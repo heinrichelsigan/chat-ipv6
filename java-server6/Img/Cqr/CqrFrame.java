@@ -5,28 +5,136 @@ A basic extension of the JApplet class
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.net.http.*;
-import java.net.*;
-import java.lang.*;
-import java.time.Duration;
+import javax.swing.plaf.metal.*;
+import javax.swing.plaf.synth.*;
 
-public class JFrameApp extends JFrame
+public class CqrFrame extends JFrame
 {
 
-	public void JFrameApp() {
+	//{{DECLARE_CONTROLS
+	public static CqrFrame jFrameApp;
+	JComboBox jComboBox;
+	JPanel jPanelCenter;
+	JButton jButton;
+	JTextArea jTextAreaSource, jTextAreaDestination;
 
+	public JMenuBar jMenuBar = new JMenuBar();
+	public JMenu menuFile;
+	public JMenuItem menuFile_itemOpen;
+	public JMenuItem menuFile_itemSave;
+	public JMenuItem menuFile_itemExit;
+	public JMenu menuView;
+	public JMenuItem menuView_itemLeftRight;
+	public JMenuItem menuView_itemTopBottom;
+	public JMenuItem menuView_item1View;
+	public JMenu menuIPAddrs;
+	public JMenu menuIPAddrs_menuMyIps;
+	public JMenu menuIPAddrs_menuFriendIps;
+	public JMenu menuIPAddrs_menuProxies;
+	public JMenuItem menuIPAddrs_itemIPv6Secure;
+	public JMenu menuChat;
+	public JMenuItem menuChat_itemSend;
+	public JMenuItem menuChat_itemRefresh;
+	public JMenuItem menuChat_itemClear;
+	public JMenu menuContacts;
+	public JMenuItem menuContacts_itemMy;
+	public JMenuItem menuContacts_itemAdd;
+	public JMenuItem menuContacts_itemImport;
+	public JMenuItem menuContacts_itemView;	
+	public JMenu menuHelp;
+	public JMenuItem menuHelp_itemAbout;	
+	
+	//}}
+
+	public CqrFrame() {
+		super();
+		
+		Init();
 	}
 
 
 	
-	public void AddMenus(JMenuBar jBar) {
+	public void Init()
+	{
+		// symantec.itools.lang.Context.setApplet(this);
 		
+		// getRootPane().putClientProperty("defeatSystemEventQueueCheck", Boolean.TRUE);
+		jMenuBar = new JMenuBar();
+		jComboBox = new JComboBox();
+		jPanelCenter = new JPanel();
+		jTextAreaSource = new JTextArea();
+		jTextAreaDestination = new JTextArea();
+		jButton = new JButton();
+		
+		setLayout(null);
+		setSize(800, 680);
+				
+		AddMenus(jMenuBar);		
+		// jMenuBar.setBounds(0, 0, 480, 24);		
+		// jMenuBar.setSize(480,24);
+		setJMenuBar(jMenuBar);
+		// jf.add(jMenuBar);
+		// jMenuBar.move(0,  0);
+		
+		jComboBox.setBounds(48, 36, 640, 24);
+		add(jComboBox);
+		
+		jPanelCenter.setBounds(48, 72, 640, 400);
+		jPanelCenter.setLayout(new GridLayout(1, 2));
+		jPanelCenter.setBackground(Color.BLACK);  
+		jPanelCenter.add(jTextAreaSource);
+		jTextAreaSource.setBounds(1,1,632,196);
+		jTextAreaSource.setBackground(Color.GRAY);  
+		jTextAreaSource.append("jMenuBar.getUI() == " + jMenuBar.getUI() + "\n");		
+		jPanelCenter.add(jTextAreaDestination);
+		jTextAreaDestination.setBounds(1,240,632,196);
+		jTextAreaDestination.setBackground(Color.YELLOW);  
+		
+		
+		add(jPanelCenter);
+		
+		jButton.setText("jbutton");
+		add(jButton);
+		jButton.setBounds(24,600,76,48);
+		jButton.setActionCommand("jbutton");
+		
+				
+		setVisible(true);
+		//}}
+	
+		//{{REGISTER_LISTENERS
+		SymAction lSymAction = new SymAction();
+		
+		menuFile_itemExit.addActionListener(lSymAction);
+		
+		menuView_itemLeftRight.addActionListener(lSymAction);
+		menuView_itemTopBottom.addActionListener(lSymAction);
+		menuView_item1View.addActionListener(lSymAction);
+		
+		menuChat_itemSend.addActionListener(lSymAction);
+		menuChat_itemRefresh.addActionListener(lSymAction);
+		menuChat_itemClear.addActionListener(lSymAction);
+		
+		menuContacts_itemMy.addActionListener(lSymAction);
+		menuContacts_itemAdd.addActionListener(lSymAction);
+		menuContacts_itemImport.addActionListener(lSymAction);
+		menuContacts_itemView.addActionListener(lSymAction);
+		
+		menuHelp_itemAbout.addActionListener(lSymAction);
+		
+		jButton.addActionListener(lSymAction);
+		//}}
+	}
+
+
+	public void AddMenus(javax.swing.JMenuBar jMenuBar) {
+			
 		menuFile = new JMenu();
 		menuFile.setText("File");
 		menuFile.setActionCommand("File");
 		menuFile.setFont(new Font("Dialog", Font.PLAIN, 12));
 		menuFile.setMnemonic((int)'F');
-		jBar.add(menuFile);
+		jMenuBar.add(menuFile);
 		
 		menuFile_itemOpen = new JMenuItem();
 		menuFile_itemOpen.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -44,6 +152,7 @@ public class JFrameApp extends JFrame
 		menuFile_itemSave.setMnemonic((int)'S');
 		menuFile.add(menuFile_itemSave);
 
+		menuFile_itemExit = new JMenuItem();
 		menuFile_itemExit.setText("Exit");
 		menuFile_itemExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, Event.ALT_MASK));
 		menuFile_itemExit.setActionCommand("Exit");
@@ -55,8 +164,8 @@ public class JFrameApp extends JFrame
 		menuView.setText("View");
 		menuView.setActionCommand("View");
 		menuView.setMnemonic((int)'V');
-		jBar.add(menuView);
-				
+		jMenuBar.add(menuView);
+						
 		menuView_itemLeftRight = new JMenuItem();
 		menuView_itemLeftRight.setHorizontalTextPosition(SwingConstants.RIGHT);
 		menuView_itemLeftRight.setText("Left-Right");
@@ -71,8 +180,7 @@ public class JFrameApp extends JFrame
 		menuView_itemTopBottom.setActionCommand("TopBottom");
 		menuView_itemTopBottom.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Event.CTRL_MASK));
 		menuView_itemTopBottom.setMnemonic((int)'C');
-		menuView.add(menuView_itemTopBottom);
-		
+		menuView.add(menuView_itemTopBottom);		
 		
 		menuView_item1View = new JMenuItem();
 		menuView_item1View.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -87,8 +195,7 @@ public class JFrameApp extends JFrame
 		menuIPAddrs.setText("IP Addresses");
 		menuIPAddrs.setActionCommand("IPAddrs");
 		menuIPAddrs.setMnemonic((int)'I');
-		jBar.add(menuIPAddrs);
-		
+		jMenuBar.add(menuIPAddrs);		
 		
 		menuIPAddrs_menuMyIps = new JMenu();
 		menuIPAddrs_menuMyIps.setText("My IP's");
@@ -120,7 +227,7 @@ public class JFrameApp extends JFrame
 		menuChat.setText("Chat");
 		menuChat.setActionCommand("Chat");
 		menuChat.setMnemonic((int)'H');
-		jBar.add(menuChat);
+		jMenuBar.add(menuChat);
 		
 		menuChat_itemSend = new JMenuItem();
 		menuChat_itemSend.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -148,7 +255,7 @@ public class JFrameApp extends JFrame
 		menuContacts.setText("Contacts");
 		menuContacts.setActionCommand("Contacts");
 		menuContacts.setMnemonic((int)'C');
-		jBar.add(menuContacts);
+		jMenuBar.add(menuContacts);
 		
 		menuContacts_itemMy = new JMenuItem();
 		menuContacts_itemMy.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -169,8 +276,7 @@ public class JFrameApp extends JFrame
 		menuContacts_itemImport.setText("Import Contacts");
 		menuContacts_itemImport.setActionCommand("ImportContacts");
 		menuContacts_itemImport.setMnemonic((int)'I');
-		menuContacts.add(menuContacts_itemImport);
-		
+		menuContacts.add(menuContacts_itemImport);		
 		
 		menuContacts_itemView = new JMenuItem();
 		menuContacts_itemView.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -184,7 +290,7 @@ public class JFrameApp extends JFrame
 		menuHelp.setText("Help");
 		menuHelp.setActionCommand("Help");
 		menuHelp.setMnemonic((int)'H');		
-		jBar.add(menuHelp);
+		jMenuBar.add(menuHelp);
 		
 		menuHelp_itemAbout = new JMenuItem();
 		menuHelp_itemAbout.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -194,126 +300,21 @@ public class JFrameApp extends JFrame
 		menuHelp.add(menuHelp_itemAbout);
 		
 	}
-	
 
-	public void Init(JFrame jf)
-	{
-		// symantec.itools.lang.Context.setApplet(this);
-		
-		// getRootPane().putClientProperty("defeatSystemEventQueueCheck", Boolean.TRUE);
-		
 
-		jf.setLayout(null);
-		jf.setSize(800, 680);
-		
-		jMenuBar = new JMenuBar();
-		AddMenus(jMenuBar);
-		
-		// jMenuBar.setBounds(0, 0, 480, 24);
-		
-		// jMenuBar.setSize(480,24);
-		jf.setJMenuBar(jMenuBar);
-		// jf.add(jMenuBar);
-		// jMenuBar.move(0,  0);
-		
-		jComboBox.setBounds(48, 36, 640, 24);
-		jf.getContentPane().add(jComboBox);
-		
-		jPanelCenter.setBounds(48, 72, 640, 400);
-		jPanelCenter.setLayout(new GridLayout(1, 2));
-		jPanelCenter.setBackground(Color.BLACK);  
-		jPanelCenter.add(jTextAreaSource);
-		jTextAreaSource.setBounds(1,1,632,196);
-		jTextAreaSource.setBackground(Color.GRAY);  
-		jTextAreaSource.append("jMenuBar.getUI() == " + jMenuBar.getUI() + "\n");		
-		jPanelCenter.add(jTextAreaDestination);
-		jTextAreaDestination.setBounds(1,240,632,196);
-		jTextAreaDestination.setBackground(Color.YELLOW);  
-		
-		jf.getContentPane().add(jPanelCenter);
-		
-		JButton1.setText("jbutton");
-		jf.getContentPane().add(JButton1);
-		JButton1.setBounds(24,600,76,48);
-		JButton1.setActionCommand("jbutton");
-		
-		
-		
-		jf.setVisible(true);
-		//}}
-	
-		//{{REGISTER_LISTENERS
-		SymAction lSymAction = new SymAction();
-		
-		menuFile_itemExit.addActionListener(lSymAction);
-		
-		menuView_itemLeftRight.addActionListener(lSymAction);
-		menuView_itemTopBottom.addActionListener(lSymAction);
-		menuView_item1View.addActionListener(lSymAction);
-		
-		menuChat_itemSend.addActionListener(lSymAction);
-		menuChat_itemRefresh.addActionListener(lSymAction);
-		menuChat_itemClear.addActionListener(lSymAction);
-		
-		menuContacts_itemMy.addActionListener(lSymAction);
-		menuContacts_itemAdd.addActionListener(lSymAction);
-		menuContacts_itemImport.addActionListener(lSymAction);
-		menuContacts_itemView.addActionListener(lSymAction);
-		
-		menuHelp_itemAbout.addActionListener(lSymAction);
-		
-		JButton1.addActionListener(lSymAction);
-		//}}
-	}
-
-	//{{DECLARE_CONTROLS
-	public static JFrameApp jFrameApp;
-	JComboBox jComboBox = new JComboBox();
-	JPanel jPanelCenter = new JPanel();
-	JButton JButton1 = new JButton();
-	JTextArea jTextAreaSource = new JTextArea(), jTextAreaDestination = new JTextArea();
-	
-	JMenuBar jMenuBar = new JMenuBar();
-	// JMenuBar jMenuBar = new JMenuBar();
-	JMenu menuFile;
-	JMenuItem menuFile_itemOpen;
-	JMenuItem menuFile_itemSave;
-	JMenuItem menuFile_itemExit = new JMenuItem();
-	JMenu menuView;
-	JMenuItem menuView_itemLeftRight;
-	JMenuItem menuView_itemTopBottom;
-	JMenuItem menuView_item1View;
-	JMenu menuIPAddrs;
-	JMenu menuIPAddrs_menuMyIps;
-	JMenu menuIPAddrs_menuFriendIps;
-	JMenu menuIPAddrs_menuProxies;
-	JMenuItem menuIPAddrs_itemIPv6Secure;
-	JMenu menuChat;
-	JMenuItem menuChat_itemSend;
-	JMenuItem menuChat_itemRefresh;
-	JMenuItem menuChat_itemClear;
-	JMenu menuContacts;
-	JMenuItem menuContacts_itemMy;
-	JMenuItem menuContacts_itemAdd;
-	JMenuItem menuContacts_itemImport;
-	JMenuItem menuContacts_itemView;
-	
-	JMenu menuHelp = new JMenu();
-	JMenuItem menuHelp_itemAbout = new JMenuItem();
-	//}}
 
 	public static void main(String args[]) {
 		
-		jFrameApp = new JFrameApp();
+		jFrameApp = new CqrFrame();
 		jFrameApp.setLayout(null);
 		jFrameApp.setSize(480,360);
-		jFrameApp.Init(jFrameApp);
+		jFrameApp.Init();
 		jFrameApp.setVisible(true);
 		jFrameApp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 
-	class SymAction implements ActionListener
+	public class SymAction implements ActionListener
 	{
 		public void actionPerformed(ActionEvent event)
 		{
@@ -348,50 +349,10 @@ public class JFrameApp extends JFrame
 			else if (object == menuHelp_itemAbout)
 				about(event);
 			
-			else if (object == JButton1)
-				JButton1_actionPerformed(event);
+			else if (object == jButton)
+				jButton_actionPerformed(event);
 			
 		}
-	}
-
-	public void MakeWebRequest() {
-		
-		HttpClient client = HttpClient.newBuilder()         
-         .connectTimeout(Duration.ofSeconds(10))
-         .build(); 
-		 
-		String area23R = "https://area23.at/s/r.aspx";
-		URI uri23 = URI.create(area23R);
-		
-		 //.version(HttpClient.Version.HTTP_2)
-		 
-		// HttpClient client = new HttpClient();
-			// .uri(URI.create("https://area23.at/net/R.aspx"))					
-			// .followRedirects(Redirect.NORMAL)
-			// .version(Version.HTTP_1_1)			
-			// .connectTimeout(Duration.ofSeconds(20))   			
-			// .authenticator(Authenticator.getDefault())			
-			// .build();
-		
-		// HttpRequest.newBuilder(new URI("https://area23.at/net/R.aspx"))
-		
-		HttpRequest request = HttpRequest.newBuilder()
-			.uri(URI.create(area23R))	
-			.GET()
-			.build();
-	
-		HttpResponse<String> response;
-   
-		try {   
-			response = client.send(request, HttpResponse.BodyHandlers.ofString());
-					
-			jTextAreaDestination.append("GET " + area23R + " status = " + response.statusCode() + "\n");
-			jTextAreaDestination.append("Headers: " + response.headers().allValues("content-type"));
-			jTextAreaDestination.append("Body: \n " + response.body());  
-		} catch (Exception ioEx) {
-			jTextAreaDestination.append("Exception: " + ioEx + "\n");		
-		}
-		
 	}
 
 	public void appExit(ActionEvent event) {
@@ -480,10 +441,8 @@ public class JFrameApp extends JFrame
 	}
 	
 
-	void JButton1_actionPerformed(ActionEvent event)
+	public void jButton_actionPerformed(ActionEvent event)
 	{
-		// to do: code goes here.
-		 MakeWebRequest();
 		try {
 			jTextAreaSource.setText("hallo");
 		} catch (Exception e) {
