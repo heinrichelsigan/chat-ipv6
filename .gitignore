@@ -6,11 +6,27 @@ serv/client
 serv/server
 serv
 
-CSharp-Server6
-CSharp-Server6/.vs
 
-/CSharp-Server6/.vs/CSharp-Server6-Linux-Docker/DesignTimeBuild/.dtbcache.v2
-/CSharp-Server6/.vs/CSharp-Server6-Linux-Docker/v17/.futdcache.v2
-/CSharp-Server6/.vs/ProjectEvaluation/csharp-server6-linux-docker.metadata.v9.bin
-/CSharp-Server6/.vs/ProjectEvaluation/csharp-server6-linux-docker.projects.v9.bin
-/CSharp-Server6/.vs/ProjectEvaluation/csharp-server6-linux-docker.strings.v9.bin
+
+CSharp/Server6
+CSharp/Server6/.vs
+
+CSharp/EU.CqrXs/Publish
+/CSharp/EU.CqrXs/Publish
+/CSharp/Server6/.vs/CSharp-Server6-Linux-Docker/DesignTimeBuild/.dtbcache.v2
+/CSharp/Server6/.vs/CSharp-Server6-Linux-Docker/v17/.futdcache.v2
+/CSharp/Server6/.vs/ProjectEvaluation/csharp-server6-linux-docker.metadata.v9.bin
+/CSharp/Server6/.vs/ProjectEvaluation/csharp-server6-linux-docker.projects.v9.bin
+/CSharp/Server6/.vs/ProjectEvaluation/csharp-server6-linux-docker.strings.v9.bin
+/CSharp/EU.CqrXs/.vs/EU.CqrXs.WinForm.SecureChat/v17/.suo
+/CSharp/EU.CqrXs/.vs/EU.CqrXs.WinForm.SecureChat/v17/DocumentLayout.backup.json
+/CSharp/EU.CqrXs/.vs/EU.CqrXs.WinForm.SecureChat/v17/DocumentLayout.json
+/CSharp/EU.CqrXs/packages/BouncyCastle.Cryptography.2.5.0/lib/net461/BouncyCastle.Cryptography.dll
+/CSharp/EU.CqrXs/packages/BouncyCastle.Cryptography.2.5.0/lib/net461/BouncyCastle.Cryptography.xml
+/CSharp/EU.CqrXs/packages/BouncyCastle.Cryptography.2.5.0/lib/net6.0/BouncyCastle.Cryptography.dll
+/CSharp/EU.CqrXs/packages/BouncyCastle.Cryptography.2.5.0/lib/net6.0/BouncyCastle.Cryptography.xml
+/CSharp/EU.CqrXs/packages/BouncyCastle.Cryptography.2.5.0/lib/netstandard2.0/BouncyCastle.Cryptography.dll
+/CSharp/EU.CqrXs/packages/BouncyCastle.Cryptography.2.5.0/lib/netstandard2.0/BouncyCastle.Cryptography.xml
+
+*.class
+*.a

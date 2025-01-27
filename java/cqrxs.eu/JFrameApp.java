@@ -10,10 +10,10 @@ import java.net.*;
 import java.lang.*;
 import java.time.Duration;
 
-public class JFrameApp extends JFrame
+public class CqrJFrame extends JFrame
 {
 
-	public void JFrameApp() {
+	public void CqrJFrame() {
 
 	}
 
@@ -267,7 +267,7 @@ public class JFrameApp extends JFrame
 	}
 
 	//{{DECLARE_CONTROLS
-	public static JFrameApp jFrameApp;
+	public static CqrJFrame cqrJFrame;
 	JComboBox jComboBox = new JComboBox();
 	JPanel jPanelCenter = new JPanel();
 	JButton JButton1 = new JButton();
@@ -304,12 +304,12 @@ public class JFrameApp extends JFrame
 
 	public static void main(String args[]) {
 		
-		jFrameApp = new JFrameApp();
-		jFrameApp.setLayout(null);
-		jFrameApp.setSize(480,360);
-		jFrameApp.Init(jFrameApp);
-		jFrameApp.setVisible(true);
-		jFrameApp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		cqrJFrame = new CqrJFrame();
+		cqrJFrame.setLayout(null);
+		cqrJFrame.setSize(480,360);
+		cqrJFrame.Init(cqrJFrame);
+		cqrJFrame.setVisible(true);
+		cqrJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 
@@ -360,7 +360,7 @@ public class JFrameApp extends JFrame
          .connectTimeout(Duration.ofSeconds(10))
          .build(); 
 		 
-		String area23R = "https://area23.at/s/r.aspx";
+		String area23R = "https://cqrxs.eu/net/R.aspx";
 		URI uri23 = URI.create(area23R);
 		
 		 //.version(HttpClient.Version.HTTP_2)
