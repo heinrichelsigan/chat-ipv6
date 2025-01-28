@@ -1,0 +1,127 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>	
+	<UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <StartupObject>EU.CqrXs.WinForm.SecureChat.Program</StartupObject>
+    <RootNamespace>EU.CqrXs.WinForm.SecureChat</RootNamespace>
+    <AssemblyVersion>2.25.0128</AssemblyVersion>
+    <FileVersion>2.25.0128</FileVersion>
+    <ErrorReport>send</ErrorReport>
+    <Title>SecureChat</Title>
+    <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>		
+	<IncludeSymbols>true</IncludeSymbols>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+	<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>	
+	<PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
+	<IsTrimmable>true</IsTrimmable>
+	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>	  	
+	<!-- PublishTrimmed>True</PublishTrimmed -->
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
+    <WarningLevel>5</WarningLevel>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Gui\Controls\" />
+    <Folder Include="log\" />
+    <Folder Include="Resources\" />
+    <Folder Include="Properties\en\" />
+    <Folder Include="Properties\fr\" />
+    <Folder Include="Properties\it\" />
+    <Folder Include="Properties\pl\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Core\EU.CqrXs.Framework.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Gui\Forms\EnDeCodingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Gui\Forms\Fortune.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Gui\Forms\NetAddr.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Gui\Forms\RichTextChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Gui\Forms\SecureChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Gui\Forms\TransparentBadge.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Gui\Forms\TransparentDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Gui\Forms\TransparentFormCore.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Gui\Forms\TScp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Properties\de\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\de\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+
+	<!-- feature switches for trimming 
+	
+	<ItemGroup>
+		<Using Include="System.Drawing" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<RuntimeHostConfigurationOption Include="System.ComponentModel.Design.IDesignerHost.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Binding.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.ComponentModel.DefaultValueAttribute.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Drawing.Design.UITypeEditor.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.ActiveXImpl.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Control.AreDesignTimeFeaturesSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.MdiWindowDialog.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.ImageIndexConverter.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Primitives.TypeConverterHelper.UseComponentModelRegisteredTypes" Value="true" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Control.UseComponentModelRegisteredTypes" Value="true" Trim="true" />
+	</ItemGroup>
+	
+    -->
+</Project>
