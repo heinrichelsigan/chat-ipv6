@@ -504,9 +504,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemHelp.Name = "menuItemHelp";
             menuItemHelp.Padding = new Padding(0, 2, 0, 2);
             menuItemHelp.ShortcutKeys = Keys.Control | Keys.F1;
-            menuItemHelp.Size = new Size(167, 24);
+            menuItemHelp.Size = new Size(180, 24);
             menuItemHelp.Text = "help";
             menuItemHelp.ToolTipText = "displays help";
+            menuItemHelp.Click += MenuItemHelp_Click;
             // 
             // menuItemInfo
             // 
@@ -514,7 +515,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemInfo.BackgroundImageLayout = ImageLayout.None;
             menuItemInfo.ForeColor = SystemColors.MenuText;
             menuItemInfo.Name = "menuItemInfo";
-            menuItemInfo.Size = new Size(167, 22);
+            menuItemInfo.Size = new Size(180, 22);
             menuItemInfo.Text = "info";
             menuItemInfo.TextImageRelation = TextImageRelation.TextAboveImage;
             menuItemInfo.ToolTipText = "displays a tiny message box with version info";
@@ -527,7 +528,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemAbout.ForeColor = SystemColors.MenuText;
             menuItemAbout.Name = "menuItemAbout";
             menuItemAbout.Padding = new Padding(0, 2, 0, 2);
-            menuItemAbout.Size = new Size(167, 24);
+            menuItemAbout.Size = new Size(180, 24);
             menuItemAbout.Text = "about";
             menuItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             menuItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";

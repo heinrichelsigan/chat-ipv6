@@ -99,7 +99,7 @@ namespace EU.CqrXs.Framework.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://github.com/heinrichelsigan/area23.at/.
+        ///   Looks up a localized string similar to https://github.com/heinrichelsigan/chat-ipv6.
         /// </summary>
         internal static string github_uri {
             get {
@@ -330,7 +330,7 @@ namespace EU.CqrXs.Framework.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://github.com/heinrichelsigan/area23.at/.
+        ///   Looks up a localized string similar to https://github.com/heinrichelsigan/chat-ipv6.
         /// </summary>
         internal static string wiki_uri {
             get {

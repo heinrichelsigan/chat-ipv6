@@ -121,13 +121,13 @@
     <value>Area23.At.Framework.Library</value>
   </data>
   <data name="wiki_uri" xml:space="preserve">
-    <value>https://github.com/heinrichelsigan/area23.at/</value>
+    <value>https://github.com/heinrichelsigan/chat-ipv6</value>
   </data>
   <data name="build_with" xml:space="preserve">
     <value>VisualStudio 2022 C# 4.8</value>
   </data>
   <data name="github_uri" xml:space="preserve">
-    <value>https://github.com/heinrichelsigan/area23.at/</value>
+    <value>https://github.com/heinrichelsigan/chat-ipv6</value>
   </data>
   <data name="help_text" xml:space="preserve">
     <value>&lt;h1&gt;Area23.At.Framework.Library&lt;/h1&gt;
@@ -340,7 +340,7 @@ Code is open source under GPL 3 and publicly accessible via &lt;a href="https://
         DqjMsJNMjAiHhbVsBRsVbC45lvCAcCRl2ZIfmClxSvGaYitXNH/uqV7YmLanp5Qus4NxJogRR8OgyDI5
         CvTIaovikpD9aBV/u++Pi8sQ1zKmOEZZwUL3/ag/+N2tm+nvKyU1RiH05HlvnVC3BV+bnvd56HlfRxB8
         hAu77F85gKF30TfLWmQfmtfh7LKsGdtwvgFtD3nd0X0pKDOQycDriXzTLLRcQ8N8qbeffY7vICldTV7B
-        7h50ZSV7ocq76yt7+/OM3x/Rb6D9crm7gxNzAAAACXBIWXMAAA7BAAAOwQG4kWvtAAAAB3RJTUUH6AUE
+        7h50ZSV7ocq76yt7+/OM3x/Rb6D9crm7gxNzAAAACXBIWXMAAA7AAAAOwAFq1okJAAAAB3RJTUUH6AUE
         DTULTHqjBQAABMZJREFUeF7tmEuIHFUUhtsoPmemq25NZxgyEFARcaXgE3whghtBQTeKj4UuJSqMujAL
         CT6iEshCMQsZUVwoEsQHiLgUH4iIgg+cMExXdUfjYyJqQmZwTPv/t89tzxQHA2J1p63L8FF1/3PuqXv+
         qq6pqkav14sAU6wjplhHTLGOmGIdMUVyVOEK1xtn0AMZ9FPulZgi0ROt4uOG7sfq1xSJnmgVGxeiEUI0
@@ -373,7 +373,7 @@ Code is open source under GPL 3 and publicly accessible via &lt;a href="https://
         NZUZceOxIeGIsJ4qYbOErWXXFu4Rbk3YjuRrMwVOKF5TbGdWrJ97qheGl5zpKaXLbGGUMSaYRMdkhTQZ
         8nTK6ojiEZP9aBl/c+CfFJcprjSWOIbJYmMEftQf/O7WS3Z3FZLCUah+8v23Nghtwdem738e+v7XEVQ+
         woVT9GcPoP9d9M2i1roP9etwdlnUzG0434Cmh5zhGoFUKVNLJuH1RL5pFhqvoXa+0NvPPsd3EJeuxq9g
-        dw/aU5K9UObdNaW9/Xkm6I/oNyfgcu/gI+PmAAAACXBIWXMAAA7BAAAOwQG4kWvtAAAAB3RJTUUH6AwS
+        dw/aU5K9UObdNaW9/Xkm6I/oNyfgcu/gI+PmAAAACXBIWXMAAA7AAAAOwAFq1okJAAAAB3RJTUUH6AwS
         Ax8nYzVE9gAABedJREFUeF7tml1MI1UUx7uIrhqzq60Qk9W4EY0m++K7MUZ907iJD+qDPumr7oMP+6IP
         Jia7PpC4iSFxja7RzRpBmUKB8lG2UJYCS4WlWXZhKYXSlqV8f5R+0cL1nMu53YFOoUpnul3ml5zMnHPP
         3LnnPzP3zjQ16Ojo6OjkiQ8q7KyYjco4OEqdF5tRKQcjr51pjC4EoQtB6EIQqgtRY6h5pN5oZsIay/9+
@@ -411,7 +411,7 @@ Code is open source under GPL 3 and publicly accessible via &lt;a href="https://
         NZUZceOxIeGIsJ4qYbOErWXXFu4Rbk3YjuRrMwVOKF5TbGdWrJ97qheGl5zpKaXLbGGUMSaYRMdkhTQZ
         8nTK6ojiEZP9aBl/c+CfFJcprjSWOIbJYmMEftQf/O7WS3Z3FZLCUah+8v23Nghtwdem738e+v7XEVQ+
         woVT9GcPoP9d9M2i1roP9etwdlnUzG0434Cmh5zhGoFUKVNLJuH1RL5pFhqvoXa+0NvPPsd3EJeuxq9g
-        dw/aU5K9UObdNaW9/Xkm6I/oNyfgcu/gI+PmAAAACXBIWXMAAA7BAAAOwQG4kWvtAAAAB3RJTUUH6AwS
+        dw/aU5K9UObdNaW9/Xkm6I/oNyfgcu/gI+PmAAAACXBIWXMAAA7AAAAOwAFq1okJAAAAB3RJTUUH6AwS
         AyE2SEB/eQAAAqVJREFUeF7tlz1oFFEQx08RFBTi7d4R/AAV0woWFlbGJnjZt6edlaUgCNqIhShcI2gj
         NpaCRFFE8LKzJ8EQJViKjWBpIwgpAnaKH0jWmb1ZeKyT5aKYuO9N8eM2/3nzNvO7ze6mkWWZgoihj4ih
         j4ihj4ihj4ghsWLxcu+xrM7YsxDSvGJI2I3S5nXDnkeaVwwJu1HarC6oCEZFMCqCURGMimBUBKMiGBXB
@@ -435,7 +435,7 @@ Code is open source under GPL 3 and publicly accessible via &lt;a href="https://
         OagyI04yMSwcEdYyFWxUsLnsWML9wh0py5b84EyJU4rXFVvZgvlzT/XCxiV7ekrpMtsZY5xJ4mgYFFgh
         S56orLYoLgnZj1Xxt/n+uLgMca1gimOEVSx034/6g9/duum+3lJSYwzqnj3vvRPqt6G45XlfR55XPIaa
         J7i0y/7VQxj8EH2rrHUcQNMGnF+VNWMHLjah9TGnO7ov1cgMptPwdirfNAvNNxCaL/X2s8/JPSSlq4lr
-        2NuHroxkL1R5d0Nlb3+e8fsj9g3EGXLHcne/1gAAAAlwSFlzAAAOwQAADsEBuJFr7QAAAAd0SU1FB+gK
+        2NuHroxkL1R5d0Nlb3+e8fsj9g3EGXLHcne/1gAAAAlwSFlzAAAOwAAADsABataJCQAAAAd0SU1FB+gK
         DRMpFbnilRoAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAC50lEQVRIS6VWS2gT
         URRNP2lMiTZ9M4lt3RSt2CB2oahQBDetdObNQNVuigjVlQuhIIjgpgtBUUF0IwVBN6VUi2beTFCwDG4U
         XIiCWy1Sq9sWShUVTDxv5k6cNG3SNBcO774zc+857xMyka9xtwD8AOZDWASWNok/gOxRDb+AoCYvuYiM
@@ -488,7 +488,7 @@ Code is open source under GPL 3 and publicly accessible via &lt;a href="https://
         NZUZceOxIeGIsJ4qYbOErWXXFu4Rbk3YjuRrMwVOKF5TbGdWrJ97qheGl5zpKaXLbGGUMSaYRMdkhTQZ
         8nTK6ojiEZP9aBl/c+CfFJcprjSWOIbJYmMEftQf/O7WS3Z3FZLCUah+8v23Nghtwdem738e+v7XEVQ+
         woVT9GcPoP9d9M2i1roP9etwdlnUzG0434Cmh5zhGoFUKVNLJuH1RL5pFhqvoXa+0NvPPsd3EJeuxq9g
-        dw/aU5K9UObdNaW9/Xkm6I/oNyfgcu/gI+PmAAAACXBIWXMAAAsRAAALEQF/ZF+RAAAAB3RJTUUH6AwS
+        dw/aU5K9UObdNaW9/Xkm6I/oNyfgcu/gI+PmAAAACXBIWXMAAAsQAAALEAGtI711AAAAB3RJTUUH6AwS
         AwsDcZh3cgAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAABFSURBVEhLYyAC/IfS
         6ACX+DAGpHp5EAaRsbExVlfhEicG0DxYMDTgcC3NfEC2wTCAywCKDQYD9OCgJDJHwSgYBUQDBgYAxyET
         7V5kFekAAAAASUVORK5CYII=
@@ -503,7 +503,7 @@ Code is open source under GPL 3 and publicly accessible via &lt;a href="https://
         c0BlBp1YdFg4KKwlS9goYXPFsYQHhDvjli35gdkCxxWvK7ZSOfPnnuqFDcv2zLTSZXYwxjiTTKFhkGOV
         FFlCstqiuERlP1LG3+77p8RliGsVUxwjpLHQfT/qD3536yb6+wpJDRGofva89y6o2Yb8lud9HXle/hgq
         n+DSLvrThzD0IfpWUes8gKYNOL8qasYOXGxC22NGd3RfqpQZSCTg7VS+aQ6ab6B+odDbzz4n9xCTriau
-        YW8fupOSvVjm3bWlvf15xu+PyDfdM3LRC9BOFwAAAAlwSFlzAAALEQAACxEBf2RfkQAAAAd0SU1FB+gJ
+        YW8fupOSvVjm3bWlvf15xu+PyDfdM3LRC9BOFwAAAAlwSFlzAAALEAAACxABrSO9dQAAAAd0SU1FB+gJ
         GAIOBDQUE7cAAF9XSURBVHhe7b0HVFV3uv7vWv/7uzOZNI2VdqgqFjqIgBVb7L333hV7LyggxYaAKFIE
         VLCLvfcWYxKTmN676Zm5cyf33knm+T/vd+8Nm+OhaNQkk/Ou9SyOeDhlf87zlu8up4pjhiOctjjBKdMJ
         ztnOcMl1gSXfAssOC1x3usJ9rzvcD7jD44gHPE54wPO0JzzPecLrghe8LuqS22ep017wPMH/P0odpA54

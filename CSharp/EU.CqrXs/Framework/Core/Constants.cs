@@ -41,6 +41,10 @@ namespace EU.CqrXs.Framework.Core
         public const string URL_SHORT = "https://area23.at/s/?";
         public const string AREA23_UTF8_URL = "https://area23.at/u/";
 
+        public const string CQRXS_EU = "cqrxs.eu";
+        public const string CQRXS_URL = "https://cqrxs.eu/";
+        public const string CQRXS_HELP_URL = "https://cqrxs.eu/help/";
+
         public const string ACK = "Ack";
         public const string NACK = "Nack";
         public const string ENTER_SECRET_KEY = "[enter secret key here]";

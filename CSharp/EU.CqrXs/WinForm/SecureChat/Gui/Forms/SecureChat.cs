@@ -946,6 +946,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private void MenuItemHelp_Click(object sender, EventArgs e)
         {
             // TODO: implement it
+            Help.ShowHelp(this, Constants.CQRXS_HELP_URL);
+            // Help.ShowHelp(this, Constants.CQRXS_HELP_URL, HelpNavigator.TableOfContents, Constants.CQRXS_EU);
         }
 
         private void MenuItemAbout_Click(object sender, EventArgs e)
