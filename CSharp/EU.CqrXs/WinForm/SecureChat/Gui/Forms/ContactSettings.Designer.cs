@@ -34,13 +34,11 @@
             labelEmail = new Label();
             labelMobile = new Label();
             labelAddress = new Label();
-            labelKey = new Label();
             labelPicture = new Label();
             comboBoxName = new ComboBox();
             textBoxEmail = new TextBox();
             textBoxMobile = new TextBox();
             textBoxAddress = new TextBox();
-            textBoxKey = new TextBox();
             pictureBoxImage = new PictureBox();
             okButton = new Button();
             openFileDialog = new OpenFileDialog();
@@ -60,27 +58,24 @@
             tableLayoutPanel.Controls.Add(labelEmail, 1, 1);
             tableLayoutPanel.Controls.Add(labelMobile, 1, 2);
             tableLayoutPanel.Controls.Add(labelAddress, 1, 3);
-            tableLayoutPanel.Controls.Add(labelKey, 1, 4);
-            tableLayoutPanel.Controls.Add(labelPicture, 1, 5);
+            tableLayoutPanel.Controls.Add(labelPicture, 1, 4);
             tableLayoutPanel.Controls.Add(comboBoxName, 2, 0);
             tableLayoutPanel.Controls.Add(textBoxEmail, 2, 1);
             tableLayoutPanel.Controls.Add(textBoxMobile, 2, 2);
             tableLayoutPanel.Controls.Add(textBoxAddress, 2, 3);
-            tableLayoutPanel.Controls.Add(textBoxKey, 2, 4);
-            tableLayoutPanel.Controls.Add(pictureBoxImage, 2, 5);
-            tableLayoutPanel.Controls.Add(okButton, 2, 6);
+            tableLayoutPanel.Controls.Add(pictureBoxImage, 2, 4);
+            tableLayoutPanel.Controls.Add(okButton, 2, 5);
             tableLayoutPanel.Dock = DockStyle.Fill;
             tableLayoutPanel.Font = new Font("Lucida Sans Unicode", 10F);
             tableLayoutPanel.Location = new Point(10, 10);
             tableLayoutPanel.Margin = new Padding(2, 1, 2, 1);
             tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 6;
+            tableLayoutPanel.RowCount = 5;
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel.Size = new Size(519, 326);
             tableLayoutPanel.TabIndex = 0;
@@ -93,7 +88,7 @@
             logoPictureBox.Margin = new Padding(3, 2, 3, 2);
             logoPictureBox.Name = "logoPictureBox";
             tableLayoutPanel.SetRowSpan(logoPictureBox, 6);
-            logoPictureBox.Size = new Size(149, 286);
+            logoPictureBox.Size = new Size(149, 322);
             logoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             logoPictureBox.TabIndex = 25;
             logoPictureBox.TabStop = false;
@@ -146,22 +141,10 @@
             labelAddress.Text = "Address";
             labelAddress.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // labelKey
-            // 
-            labelKey.Dock = DockStyle.Fill;
-            labelKey.Location = new Point(162, 128);
-            labelKey.Margin = new Padding(7, 0, 4, 0);
-            labelKey.MaximumSize = new Size(0, 20);
-            labelKey.Name = "labelKey";
-            labelKey.Size = new Size(92, 20);
-            labelKey.TabIndex = 30;
-            labelKey.Text = "Secret Key";
-            labelKey.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // labelPicture
             // 
             labelPicture.Dock = DockStyle.Fill;
-            labelPicture.Location = new Point(162, 160);
+            labelPicture.Location = new Point(162, 128);
             labelPicture.Margin = new Padding(7, 0, 4, 0);
             labelPicture.MaximumSize = new Size(0, 20);
             labelPicture.Name = "labelPicture";
@@ -209,24 +192,15 @@
             textBoxAddress.Size = new Size(257, 28);
             textBoxAddress.TabIndex = 23;
             // 
-            // textBoxKey
-            // 
-            textBoxKey.Dock = DockStyle.Fill;
-            textBoxKey.Location = new Point(260, 130);
-            textBoxKey.Margin = new Padding(2);
-            textBoxKey.Name = "textBoxKey";
-            textBoxKey.Size = new Size(257, 28);
-            textBoxKey.TabIndex = 24;
-            // 
             // pictureBoxImage
             // 
             pictureBoxImage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             pictureBoxImage.BackgroundImageLayout = ImageLayout.Center;
             pictureBoxImage.BorderStyle = BorderStyle.FixedSingle;
-            pictureBoxImage.Location = new Point(260, 162);
+            pictureBoxImage.Location = new Point(260, 130);
             pictureBoxImage.Margin = new Padding(2);
             pictureBoxImage.Name = "pictureBoxImage";
-            pictureBoxImage.Size = new Size(257, 126);
+            pictureBoxImage.Size = new Size(257, 159);
             pictureBoxImage.SizeMode = PictureBoxSizeMode.CenterImage;
             pictureBoxImage.TabIndex = 3;
             pictureBoxImage.TabStop = false;
@@ -236,10 +210,10 @@
             // 
             okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             okButton.DialogResult = DialogResult.Cancel;
-            okButton.Location = new Point(428, 297);
+            okButton.Location = new Point(428, 300);
             okButton.Margin = new Padding(3, 2, 3, 2);
             okButton.Name = "okButton";
-            okButton.Size = new Size(88, 27);
+            okButton.Size = new Size(88, 24);
             okButton.TabIndex = 32;
             okButton.Text = "&OK";
             // 
@@ -282,12 +256,10 @@
         private System.Windows.Forms.Label labelMobile;
         private System.Windows.Forms.Label labelAddress;        
         private System.Windows.Forms.Button okButton;
-        private Label labelKey;
         private Label labelPicture;
         private TextBox textBoxAddress;
         private TextBox textBoxMobile;
         private TextBox textBoxEmail;
-        private TextBox textBoxKey;
         private PictureBox pictureBoxImage;
         private OpenFileDialog openFileDialog;
         private ComboBox comboBoxName;

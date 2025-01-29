@@ -320,7 +320,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // If these threads are different, it returns true.
             if (richTextBox.InvokeRequired)
             {
-                ClearRichTextCallback clearRichTextCallback = 
+                ClearRichTextCallback clearRichTextCallback =
                     delegate (System.Windows.Forms.RichTextBox textArea, bool clr)
                     {
                         if (textArea != null)
@@ -379,9 +379,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private void Button_SecretKey_Click(object sender, EventArgs e)
         {
-            myServerKey = (string.IsNullOrEmpty(this.textBoxSecretKey.Text)) ?
-                ExternalIpAddress?.ToString() + Constants.BC_START_MSG :
-                this.textBoxSecretKey.Text;
+            myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
+            if (!string.IsNullOrEmpty(this.comboBoxSecretKey.Text) &&
+                !this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            {
+                myServerKey = this.comboBoxSecretKey.Text;
+            }
 
             // TODO: test case later
 
@@ -400,15 +403,47 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         }
 
-        private void TextBoxSecretKey_TextChanged(object sender, EventArgs e)
+        private void ComboBoxSecretKey_FocusLeave(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.textBoxSecretKey.Text))
+            if (string.IsNullOrEmpty(this.comboBoxSecretKey.Text) ||
+                this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.textBoxSecretKey.BorderStyle = BorderStyle.Fixed3D;
+                this.comboBoxSecretKey.BackColor = Color.OrangeRed;
                 return;
             }
-            this.textBoxSecretKey.BorderStyle = BorderStyle.FixedSingle;
+            this.comboBoxSecretKey.BackColor = Color.White;
+            Button_SecretKey_Click(sender, e);
+            if (Entities.Settings.Instance != null)
+            {
+                if (!Entities.Settings.Instance.SecretKeys.Contains(this.comboBoxSecretKey.Text))
+                    Entities.Settings.Instance.SecretKeys.Add(this.comboBoxSecretKey.Text);
+                if (!this.comboBoxSecretKey.Items.Contains(this.comboBoxSecretKey.Text))
+                    this.comboBoxSecretKey.Items.Add(this.comboBoxSecretKey.Text);
+            }
+        }
+
+
+        private void ComboBoxSecretKey_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.comboBoxSecretKey.Text) ||
+                this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            {
+                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.comboBoxSecretKey.BackColor = Color.OrangeRed;
+                return;
+            }
+            this.comboBoxSecretKey.BackColor = Color.White;
+            Button_SecretKey_Click(sender, e);
+        }
+
+        private void ComboBoxSecretKey_TextUpdate(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.comboBoxSecretKey.Text))
+            {
+                return;
+            }
+            this.comboBoxSecretKey.BackColor = Color.White;
             Button_SecretKey_Click(sender, e);
         }
 
@@ -423,8 +458,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         internal void OnClientReceive(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(myServerKey))
-                myServerKey = this.textBoxSecretKey.Text;
-
+            {
+                myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
+                if (!string.IsNullOrEmpty(this.comboBoxSecretKey.Text) &&
+                    !this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    myServerKey = this.comboBoxSecretKey.Text;
+                }
+            }
 
             if (sender != null)
             {
@@ -451,15 +492,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            myServerKey = (string.IsNullOrEmpty(this.textBoxSecretKey.Text)) ?
-                ExternalIpAddress?.ToString() + Constants.APP_NAME :
-                this.textBoxSecretKey.Text;
-
-            // TODO: test case later
-            if (!string.IsNullOrEmpty(this.textBoxSecretKey.Text))
-                myServerKey = this.textBoxSecretKey.Text;
+            myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
+            if (!string.IsNullOrEmpty(this.comboBoxSecretKey.Text) &&
+                !this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            {
+                myServerKey = this.comboBoxSecretKey.Text;
+            }
             else
-                this.textBoxSecretKey.Text = myServerKey;
+                this.comboBoxSecretKey.Text = myServerKey;
 
             CqrServerMsg serverMessage = new CqrServerMsg(myServerKey);
             this.TextBoxPipe.Text = serverMessage.symmPipe.PipeString;
@@ -491,15 +531,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            if (string.IsNullOrEmpty(this.textBoxSecretKey.Text))
+            if (string.IsNullOrEmpty(this.comboBoxSecretKey.Text) ||
+                this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.textBoxSecretKey.BorderStyle = BorderStyle.Fixed3D;
+                this.comboBoxSecretKey.BackColor = Color.OrangeRed;
                 return;
             }
 
-            if (string.IsNullOrEmpty(myServerKey))
-                myServerKey = this.textBoxSecretKey.Text;
+            myServerKey = this.comboBoxSecretKey.Text;
 
 
             string unencrypted = this.richTextBoxChat.Text;
@@ -509,7 +549,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 partnerIp = IPAddress.Parse(this.comboBoxIpContact.Text);
                 CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                 pmsg.SendCqrPeerMsg(unencrypted, partnerIp, EncodingType.Base64, Constants.CHAT_PORT);
-                
+
                 chat.AddMyMessage(unencrypted);
                 AppendText(TextBoxSource, unencrypted);
                 Format_Lines_RichTextBox();
@@ -606,7 +646,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ContactSettings contactSettings = new ContactSettings("Add Contact Info", 1);
             contactSettings.ShowInTaskbar = true;
             contactSettings.ShowDialog();
-            
+
             AddContactsToIpContact();
         }
 
@@ -1037,7 +1077,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #endregion closeForm
 
-        
+
     }
 
 }

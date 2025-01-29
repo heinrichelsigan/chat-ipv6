@@ -93,7 +93,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             pictureBoxYou = new PictureBox();
             buttonSecretKey = new Button();
             panelEnCodeCrypt = new Panel();
-            textBoxSecretKey = new TextBox();
+            comboBoxSecretKey = new ComboBox();
+            labelSecretKey = new Label();
             comboBoxIpContact = new ComboBox();
             TextBoxPipe = new TextBox();
             pictureBoxQr = new PictureBox();
@@ -102,7 +103,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             panelDestination = new Panel();
             panelCenter = new Panel();
             richTextBoxOneView = new RichTextBox();
-            labelSecretKey = new Label();
             menuStrip.SuspendLayout();
             statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
@@ -717,8 +717,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // panelEnCodeCrypt
             // 
             panelEnCodeCrypt.BackColor = SystemColors.ActiveCaption;
+            panelEnCodeCrypt.Controls.Add(comboBoxSecretKey);
             panelEnCodeCrypt.Controls.Add(labelSecretKey);
-            panelEnCodeCrypt.Controls.Add(textBoxSecretKey);
             panelEnCodeCrypt.Controls.Add(comboBoxIpContact);
             panelEnCodeCrypt.Controls.Add(TextBoxPipe);
             panelEnCodeCrypt.Controls.Add(buttonSecretKey);
@@ -729,18 +729,30 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             panelEnCodeCrypt.Size = new Size(976, 36);
             panelEnCodeCrypt.TabIndex = 10;
             // 
-            // textBoxSecretKey
+            // comboBoxSecretKey
             // 
-            textBoxSecretKey.BorderStyle = BorderStyle.FixedSingle;
-            textBoxSecretKey.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBoxSecretKey.HideSelection = false;
-            textBoxSecretKey.Location = new Point(116, 5);
-            textBoxSecretKey.Margin = new Padding(1);
-            textBoxSecretKey.MaxLength = 8192;
-            textBoxSecretKey.Name = "textBoxSecretKey";
-            textBoxSecretKey.Size = new Size(235, 26);
-            textBoxSecretKey.TabIndex = 19;
-            textBoxSecretKey.TextChanged += TextBoxSecretKey_TextChanged;
+            comboBoxSecretKey.BackColor = SystemColors.ControlLightLight;
+            comboBoxSecretKey.ForeColor = SystemColors.ControlText;
+            comboBoxSecretKey.FormattingEnabled = true;
+            comboBoxSecretKey.Location = new Point(116, 6);
+            comboBoxSecretKey.Margin = new Padding(1);
+            comboBoxSecretKey.Name = "comboBoxSecretKey";
+            comboBoxSecretKey.Size = new Size(235, 24);
+            comboBoxSecretKey.TabIndex = 12;
+            comboBoxSecretKey.Text = "[enter secret key here]";
+            comboBoxSecretKey.SelectedIndexChanged += ComboBoxSecretKey_SelectedIndexChanged;
+            comboBoxSecretKey.TextUpdate += ComboBoxSecretKey_TextUpdate;
+            comboBoxSecretKey.Leave += ComboBoxSecretKey_FocusLeave;
+            // 
+            // labelSecretKey
+            // 
+            labelSecretKey.AutoSize = true;
+            labelSecretKey.Location = new Point(31, 9);
+            labelSecretKey.Margin = new Padding(2, 0, 2, 0);
+            labelSecretKey.Name = "labelSecretKey";
+            labelSecretKey.Size = new Size(82, 17);
+            labelSecretKey.TabIndex = 11;
+            labelSecretKey.Text = "Secret Key:";
             // 
             // comboBoxIpContact
             // 
@@ -828,16 +840,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             richTextBoxOneView.Size = new Size(800, 460);
             richTextBoxOneView.TabIndex = 0;
             richTextBoxOneView.Text = "";
-            // 
-            // labelSecretKey
-            // 
-            labelSecretKey.AutoSize = true;
-            labelSecretKey.Location = new Point(31, 9);
-            labelSecretKey.Margin = new Padding(2, 0, 2, 0);
-            labelSecretKey.Name = "labelSecretKey";
-            labelSecretKey.Size = new Size(82, 17);
-            labelSecretKey.TabIndex = 20;
-            labelSecretKey.Text = "Secret Key:";
             // 
             // SecureChat
             // 
@@ -961,8 +963,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripSeparator menuConnectSeparatorLast;
         private TextBox TextBoxPipe;
         private ComboBox comboBoxIpContact;
-        private TextBox textBoxSecretKey;
         internal MenuStrip menuStrip;
         private Label labelSecretKey;
+        private ComboBox comboBoxSecretKey;
     }
 }

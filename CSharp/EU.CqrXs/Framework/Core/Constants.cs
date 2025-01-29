@@ -43,6 +43,7 @@ namespace EU.CqrXs.Framework.Core
 
         public const string ACK = "Ack";
         public const string NACK = "Nack";
+        public const string ENTER_SECRET_KEY = "[enter secret key here]";
 
         public const string AUTHOR = "Heinrich Elsigan";
         public const string AUTHOR_EMAIL = "heinrich.elsigan@area23.at";

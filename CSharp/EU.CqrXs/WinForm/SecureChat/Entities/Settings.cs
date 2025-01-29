@@ -39,6 +39,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
 
         public List<string> Proxies {  get; set; }
 
+        public List<string> SecretKeys { get; set; }
+
         #endregion properties
 
         #region ctor Settings() Settings(DateTime timeStamp) => Load()
@@ -53,6 +55,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             FriendIPs = new List<string>();
             MyIPs = new List<string>();
             Proxies = new List<string>();
+            SecretKeys = new List<string>();
             MyContact = new Contact() { ContactId = 0 }; 
         }
 

@@ -52,8 +52,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     this.comboBoxName.Text = Settings.Instance.MyContact.Name;
                     this.textBoxEmail.Text = Settings.Instance.MyContact.Email;
                     this.textBoxMobile.Text = Settings.Instance.MyContact.Mobile;
-                    this.textBoxAddress.Text = Settings.Instance.MyContact.Address;
-                    this.textBoxKey.Text = Settings.Instance.MyContact.SecretKey;
+                    this.textBoxAddress.Text = Settings.Instance.MyContact.Address;                    
                     base64image = Entities.Settings.Instance.MyContact.ImageBase64 ?? string.Empty;
                     if (!string.IsNullOrEmpty(base64image))
                         this.pictureBoxImage.Image = base64image.Base64ToImage();
@@ -127,7 +126,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                 Email = this.textBoxEmail.Text ?? string.Empty,
                                 Mobile = this.textBoxMobile.Text ?? string.Empty,
                                 Address = this.textBoxAddress.Text ?? string.Empty,
-                                SecretKey = this.textBoxKey.Text ?? string.Empty,
                                 ImageBase64 = (pictureBoxImage.Tag != null && pictureBoxImage.Tag.ToString() == "Upload image") ?
                                     null : this.pictureBoxImage.Image.ToBase64()
                             }); 
@@ -155,7 +153,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     Email = this.textBoxEmail.Text ?? string.Empty,
                     Mobile = this.textBoxMobile.Text ?? string.Empty,
                     Address = this.textBoxAddress.Text ?? string.Empty,
-                    SecretKey = this.textBoxKey.Text ?? DeEnCoder.KeyToHex(this.textBoxEmail.ToString()),
                     ImageBase64 = (pictureBoxImage.Tag != null && pictureBoxImage.Tag.ToString() == "Upload image") ?
                         null : this.pictureBoxImage.Image.ToBase64()
                 };                 
@@ -182,7 +179,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         this.textBoxEmail.Text = contact.Email ?? string.Empty;
                         this.textBoxMobile.Text = contact.Mobile ?? string.Empty;
                         this.textBoxAddress.Text = contact.Address ?? string.Empty;
-                        this.textBoxKey.Text = contact.SecretKey ?? string.Empty;
                         base64image = contact.ImageBase64 ?? string.Empty;
                         if (!string.IsNullOrEmpty(base64image))
                         {
@@ -217,7 +213,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         this.textBoxEmail.Text = contact.Email ?? string.Empty;
                         this.textBoxMobile.Text = contact.Mobile ?? string.Empty;
                         this.textBoxAddress.Text = contact.Address ?? string.Empty;
-                        this.textBoxKey.Text = contact.SecretKey ?? string.Empty;
                         base64image = contact.ImageBase64 ?? string.Empty;
                         if (!string.IsNullOrEmpty(base64image))
                         {
