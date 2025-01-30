@@ -22,6 +22,8 @@ namespace EU.CqrXs.Framework.Core
         public const int MAX_SERVER_SOCKET_ADDRESSES = 16;
         public const int CLOSING_TIMEOUT = 6000;
 
+        public const int MAX_BYTE_BUFFEER = 1048560;
+
         public const char ANNOUNCE = ':';
         public const char DATE_DELIM = '-';
         public const char WHITE_SPACE = ' ';
@@ -29,7 +31,7 @@ namespace EU.CqrXs.Framework.Core
 
         public const string APP_NAME = "Area23.At";
         public const string APP_DIR = "net";
-        public const string VERSION = "v2.24.1226";
+        public const string VERSION = "v2.25.0221";
 
         public const string AREA23_URL = "https://area23.at";
         public const string APP_PATH = "https://area23.at/net/";

@@ -1,4 +1,4 @@
-﻿
+﻿using EU.CqrXs.Framework.Core;
 using EU.CqrXs.Framework.Core.Net.WebHttp;
 using System.Net;
 
@@ -93,7 +93,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             pictureBoxYou = new PictureBox();
             buttonSecretKey = new Button();
             panelEnCodeCrypt = new Panel();
-            textBoxSecretKey = new TextBox();
+            comboBoxSecretKey = new ComboBox();
+            labelSecretKey = new Label();
             comboBoxIpContact = new ComboBox();
             TextBoxPipe = new TextBox();
             pictureBoxQr = new PictureBox();
@@ -102,7 +103,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             panelDestination = new Panel();
             panelCenter = new Panel();
             richTextBoxOneView = new RichTextBox();
-            labelSecretKey = new Label();
             menuStrip.SuspendLayout();
             statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
@@ -504,9 +504,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemHelp.Name = "menuItemHelp";
             menuItemHelp.Padding = new Padding(0, 2, 0, 2);
             menuItemHelp.ShortcutKeys = Keys.Control | Keys.F1;
-            menuItemHelp.Size = new Size(167, 24);
+            menuItemHelp.Size = new Size(180, 24);
             menuItemHelp.Text = "help";
             menuItemHelp.ToolTipText = "displays help";
+            menuItemHelp.Click += MenuItemHelp_Click;
             // 
             // menuItemInfo
             // 
@@ -514,7 +515,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemInfo.BackgroundImageLayout = ImageLayout.None;
             menuItemInfo.ForeColor = SystemColors.MenuText;
             menuItemInfo.Name = "menuItemInfo";
-            menuItemInfo.Size = new Size(167, 22);
+            menuItemInfo.Size = new Size(180, 22);
             menuItemInfo.Text = "info";
             menuItemInfo.TextImageRelation = TextImageRelation.TextAboveImage;
             menuItemInfo.ToolTipText = "displays a tiny message box with version info";
@@ -527,7 +528,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemAbout.ForeColor = SystemColors.MenuText;
             menuItemAbout.Name = "menuItemAbout";
             menuItemAbout.Padding = new Padding(0, 2, 0, 2);
-            menuItemAbout.Size = new Size(167, 24);
+            menuItemAbout.Size = new Size(180, 24);
             menuItemAbout.Text = "about";
             menuItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             menuItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
@@ -717,8 +718,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // panelEnCodeCrypt
             // 
             panelEnCodeCrypt.BackColor = SystemColors.ActiveCaption;
+            panelEnCodeCrypt.Controls.Add(comboBoxSecretKey);
             panelEnCodeCrypt.Controls.Add(labelSecretKey);
-            panelEnCodeCrypt.Controls.Add(textBoxSecretKey);
             panelEnCodeCrypt.Controls.Add(comboBoxIpContact);
             panelEnCodeCrypt.Controls.Add(TextBoxPipe);
             panelEnCodeCrypt.Controls.Add(buttonSecretKey);
@@ -729,18 +730,30 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             panelEnCodeCrypt.Size = new Size(976, 36);
             panelEnCodeCrypt.TabIndex = 10;
             // 
-            // textBoxSecretKey
+            // comboBoxSecretKey
             // 
-            textBoxSecretKey.BorderStyle = BorderStyle.FixedSingle;
-            textBoxSecretKey.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBoxSecretKey.HideSelection = false;
-            textBoxSecretKey.Location = new Point(116, 5);
-            textBoxSecretKey.Margin = new Padding(1);
-            textBoxSecretKey.MaxLength = 8192;
-            textBoxSecretKey.Name = "textBoxSecretKey";
-            textBoxSecretKey.Size = new Size(235, 26);
-            textBoxSecretKey.TabIndex = 19;
-            textBoxSecretKey.TextChanged += TextBoxSecretKey_TextChanged;
+            comboBoxSecretKey.BackColor = SystemColors.ControlLightLight;
+            comboBoxSecretKey.ForeColor = SystemColors.ControlText;
+            comboBoxSecretKey.FormattingEnabled = true;
+            comboBoxSecretKey.Location = new Point(116, 6);
+            comboBoxSecretKey.Margin = new Padding(1);
+            comboBoxSecretKey.Name = "comboBoxSecretKey";
+            comboBoxSecretKey.Size = new Size(235, 24);
+            comboBoxSecretKey.TabIndex = 12;
+            comboBoxSecretKey.Text = "[enter secret key here]";
+            comboBoxSecretKey.SelectedIndexChanged += ComboBoxSecretKey_SelectedIndexChanged;
+            comboBoxSecretKey.TextUpdate += ComboBoxSecretKey_TextUpdate;
+            comboBoxSecretKey.Leave += ComboBoxSecretKey_FocusLeave;
+            // 
+            // labelSecretKey
+            // 
+            labelSecretKey.AutoSize = true;
+            labelSecretKey.Location = new Point(31, 9);
+            labelSecretKey.Margin = new Padding(2, 0, 2, 0);
+            labelSecretKey.Name = "labelSecretKey";
+            labelSecretKey.Size = new Size(82, 17);
+            labelSecretKey.TabIndex = 11;
+            labelSecretKey.Text = "Secret Key:";
             // 
             // comboBoxIpContact
             // 
@@ -828,16 +841,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             richTextBoxOneView.Size = new Size(800, 460);
             richTextBoxOneView.TabIndex = 0;
             richTextBoxOneView.Text = "";
-            // 
-            // labelSecretKey
-            // 
-            labelSecretKey.AutoSize = true;
-            labelSecretKey.Location = new Point(31, 9);
-            labelSecretKey.Margin = new Padding(2, 0, 2, 0);
-            labelSecretKey.Name = "labelSecretKey";
-            labelSecretKey.Size = new Size(82, 17);
-            labelSecretKey.TabIndex = 20;
-            labelSecretKey.Text = "Secret Key:";
             // 
             // RichTextChat
             // 
@@ -961,8 +964,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripSeparator menuConnectSeparatorLast;
         private TextBox TextBoxPipe;
         private ComboBox comboBoxIpContact;
-        private TextBox textBoxSecretKey;
         internal MenuStrip menuStrip;
         private Label labelSecretKey;
+        private ComboBox comboBoxSecretKey;
     }
+
 }

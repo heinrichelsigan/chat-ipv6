@@ -1,5 +1,4 @@
-﻿    
-using EU.CqrXs.Framework.Core.Net.WebHttp;
+﻿using EU.CqrXs.Framework.Core.Net.WebHttp;
 using System.Net;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
@@ -382,7 +381,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemSend.BackColor = SystemColors.MenuBar;
             menuItemSend.Name = "menuItemSend";
             menuItemSend.ShortcutKeys = Keys.Control | Keys.S;
-            menuItemSend.Size = new Size(178, 22);
+            menuItemSend.Size = new Size(180, 22);
             menuItemSend.Text = "send";
             menuItemSend.ToolTipText = "sends a message";
             menuItemSend.Click += menuItemSend_Click;
@@ -392,22 +391,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemAttach.BackColor = SystemColors.MenuBar;
             menuItemAttach.Name = "menuItemAttach";
             menuItemAttach.ShortcutKeys = Keys.Control | Keys.A;
-            menuItemAttach.Size = new Size(178, 22);
+            menuItemAttach.Size = new Size(180, 22);
             menuItemAttach.Text = "attach";
             menuItemAttach.ToolTipText = "attaches file to send; in prototype only  file extension image audio and video is supported";
+            menuItemAttach.Click += menuItemAttach_Click;
             // 
             // menuCommandsSeperator
             // 
             menuCommandsSeperator.BackColor = SystemColors.MenuBar;
             menuCommandsSeperator.Name = "menuCommandsSeperator";
-            menuCommandsSeperator.Size = new Size(175, 6);
+            menuCommandsSeperator.Size = new Size(177, 6);
             // 
             // menuItemRefresh
             // 
             menuItemRefresh.BackColor = SystemColors.MenuBar;
             menuItemRefresh.Name = "menuItemRefresh";
             menuItemRefresh.ShortcutKeys = Keys.Control | Keys.R;
-            menuItemRefresh.Size = new Size(178, 22);
+            menuItemRefresh.Size = new Size(180, 22);
             menuItemRefresh.Text = "refresh";
             menuItemRefresh.ToolTipText = "refreshes, when the terminal is flushed";
             menuItemRefresh.Click += menuItemRefresh_Click;
@@ -417,7 +417,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemClear.BackColor = SystemColors.MenuBar;
             menuItemClear.Name = "menuItemClear";
             menuItemClear.ShortcutKeys = Keys.Control | Keys.Delete;
-            menuItemClear.Size = new Size(178, 22);
+            menuItemClear.Size = new Size(180, 22);
             menuItemClear.Text = "clear";
             menuItemClear.ToolTipText = "clears completey all chat windows";
             menuItemClear.Click += menuItemClear_Click;
@@ -504,7 +504,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemHelp.Name = "menuItemHelp";
             menuItemHelp.Padding = new Padding(0, 2, 0, 2);
             menuItemHelp.ShortcutKeys = Keys.Control | Keys.F1;
-            menuItemHelp.Size = new Size(180, 24);
+            menuItemHelp.Size = new Size(167, 24);
             menuItemHelp.Text = "help";
             menuItemHelp.ToolTipText = "displays help";
             menuItemHelp.Click += MenuItemHelp_Click;
@@ -515,7 +515,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemInfo.BackgroundImageLayout = ImageLayout.None;
             menuItemInfo.ForeColor = SystemColors.MenuText;
             menuItemInfo.Name = "menuItemInfo";
-            menuItemInfo.Size = new Size(180, 22);
+            menuItemInfo.Size = new Size(167, 22);
             menuItemInfo.Text = "info";
             menuItemInfo.TextImageRelation = TextImageRelation.TextAboveImage;
             menuItemInfo.ToolTipText = "displays a tiny message box with version info";
@@ -528,7 +528,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemAbout.ForeColor = SystemColors.MenuText;
             menuItemAbout.Name = "menuItemAbout";
             menuItemAbout.Padding = new Padding(0, 2, 0, 2);
-            menuItemAbout.Size = new Size(180, 24);
+            menuItemAbout.Size = new Size(167, 24);
             menuItemAbout.Text = "about";
             menuItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             menuItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";

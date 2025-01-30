@@ -9,7 +9,7 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
 {
     public class IpSockReceiveData
     {
-        public byte[] BufferedData { get; internal set; } = new byte[131070];
+        public byte[] BufferedData { get; internal set; } = new byte[Constants.MAX_BYTE_BUFFEER];
 
         public string ClientIPAddr { get; internal set; } = string.Empty;
 

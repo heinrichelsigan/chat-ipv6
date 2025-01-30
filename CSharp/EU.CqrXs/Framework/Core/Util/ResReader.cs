@@ -99,11 +99,11 @@ namespace EU.CqrXs.Framework.Core.Util
             return key.Replace("_", " ");
         }
 
-        public static string GetAllFortunes()
-        {
-            string fortuneString = EnDeCoder.GetString(Properties.Resource.fortune_u8);
-            return fortuneString;
-        }
+        //public static string GetAllFortunes()
+        //{
+        //    string fortuneString = EnDeCoder.GetString(Properties.Resource.fortune_u8);
+        //    return fortuneString;
+        //}
 
     }
 

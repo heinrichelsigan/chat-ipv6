@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using EU.CqrXs.WinForm.SecureChat.Util;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -96,11 +97,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         public SecureChat()
         {
             InitializeComponent();
-            // Resources.
-            // MemoryStream ms = new MemoryStream(Properties.Resources.a_hash);
-            // buttonSecretKey.Image = new System.Drawing.Bitmap(ms);
-            // buttonHashIv.Image = new System.Drawing.Bitmap(ms);
-            // ms.Close();
+            TextBoxSource.MaxLength = Constants.MAX_BYTE_BUFFEER;
+            TextBoxDestionation.MaxLength = Constants.MAX_BYTE_BUFFEER;
         }
 
 
@@ -230,6 +228,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal void SelectRichText(System.Windows.Forms.RichTextBox richTextBox, int start, int length)
         {
+            if (start < 0)
+                start = 0;
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             // If these threads are different, it returns true.
             if (richTextBox.InvokeRequired)
@@ -471,7 +471,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     myServerKey = this.comboBoxSecretKey.Text;
                 }
             }
-            
+
 
             if (sender != null)
             {
@@ -540,7 +540,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             toolStripStatusLabel.Text = "Finished 1st registration";
         }
 
-
+        /// <summary>
+        /// Sends a secure message
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         private void menuItemSend_Click(object sender, EventArgs e)
         {
             // TODO: implement it via socket directly or to registered user
@@ -581,6 +585,68 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             // otherwise send message to registered user via server
             // Always encrypt via key
+        }
+
+
+        /// <summary>
+        /// Attaches a fileto send
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
+        private void menuItemAttach_Click(object sender, EventArgs e)
+        {
+            if (chat == null)
+                chat = new Chat(0);
+
+            if (string.IsNullOrEmpty(this.comboBoxSecretKey.Text) ||
+                this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            {
+                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.comboBoxSecretKey.BackColor = Color.OrangeRed;
+                return;
+            }
+
+            myServerKey = this.comboBoxSecretKey.Text;
+
+            openFileDialog = openFileDialog ?? new OpenFileDialog();
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.AddExtension = false;
+            openFileDialog.CheckFileExists = true;
+            openFileDialog.CheckPathExists = true;
+            openFileDialog.Filter = "BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf|All files (*.*)|*.*";
+            DialogResult result = openFileDialog.ShowDialog();
+            if (result == DialogResult.OK || result == DialogResult.Yes)
+            {
+                if (File.Exists(openFileDialog.FileName))
+                {
+                    byte[] fileBytes = System.IO.File.ReadAllBytes(openFileDialog.FileName);
+                    string fileNameOnly = Path.GetFileName(openFileDialog.FileName);
+                    string mimeType = Framework.Core.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
+                    string base64Mime = Base64.Encode(fileBytes);
+
+                    string unencrypted = MimeAttachment.GetMimeMessage(fileNameOnly, mimeType, base64Mime);
+                    IPAddress partnerIp;
+                    try
+                    {
+                        partnerIp = IPAddress.Parse(this.comboBoxIpContact.Text);
+                        CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
+                        pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIp, EncodingType.Base64, Constants.CHAT_PORT);
+
+                        chat.AddMyMessage(unencrypted);
+                        AppendText(TextBoxSource, unencrypted);
+                        Format_Lines_RichTextBox();
+                        this.richTextBoxChat.Text = string.Empty;
+                        toolStripStatusLabel.Text = "Send SUCCESSFULLY";
+                    }
+                    catch (Exception ex)
+                    {
+                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in menuItemSend_Click: {ex.Message}.\n", ex);
+                        toolStripStatusLabel.Text = "Send FAILED: " + ex.Message;
+                    }
+                }
+                // otherwise send message to registered user via server
+                // Always encrypt via key
+            }
         }
 
         private void menuItemRefresh_Click(object sender, EventArgs e)
@@ -865,7 +931,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                 ipSockListener?.Dispose();
                 ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.IPSockListener(clientIpAddress, OnClientReceive);
-                toolStripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":7777";
+                toolStripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
             }
         }
 
@@ -1100,7 +1166,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         }
 
         #endregion closeForm
-
 
     }
 

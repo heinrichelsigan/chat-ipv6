@@ -19,7 +19,7 @@ using System.Windows.Controls;
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
 
-    public partial class RichTextChat : Form
+    public partial class RichTextChat : Form        
     {
         protected string savedFile = string.Empty;
         protected string loadDir = string.Empty;
@@ -96,11 +96,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         public RichTextChat()
         {
             InitializeComponent();
-            // Resources.
-            // MemoryStream ms = new MemoryStream(Properties.Resources.a_hash);
-            // buttonSecretKey.Image = new System.Drawing.Bitmap(ms);
-            // buttonHashIv.Image = new System.Drawing.Bitmap(ms);
-            // ms.Close();
+            TextBoxSource.MaxLength = Constants.MAX_BYTE_BUFFEER;
+            TextBoxDestionation.MaxLength = Constants.MAX_BYTE_BUFFEER;
         }
 
 
@@ -128,6 +125,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 send1stReg = true;
             }
 
+            toolStripStatusLabel.Text = "Setup Network";
             await SetupNetwork();
 
             if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ImageBase64))
@@ -141,6 +139,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 menuItemSend_1stServerRegistration(sender, e);
 
             AddContactsToIpContact();
+            toolStripStatusLabel.Text = "Secure Chat init done.";
         }
 
         #region thread save text and richtext box access
@@ -380,9 +379,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private void Button_SecretKey_Click(object sender, EventArgs e)
         {
-            myServerKey = (string.IsNullOrEmpty(this.textBoxSecretKey.Text)) ?
-                ExternalIpAddress?.ToString() + Constants.BC_START_MSG :
-                this.textBoxSecretKey.Text;
+            myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
+            if (!string.IsNullOrEmpty(this.comboBoxSecretKey.Text) &&
+                !this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            {
+                myServerKey = this.comboBoxSecretKey.Text;
+            }
 
             // TODO: test case later
 
@@ -401,15 +403,49 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         }
 
-        private void TextBoxSecretKey_TextChanged(object sender, EventArgs e)
+        private void ComboBoxSecretKey_FocusLeave(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.textBoxSecretKey.Text))
+            if (string.IsNullOrEmpty(this.comboBoxSecretKey.Text) ||
+                this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.textBoxSecretKey.BorderStyle = BorderStyle.Fixed3D;
+                this.comboBoxSecretKey.BackColor = Color.OrangeRed;
                 return;
             }
-            this.textBoxSecretKey.BorderStyle = BorderStyle.FixedSingle;
+            this.comboBoxSecretKey.BackColor = Color.White;
+            Button_SecretKey_Click(sender, e);
+            if (Entities.Settings.Instance != null)
+            {
+                if (!Entities.Settings.Instance.SecretKeys.Contains(this.comboBoxSecretKey.Text))
+                    Entities.Settings.Instance.SecretKeys.Add(this.comboBoxSecretKey.Text);
+                if (!this.comboBoxSecretKey.Items.Contains(this.comboBoxSecretKey.Text))
+                    this.comboBoxSecretKey.Items.Add(this.comboBoxSecretKey.Text);
+            }
+            toolStripStatusLabel.Text = "Added new secret key => calculated new SecurePipe...";
+        }
+
+
+        private void ComboBoxSecretKey_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.comboBoxSecretKey.Text) ||
+                this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            {
+                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.comboBoxSecretKey.BackColor = Color.OrangeRed;
+                return;
+            }
+            this.comboBoxSecretKey.BackColor = Color.White;
+            Button_SecretKey_Click(sender, e);
+            toolStripStatusLabel.Text = "Changed secret key => calculated new SecurePipe...";
+        }
+
+        private void ComboBoxSecretKey_TextUpdate(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.comboBoxSecretKey.Text))
+            {
+                return;
+            }
+            this.comboBoxSecretKey.BackColor = Color.White;
             Button_SecretKey_Click(sender, e);
         }
 
@@ -424,7 +460,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         internal void OnClientReceive(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(myServerKey))
-                myServerKey = this.textBoxSecretKey.Text;
+            {
+                myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
+                if (!string.IsNullOrEmpty(this.comboBoxSecretKey.Text) &&
+                    !this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    myServerKey = this.comboBoxSecretKey.Text;
+                }
+            }
 
 
             if (sender != null)
@@ -433,6 +476,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     if (chat == null)
                         chat = new Chat(0);
+
+                    Area23EventArgs<IpSockReceiveData>? area23EvArgs = null;
+                    if (e != null && e is Area23EventArgs<IpSockReceiveData>)
+                    {
+                        area23EvArgs = ((Area23EventArgs<IpSockReceiveData>)e);
+                        //TODO: Enable cross thread via delegate
+                        // toolStripStatusLabel.Text = "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort;
+                        // if (!this.comboBoxIpContact.Text.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
+                        //     this.comboBoxIpContact.Text = area23EvArgs.GenericTData.ClientIPAddr;
+                    }
 
                     string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
@@ -452,15 +505,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            myServerKey = (string.IsNullOrEmpty(this.textBoxSecretKey.Text)) ?
-                ExternalIpAddress?.ToString() + Constants.APP_NAME :
-                this.textBoxSecretKey.Text;
-
-            // TODO: test case later
-            if (!string.IsNullOrEmpty(this.textBoxSecretKey.Text))
-                myServerKey = this.textBoxSecretKey.Text;
+            myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
+            if (!string.IsNullOrEmpty(this.comboBoxSecretKey.Text) &&
+                !this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            {
+                myServerKey = this.comboBoxSecretKey.Text;
+            }
             else
-                this.textBoxSecretKey.Text = myServerKey;
+                this.comboBoxSecretKey.Text = myServerKey;
 
             CqrServerMsg serverMessage = new CqrServerMsg(myServerKey);
             this.TextBoxPipe.Text = serverMessage.symmPipe.PipeString;
@@ -481,6 +533,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             // this.richTextBoxOneView.Rtf = this.richTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
+
+            toolStripStatusLabel.Text = "Finished 1st registration";
         }
 
 
@@ -492,15 +546,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            if (string.IsNullOrEmpty(this.textBoxSecretKey.Text))
+            if (string.IsNullOrEmpty(this.comboBoxSecretKey.Text) ||
+                this.comboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.textBoxSecretKey.BorderStyle = BorderStyle.Fixed3D;
+                this.comboBoxSecretKey.BackColor = Color.OrangeRed;
                 return;
             }
 
-            if (string.IsNullOrEmpty(myServerKey))
-                myServerKey = this.textBoxSecretKey.Text;
+            myServerKey = this.comboBoxSecretKey.Text;
 
 
             string unencrypted = this.richTextBoxChat.Text;
@@ -514,10 +568,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 chat.AddMyMessage(unencrypted);
                 AppendText(TextBoxSource, unencrypted);
                 Format_Lines_RichTextBox();
+                this.richTextBoxChat.Text = string.Empty;
+                toolStripStatusLabel.Text = "Send SUCCESSFULLY";
             }
             catch (Exception ex)
             {
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in menuItemSend_Click: {ex.Message}.\n", ex);
+                toolStripStatusLabel.Text = "Send FAILED: " + ex.Message;
             }
             // otherwise send message to registered user via server
             // Always encrypt via key
@@ -805,6 +862,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                 ipSockListener?.Dispose();
                 ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.IPSockListener(clientIpAddress, OnClientReceive);
+                toolStripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
             }
         }
 
@@ -907,6 +965,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private void MenuItemHelp_Click(object sender, EventArgs e)
         {
             // TODO: implement it
+            Help.ShowHelp(this, Constants.CQRXS_HELP_URL);
+            // Help.ShowHelp(this, Constants.CQRXS_HELP_URL, HelpNavigator.TableOfContents, Constants.CQRXS_EU);
         }
 
         private void MenuItemAbout_Click(object sender, EventArgs e)
@@ -1040,6 +1100,5 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
     }
-
 
 }

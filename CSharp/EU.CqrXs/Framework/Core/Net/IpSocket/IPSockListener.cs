@@ -19,7 +19,7 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
         public IPEndPoint? ServerEndPoint { get; protected internal set; }
         public Socket? ClientSocket { get; protected internal set; }
 
-        public byte[] BufferedData { get; protected internal set; } = new byte[131070];
+        public byte[] BufferedData { get; protected internal set; } = new byte[Constants.MAX_BYTE_BUFFEER];
 
         
 
@@ -79,14 +79,14 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
             {
                 lock (_lock)
                 {
-                    byte[] buffer = new byte[131070];
+                    byte[] buffer = new byte[Constants.MAX_BYTE_BUFFEER];
 
                     IPEndPoint clientIEP = (IPEndPoint?)ClientSocket.RemoteEndPoint;
                     string sstring = "Accept connection from " + clientIEP?.Address.ToString() + ":" + clientIEP?.Port.ToString() +
                         " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
                     Area23Log.Logger.LogInfo(sstring);
 
-                    int rsize = ClientSocket.Receive(buffer, 0, 131070, 0);
+                    int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_BYTE_BUFFEER, 0);
                     Array.Copy(buffer, BufferedData, rsize);
                     
                     IpSockReceiveData receiveData = new IpSockReceiveData(buffer, clientIEP?.Address.ToString(), clientIEP?.Port);                    

@@ -89,16 +89,6 @@ namespace EU.CqrXs.Framework.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] fortune_u8 {
-            get {
-                object obj = ResourceManager.GetObject("fortune.u8", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to https://github.com/heinrichelsigan/chat-ipv6.
         /// </summary>
         internal static string github_uri {

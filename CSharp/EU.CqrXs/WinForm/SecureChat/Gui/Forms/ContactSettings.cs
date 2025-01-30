@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using EU.CqrXs.Framework.Core.Crypt.Cipher;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using Contact = EU.CqrXs.WinForm.SecureChat.Entities.Contact;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -246,7 +247,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             openFileDialog.RestoreDirectory = true;
             openFileDialog.AddExtension = false;
             openFileDialog.CheckFileExists = true;
-            openFileDialog.Filter = "Images|*.jpg|*.png|*.gif";
+            openFileDialog.Filter = "BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPEG (*.jpeg)|*.jpeg|JPG (*.jpg)|*.jpg";
+            // openFileDialog.Filter = "Images|*.jpg|*.png|*.gif";
             DialogResult diaRes = openFileDialog.ShowDialog();
             if (diaRes == DialogResult.OK)
             {

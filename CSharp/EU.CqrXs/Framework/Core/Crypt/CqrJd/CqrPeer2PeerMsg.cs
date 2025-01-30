@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EU.CqrXs.Framework.Core.Net.IpSocket;
 using System.Net;
+using System.Windows.Interop;
 
 namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
 {
@@ -22,11 +23,9 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
         private readonly string key;
         private readonly string hash;
         private readonly byte[] keyBytes;
-#if DEBUG
+
         public readonly SymmCipherPipe symmPipe;
-#else
-        private readonly SymmCipherPipe symmPipe;
-#endif
+
         public string CqrMsg { get; protected internal set; }
 
         /// <summary>
@@ -64,6 +63,21 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             return CqrMsg;
         }
 
+
+        public string CqrPeerAttachment(string fileName, string mimeType, string base64Mime, EncodingType encType = EncodingType.Base64)
+        {
+            string mimeMsg = $"Content-Type: {mimeType}; name=\"{fileName}\"\n";
+            mimeMsg += $"Content-Transfer-Encoding: base64\nContent-Disposition: attachment; filename=\"{fileName}\"\n";
+            mimeMsg += base64Mime + "\n\n" + symmPipe.PipeString;
+            
+            byte[] msgBytes = DeEnCoder.GetBytesFromString(mimeMsg);
+
+            byte[] cqrbytes = symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash);
+            CqrMsg = DeEnCoder.EncodeBytes(cqrbytes, encType);
+
+            return CqrMsg;
+
+        }
 
         /// <summary>
         /// NCqrPeerMsg decryptes an secure encrypted msg 
@@ -109,6 +123,14 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
         public string SendCqrPeerMsg(string msg, IPAddress peerIp, EncodingType encodingType = EncodingType.Base64, int serverPort = 7777)
         {
             string encrypted = CqrPeerMsg(msg, encodingType);
+            string response = IPSocketSender.Send(peerIp, encrypted, Constants.CHAT_PORT);
+            return response;
+        }
+
+
+        public string SendCqrPeerAttachment(string fileName, string mimeType, string base64Mime, IPAddress peerIp, EncodingType encodingType = EncodingType.Base64, int serverPort = 7777)
+        {
+            string encrypted = CqrPeerAttachment(fileName, mimeType, base64Mime, encodingType);
             string response = IPSocketSender.Send(peerIp, encrypted, Constants.CHAT_PORT);
             return response;
         }

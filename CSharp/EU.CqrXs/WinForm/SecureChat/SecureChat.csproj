@@ -37,6 +37,7 @@
   <ItemGroup>
     <Folder Include="Gui\Controls\" />
     <Folder Include="log\" />
+    <Folder Include="Properties\text\" />
     <Folder Include="Resources\" />
     <Folder Include="Properties\en\" />
     <Folder Include="Properties\fr\" />
@@ -53,15 +54,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Gui\Forms\EnDeCodingForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Gui\Forms\Fortune.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Gui\Forms\NetAddr.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Gui\Forms\RichTextChat.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,12 +64,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Gui\Forms\TransparentDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Gui\Forms\TransparentFormCore.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Gui\Forms\TScp.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Properties\de\Resources.Designer.cs">
