@@ -1,3 +1,17 @@
+# CqrJd Endpoint to Endpoint scenarios
+
+In all Endpoint to Endpoint scenarios CqrJd doesn't need to proxy over cqrxs.eu
+and can directly connect a secure tcp connection to another chat-client.
+
+<a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/doc/2025-01-29_CqrJd-Endpoint-to-Endpoint.gif" target="_blank"><img src="https://raw.githubusercontent.com/heinrichelsigan/chat-ipv6/refs/heads/main/doc/2025-01-29_CqrJd-Endpoint-to-Endpoint.gif" border="0" /></a>
+
+# CqrJd C#
+
+Open with Visual Studio <a href="https://visualstudio.microsoft.com/de/downloads/" target="_blank">free Community Edition</a> 
+<a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/CSharp/EU.CqrXs/EU.CqrXs.WinForm.SecureChat.sln" target="_blank">CSharp/EU.CqrXs/EU.CqrXs.WinForm.SecureChat.sln</a>
+<pre>CSharp/EU.CqrXs/EU.CqrXs.WinForm.SecureChat.sln</pre>
+
+<a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/doc/Cqrxs-cqrjd.gif" target="_blank"><img src="https://raw.githubusercontent.com/heinrichelsigan/chat-ipv6/refs/heads/main/doc/Cqrxs-cqrjd.gif" border="0" /></a> 
 
 # **C** *a cloning ipv6 socket server & client*
 
@@ -10,57 +24,11 @@ is same as a forking ipv6 server, but using clone(2) for posix threads instead o
 client6.s and server6_clone.s will be compiled and linked with **gcc** and ***GNU make utility***.
 
 - change directory to c sources containing directory c-server6 and then make clean:
-  <pre>cd c-server6/
+  <pre>cd c/server6/
   <b>make clean</b>
   rm -f client6 client6.o server6_clone server6_clone.o
   </pre>
-  
-## build client6
-
-- make client6
-  <pre>gcc "-Wimplicit-function-declaration" -o client6.o -c  client6.c
-  client6.c: In function ‘ping’:
-  client6.c:42:27: warning: embedded ‘\0’ in format [-Wformat-contains-nul]
-  42 |     sprintf(inbuf, "%s\r\n\0", msg); 
-     |                           ^~
-  client6.c:49:16: warning: function returns address of local variable [-Wreturn-local-addr]
-  49 |         return &outbuf[0];
-     |                ^~~~~~~~~~
-  client6.c: In function ‘main’:
-  client6.c:92:17: warning: implicit declaration of function ‘close’; did you mean ‘pclose’? [-Wimplicit-function-declaration]
-  92 |                 close(sd);
-     |                 ^~~~~
-     |                 pclose
-  gcc "-Wimplicit-function-declaration" -o client6 client6.o</pre>
-
-## build server6
-
-- make server6
-  <pre>gcc  "-Wimplicit-function-declaration" -o server6.o -c server6.c
-gcc "-Wimplicit-function-declaration"  -o server6 server6.o</pre>
-
-## start server at a custom tcpv6 port
-
-- ./server6 "2600:1f18:7a3f:a700::6291" 7777
-  <pre>./server6 program started...
-  server trys listening on address 2600:1f18:7a3f:a700::6291 port: 7777
-  ./server6: cannot clone(2), trying to fork(2)./server6: offset: 1024,   pagesze_offet: 4095,    pa_offset: 0,
-  sockets:        s_sd=3, c_sd=4
-  ./server6: cannot clone(2), trying to fork(2)./server6: client request handled after sending/receiving 136 bytes total.
-  ./server6       closed client socket descriptor 4 now, exiting in 1 secondchild pid: 231095child pid 231095 exited, status=0, done=1
-  ^C
-  zen@virginia:~/prog/chat-ipv6/c-server6$ sudo ./server6 "2600:1f18:7a3f:a700::6291" 7777
-  ./server6 program started...
-  server trys listening on address 2600:1f18:7a3f:a700::6291 port: 7777
-  ./server6:      offset: 1024,   pagesze_offet: 4095,    pa_offset: 0,
-  sockets:        s_sd=3, c_sd=4
-  ./server6:      client request handled after sending/receiving 136 bytes total.
-  child pid: 231102 child pid 231102 exited, status=0, done=1
-  ./server6:      offset: 1024,   pagesze_offet: 4095,    pa_offset: 0,
-  sockets:        s_sd=3, c_sd=5
-  ./server6:      client request handled after sending/receiving 135 bytes total.
-  child pid: 231107 child pid 231107 exited, status=0, done=1</pre>
-
+ 
 <hr />
 
 <a href="LinuxTerm.png" target="_blank"><img src="LinuxTerm.png" border="0" /></a>

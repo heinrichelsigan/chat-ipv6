@@ -6,11 +6,37 @@ serv/client
 serv/server
 serv
 
-CSharp-Server6
-CSharp-Server6/.vs
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+[Ppackages]/
 
-/CSharp-Server6/.vs/CSharp-Server6-Linux-Docker/DesignTimeBuild/.dtbcache.v2
-/CSharp-Server6/.vs/CSharp-Server6-Linux-Docker/v17/.futdcache.v2
-/CSharp-Server6/.vs/ProjectEvaluation/csharp-server6-linux-docker.metadata.v9.bin
-/CSharp-Server6/.vs/ProjectEvaluation/csharp-server6-linux-docker.projects.v9.bin
-/CSharp-Server6/.vs/ProjectEvaluation/csharp-server6-linux-docker.strings.v9.bin
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+# Unc
+
+CSharp/Server6
+CSharp/Server6/.vs
+
+CSharp/EU.CqrXs/Publish
+/CSharp/EU.CqrXs/Publish
+/CSharp/EU.CqrXs/packages
+/CSharp/Server6/.vs
+/CSharp/EU.CqrXs/.vs
+
+
+*.class
+*.a
