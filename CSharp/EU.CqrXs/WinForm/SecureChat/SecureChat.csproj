@@ -9,8 +9,8 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <StartupObject>EU.CqrXs.WinForm.SecureChat.Program</StartupObject>
     <RootNamespace>EU.CqrXs.WinForm.SecureChat</RootNamespace>
-    <AssemblyVersion>2.25.0128</AssemblyVersion>
-    <FileVersion>2.25.0128</FileVersion>
+    <AssemblyVersion>2.25.131</AssemblyVersion>
+    <FileVersion>2.25.131</FileVersion>
     <ErrorReport>send</ErrorReport>
     <Title>SecureChat</Title>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>		

@@ -31,7 +31,7 @@ namespace EU.CqrXs.Framework.Core
 
         public const string APP_NAME = "Area23.At";
         public const string APP_DIR = "net";
-        public const string VERSION = "v2.25.0221";
+        public const string VERSION = "v2.25.221";
 
         public const string AREA23_URL = "https://area23.at";
         public const string APP_PATH = "https://area23.at/net/";
@@ -50,6 +50,7 @@ namespace EU.CqrXs.Framework.Core
         public const string ACK = "Ack";
         public const string NACK = "Nack";
         public const string ENTER_SECRET_KEY = "[enter secret key here]";
+        public const string ENTER_IP_CONTACT = "[Enter peer IPv4 or reachable IPv6 for directly connect]";
 
         public const string AUTHOR = "Heinrich Elsigan";
         public const string AUTHOR_EMAIL = "heinrich.elsigan@area23.at";
