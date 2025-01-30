@@ -19,10 +19,11 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
         public IPEndPoint? ServerEndPoint { get; protected internal set; }
         public Socket? ClientSocket { get; protected internal set; }
 
-        public byte[] BufferedData { get; protected internal set; } = new byte[65535];
+        public byte[] BufferedData { get; protected internal set; } = new byte[131070];
 
+        
 
-        public EventHandler<Area23EventArgs<byte[]>> EventHandlerClientRequest { get; protected internal set; }
+        public EventHandler<Area23EventArgs<IpSockReceiveData>> EventHandlerClientRequest { get; protected internal set; }
 
         protected internal EventHandler AcceptClientConnection { get; set; }
 
@@ -46,7 +47,7 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
             task.Start();
         }
 
-        public IPSockListener(IPAddress connectedIpIfAddr, EventHandler<Area23EventArgs<byte[]>> evClReq) : this(connectedIpIfAddr)
+        public IPSockListener(IPAddress connectedIpIfAddr, EventHandler<Area23EventArgs<IpSockReceiveData>> evClReq) : this(connectedIpIfAddr)
         {
             EventHandlerClientRequest = evClReq;
         }
@@ -59,12 +60,7 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
                 Console.WriteLine(ListenToString());
                 while (true)
                 {
-                    ClientSocket = ServerSocket.Accept();
-                    IPEndPoint clientIEP = (IPEndPoint?)ClientSocket.RemoteEndPoint;
-                    
-                    string sstring = "Accept connection from " + clientIEP?.Address.ToString() + ":" + clientIEP?.Port.ToString() +
-                        " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
-                    Area23Log.Logger.LogInfo(sstring);
+                    ClientSocket = ServerSocket.Accept();                                                         
                     // Task task = new Task(() => HandleClientRequest(sender, e));
                     // task.Start();
                     t = new Thread(new ThreadStart(() => HandleClientRequest(sender, e)));
@@ -83,21 +79,30 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
             {
                 lock (_lock)
                 {
-                    byte[] buffer = new byte[65536];
-                    int rsize = ClientSocket.Receive(buffer, 0, 65536, 0);
-                    Array.Copy(buffer, BufferedData, rsize);
+                    byte[] buffer = new byte[131070];
 
+                    IPEndPoint clientIEP = (IPEndPoint?)ClientSocket.RemoteEndPoint;
+                    string sstring = "Accept connection from " + clientIEP?.Address.ToString() + ":" + clientIEP?.Port.ToString() +
+                        " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
+                    Area23Log.Logger.LogInfo(sstring);
+
+                    int rsize = ClientSocket.Receive(buffer, 0, 131070, 0);
+                    Array.Copy(buffer, BufferedData, rsize);
+                    
+                    IpSockReceiveData receiveData = new IpSockReceiveData(buffer, clientIEP?.Address.ToString(), clientIEP?.Port);                    
+                    
                     byte[] sendData = new byte[8];
                     sendData = Encoding.Default.GetBytes("ACK\r\n\0");
                     ClientSocket.Send(sendData);
-                    ClientSocket.Close();
 
                     if (EventHandlerClientRequest != null)
                     {
-                        EventHandler<Area23EventArgs<byte[]>> handler = EventHandlerClientRequest;
-                        Area23EventArgs<byte[]> area23EventArgs = new Area23EventArgs<byte[]>(BufferedData);
+                        EventHandler<Area23EventArgs<IpSockReceiveData>> handler = EventHandlerClientRequest;
+                        Area23EventArgs<IpSockReceiveData> area23EventArgs = new Area23EventArgs<IpSockReceiveData>(receiveData);
                         handler?.Invoke(this, area23EventArgs);
                     }
+
+                    ClientSocket.Close();
                 }
             }
         }

@@ -15,6 +15,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -127,6 +128,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 send1stReg = true;
             }
 
+            toolStripStatusLabel.Text = "Setup Network";
             await SetupNetwork();
 
             if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ImageBase64))
@@ -140,6 +142,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 menuItemSend_1stServerRegistration(sender, e);
 
             AddContactsToIpContact();
+            toolStripStatusLabel.Text = "Secure Chat init done.";
         }
 
         #region thread save text and richtext box access
@@ -421,6 +424,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 if (!this.comboBoxSecretKey.Items.Contains(this.comboBoxSecretKey.Text))
                     this.comboBoxSecretKey.Items.Add(this.comboBoxSecretKey.Text);
             }
+            toolStripStatusLabel.Text = "Added new secret key => calculated new SecurePipe...";
         }
 
 
@@ -435,6 +439,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             this.comboBoxSecretKey.BackColor = Color.White;
             Button_SecretKey_Click(sender, e);
+            toolStripStatusLabel.Text = "Changed secret key => calculated new SecurePipe...";
         }
 
         private void ComboBoxSecretKey_TextUpdate(object sender, EventArgs e)
@@ -466,6 +471,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     myServerKey = this.comboBoxSecretKey.Text;
                 }
             }
+            
 
             if (sender != null)
             {
@@ -473,6 +479,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     if (chat == null)
                         chat = new Chat(0);
+
+                    Area23EventArgs<IpSockReceiveData>? area23EvArgs = null;
+                    if (e != null && e is Area23EventArgs<IpSockReceiveData>)
+                    {
+                        area23EvArgs = ((Area23EventArgs<IpSockReceiveData>)e);
+                        //TODO: Enable cross thread via delegate
+                        // toolStripStatusLabel.Text = "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort;
+                        // if (!this.comboBoxIpContact.Text.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
+                        //     this.comboBoxIpContact.Text = area23EvArgs.GenericTData.ClientIPAddr;
+                    }
 
                     string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
@@ -520,6 +536,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             // this.richTextBoxOneView.Rtf = this.richTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
+
+            toolStripStatusLabel.Text = "Finished 1st registration";
         }
 
 
@@ -553,10 +571,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 chat.AddMyMessage(unencrypted);
                 AppendText(TextBoxSource, unencrypted);
                 Format_Lines_RichTextBox();
+                this.richTextBoxChat.Text = string.Empty;
+                toolStripStatusLabel.Text = "Send SUCCESSFULLY";
             }
             catch (Exception ex)
             {
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in menuItemSend_Click: {ex.Message}.\n", ex);
+                toolStripStatusLabel.Text = "Send FAILED: " + ex.Message;
             }
             // otherwise send message to registered user via server
             // Always encrypt via key
@@ -844,6 +865,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                 ipSockListener?.Dispose();
                 ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.IPSockListener(clientIpAddress, OnClientReceive);
+                toolStripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":7777";
             }
         }
 
