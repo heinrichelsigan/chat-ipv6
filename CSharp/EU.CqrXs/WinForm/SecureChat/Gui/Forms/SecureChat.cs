@@ -696,19 +696,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
         {
-            LinkLabel linkLabelAttachment0 = new LinkLabel() { Name = "linkLabelAttachment0" };
+            int attachNum = ((attachCnt % 8) + 1);
+            LinkLabel linkLabelAttachment0 = new LinkLabel() { Name = $"linkLabelAttachment{attachNum}" };
             if (!Directory.Exists(LibPaths.AttachmentFilesDir))
                 Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
 
-            int attachNum = ((attachCnt % 8) + 1);
+            
             foreach (System.Windows.Forms.Control ctrl in groupBoxAttachments.Controls)
             {
-                if (ctrl != null && ctrl is LinkLabel lbAttach && 
+                if (ctrl != null && ctrl is LinkLabel lbAttach &&
                     (ctrl.Name.EndsWith(attachNum.ToString()) || ctrl.Name.Equals("linkLabelAttachment" + attachNum)))
                 {
                     linkLabelAttachment0 = (LinkLabel)lbAttach;
-                    linkLabelAttachment0.Name = $"linkLabelAttachment{attachNum}";
-                    linkLabelAttachment0.Visible = true;                    
+                    try
+                    {
+                        linkLabelAttachment0.Name = $"linkLabelAttachment{attachNum}";
+                        linkLabelAttachment0.Visible = true;
+                    } catch { }
                     break; // we got the next LinkLabel attachment in modulo slot
                 }
             }
