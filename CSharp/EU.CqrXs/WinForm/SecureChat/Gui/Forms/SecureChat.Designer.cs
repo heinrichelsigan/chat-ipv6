@@ -438,7 +438,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuContactsItemMe.Size = new Size(233, 22);
             menuContactsItemMe.Text = "me myself mine";
             menuContactsItemMe.ToolTipText = "edits my contact";
-            menuContactsItemMe.Click += menuItemMyContact_Click;
+            menuContactsItemMe.Click += MenuItemMyContact_Click;
             // 
             // menuContactsItemAdd
             // 
@@ -448,7 +448,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuContactsItemAdd.Size = new Size(233, 22);
             menuContactsItemAdd.Text = "add contact";
             menuContactsItemAdd.ToolTipText = "adds a friend contact to cqr chat";
-            menuContactsItemAdd.Click += menuItemAddContact_Click;
+            menuContactsItemAdd.Click += MenuItemAddContact_Click;
             // 
             // menuContactsItemView
             // 

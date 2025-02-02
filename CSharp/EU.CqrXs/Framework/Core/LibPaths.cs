@@ -4,6 +4,7 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Net.Http;
+using System.Reflection;
 using System.Web;
 
 namespace EU.CqrXs.Framework.Core
@@ -63,16 +64,21 @@ namespace EU.CqrXs.Framework.Core
                     else if (ConfigurationManager.AppSettings["AppDirPathWin"] != null)
                         systemDirPath = (string)ConfigurationManager.AppSettings["AppDirPathWin"];
 
-                    if (String.IsNullOrEmpty(systemDirPath))
+                    if (String.IsNullOrEmpty(systemDirPath) || !Directory.Exists(systemDirPath))
                     {
-                        if (AppContext.BaseDirectory != null)
-                            systemDirPath = AppContext.BaseDirectory;
-                        else if (AppDomain.CurrentDomain != null)
-                            systemDirPath = AppDomain.CurrentDomain.BaseDirectory;
+                        systemDirPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
 
-                        systemDirPath = systemDirPath.
-                            Replace(LibPaths.SepChar + Constants.BIN_DIR, "").Replace(LibPaths.SepChar + Constants.OBJ_DIR, "").
-                            Replace(LibPaths.SepChar + Constants.RELEASE_DIR, "").Replace(LibPaths.SepChar + Constants.DEBUG_DIR, "");
+                        if (String.IsNullOrEmpty(systemDirPath) || !Directory.Exists(systemDirPath)) 
+                        {
+                            if (AppContext.BaseDirectory != null)
+                                systemDirPath = AppContext.BaseDirectory;
+                            else if (String.IsNullOrEmpty(systemDirPath) && (AppDomain.CurrentDomain != null))
+                                systemDirPath = AppDomain.CurrentDomain.BaseDirectory;
+
+                            systemDirPath = systemDirPath.
+                                Replace(LibPaths.SepChar + Constants.BIN_DIR, "").Replace(LibPaths.SepChar + Constants.OBJ_DIR, "").
+                                Replace(LibPaths.SepChar + Constants.RELEASE_DIR, "").Replace(LibPaths.SepChar + Constants.DEBUG_DIR, "");
+                        }
                     }
 
                     if (!systemDirPath.EndsWith(SepChar))

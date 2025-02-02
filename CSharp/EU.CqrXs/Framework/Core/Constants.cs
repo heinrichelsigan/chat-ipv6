@@ -43,7 +43,23 @@ namespace EU.CqrXs.Framework.Core
         public const string URL_SHORT = "https://area23.at/s/?";
         public const string AREA23_UTF8_URL = "https://area23.at/u/";
 
+        public const string AREA23_AT = "area23.at";
+        public const string VIRGINA_AREA23_AT = "virginia.area23.at";
+        public const string PARIS_AREA23_AT = "paris.area23.at";
+        public const string PARISIENNE_AREA23_AT = "parisienne.area23.at";
         public const string CQRXS_EU = "cqrxs.eu";
+        public const string IPV4_CQRXS_EU = "ipv4.cqrxs.eu";
+        public const string IPV6_CQRXS_EU = "ipv6.cqrxs.eu";
+        public const string SPAIN_CQRXS_EU = "spain.cqrxs.eu";
+        public const string MILAN_CQRXS_EU = "it.cqrxs.eu";
+        public const string PARIS_CQRXS_EU = "fr.cqrxs.eu";
+        public const string FRANKFURT_CQRXS_EU = "de.cqrxs.eu";
+        public const string STOCKHOLM_CQRXS_EU = "se.cqrxs.eu";
+        public const string IRELAND_CQRXS_EU = "ie.cqrxs.eu";
+        public const string LONDON_CQRXS_EU = "uk.cqrxs.eu";
+        public const string ZURICH_CQRXS_EU = "ch.cqrxs.eu";
+
+
         public const string CQRXS_URL = "https://cqrxs.eu/";
         public const string CQRXS_HELP_URL = "https://cqrxs.eu/help/";
 

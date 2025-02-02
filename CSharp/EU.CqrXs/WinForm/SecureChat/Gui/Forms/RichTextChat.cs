@@ -5,6 +5,7 @@ using EU.CqrXs.Framework.Core.Crypt.CqrJd;
 using EU.CqrXs.Framework.Core.Crypt.EnDeCoding;
 using EU.CqrXs.Framework.Core.Net;
 using EU.CqrXs.Framework.Core.Net.IpSocket;
+using EU.CqrXs.Framework.Core.Net.NameService;
 using EU.CqrXs.Framework.Core.Net.WebHttp;
 using EU.CqrXs.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
@@ -46,7 +47,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     return serverIpAddress;
 
                 // TODO: change it
-                IEnumerable<IPAddress> list = NetworkAddresses.GetIpAddrsByHostName("cqrxs.eu");
+                IEnumerable<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
                 foreach (IPAddress ip in list)
                 {
                     foreach (string sip in Settings.Instance.Proxies)
@@ -92,8 +93,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 if (externalIPAddress != null)
                     return externalIPAddress;
 
-                string hexs = DeEnCoder.KeyToHex(Constants.BC_START_MSG);
-                externalIPAddress = WebClientRequest.ClientIpFromArea23("https://cqrxs.eu/net/R.aspx", hexs);
+                externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://cqrxs.eu/net/R.aspx");
                 return externalIPAddress;
             }
         }
@@ -644,6 +644,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     if (chat == null)
                         chat = new Chat(0);
+                    string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
 
                     Area23EventArgs<IpSockReceiveData>? area23EvArgs = null;
                     if (e != null && e is Area23EventArgs<IpSockReceiveData>)
@@ -654,14 +655,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         // toolStripStatusLabel.Text = "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort;
                         // if (!this.ComboBoxIpContact.Text.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
                         //     this.ComboBoxIpContact.Text = area23EvArgs.GenericTData.ClientIPAddr;
+                        encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
                     }
 
-                    string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
+
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                     string unencrypted = pmsg.NCqrPeerMsg(encrypted);
+                    string friendMsg = string.Empty;
+                    if (unencrypted.StartsWith("Content-Type: ") || unencrypted.Contains("Content-Verification:"))
+                    {
+                        MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(unencrypted);
+                        friendMsg = unencrypted.Substring(0, unencrypted.IndexOf("Content-Verification: "));
+                    }
+                    else
+                    {
+                        friendMsg = unencrypted;
+                    }
 
-                    chat.AddFriendMessage(unencrypted);
-
+                    chat.AddFriendMessage(friendMsg);
                     AppendText(TextBoxDestionation, unencrypted);
                     // this.richTextBoxOneView.Text = unencrypted;
                     Format_Lines_RichTextBox();
@@ -753,12 +764,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     string mimeType = Framework.Core.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
                     string base64Mime = Base64.Encode(fileBytes);
 
-                    string unencrypted = MimeAttachment.GetMimeMessage(fileNameOnly, mimeType, base64Mime);
+                    CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
+                    string unencrypted = MimeAttachment.GetMimeMessage(fileNameOnly, mimeType, base64Mime, pmsg.symmPipe.PipeString);
 
                     try
                     {
                         partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
-                        CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
+
                         pmsg.SendCqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
                         // pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
 
@@ -978,7 +990,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 try
                 {
-                    foreach (var netIp in NetworkAddresses.GetIpAddrsByHostName(proxyStr))
+                    foreach (var netIp in DnsHelper.GetIpAddrsByHostName(proxyStr))
                         if (!addresses.Contains(netIp))
                             addresses.Add(netIp);
                 }

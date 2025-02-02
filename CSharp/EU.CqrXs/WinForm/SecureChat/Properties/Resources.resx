@@ -143,4 +143,10 @@
   <data name="ClickToUpload" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ClickToUpload.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="RemoteIpUrls" xml:space="preserve">
+    <value>https://cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx;https://pairs.area23.at/net/R.aspx</value>
+  </data>
+  <data name="CqrServerUrlToPost" xml:space="preserve">
+    <value>https://cqrxs.eu/net/CqrJD/Default.aspx;https://area23.at/net/CqrJD/Default.aspx;</value>
+  </data>
 </root>

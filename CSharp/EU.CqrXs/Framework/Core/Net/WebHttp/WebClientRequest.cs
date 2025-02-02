@@ -12,6 +12,14 @@ using System.Threading.Tasks;
 
 namespace EU.CqrXs.Framework.Core.Net.WebHttp
 {
+
+    /// <summary>
+    /// WebClientRequest implements a static WebClient Request via <see cref="WebClient"/>
+    /// and maily provides
+    /// <see cref="DownloadString(string, string, string, Encoding?)"
+    /// <see cref="PostMessage(string, string, string, string, Encoding?)"/>
+    /// funtionality.
+    /// </summary>
     public static class WebClientRequest
     {
         private static WebClient wclient;
@@ -20,6 +28,9 @@ namespace EU.CqrXs.Framework.Core.Net.WebHttp
         private static readonly WebHeaderCollection headers = new WebHeaderCollection();
         public static WebHeaderCollection Headers { get => headers; }
 
+        /// <summary>
+        /// static constructor
+        /// </summary>
         static WebClientRequest() 
         {
             // headers.Add(HttpRequestHeader.AcceptEncoding, "gzip, deflate, br, zstd");
@@ -39,6 +50,9 @@ namespace EU.CqrXs.Framework.Core.Net.WebHttp
             // webclient.Credentials
            
         }
+
+
+        #region GetWebClient
 
         public static WebClient GetWebClient(string baseAddr, string secretKey, string keyIv = "", System.Text.Encoding? encoding = null)        
         {
@@ -60,28 +74,6 @@ namespace EU.CqrXs.Framework.Core.Net.WebHttp
             return wclient;
         }
 
-
-        public static string DownloadString(string url, string secretKey, string keyIv = "", System.Text.Encoding? encoding = null)
-        {
-            WebClient wc = GetWebClient(url, secretKey, keyIv, encoding);
-            Uri uri = new Uri(url);
-            return wc.DownloadString(uri);
-        }
-
-        public static IPAddress? ClientIpFromArea23(string url, string secretKey, string keyIv = "", System.Text.Encoding? encoding = null)
-        {
-            WebClient wc = GetWebClient(url, secretKey, keyIv, encoding);
-            Uri uri = new Uri(url);    
-            string myIp = wc.DownloadString(uri);
-            if (myIp.Contains("<body>"))
-            {
-                myIp = myIp.Substring(myIp.IndexOf("<body>"));
-                if (myIp.Contains("</body>"))
-                    myIp = myIp.Substring(0, myIp.IndexOf("</body>")).Replace("<body>", "").Replace("</body>", "");
-            }
-            return IPAddress.Parse(myIp);
-        }
-
         public static WebClient GetWebClient(string baseAddr, System.Text.Encoding? encoding = null)
         {
             encoding = encoding ?? Encoding.UTF8;
@@ -93,6 +85,52 @@ namespace EU.CqrXs.Framework.Core.Net.WebHttp
             return wclient;
         }
 
+        #endregion GetWebClient
+
+        /// <summary>
+        /// DownloadString downloads a string from an uri
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="secretKey"></param>
+        /// <param name="keyIv"></param>
+        /// <param name="encoding"><see cref=System.Text.Encoding"/></param>
+        /// <returns>downloaded string</returns>
+        public static string DownloadString(string url, string secretKey, string keyIv = "", System.Text.Encoding? encoding = null)
+        {
+            WebClient wc = GetWebClient(url, secretKey, keyIv, encoding);
+            Uri uri = new Uri(url);
+            return wc.DownloadString(uri);
+        }
+
+        /// <summary>
+        /// ExternalClientIpFromServer gets external network ip for client from server
+        /// </summary>
+        /// <param name="url">default: https://cqrxs.eu/net/R.aspx https://area23.at/net/R.aspx</param>
+        /// <param name="encoding"><see cref="System.Text.Encoding"/></param>
+        /// <returns>external official gateway <see cref="IPAddress">ip address</see> of client</returns>
+        public static IPAddress? ExternalClientIpFromServer(string url = "https://cqrxs.eu/net/R.aspx", System.Text.Encoding? encoding = null)
+        {
+            WebClient wc = GetWebClient(url, encoding);
+            Uri uri = new Uri(url);    
+            string myIp = wc.DownloadString(uri);
+            if (myIp.Contains("<body>"))
+            {
+                myIp = myIp.Substring(myIp.IndexOf("<body>"));
+                if (myIp.Contains("</body>"))
+                    myIp = myIp.Substring(0, myIp.IndexOf("</body>")).Replace("<body>", "").Replace("</body>", "");
+            }
+            return IPAddress.Parse(myIp);
+        }
+
+        /// <summary>
+        /// PostMessage posts message via <see cref="WebClient.UploadString(string, string)"/>
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="url"></param>
+        /// <param name="hostname"></param>
+        /// <param name="serverIp"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
         public static string PostMessage(string msg, string url, string hostname = "cqrxs.eu", string serverIp = "18.100.254.167", System.Text.Encoding? encoding = null)
         {
             encoding = encoding ?? Encoding.UTF8;
@@ -108,7 +146,8 @@ namespace EU.CqrXs.Framework.Core.Net.WebHttp
 
             return resp;
         }
-    }
 
+
+    }
 
 }

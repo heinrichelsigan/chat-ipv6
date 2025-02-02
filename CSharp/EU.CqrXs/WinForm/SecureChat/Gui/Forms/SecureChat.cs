@@ -17,6 +17,7 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Util;
+using EU.CqrXs.Framework.Core.Net.NameService;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -46,7 +47,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     return serverIpAddress;
 
                 // TODO: change it
-                IEnumerable<IPAddress> list = NetworkAddresses.GetIpAddrsByHostName("cqrxs.eu");
+                IEnumerable<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
                 foreach (IPAddress ip in list)
                 {
                     foreach (string sip in Settings.Instance.Proxies)
@@ -92,8 +93,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 if (externalIPAddress != null)
                     return externalIPAddress;
 
-                string hexs = DeEnCoder.KeyToHex(Constants.BC_START_MSG);
-                externalIPAddress = WebClientRequest.ClientIpFromArea23("https://cqrxs.eu/net/R.aspx", hexs);
+                externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://cqrxs.eu/net/R.aspx");
                 return externalIPAddress;
             }
         }
@@ -119,7 +119,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
                 // badge.Show();
-                menuItemMyContact_Click(sender, e);
+                MenuItemMyContact_Click(sender, e);
                 while (string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Name))
                 {
                     string notFullReason = string.Empty;
@@ -131,7 +131,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     //     notFullReason += "Mobile phone is missing!" + Environment.NewLine;
                     MessageBox.Show(notFullReason, "Please fill out your info fully", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    menuItemMyContact_Click(sender, e);
+                    MenuItemMyContact_Click(sender, e);
                 }
                 send1stReg = true;
             }
@@ -588,6 +588,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #region OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
 
+        /// <summary>
+        /// Send_1st_Server_Registration sends contact registration to cqrxs.eu server
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         private void Send_1st_Server_Registration(object sender, EventArgs e)
         {
             if (chat == null)
@@ -625,6 +630,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             toolStripStatusLabel.Text = "Finished 1st registration";
         }
 
+        /// <summary>
+        /// OnClientReceive event is fired, 
+        /// when another secure chat client connects directly peer 2 peer 
+        /// to server socket of our local chat app,
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         internal void OnClientReceive(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(myServerKey))
@@ -644,6 +656,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     if (chat == null)
                         chat = new Chat(0);
+                    string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
 
                     Area23EventArgs<IpSockReceiveData>? area23EvArgs = null;
                     if (e != null && e is Area23EventArgs<IpSockReceiveData>)
@@ -654,14 +667,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         // toolStripStatusLabel.Text = "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort;
                         // if (!this.ComboBoxIpContact.Text.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
                         //     this.ComboBoxIpContact.Text = area23EvArgs.GenericTData.ClientIPAddr;
+                        encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
                     }
 
-                    string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
+                    
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                     string unencrypted = pmsg.NCqrPeerMsg(encrypted);
+                    string friendMsg = string.Empty;
+                    if (unencrypted.StartsWith("Content-Type: ") || unencrypted.Contains("Content-Verification:"))
+                    {
+                        MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(unencrypted);
+                        friendMsg = unencrypted.Substring(0, unencrypted.IndexOf("Content-Verification: "));
+                    }
+                    else
+                    {
+                        friendMsg = unencrypted;                        
+                    }
 
-                    chat.AddFriendMessage(unencrypted);
-
+                    chat.AddFriendMessage(friendMsg);
                     AppendText(TextBoxDestionation, unencrypted);
                     // this.richTextBoxOneView.Text = unencrypted;
                     Format_Lines_RichTextBox();
@@ -718,7 +741,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
         /// <summary>
-        /// Attaches a fileto send
+        /// Attaches a file to send
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
@@ -752,13 +775,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     string fileNameOnly = Path.GetFileName(openFileDialog.FileName);
                     string mimeType = Framework.Core.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
                     string base64Mime = Base64.Encode(fileBytes);
-
-                    string unencrypted = MimeAttachment.GetMimeMessage(fileNameOnly, mimeType, base64Mime);
+                    
+                    CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
+                    string unencrypted = MimeAttachment.GetMimeMessage(fileNameOnly, mimeType, base64Mime, pmsg.symmPipe.PipeString);
                     
                     try
                     {
                         partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
-                        CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
+                        
                         pmsg.SendCqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
                         // pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
 
@@ -805,6 +829,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         }
 
+        /// <summary>
+        /// MenuItemClear_Click clears all input & output chat windows
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItemClear_Click(object sender, EventArgs e)
         {
             this.TextBoxDestionation.Clear();
@@ -829,7 +858,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.ComboBoxIpContact.Text = ipContact;
         }
 
-        private void menuItemMyContact_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItemMyContact_Click(object sender, EventArgs e)
         {
             ContactSettings contactSettings = new ContactSettings("My Contact Info", 0);
             contactSettings.ShowInTaskbar = true;
@@ -866,7 +900,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         }
 
-        private void menuItemAddContact_Click(object sender, EventArgs e)
+        private void MenuItemAddContact_Click(object sender, EventArgs e)
         {
             ContactSettings contactSettings = new ContactSettings("Add Contact Info", 1);
             contactSettings.ShowInTaskbar = true;
@@ -978,7 +1012,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 try
                 {
-                    foreach (var netIp in NetworkAddresses.GetIpAddrsByHostName(proxyStr))
+                    foreach (var netIp in DnsHelper.GetIpAddrsByHostName(proxyStr))
                         if (!addresses.Contains(netIp))
                             addresses.Add(netIp);
                 }

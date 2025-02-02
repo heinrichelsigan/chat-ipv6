@@ -1,6 +1,7 @@
 ﻿using EU.CqrXs.Framework.Core.Crypt.Cipher;
 using EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric;
 using EU.CqrXs.Framework.Core.Crypt.EnDeCoding;
+using EU.CqrXs.Framework.Core.Net.IpSocket;
 using EU.CqrXs.Framework.Core.Net.WebHttp;
 using EU.CqrXs.Framework.Core.Util;
 using System.Configuration;
@@ -22,6 +23,7 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
         public readonly SymmCipherPipe symmPipe;
 
         public string CqrMsg { get; protected internal set; }
+
 
         /// <summary>
         /// CqrServerMsg constructor with srvKey
@@ -58,6 +60,28 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             return CqrMsg;
         }
 
+        /// <summary>
+        /// CqrServerAttachment encrypts a file attchment message
+        /// </summary>
+        /// <param name="fileName">file name of attached file</param>
+        /// <param name="mimeType"><see cref="Util.MimeType"/></param>
+        /// <param name="base64Mime">base64 encoded mime block</param>
+        /// <param name="encType"><see cref="EncodingType"/></param>
+        /// <returns>encrypted attachment msg via <see cref="SymmCipherPipe"/></returns>
+        public string CqrServerAttachment(string fileName, string mimeType, string base64Mime, EncodingType encType = EncodingType.Base64)
+        {
+            string mimeMsg = $"Content-Type: {mimeType}; name=\"{fileName}\"\n";
+            mimeMsg += $"Content-Transfer-Encoding: base64\nContent-Disposition: attachment; filename=\"{fileName}\"\n";
+            mimeMsg += base64Mime + "\n\n" + symmPipe.PipeString;
+
+            byte[] msgBytes = DeEnCoder.GetBytesFromString(mimeMsg);
+
+            byte[] cqrbytes = symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash);
+            CqrMsg = DeEnCoder.EncodeBytes(cqrbytes, encType);
+
+            return CqrMsg;
+
+        }
 
         /// <summary>
         /// NCqrMessage decryptes an secure encrypted msg 
@@ -98,6 +122,13 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
         }
 
 
+        /// <summary>
+        /// SendCqrServerMsg sends registration msg to server
+        /// </summary>
+        /// <param name="msg">string message</param>
+        /// <param name="srvIp">public availible server ip address</param>
+        /// <param name="encodingType"><see cref="EncodingType"/></param>
+        /// <returns></returns>
         public string SendCqrSrvMsg(string msg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
             string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
@@ -110,6 +141,30 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
 
             return response;
         }
+
+        /// <summary>
+        /// SendCqrPeerAttachment sends an attached base64 encoded file
+        /// </summary>
+        /// <param name="fileName">file name of attached file</param>
+        /// <param name="mimeType"><see cref="Util.MimeType"/></param>
+        /// <param name="base64Mime">base64 encoded mime block</param>
+        /// <param name="peerIp">peer partner ip address</param>
+        /// <param name="encodingType"><see cref="EncodingType"/></param>
+        /// <param name="serverPort">tcp server port</param>
+        /// <returns>response string</returns>
+        public string SendCqrServerAttachment(string fileName, string mimeType, string base64Mime, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64, int serverPort = 7777)
+        {
+            string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
+                CqrServerAttachment(fileName, mimeType, base64Mime, encodingType));
+
+            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
+
+            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+
+            return response;
+        }
+
 
     }
 

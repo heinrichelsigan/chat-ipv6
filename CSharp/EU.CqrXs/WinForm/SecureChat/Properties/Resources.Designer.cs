@@ -101,6 +101,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://cqrxs.eu/net/CqrJD/Default.aspx;https://area23.at/net/CqrJD/Default.aspx;.
+        /// </summary>
+        internal static string CqrServerUrlToPost {
+            get {
+                return ResourceManager.GetString("CqrServerUrlToPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://github.com/heinrichelsigan/chat-ipv6.
         /// </summary>
         internal static string github_uri {
@@ -124,6 +133,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties {
         internal static string ProxyNames {
             get {
                 return ResourceManager.GetString("ProxyNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx;https://pairs.area23.at/net/R.aspx.
+        /// </summary>
+        internal static string RemoteIpUrls {
+            get {
+                return ResourceManager.GetString("RemoteIpUrls", resourceCulture);
             }
         }
         

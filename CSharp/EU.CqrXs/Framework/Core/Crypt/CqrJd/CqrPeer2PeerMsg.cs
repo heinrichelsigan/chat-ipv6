@@ -63,15 +63,20 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             return CqrMsg;
         }
 
-
+        /// <summary>
+        /// CqrPeerAttachment encrypts a file attchment message
+        /// </summary>
+        /// <param name="fileName">file name of attached file</param>
+        /// <param name="mimeType"><see cref="Util.MimeType"/></param>
+        /// <param name="base64Mime">base64 encoded mime block</param>
+        /// <param name="encType"><see cref="EncodingType"/></param>
+        /// <returns>encrypted attachment msg via <see cref="SymmCipherPipe"/></returns>
         public string CqrPeerAttachment(string fileName, string mimeType, string base64Mime, EncodingType encType = EncodingType.Base64)
         {
-            string mimeMsg = $"Content-Type: {mimeType}; name=\"{fileName}\"\n";
-            mimeMsg += $"Content-Transfer-Encoding: base64\nContent-Disposition: attachment; filename=\"{fileName}\"\n";
-            mimeMsg += base64Mime + "\n\n" + symmPipe.PipeString;
+            string mimeMsg = MimeAttachment.GetMimeMessage(fileName, mimeType, base64Mime, symmPipe.PipeString);
+            mimeMsg += "\n" + symmPipe.PipeString + "\0";
             
             byte[] msgBytes = DeEnCoder.GetBytesFromString(mimeMsg);
-
             byte[] cqrbytes = symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash);
             CqrMsg = DeEnCoder.EncodeBytes(cqrbytes, encType);
 
@@ -94,8 +99,13 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
 
             byte[] unroundedMerryBytes = symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash);
             string decrypted = DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
-
             string hashVerification = decrypted.Substring(decrypted.Length - 8);
+
+            if (decrypted.StartsWith("Content-Type: ") || decrypted.Contains("Content-Verification:"))
+            {
+                MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(decrypted);
+                hashVerification = mimeAttachment.Verification;
+            }            
 
             int failureCnt = 0, ic = 0;
             int minLen = Math.Min(8, symmPipe.PipeString.Length);
@@ -120,6 +130,47 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
         }
 
 
+        public string NCqrSrvMsg(string cqrMessage, EncodingType encType = EncodingType.Base64)
+        {
+            CqrMsg = cqrMessage.TrimEnd("\0".ToCharArray());
+            byte[] cipherBytes = DeEnCoder.DecodeText(CqrMsg, encType);
+
+            byte[] unroundedMerryBytes = symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash);
+            string decrypted = DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
+
+            MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(decrypted);
+            string hashVerification = mimeAttachment.Verification;
+
+            int failureCnt = 0, ic = 0;
+            int minLen = Math.Min(8, symmPipe.PipeString.Length);
+            int maxLen = Math.Min(minLen, hashVerification.Length);
+            for (ic = 0; ic < 8; ic++)
+            {
+                if (hashVerification[ic] != symmPipe.PipeString[ic])
+                    failureCnt += ic;
+            }
+
+            if (failureCnt > 0)
+            {
+                string hashSymShow = symmPipe.PipeString ?? "        ";
+                hashSymShow = hashSymShow.Substring(0, 2) + "...." + hashSymShow.Substring(6);
+
+                throw new InvalidOperationException(
+                $"SymmCiphers [{hashSymShow}] in crypt pipeline doesn't match serverside key !?$* byte length ={keyBytes.Length}");
+            }
+
+            string decryptedFinally = decrypted.Substring(0, decrypted.Length - 8);
+            return decryptedFinally;
+        }
+
+        /// <summary>
+        /// SendCqrPeerMsg
+        /// </summary>
+        /// <param name="msg">message to send</param>
+        /// <param name="peerIp">peer partner ip address</param>
+        /// <param name="encodingType"><see cref="EncodingType"/></param>
+        /// <param name="serverPort">tcp server port</param>
+        /// <returns>response string</returns>
         public string SendCqrPeerMsg(string msg, IPAddress peerIp, EncodingType encodingType = EncodingType.Base64, int serverPort = 7777)
         {
             string encrypted = CqrPeerMsg(msg, encodingType);
@@ -127,7 +178,16 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             return response;
         }
 
-
+        /// <summary>
+        /// SendCqrPeerAttachment sends an attached base64 encoded file
+        /// </summary>
+        /// <param name="fileName">file name of attached file</param>
+        /// <param name="mimeType"><see cref="Util.MimeType"/></param>
+        /// <param name="base64Mime">base64 encoded mime block</param>
+        /// <param name="peerIp">peer partner ip address</param>
+        /// <param name="encodingType"><see cref="EncodingType"/></param>
+        /// <param name="serverPort">tcp server port</param>
+        /// <returns>response string</returns>
         public string SendCqrPeerAttachment(string fileName, string mimeType, string base64Mime, IPAddress peerIp, EncodingType encodingType = EncodingType.Base64, int serverPort = 7777)
         {
             string encrypted = CqrPeerAttachment(fileName, mimeType, base64Mime, encodingType);
@@ -136,5 +196,4 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
         }
 
     }
-
 }
