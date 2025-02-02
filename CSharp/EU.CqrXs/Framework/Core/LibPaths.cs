@@ -163,7 +163,7 @@ namespace EU.CqrXs.Framework.Core
 
 
 
-
+        public static string AttachmentFilesDir { get => SystemDirPath + Constants.ATTACH_FILES_DIR + SepChar; }
 
 
         public static string AdditionalBinDir { get => SystemDirResPath + Constants.BIN_DIR + SepChar; }

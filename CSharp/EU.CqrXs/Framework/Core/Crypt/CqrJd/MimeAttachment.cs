@@ -51,17 +51,17 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             string restString = plainAttachment;
 
             MimeType = restString.Substring(restString.IndexOf("Content-Type: "));
-            MimeType = MimeType.Substring(0, MimeType.IndexOf(";"));
+            MimeType = MimeType.Substring("Content-Type: ".Length, MimeType.IndexOf(";\n"));
 
-            FileName = restString.Substring(restString.IndexOf("; name=\""));
-            FileName = FileName.Substring(0, FileName.IndexOf("\";"));
+            FileName = restString.Substring(restString.IndexOf("FileName: "));
+            FileName = FileName.Substring("FileName: ".Length, FileName.IndexOf(";\n"));
 
             string contentLengthString = restString.Substring(restString.IndexOf("Content-Length: "));
             contentLengthString = contentLengthString.Substring(0, contentLengthString.IndexOf(";"));
             ContentLength = Int32.Parse(contentLengthString);
 
             restString = restString.Substring(restString.IndexOf("Content-Verification: "));
-            Verification = restString.Substring(0, restString.IndexOf(";\n"));
+            Verification = restString.Substring("Content-Verification: ".Length, restString.IndexOf(";\n"));
 
             Base64Mime = restString.Substring(restString.IndexOf(";\n"));
             Base64Mime = Base64Mime.Substring(0, Base64Mime.LastIndexOf("\n"));
@@ -75,17 +75,23 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             string restString = plainAttachment;
             
             string mimeType = restString.Substring(restString.IndexOf("Content-Type: "));
-            mimeType = mimeType.Substring(0, mimeType.IndexOf(";"));
-            
-            string fileName = restString.Substring(restString.IndexOf("; name=\""));
-            fileName = fileName.Substring(0, fileName.IndexOf("\";"));
+            mimeType = mimeType.Substring("Content-Type: ".Length, mimeType.IndexOf(";"));
+
+            string fileName = restString.Substring(restString.IndexOf("FileName: "));
+            fileName = fileName.Substring("FileName: ".Length, fileName.IndexOf(";\n"));
 
             string contentLengthString = restString.Substring(restString.IndexOf("Content-Length: "));
-            contentLengthString = contentLengthString.Substring(0, contentLengthString.IndexOf(";"));
-            int contentLen = Int32.Parse(contentLengthString);
+            contentLengthString = contentLengthString.Substring("Content-Length: ".Length, contentLengthString.IndexOf(";\n"));
+            string contentLenString = string.Empty;
+            foreach (char ch in contentLengthString.ToCharArray())
+            {
+                if (Char.IsDigit(ch) || Char.IsNumber(ch) || ch == '.')
+                    contentLenString += ch.ToString();
+            }
+            int contentLen = Int32.Parse(contentLenString);
 
             restString = restString.Substring(restString.IndexOf("Content-Verification: "));
-            string verification = restString.Substring(0, restString.IndexOf(";\n"));
+            string verification = restString.Substring("Content-Verification: ".Length, restString.IndexOf(";\n"));
 
             string mimeBase64 = restString.Substring(restString.IndexOf(";\n"));
             mimeBase64 = mimeBase64.Substring(0, mimeBase64.LastIndexOf("\n"));

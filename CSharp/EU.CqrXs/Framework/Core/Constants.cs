@@ -95,6 +95,7 @@ namespace EU.CqrXs.Framework.Core
         public const string OBJ_DIR = "obj";
         public const string RELEASE_DIR = "Release";
         public const string DEBUG_DIR = "Release";
+        public const string ATTACH_FILES_DIR = "AttachFiles";
 
         public const string UTF8_JSON = "utf8symol.json";
         public const string JSON_SAVE_FILE = "urlshort.json";

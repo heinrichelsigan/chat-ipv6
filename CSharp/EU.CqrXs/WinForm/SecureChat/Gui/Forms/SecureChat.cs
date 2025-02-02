@@ -28,6 +28,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         protected string loadDir = string.Empty;
 
         private string myServerKey;
+        internal static int attachCnt = 0;
         internal static int chatCnt = 0;
         internal static Chat? chat;
 
@@ -677,6 +678,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     if (unencrypted.StartsWith("Content-Type: ") || unencrypted.Contains("Content-Verification:"))
                     {
                         MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(unencrypted);
+                        SetAttachmentTextLink(mimeAttachment);
                         friendMsg = unencrypted.Substring(0, unencrypted.IndexOf("Content-Verification: "));
                     }
                     else
@@ -692,6 +694,35 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
+        internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
+        {
+            LinkLabel linkLabelAttachment0 = new LinkLabel() { Name = "linkLabelAttachment0" };
+            if (!Directory.Exists(LibPaths.AttachmentFilesDir))
+                Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
+
+            int attachNum = ((attachCnt % 8) + 1);
+            foreach (System.Windows.Forms.Control ctrl in groupBoxAttachments.Controls)
+            {
+                if (ctrl != null && ctrl is LinkLabel lbAttach && 
+                    (ctrl.Name.EndsWith(attachNum.ToString()) || ctrl.Name.Equals("linkLabelAttachment" + attachNum)))
+                {
+                    linkLabelAttachment0 = (LinkLabel)lbAttach;
+                    linkLabelAttachment0.Name = $"linkLabelAttachment{attachNum}";
+                    linkLabelAttachment0.Visible = true;                    
+                    break; // we got the next LinkLabel attachment in modulo slot
+                }
+            }
+
+            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
+            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime.Substring(1));
+            System.IO.File.WriteAllBytes(filePath, fileBytes);            
+            Uri uri = new Uri("file://" + filePath);
+            linkLabelAttachment0.Text = mimeAttachment.FileName;
+            linkLabelAttachment0.Links.Add(0, uri.ToString().Length, uri.ToString());
+            
+            ++attachCnt;
+                
+        }
 
         /// <summary>
         /// Sends a secure message
