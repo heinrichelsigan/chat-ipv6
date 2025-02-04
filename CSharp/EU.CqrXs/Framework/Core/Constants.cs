@@ -22,7 +22,7 @@ namespace EU.CqrXs.Framework.Core
         public const int MAX_SERVER_SOCKET_ADDRESSES = 16;
         public const int CLOSING_TIMEOUT = 6000;
 
-        public const int MAX_BYTE_BUFFEER = 1048560;
+        public const int MAX_BYTE_BUFFEER = 4194240;    // 4 MB Buffer
 
         public const char ANNOUNCE = ':';
         public const char DATE_DELIM = '-';

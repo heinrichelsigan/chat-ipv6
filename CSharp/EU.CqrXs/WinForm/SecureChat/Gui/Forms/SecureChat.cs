@@ -437,42 +437,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     }
 
                     chat.AddFriendMessage(friendMsg);
-                    AppendText(TextBoxDestionation, unencrypted);
+                    AppendText(TextBoxDestionation, friendMsg);
                     // this.richTextBoxOneView.Text = unencrypted;
                     Format_Lines_RichTextBox();
                 }
             }
-        }
-
-        internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
-        {
-            int attachNum = ((attachCnt % 8) + 1);
-            LinkLabel linkLabelAttachment0 = new LinkLabel() { Name = $"linkLabelAttachment{attachNum}" };
-            if (!Directory.Exists(LibPaths.AttachmentFilesDir))
-                Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
-
-            
-            foreach (System.Windows.Forms.Control ctrl in groupBoxAttachments.Controls)
-            {
-                if (ctrl != null && ctrl is LinkLabel lbAttach &&
-                    (ctrl.Name.EndsWith(attachNum.ToString()) || ctrl.Name.Equals("linkLabelAttachment" + attachNum)))
-                {                    
-                    linkLabelAttachment0 = (LinkLabel)lbAttach;
-                    linkLabelAttachment0.Name = $"linkLabelAttachment{attachNum}";
-                    SetLinkLabelVisible(linkLabelAttachment0, true);                    
-                    break; // we got the next LinkLabel attachment in modulo slot
-                }
-            }
-
-            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
-            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime.Substring(1));
-            System.IO.File.WriteAllBytes(filePath, fileBytes);          
-            Uri uri = new Uri("file://" + filePath);
-            SetLinkLabelText(linkLabelAttachment0, mimeAttachment.FileName);
-            AddLinkLabelLinks(linkLabelAttachment0, uri.ToString());            
-            
-            ++attachCnt;
-                
         }
 
         /// <summary>
@@ -621,6 +590,46 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.TextBoxDestionation.Clear();
             this.TextBoxSource.Clear();
             this.RichTextBoxChat.Clear();
+        }
+
+
+        protected internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
+        {
+            int attachNum = ((attachCnt % 8) + 1);
+            LinkLabel linkLabelAttachment0 = new LinkLabel() { Name = $"linkLabelAttachment{attachNum}" };
+            if (!Directory.Exists(LibPaths.AttachmentFilesDir))
+                Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
+
+
+            foreach (System.Windows.Forms.Control ctrl in groupBoxAttachments.Controls)
+            {
+                if (ctrl != null && ctrl is LinkLabel lbAttach &&
+                    (ctrl.Name.EndsWith(attachNum.ToString()) || ctrl.Name.Equals("linkLabelAttachment" + attachNum)))
+                {
+                    linkLabelAttachment0 = (LinkLabel)lbAttach;
+                    linkLabelAttachment0.Name = $"linkLabelAttachment{attachNum}";
+                    SetLinkLabelVisible(linkLabelAttachment0, true);
+                    break; // we got the next LinkLabel attachment in modulo slot
+                }
+            }
+
+            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
+            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime.Substring(1));
+            System.IO.File.WriteAllBytes(filePath, fileBytes);
+            Uri uri = new Uri("file://" + filePath);
+            SetLinkLabelText(linkLabelAttachment0, mimeAttachment.FileName);
+            AddLinkLabelLinks(linkLabelAttachment0, filePath);
+            linkLabelAttachment0.LinkClicked += LinkLabel_LinkClicked;
+            ++attachCnt;
+
+        }
+
+        protected internal void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (sender != null && e.Link != null && e.Link.LinkData != null && File.Exists(e.Link.LinkData.ToString()))
+            {
+                ProcessCmd.Execute("explorer", e.Link.LinkData.ToString());
+            }
         }
 
         #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear

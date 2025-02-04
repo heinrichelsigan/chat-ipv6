@@ -50,21 +50,21 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
         {
             string restString = plainAttachment;
 
-            MimeType = restString.Substring(restString.IndexOf("Content-Type: "));
-            MimeType = MimeType.Substring("Content-Type: ".Length, MimeType.IndexOf(";\n"));
+            MimeType = restString.Substring(restString.IndexOf("Content-Type: ") + "Content-Type: ".Length);
+            MimeType = MimeType.Substring(0, MimeType.IndexOf(";\n"));
 
-            FileName = restString.Substring(restString.IndexOf("FileName: "));
-            FileName = FileName.Substring("FileName: ".Length, FileName.IndexOf(";\n"));
+            FileName = restString.Substring(restString.IndexOf("FileName: ") + "FileName: ".Length);
+            FileName = FileName.Substring(0, FileName.IndexOf(";\n"));
 
-            string contentLengthString = restString.Substring(restString.IndexOf("Content-Length: "));
+            string contentLengthString = restString.Substring(restString.IndexOf("Content-Length: ") + "Content-Length: ".Length);
             contentLengthString = contentLengthString.Substring(0, contentLengthString.IndexOf(";"));
             ContentLength = Int32.Parse(contentLengthString);
 
-            restString = restString.Substring(restString.IndexOf("Content-Verification: "));
-            Verification = restString.Substring("Content-Verification: ".Length, restString.IndexOf(";\n"));
+            restString = restString.Substring(restString.IndexOf("Content-Verification: ") + "Content-Verification: ".Length);
+            Verification = restString.Substring(0, restString.IndexOf(";\n"));
 
-            Base64Mime = restString.Substring(restString.IndexOf(";\n"));
-            Base64Mime = Base64Mime.Substring(0, Base64Mime.LastIndexOf("\n"));
+            Base64Mime = restString.Substring(restString.IndexOf(";\n") + ";\n".Length);
+            Base64Mime = Base64Mime.Substring(0, Base64Mime.LastIndexOf("\n") - 1);
 
             return (MimeAttachment)this;
 
@@ -93,8 +93,8 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             restString = restString.Substring(restString.IndexOf("Content-Verification: ") + "Content-Verification: ".Length);
             string verification = restString.Substring(0, restString.IndexOf(";\n"));
 
-            string mimeBase64 = restString.Substring(restString.IndexOf(";\n"));
-            mimeBase64 = mimeBase64.Substring(0, mimeBase64.LastIndexOf("\n"));
+            string mimeBase64 = restString.Substring(restString.IndexOf(";\n") + ";\n".Length);
+            mimeBase64 = mimeBase64.Substring(0, mimeBase64.LastIndexOf("\n") - 1);
 
             MimeAttachment mimeAttach = new MimeAttachment(fileName, mimeType, mimeBase64, verification);
             return mimeAttach;

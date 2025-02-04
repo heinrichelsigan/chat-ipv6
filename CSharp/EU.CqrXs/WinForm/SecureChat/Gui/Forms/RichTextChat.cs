@@ -21,13 +21,12 @@ using System.Windows.Controls;
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
 
-    public partial class RichTextChat : Form
+    public partial class RichTextChat : BaseChatForm
     {
-        #region fields
-        protected string savedFile = string.Empty;
-        protected string loadDir = string.Empty;
+        #region fields        
 
-        private string myServerKey;
+        private string myServerKey = string.Empty;
+        internal static int attachCnt = 0;
         internal static int chatCnt = 0;
         internal static Chat? chat;
 
@@ -38,6 +37,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         #endregion fields
 
         #region Properties
+
         private static IPAddress? serverIpAddress;
         internal IPAddress? ServerIpAddress
         {
@@ -85,24 +85,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
-        private static IPAddress? externalIPAddress;
-        internal static IPAddress? ExternalIpAddress
-        {
-            get
-            {
-                if (externalIPAddress != null)
-                    return externalIPAddress;
-
-                externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://cqrxs.eu/net/R.aspx");
-                return externalIPAddress;
-            }
-        }
         #endregion Properties
 
         /// <summary>
         /// Ctor
         /// </summary>
-        public RichTextChat()
+        public RichTextChat() : base()
         {
             InitializeComponent();
             TextBoxSource.MaxLength = Constants.MAX_BYTE_BUFFEER;
@@ -119,7 +107,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
                 // badge.Show();
-                menuItemMyContact_Click(sender, e);
+                MenuItemMyContact_Click(sender, e);
                 while (string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Name))
                 {
                     string notFullReason = string.Empty;
@@ -131,7 +119,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     //     notFullReason += "Mobile phone is missing!" + Environment.NewLine;
                     MessageBox.Show(notFullReason, "Please fill out your info fully", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    menuItemMyContact_Click(sender, e);
+                    MenuItemMyContact_Click(sender, e);
                 }
                 send1stReg = true;
             }
@@ -153,243 +141,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             toolStripStatusLabel.Text = "Secure Chat init done.";
         }
 
-        #region thread save text and richtext box access
-
-        internal delegate void SetTextCallback(System.Windows.Forms.TextBox textBox, string text);
-
-        internal delegate void AppendTextCallback(System.Windows.Forms.TextBox textBox, string text);
-
-        internal delegate void AppendRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, string text);
-
-        internal delegate void SelectRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, int start, int length);
-
-        internal delegate void SelectionAlignmentRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, HorizontalAlignment leftRight);
-
-        internal delegate int GetFirstCharIndexFromLineRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, int lineNr);
-
-        internal delegate void ClearRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, bool clear = true);
-
-        internal delegate void ToolStripStatusLabelSetTextCallback(ToolStripStatusLabel statusLabel, string text);
-
-        /// <summary>
-        /// AppendText - appends text on a <see cref="System.Windows.Forms.TextBox"/>
-        /// </summary>
-        /// <param name="textBox"><see cref="System.Windows.Forms.TextBox"/></param>
-        /// <param name="text"><see cref="string">string text</see> to set</param>
-        internal void AppendText(System.Windows.Forms.TextBox textBox, string text)
-        {
-            string textToAppend = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
-
-            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (textBox.InvokeRequired)
-            {
-                AppendTextCallback appendTextDelegate = // new AppendTextCallback(SetTextSpooler);
-                    delegate (System.Windows.Forms.TextBox textArea, string appendText)
-                    {
-                        if (textArea != null && textArea.Text != null && appendText != null)
-                            textArea.AppendText(appendText);
-                    };
-                try
-                {
-                    textBox.Invoke(appendTextDelegate, new object[] { textBox, textToAppend });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
-                }
-                catch (System.Exception exDelegate)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate set text: \"{text}\".\n", exDelegate);
-                }
-            }
-            else
-            {
-                if (textBox != null && textBox.Text != null && textToAppend != null)
-                    textBox.AppendText(textToAppend);
-            }
-        }
-
-        internal void AppendRichText(System.Windows.Forms.RichTextBox richTextBox, string text)
-        {
-            string textToAppend = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
-
-            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (richTextBox.InvokeRequired)
-            {
-                AppendRichTextCallback appendRichTextDelegate = // new AppendTextCallback(SetTextSpooler);
-                    delegate (System.Windows.Forms.RichTextBox textArea, string appendText)
-                    {
-                        if (textArea != null && textArea.Text != null && appendText != null)
-                            textArea.AppendText(appendText);
-                    };
-                try
-                {
-                    richTextBox.Invoke(appendRichTextDelegate, new object[] { richTextBox, textToAppend });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
-                }
-                catch (System.Exception exDelegate)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate set text: \"{text}\".\n", exDelegate);
-                }
-            }
-            else
-            {
-                if (richTextBox != null && richTextBox.Text != null && textToAppend != null)
-                    richTextBox.AppendText(textToAppend);
-            }
-        }
-
-        internal void SelectRichText(System.Windows.Forms.RichTextBox richTextBox, int start, int length)
-        {
-            if (start < 0)
-                start = 0;
-            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (richTextBox.InvokeRequired)
-            {
-                SelectRichTextCallback selectRichTextCallback = // new AppendTextCallback(SetTextSpooler);
-                    delegate (System.Windows.Forms.RichTextBox textArea, int charStart, int charLength)
-                    {
-                        if (textArea != null && textArea.Text != null)
-                            textArea.Select(charStart, charLength);
-                    };
-                try
-                {
-                    richTextBox.Invoke(selectRichTextCallback, new object[] { richTextBox, start, length });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
-                }
-                catch (System.Exception exDelegate)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate select rich text: \"{start},{length}\".\n", exDelegate);
-                }
-            }
-            else
-            {
-                if (richTextBox != null && richTextBox.Text != null)
-                    richTextBox.Select(start, length);
-            }
-        }
-
-        internal void SelectionAlignmentRichText(System.Windows.Forms.RichTextBox richTextBox, HorizontalAlignment leftRight)
-        {
-            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (richTextBox.InvokeRequired)
-            {
-                SelectionAlignmentRichTextCallback selectionAlignmentRichTextCallback = // new AppendTextCallback(SetTextSpooler);
-                    delegate (System.Windows.Forms.RichTextBox textArea, HorizontalAlignment lr)
-                    {
-                        if (textArea != null && textArea.Text != null)
-                            textArea.SelectionAlignment = lr;
-                    };
-                try
-                {
-                    richTextBox.Invoke(selectionAlignmentRichTextCallback, new object[] { richTextBox, leftRight });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
-                }
-                catch (System.Exception exDelegate)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SelectionAlignmentRichText: \"{leftRight}\".\n", exDelegate);
-                }
-            }
-            else
-            {
-                if (richTextBox != null && richTextBox.Text != null)
-                    richTextBox.SelectionAlignment = leftRight;
-            }
-        }
-
-        internal int GetFirstCharIndexFromLineRichText(System.Windows.Forms.RichTextBox richTextBox, int lineNr)
-        {
-            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (richTextBox.InvokeRequired)
-            {
-                GetFirstCharIndexFromLineRichTextCallback getFirstCharIndexFromLineRichTextCallback = // new AppendTextCallback(SetTextSpooler);
-                    delegate (System.Windows.Forms.RichTextBox textArea, int lnr)
-                    {
-                        if (textArea != null && textArea.Text != null)
-                            return textArea.GetFirstCharIndexFromLine(lnr);
-                        return -1;
-                    };
-                try
-                {
-                    richTextBox.Invoke(getFirstCharIndexFromLineRichTextCallback, new object[] { richTextBox, lineNr });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
-                }
-                catch (System.Exception exDelegate)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetFirstCharIndexFromLineRichText({lineNr}).\n", exDelegate);
-                }
-            }
-            else
-            {
-                if (richTextBox != null && richTextBox.Text != null)
-                    return richTextBox.GetFirstCharIndexFromLine(lineNr);
-            }
-            return -1;
-        }
-
-        internal void ClearRichText(System.Windows.Forms.RichTextBox richTextBox, bool clear = true)
-        {
-            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (richTextBox.InvokeRequired)
-            {
-                ClearRichTextCallback clearRichTextCallback =
-                    delegate (System.Windows.Forms.RichTextBox textArea, bool clr)
-                    {
-                        if (textArea != null)
-                            textArea.Clear();
-                        return;
-                    };
-                try
-                {
-                    richTextBox.Invoke(clearRichTextCallback, new object[] { richTextBox, clear });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
-                }
-                catch (System.Exception exDelegate)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate ClearRichText: \"{exDelegate.Message}\".\n", exDelegate);
-                }
-            }
-            else
-            {
-                if (richTextBox != null)
-                    richTextBox.Clear();
-            }
-        }
-
-        internal void SetStatusText(ToolStripStatusLabel toolStatusLabel, string text)
-        {
-            string setText = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
-
-            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-
-            if (toolStatusLabel.GetCurrentParent() != null && toolStatusLabel.GetCurrentParent().InvokeRequired)
-            {
-                ToolStripStatusLabelSetTextCallback statusLabelSetTextCallback = // new AppendTextCallback(SetTextSpooler);
-                    delegate (ToolStripStatusLabel statusLabel, string setText)
-                    {
-                        if (statusLabel != null && setText != null)
-                            statusLabel.Text = setText;
-                    };
-                try
-                {
-                    toolStatusLabel.GetCurrentParent().Invoke(statusLabelSetTextCallback, new object[] { toolStatusLabel, setText });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
-                }
-                catch (System.Exception exDelegate)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate set text: \"{text}\".\n", exDelegate);
-                }
-            }
-            else
-            {
-                if (toolStatusLabel != null && setText != null)
-                    toolStatusLabel.Text = setText;
-            }
-        }
+        #region thread save text and richtext box access       
 
         /// <summary>
         /// Displays and formats lines in <see cref="richTextBoxOneView" />
@@ -588,6 +340,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #region OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
 
+        /// <summary>
+        /// Send_1st_Server_Registration sends contact registration to cqrxs.eu server
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         private void Send_1st_Server_Registration(object sender, EventArgs e)
         {
             if (chat == null)
@@ -625,6 +382,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             toolStripStatusLabel.Text = "Finished 1st registration";
         }
 
+        /// <summary>
+        /// OnClientReceive event is fired, 
+        /// when another secure chat client connects directly peer 2 peer 
+        /// to server socket of our local chat app,
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         internal void OnClientReceive(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(myServerKey))
@@ -636,7 +400,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     myServerKey = this.ComboBoxSecretKey.Text;
                 }
             }
-
 
             if (sender != null)
             {
@@ -665,6 +428,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     if (unencrypted.StartsWith("Content-Type: ") || unencrypted.Contains("Content-Verification:"))
                     {
                         MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(unencrypted);
+                        SetAttachmentTextLink(mimeAttachment);
                         friendMsg = unencrypted.Substring(0, unencrypted.IndexOf("Content-Verification: "));
                     }
                     else
@@ -673,13 +437,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     }
 
                     chat.AddFriendMessage(friendMsg);
-                    AppendText(TextBoxDestionation, unencrypted);
+                    AppendText(TextBoxDestionation, friendMsg);
                     // this.richTextBoxOneView.Text = unencrypted;
                     Format_Lines_RichTextBox();
                 }
             }
         }
-
 
         /// <summary>
         /// Sends a secure message
@@ -729,7 +492,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
         /// <summary>
-        /// Attaches a fileto send
+        /// Attaches a file to send
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
@@ -817,11 +580,56 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         }
 
+        /// <summary>
+        /// MenuItemClear_Click clears all input & output chat windows
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItemClear_Click(object sender, EventArgs e)
         {
             this.TextBoxDestionation.Clear();
             this.TextBoxSource.Clear();
             this.RichTextBoxChat.Clear();
+        }
+
+
+        protected internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
+        {
+            int attachNum = ((attachCnt % 8) + 1);
+            LinkLabel linkLabelAttachment0 = new LinkLabel() { Name = $"linkLabelAttachment{attachNum}" };
+            if (!Directory.Exists(LibPaths.AttachmentFilesDir))
+                Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
+
+
+            foreach (System.Windows.Forms.Control ctrl in groupBoxAttachments.Controls)
+            {
+                if (ctrl != null && ctrl is LinkLabel lbAttach &&
+                    (ctrl.Name.EndsWith(attachNum.ToString()) || ctrl.Name.Equals("linkLabelAttachment" + attachNum)))
+                {
+                    linkLabelAttachment0 = (LinkLabel)lbAttach;
+                    linkLabelAttachment0.Name = $"linkLabelAttachment{attachNum}";
+                    SetLinkLabelVisible(linkLabelAttachment0, true);
+                    break; // we got the next LinkLabel attachment in modulo slot
+                }
+            }
+
+            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
+            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime.Substring(1));
+            System.IO.File.WriteAllBytes(filePath, fileBytes);
+            Uri uri = new Uri("file://" + filePath);
+            SetLinkLabelText(linkLabelAttachment0, mimeAttachment.FileName);
+            AddLinkLabelLinks(linkLabelAttachment0, filePath);
+            linkLabelAttachment0.LinkClicked += LinkLabel_LinkClicked;
+            ++attachCnt;
+
+        }
+
+        protected internal void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (sender != null && e.Link != null && e.Link.LinkData != null && File.Exists(e.Link.LinkData.ToString()))
+            {
+                ProcessCmd.Execute("explorer", e.Link.LinkData.ToString());
+            }
         }
 
         #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
@@ -841,7 +649,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.ComboBoxIpContact.Text = ipContact;
         }
 
-        private void menuItemMyContact_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItemMyContact_Click(object sender, EventArgs e)
         {
             ContactSettings contactSettings = new ContactSettings("My Contact Info", 0);
             contactSettings.ShowInTaskbar = true;
@@ -878,7 +691,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         }
 
-        private void menuItemAddContact_Click(object sender, EventArgs e)
+        private void MenuItemAddContact_Click(object sender, EventArgs e)
         {
             ContactSettings contactSettings = new ContactSettings("Add Contact Info", 1);
             contactSettings.ShowInTaskbar = true;
@@ -1179,145 +992,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         #endregion LoadSaveChatContent
 
 
-        #region Help About Info
-
-        private void MenuItemHelp_Click(object sender, EventArgs e)
-        {
-            // TODO: implement it
-            Help.ShowHelp(this, Constants.CQRXS_HELP_URL);
-            // Help.ShowHelp(this, Constants.CQRXS_HELP_URL, HelpNavigator.TableOfContents, Constants.CQRXS_EU);
-        }
-
-        private void MenuItemAbout_Click(object sender, EventArgs e)
-        {
-            TransparentDialog dialog = new TransparentDialog();
-            dialog.ShowDialog();
-        }
-
-        protected internal void MenuItemInfo_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show($"{Text} type {this.GetType()} Information MessageBox.", $"{Text} type {this.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        #endregion Help About Info
-
-
-        #region CloseForm AppExit
-
-        /// <summary>
-        /// Closes Form, if this is the last form of application, then executes <see cref="AppCloseAllFormsExit"/>
-        /// </summary>
-        /// <param name="sender">object sender</param>
-        /// <param name="e">FormClosingEventArgs e</param>
-        private void FormClose_Click(object sender, FormClosingEventArgs e)
-        {
-            if (System.Windows.Forms.Application.OpenForms.Count < 2)
-            {
-                AppCloseAllFormsExit();
-                return;
-            }
-            try
-            {
-                this.Close();
-            }
-            catch (Exception exFormClose)
-            {
-                CqrException.LastException = exFormClose;
-                Area23Log.LogStatic(exFormClose);
-            }
-            try
-            {
-                this.Dispose(true);
-            }
-            catch (Exception exFormDispose)
-            {
-                CqrException.LastException = exFormDispose;
-                Area23Log.LogStatic(exFormDispose);
-            }
-
-            return;
-
-        }
-
-        /// <summary>
-        /// MenuFileItemExit_Click is fired, when selecting exit menu 
-        /// and will nevertheless close all forms and exits application
-        /// </summary>
-        /// <param name="sender">object sender</param>
-        /// <param name="e">EventArgs e</param>
-        private void MenuFileItemExit_Click(object sender, EventArgs e)
-        {
-            AppCloseAllFormsExit();
-        }
-
-        /// <summary>
-        /// AppCloseAllFormsExit closes all open forms and exit and finally unlocks Mutex
-        /// </summary>
-        /// <exception cref="ApplicationException"></exception>
-        public virtual void AppCloseAllFormsExit()
-        {
-            string settingsNotSavedReason = string.Empty;
-            try
-            {
-                if (!Entities.Settings.Save(null))
-                    settingsNotSavedReason = (CqrException.LastException != null) ?
-                        CqrException.LastException.Message : "Unknown reason!";
-            }
-            catch (Exception exSetSave)
-            {
-                Area23Log.LogStatic(exSetSave);
-                settingsNotSavedReason = exSetSave.Message;
-            }
-
-            if (!string.IsNullOrEmpty(settingsNotSavedReason))
-                MessageBox.Show(settingsNotSavedReason, "Couldn't save chat settings", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-            if (CqrException.LastException != null) // TODO: Remove this
-                MessageBox.Show(CqrException.LastException.ToString(), CqrException.LastException.Message, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-            int openForms = System.Windows.Forms.Application.OpenForms.Count;
-            if (openForms > 1)
-            {
-                for (int frmidx = 0; frmidx < System.Windows.Forms.Application.OpenForms.Count; frmidx++)
-                {
-                    try
-                    {
-                        Form? form = System.Windows.Forms.Application.OpenForms[frmidx];
-                        if (form != null && form.Name != this.Name)
-                        {
-                            form.Close();
-                            form.Dispose();
-                        }
-                    }
-                    catch (Exception exForm)
-                    {
-                        CqrException.LastException = exForm;
-                        Area23Log.LogStatic(exForm);
-                    }
-                }
-
-            }
-
-            try
-            {
-                Program.ReleaseCloseDisposeMutex(Program.PMutec);
-            }
-            catch (Exception ex)
-            {
-                CqrException.LastException = ex;
-                Area23Log.LogStatic(ex);
-            }
-
-            Application.ExitThread();
-            Dispose();
-            Application.Exit();
-            Environment.Exit(0);
-
-        }
-
-        #endregion CloseForm AppExit
-
     }
-
 
 }
