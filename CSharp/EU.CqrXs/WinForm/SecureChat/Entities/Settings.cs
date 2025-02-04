@@ -157,28 +157,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             return _disposed;
         }
 
-        ~Settings()
-        {
-            if (!_destructed)
-            {
-                if (!Instance.Dispose(true))
-                {
-                    string fileName = LibPaths.SystemDirPath + Constants.JSON_SAVE_FILE;
-                    throw new CqrException($"~Settings() couldn't save settings to to {fileName}.", CqrException.LastException);
-                }
-            }
-            TimeStamp = DateTime.Now;
-            _disposed = true;
-            SaveStamp = null;
-            this.Contacts.Clear();
-            this.FriendIPs.Clear();
-            this.Proxies.Clear();
-            this.MyIPs.Clear();
-            // TODO: Only way to destruct a singelton is to set _instance Lazy<T> to null
-            // think about the risk, that reflection could change a private static non readonly field
-            // so I decided to let the GC handle this
-            // _instance = null;            
-        }
+        //~Settings()
+        //{
+        //    if (!_destructed)
+        //    {
+        //        if (!Instance.Dispose(true))
+        //        {
+        //            string fileName = LibPaths.SystemDirPath + Constants.JSON_SAVE_FILE;
+        //            throw new CqrException($"~Settings() couldn't save settings to to {fileName}.", CqrException.LastException);
+        //        }
+        //    }
+        //    TimeStamp = DateTime.Now;
+        //    _disposed = true;
+        //    SaveStamp = null;
+        //    this.Contacts.Clear();
+        //    this.FriendIPs.Clear();
+        //    this.Proxies.Clear();
+        //    this.MyIPs.Clear();
+        //    // TODO: Only way to destruct a singelton is to set _instance Lazy<T> to null
+        //    // think about the risk, that reflection could change a private static non readonly field
+        //    // so I decided to let the GC handle this
+        //    // _instance = null;            
+        //}
 
         #endregion Dispose() Dispose(bool disposing) ~Settings()
 
