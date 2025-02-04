@@ -57,6 +57,7 @@
     <Compile Update="Gui\Forms\RichTextChat.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Gui\Forms\BaseChatForm.cs" />
     <Compile Update="Gui\Forms\SecureChat.cs">
       <SubType>Form</SubType>
     </Compile>

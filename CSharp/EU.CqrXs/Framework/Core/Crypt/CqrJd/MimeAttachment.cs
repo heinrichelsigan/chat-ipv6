@@ -74,14 +74,14 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
         {
             string restString = plainAttachment;
             
-            string mimeType = restString.Substring(restString.IndexOf("Content-Type: "));
-            mimeType = mimeType.Substring("Content-Type: ".Length, mimeType.IndexOf(";"));
+            string mimeType = restString.Substring(restString.IndexOf("Content-Type: ") + "Content-Type: ".Length);
+            mimeType = mimeType.Substring(0, mimeType.IndexOf(";"));
 
-            string fileName = restString.Substring(restString.IndexOf("FileName: "));
-            fileName = fileName.Substring("FileName: ".Length, fileName.IndexOf(";\n"));
+            string fileName = restString.Substring(restString.IndexOf("FileName: ") + "FileName: ".Length);
+            fileName = fileName.Substring(0, fileName.IndexOf(";\n"));
 
-            string contentLengthString = restString.Substring(restString.IndexOf("Content-Length: "));
-            contentLengthString = contentLengthString.Substring("Content-Length: ".Length, contentLengthString.IndexOf(";\n"));
+            string contentLengthString = restString.Substring(restString.IndexOf("Content-Length: ") + "Content-Length: ".Length);
+            contentLengthString = contentLengthString.Substring(0, contentLengthString.IndexOf(";\n"));
             string contentLenString = string.Empty;
             foreach (char ch in contentLengthString.ToCharArray())
             {
@@ -90,8 +90,8 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             }
             int contentLen = Int32.Parse(contentLenString);
 
-            restString = restString.Substring(restString.IndexOf("Content-Verification: "));
-            string verification = restString.Substring("Content-Verification: ".Length, restString.IndexOf(";\n"));
+            restString = restString.Substring(restString.IndexOf("Content-Verification: ") + "Content-Verification: ".Length);
+            string verification = restString.Substring(0, restString.IndexOf(";\n"));
 
             string mimeBase64 = restString.Substring(restString.IndexOf(";\n"));
             mimeBase64 = mimeBase64.Substring(0, mimeBase64.LastIndexOf("\n"));

@@ -383,3 +383,5 @@ FodyWeavers.xsd
 /www/mono/res/out/*.3fish
 /www/mono/res/out/*.fish2
 /www/mono/res/out/*.fish3
+
+/WinForm/SecureChat/AttachFiles
