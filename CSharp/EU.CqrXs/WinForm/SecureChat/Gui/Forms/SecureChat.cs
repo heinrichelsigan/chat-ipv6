@@ -420,8 +420,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         //     this.ComboBoxIpContact.Text = area23EvArgs.GenericTData.ClientIPAddr;
                         encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
                     }
+                    //string encrypt = string.Empty;
+                    //bool trimmed = false;
+                    //int l = encrypted.Length - 1;
+                    //while (!trimmed)
+                    //{
+                    //    if (encrypted[l] == '\0')
+                    //        l--;
+                    //    else
+                    //    {
+                    //        trimmed = true;
+                    //        encrypt = encrypted.Substring(0, l);
+                    //    }
+                    //}
 
-                    
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                     string unencrypted = pmsg.NCqrPeerMsg(encrypted);
                     string friendMsg = string.Empty;
@@ -614,7 +626,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
-            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime.Substring(1));
+            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
             Uri uri = new Uri("file://" + filePath);
             SetLinkLabelText(linkLabelAttachment0, mimeAttachment.FileName);

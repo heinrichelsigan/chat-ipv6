@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using EU.CqrXs.Framework.Core.Net.IpSocket;
 using System.Net;
 using System.Windows.Interop;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
 {
@@ -95,7 +96,21 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
         public string NCqrPeerMsg(string cqrMessage, EncodingType encType = EncodingType.Base64)
         {
             CqrMsg = cqrMessage.TrimEnd("\0".ToCharArray());
+            //bool trimmed = false;
+            //int l = cqrMessage.Length - 1;
+            //while (!trimmed)
+            //{
+            //    if (cqrMessage[l] == '\0')
+            //        l--;
+            //    else
+            //    {
+            //        trimmed = true;
+            //        CqrMsg = cqrMessage.Substring(0, l);
+            //    }
+            //}
+            
             byte[] cipherBytes = DeEnCoder.DecodeText(CqrMsg, encType);
+            // byte[] cipherBytes = Convert.FromBase64String(CqrMsg);
 
             byte[] unroundedMerryBytes = symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash);
             string decrypted = DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);

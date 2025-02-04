@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,7 +65,14 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             Verification = restString.Substring(0, restString.IndexOf(";\n"));
 
             Base64Mime = restString.Substring(restString.IndexOf(";\n") + ";\n".Length);
-            Base64Mime = Base64Mime.Substring(0, Base64Mime.LastIndexOf("\n") - 1);
+            try
+            {
+                Base64Mime = Base64Mime.Substring(0, Base64Mime.IndexOf("\n"));
+            }
+            catch (Exception exMime)
+            {
+                Area23Log.LogStatic(exMime);
+            }            
 
             return (MimeAttachment)this;
 
@@ -94,7 +102,14 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             string verification = restString.Substring(0, restString.IndexOf(";\n"));
 
             string mimeBase64 = restString.Substring(restString.IndexOf(";\n") + ";\n".Length);
-            mimeBase64 = mimeBase64.Substring(0, mimeBase64.LastIndexOf("\n") - 1);
+            try
+            {
+                mimeBase64 = mimeBase64.Substring(0, mimeBase64.IndexOf("\n"));
+            } 
+            catch (Exception exMime)
+            {
+                Area23Log.LogStatic(exMime);
+            }
 
             MimeAttachment mimeAttach = new MimeAttachment(fileName, mimeType, mimeBase64, verification);
             return mimeAttach;

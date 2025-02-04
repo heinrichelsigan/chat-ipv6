@@ -86,7 +86,7 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
                         " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
                     Area23Log.Logger.LogInfo(sstring);
 
-                    int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_BYTE_BUFFEER, 0);
+                    int rsize = ClientSocket.Receive(buffer); // , 0, Constants.MAX_BYTE_BUFFEER, 0);
                     Array.Copy(buffer, BufferedData, rsize);
                     
                     IpSockReceiveData receiveData = new IpSockReceiveData(buffer, clientIEP?.Address.ToString(), clientIEP?.Port);                    
