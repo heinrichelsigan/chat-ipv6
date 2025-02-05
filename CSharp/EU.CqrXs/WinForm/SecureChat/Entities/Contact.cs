@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,5 +24,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                
 
         public string? ImageBase64 { get; set; }
+
+        /// <summary>
+        /// <see cref="object[]">RowParams</see> gets an object array of row parameters to show in <see cref="System.Windows.Forms.DataGridView"/>
+        /// </summary>
+        public object[] RowParams
+        {
+            get
+            {
+                List<object> oList = new List<object>();
+                oList.Add(ContactId);
+                oList.Add(Name);
+                oList.Add(Email);
+                oList.Add(Mobile);
+                oList.Add(Address);
+                return oList.ToArray();
+            }
+        }
     }
 }

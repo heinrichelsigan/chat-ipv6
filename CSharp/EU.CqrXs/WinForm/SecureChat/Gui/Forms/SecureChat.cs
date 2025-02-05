@@ -715,12 +715,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private void MenuContactsItemView_Click(object sender, EventArgs e)
         {
-
+            ContactsView cview = new ContactsView();
+            cview.ShowDialog();
         }
 
         private void MenuContactstemImport_Click(object sender, EventArgs e)
         {
-            int contactId = Entities.Settings.Instance.Contacts.Count - 1;
+            int contactId = Entities.Settings.Instance.Contacts.Count;
             HashSet<string> names = new HashSet<string>();
             foreach (Contact c in Entities.Settings.Instance.Contacts)
             {

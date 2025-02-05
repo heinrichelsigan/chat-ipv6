@@ -64,6 +64,9 @@
     <Compile Update="Gui\Forms\TransparentBadge.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Gui\Forms\ContactsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Gui\Forms\TransparentDialog.cs">
       <SubType>Form</SubType>
     </Compile>

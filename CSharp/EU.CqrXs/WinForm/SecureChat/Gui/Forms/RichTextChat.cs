@@ -712,11 +712,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             AddContactsToIpContact();
         }
 
-
         private void MenuContactsItemView_Click(object sender, EventArgs e)
         {
-
+            ContactsView cview = new ContactsView();
+            cview.ShowDialog();
         }
+
 
         private void MenuContactstemImport_Click(object sender, EventArgs e)
         {
