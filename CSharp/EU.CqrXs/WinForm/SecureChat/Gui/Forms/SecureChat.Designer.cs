@@ -99,17 +99,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             RichTextBoxChat = new RichTextBox();
             PictureBoxPartner = new PictureBox();
             PanelDestination = new Panel();
-            linkLabelAttachment1 = new LinkLabel();
-            PanelCenter = new Panel();
-            richTextBoxOneView = new RichTextBox();
             groupBoxAttachments = new GroupBox();
-            linkLabelAttachment2 = new LinkLabel();
-            linkLabelAttachment3 = new LinkLabel();
-            linkLabelAttachment5 = new LinkLabel();
-            linkLabelAttachment4 = new LinkLabel();
             linkLabelAttachment8 = new LinkLabel();
             linkLabelAttachment7 = new LinkLabel();
             linkLabelAttachment6 = new LinkLabel();
+            linkLabelAttachment5 = new LinkLabel();
+            linkLabelAttachment4 = new LinkLabel();
+            linkLabelAttachment3 = new LinkLabel();
+            linkLabelAttachment2 = new LinkLabel();
+            linkLabelAttachment1 = new LinkLabel();
+            PanelCenter = new Panel();
+            richTextBoxOneView = new RichTextBox();
             menuStrip.SuspendLayout();
             statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
@@ -120,8 +120,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelEnCodeCrypt.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PictureBoxPartner).BeginInit();
             PanelDestination.SuspendLayout();
-            PanelCenter.SuspendLayout();
             groupBoxAttachments.SuspendLayout();
+            PanelCenter.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip
@@ -466,6 +466,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuContactsItemView.Size = new Size(233, 22);
             menuContactsItemView.Text = "view contacts";
             menuContactsItemView.ToolTipText = "view all added and imported contacts";
+            menuContactsItemView.Click += MenuContactsItemView_Click;
             // 
             // separetorContacts
             // 
@@ -480,6 +481,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuContactstemImport.Size = new Size(233, 22);
             menuContactstemImport.Text = "import contacts";
             menuContactstemImport.ToolTipText = "import contacts from address book";
+            menuContactstemImport.Click += MenuContactstemImport_Click;
             // 
             // menuContactstemExport
             // 
@@ -824,39 +826,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelDestination.Size = new Size(148, 512);
             PanelDestination.TabIndex = 80;
             // 
-            // linkLabelAttachment1
-            // 
-            linkLabelAttachment1.AutoSize = true;
-            linkLabelAttachment1.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            linkLabelAttachment1.Location = new Point(3, 27);
-            linkLabelAttachment1.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment1.Name = "linkLabelAttachment1";
-            linkLabelAttachment1.Size = new Size(82, 11);
-            linkLabelAttachment1.TabIndex = 60;
-            linkLabelAttachment1.TabStop = true;
-            linkLabelAttachment1.Text = "Attachment1";
-            linkLabelAttachment1.Visible = false;
-            // 
-            // PanelCenter
-            // 
-            PanelCenter.Controls.Add(richTextBoxOneView);
-            PanelCenter.Location = new Point(28, 72);
-            PanelCenter.Margin = new Padding(0);
-            PanelCenter.Name = "PanelCenter";
-            PanelCenter.Size = new Size(800, 460);
-            PanelCenter.TabIndex = 81;
-            PanelCenter.Visible = false;
-            // 
-            // richTextBoxOneView
-            // 
-            richTextBoxOneView.Dock = DockStyle.Fill;
-            richTextBoxOneView.Location = new Point(0, 0);
-            richTextBoxOneView.Margin = new Padding(2);
-            richTextBoxOneView.Name = "richTextBoxOneView";
-            richTextBoxOneView.Size = new Size(800, 460);
-            richTextBoxOneView.TabIndex = 0;
-            richTextBoxOneView.Text = "";
-            // 
             // groupBoxAttachments
             // 
             groupBoxAttachments.Controls.Add(linkLabelAttachment8);
@@ -875,58 +844,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             groupBoxAttachments.TabIndex = 60;
             groupBoxAttachments.TabStop = false;
             groupBoxAttachments.Text = "    Attachments:";
-            // 
-            // linkLabelAttachment2
-            // 
-            linkLabelAttachment2.AutoSize = true;
-            linkLabelAttachment2.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            linkLabelAttachment2.Location = new Point(3, 50);
-            linkLabelAttachment2.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment2.Name = "linkLabelAttachment2";
-            linkLabelAttachment2.Size = new Size(82, 11);
-            linkLabelAttachment2.TabIndex = 61;
-            linkLabelAttachment2.TabStop = true;
-            linkLabelAttachment2.Text = "Attachment2";
-            linkLabelAttachment2.Visible = false;
-            // 
-            // linkLabelAttachment3
-            // 
-            linkLabelAttachment3.AutoSize = true;
-            linkLabelAttachment3.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            linkLabelAttachment3.Location = new Point(3, 73);
-            linkLabelAttachment3.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment3.Name = "linkLabelAttachment3";
-            linkLabelAttachment3.Size = new Size(82, 11);
-            linkLabelAttachment3.TabIndex = 62;
-            linkLabelAttachment3.TabStop = true;
-            linkLabelAttachment3.Text = "Attachment2";
-            linkLabelAttachment3.Visible = false;
-            // 
-            // linkLabelAttachment5
-            // 
-            linkLabelAttachment5.AutoSize = true;
-            linkLabelAttachment5.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            linkLabelAttachment5.Location = new Point(3, 119);
-            linkLabelAttachment5.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment5.Name = "linkLabelAttachment5";
-            linkLabelAttachment5.Size = new Size(82, 11);
-            linkLabelAttachment5.TabIndex = 64;
-            linkLabelAttachment5.TabStop = true;
-            linkLabelAttachment5.Text = "Attachment5";
-            linkLabelAttachment5.Visible = false;
-            // 
-            // linkLabelAttachment4
-            // 
-            linkLabelAttachment4.AutoSize = true;
-            linkLabelAttachment4.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            linkLabelAttachment4.Location = new Point(3, 96);
-            linkLabelAttachment4.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment4.Name = "linkLabelAttachment4";
-            linkLabelAttachment4.Size = new Size(82, 11);
-            linkLabelAttachment4.TabIndex = 63;
-            linkLabelAttachment4.TabStop = true;
-            linkLabelAttachment4.Text = "Attachment4";
-            linkLabelAttachment4.Visible = false;
             // 
             // linkLabelAttachment8
             // 
@@ -967,6 +884,91 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             linkLabelAttachment6.Text = "Attachment6";
             linkLabelAttachment6.Visible = false;
             // 
+            // linkLabelAttachment5
+            // 
+            linkLabelAttachment5.AutoSize = true;
+            linkLabelAttachment5.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            linkLabelAttachment5.Location = new Point(3, 119);
+            linkLabelAttachment5.Margin = new Padding(1, 0, 1, 0);
+            linkLabelAttachment5.Name = "linkLabelAttachment5";
+            linkLabelAttachment5.Size = new Size(82, 11);
+            linkLabelAttachment5.TabIndex = 64;
+            linkLabelAttachment5.TabStop = true;
+            linkLabelAttachment5.Text = "Attachment5";
+            linkLabelAttachment5.Visible = false;
+            // 
+            // linkLabelAttachment4
+            // 
+            linkLabelAttachment4.AutoSize = true;
+            linkLabelAttachment4.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            linkLabelAttachment4.Location = new Point(3, 96);
+            linkLabelAttachment4.Margin = new Padding(1, 0, 1, 0);
+            linkLabelAttachment4.Name = "linkLabelAttachment4";
+            linkLabelAttachment4.Size = new Size(82, 11);
+            linkLabelAttachment4.TabIndex = 63;
+            linkLabelAttachment4.TabStop = true;
+            linkLabelAttachment4.Text = "Attachment4";
+            linkLabelAttachment4.Visible = false;
+            // 
+            // linkLabelAttachment3
+            // 
+            linkLabelAttachment3.AutoSize = true;
+            linkLabelAttachment3.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            linkLabelAttachment3.Location = new Point(3, 73);
+            linkLabelAttachment3.Margin = new Padding(1, 0, 1, 0);
+            linkLabelAttachment3.Name = "linkLabelAttachment3";
+            linkLabelAttachment3.Size = new Size(82, 11);
+            linkLabelAttachment3.TabIndex = 62;
+            linkLabelAttachment3.TabStop = true;
+            linkLabelAttachment3.Text = "Attachment2";
+            linkLabelAttachment3.Visible = false;
+            // 
+            // linkLabelAttachment2
+            // 
+            linkLabelAttachment2.AutoSize = true;
+            linkLabelAttachment2.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            linkLabelAttachment2.Location = new Point(3, 50);
+            linkLabelAttachment2.Margin = new Padding(1, 0, 1, 0);
+            linkLabelAttachment2.Name = "linkLabelAttachment2";
+            linkLabelAttachment2.Size = new Size(82, 11);
+            linkLabelAttachment2.TabIndex = 61;
+            linkLabelAttachment2.TabStop = true;
+            linkLabelAttachment2.Text = "Attachment2";
+            linkLabelAttachment2.Visible = false;
+            // 
+            // linkLabelAttachment1
+            // 
+            linkLabelAttachment1.AutoSize = true;
+            linkLabelAttachment1.Font = new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            linkLabelAttachment1.Location = new Point(3, 27);
+            linkLabelAttachment1.Margin = new Padding(1, 0, 1, 0);
+            linkLabelAttachment1.Name = "linkLabelAttachment1";
+            linkLabelAttachment1.Size = new Size(82, 11);
+            linkLabelAttachment1.TabIndex = 60;
+            linkLabelAttachment1.TabStop = true;
+            linkLabelAttachment1.Text = "Attachment1";
+            linkLabelAttachment1.Visible = false;
+            // 
+            // PanelCenter
+            // 
+            PanelCenter.Controls.Add(richTextBoxOneView);
+            PanelCenter.Location = new Point(28, 72);
+            PanelCenter.Margin = new Padding(0);
+            PanelCenter.Name = "PanelCenter";
+            PanelCenter.Size = new Size(800, 460);
+            PanelCenter.TabIndex = 81;
+            PanelCenter.Visible = false;
+            // 
+            // richTextBoxOneView
+            // 
+            richTextBoxOneView.Dock = DockStyle.Fill;
+            richTextBoxOneView.Location = new Point(0, 0);
+            richTextBoxOneView.Margin = new Padding(2);
+            richTextBoxOneView.Name = "richTextBoxOneView";
+            richTextBoxOneView.Size = new Size(800, 460);
+            richTextBoxOneView.TabIndex = 0;
+            richTextBoxOneView.Text = "";
+            // 
             // SecureChat
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
@@ -1004,9 +1006,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelEnCodeCrypt.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PictureBoxPartner).EndInit();
             PanelDestination.ResumeLayout(false);
-            PanelCenter.ResumeLayout(false);
             groupBoxAttachments.ResumeLayout(false);
             groupBoxAttachments.PerformLayout();
+            PanelCenter.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }

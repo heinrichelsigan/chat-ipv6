@@ -21,7 +21,7 @@ using EU.CqrXs.Framework.Core.Net.NameService;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
-    public abstract class BaseChatForm : Form
+    public class BaseChatForm : Form
     {
         #region fields
 

@@ -84,7 +84,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 return null;
             }
         }
-        
+
         #endregion Properties
 
         /// <summary>
@@ -287,7 +287,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             try
             {
                 partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
-            } 
+            }
             catch (Exception exIpContact)
             {
                 MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIpContact.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -296,7 +296,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             this.ComboBoxIpContact.BackColor = Color.White;
-           
+
             if (Entities.Settings.Instance != null)
             {
                 if (!Entities.Settings.Instance.FriendIPs.Contains(this.ComboBoxIpContact.Text))
@@ -445,7 +445,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     }
                     else
                     {
-                        friendMsg = unencrypted;                        
+                        friendMsg = unencrypted;
                     }
 
                     chat.AddFriendMessage(friendMsg);
@@ -480,7 +480,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             myServerKey = this.ComboBoxSecretKey.Text;
 
             string unencrypted = this.RichTextBoxChat.Text;
-            
+
             try
             {
                 partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
@@ -528,7 +528,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             openFileDialog.AddExtension = false;
             openFileDialog.CheckFileExists = true;
             openFileDialog.CheckPathExists = true;
-            openFileDialog.Filter = "BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf|All files (*.*)|*.*";
+            openFileDialog.Filter = "All files (*.*)|*.*|BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf";
             DialogResult result = openFileDialog.ShowDialog();
             if (result == DialogResult.OK || result == DialogResult.Yes)
             {
@@ -538,14 +538,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     string fileNameOnly = Path.GetFileName(openFileDialog.FileName);
                     string mimeType = Framework.Core.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
                     string base64Mime = Base64.Encode(fileBytes);
-                    
+
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                     string unencrypted = MimeAttachment.GetMimeMessage(fileNameOnly, mimeType, base64Mime, pmsg.symmPipe.PipeString);
-                    
+
                     try
                     {
                         partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
-                        
+
                         pmsg.SendCqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
                         // pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
 
@@ -710,6 +710,118 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             contactSettings.ShowDialog();
 
             AddContactsToIpContact();
+        }
+
+
+        private void MenuContactsItemView_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MenuContactstemImport_Click(object sender, EventArgs e)
+        {
+            int contactId = Entities.Settings.Instance.Contacts.Count - 1;
+            HashSet<string> names = new HashSet<string>();
+            foreach (Contact c in Entities.Settings.Instance.Contacts)
+            {
+                if (!string.IsNullOrEmpty(c.Name) && !names.Contains(c.Name))
+                    names.Add(c.Name);
+                contactId = Math.Max(contactId, c.ContactId);
+            }
+            contactId++;
+            openFileDialog = openFileDialog ?? new OpenFileDialog();
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.AddExtension = false;
+            openFileDialog.CheckFileExists = true;
+            openFileDialog.CheckPathExists = true;
+            openFileDialog.Filter = "CSV (*.csv)|*.csv|VCard (*.vcf)|*.vcf"; //|All files (*.*)|*.*";
+            DialogResult result = openFileDialog.ShowDialog();
+            if (result == DialogResult.OK || result == DialogResult.Yes)
+            {
+                if (File.Exists(openFileDialog.FileName))
+                {
+                    string extension = Path.GetExtension(openFileDialog.FileName).ToLower();
+                    string[] lines = System.IO.File.ReadAllLines(openFileDialog.FileName);
+                    switch (extension)
+                    {
+                        case "csv":
+                        case ".csv":
+                            int cnt = 0;
+                            string cname = string.Empty;
+                            string cemail = string.Empty;
+                            string cphone = string.Empty;
+                            string cmobile = string.Empty;
+                            List<int> mailfields = new List<int>();
+                            List<int> phonefields = new List<int>();
+                            List<int> mobilefields = new List<int>();
+
+                            string[] attributes = lines[0].Split(',');                            
+                            foreach (string attribute in attributes)
+                            {
+                                if (attribute.ToLower().Contains("e-mail") || attribute.ToLower().Contains("email") || attribute.ToLower().Contains("mail"))
+                                    mailfields.Add(cnt);
+                                if (attribute.ToLower().Contains("phone"))
+                                    phonefields.Add(cnt);
+                                if (attribute.ToLower().Contains("mobil")) 
+                                    mobilefields.Add(cnt);
+                                cnt++;
+                            }
+                            
+                            for (int i = 1; i < lines.Length; i++)
+                            {
+                                cnt = 0;
+                                cname = string.Empty; cemail = string.Empty; cphone = string.Empty; cmobile = string.Empty;
+                                string[] fields = lines[i].Split(',');
+                                for (int j = 0; j < fields.Length; j++)
+                                {
+                                    if (j == 0 || j == 2)
+                                    {
+                                        cname += fields[j] + " ";
+                                    }
+                                    if (j == 3)
+                                        cname = cname.TrimEnd(' ');
+
+                                    if (mailfields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsEmail())
+                                    {
+                                        if (string.IsNullOrEmpty(cemail))
+                                            cemail = fields[j];
+                                    }
+
+                                    if (phonefields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsPhoneOrMobile())
+                                    {
+                                        if (string.IsNullOrEmpty(cphone))
+                                            cphone = fields[j];
+                                    }
+                                    if (mobilefields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsPhoneOrMobile())
+                                    {
+                                        if (string.IsNullOrEmpty(cmobile))
+                                            cmobile = fields[j];
+                                    }
+                                }
+                                cmobile = (string.IsNullOrEmpty(cmobile)) ? cphone : cmobile;
+                                if (!string.IsNullOrEmpty(cname) && !names.Contains(cname))
+                                {
+                                    if (!string.IsNullOrEmpty(cemail))
+                                    {
+                                        Contact contact = new Contact() { ContactId = contactId++, Name = cname, Email = cemail, Mobile = cmobile };
+                                        Entities.Settings.Instance.Contacts.Add(contact);
+                                    }
+                                }
+                                
+                            }
+                            
+                            Entities.Settings.Save(Entities.Settings.Instance);
+                            break;
+                        case "vcf":
+                        case ".vcf":
+
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
+            }
         }
 
         #endregion Contacts

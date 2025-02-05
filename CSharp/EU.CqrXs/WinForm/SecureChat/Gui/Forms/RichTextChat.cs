@@ -420,7 +420,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         //     this.ComboBoxIpContact.Text = area23EvArgs.GenericTData.ClientIPAddr;
                         encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
                     }
-
+                    //string encrypt = string.Empty;
+                    //bool trimmed = false;
+                    //int l = encrypted.Length - 1;
+                    //while (!trimmed)
+                    //{
+                    //    if (encrypted[l] == '\0')
+                    //        l--;
+                    //    else
+                    //    {
+                    //        trimmed = true;
+                    //        encrypt = encrypted.Substring(0, l);
+                    //    }
+                    //}
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                     string unencrypted = pmsg.NCqrPeerMsg(encrypted);
@@ -516,7 +528,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             openFileDialog.AddExtension = false;
             openFileDialog.CheckFileExists = true;
             openFileDialog.CheckPathExists = true;
-            openFileDialog.Filter = "BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf|All files (*.*)|*.*";
+            openFileDialog.Filter = "All files (*.*)|*.*|BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf";
             DialogResult result = openFileDialog.ShowDialog();
             if (result == DialogResult.OK || result == DialogResult.Yes)
             {
@@ -614,7 +626,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
-            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime.Substring(1));
+            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
             Uri uri = new Uri("file://" + filePath);
             SetLinkLabelText(linkLabelAttachment0, mimeAttachment.FileName);
@@ -698,6 +710,118 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             contactSettings.ShowDialog();
 
             AddContactsToIpContact();
+        }
+
+
+        private void MenuContactsItemView_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MenuContactstemImport_Click(object sender, EventArgs e)
+        {
+            int contactId = Entities.Settings.Instance.Contacts.Count - 1;
+            HashSet<string> names = new HashSet<string>();
+            foreach (Contact c in Entities.Settings.Instance.Contacts)
+            {
+                if (!string.IsNullOrEmpty(c.Name) && !names.Contains(c.Name))
+                    names.Add(c.Name);
+                contactId = Math.Max(contactId, c.ContactId);
+            }
+            contactId++;
+            openFileDialog = openFileDialog ?? new OpenFileDialog();
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.AddExtension = false;
+            openFileDialog.CheckFileExists = true;
+            openFileDialog.CheckPathExists = true;
+            openFileDialog.Filter = "CSV (*.csv)|*.csv|VCard (*.vcf)|*.vcf"; //|All files (*.*)|*.*";
+            DialogResult result = openFileDialog.ShowDialog();
+            if (result == DialogResult.OK || result == DialogResult.Yes)
+            {
+                if (File.Exists(openFileDialog.FileName))
+                {
+                    string extension = Path.GetExtension(openFileDialog.FileName).ToLower();
+                    string[] lines = System.IO.File.ReadAllLines(openFileDialog.FileName);
+                    switch (extension)
+                    {
+                        case "csv":
+                        case ".csv":
+                            int cnt = 0;
+                            string cname = string.Empty;
+                            string cemail = string.Empty;
+                            string cphone = string.Empty;
+                            string cmobile = string.Empty;
+                            List<int> mailfields = new List<int>();
+                            List<int> phonefields = new List<int>();
+                            List<int> mobilefields = new List<int>();
+
+                            string[] attributes = lines[0].Split(',');
+                            foreach (string attribute in attributes)
+                            {
+                                if (attribute.ToLower().Contains("e-mail") || attribute.ToLower().Contains("email") || attribute.ToLower().Contains("mail"))
+                                    mailfields.Add(cnt);
+                                if (attribute.ToLower().Contains("phone"))
+                                    phonefields.Add(cnt);
+                                if (attribute.ToLower().Contains("mobil"))
+                                    mobilefields.Add(cnt);
+                                cnt++;
+                            }
+
+                            for (int i = 1; i < lines.Length; i++)
+                            {
+                                cnt = 0;
+                                cname = string.Empty; cemail = string.Empty; cphone = string.Empty; cmobile = string.Empty;
+                                string[] fields = lines[i].Split(',');
+                                for (int j = 0; j < fields.Length; j++)
+                                {
+                                    if (j == 0 || j == 2)
+                                    {
+                                        cname += fields[j] + " ";
+                                    }
+                                    if (j == 3)
+                                        cname = cname.TrimEnd(' ');
+
+                                    if (mailfields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsEmail())
+                                    {
+                                        if (string.IsNullOrEmpty(cemail))
+                                            cemail = fields[j];
+                                    }
+
+                                    if (phonefields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsPhoneOrMobile())
+                                    {
+                                        if (string.IsNullOrEmpty(cphone))
+                                            cphone = fields[j];
+                                    }
+                                    if (mobilefields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsPhoneOrMobile())
+                                    {
+                                        if (string.IsNullOrEmpty(cmobile))
+                                            cmobile = fields[j];
+                                    }
+                                }
+                                cmobile = (string.IsNullOrEmpty(cmobile)) ? cphone : cmobile;
+                                if (!string.IsNullOrEmpty(cname) && !names.Contains(cname))
+                                {
+                                    if (!string.IsNullOrEmpty(cemail))
+                                    {
+                                        Contact contact = new Contact() { ContactId = contactId++, Name = cname, Email = cemail, Mobile = cmobile };
+                                        Entities.Settings.Instance.Contacts.Add(contact);
+                                    }
+                                }
+
+                            }
+
+                            Entities.Settings.Save(Entities.Settings.Instance);
+                            break;
+                        case "vcf":
+                        case ".vcf":
+
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
+            }
         }
 
         #endregion Contacts
@@ -993,5 +1117,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
     }
+
+
 
 }

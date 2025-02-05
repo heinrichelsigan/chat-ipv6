@@ -247,7 +247,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             openFileDialog.RestoreDirectory = true;
             openFileDialog.AddExtension = false;
             openFileDialog.CheckFileExists = true;
-            openFileDialog.Filter = "BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPEG (*.jpeg)|*.jpeg|JPG (*.jpg)|*.jpg";
+            openFileDialog.Filter = "PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPEG (*.jpeg)|*.jpeg|JPG (*.jpg)|*.jpg|BMP (*.bmp)|*.bmp";
             // openFileDialog.Filter = "Images|*.jpg|*.png|*.gif";
             DialogResult diaRes = openFileDialog.ShowDialog();
             if (diaRes == DialogResult.OK)
