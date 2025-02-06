@@ -92,26 +92,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PictureBoxYou = new PictureBox();
             ButtonKey = new Button();
             PanelEnCodeCrypt = new Panel();
+            ButtonCheck = new Button();
             ComboBoxSecretKey = new ComboBox();
             ComboBoxIpContact = new ComboBox();
             TextBoxPipe = new TextBox();
             RichTextBoxChat = new RichTextBox();
             PictureBoxPartner = new PictureBox();
             PanelDestination = new Panel();
-            groupBoxAttachments = new GroupBox();
-            linkLabelAttachment8 = new LinkLabel();
-            linkLabelAttachment7 = new LinkLabel();
-            linkLabelAttachment6 = new LinkLabel();
-            linkLabelAttachment5 = new LinkLabel();
-            linkLabelAttachment4 = new LinkLabel();
-            linkLabelAttachment3 = new LinkLabel();
-            linkLabelAttachment2 = new LinkLabel();
-            linkLabelAttachment1 = new LinkLabel();
+            GroupBoxLinks = new Controls.GroupBoxLinkLabels();
             PanelCenter = new Panel();
-            PanelBottom = new Panel();
             RichTextBoxOneView = new RichTextBox();
+            PanelBottom = new Panel();
+            buttonAttach = new Button();
             button1 = new Button();
-            button2 = new Button();
+            buttonClear = new Button();
             menuStrip.SuspendLayout();
             statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
@@ -121,10 +115,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ((System.ComponentModel.ISupportInitialize)PictureBoxYou).BeginInit();
             PanelEnCodeCrypt.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PictureBoxPartner).BeginInit();
-            PanelBottom.SuspendLayout();
             PanelDestination.SuspendLayout();
-            groupBoxAttachments.SuspendLayout();
             PanelCenter.SuspendLayout();
+            PanelBottom.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip
@@ -286,7 +279,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuIItemMyIps.BackColor = SystemColors.MenuBar;
             menuIItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { menuItemExternalIp });
             menuIItemMyIps.Name = "menuIItemMyIps";
-            menuIItemMyIps.Size = new Size(180, 22);
+            menuIItemMyIps.Size = new Size(177, 22);
             menuIItemMyIps.Text = "my ip's";
             // 
             // menuItemExternalIp
@@ -302,7 +295,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuItemFriendIp.BackColor = SystemColors.MenuBar;
             menuItemFriendIp.DropDownItems.AddRange(new ToolStripItem[] { menuItempComboBoxFriendIp });
             menuItemFriendIp.Name = "menuItemFriendIp";
-            menuItemFriendIp.Size = new Size(180, 22);
+            menuItemFriendIp.Size = new Size(177, 22);
             menuItemFriendIp.Text = "friend ip's";
             menuItemFriendIp.ToolTipText = "You can enter here directly friend ip's, if your connection is free of SNAT/DNAT";
             // 
@@ -316,7 +309,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             menuItemProxyServers.BackColor = SystemColors.MenuBar;
             menuItemProxyServers.Name = "menuItemProxyServers";
-            menuItemProxyServers.Size = new Size(180, 22);
+            menuItemProxyServers.Size = new Size(177, 22);
             menuItemProxyServers.Text = "proxies";
             menuItemProxyServers.ToolTipText = "proxies are needed mainly to connect to people, where no endpoint to endpoint ip connection is possible";
             // 
@@ -325,14 +318,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuIPsSeparator.BackColor = SystemColors.MenuBar;
             menuIPsSeparator.ForeColor = SystemColors.ActiveBorder;
             menuIPsSeparator.Name = "menuIPsSeparator";
-            menuIPsSeparator.Size = new Size(177, 6);
+            menuIPsSeparator.Size = new Size(174, 6);
             // 
             // menuItemIPv6Secure
             // 
             menuItemIPv6Secure.BackColor = SystemColors.MenuBar;
             menuItemIPv6Secure.Name = "menuItemIPv6Secure";
             menuItemIPv6Secure.ShortcutKeys = Keys.Control | Keys.D6;
-            menuItemIPv6Secure.Size = new Size(180, 22);
+            menuItemIPv6Secure.Size = new Size(177, 22);
             menuItemIPv6Secure.Text = "ip6 cqr";
             menuItemIPv6Secure.ToolTipText = "you can check it only, when you have an ipv6 address and you want to chat only to partners, where ip6 connect is possible";
             // 
@@ -591,7 +584,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuEditItemSelectAll.ShortcutKeys = Keys.Control | Keys.A;
             menuEditItemSelectAll.Size = new Size(164, 22);
             menuEditItemSelectAll.Text = "Select All";
-
+            // 
+            // openFileDialog
+            // 
+            openFileDialog.FileName = "openFileDialog";
+            openFileDialog.Title = "OpenFileDialog";
+            // 
+            // saveFileDialog
+            // 
+            saveFileDialog.InitialDirectory = "C:\\Windows\\Temp";
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.ShowHiddenFiles = true;
+            saveFileDialog.SupportMultiDottedExtensions = true;
+            saveFileDialog.Title = "Save File";
             // 
             // statusStrip
             // 
@@ -617,106 +622,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             toolStripStatusLabel.Size = new Size(659, 19);
             toolStripStatusLabel.Spring = true;
             toolStripStatusLabel.Text = "Status";
-
-            // 
-            // PanelEnCodeCrypt
-            // 
-            PanelEnCodeCrypt.BackColor = SystemColors.ActiveCaption;
-            PanelEnCodeCrypt.Controls.Add(button1);
-            PanelEnCodeCrypt.Controls.Add(ComboBoxSecretKey);
-            PanelEnCodeCrypt.Controls.Add(ComboBoxIpContact);
-            PanelEnCodeCrypt.Controls.Add(TextBoxPipe);
-            PanelEnCodeCrypt.Controls.Add(ButtonKey);
-            PanelEnCodeCrypt.ForeColor = SystemColors.WindowText;
-            PanelEnCodeCrypt.Location = new Point(0, 28);
-            PanelEnCodeCrypt.Margin = new Padding(0);
-            PanelEnCodeCrypt.Name = "PanelEnCodeCrypt";
-            PanelEnCodeCrypt.Size = new Size(976, 36);
-            PanelEnCodeCrypt.TabIndex = 10;
-            // 
-            // ComboBoxSecretKey
-            // 
-            ComboBoxSecretKey.BackColor = SystemColors.ControlLightLight;
-            ComboBoxSecretKey.ForeColor = SystemColors.ControlText;
-            ComboBoxSecretKey.FormattingEnabled = true;
-            ComboBoxSecretKey.Location = new Point(10, 6);
-            ComboBoxSecretKey.Margin = new Padding(1);
-            ComboBoxSecretKey.Name = "ComboBoxSecretKey";
-            ComboBoxSecretKey.Size = new Size(251, 24);
-            ComboBoxSecretKey.TabIndex = 11;
-            ComboBoxSecretKey.Text = "[enter secret key here]";
-            ComboBoxSecretKey.SelectedIndexChanged += ComboBoxSecretKey_SelectedIndexChanged;
-            ComboBoxSecretKey.TextUpdate += ComboBoxSecretKey_TextUpdate;
-            ComboBoxSecretKey.Leave += ComboBoxSecretKey_FocusLeave;
-            // 
-            // ButtonKey
-            // 
-            ButtonKey.BackColor = SystemColors.ButtonHighlight;
-            ButtonKey.BackgroundImageLayout = ImageLayout.Center;
-            ButtonKey.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
-            ButtonKey.ForeColor = SystemColors.ActiveCaptionText;
-            ButtonKey.Image = Properties.Resources.a_right_key;
-            ButtonKey.Location = new Point(269, 4);
-            ButtonKey.Margin = new Padding(1);
-            ButtonKey.Name = "ButtonKey";
-            ButtonKey.Padding = new Padding(1);
-            ButtonKey.Size = new Size(40, 27);
-            ButtonKey.TabIndex = 12;
-            ButtonKey.UseVisualStyleBackColor = false;
-            ButtonKey.Click += ButtonKey_Click;
-            // 
-            // TextBoxPipe
-            // 
-            TextBoxPipe.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            TextBoxPipe.HideSelection = false;
-            TextBoxPipe.Location = new Point(319, 5);
-            TextBoxPipe.Margin = new Padding(1);
-            TextBoxPipe.Name = "TextBoxPipe";
-            TextBoxPipe.ReadOnly = true;
-            TextBoxPipe.Size = new Size(101, 26);
-            TextBoxPipe.TabIndex = 13;
-            // 
-            // ComboBoxIpContact
-            // 
-            ComboBoxIpContact.BackColor = SystemColors.ControlLightLight;
-            ComboBoxIpContact.Font = new Font("Lucida Sans Unicode", 10F);
-            ComboBoxIpContact.ForeColor = SystemColors.ControlText;
-            ComboBoxIpContact.FormattingEnabled = true;
-            ComboBoxIpContact.Location = new Point(429, 6);
-            ComboBoxIpContact.Margin = new Padding(1);
-            ComboBoxIpContact.Name = "ComboBoxIpContact";
-            ComboBoxIpContact.Size = new Size(317, 24);
-            ComboBoxIpContact.TabIndex = 15;
-            ComboBoxIpContact.Text = "[enter peer IPv4 or IPv6 for directly connect]";
-            ComboBoxIpContact.SelectedIndexChanged += ComboBoxIpContact_SelectedIndexChanged;
-            ComboBoxIpContact.TextUpdate += ComboBoxIpContact_TextUpdate;
-            ComboBoxIpContact.Leave += ComboBoxIpContact_FocusLeave;
-            // 
-            // button1
-            // 
-            button1.BackColor = SystemColors.ButtonHighlight;
-            button1.BackgroundImageLayout = ImageLayout.Center;
-            button1.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
-            button1.ForeColor = SystemColors.ActiveCaptionText;
-            button1.Image = Properties.Resources.a_right_key;
-            button1.Location = new Point(770, 4);
-            button1.Margin = new Padding(1);
-            button1.Name = "button1";
-            button1.Padding = new Padding(1);
-            button1.Size = new Size(40, 27);
-            button1.TabIndex = 17;
-            button1.UseVisualStyleBackColor = false;
-            // 
-            // PanelCenter
-            // 
-            PanelCenter.Controls.Add(SplitChatView);
-            PanelCenter.Controls.Add(RichTextBoxOneView);
-            PanelCenter.Location = new Point(8, 72);
-            PanelCenter.Margin = new Padding(0);
-            PanelCenter.Name = "PanelCenter";
-            PanelCenter.Size = new Size(800, 460);
-            PanelCenter.TabIndex = 30;
-            PanelCenter.Visible = true;
             // 
             // SplitChatView
             // 
@@ -727,12 +632,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             SplitChatView.MaximumSize = new Size(800, 600);
             SplitChatView.MinimumSize = new Size(600, 400);
             SplitChatView.Name = "SplitChatView";
-            SplitChatView.Size = new Size(800, 460);
-            SplitChatView.SplitterDistance = 396;
-            SplitChatView.SplitterIncrement = 8;
-            SplitChatView.SplitterWidth = 8;
-            SplitChatView.TabIndex = 31;
-            SplitChatView.TabStop = false;
             // 
             // SplitChatView.Panel1
             // 
@@ -746,6 +645,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             SplitChatView.Panel2.BackgroundImageLayout = ImageLayout.None;
             SplitChatView.Panel2.Controls.Add(TextBoxDestionation);
             SplitChatView.Panel2MinSize = 300;
+            SplitChatView.Size = new Size(800, 460);
+            SplitChatView.SplitterDistance = 396;
+            SplitChatView.SplitterIncrement = 8;
+            SplitChatView.SplitterWidth = 8;
+            SplitChatView.TabIndex = 31;
+            SplitChatView.TabStop = false;
             // 
             // TextBoxSource
             // 
@@ -777,6 +682,162 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             TextBoxDestionation.Size = new Size(396, 460);
             TextBoxDestionation.TabIndex = 33;
             // 
+            // PictureBoxYou
+            // 
+            PictureBoxYou.BackgroundImageLayout = ImageLayout.Stretch;
+            PictureBoxYou.Location = new Point(2, 1);
+            PictureBoxYou.Margin = new Padding(1);
+            PictureBoxYou.Name = "PictureBoxYou";
+            PictureBoxYou.Padding = new Padding(1);
+            PictureBoxYou.Size = new Size(148, 148);
+            PictureBoxYou.TabIndex = 71;
+            PictureBoxYou.TabStop = false;
+            // 
+            // ButtonKey
+            // 
+            ButtonKey.BackColor = SystemColors.ButtonHighlight;
+            ButtonKey.BackgroundImageLayout = ImageLayout.Center;
+            ButtonKey.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
+            ButtonKey.ForeColor = SystemColors.ActiveCaptionText;
+            ButtonKey.Image = Properties.Resources.a_right_key;
+            ButtonKey.Location = new Point(254, 4);
+            ButtonKey.Margin = new Padding(1);
+            ButtonKey.Name = "ButtonKey";
+            ButtonKey.Padding = new Padding(1);
+            ButtonKey.Size = new Size(40, 27);
+            ButtonKey.TabIndex = 12;
+            ButtonKey.UseVisualStyleBackColor = false;
+            ButtonKey.Click += ButtonKey_Click;
+            // 
+            // PanelEnCodeCrypt
+            // 
+            PanelEnCodeCrypt.BackColor = SystemColors.ActiveCaption;
+            PanelEnCodeCrypt.Controls.Add(ButtonCheck);
+            PanelEnCodeCrypt.Controls.Add(ComboBoxSecretKey);
+            PanelEnCodeCrypt.Controls.Add(ComboBoxIpContact);
+            PanelEnCodeCrypt.Controls.Add(TextBoxPipe);
+            PanelEnCodeCrypt.Controls.Add(ButtonKey);
+            PanelEnCodeCrypt.ForeColor = SystemColors.WindowText;
+            PanelEnCodeCrypt.Location = new Point(0, 28);
+            PanelEnCodeCrypt.Margin = new Padding(0);
+            PanelEnCodeCrypt.Name = "PanelEnCodeCrypt";
+            PanelEnCodeCrypt.Size = new Size(976, 36);
+            PanelEnCodeCrypt.TabIndex = 10;
+            // 
+            // ButtonCheck
+            // 
+            ButtonCheck.BackColor = SystemColors.ButtonHighlight;
+            ButtonCheck.BackgroundImageLayout = ImageLayout.Center;
+            ButtonCheck.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
+            ButtonCheck.ForeColor = SystemColors.ActiveCaptionText;
+            ButtonCheck.Image = Properties.Resources.a_right_key;
+            ButtonCheck.Location = new Point(768, 4);
+            ButtonCheck.Margin = new Padding(1);
+            ButtonCheck.Name = "ButtonCheck";
+            ButtonCheck.Padding = new Padding(1);
+            ButtonCheck.Size = new Size(40, 27);
+            ButtonCheck.TabIndex = 17;
+            ButtonCheck.UseVisualStyleBackColor = false;
+            // 
+            // ComboBoxSecretKey
+            // 
+            ComboBoxSecretKey.BackColor = SystemColors.ControlLightLight;
+            ComboBoxSecretKey.ForeColor = SystemColors.ControlText;
+            ComboBoxSecretKey.FormattingEnabled = true;
+            ComboBoxSecretKey.Location = new Point(10, 6);
+            ComboBoxSecretKey.Margin = new Padding(1);
+            ComboBoxSecretKey.Name = "ComboBoxSecretKey";
+            ComboBoxSecretKey.Size = new Size(237, 24);
+            ComboBoxSecretKey.TabIndex = 11;
+            ComboBoxSecretKey.Text = "[enter secret key here]";
+            ComboBoxSecretKey.SelectedIndexChanged += ComboBoxSecretKey_SelectedIndexChanged;
+            ComboBoxSecretKey.TextUpdate += ComboBoxSecretKey_TextUpdate;
+            ComboBoxSecretKey.Leave += ComboBoxSecretKey_FocusLeave;
+            // 
+            // ComboBoxIpContact
+            // 
+            ComboBoxIpContact.BackColor = SystemColors.ControlLightLight;
+            ComboBoxIpContact.Font = new Font("Lucida Sans Unicode", 10F);
+            ComboBoxIpContact.ForeColor = SystemColors.ControlText;
+            ComboBoxIpContact.FormattingEnabled = true;
+            ComboBoxIpContact.Location = new Point(412, 6);
+            ComboBoxIpContact.Margin = new Padding(1);
+            ComboBoxIpContact.Name = "ComboBoxIpContact";
+            ComboBoxIpContact.Size = new Size(348, 24);
+            ComboBoxIpContact.TabIndex = 15;
+            ComboBoxIpContact.Text = "[enter peer IPv4 or IPv6 for directly connect]";
+            ComboBoxIpContact.SelectedIndexChanged += ComboBoxIpContact_SelectedIndexChanged;
+            ComboBoxIpContact.TextUpdate += ComboBoxIpContact_TextUpdate;
+            ComboBoxIpContact.Leave += ComboBoxIpContact_FocusLeave;
+            // 
+            // TextBoxPipe
+            // 
+            TextBoxPipe.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TextBoxPipe.HideSelection = false;
+            TextBoxPipe.Location = new Point(304, 5);
+            TextBoxPipe.Margin = new Padding(1);
+            TextBoxPipe.Name = "TextBoxPipe";
+            TextBoxPipe.ReadOnly = true;
+            TextBoxPipe.Size = new Size(100, 26);
+            TextBoxPipe.TabIndex = 13;
+            // 
+            // RichTextBoxChat
+            // 
+            RichTextBoxChat.BorderStyle = BorderStyle.FixedSingle;
+            RichTextBoxChat.ForeColor = SystemColors.WindowText;
+            RichTextBoxChat.Location = new Point(0, 0);
+            RichTextBoxChat.Margin = new Padding(1);
+            RichTextBoxChat.Name = "RichTextBoxChat";
+            RichTextBoxChat.Size = new Size(824, 136);
+            RichTextBoxChat.TabIndex = 41;
+            RichTextBoxChat.Text = "";
+            // 
+            // PictureBoxPartner
+            // 
+            PictureBoxPartner.Location = new Point(2, 366);
+            PictureBoxPartner.Margin = new Padding(1);
+            PictureBoxPartner.Name = "PictureBoxPartner";
+            PictureBoxPartner.Padding = new Padding(1);
+            PictureBoxPartner.Size = new Size(148, 148);
+            PictureBoxPartner.TabIndex = 72;
+            PictureBoxPartner.TabStop = false;
+            // 
+            // PanelDestination
+            // 
+            PanelDestination.BackColor = SystemColors.ActiveCaption;
+            PanelDestination.Controls.Add(GroupBoxLinks);
+            PanelDestination.Controls.Add(PictureBoxYou);
+            PanelDestination.Controls.Add(PictureBoxPartner);
+            PanelDestination.ForeColor = SystemColors.ActiveCaptionText;
+            PanelDestination.Location = new Point(824, 32);
+            PanelDestination.Margin = new Padding(0);
+            PanelDestination.Name = "PanelDestination";
+            PanelDestination.Size = new Size(152, 515);
+            PanelDestination.TabIndex = 70;
+            // 
+            // GroupBoxLinks
+            // 
+            GroupBoxLinks.BackColor = SystemColors.ControlLightLight;
+            GroupBoxLinks.Font = new Font("Lucida Sans Unicode", 9F);
+            GroupBoxLinks.Location = new Point(1, 151);
+            GroupBoxLinks.Margin = new Padding(1);
+            GroupBoxLinks.Name = "GroupBoxLinks";
+            GroupBoxLinks.Padding = new Padding(1);
+            GroupBoxLinks.Size = new Size(151, 213);
+            GroupBoxLinks.TabIndex = 80;
+            GroupBoxLinks.TabStop = false;
+            GroupBoxLinks.Text = "Attachments";
+            // 
+            // PanelCenter
+            // 
+            PanelCenter.Controls.Add(SplitChatView);
+            PanelCenter.Controls.Add(RichTextBoxOneView);
+            PanelCenter.Location = new Point(8, 72);
+            PanelCenter.Margin = new Padding(0);
+            PanelCenter.Name = "PanelCenter";
+            PanelCenter.Size = new Size(800, 460);
+            PanelCenter.TabIndex = 30;
+            // 
             // RichTextBoxOneView
             // 
             RichTextBoxOneView.Dock = DockStyle.Fill;
@@ -799,198 +860,41 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelBottom.Size = new Size(824, 136);
             PanelBottom.TabIndex = 40;
             // 
-            // RichTextBoxChat
+            // buttonAttach
             // 
-            RichTextBoxChat.BorderStyle = BorderStyle.FixedSingle;
-            RichTextBoxChat.ForeColor = SystemColors.WindowText;
-            RichTextBoxChat.Location = new Point(0, 549);
-            RichTextBoxChat.Margin = new Padding(1);
-            RichTextBoxChat.Name = "RichTextBoxChat";
-            RichTextBoxChat.Size = new Size(824, 136);
-            RichTextBoxChat.TabIndex = 41;
-            RichTextBoxChat.Text = "";
-
+            buttonAttach.Location = new Point(827, 552);
+            buttonAttach.Margin = new Padding(2);
+            buttonAttach.Name = "buttonAttach";
+            buttonAttach.Padding = new Padding(1);
+            buttonAttach.Size = new Size(144, 40);
+            buttonAttach.TabIndex = 82;
+            buttonAttach.Text = "Attach";
+            buttonAttach.UseVisualStyleBackColor = true;
+            buttonAttach.Click += buttonAttach_Click;
             // 
-            // PanelDestination
+            // button1
             // 
-            PanelDestination.BackColor = SystemColors.ActiveCaption;
-            PanelDestination.Controls.Add(groupBoxAttachments);
-            PanelDestination.Controls.Add(PictureBoxYou);
-            PanelDestination.Controls.Add(PictureBoxPartner);
-            PanelDestination.ForeColor = SystemColors.ActiveCaptionText;
-            PanelDestination.Location = new Point(824, 32);
-            PanelDestination.Margin = new Padding(0);
-            PanelDestination.Name = "PanelDestination";
-            PanelDestination.Size = new Size(152, 515);
-            PanelDestination.TabIndex = 70;
+            button1.Location = new Point(827, 598);
+            button1.Margin = new Padding(2);
+            button1.Name = "button1";
+            button1.Padding = new Padding(1);
+            button1.Size = new Size(144, 40);
+            button1.TabIndex = 83;
+            button1.Text = "Send";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
-            // PictureBoxYou
+            // buttonClear
             // 
-            PictureBoxYou.BackgroundImageLayout = ImageLayout.Stretch;
-            PictureBoxYou.Location = new Point(2, 1);
-            PictureBoxYou.Margin = new Padding(1);
-            PictureBoxYou.Name = "PictureBoxYou";
-            PictureBoxYou.Padding = new Padding(1);
-            PictureBoxYou.Size = new Size(148, 148);
-            PictureBoxYou.TabIndex = 71;
-            PictureBoxYou.TabStop = false;
-            // 
-            // PictureBoxPartner
-            // 
-            PictureBoxPartner.Location = new Point(2, 366);
-            PictureBoxPartner.Margin = new Padding(1);
-            PictureBoxPartner.Name = "PictureBoxPartner";
-            PictureBoxPartner.Padding = new Padding(1);
-            PictureBoxPartner.Size = new Size(148, 148);
-            PictureBoxPartner.TabIndex = 72;
-            PictureBoxPartner.TabStop = false;
-            // 
-            // groupBoxAttachments
-            // 
-            groupBoxAttachments.BackColor = SystemColors.ControlLightLight;
-            groupBoxAttachments.Controls.Add(linkLabelAttachment8);
-            groupBoxAttachments.Controls.Add(linkLabelAttachment7);
-            groupBoxAttachments.Controls.Add(linkLabelAttachment6);
-            groupBoxAttachments.Controls.Add(linkLabelAttachment5);
-            groupBoxAttachments.Controls.Add(linkLabelAttachment4);
-            groupBoxAttachments.Controls.Add(linkLabelAttachment3);
-            groupBoxAttachments.Controls.Add(linkLabelAttachment2);
-            groupBoxAttachments.Controls.Add(linkLabelAttachment1);
-            groupBoxAttachments.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            groupBoxAttachments.Location = new Point(1, 151);
-            groupBoxAttachments.Margin = new Padding(1);
-            groupBoxAttachments.Name = "groupBoxAttachments";
-            groupBoxAttachments.Padding = new Padding(1);
-            groupBoxAttachments.Size = new Size(151, 213);
-            groupBoxAttachments.TabIndex = 80;
-            groupBoxAttachments.TabStop = false;
-            groupBoxAttachments.Text = "     Attachments:";
-            // 
-            // linkLabelAttachment8
-            // 
-            linkLabelAttachment8.AutoSize = true;
-            linkLabelAttachment8.Font = new Font("Lucida Console", 8F);
-            linkLabelAttachment8.Location = new Point(3, 189);
-            linkLabelAttachment8.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment8.Name = "linkLabelAttachment8";
-            linkLabelAttachment8.Size = new Size(82, 11);
-            linkLabelAttachment8.TabIndex = 88;
-            linkLabelAttachment8.TabStop = true;
-            linkLabelAttachment8.Text = "Attachment8";
-            linkLabelAttachment8.Visible = false;
-            // 
-            // linkLabelAttachment7
-            // 
-            linkLabelAttachment7.AutoSize = true;
-            linkLabelAttachment7.Font = new Font("Lucida Console", 8F);
-            linkLabelAttachment7.Location = new Point(3, 165);
-            linkLabelAttachment7.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment7.Name = "linkLabelAttachment7";
-            linkLabelAttachment7.Size = new Size(82, 11);
-            linkLabelAttachment7.TabIndex = 87;
-            linkLabelAttachment7.TabStop = true;
-            linkLabelAttachment7.Text = "Attachment7";
-            linkLabelAttachment7.Visible = false;
-            // 
-            // linkLabelAttachment6
-            // 
-            linkLabelAttachment6.AutoSize = true;
-            linkLabelAttachment6.Font = new Font("Lucida Console", 8F);
-            linkLabelAttachment6.Location = new Point(3, 142);
-            linkLabelAttachment6.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment6.Name = "linkLabelAttachment6";
-            linkLabelAttachment6.Size = new Size(82, 11);
-            linkLabelAttachment6.TabIndex = 86;
-            linkLabelAttachment6.TabStop = true;
-            linkLabelAttachment6.Text = "Attachment6";
-            linkLabelAttachment6.Visible = false;
-            // 
-            // linkLabelAttachment5
-            // 
-            linkLabelAttachment5.AutoSize = true;
-            linkLabelAttachment5.Font = new Font("Lucida Console", 8F);
-            linkLabelAttachment5.Location = new Point(3, 119);
-            linkLabelAttachment5.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment5.Name = "linkLabelAttachment5";
-            linkLabelAttachment5.Size = new Size(82, 11);
-            linkLabelAttachment5.TabIndex = 85;
-            linkLabelAttachment5.TabStop = true;
-            linkLabelAttachment5.Text = "Attachment5";
-            linkLabelAttachment5.Visible = false;
-            // 
-            // linkLabelAttachment4
-            // 
-            linkLabelAttachment4.AutoSize = true;
-            linkLabelAttachment4.Font = new Font("Lucida Console", 8F);
-            linkLabelAttachment4.Location = new Point(3, 96);
-            linkLabelAttachment4.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment4.Name = "linkLabelAttachment4";
-            linkLabelAttachment4.Size = new Size(82, 11);
-            linkLabelAttachment4.TabIndex = 84;
-            linkLabelAttachment4.TabStop = true;
-            linkLabelAttachment4.Text = "Attachment4";
-            linkLabelAttachment4.Visible = false;
-            // 
-            // linkLabelAttachment3
-            // 
-            linkLabelAttachment3.AutoSize = true;
-            linkLabelAttachment3.Font = new Font("Lucida Console", 8F);
-            linkLabelAttachment3.Location = new Point(3, 73);
-            linkLabelAttachment3.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment3.Name = "linkLabelAttachment3";
-            linkLabelAttachment3.Size = new Size(82, 11);
-            linkLabelAttachment3.TabIndex = 83;
-            linkLabelAttachment3.TabStop = true;
-            linkLabelAttachment3.Text = "Attachment2";
-            linkLabelAttachment3.Visible = false;
-            // 
-            // linkLabelAttachment2
-            // 
-            linkLabelAttachment2.AutoSize = true;
-            linkLabelAttachment2.Font = new Font("Lucida Console", 8F);
-            linkLabelAttachment2.Location = new Point(3, 50);
-            linkLabelAttachment2.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment2.Name = "linkLabelAttachment2";
-            linkLabelAttachment2.Size = new Size(82, 11);
-            linkLabelAttachment2.TabIndex = 82;
-            linkLabelAttachment2.TabStop = true;
-            linkLabelAttachment2.Text = "Attachment2";
-            linkLabelAttachment2.Visible = false;
-            // 
-            // linkLabelAttachment1
-            // 
-            linkLabelAttachment1.AutoSize = true;
-            linkLabelAttachment1.Font = new Font("Lucida Console", 8F);
-            linkLabelAttachment1.Location = new Point(3, 27);
-            linkLabelAttachment1.Margin = new Padding(1, 0, 1, 0);
-            linkLabelAttachment1.Name = "linkLabelAttachment1";
-            linkLabelAttachment1.Size = new Size(82, 11);
-            linkLabelAttachment1.TabIndex = 81;
-            linkLabelAttachment1.TabStop = true;
-            linkLabelAttachment1.Text = "Attachment1";
-            linkLabelAttachment1.Visible = false;
-            // 
-            // button2
-            // 
-            button2.Location = new Point(823, 551);
-            button2.Name = "button2";
-            button2.Size = new Size(151, 39);
-            button2.TabIndex = 82;
-            button2.Text = "button2";
-            button2.UseVisualStyleBackColor = true;
-            // 
-            // openFileDialog
-            // 
-            openFileDialog.FileName = "openFileDialog";
-            openFileDialog.Title = "OpenFileDialog";
-            // 
-            // saveFileDialog
-            // 
-            saveFileDialog.InitialDirectory = "C:\\Windows\\Temp";
-            saveFileDialog.RestoreDirectory = true;
-            saveFileDialog.ShowHiddenFiles = true;
-            saveFileDialog.SupportMultiDottedExtensions = true;
-            saveFileDialog.Title = "Save File";
+            buttonClear.Location = new Point(827, 644);
+            buttonClear.Margin = new Padding(2);
+            buttonClear.Name = "buttonClear";
+            buttonClear.Padding = new Padding(1);
+            buttonClear.Size = new Size(144, 40);
+            buttonClear.TabIndex = 84;
+            buttonClear.Text = "Clear";
+            buttonClear.UseVisualStyleBackColor = true;
+            buttonClear.Click += buttonClear_Click;
             // 
             // RichTextChat
             // 
@@ -999,7 +903,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             BackColor = SystemColors.Control;
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(976, 711);
-            Controls.Add(button2);
+            Controls.Add(buttonClear);
+            Controls.Add(button1);
+            Controls.Add(buttonAttach);
             Controls.Add(PanelCenter);
             Controls.Add(PanelDestination);
             Controls.Add(PanelBottom);
@@ -1029,8 +935,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelEnCodeCrypt.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PictureBoxPartner).EndInit();
             PanelDestination.ResumeLayout(false);
-            groupBoxAttachments.ResumeLayout(false);
-            groupBoxAttachments.PerformLayout();
             PanelCenter.ResumeLayout(false);
             PanelBottom.ResumeLayout(false);
             ResumeLayout(false);
@@ -1049,7 +953,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private TextBox TextBoxSource;
         private TextBox TextBoxDestionation;
         private Button ButtonKey;
-        private Button button1;
+        private Button ButtonCheck;
         private RichTextBox RichTextBoxChat;
         private PictureBox PictureBoxYou;
         private PictureBox PictureBoxPartner;
@@ -1119,17 +1023,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private OpenFileDialog openFileDialog;
         private SaveFileDialog saveFileDialog;
-        private LinkLabel linkLabelAttachment1;
-        private GroupBox groupBoxAttachments;
-        private LinkLabel linkLabelAttachment8;
-        private LinkLabel linkLabelAttachment7;
-        private LinkLabel linkLabelAttachment6;
-        private LinkLabel linkLabelAttachment5;
-        private LinkLabel linkLabelAttachment4;
-        private LinkLabel linkLabelAttachment3;
-        private LinkLabel linkLabelAttachment2;
 
-        private Button button2;
+        private Button buttonAttach;
+        private Controls.GroupBoxLinkLabels GroupBoxLinks;
+        private Button button1;
+        private Button buttonClear;
     }
 
 }

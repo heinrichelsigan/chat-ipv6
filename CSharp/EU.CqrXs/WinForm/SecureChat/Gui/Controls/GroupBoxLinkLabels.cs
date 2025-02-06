@@ -66,7 +66,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             ++linksCount;
         }
 
-        public void SetNameFilePathk(string linkLabelName, string filePath, bool chackFilePath = false)
+        public void SetNameFilePath(string linkLabelName, string filePath, bool chackFilePath = false)
         {
             if (chackFilePath && !File.Exists(filePath))
             {
@@ -95,14 +95,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
         }
 
 
-        internal void SetMimeAttachmentTextLink(MimeAttachment mimeAttachment)
+        public void SetMimeAttachmentTextLink(MimeAttachment mimeAttachment)
         {
             string fileName = mimeAttachment.FileName;
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
             byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
-            SetNameFilePathk(fileName, filePath);
+            SetNameFilePath(fileName, filePath);
         }
 
 

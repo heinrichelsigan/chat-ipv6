@@ -125,7 +125,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             toolStripStatusLabel.Text = "Setup Network";
-            await SetupNetwork();
+            PlaySoundFromResource("sound_perfect");
+            await SetupNetwork();            
 
             if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ImageBase64))
             {
@@ -137,7 +138,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (send1stReg)
                 Send_1st_Server_Registration(sender, e);
 
-            AddContactsToIpContact();
+            AddContactsToIpContact();            
             toolStripStatusLabel.Text = "Secure Chat init done.";
         }
 
@@ -221,6 +222,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
@@ -263,6 +265,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
@@ -282,6 +285,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.PeachPuff;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             try
@@ -292,6 +296,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIpContact.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.Violet;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
 
@@ -319,6 +324,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.PeachPuff;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             try
@@ -329,6 +335,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIpContact.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.Violet;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             this.ComboBoxIpContact.BackColor = Color.White;
@@ -415,24 +422,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         area23EvArgs = ((Area23EventArgs<IpSockReceiveData>)e);
                         //TODO: Enable cross thread via delegate
                         SetStatusText(toolStripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
-                        // toolStripStatusLabel.Text = "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort;
-                        // if (!this.ComboBoxIpContact.Text.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
-                        //     this.ComboBoxIpContact.Text = area23EvArgs.GenericTData.ClientIPAddr;
+
+                        string comboText = GetComboBoxText(ComboBoxIpContact);
+                        if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            PlaySoundFromResource("sound_row_completed");
+                            SetComboBoxText(ComboBoxIpContact, area23EvArgs.GenericTData.ClientIPAddr);
+
+                        }                                                        
                         encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
                     }
-                    //string encrypt = string.Empty;
-                    //bool trimmed = false;
-                    //int l = encrypted.Length - 1;
-                    //while (!trimmed)
-                    //{
-                    //    if (encrypted[l] == '\0')
-                    //        l--;
-                    //    else
-                    //    {
-                    //        trimmed = true;
-                    //        encrypt = encrypted.Substring(0, l);
-                    //    }
-                    //}
+        
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                     string unencrypted = pmsg.NCqrPeerMsg(encrypted);
@@ -607,42 +607,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         protected internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
         {
-            int attachNum = ((attachCnt % 8) + 1);
-            LinkLabel linkLabelAttachment0 = new LinkLabel() { Name = $"linkLabelAttachment{attachNum}" };
-            if (!Directory.Exists(LibPaths.AttachmentFilesDir))
-                Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
-
-
-            foreach (System.Windows.Forms.Control ctrl in groupBoxAttachments.Controls)
-            {
-                if (ctrl != null && ctrl is LinkLabel lbAttach &&
-                    (ctrl.Name.EndsWith(attachNum.ToString()) || ctrl.Name.Equals("linkLabelAttachment" + attachNum)))
-                {
-                    linkLabelAttachment0 = (LinkLabel)lbAttach;
-                    linkLabelAttachment0.Name = $"linkLabelAttachment{attachNum}";
-                    SetLinkLabelVisible(linkLabelAttachment0, true);
-                    break; // we got the next LinkLabel attachment in modulo slot
-                }
-            }
-
+            string fileName = mimeAttachment.FileName;
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
             byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
-            Uri uri = new Uri("file://" + filePath);
-            SetLinkLabelText(linkLabelAttachment0, mimeAttachment.FileName);
-            AddLinkLabelLinks(linkLabelAttachment0, filePath);
-            linkLabelAttachment0.LinkClicked += LinkLabel_LinkClicked;
-            ++attachCnt;
 
+            GroupBoxLinks.SetNameFilePath(fileName, filePath);
         }
 
-        protected internal void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            if (sender != null && e.Link != null && e.Link.LinkData != null && File.Exists(e.Link.LinkData.ToString()))
-            {
-                ProcessCmd.Execute("explorer", e.Link.LinkData.ToString());
-            }
-        }
 
         #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
 
@@ -756,18 +728,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             List<int> phonefields = new List<int>();
                             List<int> mobilefields = new List<int>();
 
-                            string[] attributes = lines[0].Split(',');                            
+                            string[] attributes = lines[0].Split(',');
                             foreach (string attribute in attributes)
                             {
                                 if (attribute.ToLower().Contains("e-mail") || attribute.ToLower().Contains("email") || attribute.ToLower().Contains("mail"))
                                     mailfields.Add(cnt);
                                 if (attribute.ToLower().Contains("phone"))
                                     phonefields.Add(cnt);
-                                if (attribute.ToLower().Contains("mobil")) 
+                                if (attribute.ToLower().Contains("mobil"))
                                     mobilefields.Add(cnt);
                                 cnt++;
                             }
-                            
+
                             for (int i = 1; i < lines.Length; i++)
                             {
                                 cnt = 0;
@@ -808,9 +780,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                         Entities.Settings.Instance.Contacts.Add(contact);
                                     }
                                 }
-                                
+
                             }
-                            
+
                             Entities.Settings.Save(Entities.Settings.Instance);
                             break;
                         case "vcf":
@@ -843,7 +815,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuViewItem1View.Checked = false;
 
             PanelCenter.Visible = true;
-            RichTextBoxOneView.Visible = false;            
+            RichTextBoxOneView.Visible = false;
 
             SplitChatView.Orientation = System.Windows.Forms.Orientation.Horizontal;
             SplitChatView.Panel1MinSize = 220;
@@ -1119,6 +1091,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         #endregion LoadSaveChatContent
 
 
+        private void buttonAttach_Click(object sender, EventArgs e)
+        {
+            this.MenuItemAttach_Click(sender, e);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.MenuItemSend_Click(sender, e);
+        }
+
+        private void buttonClear_Click(object sender, EventArgs e)
+        {
+            this.MenuItemClear_Click(sender, e);
+        }
     }
 
 }

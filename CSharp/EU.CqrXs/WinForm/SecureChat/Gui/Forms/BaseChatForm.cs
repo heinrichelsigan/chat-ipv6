@@ -18,6 +18,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using EU.CqrXs.Framework.Core.Net.NameService;
+using System.Media;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -55,6 +56,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #region thread save WinForm delegate callbacks
 
+
+
+        
+        #region TextBox&RichTextBox
+
         internal delegate void SetTextCallback(System.Windows.Forms.TextBox textBox, string text);
 
         internal delegate void AppendTextCallback(System.Windows.Forms.TextBox textBox, string text);
@@ -69,13 +75,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal delegate void ClearRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, bool clear = true);
 
-        internal delegate void SetToolStripStatusLabelTextCallback(ToolStripStatusLabel statusLabel, string text);
-
-        internal delegate void SetLinkLabelTextCallback(LinkLabel linkLabel, string text);
-
-        internal delegate void AddLinkLabelLinksCallback(LinkLabel linkLabel, string linkUrl);
-
-        internal delegate void SetLinkLabelVisibleCallback(LinkLabel linkLabel, bool visible);
 
         /// <summary>
         /// AppendText - appends text on a <see cref="System.Windows.Forms.TextBox"/>
@@ -265,53 +264,30 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
-        internal void SetStatusText(ToolStripStatusLabel toolStatusLabel, string text)
-        {
-            string setText = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+        #endregion TextBox&RichTextBox
 
-            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
+        #region LinkLabel
 
-            if (toolStatusLabel.GetCurrentParent() != null && toolStatusLabel.GetCurrentParent().InvokeRequired)
-            {
-                SetToolStripStatusLabelTextCallback statusLabelSetTextCallback = // new AppendTextCallback(SetTextSpooler);
-                    delegate (ToolStripStatusLabel statusLabel, string setText)
-                    {
-                        if (statusLabel != null && setText != null)
-                            statusLabel.Text = setText;
-                    };
-                try
-                {
-                    toolStatusLabel.GetCurrentParent().Invoke(statusLabelSetTextCallback, new object[] { toolStatusLabel, setText });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
-                }
-                catch (System.Exception exDelegate)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetStatusText text: \"{text}\".\n", exDelegate);
-                }
-            }
-            else
-            {
-                if (toolStatusLabel != null && setText != null)
-                    toolStatusLabel.Text = setText;
-            }
-        }
+        internal delegate void SetLinkLabelTextCallback(LinkLabel linkLabel, string text);
+
+        internal delegate void AddLinkLabelLinksCallback(LinkLabel linkLabel, string linkUrl);
+
+        internal delegate void SetLinkLabelVisibleCallback(LinkLabel linkLabel, bool visible);
 
         /// <summary>
-        /// SetLinkLabelText - sets text on a <see cref="System.Windows.Forms.LinkLabel"/>
+        /// SetLinkLabelText - sets text on a <see cref="LinkLabel"/>
         /// </summary>
-        /// <param name="linkLabel"><see cref="System.Windows.Forms.linkLabel"/></param>
+        /// <param name="linkLabel"><see cref="linkLabel"/></param>
         /// <param name="text"><see cref="string">string text</see> to set</param>
-        internal void SetLinkLabelText(System.Windows.Forms.LinkLabel linkLabel, string text)
+        internal void SetLinkLabelText(LinkLabel linkLabel, string text)
         {
             string textToSet = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
             if (linkLabel.InvokeRequired)
             {
-                SetLinkLabelTextCallback setTextDelegate = // new AppendTextCallback(SetTextSpooler);
-                    delegate (System.Windows.Forms.LinkLabel lnkLabel, string setText)
+                SetLinkLabelTextCallback setTextDelegate = 
+                    delegate (LinkLabel lnkLabel, string setText)
                     {
                         if (lnkLabel != null && lnkLabel.Text != null && setText != null)
                             lnkLabel.Text = setText;
@@ -319,7 +295,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 try
                 {
                     linkLabel.Invoke(setTextDelegate, new object[] { linkLabel, textToSet });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
                 catch (System.Exception exDelegate)
                 {
@@ -333,16 +308,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
-        internal void AddLinkLabelLinks(System.Windows.Forms.LinkLabel linkLabel, string link)
+        internal void AddLinkLabelLinks(LinkLabel linkLabel, string link)
         {
             string linkToAdd = (!string.IsNullOrEmpty(link)) ? link : string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
             if (linkLabel.InvokeRequired)
             {
                 AddLinkLabelLinksCallback addLinkLabelLinksCallback = // new AppendTextCallback(SetTextSpooler);
-                    delegate (System.Windows.Forms.LinkLabel lnkLabel, string linkUrlToAdd)
+                    delegate (LinkLabel lnkLabel, string linkUrlToAdd)
                     {
                         if (lnkLabel != null && lnkLabel.Text != null && linkUrlToAdd != null)
                             lnkLabel.Links.Add(0, linkUrlToAdd.Length, linkUrlToAdd);
@@ -350,7 +324,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 try
                 {
                     linkLabel.Invoke(addLinkLabelLinksCallback, new object[] { linkLabel, link });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
                 catch (System.Exception exDelegate)
                 {
@@ -364,14 +337,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
-        internal void SetLinkLabelVisible(System.Windows.Forms.LinkLabel linkLabel, bool visible)
+        internal void SetLinkLabelVisible(LinkLabel linkLabel, bool visible)
         {           
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
             if (linkLabel.InvokeRequired)
             {
-                SetLinkLabelVisibleCallback setLinkLabelVisibleCallback = // new AppendTextCallback(SetTextSpooler);
-                    delegate (System.Windows.Forms.LinkLabel lnkLabel, bool vicible)
+                SetLinkLabelVisibleCallback setLinkLabelVisibleCallback = 
+                    delegate (LinkLabel lnkLabel, bool vicible)
                     {
                         if (lnkLabel != null)
                             lnkLabel.Visible = vicible;
@@ -379,7 +351,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 try
                 {
                     linkLabel.Invoke(setLinkLabelVisibleCallback, new object[] { linkLabel, visible });
-                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
                 catch (System.Exception exDelegate)
                 {
@@ -393,9 +364,134 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
+        #endregion LinkLabel
+
+        #region ToolStripStatusLabel
+
+        internal delegate void SetToolStripStatusLabelTextCallback(ToolStripStatusLabel statusLabel, string text);
+
+        internal void SetStatusText(ToolStripStatusLabel toolStatusLabel, string text)
+        {
+            string setText = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (toolStatusLabel.GetCurrentParent() != null && toolStatusLabel.GetCurrentParent().InvokeRequired)
+            {
+                SetToolStripStatusLabelTextCallback statusLabelSetTextCallback = // new AppendTextCallback(SetTextSpooler);
+                    delegate (ToolStripStatusLabel statusLabel, string setText)
+                    {
+                        if (statusLabel != null && setText != null)
+                            statusLabel.Text = setText;
+                    };
+                try
+                {
+                    toolStatusLabel.GetCurrentParent().Invoke(statusLabelSetTextCallback, new object[] { toolStatusLabel, setText });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetStatusText text: \"{text}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (toolStatusLabel != null && setText != null)
+                    toolStatusLabel.Text = setText;
+            }
+        }
+
+        #endregion
+
+        #region ComboBox
+
+        internal delegate string GetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox);
+
+        internal delegate void SetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox, string text);
+
+
+        internal string GetComboBoxText(System.Windows.Forms.ComboBox comboBox)
+        {
+            string reText = string.Empty;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (comboBox.InvokeRequired)
+            {
+                GetComboBoxTextCallback getComboBoxTextCallback = 
+                    delegate (System.Windows.Forms.ComboBox cmbx)
+                    {
+                        return (cmbx != null && cmbx.Text != null) ? cmbx.Text : string.Empty;
+                    };
+                try
+                {
+                    reText = (string)comboBox.Invoke(getComboBoxTextCallback, new object[] { comboBox });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetComboBoxText ComboBox = {comboBox.Name}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                reText = (comboBox != null && comboBox.Text != null) ? comboBox.Text : string.Empty;
+            }
+
+            return reText;
+        }
+
+
+        internal void SetComboBoxText(System.Windows.Forms.ComboBox comboBox, string text)
+        {
+            string setText = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (comboBox.InvokeRequired)
+            {
+                SetComboBoxTextCallback setComboBoxTextCallback = 
+                    delegate (System.Windows.Forms.ComboBox cmbx, string txt)
+                    {
+                        if (cmbx != null && txt != null)
+                            cmbx.Text = setText;
+                    };
+                try
+                {
+                    comboBox.Invoke(setComboBoxTextCallback, new object[] { comboBox, setText });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetComboBoxText ComboBox = {comboBox.Name}, text = \"{text}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (comboBox != null && setText != null)
+                    comboBox.Text = setText;
+            }
+        }
+
+        #endregion ComboBox
 
         #endregion thread save WinForm delegate callbacks
 
+        #region Media Methods
+
+        /// <summary>
+        /// PlaySoundFromResource - plays a sound embedded in application ressource file
+        /// </summary>
+        /// <param name="soundName">unique qualified name for sound</param>
+        protected virtual unsafe void PlaySoundFromResource(string soundName)
+        {
+            if (true)
+            {
+                byte[] bytes = (byte[])EU.CqrXs.WinForm.SecureChat.Properties.Resources.ResourceManager.GetObject(soundName);
+                fixed (byte* bufferPtr = &bytes[0])
+                {
+                    System.IO.UnmanagedMemoryStream ums = new UnmanagedMemoryStream(bufferPtr, bytes.Length);
+                    SoundPlayer player = new SoundPlayer(ums);
+                    player.Play();
+                }
+            }
+        }
+
+        #endregion Media Methods
 
         #region Help About Info
 
@@ -442,7 +538,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e">FormClosingEventArgs e</param>
         protected internal void FormClose_Click(object sender, FormClosingEventArgs e)
         {
-            if (System.Windows.Forms.Application.OpenForms.Count < 2)
+            if (Application.OpenForms.Count < 2)
             {
                 AppCloseAllFormsExit();
                 return;
@@ -506,14 +602,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (CqrException.LastException != null) // TODO: Remove this
                 MessageBox.Show(CqrException.LastException.ToString(), CqrException.LastException.Message, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            int openForms = System.Windows.Forms.Application.OpenForms.Count;
+            int openForms = Application.OpenForms.Count;
             if (openForms > 1)
             {
-                for (int frmidx = 0; frmidx < System.Windows.Forms.Application.OpenForms.Count; frmidx++)
+                for (int frmidx = 0; frmidx < Application.OpenForms.Count; frmidx++)
                 {
                     try
                     {
-                        Form? form = System.Windows.Forms.Application.OpenForms[frmidx];
+                        Form? form = Application.OpenForms[frmidx];
                         if (form != null && form.Name != this.Name)
                         {
                             form.Close();
