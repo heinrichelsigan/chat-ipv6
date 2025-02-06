@@ -144,30 +144,30 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         #region thread save text and richtext box access       
 
         /// <summary>
-        /// Displays and formats lines in <see cref="richTextBoxOneView" />
+        /// Displays and formats lines in <see cref="RichTextBoxOneView" />
         /// </summary>
         internal void Format_Lines_RichTextBox()
         {
             if (chat != null)
             {
-                ClearRichText(richTextBoxOneView);
+                ClearRichText(RichTextBoxOneView);
                 int lineIndex = 0;
                 foreach (var tuple in chat.CqrMsgs)
                 {
                     string line = tuple.Value;
 
-                    AppendRichText(richTextBoxOneView, line + Environment.NewLine);
-                    // richTextBoxOneView.AppendText(line + Environment.NewLine);
+                    AppendRichText(RichTextBoxOneView, line + Environment.NewLine);
+                    // RichTextBoxOneView.AppendText(line + Environment.NewLine);
 
-                    int startPos = GetFirstCharIndexFromLineRichText(richTextBoxOneView, lineIndex++);
-                    SelectRichText(richTextBoxOneView, startPos, line.Length + Environment.NewLine.Length);
+                    int startPos = GetFirstCharIndexFromLineRichText(RichTextBoxOneView, lineIndex++);
+                    SelectRichText(RichTextBoxOneView, startPos, line.Length + Environment.NewLine.Length);
                     if (chat.MyMsgTStamps.Contains(tuple.Key))
                     {
-                        SelectionAlignmentRichText(richTextBoxOneView, HorizontalAlignment.Right);
+                        SelectionAlignmentRichText(RichTextBoxOneView, HorizontalAlignment.Right);
                     }
                     else if (chat.FriendMsgTStamps.Contains(tuple.Key))
                     {
-                        SelectionAlignmentRichText(richTextBoxOneView, HorizontalAlignment.Left);
+                        SelectionAlignmentRichText(RichTextBoxOneView, HorizontalAlignment.Left);
                     }
                 }
 
@@ -376,7 +376,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             chat.AddMyMessage(plain);
             chat.AddFriendMessage(decrypted);
 
-            // this.richTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
+            // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
 
             toolStripStatusLabel.Text = "Finished 1st registration";
@@ -450,7 +450,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                     chat.AddFriendMessage(friendMsg);
                     AppendText(TextBoxDestionation, friendMsg);
-                    // this.richTextBoxOneView.Text = unencrypted;
+                    // this.RichTextBoxOneView.Text = unencrypted;
                     Format_Lines_RichTextBox();
                 }
             }
@@ -842,7 +842,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuViewItemTopBottom.Checked = true;
             menuViewItem1View.Checked = false;
 
-            PanelCenter.Visible = false;
+            PanelCenter.Visible = true;
+            RichTextBoxOneView.Visible = false;            
 
             SplitChatView.Orientation = System.Windows.Forms.Orientation.Horizontal;
             SplitChatView.Panel1MinSize = 220;
@@ -868,7 +869,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuViewItemTopBottom.Checked = false;
             menuViewItem1View.Checked = false;
 
-            PanelCenter.Visible = false;
+            PanelCenter.Visible = true;
+            RichTextBoxOneView.Visible = false;
 
             SplitChatView.Orientation = System.Windows.Forms.Orientation.Vertical;
             SplitChatView.Panel1MinSize = 380;
@@ -895,9 +897,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuViewItem1View.Checked = true;
 
             PanelCenter.Visible = true;
-            PanelCenter.BringToFront();
             SplitChatView.Visible = false;
-            richTextBoxOneView.Visible = true;
+            RichTextBoxOneView.Visible = true;
+            RichTextBoxOneView.BringToFront();
         }
 
         #endregion SplitChatWindowLayout

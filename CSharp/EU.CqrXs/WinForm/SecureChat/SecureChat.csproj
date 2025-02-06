@@ -35,7 +35,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Gui\Controls\" />
     <Folder Include="log\" />
     <Folder Include="Properties\text\" />
     <Folder Include="Resources\" />

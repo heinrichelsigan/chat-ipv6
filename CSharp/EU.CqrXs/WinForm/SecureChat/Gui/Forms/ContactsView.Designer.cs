@@ -30,7 +30,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         protected internal void InitializeComponent()
         {
             dataGridContacts = new DataGridView();
-            buttonClose = new Button();
             ContactId = new DataGridViewTextBoxColumn();
             ContactName = new DataGridViewTextBoxColumn();
             ContactEmail = new DataGridViewTextBoxColumn();
@@ -41,25 +40,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // dataGridContacts
             // 
+            dataGridContacts.BackgroundColor = SystemColors.Control;
             dataGridContacts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridContacts.Columns.AddRange(new DataGridViewColumn[] { ContactId, ContactName, ContactEmail, ContactMobile, ContactAddress });
-            dataGridContacts.Location = new Point(12, 12);
+            dataGridContacts.Dock = DockStyle.Fill;
+            dataGridContacts.Location = new Point(4, 4);
             dataGridContacts.Margin = new Padding(2);
             dataGridContacts.Name = "dataGridContacts";
-            dataGridContacts.Size = new Size(644, 306);
+            dataGridContacts.Size = new Size(776, 373);
             dataGridContacts.TabIndex = 26;
-            // 
-            // buttonClose
-            // 
-            buttonClose.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonClose.DialogResult = DialogResult.Cancel;
-            buttonClose.Location = new Point(568, 324);
-            buttonClose.Margin = new Padding(2);
-            buttonClose.Name = "buttonClose";
-            buttonClose.Size = new Size(88, 30);
-            buttonClose.TabIndex = 28;
-            buttonClose.Text = "&Close";
-            buttonClose.Click += ButtonClose_Click;
             // 
             // ContactId
             // 
@@ -68,7 +57,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ContactId.Name = "ContactId";
             ContactId.ReadOnly = true;
             ContactId.ToolTipText = "Contact Identifier";
-            ContactId.Width = 72;
+            ContactId.Width = 80;
             // 
             // ContactName
             // 
@@ -78,7 +67,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ContactName.ReadOnly = true;
             ContactName.Resizable = DataGridViewTriState.True;
             ContactName.ToolTipText = "Contact Name";
-            ContactName.Width = 136;
+            ContactName.Width = 160;
             // 
             // ContactEmail
             // 
@@ -87,7 +76,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ContactEmail.Name = "ContactEmail";
             ContactEmail.ReadOnly = true;
             ContactEmail.ToolTipText = "Contact E-Mail";
-            ContactEmail.Width = 162;
+            ContactEmail.Width = 160;
             // 
             // ContactMobile
             // 
@@ -97,7 +86,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ContactMobile.ReadOnly = true;
             ContactMobile.Resizable = DataGridViewTriState.True;
             ContactMobile.ToolTipText = "Contact Mobile";
-            ContactMobile.Width = 96;
+            ContactMobile.Width = 128;
             // 
             // ContactAddress
             // 
@@ -106,15 +95,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ContactAddress.Name = "ContactAddress";
             ContactAddress.ReadOnly = true;
             ContactAddress.ToolTipText = "Contact Address";
-            ContactAddress.Width = 144;
+            ContactAddress.Width = 192;
             // 
             // ContactsView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
-            ClientSize = new Size(673, 360);
-            Controls.Add(buttonClose);
+            ClientSize = new Size(784, 381);
             Controls.Add(dataGridContacts);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Margin = new Padding(2, 2, 2, 3);
@@ -135,12 +123,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #endregion
         private DataGridView dataGridContacts;
-        private Button buttonClose;
         private DataGridViewTextBoxColumn ContactId;
         private DataGridViewTextBoxColumn ContactName;
         private DataGridViewTextBoxColumn ContactEmail;
         private DataGridViewTextBoxColumn ContactMobile;
         private DataGridViewTextBoxColumn ContactAddress;
-
     }
 }
