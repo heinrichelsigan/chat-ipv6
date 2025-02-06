@@ -692,8 +692,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         }
 
         private void MenuContactstemImport_Click(object sender, EventArgs e)
-        {
+        {                                                
             int contactId = Entities.Settings.Instance.Contacts.Count;
+            string cname = string.Empty, cemail = string.Empty, cmobile = string.Empty, cphone = string.Empty, caddress = string.Empty;
             HashSet<string> names = new HashSet<string>();
             foreach (Contact c in Entities.Settings.Instance.Contacts)
             {
@@ -715,15 +716,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     string extension = Path.GetExtension(openFileDialog.FileName).ToLower();
                     string[] lines = System.IO.File.ReadAllLines(openFileDialog.FileName);
+
                     switch (extension)
                     {
                         case "csv":
                         case ".csv":
-                            int cnt = 0;
-                            string cname = string.Empty;
-                            string cemail = string.Empty;
-                            string cphone = string.Empty;
-                            string cmobile = string.Empty;
+                            int csvCnt = 0;
                             List<int> mailfields = new List<int>();
                             List<int> phonefields = new List<int>();
                             List<int> mobilefields = new List<int>();
@@ -732,17 +730,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             foreach (string attribute in attributes)
                             {
                                 if (attribute.ToLower().Contains("e-mail") || attribute.ToLower().Contains("email") || attribute.ToLower().Contains("mail"))
-                                    mailfields.Add(cnt);
+                                    mailfields.Add(csvCnt);
                                 if (attribute.ToLower().Contains("phone"))
-                                    phonefields.Add(cnt);
+                                    phonefields.Add(csvCnt);
                                 if (attribute.ToLower().Contains("mobil"))
-                                    mobilefields.Add(cnt);
-                                cnt++;
+                                    mobilefields.Add(csvCnt);
+                                csvCnt++;
                             }
 
                             for (int i = 1; i < lines.Length; i++)
                             {
-                                cnt = 0;
+                                csvCnt = 0;
                                 cname = string.Empty; cemail = string.Empty; cphone = string.Empty; cmobile = string.Empty;
                                 string[] fields = lines[i].Split(',');
                                 for (int j = 0; j < fields.Length; j++)
@@ -788,6 +786,85 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         case "vcf":
                         case ".vcf":
 
+                            int vcfCnt = 0;
+                            bool beginEndVcard = false;
+                            
+                            
+                            for (int i = 0; i < lines.Length; i++)
+                            {
+                                
+                                if (lines[i].ToUpper().StartsWith("BEGIN:VCARD"))
+                                {
+                                    beginEndVcard = true;
+                                    cname = string.Empty; cemail = string.Empty; cphone = string.Empty; cmobile = string.Empty; caddress = string.Empty;
+                                }
+                                    
+
+                                if (beginEndVcard)
+                                {
+                                    string tmpString = string.Empty;
+                                    if (lines[i].ToUpper().StartsWith("FN:")) 
+                                    {
+                                        tmpString = lines[i].Substring(3);
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
+                                            cname = tmpString;
+                                    }
+                                    if (lines[i].ToUpper().StartsWith("N:") && string.IsNullOrEmpty(cname))
+                                    {
+                                        tmpString = lines[i].Substring(2).Replace(";", " ").TrimEnd(' ');
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
+                                            cname = tmpString;
+                                    }
+                                    if (lines[i].ToUpper().Contains("EMAIL") && lines[i].Contains("@") && string.IsNullOrEmpty(cemail))
+                                    {
+                                        tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsEmail())
+                                            cemail = tmpString;
+                                    }
+                                        
+                                    if (lines[i].ToUpper().Contains("TEL") && lines[i].Contains("CELL") && string.IsNullOrEmpty(cmobile))
+                                    {
+                                        tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsPhoneOrMobile())
+                                            cmobile = tmpString;
+                                    }
+                                    if (lines[i].ToUpper().Contains("TEL") && string.IsNullOrEmpty(cmobile))
+                                    {
+                                        tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsPhoneOrMobile())
+                                            cmobile = tmpString;
+                                    }
+                                    if (lines[i].ToUpper().Contains("ADR") && string.IsNullOrEmpty(caddress))
+                                    {
+                                        tmpString = lines[i].Substring(lines[i].IndexOf(':')).Trim(':').Replace(";;;", " ").Replace(";;", " ").Replace(";", " ");
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
+                                            caddress = tmpString;
+                                    }
+
+                                    // TODO Photo add
+                                    
+
+                                }
+
+
+                                if (lines[i].ToUpper().StartsWith("END:VCARD"))
+                                {
+                                    vcfCnt++;
+                                    beginEndVcard = false;
+                                    if (!string.IsNullOrEmpty(cname) && !names.Contains(cname))
+                                    {
+                                        if (!string.IsNullOrEmpty(cemail))
+                                        {
+                                            Contact contact = new Contact() { ContactId = contactId++, Name = cname, Email = cemail, Mobile = cmobile };
+                                            Entities.Settings.Instance.Contacts.Add(contact);
+                                        }
+                                    }
+                                }
+                                    
+
+                            }
+
+                            Entities.Settings.Save(Entities.Settings.Instance);
                             break;
                         default:
                             break;
