@@ -21,6 +21,10 @@ using System.Windows.Controls;
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
 
+
+    /// <summary>
+    /// SecureChat main form
+    /// </summary>
     public partial class RichTextChat : BaseChatForm
     {
         #region fields        
@@ -93,10 +97,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         public RichTextChat() : base()
         {
             InitializeComponent();
-            TextBoxSource.MaxLength = Constants.MAX_BYTE_BUFFEER;
-            TextBoxDestionation.MaxLength = Constants.MAX_BYTE_BUFFEER;
+            TextBoxSource.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
+            TextBoxDestionation.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
             ComboBoxIpContact.Text = Constants.ENTER_IP_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
+            try
+            {
+                if (!Directory.Exists(LibPaths.AttachmentFilesDir))
+                    Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
+            }
+            catch (Exception exBase64)
+            {
+                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
+                toolStripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
+            }
         }
 
 
@@ -125,6 +139,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             toolStripStatusLabel.Text = "Setup Network";
+            // PlaySoundFromResource("sound_perfect");
             await SetupNetwork();
 
             if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ImageBase64))
@@ -221,6 +236,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
@@ -263,6 +279,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
@@ -282,6 +299,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.PeachPuff;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             try
@@ -292,6 +310,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIpContact.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.Violet;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
 
@@ -319,6 +338,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.PeachPuff;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             try
@@ -329,6 +349,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIpContact.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.Violet;
+                PlaySoundFromResource("sound_interaction");
                 return;
             }
             this.ComboBoxIpContact.BackColor = Color.White;
@@ -419,7 +440,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         string comboText = GetComboBoxText(ComboBoxIpContact);
                         if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            // Todo Pla Sound
+                            PlaySoundFromResource("sound_completed");
                             SetComboBoxText(ComboBoxIpContact, area23EvArgs.GenericTData.ClientIPAddr);
 
                         }
@@ -429,13 +450,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                     MsgContent msgContent = pmsg.NCqrPeerMsg(encrypted);
-                    
                     string friendMsg = string.Empty;
-                    if (msgContent.IsMimeAttachment()) 
+                    if (msgContent.IsMimeAttachment())
                     {
                         MimeAttachment mimeAttachment = msgContent.ToMimeAttachment();
                         SetAttachmentTextLink(mimeAttachment);
-                        friendMsg = mimeAttachment.FileName + "[" + mimeAttachment.ContentLength + "]";
+                        friendMsg = mimeAttachment.GetFileNameContentLength();
                     }
                     else
                     {
@@ -528,31 +548,38 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (File.Exists(openFileDialog.FileName))
                 {
+                    string md5 = Framework.Core.Crypt.Hash.MD5Sum.Hash(openFileDialog.FileName, true);
+                    string sha256 = Framework.Core.Crypt.Hash.Sha256Sum.Hash(openFileDialog.FileName, true);
+
                     byte[] fileBytes = System.IO.File.ReadAllBytes(openFileDialog.FileName);
                     string fileNameOnly = Path.GetFileName(openFileDialog.FileName);
                     string mimeType = Framework.Core.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
+
                     string base64Mime = Base64.Encode(fileBytes);
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
-                    string unencrypted = MimeAttachment.GetMimeMessage(fileNameOnly, mimeType, base64Mime, pmsg.symmPipe.PipeString);
 
+                    MimeAttachment mimeAttach;
                     try
                     {
                         partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
 
-                        pmsg.SendCqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                        // pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                        // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                        pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, EncodingType.Base64, Constants.CHAT_PORT, md5, sha256);
 
-                        chat.AddMyMessage(unencrypted);
-                        AppendText(TextBoxSource, unencrypted);
+                        string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
+                        System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
+
+                        chat.AddMyMessage(mimeAttach.GetFileNameContentLength());
+                        AppendText(TextBoxSource, mimeAttach.GetFileNameContentLength());
                         Format_Lines_RichTextBox();
                         this.RichTextBoxChat.Text = string.Empty;
                         toolStripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
                     }
                     catch (Exception ex)
                     {
-                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in menuItemSend_Click: {ex.Message}.\n", ex);
-                        toolStripStatusLabel.Text = "Send FAILED: " + ex.Message;
+                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
+                        toolStripStatusLabel.Text = "Attach FAILED: " + ex.Message;
                     }
                 }
                 // otherwise send message to registered user via server
@@ -582,8 +609,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 TextBoxDestionation.Text += "| " + zeni.ToString("x1") + " | => | " + sb.ToString("x1") + " | " + "\r\n";
             }
             // this.TextBoxDestionation.Text += ZenMatrix.EncryptString(this.RichTextBoxChat.Text) + "\n";
-
-
         }
 
         /// <summary>
@@ -602,8 +627,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         protected internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
         {
             string fileName = mimeAttachment.FileName;
+            string mimeFilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName + Constants.MIME_EXT);
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
-            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
+
+            byte[] attachBytes = EnDeCoder.GetBytes(mimeAttachment.MimeMsg);
+            System.IO.File.WriteAllBytes(mimeFilePath, attachBytes);
+
+            string base64 = mimeAttachment.Base64Mime;
+            if (mimeAttachment.ContentLength < mimeAttachment.Base64Mime.Length)
+                base64 = mimeAttachment.Base64Mime.Substring(0, mimeAttachment.ContentLength);
+
+            byte[] fileBytes = Base64.Decode(base64);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
             GroupBoxLinks.SetNameFilePath(fileName, filePath);
@@ -688,6 +722,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private void MenuContactstemImport_Click(object sender, EventArgs e)
         {
             int contactId = Entities.Settings.Instance.Contacts.Count;
+            string cname = string.Empty, cemail = string.Empty, cmobile = string.Empty, cphone = string.Empty, caddress = string.Empty;
             HashSet<string> names = new HashSet<string>();
             foreach (Contact c in Entities.Settings.Instance.Contacts)
             {
@@ -709,15 +744,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     string extension = Path.GetExtension(openFileDialog.FileName).ToLower();
                     string[] lines = System.IO.File.ReadAllLines(openFileDialog.FileName);
+
                     switch (extension)
                     {
                         case "csv":
                         case ".csv":
-                            int cnt = 0;
-                            string cname = string.Empty;
-                            string cemail = string.Empty;
-                            string cphone = string.Empty;
-                            string cmobile = string.Empty;
+                            int csvCnt = 0;
                             List<int> mailfields = new List<int>();
                             List<int> phonefields = new List<int>();
                             List<int> mobilefields = new List<int>();
@@ -726,17 +758,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             foreach (string attribute in attributes)
                             {
                                 if (attribute.ToLower().Contains("e-mail") || attribute.ToLower().Contains("email") || attribute.ToLower().Contains("mail"))
-                                    mailfields.Add(cnt);
+                                    mailfields.Add(csvCnt);
                                 if (attribute.ToLower().Contains("phone"))
-                                    phonefields.Add(cnt);
+                                    phonefields.Add(csvCnt);
                                 if (attribute.ToLower().Contains("mobil"))
-                                    mobilefields.Add(cnt);
-                                cnt++;
+                                    mobilefields.Add(csvCnt);
+                                csvCnt++;
                             }
 
                             for (int i = 1; i < lines.Length; i++)
                             {
-                                cnt = 0;
+                                csvCnt = 0;
                                 cname = string.Empty; cemail = string.Empty; cphone = string.Empty; cmobile = string.Empty;
                                 string[] fields = lines[i].Split(',');
                                 for (int j = 0; j < fields.Length; j++)
@@ -782,6 +814,85 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         case "vcf":
                         case ".vcf":
 
+                            int vcfCnt = 0;
+                            bool beginEndVcard = false;
+
+
+                            for (int i = 0; i < lines.Length; i++)
+                            {
+
+                                if (lines[i].ToUpper().StartsWith("BEGIN:VCARD"))
+                                {
+                                    beginEndVcard = true;
+                                    cname = string.Empty; cemail = string.Empty; cphone = string.Empty; cmobile = string.Empty; caddress = string.Empty;
+                                }
+
+
+                                if (beginEndVcard)
+                                {
+                                    string tmpString = string.Empty;
+                                    if (lines[i].ToUpper().StartsWith("FN:"))
+                                    {
+                                        tmpString = lines[i].Substring(3);
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
+                                            cname = tmpString;
+                                    }
+                                    if (lines[i].ToUpper().StartsWith("N:") && string.IsNullOrEmpty(cname))
+                                    {
+                                        tmpString = lines[i].Substring(2).Replace(";", " ").TrimEnd(' ');
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
+                                            cname = tmpString;
+                                    }
+                                    if (lines[i].ToUpper().Contains("EMAIL") && lines[i].Contains("@") && string.IsNullOrEmpty(cemail))
+                                    {
+                                        tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsEmail())
+                                            cemail = tmpString;
+                                    }
+
+                                    if (lines[i].ToUpper().Contains("TEL") && lines[i].Contains("CELL") && string.IsNullOrEmpty(cmobile))
+                                    {
+                                        tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsPhoneOrMobile())
+                                            cmobile = tmpString;
+                                    }
+                                    if (lines[i].ToUpper().Contains("TEL") && string.IsNullOrEmpty(cmobile))
+                                    {
+                                        tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsPhoneOrMobile())
+                                            cmobile = tmpString;
+                                    }
+                                    if (lines[i].ToUpper().Contains("ADR") && string.IsNullOrEmpty(caddress))
+                                    {
+                                        tmpString = lines[i].Substring(lines[i].IndexOf(':')).Trim(':').Replace(";;;", " ").Replace(";;", " ").Replace(";", " ");
+                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
+                                            caddress = tmpString;
+                                    }
+
+                                    // TODO Photo add
+
+
+                                }
+
+
+                                if (lines[i].ToUpper().StartsWith("END:VCARD"))
+                                {
+                                    vcfCnt++;
+                                    beginEndVcard = false;
+                                    if (!string.IsNullOrEmpty(cname) && !names.Contains(cname))
+                                    {
+                                        if (!string.IsNullOrEmpty(cemail))
+                                        {
+                                            Contact contact = new Contact() { ContactId = contactId++, Name = cname, Email = cemail, Mobile = cmobile };
+                                            Entities.Settings.Instance.Contacts.Add(contact);
+                                        }
+                                    }
+                                }
+
+
+                            }
+
+                            Entities.Settings.Save(Entities.Settings.Instance);
                             break;
                         default:
                             break;
@@ -1099,6 +1210,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             this.MenuItemClear_Click(sender, e);
         }
+
     }
 
 }
