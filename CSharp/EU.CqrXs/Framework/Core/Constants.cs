@@ -99,6 +99,7 @@ namespace EU.CqrXs.Framework.Core
         public const string DEBUG_DIR = "Release";
         public const string MIME_EXT = ".mime";
         public const string BASE64_EXT = ".base64";
+        public const string HTML_EXT = ".html";
         public const string ATTACH_FILES_DIR = "AttachFiles";
 
         public const string UTF8_JSON = "utf8symol.json";

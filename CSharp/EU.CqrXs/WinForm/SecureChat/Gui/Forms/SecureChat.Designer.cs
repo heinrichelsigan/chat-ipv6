@@ -97,12 +97,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             RichTextBoxChat = new RichTextBox();
             PictureBoxPartner = new PictureBox();
             PanelDestination = new Panel();
-            GroupBoxLinks = new Controls.GroupBoxLinkLabels();
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
             buttonAttach = new Button();
-            button1 = new Button();
+            buttonSend = new Button();
             buttonClear = new Button();
             menuStrip.SuspendLayout();
             statusStrip.SuspendLayout();
@@ -728,12 +727,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonCheck.BackgroundImageLayout = ImageLayout.Center;
             ButtonCheck.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
             ButtonCheck.ForeColor = SystemColors.ActiveCaptionText;
-            ButtonCheck.Image = Properties.Resources.a_right_key;
-            ButtonCheck.Location = new Point(768, 4);
+            ButtonCheck.Image = Properties.de.Resources.CableWireCut;
+            ButtonCheck.Location = new Point(774, 2);
             ButtonCheck.Margin = new Padding(1);
             ButtonCheck.Name = "ButtonCheck";
             ButtonCheck.Padding = new Padding(1);
-            ButtonCheck.Size = new Size(40, 27);
+            ButtonCheck.Size = new Size(34, 32);
             ButtonCheck.TabIndex = 17;
             ButtonCheck.UseVisualStyleBackColor = false;
             // 
@@ -761,7 +760,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ComboBoxIpContact.Location = new Point(412, 6);
             ComboBoxIpContact.Margin = new Padding(1);
             ComboBoxIpContact.Name = "ComboBoxIpContact";
-            ComboBoxIpContact.Size = new Size(348, 24);
+            ComboBoxIpContact.Size = new Size(342, 24);
             ComboBoxIpContact.TabIndex = 15;
             ComboBoxIpContact.Text = "[enter peer IPv4 or IPv6 for directly connect]";
             ComboBoxIpContact.SelectedIndexChanged += ComboBoxIpContact_SelectedIndexChanged;
@@ -803,7 +802,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // PanelDestination
             // 
             PanelDestination.BackColor = SystemColors.ActiveCaption;
-            PanelDestination.Controls.Add(GroupBoxLinks);
             PanelDestination.Controls.Add(PictureBoxYou);
             PanelDestination.Controls.Add(PictureBoxPartner);
             PanelDestination.ForeColor = SystemColors.ActiveCaptionText;
@@ -812,19 +810,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelDestination.Name = "PanelDestination";
             PanelDestination.Size = new Size(152, 515);
             PanelDestination.TabIndex = 70;
-            // 
-            // GroupBoxLinks
-            // 
-            GroupBoxLinks.BackColor = SystemColors.ControlLightLight;
-            GroupBoxLinks.Font = new Font("Lucida Sans Unicode", 9F);
-            GroupBoxLinks.Location = new Point(1, 151);
-            GroupBoxLinks.Margin = new Padding(1);
-            GroupBoxLinks.Name = "GroupBoxLinks";
-            GroupBoxLinks.Padding = new Padding(1);
-            GroupBoxLinks.Size = new Size(151, 213);
-            GroupBoxLinks.TabIndex = 80;
-            GroupBoxLinks.TabStop = false;
-            GroupBoxLinks.Text = "Attachments";
             // 
             // PanelCenter
             // 
@@ -870,17 +855,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             buttonAttach.UseVisualStyleBackColor = true;
             buttonAttach.Click += buttonAttach_Click;
             // 
-            // button1
+            // buttonSend
             // 
-            button1.Location = new Point(827, 598);
-            button1.Margin = new Padding(2);
-            button1.Name = "button1";
-            button1.Padding = new Padding(1);
-            button1.Size = new Size(144, 40);
-            button1.TabIndex = 83;
-            button1.Text = "Send";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            buttonSend.Location = new Point(827, 598);
+            buttonSend.Margin = new Padding(2);
+            buttonSend.Name = "buttonSend";
+            buttonSend.Padding = new Padding(1);
+            buttonSend.Size = new Size(144, 40);
+            buttonSend.TabIndex = 83;
+            buttonSend.Text = "Send";
+            buttonSend.UseVisualStyleBackColor = true;
+            buttonSend.Click += buttonSend_Click;
             // 
             // buttonClear
             // 
@@ -902,7 +887,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(976, 711);
             Controls.Add(buttonClear);
-            Controls.Add(button1);
+            Controls.Add(buttonSend);
             Controls.Add(buttonAttach);
             Controls.Add(PanelCenter);
             Controls.Add(PanelDestination);
@@ -951,7 +936,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private TextBox TextBoxSource;
         private TextBox TextBoxDestionation;
         private Button ButtonKey;
-        private Button ButtonCheck;
         private RichTextBox RichTextBoxChat;
         private PictureBox PictureBoxYou;
         private PictureBox PictureBoxPartner;
@@ -1024,7 +1008,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         
         private Button buttonAttach;
         private Controls.GroupBoxLinkLabels GroupBoxLinks;
-        private Button button1;
+        private Button buttonSend;
         private Button buttonClear;
+        private Button ButtonCheck;
     }
 }
