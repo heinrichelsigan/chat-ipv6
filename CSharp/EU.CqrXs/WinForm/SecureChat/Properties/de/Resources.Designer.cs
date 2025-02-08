@@ -91,6 +91,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.de {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CableWireCut {
+            get {
+                object obj = ResourceManager.GetObject("CableWireCut", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] ClickToUpload {
@@ -173,6 +183,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.de {
         internal static string ProxyNames {
             get {
                 return ResourceManager.GetString("ProxyNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RemoteConnect {
+            get {
+                object obj = ResourceManager.GetObject("RemoteConnect", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

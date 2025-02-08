@@ -18,10 +18,11 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using EU.CqrXs.Framework.Core.Net.NameService;
+using System.Media;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
-    
+
     /// <summary>
     /// SecureChat main form
     /// </summary>
@@ -139,8 +140,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             toolStripStatusLabel.Text = "Setup Network";
-            // PlaySoundFromResource("sound_perfect");
-            await SetupNetwork();            
+            PlaySoundFromResource("sound_perfect");
+            await SetupNetwork();
 
             if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ImageBase64))
             {
@@ -152,7 +153,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (send1stReg)
                 Send_1st_Server_Registration(sender, e);
 
-            AddContactsToIpContact();            
+            AddContactsToIpContact();
             toolStripStatusLabel.Text = "Secure Chat init done.";
         }
 
@@ -316,13 +317,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             this.ComboBoxIpContact.BackColor = Color.White;
 
-            if (Entities.Settings.Instance != null)
+            if (Entities.Settings.Instance != null && SendInit_Click())
             {
+                PlaySoundFromResource("sound_perfect");
+
                 if (!Entities.Settings.Instance.FriendIPs.Contains(this.ComboBoxIpContact.Text))
                     Entities.Settings.Instance.FriendIPs.Add(partnerIpAddress.ToString());
                 if (!this.ComboBoxIpContact.Items.Contains(this.ComboBoxIpContact.Text))
                     this.ComboBoxIpContact.Items.Add(partnerIpAddress.ToString());
+
+                Entities.Settings.Save(Entities.Settings.Instance);
             }
+            else
+            {
+                ButtonCheck.Image = Properties.de.Resources.CableWireCut;
+                PlaySoundFromResource("sound_interaction");
+            }
+
             toolStripStatusLabel.Text = $"Added new partner ip address {partnerIpAddress.ToString()}.";
         }
 
@@ -354,6 +365,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             this.ComboBoxIpContact.BackColor = Color.White;
             toolStripStatusLabel.Text = $"Selected partner ip address {partnerIpAddress.ToString()}.";
+
+            if (SendInit_Click())
+            {
+                PlaySoundFromResource("sound_perfect");
+            }
+            else
+            {
+                ButtonCheck.Image = Properties.de.Resources.CableWireCut;
+                PlaySoundFromResource("sound_interaction");
+            }
         }
 
         #endregion ComboBoxIpContact FocusLeave TextUpdate SelectedIndexChanged
@@ -443,10 +464,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             PlaySoundFromResource("sound_completed");
                             SetComboBoxText(ComboBoxIpContact, area23EvArgs.GenericTData.ClientIPAddr);
 
-                        }                                                        
+                        }
                         encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
                     }
-        
+
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                     MsgContent msgContent = pmsg.NCqrPeerMsg(encrypted);
@@ -469,6 +490,53 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
             }
         }
+
+        /// <summary>
+        /// Sends a init secure message to peer ip address
+        /// </summary>
+        private bool SendInit_Click()
+        {
+            // TODO: implement it via socket directly or to registered user
+            // if Ip is pingable and reachable and connectable
+            // send HELLO to IP
+            if (chat == null)
+                chat = new Chat(0);
+
+            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
+                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            {
+                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                return false;
+            }
+
+            myServerKey = this.ComboBoxSecretKey.Text;
+            string unencrypted = clientIpAddress?.ToString() + " " + Entities.Settings.Instance.MyContact.NameEmail;
+
+            try
+            {
+                partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
+                CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
+                pmsg.SendCqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+
+                // chat.AddMyMessage(unencrypted);
+                // AppendText(TextBoxSource, unencrypted);
+                // Format_Lines_RichTextBox();
+                this.RichTextBoxChat.Text = string.Empty;
+                toolStripStatusLabel.Text = "SendInit successfully";
+                ButtonCheck.Image = Properties.de.Resources.RemoteConnect;
+            }
+            catch (Exception ex)
+            {
+                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in SendInit_Click: {ex.Message}.\n", ex);
+                toolStripStatusLabel.Text = "SendInit FAILED: " + ex.Message;                
+                return false;
+            }
+
+            return true;
+        }
+
+
 
         /// <summary>
         /// Sends a secure message
@@ -554,7 +622,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     byte[] fileBytes = System.IO.File.ReadAllBytes(openFileDialog.FileName);
                     string fileNameOnly = Path.GetFileName(openFileDialog.FileName);
                     string mimeType = Framework.Core.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
-                    
+
                     string base64Mime = Base64.Encode(fileBytes);
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
@@ -566,7 +634,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                         // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
                         pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, EncodingType.Base64, Constants.CHAT_PORT, md5, sha256);
-                        
+
                         string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
                         System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
 
@@ -720,7 +788,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         }
 
         private void MenuContactstemImport_Click(object sender, EventArgs e)
-        {                                                
+        {
             int contactId = Entities.Settings.Instance.Contacts.Count;
             string cname = string.Empty, cemail = string.Empty, cmobile = string.Empty, cphone = string.Empty, caddress = string.Empty;
             HashSet<string> names = new HashSet<string>();
@@ -816,22 +884,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                             int vcfCnt = 0;
                             bool beginEndVcard = false;
-                            
-                            
+
+
                             for (int i = 0; i < lines.Length; i++)
                             {
-                                
+
                                 if (lines[i].ToUpper().StartsWith("BEGIN:VCARD"))
                                 {
                                     beginEndVcard = true;
                                     cname = string.Empty; cemail = string.Empty; cphone = string.Empty; cmobile = string.Empty; caddress = string.Empty;
                                 }
-                                    
+
 
                                 if (beginEndVcard)
                                 {
                                     string tmpString = string.Empty;
-                                    if (lines[i].ToUpper().StartsWith("FN:")) 
+                                    if (lines[i].ToUpper().StartsWith("FN:"))
                                     {
                                         tmpString = lines[i].Substring(3);
                                         if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
@@ -849,7 +917,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                         if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsEmail())
                                             cemail = tmpString;
                                     }
-                                        
+
                                     if (lines[i].ToUpper().Contains("TEL") && lines[i].Contains("CELL") && string.IsNullOrEmpty(cmobile))
                                     {
                                         tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
@@ -870,7 +938,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                     }
 
                                     // TODO Photo add
-                                    
+
 
                                 }
 
@@ -888,7 +956,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                         }
                                     }
                                 }
-                                    
+
 
                             }
 
@@ -1201,7 +1269,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.MenuItemAttach_Click(sender, e);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonSend_Click(object sender, EventArgs e)
         {
             this.MenuItemSend_Click(sender, e);
         }
@@ -1210,7 +1278,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             this.MenuItemClear_Click(sender, e);
         }
-    
+
     }
 
 }
