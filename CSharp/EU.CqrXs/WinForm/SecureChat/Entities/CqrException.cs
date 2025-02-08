@@ -9,6 +9,10 @@ using System.Windows.Forms;
 
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
+    
+    /// <summary>
+    /// CqrException is inherited from <see cref="ApplicationException"/>
+    /// </summary>
     public class CqrException : ApplicationException
     {
         public static Exception LastException
@@ -31,4 +35,5 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         }
 
     }
+
 }

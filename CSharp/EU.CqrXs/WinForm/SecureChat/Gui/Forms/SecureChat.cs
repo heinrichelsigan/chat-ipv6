@@ -21,6 +21,10 @@ using EU.CqrXs.Framework.Core.Net.NameService;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
+    
+    /// <summary>
+    /// SecureChat main form
+    /// </summary>
     public partial class SecureChat : BaseChatForm
     {
         #region fields        
@@ -32,7 +36,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private static IPAddress? clientIpAddress;
         private static IPAddress? partnerIpAddress;
-        private static IPSockListener? ipSockListener;
+        private static Listener? ipSockListener;
 
         #endregion fields
 
@@ -93,10 +97,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         public SecureChat() : base()
         {
             InitializeComponent();
-            TextBoxSource.MaxLength = Constants.MAX_BYTE_BUFFEER;
-            TextBoxDestionation.MaxLength = Constants.MAX_BYTE_BUFFEER;
+            TextBoxSource.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
+            TextBoxDestionation.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
             ComboBoxIpContact.Text = Constants.ENTER_IP_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
+            try
+            {
+                if (!Directory.Exists(LibPaths.AttachmentFilesDir))
+                    Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
+            }
+            catch (Exception exBase64)
+            {
+                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
+                toolStripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
+            }
         }
 
 
@@ -125,7 +139,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             toolStripStatusLabel.Text = "Setup Network";
-            PlaySoundFromResource("sound_perfect");
+            // PlaySoundFromResource("sound_perfect");
             await SetupNetwork();            
 
             if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ImageBase64))
@@ -373,15 +387,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string plain = myContact.Name + Environment.NewLine + myContact.Email + Environment.NewLine +
                 myContact.Mobile + Environment.NewLine + myContact.Address + Environment.NewLine +
                 myContact.SecretKey + Environment.NewLine;
-            string encrypted = serverMessage.CqrMessage(plain);
+            string encrypted = serverMessage.CqrSrvMsg(plain);
             string response = serverMessage.SendCqrSrvMsg(plain, ServerIpAddress);
 
             this.TextBoxSource.Text = encrypted + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            string decrypted = serverMessage.NCqrMessage(encrypted);
-            this.TextBoxDestionation.Text = decrypted + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            MsgContent msgContent = serverMessage.NCqrSrvMsg(encrypted);
+            this.TextBoxDestionation.Text = msgContent.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
             chat.AddMyMessage(plain);
-            chat.AddFriendMessage(decrypted);
+            chat.AddFriendMessage(msgContent.Message);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
@@ -416,17 +430,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         chat = new Chat(0);
                     string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
 
-                    Area23EventArgs<IpSockReceiveData>? area23EvArgs = null;
-                    if (e != null && e is Area23EventArgs<IpSockReceiveData>)
+                    Area23EventArgs<ReceiveData>? area23EvArgs = null;
+                    if (e != null && e is Area23EventArgs<ReceiveData>)
                     {
-                        area23EvArgs = ((Area23EventArgs<IpSockReceiveData>)e);
+                        area23EvArgs = ((Area23EventArgs<ReceiveData>)e);
                         //TODO: Enable cross thread via delegate
                         SetStatusText(toolStripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
 
                         string comboText = GetComboBoxText(ComboBoxIpContact);
                         if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            PlaySoundFromResource("sound_row_completed");
+                            PlaySoundFromResource("sound_completed");
                             SetComboBoxText(ComboBoxIpContact, area23EvArgs.GenericTData.ClientIPAddr);
 
                         }                                                        
@@ -435,17 +449,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
-                    string unencrypted = pmsg.NCqrPeerMsg(encrypted);
+                    MsgContent msgContent = pmsg.NCqrPeerMsg(encrypted);
                     string friendMsg = string.Empty;
-                    if (unencrypted.StartsWith("Content-Type: ") || unencrypted.Contains("Content-Verification:"))
+                    if (msgContent.IsMimeAttachment())
                     {
-                        MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(unencrypted);
+                        MimeAttachment mimeAttachment = msgContent.ToMimeAttachment();
                         SetAttachmentTextLink(mimeAttachment);
-                        friendMsg = unencrypted.Substring(0, unencrypted.IndexOf("Content-Verification: "));
+                        friendMsg = mimeAttachment.GetFileNameContentLength();
                     }
                     else
                     {
-                        friendMsg = unencrypted;
+                        friendMsg = msgContent.Message;
                     }
 
                     chat.AddFriendMessage(friendMsg);
@@ -534,31 +548,38 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (File.Exists(openFileDialog.FileName))
                 {
+                    string md5 = Framework.Core.Crypt.Hash.MD5Sum.Hash(openFileDialog.FileName, true);
+                    string sha256 = Framework.Core.Crypt.Hash.Sha256Sum.Hash(openFileDialog.FileName, true);
+
                     byte[] fileBytes = System.IO.File.ReadAllBytes(openFileDialog.FileName);
                     string fileNameOnly = Path.GetFileName(openFileDialog.FileName);
                     string mimeType = Framework.Core.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
+                    
                     string base64Mime = Base64.Encode(fileBytes);
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
-                    string unencrypted = MimeAttachment.GetMimeMessage(fileNameOnly, mimeType, base64Mime, pmsg.symmPipe.PipeString);
 
+                    MimeAttachment mimeAttach;
                     try
                     {
                         partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
 
-                        pmsg.SendCqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                        // pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                        // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                        pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, EncodingType.Base64, Constants.CHAT_PORT, md5, sha256);
+                        
+                        string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
+                        System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
 
-                        chat.AddMyMessage(unencrypted);
-                        AppendText(TextBoxSource, unencrypted);
+                        chat.AddMyMessage(mimeAttach.GetFileNameContentLength());
+                        AppendText(TextBoxSource, mimeAttach.GetFileNameContentLength());
                         Format_Lines_RichTextBox();
                         this.RichTextBoxChat.Text = string.Empty;
                         toolStripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
                     }
                     catch (Exception ex)
                     {
-                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in menuItemSend_Click: {ex.Message}.\n", ex);
-                        toolStripStatusLabel.Text = "Send FAILED: " + ex.Message;
+                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
+                        toolStripStatusLabel.Text = "Attach FAILED: " + ex.Message;
                     }
                 }
                 // otherwise send message to registered user via server
@@ -588,8 +609,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 TextBoxDestionation.Text += "| " + zeni.ToString("x1") + " | => | " + sb.ToString("x1") + " | " + "\r\n";
             }
             // this.TextBoxDestionation.Text += ZenMatrix.EncryptString(this.RichTextBoxChat.Text) + "\n";
-
-
         }
 
         /// <summary>
@@ -608,8 +627,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         protected internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
         {
             string fileName = mimeAttachment.FileName;
+            string mimeFilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName + Constants.MIME_EXT);
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
-            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
+
+            byte[] attachBytes = EnDeCoder.GetBytes(mimeAttachment.MimeMsg);
+            System.IO.File.WriteAllBytes(mimeFilePath, attachBytes);
+
+            string base64 = mimeAttachment.Base64Mime;
+            if (mimeAttachment.ContentLength < mimeAttachment.Base64Mime.Length)
+                base64 = mimeAttachment.Base64Mime.Substring(0, mimeAttachment.ContentLength);
+
+            byte[] fileBytes = Base64.Decode(base64);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
             GroupBoxLinks.SetNameFilePath(fileName, filePath);
@@ -1014,7 +1042,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             item.Checked = true;
                             if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                                 this.menuItemIPv6Secure.Checked = true;
-                            ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.IPSockListener(clientIpAddress, OnClientReceive);
+                            ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                         }
                     }
 
@@ -1069,7 +1097,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 clientIpAddress = IPAddress.Parse(mi.Name);
 
                 ipSockListener?.Dispose();
-                ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.IPSockListener(clientIpAddress, OnClientReceive);
+                ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                 toolStripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
             }
         }
@@ -1182,6 +1210,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             this.MenuItemClear_Click(sender, e);
         }
+    
     }
 
 }

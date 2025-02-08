@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
+
     public class Settings : IDisposable
     {
         // TODO: replace it in C# 9.0 to private static readonly lock _lock
@@ -183,4 +184,5 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         #endregion Dispose() Dispose(bool disposing) ~Settings()
 
     }
+
 }

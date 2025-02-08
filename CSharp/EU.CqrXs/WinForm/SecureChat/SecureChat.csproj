@@ -33,15 +33,6 @@
     <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Gui\Controls\LinkLabelsControl.cs" />
-    <Compile Remove="Gui\Controls\LinkLabelsControl.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="Gui\Controls\LinkLabelsControl.resx" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <Folder Include="log\" />

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
+
     /// <summary>
     /// Chat persistency
     /// </summary>
@@ -190,4 +191,5 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
 
         #endregion Dispose() Dispose(bool disposing) ~Chat()
     }
+
 }

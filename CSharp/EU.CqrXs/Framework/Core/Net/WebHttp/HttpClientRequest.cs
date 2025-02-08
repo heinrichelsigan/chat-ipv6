@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 namespace EU.CqrXs.Framework.Core.Net.WebHttp
 {
 
+    /// <summary>
+    /// HttpClientRequest encapsulation
+    /// </summary>
     public static class HttpClientRequest
     {
 

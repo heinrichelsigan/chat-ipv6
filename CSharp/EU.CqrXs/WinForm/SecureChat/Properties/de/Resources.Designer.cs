@@ -59,5 +59,190 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.de {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap a_hash {
+            get {
+                object obj = ResourceManager.GetObject("a_hash", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap a_right_key {
+            get {
+                object obj = ResourceManager.GetObject("a_right_key", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AddAesArrow {
+            get {
+                object obj = ResourceManager.GetObject("AddAesArrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ClickToUpload {
+            get {
+                object obj = ResourceManager.GetObject("ClickToUpload", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://cqrxs.eu/net/CqrJD/Default.aspx;https://area23.at/net/CqrJD/Default.aspx;.
+        /// </summary>
+        internal static string CqrServerUrlToPost {
+            get {
+                return ResourceManager.GetString("CqrServerUrlToPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] frogInHole {
+            get {
+                object obj = ResourceManager.GetObject("frogInHole", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] frogInSwamp {
+            get {
+                object obj = ResourceManager.GetObject("frogInSwamp", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] frogJump {
+            get {
+                object obj = ResourceManager.GetObject("frogJump", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] frogUnderWater {
+            get {
+                object obj = ResourceManager.GetObject("frogUnderWater", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://github.com/heinrichelsigan/chat-ipv6.
+        /// </summary>
+        internal static string github_uri {
+            get {
+                return ResourceManager.GetString("github_uri", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 18.100.254.167;13.38.136.165;2a05:d011:cdf:3a00:726a:e8ec:f5ca:8caa;;2a05:d012:209:ee00:a8ba:d6c4:bd60:bab5.
+        /// </summary>
+        internal static string Proxies {
+            get {
+                return ResourceManager.GetString("Proxies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to cqrxs.eu;paris.area23.at;paris.area23.at;ipv6.cqrxs.eu;virginia.area23.at;parisienne.area23.at.
+        /// </summary>
+        internal static string ProxyNames {
+            get {
+                return ResourceManager.GetString("ProxyNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx;https://pairs.area23.at/net/R.aspx.
+        /// </summary>
+        internal static string RemoteIpUrls {
+            get {
+                return ResourceManager.GetString("RemoteIpUrls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sound_camera_click {
+            get {
+                object obj = ResourceManager.GetObject("sound_camera_click", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sound_interaction {
+            get {
+                object obj = ResourceManager.GetObject("sound_interaction", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sound_perfect {
+            get {
+                object obj = ResourceManager.GetObject("sound_perfect", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sound_row_completed {
+            get {
+                object obj = ResourceManager.GetObject("sound_row_completed", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] TransparentFormsIcon {
+            get {
+                object obj = ResourceManager.GetObject("TransparentFormsIcon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] WinFormAboutDialog {
+            get {
+                object obj = ResourceManager.GetObject("WinFormAboutDialog", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

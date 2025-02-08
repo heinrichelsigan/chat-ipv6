@@ -9,6 +9,7 @@ using Microsoft.Win32;
 
 namespace EU.CqrXs.Framework.Core.Net.WebHttp
 {
+
     public static class TcpClientWebRequest
     {
         const string TEST_HTTP_REQUEST_HEADER = @"GET / HTTP/1.1

@@ -6,12 +6,17 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using EU.CqrXs.Framework.Core.Crypt.EnDeCoding;
+using System.IO;
 
 namespace EU.CqrXs.Framework.Core.Net.IpSocket
 {
-    public static class IPSocketSender
-    {
 
+    /// <summary>
+    /// IpSocket.Sender encapsulation of tcp ipv46 sender 
+    /// </summary>
+    public static class Sender
+    {
 
         /// <summary>
         /// Send
@@ -27,18 +32,20 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
             {
                 IPEndPoint serverIep = new IPEndPoint(serverIp, serverPort);
                 TcpClient tcpClient = new TcpClient();
-                byte[] data = Encoding.UTF8.GetBytes(msg);
+                byte[] data = EnDeCoder.GetBytes(msg);
+                // byte[] data = Encoding.UTF8.GetBytes(msg);
+                tcpClient.SendBufferSize = Constants.MAX_BYTE_BUFFEER;
                 tcpClient.Connect(serverIep);
-                // tcpClient.Client.Send(data);
-                NetworkStream netStream = tcpClient.GetStream();
-                StreamWriter sw = new StreamWriter(netStream);
+                tcpClient.Client.Send(data);
+                // NetworkStream netStream = tcpClient.GetStream();
+                // StreamWriter sw = new StreamWriter(netStream);
                 // StreamReader sr = new StreamReader(netStream);
-                sw.Write(msg);
-                sw.Flush();
+                // sw.Write(msg);
+                // sw.Flush();
                 // byte[] outbuf = new byte[8192];
                 // int read = tcpClient.Client.Receive(outbuf);
                 // sr.BaseStream.Read(outbuf, 0, 8192);
-                resp = tcpClient.Client.LocalEndPoint?.ToString();
+                resp = tcpClient.Client.LocalEndPoint?.ToString();               
                 if (resp != null && resp.Contains("::ffff:"))
                 {
                     resp = resp?.Replace("::ffff:", "");
@@ -49,9 +56,9 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
                     }
                     resp = resp?.Trim("[{()}]".ToCharArray());
                 }
-                sw.Close();
+                // sw.Close();
                 // sr.Close();
-                netStream.Close();
+                // netStream.Close();
                 tcpClient.Close();
             }
             catch (Exception ex)
@@ -65,22 +72,22 @@ namespace EU.CqrXs.Framework.Core.Net.IpSocket
 
 
         /// <summary>
-        /// MakeWebRequestAsync
+        /// SendAsync
         /// </summary>
         /// <param name="serverIp">server ip address</param>
-        /// <param name="serverPort">server port (default 80)</param>
+        /// <param name="msg">msg to send</param>
+        /// <param name="serverPort">server port (default 7777)</param>
         /// <returns><see cref="Task{object}"/></returns>
-        //public static async Task<object> MakeWebRequestAsync(IPAddress serverIp, int serverPort = 80)
-        //{
-        //    Task<object> makeTcpRequestTask = (Task<object>)await Task<object>.Run<object>(() =>
-        //    {
-        //        string clientIpStr = MakeWebRequest(serverIp, serverPort);
-        //        return clientIpStr;
-        //    });
+        public static async Task<object> SendAsync(IPAddress serverIp, string msg, int serverPort = 7777)
+        {
+            Task<object> sendTaskAsync = (Task<object>)await Task<object>.Run<object>(() =>
+            {
+                string response = Send(serverIp, msg, serverPort);
+                return response;
+            });
 
-        //    return makeTcpRequestTask;
-        //}
-
+            return sendTaskAsync;
+        }
 
 
     }

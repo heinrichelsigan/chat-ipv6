@@ -128,9 +128,6 @@
     <value>cqrxs.eu;paris.area23.at;paris.area23.at;ipv6.cqrxs.eu;virginia.area23.at;parisienne.area23.at</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AddAesArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AddAesArrow.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="WinFormAboutDialog" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\WinFormAboutDialog.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -139,9 +136,6 @@
   </data>
   <data name="a_hash" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\a_hash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ClickToUpload" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ClickToUpload.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="RemoteIpUrls" xml:space="preserve">
     <value>https://cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx;https://pairs.area23.at/net/R.aspx</value>
@@ -164,16 +158,22 @@
   <data name="TransparentFormsIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TransparentFormsIcon.ico;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="sound_perfect" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sound_perfect.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="sound_interaction" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\sound_interaction.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="sound_camera_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\sound_camera_click.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="sound_row_completed" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sound_row_completed.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="ClickToUpload" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClickToUpload.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AddAesArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AddAesArrow.gif;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_perfect" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_perfect.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_completed" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_completed.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

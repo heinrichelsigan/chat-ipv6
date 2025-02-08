@@ -32,7 +32,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private static IPAddress? clientIpAddress;
         private static IPAddress? partnerIpAddress;
-        private static IPSockListener? ipSockListener;
+        private static Listener? ipSockListener;
 
         #endregion fields
 
@@ -366,15 +366,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string plain = myContact.Name + Environment.NewLine + myContact.Email + Environment.NewLine +
                 myContact.Mobile + Environment.NewLine + myContact.Address + Environment.NewLine +
                 myContact.SecretKey + Environment.NewLine;
-            string encrypted = serverMessage.CqrMessage(plain);
+            string encrypted = serverMessage.CqrSrvMsg(plain);
             string response = serverMessage.SendCqrSrvMsg(plain, ServerIpAddress);
 
             this.TextBoxSource.Text = encrypted + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            string decrypted = serverMessage.NCqrMessage(encrypted);
-            this.TextBoxDestionation.Text = decrypted + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            MsgContent msgContent = serverMessage.NCqrSrvMsg(encrypted);
+            this.TextBoxDestionation.Text = msgContent.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
             chat.AddMyMessage(plain);
-            chat.AddFriendMessage(decrypted);
+            chat.AddFriendMessage(msgContent.Message);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
@@ -409,10 +409,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         chat = new Chat(0);
                     string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
 
-                    Area23EventArgs<IpSockReceiveData>? area23EvArgs = null;
-                    if (e != null && e is Area23EventArgs<IpSockReceiveData>)
+                    Area23EventArgs<ReceiveData>? area23EvArgs = null;
+                    if (e != null && e is Area23EventArgs<ReceiveData>)
                     {
-                        area23EvArgs = ((Area23EventArgs<IpSockReceiveData>)e);
+                        area23EvArgs = ((Area23EventArgs<ReceiveData>)e);
                         //TODO: Enable cross thread via delegate
                         SetStatusText(toolStripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
 
@@ -428,17 +428,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
-                    string unencrypted = pmsg.NCqrPeerMsg(encrypted);
+                    MsgContent msgContent = pmsg.NCqrPeerMsg(encrypted);
+                    
                     string friendMsg = string.Empty;
-                    if (unencrypted.StartsWith("Content-Type: ") || unencrypted.Contains("Content-Verification:"))
+                    if (msgContent.IsMimeAttachment()) 
                     {
-                        MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(unencrypted);
+                        MimeAttachment mimeAttachment = msgContent.ToMimeAttachment();
                         SetAttachmentTextLink(mimeAttachment);
-                        friendMsg = unencrypted.Substring(0, unencrypted.IndexOf("Content-Verification: "));
+                        friendMsg = mimeAttachment.FileName + "[" + mimeAttachment.ContentLength + "]";
                     }
                     else
                     {
-                        friendMsg = unencrypted;
+                        friendMsg = msgContent.Message;
                     }
 
                     chat.AddFriendMessage(friendMsg);
@@ -930,7 +931,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             item.Checked = true;
                             if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                                 this.menuItemIPv6Secure.Checked = true;
-                            ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.IPSockListener(clientIpAddress, OnClientReceive);
+                            ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                         }
                     }
 
@@ -985,7 +986,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 clientIpAddress = IPAddress.Parse(mi.Name);
 
                 ipSockListener?.Dispose();
-                ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.IPSockListener(clientIpAddress, OnClientReceive);
+                ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                 toolStripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
             }
         }

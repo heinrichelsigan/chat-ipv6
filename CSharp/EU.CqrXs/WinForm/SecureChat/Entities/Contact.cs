@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
+
+    /// <summary>
+    /// Represents a contact entry
+    /// </summary>
     public class Contact
     {
         public int ContactId { get; set; }
@@ -42,4 +46,5 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             }
         }
     }
+
 }

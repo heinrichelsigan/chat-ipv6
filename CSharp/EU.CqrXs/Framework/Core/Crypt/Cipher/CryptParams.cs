@@ -9,6 +9,7 @@ using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace EU.CqrXs.Framework.Core.Crypt.Cipher
 {
+
     /// <summary>
     /// CryptParams parameters for encryption algorithm engine
     /// </summary>

@@ -14,16 +14,18 @@ namespace EU.CqrXs.Framework.Core
     {
 
         #region public const
-        
+
         public const int BACKLOG = 8;
         public const int CHAT_PORT = 7777;
         public const int MAX_KEY_LEN = 4096;
         public const int MAX_PIPE_LEN = 8;
         public const int MAX_SERVER_SOCKET_ADDRESSES = 16;
         public const int CLOSING_TIMEOUT = 6000;
-
-        public const int MAX_BYTE_BUFFEER = 4194240;    // 4 MB Buffer
-
+        public const int MIN_SOCKET_BYTE_BUFFEER = 65536;   // 64 KB Buffer
+        public const int SOCKET_BYTE_BUFFEER = 1048576;     //  1 MB Buffer
+        public const int MAX_BYTE_BUFFEER = 4194240;        //  4 MB Buffer
+        public const bool CQR_ENCRYPT = true;
+        
         public const char ANNOUNCE = ':';
         public const char DATE_DELIM = '-';
         public const char WHITE_SPACE = ' ';
@@ -66,7 +68,7 @@ namespace EU.CqrXs.Framework.Core
         public const string ACK = "Ack";
         public const string NACK = "Nack";
         public const string ENTER_SECRET_KEY = "[enter secret key here]";
-        public const string ENTER_IP_CONTACT = "[Enter peer IPv4 or reachable IPv6 for directly connect]";
+        public const string ENTER_IP_CONTACT = "[Enter peer IPv4 or reachable IPv6 for directly connect]";        
 
         public const string AUTHOR = "Heinrich Elsigan";
         public const string AUTHOR_EMAIL = "heinrich.elsigan@area23.at";
@@ -95,6 +97,8 @@ namespace EU.CqrXs.Framework.Core
         public const string OBJ_DIR = "obj";
         public const string RELEASE_DIR = "Release";
         public const string DEBUG_DIR = "Release";
+        public const string MIME_EXT = ".mime";
+        public const string BASE64_EXT = ".base64";
         public const string ATTACH_FILES_DIR = "AttachFiles";
 
         public const string UTF8_JSON = "utf8symol.json";

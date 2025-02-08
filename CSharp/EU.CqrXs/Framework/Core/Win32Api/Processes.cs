@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace EU.CqrXs.Framework.Core.Win32Api
 {
+
     /// <summary>
     /// Processes - a windows process Library using Win32 Api
     /// Thanks to <see href="https://github.com/dotnet">github.com/dotnet</see>,

@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace EU.CqrXs.Framework.Core.Win32Api
 {
+
     /// <summary>
     /// NativeWrapper contain inner classes for User32, Kernel32 and GDI32 Windows Core API calls
     /// Thanks to <see href="https://github.com/dotnet">github.com/dotnet</see>,
