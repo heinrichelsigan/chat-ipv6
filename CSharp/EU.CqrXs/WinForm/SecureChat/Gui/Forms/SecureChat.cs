@@ -559,7 +559,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
 
-                    MimeAttachment mimeAttach;
+                    MimeAttachment mimeAttach; // = new MimeAttachment(fileNameOnly, mimeType, base64Mime, pmsg.symmPipe.PipeString, md5, sha256);
                     try
                     {
                         partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
@@ -627,10 +627,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         protected internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
         {
             string fileName = mimeAttachment.FileName;
-            string mimeFilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName + Constants.MIME_EXT);
+            string mimeFilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName + Constants.HTML_EXT);
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
 
-            byte[] attachBytes = EnDeCoder.GetBytes(mimeAttachment.MimeMsg);
+            byte[] attachBytes = EnDeCoder.GetBytes(mimeAttachment.GetWebPage());
             System.IO.File.WriteAllBytes(mimeFilePath, attachBytes);
 
             string base64 = mimeAttachment.Base64Mime;
