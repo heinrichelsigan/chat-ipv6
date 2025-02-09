@@ -482,11 +482,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (true)
             {
                 byte[] bytes = (byte[])EU.CqrXs.WinForm.SecureChat.Properties.Resources.ResourceManager.GetObject(soundName);
-                fixed (byte* bufferPtr = &bytes[0])
+                if (bytes != null && bytes.Length > 0)
                 {
-                    System.IO.UnmanagedMemoryStream ums = new UnmanagedMemoryStream(bufferPtr, bytes.Length);
-                    SoundPlayer player = new SoundPlayer(ums);
-                    player.Play();
+                    fixed (byte* bufferPtr = &bytes[0])
+                    {
+                        System.IO.UnmanagedMemoryStream ums = new UnmanagedMemoryStream(bufferPtr, bytes.Length);
+                        SoundPlayer player = new SoundPlayer(ums);
+                        player.Play();
+                    }
                 }
             }
         }

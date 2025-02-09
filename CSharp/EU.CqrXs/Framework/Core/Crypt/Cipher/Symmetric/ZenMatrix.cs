@@ -203,13 +203,13 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
             {
                 processedEncrypted = new byte[len];
                 aCnt = 0;
-                for (bCnt = offSet; bCnt < offSet + len; bCnt++)
+                for (aCnt = 0, bCnt = offSet; bCnt < offSet + len; aCnt++, bCnt++)
                 {
                     byte b = inBytesPadding[bCnt];
                     MapByteValue(ref b, out byte mapEncryptB, true);
                     sbyte sm = MatrixPermKey[aCnt];
                     processedEncrypted[(int)sm] = mapEncryptB;
-                    aCnt++;
+                    // aCnt++;
                 }
             }
             return processedEncrypted;
@@ -230,13 +230,13 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
             {
                 processedDecrypted = new byte[len];
                 aCnt = 0;
-                for (bCnt = offSet; bCnt < offSet + len; bCnt++)
+                for (aCnt = 0, bCnt = offSet; bCnt < offSet + len; aCnt++, bCnt++)
                 {
                     byte b = inBytesEncrypted[bCnt];
                     MapByteValue(ref b, out byte mapDecryptB, false);
                     sbyte sm = MatrixReverse[aCnt];
                     processedDecrypted[(int)sm] = mapDecryptB;
-                    aCnt++;
+                    // aCnt++;
                 }
             }
             return processedDecrypted;

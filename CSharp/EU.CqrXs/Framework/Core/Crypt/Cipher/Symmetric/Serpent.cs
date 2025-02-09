@@ -54,7 +54,7 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
         }
 
         /// <summary>
-        /// ThreeFishGenWithKey => Generates new <see cref="Serpent"/> with secret key
+        /// SerpentGenWithKey => Generates new <see cref="Serpent"/> with secret key
         /// </summary>
         /// <param name="secretKey">key param for encryption</param>
         /// <param name="usrHash">user key hash</param>
