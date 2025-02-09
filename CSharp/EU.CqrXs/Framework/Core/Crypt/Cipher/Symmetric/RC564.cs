@@ -15,7 +15,7 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
 {
 
     /// <summary>
-    /// static class RC564, that implements 2FISH static Encrypt & Decrypt members
+    /// static class RC564, that implements RC564 static Encrypt & Decrypt members
     /// </summary>
     public static class RC564
     {
@@ -42,7 +42,7 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
         #region ctor_gen
 
         /// <summary>
-        /// static Fish2 constructor
+        /// static RC564 constructor
         /// </summary>
         static RC564()
         {
@@ -59,12 +59,13 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
             // TwoFishGenWithKey(string.Empty, true);
         }
 
+
         /// <summary>
-        /// RijndaelGenWithKey - Generate new <see cref="Rijndael"/> with secret key
+        /// RC564GenWithKey - Generates a new <see cref="RC564"/> with secret key
         /// </summary>
         /// <param name="secretKey">key param for encryption</param>
         /// <param name="usrHash">user key hash</param>
-        /// <param name="init">init <see cref="Fish2"/> first time with a new key</param>
+        /// <param name="init">init <see cref="RC564"/> first time with a new key</param>
         /// <returns>true, if init was with same key successfull</returns>
         public static bool RC564GenWithKey(string secretKey = "heinrich.elsigan@area23.at", string usrHash = "https://cqrxs.eu/net", bool init = true)
         {
@@ -109,7 +110,7 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
         #region EncryptDecryptBytes
 
         /// <summary>
-        /// Rijndael Encrypt member function
+        /// RC564 Encrypt with <see cref="RC564Engine"/>
         /// </summary>
         /// <param name="plainData">plain data as <see cref="byte[]"/></param>
         /// <returns>encrypted data <see cref="byte[]">bytes</see></returns>
@@ -144,7 +145,7 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
         }
 
         /// <summary>
-        /// Rijndael Decrypt member function
+        /// RC564 Decrypt with <see cref="RC564Engine"/>
         /// </summary>
         /// <param name="cipherData">encrypted <see cref="byte[]">bytes</see></param>
         /// <returns>decrypted plain byte[] data</returns>
@@ -182,7 +183,7 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
         #region EnDecryptString
 
         /// <summary>
-        /// 2FISH Encrypt String method
+        /// RC564 Encrypt String method
         /// </summary>
         /// <param name="inString">plain string to encrypt</param>
         /// <returns>base64 encoded encrypted string</returns>
@@ -197,7 +198,7 @@ namespace EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric
 
 
         /// <summary>
-        /// 2FISH Decrypt String method
+        /// RC564 Decrypt String method
         /// </summary>
         /// <param name="inCryptString">base64 encrypted string</param>
         /// <returns>plain text decrypted string</returns>

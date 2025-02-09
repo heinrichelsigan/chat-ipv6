@@ -152,26 +152,14 @@
   <data name="TransparentFormsIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TransparentFormsIcon.ico;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="sound_interaction" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sound_interaction.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="sound_camera_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sound_camera_click.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="ClickToUpload" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ClickToUpload.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="AddAesArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\AddAesArrow.gif;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="sound_perfect" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sound_perfect.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="sound_completed" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sound_completed.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="RemoteConnect" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\RemoteConnect.gif;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RemoteConnect.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CableWireCut" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CableWireCut.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -193,5 +181,65 @@
   </data>
   <data name="file" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\file.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_arrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_arrow.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_breakpoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_breakpoint.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_glasses" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_glasses.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_laser" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_laser.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_push" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_push.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_sputnik" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_sputnik.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_volatage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_volatage.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_warning" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_warning.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_ups" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_ups.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_click.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_camera" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_camera.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_type" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_type.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_train" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_train.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_top.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_space" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_space.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_soft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_soft.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_coin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_coin.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_gong" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_gong.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_wind" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_wind.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sound_error" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sound_error.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

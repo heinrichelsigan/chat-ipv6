@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureChat", "WinForm\Secur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.Framework.Core", "Framework\Core\EU.CqrXs.Framework.Core.csproj", "{07636C3B-E22E-4B5D-BBEE-B4175EFBEFEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Area23.At.Framework.Core", "Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj", "{F911E898-5322-468E-80D8-E97C9FAB3B7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{07636C3B-E22E-4B5D-BBEE-B4175EFBEFEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07636C3B-E22E-4B5D-BBEE-B4175EFBEFEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07636C3B-E22E-4B5D-BBEE-B4175EFBEFEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F911E898-5322-468E-80D8-E97C9FAB3B7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F911E898-5322-468E-80D8-E97C9FAB3B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F911E898-5322-468E-80D8-E97C9FAB3B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F911E898-5322-468E-80D8-E97C9FAB3B7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

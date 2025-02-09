@@ -208,46 +208,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.de {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] sound_camera_click {
-            get {
-                object obj = ResourceManager.GetObject("sound_camera_click", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] sound_interaction {
-            get {
-                object obj = ResourceManager.GetObject("sound_interaction", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] sound_perfect {
-            get {
-                object obj = ResourceManager.GetObject("sound_perfect", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] sound_row_completed {
-            get {
-                object obj = ResourceManager.GetObject("sound_row_completed", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] TransparentFormsIcon {
             get {
                 object obj = ResourceManager.GetObject("TransparentFormsIcon", resourceCulture);
