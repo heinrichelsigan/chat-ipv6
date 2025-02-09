@@ -504,7 +504,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     }
 
                     chat.AddFriendMessage(friendMsg);
-                    AppendText(TextBoxDestionation, friendMsg);
+                    AppendText(TextBoxDestionation, friendMsg + Environment.NewLine);
                     // this.RichTextBoxOneView.Text = unencrypted;
                     Format_Lines_RichTextBox();
                 }
@@ -544,13 +544,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 // AppendText(TextBoxSource, unencrypted);
                 // Format_Lines_RichTextBox();
                 this.RichTextBoxChat.Text = string.Empty;
-                toolStripStatusLabel.Text = "SendInit successfully";
+                toolStripStatusLabel.Text = "Send init successfully";
                 ButtonCheck.Image = Properties.de.Resources.RemoteConnect;
             }
             catch (Exception ex)
             {
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in SendInit_Click: {ex.Message}.\n", ex);
-                toolStripStatusLabel.Text = "SendInit FAILED: " + ex.Message;                
+                toolStripStatusLabel.Text = "Send init FAILED: " + ex.Message;
+                PlaySoundFromResource("sound_hammer");
                 return false;
             }
 
@@ -589,7 +590,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
                
             myServerKey = this.ComboBoxSecretKey.Text;
-            string unencrypted = this.RichTextBoxChat.Text;
+            string unencrypted = this.RichTextBoxChat.Text.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
+
 
             try
             {
@@ -670,7 +672,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
 
                         chat.AddMyMessage(mimeAttach.GetFileNameContentLength());
-                        AppendText(TextBoxSource, mimeAttach.GetFileNameContentLength());
+                        AppendText(TextBoxSource, mimeAttach.GetFileNameContentLength() + Environment.NewLine);
                         Format_Lines_RichTextBox();
                         this.RichTextBoxChat.Text = string.Empty;
                         toolStripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
