@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 {
-
 
     /// <summary>
     /// Simple Matrix symmetric cipher maybe already invented, but created by zen@area23.at (Heinrich Elsigan)
@@ -38,10 +38,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
         #region Properties
 
-        public static sbyte[] MatrixPermKey { get; set; }
-        public static sbyte[] MatrixReverse { get; set; }
+        public static sbyte[] MatrixPermKey { get; internal set; }
+        public static sbyte[] MatrixReverse { get; internal set; }
 
-        public static HashSet<sbyte> PermKeyHash { get; set; }
+        public static HashSet<sbyte> PermKeyHash { get; internal set; }
+
+        public static Dictionary<sbyte, sbyte> MatrixDict { get; internal set; }
 
 
         #endregion Properties
@@ -59,6 +61,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             // MatrixReverse = BuildReveseMatrix(MatrixPermKey);
         }
 
+
         /// <summary>
         /// InitMatrixSymChiffer - base initialization of variables, needed for matrix sym chiffer encryption
         /// </summary>
@@ -71,7 +74,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 privateBytes[cntSby % 16] = (byte)0;
                 MatrixPermKey[cntSby++] = s;
             }
-
             PermKeyHash = new HashSet<sbyte>(MatrixBasePerm);
             MatrixReverse = BuildReveseMatrix(MatrixPermKey);
         }
@@ -85,7 +87,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="usrHash">user key hash</param>
         /// <param name="init">init three fish first time with a new key</param>
         /// <returns>true, if init was with same key successfull</returns>
-        public static bool ZenMatrixGenWithKey(string secretKey = "he@area23.at", string usrHash = "elsigan@area23.at", bool init = true) // , byte[] textForEncryption = null)
+        public static bool ZenMatrixGenWithKey(string secretKey = "", string usrHash = "", bool init = true) // , byte[] textForEncryption = null)
         {
             if (!init)
             {
@@ -120,47 +122,95 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
             if (init)
             {
-                int aCnt = 0, bCnt = 0;
+                int ba = 0, bb = 0;
                 Array.Copy(keyBytes, 0, privateBytes, 0, Math.Min(keyBytes.Length, 16));
 
                 InitMatrixSymChiffer();
+                MatrixDict = new Dictionary<sbyte, sbyte>();
                 PermKeyHash = new HashSet<sbyte>();
                 List<byte> key2 = new List<byte>(keyBytes);
 
                 //foreach (byte keyByte in keyBytes)
                 //{
-                //    byte sb = (byte)(keyByte % 16);
-                //    key2.Add(sb);
-                //    byte lb = (byte)((keyByte - (byte)sb) / 16);
-                //    key2.Add(lb);                    
+                //    byte lsb = (byte)(keyByte % 16);
+                //    byte msb = (byte)((keyByte - (byte)lsb) / 16);
+                //    key2.Add(msb);
+                //    key2.Add(lsb);
                 //}
 
                 foreach (byte keyByte in key2)
                 {
                     sbyte b = (sbyte)(keyByte % 16);
-                    for (int i = 0; ((i < 16) && (PermKeyHash.Contains(b) || ((int)b) == bCnt)); i++)
+                    for (int i = 0; i < 32; i++)
                     {
-                        b = ((sbyte)((Convert.ToInt32(keyByte) + MagicOrder[i]) % 16));
+                        if (PermKeyHash.Contains(b) || ((int)b) == ba)
+                        {
+                            if (i < 16)
+                                b = ((sbyte)((Convert.ToInt32(keyByte) + MagicOrder[i]) % 16));
+                            if (i >= 16)
+                                b = ((sbyte)((Convert.ToInt32(keyByte) + i) % 16));
+                        }
+                        else break;
                     }
+
                     if (!PermKeyHash.Contains(b))
                     {
-                        PermKeyHash.Add(b);
-                        aCnt = (int)b;
-                        if (aCnt != bCnt)
+                        bb = (int)b;
+                        if (ba != bb)
                         {
-                            // MatrixPermKey = MatrixPermKey.SwapTPositions<sbyte>(aCnt, bCnt);
-                            sbyte sba = MatrixPermKey[aCnt];
-                            sbyte sbb = MatrixPermKey[bCnt];
-                            MatrixPermKey[aCnt] = sbb;
-                            MatrixPermKey[bCnt] = sba;
+                            if (!MatrixDict.Keys.Contains(b) && !MatrixDict.Keys.Contains((sbyte)ba))
+                            {
+                                MatrixDict.Add((sbyte)ba, (sbyte)bb);
+                                MatrixDict.Add((sbyte)bb, (sbyte)ba);
+                            }
+
+                            PermKeyHash.Add(b);
+                            MatrixPermKey = MatrixPermKey.SwapTPositions<sbyte>(ba, bb);
+                            ba++;
                         }
-                        bCnt++;
                     }
                 }
 
+                #region Constants.ZEN_MATRIX_SYMMETRIC only for full symmetric zen matrizes, where (key -> value => value -> key)
+                if (Constants.ZEN_MATRIX_SYMMETRIC)
+                {
+                    if (MatrixDict.Count < 15)
+                    {
+                        for (int k = 0; k < 16; k++)
+                            if (!MatrixDict.Keys.Contains((sbyte)k))
+                                for (int l = 15; l >= 0; l--)
+                                    if (!MatrixDict.Values.Contains((sbyte)l))
+                                    {
+                                        MatrixDict.Add((sbyte)k, (sbyte)l);
+                                        if (!MatrixDict.Keys.Contains((sbyte)l))
+                                            MatrixDict.Add((sbyte)l, (sbyte)k);
+                                        break;
+                                    }
+                    }
+                    if (MatrixDict.Count == 16)
+                    {
+                        sbyte bKey, bValue;
+                        PermKeyHash.Clear();
+                        for (int n = 0; n < 16; n++)
+                        {
+                            bKey = (sbyte)n;
+                            bValue = (sbyte)MatrixDict[bKey];
+                            PermKeyHash.Add(bValue);
+                            MatrixPermKey[(int)bKey] = bValue;
+                            MatrixPermKey[(int)bValue] = bKey;
+                        }
+                    }
+                }
+                #endregion Constants.ZEN_MATRIX_SYMMETRIC only for full symmetric zen matrizes, where (key -> value => value -> key)
+
+
                 MatrixReverse = BuildReveseMatrix(MatrixPermKey);
+
+
             }
+
             return true;
+
         }
 
 
@@ -201,7 +251,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             byte[] processedEncrypted = null;
             if (offSet < inBytesPadding.Length && offSet + len <= inBytesPadding.Length)
             {
-                processedEncrypted = new byte[len];                
+                processedEncrypted = new byte[len];
                 for (aCnt = 0, bCnt = offSet; bCnt < offSet + len; aCnt++, bCnt++)
                 {
                     byte b = inBytesPadding[bCnt];
@@ -260,7 +310,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
             byte[] randBuffer = new byte[outputSize - plainData.Length];
             Random rand = new Random(plainData.Length);
-            rand.Shuffle(randBuffer);
             rand.NextBytes(randBuffer);
 
             for (bCnt = 0; bCnt < inBytesPadding.Length; bCnt++)
@@ -305,6 +354,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 (long)(cipherData.Length + (16 - (cipherData.Length % 16)));
             long outputSize = ((long)(oSize / 16)) * 16;
             byte[] inBytesEncrypted = new byte[outputSize];
+
             for (bCnt = 0; bCnt < inBytesEncrypted.Length; bCnt++)
             {
                 if (bCnt < cipherData.Length)
@@ -398,7 +448,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             return outSBytes.ToArray();
         }
 
-
         internal static T[] SwapT<T>(ref T t0, ref T t1)
         {
             T[] tt = new T[2];
@@ -409,6 +458,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
             return tt;
         }
+
 
 
         #endregion SwapHelpers
@@ -471,11 +521,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     aCnt = (int)sb;
                     if (aCnt != bCnt)
                     {
-                        // MatrixPermKey = MatrixPermKey.SwapTPositions<sbyte>(aCnt, bCnt);
-                        sbyte sba = MatrixPermKey[aCnt];
-                        sbyte sbb = MatrixPermKey[bCnt];                        
-                        MatrixPermKey[aCnt] = sbb;
-                        MatrixPermKey[bCnt] = sba;
+                        MatrixPermKey = MatrixPermKey.SwapTPositions<sbyte>(aCnt, bCnt);
+                        // sbyte sba = MatrixPermKey[aCnt];
+                        // sbyte sbb = MatrixPermKey[bCnt];
+                        // SwapT<sbyte>(ref sba, ref sbb);
+                        // MatrixPermKey[aCnt] = sba;
+                        // MatrixPermKey[bCnt] = sbb;
                     }
                     bCnt++;
                 }
@@ -521,6 +572,5 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         #endregion ObsoleteDeprecated
 
     }
-
 
 }
