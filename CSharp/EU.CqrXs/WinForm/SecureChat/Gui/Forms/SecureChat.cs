@@ -592,7 +592,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             myServerKey = this.ComboBoxSecretKey.Text;
             string unencrypted = this.RichTextBoxChat.Text.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
 
-
             try
             {
                 partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
