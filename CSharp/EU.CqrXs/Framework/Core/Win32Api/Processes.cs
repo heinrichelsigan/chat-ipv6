@@ -97,7 +97,7 @@ namespace EU.CqrXs.Framework.Core.Win32Api
         /// <returns><see cref="System.Diagnostics.Process"/></returns>
         public static Process GetProcessById(int pid)
         {
-            Process process;
+            Process? process = null;
             try
             {
                 process = Process.GetProcessById(pid);
@@ -396,7 +396,7 @@ namespace EU.CqrXs.Framework.Core.Win32Api
         public static void KillProcess(int pid, bool ignoreWin32SystemProcesses = true)
         {
             string methodSignature = $"Processes.KillProcess(int pid = {pid}, bool ignoreWin32SystemProcesses = {ignoreWin32SystemProcesses})";
-            Process process = null;
+            Process? process = null;
             try
             {
                 process = Process.GetProcessById(pid);
@@ -469,7 +469,7 @@ namespace EU.CqrXs.Framework.Core.Win32Api
         public static int KillProcessTree(int pid, bool killParent = true, int psKilled = 0, bool ignoreWin32SystemProcesses = true)
         {
             string methodSignature = $"Processes.KillProcessTree(int pid = {pid}, bool killParent = {killParent}, int psKilled = {psKilled}, bool ignoreWin32SystemProcesses = {ignoreWin32SystemProcesses})";
-            Process process = null;
+            Process? process = null;
             try
             {
                 process = Process.GetProcessById(pid);

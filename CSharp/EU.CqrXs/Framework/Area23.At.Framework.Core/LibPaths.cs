@@ -16,10 +16,10 @@ namespace Area23.At.Framework.Core
     /// </summary>
     public static class LibPaths
     {
-        private static string appPath = null;
-        private static string baseAppPath = null;
-        private static string systemDirPath = null;
-        private static string systemDirResPath = null;
+        private static string appPath = "";
+        private static string baseAppPath = "";
+        private static string systemDirPath = "";
+        private static string systemDirResPath = "";
 
         public static char SepCh { get => Path.DirectorySeparatorChar; }
 
@@ -60,7 +60,9 @@ namespace Area23.At.Framework.Core
                 if (String.IsNullOrEmpty(baseAppPath))
                 {
                     string basApPath = "";
-                    if ((SepCh == '/') && (System.Configuration.ConfigurationManager.AppSettings["BaseAppPathUnix"] != null))
+                    if (SepCh == '/' && 
+                        System.Configuration.ConfigurationManager.AppSettings["BaseAppPathUnix"] != null && 
+                        System.Configuration.ConfigurationManager.AppSettings["BaseAppPathUnix"] != "")
                         basApPath = System.Configuration.ConfigurationManager.AppSettings["BaseAppPathUnix"];
                     else if (System.Configuration.ConfigurationManager.AppSettings["BaseAppPathWin"] != null)
                         basApPath = System.Configuration.ConfigurationManager.AppSettings["BaseAppPathWin"];
@@ -96,26 +98,41 @@ namespace Area23.At.Framework.Core
 
         #endregion Web App Paths
 
+
         #region directory & file paths
 
+        /// <summary>
+        /// SystemDirPath return system directory path, 
+        /// if defined in App.Config, 
+        /// otherwise applcation directory of base exe.
+        /// </summary>
         public static string SystemDirPath
         {
             get
             {
-                if (String.IsNullOrEmpty(systemDirPath))
+                if (string.IsNullOrEmpty(systemDirPath))
                 {
-                    if ((SepCh == '/') && (ConfigurationManager.AppSettings["AppDirPathUnix"] != null))
-                        systemDirPath = (string)ConfigurationManager.AppSettings["AppDirPathUnix"];
-                    else if (ConfigurationManager.AppSettings["AppDirPathWin"] != null)
-                        systemDirPath = (string)ConfigurationManager.AppSettings["AppDirPathWin"];
-
-                    if (String.IsNullOrEmpty(systemDirPath))
+                    for (int sysDirTry = 0; sysDirTry < 6; sysDirTry++)
                     {
-                        if (AppContext.BaseDirectory != null)
-                            systemDirPath = Assembly.GetExecutingAssembly().Location;
-                        else if (AppDomain.CurrentDomain != null)
-                            systemDirPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                        switch (sysDirTry)
+                        {
+                            case 0:
+                                if (SepChar == "/" && Path.DirectorySeparatorChar == '/' && SepCh == Path.DirectorySeparatorChar &&
+                                            ConfigurationManager.AppSettings["AppDirPathUnix"] != null &&
+                                            ConfigurationManager.AppSettings["AppDirPathUnix"] != "")
+                                    systemDirPath = (string)ConfigurationManager.AppSettings["AppDirPathUnix"]; break;
+                            case 1:
+                                if (ConfigurationManager.AppSettings["AppDirPathWin"] != null)
+                                    systemDirPath = (string)ConfigurationManager.AppSettings["AppDirPathWin"]; break;
+                            case 2: systemDirPath = Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location); break;
+                            case 3: if (AppContext.BaseDirectory != null) systemDirPath = AppContext.BaseDirectory; break;
+                            case 4: if (AppDomain.CurrentDomain != null) systemDirPath = AppDomain.CurrentDomain.BaseDirectory; break;
+                            case 5:
+                            default: systemDirPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location); break;
+                        }
 
+                        if (!string.IsNullOrEmpty(systemDirPath) && Directory.Exists(systemDirPath))
+                            break;
                     }
 
                     if (!systemDirPath.EndsWith(SepChar))
@@ -127,11 +144,15 @@ namespace Area23.At.Framework.Core
         }
 
 
+        /// <summary>
+        /// SystemDirResPath returns path to subdirector <see cref="Constants.RES_DIR"/> of base directory <see cref="SystemDirPath"/>.
+        /// If subdirectory <see cref="Constants.RES_DIR"/> will be created, if it not allready exist inside directory <see cref="SystemDirPath"/>.        
+        /// </summary>
         public static string SystemDirResPath
         {
             get
             {
-                if (String.IsNullOrEmpty(systemDirResPath))
+                if (string.IsNullOrEmpty(systemDirResPath))
                 {
                     systemDirResPath = SystemDirPath;
                     if (!systemDirResPath.Contains(Constants.RES_DIR))
@@ -154,6 +175,7 @@ namespace Area23.At.Framework.Core
                 return systemDirResPath;
             }
         }
+
 
         public static string SystemDirBinPath { get => SystemDirResPath + Constants.BIN_DIR + SepChar; }
 

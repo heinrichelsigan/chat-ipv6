@@ -361,8 +361,8 @@ PMsi2xTrUPC6pAERVgu7wz02ka3WPOdlxfoG0o9s/BwJmhi5EEBqGB4CriR8R8AY
 
         public static string Json_Example { get => ResReader.GetValue("json_sample0"); }
 
-        private static System.Globalization.CultureInfo locale = null;
-        private static String defaultLang = null;
+        private static System.Globalization.CultureInfo? locale = null;
+        private static String? defaultLang = null;
 
         /// <summary>
         /// UT DateTime @area23.at including seconds

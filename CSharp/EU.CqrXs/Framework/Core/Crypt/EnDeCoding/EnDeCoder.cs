@@ -91,10 +91,10 @@ namespace EU.CqrXs.Framework.Core.Crypt.EnDeCoding
             return Encoding.ASCII.GetString(data, 0, data.Length);
         }
 
-        public static string GetString7(byte[] data)
-        {
-            return Encoding.UTF7.GetString(data, 0, data.Length);
-        }
+        //public static string GetString7(byte[] data)
+        //{
+        //    return Encoding.UTF7.GetString(data, 0, data.Length);
+        //}
 
         public static string GetString8(byte[] data)
         {
@@ -124,10 +124,10 @@ namespace EU.CqrXs.Framework.Core.Crypt.EnDeCoding
             return Encoding.ASCII.GetBytes(str2encode);
         }
 
-        public static byte[] GetBytes7(string str2encode)
-        {
-            return Encoding.UTF7.GetBytes(str2encode);
-        }
+        //public static byte[] GetBytes7(string str2encode)
+        //{
+        //    return Encoding.UTF7.GetBytes(str2encode);
+        //}
 
         public static byte[] GetBytes8(string str2encode)
         {
@@ -158,10 +158,10 @@ namespace EU.CqrXs.Framework.Core.Crypt.EnDeCoding
             return Encoding.ASCII.GetByteCount(str);
         }
 
-        public static int GetByteCount7(string str)
-        {
-            return Encoding.UTF7.GetByteCount(str);
-        }
+        //public static int GetByteCount7(string str)
+        //{
+        //    return Encoding.UTF7.GetByteCount(str);
+        //}
 
         public static int GetByteCount8(string str)
         {

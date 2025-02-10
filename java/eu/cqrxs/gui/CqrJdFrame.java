@@ -1,7 +1,10 @@
 /*
 	CqrJdFrame
+	https://heinrichelsigan.area23.at
 */
+// package eu.cqrxs.gui;
 
+// import eu.cqrxs.gui.CqrJDialog;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -9,8 +12,6 @@ import java.net.http.*;
 import java.net.*;
 import java.lang.*;
 import java.time.Duration;
-
-
 
 
 public class CqrJdFrame extends JFrame
@@ -275,6 +276,7 @@ public class CqrJdFrame extends JFrame
 	JPanel jPanelCenter = new JPanel();
 	JButton JButton1 = new JButton();
 	JTextArea jTextAreaSource = new JTextArea(), jTextAreaDestination = new JTextArea();
+	CqrJDialog cqrJDialog;
 	
 	JMenuBar jMenuBar = new JMenuBar();
 	// JMenuBar jMenuBar = new JMenuBar();
@@ -480,8 +482,11 @@ public class CqrJdFrame extends JFrame
 	public void about(ActionEvent event) {
 	
 		jTextAreaSource.append("About menu clicked, event: " + event + "\n");
-		CqrJDialog cqrJDialog = new CqrJDialog("About CqrJd:");
-		cqrJDialog.showDialog(cqrJdFrame);
+		try {
+			cqrJDialog = new CqrJDialog("cqrxs-eu.jpg");
+			cqrJDialog.showDialog(cqrJdFrame);
+		} catch (Exception exIO) {
+		}
 	}
 	
 
