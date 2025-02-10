@@ -28,6 +28,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
     /// </summary>
     public partial class SecureChat : BaseChatForm
     {
+
         #region fields        
 
         private string myServerKey = string.Empty;

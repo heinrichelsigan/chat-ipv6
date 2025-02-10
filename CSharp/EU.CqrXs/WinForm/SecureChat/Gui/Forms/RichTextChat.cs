@@ -23,10 +23,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
     /// <summary>
-    /// SecureChat main form
+    /// RichTextChat main form
     /// </summary>
     public partial class RichTextChat : BaseChatForm
     {
+
         #region fields        
 
         private string myServerKey = string.Empty;
@@ -139,7 +140,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             toolStripStatusLabel.Text = "Setup Network";
-            // PlaySoundFromResource("sound_perfect");
+            PlaySoundFromResource("sound_sputnik");
             await SetupNetwork();
 
             if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ImageBase64))
@@ -236,7 +237,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_interaction");
+                PlaySoundFromResource("sound_warning");
                 return;
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
@@ -279,7 +280,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_interaction");
+                PlaySoundFromResource("sound_warning");
                 return;
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
@@ -299,7 +300,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.PeachPuff;
-                PlaySoundFromResource("sound_interaction");
+                PlaySoundFromResource("sound_warning");
                 return;
             }
             try
@@ -310,19 +311,29 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIpContact.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.Violet;
-                PlaySoundFromResource("sound_interaction");
+                PlaySoundFromResource("sound_warning");
                 return;
             }
 
             this.ComboBoxIpContact.BackColor = Color.White;
 
-            if (Entities.Settings.Instance != null)
+            if (Entities.Settings.Instance != null && SendInit_Click())
             {
+                PlaySoundFromResource("sound_laser");
+
                 if (!Entities.Settings.Instance.FriendIPs.Contains(this.ComboBoxIpContact.Text))
                     Entities.Settings.Instance.FriendIPs.Add(partnerIpAddress.ToString());
                 if (!this.ComboBoxIpContact.Items.Contains(this.ComboBoxIpContact.Text))
                     this.ComboBoxIpContact.Items.Add(partnerIpAddress.ToString());
+
+                Entities.Settings.Save(Entities.Settings.Instance);
             }
+            else
+            {
+                ButtonCheck.Image = Properties.de.Resources.CableWireCut;
+                PlaySoundFromResource("sound_warning");
+            }
+
             toolStripStatusLabel.Text = $"Added new partner ip address {partnerIpAddress.ToString()}.";
         }
 
@@ -338,7 +349,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.PeachPuff;
-                PlaySoundFromResource("sound_interaction");
+                PlaySoundFromResource("sound_warning");
                 return;
             }
             try
@@ -349,11 +360,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIpContact.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxIpContact.BackColor = Color.Violet;
-                PlaySoundFromResource("sound_interaction");
+                PlaySoundFromResource("sound_warning");
                 return;
             }
             this.ComboBoxIpContact.BackColor = Color.White;
             toolStripStatusLabel.Text = $"Selected partner ip address {partnerIpAddress.ToString()}.";
+
+            if (SendInit_Click())
+            {
+                PlaySoundFromResource("sound_laser");
+            }
+            else
+            {
+                ButtonCheck.Image = Properties.de.Resources.CableWireCut;
+                PlaySoundFromResource("sound_warning");
+            }
         }
 
         #endregion ComboBoxIpContact FocusLeave TextUpdate SelectedIndexChanged
@@ -440,7 +461,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         string comboText = GetComboBoxText(ComboBoxIpContact);
                         if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            PlaySoundFromResource("sound_completed");
+                            PlaySoundFromResource("sound_breakpoint");
                             SetComboBoxText(ComboBoxIpContact, area23EvArgs.GenericTData.ClientIPAddr);
 
                         }
@@ -449,26 +470,95 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
-                    MsgContent msgContent = pmsg.NCqrPeerMsg(encrypted);
+                    MsgContent msgContent;
+                    try
+                    {
+                        msgContent = pmsg.NCqrPeerMsg(encrypted);
+                    }
+                    catch (Exception exCrypt)
+                    {
+                        PlaySoundFromResource("sound_hammer");
+                        if (exCrypt is InvalidOperationException)
+                        {
+                            MessageBox.Show(((InvalidOperationException)exCrypt).Message, "Invalid or non matching secret key for decrypt.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                        }
+                        else
+                        {
+                            MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIpContact)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        return;
+                    }
                     string friendMsg = string.Empty;
                     if (msgContent.IsMimeAttachment())
                     {
                         MimeAttachment mimeAttachment = msgContent.ToMimeAttachment();
                         SetAttachmentTextLink(mimeAttachment);
                         friendMsg = mimeAttachment.GetFileNameContentLength();
+                        PlaySoundFromResource("sound_wind");
                     }
                     else
                     {
                         friendMsg = msgContent.Message;
+                        PlaySoundFromResource("sound_push");
                     }
 
                     chat.AddFriendMessage(friendMsg);
-                    AppendText(TextBoxDestionation, friendMsg);
+                    AppendText(TextBoxDestionation, friendMsg + Environment.NewLine);
                     // this.RichTextBoxOneView.Text = unencrypted;
                     Format_Lines_RichTextBox();
                 }
             }
         }
+
+        /// <summary>
+        /// Sends a init secure message to peer ip address
+        /// </summary>
+        private bool SendInit_Click()
+        {
+            // TODO: implement it via socket directly or to registered user
+            // if Ip is pingable and reachable and connectable
+            // send HELLO to IP
+            if (chat == null)
+                chat = new Chat(0);
+
+            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
+                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            {
+                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                PlaySoundFromResource("sound_warning");
+                return false;
+            }
+
+            myServerKey = this.ComboBoxSecretKey.Text;
+            string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Instance.MyContact.NameEmail;
+
+            try
+            {
+                partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
+                CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
+                pmsg.SendCqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+
+                // chat.AddMyMessage(unencrypted);
+                // AppendText(TextBoxSource, unencrypted);
+                // Format_Lines_RichTextBox();
+                this.RichTextBoxChat.Text = string.Empty;
+                toolStripStatusLabel.Text = "Send init successfully";
+                ButtonCheck.Image = Properties.de.Resources.RemoteConnect;
+            }
+            catch (Exception ex)
+            {
+                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in SendInit_Click: {ex.Message}.\n", ex);
+                toolStripStatusLabel.Text = "Send init FAILED: " + ex.Message;
+                PlaySoundFromResource("sound_hammer");
+                return false;
+            }
+
+            return true;
+        }
+
+
 
         /// <summary>
         /// Sends a secure message
@@ -488,12 +578,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                PlaySoundFromResource("sound_warning");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(this.RichTextBoxChat.Text) || string.IsNullOrWhiteSpace(this.RichTextBoxChat.Text))
+            {
+                toolStripStatusLabel.Text = "Nothing to send!";
+                PlaySoundFromResource("sound_warning");
                 return;
             }
 
             myServerKey = this.ComboBoxSecretKey.Text;
-
-            string unencrypted = this.RichTextBoxChat.Text;
+            string unencrypted = this.RichTextBoxChat.Text.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
 
             try
             {
@@ -506,11 +603,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 Format_Lines_RichTextBox();
                 this.RichTextBoxChat.Text = string.Empty;
                 toolStripStatusLabel.Text = "Send successfully";
+                PlaySoundFromResource("sound_arrow");
             }
             catch (Exception ex)
             {
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in menuItemSend_Click: {ex.Message}.\n", ex);
                 toolStripStatusLabel.Text = "Send FAILED: " + ex.Message;
+                PlaySoundFromResource("sound_warning");
             }
             // otherwise send message to registered user via server
             // Always encrypt via key
@@ -532,6 +631,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                PlaySoundFromResource("sound_warning");
                 return;
             }
 
@@ -559,7 +659,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                     CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
 
-                    MimeAttachment mimeAttach;
+                    MimeAttachment mimeAttach; // = new MimeAttachment(fileNameOnly, mimeType, base64Mime, pmsg.symmPipe.PipeString, md5, sha256);
                     try
                     {
                         partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
@@ -571,7 +671,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
 
                         chat.AddMyMessage(mimeAttach.GetFileNameContentLength());
-                        AppendText(TextBoxSource, mimeAttach.GetFileNameContentLength());
+                        AppendText(TextBoxSource, mimeAttach.GetFileNameContentLength() + Environment.NewLine);
                         Format_Lines_RichTextBox();
                         this.RichTextBoxChat.Text = string.Empty;
                         toolStripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
@@ -580,6 +680,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     {
                         Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
                         toolStripStatusLabel.Text = "Attach FAILED: " + ex.Message;
+                        PlaySoundFromResource("sound_warning");
                     }
                 }
                 // otherwise send message to registered user via server
@@ -618,19 +719,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e"></param>
         private void MenuItemClear_Click(object sender, EventArgs e)
         {
+            // TODO: add warning and saving here
+            PlaySoundFromResource("sound_glasses");
             this.TextBoxDestionation.Clear();
             this.TextBoxSource.Clear();
             this.RichTextBoxChat.Clear();
         }
 
-
+        /// <summary>
+        /// SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="GroupBoxLinks"/>
+        /// </summary>
+        /// <param name="mimeAttachment"><see cref="MimeAttachment"/></param>
         protected internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
         {
             string fileName = mimeAttachment.FileName;
-            string mimeFilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName + Constants.MIME_EXT);
+            string mimeFilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName + Constants.HTML_EXT);
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
 
-            byte[] attachBytes = EnDeCoder.GetBytes(mimeAttachment.MimeMsg);
+            byte[] attachBytes = EnDeCoder.GetBytes(mimeAttachment.GetWebPage());
             System.IO.File.WriteAllBytes(mimeFilePath, attachBytes);
 
             string base64 = mimeAttachment.Base64Mime;
@@ -1201,7 +1307,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.MenuItemAttach_Click(sender, e);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonSend_Click(object sender, EventArgs e)
         {
             this.MenuItemSend_Click(sender, e);
         }
