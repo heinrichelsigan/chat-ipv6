@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
-using Contact = EU.CqrXs.WinForm.SecureChat.Entities.Contact;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using Area23.At.Framework.Core.Crypt.CqrJd;
 
@@ -148,7 +147,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             if (_id == 0 && !string.IsNullOrEmpty(this.comboBoxName.Text))
             {
-                Settings.Instance.MyContact = new Contact()
+                Settings.Instance.MyContact = new CqrContact()
                 {
                     ContactId = 0,
                     Name = this.comboBoxName.Text ?? string.Empty,

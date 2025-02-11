@@ -40,7 +40,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if ((contacts = Entities.Settings.Instance.Contacts.ToArray()) != null)
             {
                 contactsCount = contacts.Length;
-                foreach (Entities.Contact contact in contacts)
+                foreach (CqrContact contact in contacts)
                 {
                     this.dataGridContacts.Rows.Add(contact.GetRowParams());
                 }
