@@ -100,7 +100,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             InitializeComponent();
             TextBoxSource.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
             TextBoxDestionation.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
-            ComboBoxIpContact.Text = Constants.ENTER_IP_CONTACT;
+            ComboBoxIp.Text = Constants.ENTER_IP;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
             try
             {
@@ -211,7 +211,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // TODO: test case later
 
             CqrServerMsg serverMessage = new CqrServerMsg(myServerKey);
-            this.TextBoxPipe.Text = serverMessage.symmPipe.PipeString;
+            this.TextBoxPipe.Text = serverMessage.PipeString;
 
         }
 
@@ -290,41 +290,41 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #endregion SecretKey & SymmCipherPipe.PipeString + ComboBoxSecretKey FocusLeave TextUpdate SelectedIndexChanged
 
-        #region ComboBoxIpContact FocusLeave TextUpdate SelectedIndexChanged
+        #region ComboBoxIp FocusLeave TextUpdate SelectedIndexChanged
 
 
-        private void ComboBoxIpContact_FocusLeave(object sender, EventArgs e)
+        private void ComboBoxIp_FocusLeave(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxIpContact.Text) ||
-                this.ComboBoxIpContact.Text.Equals(Constants.ENTER_IP_CONTACT, StringComparison.InvariantCultureIgnoreCase))
+            if (string.IsNullOrEmpty(this.ComboBoxIp.Text) ||
+                this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
             {
                 MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxIpContact.BackColor = Color.PeachPuff;
+                this.ComboBoxIp.BackColor = Color.PeachPuff;
                 PlaySoundFromResource("sound_warning");
                 return;
             }
             try
             {
-                partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
+                partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
             }
             catch (Exception exIpContact)
             {
-                MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIpContact.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxIpContact.BackColor = Color.Violet;
+                MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIp.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.ComboBoxIp.BackColor = Color.Violet;
                 PlaySoundFromResource("sound_warning");
                 return;
             }
 
-            this.ComboBoxIpContact.BackColor = Color.White;
+            this.ComboBoxIp.BackColor = Color.White;
 
             if (Entities.Settings.Instance != null && SendInit_Click())
             {
                 PlaySoundFromResource("sound_laser");
 
-                if (!Entities.Settings.Instance.FriendIPs.Contains(this.ComboBoxIpContact.Text))
+                if (!Entities.Settings.Instance.FriendIPs.Contains(this.ComboBoxIp.Text))
                     Entities.Settings.Instance.FriendIPs.Add(partnerIpAddress.ToString());
-                if (!this.ComboBoxIpContact.Items.Contains(this.ComboBoxIpContact.Text))
-                    this.ComboBoxIpContact.Items.Add(partnerIpAddress.ToString());
+                if (!this.ComboBoxIp.Items.Contains(this.ComboBoxIp.Text))
+                    this.ComboBoxIp.Items.Add(partnerIpAddress.ToString());
 
                 Entities.Settings.Save(Entities.Settings.Instance);
             }
@@ -337,33 +337,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             StripStatusLabel.Text = $"Added new partner ip address {partnerIpAddress.ToString()}.";
         }
 
-        private void ComboBoxIpContact_TextUpdate(object sender, EventArgs e)
+        private void ComboBoxIp_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-        }
-
-        private void ComboBoxIpContact_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(this.ComboBoxIpContact.Text) ||
-                this.ComboBoxIpContact.Text.Equals(Constants.ENTER_IP_CONTACT, StringComparison.InvariantCultureIgnoreCase))
+            if (string.IsNullOrEmpty(this.ComboBoxIp.Text) ||
+                this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
             {
                 MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxIpContact.BackColor = Color.PeachPuff;
+                this.ComboBoxIp.BackColor = Color.PeachPuff;
                 PlaySoundFromResource("sound_warning");
                 return;
             }
             try
             {
-                partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
+                partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
             }
             catch (Exception exIpContact)
             {
-                MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIpContact.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxIpContact.BackColor = Color.Violet;
+                MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIp.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.ComboBoxIp.BackColor = Color.Violet;
                 PlaySoundFromResource("sound_warning");
                 return;
             }
-            this.ComboBoxIpContact.BackColor = Color.White;
+            this.ComboBoxIp.BackColor = Color.White;
             StripStatusLabel.Text = $"Selected partner ip address {partnerIpAddress.ToString()}.";
 
             if (SendInit_Click())
@@ -377,7 +372,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
-        #endregion ComboBoxIpContact FocusLeave TextUpdate SelectedIndexChanged
+        #endregion ComboBoxIp FocusLeave TextUpdate SelectedIndexChanged
 
 
         #region OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
@@ -402,9 +397,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 this.ComboBoxSecretKey.Text = myServerKey;
 
             CqrServerMsg serverMessage = new CqrServerMsg(myServerKey);
-            this.TextBoxPipe.Text = serverMessage.symmPipe.PipeString;
+            this.TextBoxPipe.Text = serverMessage.PipeString;
 
-            Contact myContact = Entities.Settings.Instance.MyContact;
+            CqrContact myContact = Entities.Settings.Instance.MyContact;
             string plain = myContact.Name + Environment.NewLine + myContact.Email + Environment.NewLine +
                 myContact.Mobile + Environment.NewLine + myContact.Address + Environment.NewLine +
                 myContact.SecretKey + Environment.NewLine;
@@ -458,11 +453,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         //TODO: Enable cross thread via delegate
                         SetStatusText(StripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
 
-                        string comboText = GetComboBoxText(ComboBoxIpContact);
+                        string comboText = GetComboBoxText(ComboBoxIp);
                         if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
                         {
                             PlaySoundFromResource("sound_breakpoint");
-                            SetComboBoxText(ComboBoxIpContact, area23EvArgs.GenericTData.ClientIPAddr);
+                            SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
 
                         }
                         encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
@@ -485,7 +480,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         }
                         else
                         {
-                            MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIpContact)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIp)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         return;
                     }
@@ -536,7 +531,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             try
             {
-                partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
+                partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
                 CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                 pmsg.SendCqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
 
@@ -594,7 +589,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             try
             {
-                partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
+                partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
                 CqrPeer2PeerMsg pmsg = new CqrPeer2PeerMsg(myServerKey);
                 pmsg.SendCqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
 
@@ -662,7 +657,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     MimeAttachment mimeAttach; // = new MimeAttachment(fileNameOnly, mimeType, base64Mime, pmsg.symmPipe.PipeString, md5, sha256);
                     try
                     {
-                        partnerIpAddress = IPAddress.Parse(this.ComboBoxIpContact.Text);
+                        partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
 
                         // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
                         pmsg.SendCqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, EncodingType.Base64, Constants.CHAT_PORT, md5, sha256);
@@ -757,14 +752,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private void AddContactsToIpContact()
         {
-            string ipContact = this.ComboBoxIpContact.Text;
-            this.ComboBoxIpContact.Items.Clear();
+            string ipContact = this.ComboBoxIp.Text;
+            this.ComboBoxIp.Items.Clear();
             foreach (Contact ct in Entities.Settings.Instance.Contacts)
             {
                 if (ct != null && !string.IsNullOrEmpty(ct.NameEmail))
-                    this.ComboBoxIpContact.Items.Add(ct.NameEmail);
+                    this.ComboBoxIp.Items.Add(ct.NameEmail);
             }
-            this.ComboBoxIpContact.Text = ipContact;
+            this.ComboBoxIp.Text = ipContact;
         }
 
         /// <summary>
@@ -1135,7 +1130,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (addr != null)
                 {
-                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily + " " + addr.ToString(), null, IPAddressSelected, addr.ToString());
+                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily + " " + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
                     item.Checked = false;
 
                     if (connectedIPs != null && connectedIPs.Count > 0 &&
@@ -1192,7 +1187,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void IPAddressSelected(object sender, EventArgs e)
+        public void IPInterfaceAddressSelected(object sender, EventArgs e)
         {
             if (sender != null && sender is ToolStripMenuItem mi)
             {

@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 namespace Area23.At.Framework.Core.Crypt.CqrJd
 {
 
+
+
     /// <summary>
     /// Provides abstract base class for secure encrypted message to send to the server or receive from server
     /// </summary>
@@ -20,7 +22,10 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
         protected internal readonly byte[] keyBytes;
         protected internal bool _isMimeAttachment = false;
 
-        public readonly SymmCipherPipe symmPipe;
+        protected internal readonly SymmCipherPipe symmPipe;
+
+
+        public string PipeString { get; set; }
 
 
         public string CqrMessage { get; protected internal set; }
@@ -40,6 +45,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             hash = DeEnCoder.KeyToHex(srvKey);
             keyBytes = CryptHelper.GetUserKeyBytes(key, hash, 16);
             symmPipe = new SymmCipherPipe(keyBytes, 8);
+            PipeString = symmPipe.PipeString;
         }
 
 
@@ -163,6 +169,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
 
             return (failureCnt == 0);
         }
+
 
     }
 

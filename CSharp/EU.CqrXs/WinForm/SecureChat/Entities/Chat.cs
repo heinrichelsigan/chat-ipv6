@@ -1,4 +1,5 @@
 ﻿using EU.CqrXs.Framework.Core;
+using EU.CqrXs.Framework.Core.Crypt.CqrJd;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -22,7 +23,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         
         internal int ChatId { get; set; }  
 
-        internal Contact Friend { get; set; }
+        internal CqrContact Friend { get; set; }
 
         internal DateTime TimeStamp { get; set; }
 

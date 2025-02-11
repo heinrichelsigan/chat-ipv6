@@ -90,9 +90,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PictureBoxYou = new PictureBox();
             ButtonKey = new Button();
             PanelEnCodeCrypt = new Panel();
+            ComboBoxContacts = new ComboBox();
             ButtonCheck = new Button();
             ComboBoxSecretKey = new ComboBox();
-            ComboBoxIpContact = new ComboBox();
+            ComboBoxIp = new ComboBox();
             TextBoxPipe = new TextBox();
             RichTextBoxChat = new RichTextBox();
             PictureBoxPartner = new PictureBox();
@@ -698,7 +699,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonKey.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
             ButtonKey.ForeColor = SystemColors.ActiveCaptionText;
             ButtonKey.Image = Properties.Resources.a_right_key;
-            ButtonKey.Location = new Point(254, 4);
+            ButtonKey.Location = new Point(213, 4);
             ButtonKey.Margin = new Padding(1);
             ButtonKey.Name = "ButtonKey";
             ButtonKey.Padding = new Padding(1);
@@ -710,9 +711,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // PanelEnCodeCrypt
             // 
             PanelEnCodeCrypt.BackColor = SystemColors.ActiveCaption;
+            PanelEnCodeCrypt.Controls.Add(ComboBoxContacts);
             PanelEnCodeCrypt.Controls.Add(ButtonCheck);
             PanelEnCodeCrypt.Controls.Add(ComboBoxSecretKey);
-            PanelEnCodeCrypt.Controls.Add(ComboBoxIpContact);
+            PanelEnCodeCrypt.Controls.Add(ComboBoxIp);
             PanelEnCodeCrypt.Controls.Add(TextBoxPipe);
             PanelEnCodeCrypt.Controls.Add(ButtonKey);
             PanelEnCodeCrypt.ForeColor = SystemColors.WindowText;
@@ -722,6 +724,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelEnCodeCrypt.Size = new Size(976, 36);
             PanelEnCodeCrypt.TabIndex = 10;
             // 
+            // ComboBoxContacts
+            // 
+            ComboBoxContacts.BackColor = SystemColors.ControlLightLight;
+            ComboBoxContacts.Font = new Font("Lucida Sans Unicode", 10F);
+            ComboBoxContacts.ForeColor = SystemColors.ControlText;
+            ComboBoxContacts.FormattingEnabled = true;
+            ComboBoxContacts.Location = new Point(524, 6);
+            ComboBoxContacts.Margin = new Padding(1);
+            ComboBoxContacts.Name = "ComboBoxContacts";
+            ComboBoxContacts.Size = new Size(261, 24);
+            ComboBoxContacts.TabIndex = 18;
+            ComboBoxContacts.Text = "[enter peer IPv4 or IPv6 for directly connect]";
+            ComboBoxContacts.SelectedIndexChanged += ComboBoxContacts_SelectedIndexChanged;
+            ComboBoxContacts.Leave += ComboBoxContacts_FocusLeave;
+            // 
             // ButtonCheck
             // 
             ButtonCheck.BackColor = SystemColors.ButtonHighlight;
@@ -729,7 +746,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonCheck.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
             ButtonCheck.ForeColor = SystemColors.ActiveCaptionText;
             ButtonCheck.Image = Properties.de.Resources.CableWireCut;
-            ButtonCheck.Location = new Point(774, 2);
+            ButtonCheck.Location = new Point(789, 2);
             ButtonCheck.Margin = new Padding(1);
             ButtonCheck.Name = "ButtonCheck";
             ButtonCheck.Padding = new Padding(1);
@@ -745,38 +762,37 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ComboBoxSecretKey.Location = new Point(10, 6);
             ComboBoxSecretKey.Margin = new Padding(1);
             ComboBoxSecretKey.Name = "ComboBoxSecretKey";
-            ComboBoxSecretKey.Size = new Size(237, 24);
+            ComboBoxSecretKey.Size = new Size(200, 24);
             ComboBoxSecretKey.TabIndex = 11;
             ComboBoxSecretKey.Text = "[enter secret key here]";
             ComboBoxSecretKey.SelectedIndexChanged += ComboBoxSecretKey_SelectedIndexChanged;
             ComboBoxSecretKey.TextUpdate += ComboBoxSecretKey_TextUpdate;
             ComboBoxSecretKey.Leave += ComboBoxSecretKey_FocusLeave;
             // 
-            // ComboBoxIpContact
+            // ComboBoxIp
             // 
-            ComboBoxIpContact.BackColor = SystemColors.ControlLightLight;
-            ComboBoxIpContact.Font = new Font("Lucida Sans Unicode", 10F);
-            ComboBoxIpContact.ForeColor = SystemColors.ControlText;
-            ComboBoxIpContact.FormattingEnabled = true;
-            ComboBoxIpContact.Location = new Point(412, 6);
-            ComboBoxIpContact.Margin = new Padding(1);
-            ComboBoxIpContact.Name = "ComboBoxIpContact";
-            ComboBoxIpContact.Size = new Size(342, 24);
-            ComboBoxIpContact.TabIndex = 15;
-            ComboBoxIpContact.Text = "[enter peer IPv4 or IPv6 for directly connect]";
-            ComboBoxIpContact.SelectedIndexChanged += ComboBoxIpContact_SelectedIndexChanged;
-            ComboBoxIpContact.TextUpdate += ComboBoxIpContact_TextUpdate;
-            ComboBoxIpContact.Leave += ComboBoxIpContact_FocusLeave;
+            ComboBoxIp.BackColor = SystemColors.ControlLightLight;
+            ComboBoxIp.Font = new Font("Lucida Sans Unicode", 10F);
+            ComboBoxIp.ForeColor = SystemColors.ControlText;
+            ComboBoxIp.FormattingEnabled = true;
+            ComboBoxIp.Location = new Point(355, 6);
+            ComboBoxIp.Margin = new Padding(1);
+            ComboBoxIp.Name = "ComboBoxIp";
+            ComboBoxIp.Size = new Size(164, 24);
+            ComboBoxIp.TabIndex = 15;
+            ComboBoxIp.Text = "[enter peer IPv4/IPv6]";
+            ComboBoxIp.SelectedIndexChanged += ComboBoxIp_SelectedIndexChanged;
+            ComboBoxIp.Leave += ComboBoxIp_FocusLeave;
             // 
             // TextBoxPipe
             // 
             TextBoxPipe.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             TextBoxPipe.HideSelection = false;
-            TextBoxPipe.Location = new Point(304, 5);
+            TextBoxPipe.Location = new Point(257, 5);
             TextBoxPipe.Margin = new Padding(1);
             TextBoxPipe.Name = "TextBoxPipe";
             TextBoxPipe.ReadOnly = true;
-            TextBoxPipe.Size = new Size(100, 26);
+            TextBoxPipe.Size = new Size(92, 26);
             TextBoxPipe.TabIndex = 13;
             // 
             // RichTextBoxChat
@@ -945,7 +961,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private Panel PanelCenter;
         private Panel PanelBottom;
         private TextBox TextBoxPipe;
-        private ComboBox ComboBoxIpContact;
+        private ComboBox ComboBoxIp;
         private ComboBox ComboBoxSecretKey;
         private SplitContainer SplitChatView;
         private TextBox TextBoxSource;
@@ -1026,5 +1042,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private Button ButtonSend;
         private Button ButtonClear;
         private Button ButtonCheck;
+        private ComboBox ComboBoxContacts;
     }
 }

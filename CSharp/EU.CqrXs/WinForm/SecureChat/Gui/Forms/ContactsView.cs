@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Properties;
 using System.Reflection.Metadata;
+using EU.CqrXs.Framework.Core.Crypt.CqrJd;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -32,7 +33,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal void Refresh_DataGrid(object sender, EventArgs e)
         {
-            Entities.Contact[] contacts;
+            CqrContact[] contacts;
             this.dataGridContacts.Rows.Clear();
             // DataGridViewRow row = new DataGridViewRow();
             string userCreatorOwner = Environment.UserName;            

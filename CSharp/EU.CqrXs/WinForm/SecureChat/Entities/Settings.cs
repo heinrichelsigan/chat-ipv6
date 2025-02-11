@@ -1,4 +1,5 @@
 ﻿using EU.CqrXs.Framework.Core;
+using EU.CqrXs.Framework.Core.Crypt.CqrJd;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -30,9 +31,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         
         public DateTime? SaveStamp { get; set; }
 
-        public Contact MyContact { get; set; }
+        public CqrContact MyContact { get; set; }
 
-        public List<Contact> Contacts { get; set; }
+        public List<CqrContact> Contacts { get; set; }
 
         public List<string> FriendIPs { get; set; }
         
@@ -52,7 +53,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         public Settings()
         {
             TimeStamp = DateTime.Now;
-            Contacts = new List<Contact>();
+            Contacts = new List<CqrContact>();
             FriendIPs = new List<string>();
             MyIPs = new List<string>();
             Proxies = new List<string>();
