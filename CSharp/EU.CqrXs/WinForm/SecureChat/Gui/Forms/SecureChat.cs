@@ -323,7 +323,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 PlaySoundFromResource("sound_laser");
 
                 if (!Entities.Settings.Instance.FriendIPs.Contains(this.ComboBoxIpContact.Text))
-                    Entities.Settings.Instance.FriendIPs.Add(partnerIpAddress.ToString());
+                    Entities.Settings.Instance.FriendIPs.Add(this.ComboBoxIpContact.Text);
+                if (!this.MenuNetworkComboBoxFriendIp.Items.Contains(partnerIpAddress.ToString()))
+                    this.MenuNetworkComboBoxFriendIp.Items.Add(partnerIpAddress.ToString());
+
                 if (!this.ComboBoxIpContact.Items.Contains(this.ComboBoxIpContact.Text))
                     this.ComboBoxIpContact.Items.Add(partnerIpAddress.ToString());
 
@@ -1094,11 +1097,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             List<IPAddress> addresses = new List<IPAddress>();
             string[] proxyStrs = Resources.Proxies.Split(";,".ToCharArray());
-            foreach (string proxyStr in proxyStrs)
+            List<string> proxySets = Entities.Settings.Instance.Proxies;
+            if (proxyStrs.Length >= proxySets.Count)
+            {
+                proxySets = new List<string>(proxyStrs);
+            }
+            foreach (string proxyS in proxySets)
             {
                 try
                 {
-                    IPAddress ip = IPAddress.Parse(proxyStr);
+                    IPAddress ip = IPAddress.Parse(proxyS);
                     addresses.Add(ip);
 
                 }
@@ -1172,7 +1180,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         (addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 && this.menuItemIPv6Secure.Checked))
                     {
                         ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily + " " + addrProxy.ToString(), null, null, addrProxy.ToString());
-                        this.menuItemProxyServers.DropDownItems.Add(item);
+                        this.MenuNetworkItemProxyServers.DropDownItems.Add(item);
+                    }
+                }
+            }
+
+            foreach (var friendIp in Entities.Settings.Instance.FriendIPs)
+            {
+                if (!string.IsNullOrEmpty(friendIp))
+                {
+                    try
+                    {
+                        IPAddress ipFriendAddr = IPAddress.Parse(friendIp);
+                        if (!MenuNetworkComboBoxFriendIp.Items.Contains(ipFriendAddr.ToString()))
+                            MenuNetworkComboBoxFriendIp.Items.Add(ipFriendAddr.ToString());
+                        if (!ComboBoxIpContact.Items.Contains(ipFriendAddr.ToString()))
+                            ComboBoxIpContact.Items.Add(ipFriendAddr.ToString());
+                    }
+                    catch (Exception exFriendIp)
+                    {
+                        // TODO: log
                     }
                 }
             }

@@ -49,9 +49,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             menuIItemMyIps = new ToolStripMenuItem();
             menuItemExternalIp = new ToolStripMenuItem();
             menuItemFriendIp = new ToolStripMenuItem();
-            menuItempComboBoxFriendIp = new ToolStripComboBox();
-            menuItemProxyServers = new ToolStripMenuItem();
-            menuIPsSeparator = new ToolStripSeparator();
+            MenuNetworkComboBoxFriendIp = new ToolStripComboBox();
+            MenuNetworkItemProxyServers = new ToolStripMenuItem();
+            MenuNetworkSeparatorIp = new ToolStripSeparator();
             menuItemIPv6Secure = new ToolStripMenuItem();
             toolMenuConnect = new ToolStripMenuItem();
             menuConnectItemFriend = new ToolStripMenuItem();
@@ -267,7 +267,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // menuNetwork
             // 
             menuNetwork.BackColor = SystemColors.MenuBar;
-            menuNetwork.DropDownItems.AddRange(new ToolStripItem[] { menuIItemMyIps, menuItemFriendIp, menuItemProxyServers, menuIPsSeparator, menuItemIPv6Secure });
+            menuNetwork.DropDownItems.AddRange(new ToolStripItem[] { menuIItemMyIps, menuItemFriendIp, MenuNetworkItemProxyServers, MenuNetworkSeparatorIp, menuItemIPv6Secure });
             menuNetwork.Name = "menuNetwork";
             menuNetwork.ShortcutKeys = Keys.Alt | Keys.N;
             menuNetwork.Size = new Size(76, 21);
@@ -293,32 +293,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // menuItemFriendIp
             // 
             menuItemFriendIp.BackColor = SystemColors.MenuBar;
-            menuItemFriendIp.DropDownItems.AddRange(new ToolStripItem[] { menuItempComboBoxFriendIp });
+            menuItemFriendIp.DropDownItems.AddRange(new ToolStripItem[] { MenuNetworkComboBoxFriendIp });
             menuItemFriendIp.Name = "menuItemFriendIp";
             menuItemFriendIp.Size = new Size(177, 22);
             menuItemFriendIp.Text = "friend ip's";
             menuItemFriendIp.ToolTipText = "You can enter here directly friend ip's, if your connection is free of SNAT/DNAT";
             // 
-            // menuItempComboBoxFriendIp
+            // MenuNetworkComboBoxFriendIp
             // 
-            menuItempComboBoxFriendIp.BackColor = SystemColors.ControlLightLight;
-            menuItempComboBoxFriendIp.Name = "menuItempComboBoxFriendIp";
-            menuItempComboBoxFriendIp.Size = new Size(121, 23);
+            MenuNetworkComboBoxFriendIp.BackColor = SystemColors.ControlLightLight;
+            MenuNetworkComboBoxFriendIp.Name = "MenuNetworkComboBoxFriendIp";
+            MenuNetworkComboBoxFriendIp.Size = new Size(121, 23);
             // 
-            // menuItemProxyServers
+            // MenuNetworkItemProxyServers
             // 
-            menuItemProxyServers.BackColor = SystemColors.MenuBar;
-            menuItemProxyServers.Name = "menuItemProxyServers";
-            menuItemProxyServers.Size = new Size(177, 22);
-            menuItemProxyServers.Text = "proxies";
-            menuItemProxyServers.ToolTipText = "proxies are needed mainly to connect to people, where no endpoint to endpoint ip connection is possible";
+            MenuNetworkItemProxyServers.BackColor = SystemColors.MenuBar;
+            MenuNetworkItemProxyServers.Name = "MenuNetworkItemProxyServers";
+            MenuNetworkItemProxyServers.Size = new Size(177, 22);
+            MenuNetworkItemProxyServers.Text = "proxies";
+            MenuNetworkItemProxyServers.ToolTipText = "proxies are needed mainly to connect to people, where no endpoint to endpoint ip connection is possible";
             // 
-            // menuIPsSeparator
+            // MenuNetworkSeparatorIp
             // 
-            menuIPsSeparator.BackColor = SystemColors.MenuBar;
-            menuIPsSeparator.ForeColor = SystemColors.ActiveBorder;
-            menuIPsSeparator.Name = "menuIPsSeparator";
-            menuIPsSeparator.Size = new Size(174, 6);
+            MenuNetworkSeparatorIp.BackColor = SystemColors.MenuBar;
+            MenuNetworkSeparatorIp.ForeColor = SystemColors.ActiveBorder;
+            MenuNetworkSeparatorIp.Name = "MenuNetworkSeparatorIp";
+            MenuNetworkSeparatorIp.Size = new Size(174, 6);
             // 
             // menuItemIPv6Secure
             // 
@@ -962,7 +962,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripMenuItem toolStripMenuMain;
         private ToolStripMenuItem menuItemAbout;
         private ToolStripMenuItem toolStripMenuItemOld;
-        private ToolStripSeparator menuIPsSeparator;
+        private ToolStripSeparator MenuNetworkSeparatorIp;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem toolStripMenuItemOpen;
         private ToolStripMenuItem toolStripMenuItemClose;
@@ -982,8 +982,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripMenuItem menuNetwork;
         private ToolStripMenuItem menuIItemMyIps;
         private ToolStripMenuItem menuItemFriendIp;
-        private ToolStripMenuItem menuItemProxyServers;
-        private ToolStripComboBox menuItempComboBoxFriendIp;
+        private ToolStripMenuItem MenuNetworkItemProxyServers;
+        private ToolStripComboBox MenuNetworkComboBoxFriendIp;
         private ToolStripMenuItem menuItemIPv6Secure;
         private ToolStripMenuItem menuCommands;
         private ToolStripMenuItem menuItemSend;

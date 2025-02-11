@@ -1171,7 +1171,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         (addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 && this.menuItemIPv6Secure.Checked))
                     {
                         ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily + " " + addrProxy.ToString(), null, null, addrProxy.ToString());
-                        this.menuItemProxyServers.DropDownItems.Add(item);
+                        this.MenuNetworkItemProxyServers.DropDownItems.Add(item);
                     }
                 }
             }
