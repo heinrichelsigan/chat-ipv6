@@ -55,7 +55,9 @@ namespace Area23.At.Framework.Core
         public const string IPV6_CQRXS_EU = "ipv6.cqrxs.eu";
         public const string SPAIN_CQRXS_EU = "spain.cqrxs.eu";
         public const string MILAN_CQRXS_EU = "it.cqrxs.eu";
-        public const string PARIS_CQRXS_EU = "fr.cqrxs.eu";
+        public const string FR_CQRXS_EU = "fr.cqrxs.eu";
+        public const string PARIS_CQRXS_EU = "paris.cqrxs.eu";
+        public const string PARISIENNE_CQRXS_EU = "parisienne.cqrxs.eu";
         public const string FRANKFURT_CQRXS_EU = "de.cqrxs.eu";
         public const string STOCKHOLM_CQRXS_EU = "se.cqrxs.eu";
         public const string IRELAND_CQRXS_EU = "ie.cqrxs.eu";
@@ -108,6 +110,7 @@ namespace Area23.At.Framework.Core
         public const string WIN_X64 = "win-x86";
         public const string MIME_EXT = ".mime";
         public const string BASE64_EXT = ".base64";
+        public const string HTML_EXT = ".html";
         public const string ATTACH_FILES_DIR = "AttachFiles";
 
         public const string UTF8_JSON = "utf8symol.json";

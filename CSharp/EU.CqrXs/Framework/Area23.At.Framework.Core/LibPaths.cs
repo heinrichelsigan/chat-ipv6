@@ -21,6 +21,8 @@ namespace Area23.At.Framework.Core
         private static string systemDirPath = "";
         private static string systemDirResPath = "";
         private static string logDirPath = "";
+        private static string logFilePath = "";
+        private static int daysave = -1;
 
         public static char SepCh { get => Path.DirectorySeparatorChar; }
 
@@ -209,6 +211,11 @@ namespace Area23.At.Framework.Core
 
         public static string AttachmentFilesDir { get => SystemDirPath + Constants.ATTACH_FILES_DIR + SepChar; }
 
+        #region LogFiles and LogPaths
+
+        /// <summary>
+        /// SystemDirLogPath gets the default full path to logfile in file system
+        /// </summary>
         public static string SystemDirLogPath
         {
             get
@@ -219,8 +226,6 @@ namespace Area23.At.Framework.Core
 
                     if (!Directory.Exists(logDirPath))
                     {
-                        string dirNotFoundMsg = String.Format("{0} directory {1} doesn't exist, creating it!", Constants.LOG_DIR, logDirPath);
-                        // Area23Log.LogStatic(dirNotFoundMsg);
                         try
                         {
                             Directory.CreateDirectory(logDirPath);
@@ -232,8 +237,37 @@ namespace Area23.At.Framework.Core
             }
         }
 
+        /// <summary>
+        /// GetLogFilePath - gets individual named logfile with substring appName
+        /// </summary>
+        /// <param name="appName">application name to customize logfile name</param>
+        /// <returns>Full file path to log file in file system</returns>
+        public static string GetLogFilePath(string appName)
+        {
+            int day = System.DateTime.UtcNow.DayOfYear;
+            if (daysave != day)
+            {
+                daysave = day;
+                logFilePath = "";
+            }
+            if (string.IsNullOrEmpty(logFilePath))
+            {
+                logFilePath = SystemDirLogPath + DateTime.UtcNow.Area23Date() + Constants.UNDER_SCORE + appName + Constants.LOG_EXT;
+                if (!File.Exists(logFilePath))
+                {
+                    try
+                    {
+                        File.Create(logFilePath);
+                    }
+                    catch { }
+                }
+            }
+            return logFilePath;
+        }
 
         public static string LogFileSystemPath { get => SystemDirLogPath + Constants.AppLogFile; }
+
+        #endregion LogFiles and LogPaths
 
         #endregion directory & file paths
 

@@ -11,7 +11,6 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
 {
 
 
-
     /// <summary>
     /// Provides abstract base class for secure encrypted message to send to the server or receive from server
     /// </summary>
@@ -169,7 +168,6 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
 
             return (failureCnt == 0);
         }
-
 
     }
 

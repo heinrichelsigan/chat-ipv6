@@ -1,5 +1,5 @@
-using EU.CqrXs.Framework.Core;
-using EU.CqrXs.Framework.Core.Win32Api;
+using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Win32Api;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using System;
 using System.Reflection;

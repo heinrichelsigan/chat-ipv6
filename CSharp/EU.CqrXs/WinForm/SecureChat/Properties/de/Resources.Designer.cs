@@ -120,46 +120,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.de {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] frogInHole {
-            get {
-                object obj = ResourceManager.GetObject("frogInHole", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] frogInSwamp {
-            get {
-                object obj = ResourceManager.GetObject("frogInSwamp", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] frogJump {
-            get {
-                object obj = ResourceManager.GetObject("frogJump", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] frogUnderWater {
-            get {
-                object obj = ResourceManager.GetObject("frogUnderWater", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to https://github.com/heinrichelsigan/chat-ipv6.
         /// </summary>
         internal static string github_uri {

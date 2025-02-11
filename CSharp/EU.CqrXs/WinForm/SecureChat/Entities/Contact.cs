@@ -1,4 +1,4 @@
-﻿using EU.CqrXs.Framework.Core.Crypt.CqrJd;
+﻿using Area23.At.Framework.Core.Crypt.CqrJd;
 using System;
 using System.Collections.Generic;
 using System.Linq;

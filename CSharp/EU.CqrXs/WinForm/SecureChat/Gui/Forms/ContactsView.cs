@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Properties;
 using System.Reflection.Metadata;
-using EU.CqrXs.Framework.Core.Crypt.CqrJd;
+using Area23.At.Framework.Core.Crypt.CqrJd;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {

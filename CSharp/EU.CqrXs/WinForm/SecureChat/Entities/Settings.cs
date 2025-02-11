@@ -1,5 +1,5 @@
-﻿using EU.CqrXs.Framework.Core;
-using EU.CqrXs.Framework.Core.Crypt.CqrJd;
+﻿using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Crypt.CqrJd;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -58,7 +58,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             MyIPs = new List<string>();
             Proxies = new List<string>();
             SecretKeys = new List<string>();
-            MyContact = new Contact() { ContactId = 0 }; 
+            MyContact = new CqrContact() { ContactId = 0 }; 
         }
 
         public Settings(DateTime timeStamp) : this()

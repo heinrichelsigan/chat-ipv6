@@ -1,4 +1,4 @@
-﻿using EU.CqrXs.Framework.Core.Net.WebHttp;
+﻿using Area23.At.Framework.Core.Net.WebHttp;
 using System.Net;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
@@ -51,12 +51,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuNetworkItemProxyServers = new ToolStripMenuItem();
             MenuNetworkSeparatorIp = new ToolStripSeparator();
             MenuNetworkItemIPv6Secure = new ToolStripMenuItem();
-            toolMenuConnect = new ToolStripMenuItem();
-            menuConnectItemFriend = new ToolStripMenuItem();
-            menuConnectSeparator = new ToolStripSeparator();
-            menuConnectComboBoxIps = new ToolStripComboBox();
-            menuConnectSeparatorLast = new ToolStripSeparator();
-            menuConnectItemLoopback = new ToolStripMenuItem();
             MenuCommands = new ToolStripMenuItem();
             MenuCommandsItemSend = new ToolStripMenuItem();
             MenuCommandsItemAttach = new ToolStripMenuItem();
@@ -125,7 +119,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             StripMenu.BackColor = SystemColors.MenuBar;
             StripMenu.Font = new Font("Lucida Sans Unicode", 10F);
             StripMenu.GripStyle = ToolStripGripStyle.Visible;
-            StripMenu.Items.AddRange(new ToolStripItem[] { MenuFile, MenuView, MenuNetwork, toolMenuConnect, MenuCommands, MenuContacts, MenuHelp });
+            StripMenu.Items.AddRange(new ToolStripItem[] { MenuFile, MenuView, MenuNetwork, MenuCommands, MenuContacts, MenuHelp });
             StripMenu.Location = new Point(0, 0);
             StripMenu.Name = "StripMenu";
             StripMenu.RenderMode = ToolStripRenderMode.System;
@@ -152,9 +146,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuFileItemOpen.ForeColor = SystemColors.MenuText;
             MenuFileItemOpen.Margin = new Padding(1);
             MenuFileItemOpen.Name = "MenuFileItemOpen";
-            MenuFileItemOpen.ShortcutKeys = Keys.Control | Keys.I;
+            MenuFileItemOpen.ShortcutKeys = Keys.Control | Keys.O;
             MenuFileItemOpen.Size = new Size(214, 22);
-            MenuFileItemOpen.Text = "import chats";
+            MenuFileItemOpen.Text = "open chats";
             MenuFileItemOpen.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuFileItemOpen.ToolTipText = "imports saved chats from a file";
             MenuFileItemOpen.Click += toolStripMenuItemLoad_Click;
@@ -167,9 +161,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuFileItemSave.ForeColor = SystemColors.MenuText;
             MenuFileItemSave.Margin = new Padding(1);
             MenuFileItemSave.Name = "MenuFileItemSave";
-            MenuFileItemSave.ShortcutKeys = Keys.Control | Keys.E;
+            MenuFileItemSave.ShortcutKeys = Keys.Control | Keys.S;
             MenuFileItemSave.Size = new Size(214, 22);
-            MenuFileItemSave.Text = "export chats";
+            MenuFileItemSave.Text = "save chats";
             MenuFileItemSave.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuFileItemSave.ToolTipText = "saves chats on local harddisk not on server";
             MenuFileItemSave.Click += toolStripMenuItemSave_Click;
@@ -278,15 +272,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
             MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { MenuItemExternalIp });
             MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
-            MenuNetworkItemMyIps.Size = new Size(177, 22);
+            MenuNetworkItemMyIps.Size = new Size(180, 22);
             MenuNetworkItemMyIps.Text = "my ip's";
             // 
             // MenuItemExternalIp
             // 
             MenuItemExternalIp.BackColor = SystemColors.MenuBar;
             MenuItemExternalIp.Name = "MenuItemExternalIp";
-            MenuItemExternalIp.ShortcutKeys = Keys.Alt | Keys.E;
-            MenuItemExternalIp.Size = new Size(206, 22);
+            MenuItemExternalIp.Size = new Size(180, 22);
             MenuItemExternalIp.Text = "External Ip's";
             // 
             // MenuItemFriendIp
@@ -294,7 +287,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuItemFriendIp.BackColor = SystemColors.MenuBar;
             MenuItemFriendIp.DropDownItems.AddRange(new ToolStripItem[] { MenuNetworkComboBoxFriendIp });
             MenuItemFriendIp.Name = "MenuItemFriendIp";
-            MenuItemFriendIp.Size = new Size(177, 22);
+            MenuItemFriendIp.Size = new Size(180, 22);
             MenuItemFriendIp.Text = "friend ip's";
             MenuItemFriendIp.ToolTipText = "You can enter here directly friend ip's, if your connection is free of SNAT/DNAT";
             // 
@@ -308,7 +301,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             MenuNetworkItemProxyServers.BackColor = SystemColors.MenuBar;
             MenuNetworkItemProxyServers.Name = "MenuNetworkItemProxyServers";
-            MenuNetworkItemProxyServers.Size = new Size(177, 22);
+            MenuNetworkItemProxyServers.Size = new Size(180, 22);
             MenuNetworkItemProxyServers.Text = "proxies";
             MenuNetworkItemProxyServers.ToolTipText = "proxies are needed mainly to connect to people, where no endpoint to endpoint ip connection is possible";
             // 
@@ -317,58 +310,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuNetworkSeparatorIp.BackColor = SystemColors.MenuBar;
             MenuNetworkSeparatorIp.ForeColor = SystemColors.ActiveBorder;
             MenuNetworkSeparatorIp.Name = "MenuNetworkSeparatorIp";
-            MenuNetworkSeparatorIp.Size = new Size(174, 6);
+            MenuNetworkSeparatorIp.Size = new Size(177, 6);
             // 
             // MenuNetworkItemIPv6Secure
             // 
             MenuNetworkItemIPv6Secure.BackColor = SystemColors.MenuBar;
             MenuNetworkItemIPv6Secure.Name = "MenuNetworkItemIPv6Secure";
             MenuNetworkItemIPv6Secure.ShortcutKeys = Keys.Control | Keys.D6;
-            MenuNetworkItemIPv6Secure.Size = new Size(177, 22);
+            MenuNetworkItemIPv6Secure.Size = new Size(180, 22);
             MenuNetworkItemIPv6Secure.Text = "ip6 cqr";
             MenuNetworkItemIPv6Secure.ToolTipText = "you can check it only, when you have an ipv6 address and you want to chat only to partners, where ip6 connect is possible";
-            // 
-            // toolMenuConnect
-            // 
-            toolMenuConnect.BackColor = SystemColors.MenuBar;
-            toolMenuConnect.DropDownItems.AddRange(new ToolStripItem[] { menuConnectItemFriend, menuConnectSeparator, menuConnectComboBoxIps, menuConnectSeparatorLast, menuConnectItemLoopback });
-            toolMenuConnect.Name = "toolMenuConnect";
-            toolMenuConnect.Size = new Size(74, 21);
-            toolMenuConnect.Text = "connect";
-            toolMenuConnect.ToolTipText = "connects directly to an peered ip address or contact over a proxy";
-            // 
-            // menuConnectItemFriend
-            // 
-            menuConnectItemFriend.BackColor = SystemColors.Menu;
-            menuConnectItemFriend.Name = "menuConnectItemFriend";
-            menuConnectItemFriend.ShortcutKeys = Keys.Control | Keys.F;
-            menuConnectItemFriend.Size = new Size(275, 22);
-            menuConnectItemFriend.Text = "friend (over proxy)";
-            menuConnectItemFriend.ToolTipText = "connects to a friend over proxy server";
-            // 
-            // menuConnectSeparator
-            // 
-            menuConnectSeparator.Name = "menuConnectSeparator";
-            menuConnectSeparator.Size = new Size(272, 6);
-            // 
-            // menuConnectComboBoxIps
-            // 
-            menuConnectComboBoxIps.Name = "menuConnectComboBoxIps";
-            menuConnectComboBoxIps.Size = new Size(144, 23);
-            // 
-            // menuConnectSeparatorLast
-            // 
-            menuConnectSeparatorLast.Name = "menuConnectSeparatorLast";
-            menuConnectSeparatorLast.Size = new Size(272, 6);
-            // 
-            // menuConnectItemLoopback
-            // 
-            menuConnectItemLoopback.BackColor = SystemColors.Menu;
-            menuConnectItemLoopback.Name = "menuConnectItemLoopback";
-            menuConnectItemLoopback.ShortcutKeys = Keys.Control | Keys.D0;
-            menuConnectItemLoopback.Size = new Size(275, 22);
-            menuConnectItemLoopback.Text = "me myself (loopback)";
-            menuConnectItemLoopback.ToolTipText = "import contacts from address book";
             // 
             // MenuCommands
             // 
@@ -384,7 +335,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuCommandsItemSend.BackColor = SystemColors.MenuBar;
             MenuCommandsItemSend.Name = "MenuCommandsItemSend";
             MenuCommandsItemSend.ShortcutKeys = Keys.Control | Keys.S;
-            MenuCommandsItemSend.Size = new Size(178, 22);
+            MenuCommandsItemSend.Size = new Size(180, 22);
             MenuCommandsItemSend.Text = "send";
             MenuCommandsItemSend.ToolTipText = "sends a message";
             MenuCommandsItemSend.Click += MenuItemSend_Click;
@@ -394,7 +345,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuCommandsItemAttach.BackColor = SystemColors.MenuBar;
             MenuCommandsItemAttach.Name = "MenuCommandsItemAttach";
             MenuCommandsItemAttach.ShortcutKeys = Keys.Control | Keys.A;
-            MenuCommandsItemAttach.Size = new Size(178, 22);
+            MenuCommandsItemAttach.Size = new Size(180, 22);
             MenuCommandsItemAttach.Text = "attach";
             MenuCommandsItemAttach.ToolTipText = "attaches file to send; in prototype only  file extension image audio and video is supported";
             MenuCommandsItemAttach.Click += MenuItemAttach_Click;
@@ -403,14 +354,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             MenuCommandsSeperator.BackColor = SystemColors.MenuBar;
             MenuCommandsSeperator.Name = "MenuCommandsSeperator";
-            MenuCommandsSeperator.Size = new Size(175, 6);
+            MenuCommandsSeperator.Size = new Size(177, 6);
             // 
             // MenuCommandsItemRefresh
             // 
             MenuCommandsItemRefresh.BackColor = SystemColors.MenuBar;
             MenuCommandsItemRefresh.Name = "MenuCommandsItemRefresh";
             MenuCommandsItemRefresh.ShortcutKeys = Keys.Control | Keys.R;
-            MenuCommandsItemRefresh.Size = new Size(178, 22);
+            MenuCommandsItemRefresh.Size = new Size(180, 22);
             MenuCommandsItemRefresh.Text = "refresh";
             MenuCommandsItemRefresh.ToolTipText = "refreshes, when the terminal is flushed";
             MenuCommandsItemRefresh.Click += MenuItemRefresh_Click;
@@ -420,7 +371,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuCommandsItemClear.BackColor = SystemColors.MenuBar;
             MenuCommandsItemClear.Name = "MenuCommandsItemClear";
             MenuCommandsItemClear.ShortcutKeys = Keys.Control | Keys.Delete;
-            MenuCommandsItemClear.Size = new Size(178, 22);
+            MenuCommandsItemClear.Size = new Size(180, 22);
             MenuCommandsItemClear.Text = "clear";
             MenuCommandsItemClear.ToolTipText = "clears completey all chat windows";
             MenuCommandsItemClear.Click += MenuItemClear_Click;
@@ -498,8 +449,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuHelp.Name = "MenuHelp";
             MenuHelp.Padding = new Padding(3, 0, 3, 0);
             MenuHelp.ShortcutKeys = Keys.Alt | Keys.F7;
-            MenuHelp.Size = new Size(24, 21);
-            MenuHelp.Text = "?";
+            MenuHelp.Size = new Size(48, 21);
+            MenuHelp.Text = "help";
             // 
             // MenuHelpItemViewHelp
             // 
@@ -509,8 +460,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuHelpItemViewHelp.Name = "MenuHelpItemViewHelp";
             MenuHelpItemViewHelp.Padding = new Padding(0, 2, 0, 2);
             MenuHelpItemViewHelp.ShortcutKeys = Keys.Control | Keys.F1;
-            MenuHelpItemViewHelp.Size = new Size(167, 24);
-            MenuHelpItemViewHelp.Text = "help";
+            MenuHelpItemViewHelp.Size = new Size(201, 24);
+            MenuHelpItemViewHelp.Text = "view help";
             MenuHelpItemViewHelp.ToolTipText = "displays help";
             MenuHelpItemViewHelp.Click += MenuHelpItemViewHelp_Click;
             // 
@@ -520,7 +471,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuHelpItemInfo.BackgroundImageLayout = ImageLayout.None;
             MenuHelpItemInfo.ForeColor = SystemColors.MenuText;
             MenuHelpItemInfo.Name = "MenuHelpItemInfo";
-            MenuHelpItemInfo.Size = new Size(167, 22);
+            MenuHelpItemInfo.Size = new Size(201, 22);
             MenuHelpItemInfo.Text = "info";
             MenuHelpItemInfo.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuHelpItemInfo.ToolTipText = "displays a tiny message box with version info";
@@ -533,7 +484,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuHelpItemAbout.ForeColor = SystemColors.MenuText;
             MenuHelpItemAbout.Name = "MenuHelpItemAbout";
             MenuHelpItemAbout.Padding = new Padding(0, 2, 0, 2);
-            MenuHelpItemAbout.Size = new Size(167, 24);
+            MenuHelpItemAbout.Size = new Size(201, 24);
             MenuHelpItemAbout.Text = "about";
             MenuHelpItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuHelpItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
@@ -1024,15 +975,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripSeparator MenuFileSeparatorExit;
         private ToolStripMenuItem MenuCommandsItemAttach;
         private ToolStripSeparator MenuCommandsSeperator;
-        private ToolStripMenuItem toolMenuConnect;
-        private ToolStripMenuItem menuConnectItemFriend;
         private ToolStripMenuItem toolStripMenuItem4;
         private ToolStripMenuItem toolStripMenuItem5;
         private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem menuConnectItemLoopback;
-        private ToolStripComboBox menuConnectComboBoxIps;
-        private ToolStripSeparator menuConnectSeparator;
-        private ToolStripSeparator menuConnectSeparatorLast;                      
 
         private OpenFileDialog FileOpenDialog;
         private SaveFileDialog FileSaveDialog;

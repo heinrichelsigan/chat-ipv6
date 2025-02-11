@@ -146,23 +146,11 @@
   <data name="CqrServerUrlToPost" xml:space="preserve">
     <value>https://cqrxs.eu/net/CqrJD/Default.aspx;https://area23.at/net/CqrJD/Default.aspx;</value>
   </data>
-  <data name="frogInHole" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\frogInHole.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="frogJump" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\frogJump.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="frogUnderWater" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\frogUnderWater.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="TransparentFormsIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\TransparentFormsIcon.ico;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ClickToUpload" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\ClickToUpload.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="frogInSwamp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\frogInSwamp.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="CableWireCut" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\CableWireCut.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

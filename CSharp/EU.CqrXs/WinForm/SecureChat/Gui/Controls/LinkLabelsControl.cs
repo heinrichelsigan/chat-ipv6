@@ -1,6 +1,7 @@
-﻿using EU.CqrXs.Framework.Core.Crypt.CqrJd;
-using EU.CqrXs.Framework.Core;
-using EU.CqrXs.Framework.Core.Util;
+﻿using Area23.At.Framework.Core.Crypt.CqrJd;
+using Area23FwCore = Area23.At.Framework.Core;
+using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Util;
 using System.ComponentModel;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
@@ -91,7 +92,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
         {
             string fileName = mimeAttachment.FileName;
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
-            byte[] fileBytes = Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
+            byte[] fileBytes = Area23FwCore.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
             
             SetNameFilePathk(fileName, filePath);

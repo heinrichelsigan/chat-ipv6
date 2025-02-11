@@ -1,12 +1,12 @@
-﻿using EU.CqrXs.Framework.Core;
-using EU.CqrXs.Framework.Core.Net;
-using EU.CqrXs.Framework.Core.Crypt.Cipher;
-using EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric;
-using EU.CqrXs.Framework.Core.Crypt.CqrJd;
-using EU.CqrXs.Framework.Core.Crypt.EnDeCoding;
-using EU.CqrXs.Framework.Core.Net.IpSocket;
-using EU.CqrXs.Framework.Core.Net.WebHttp;
-using EU.CqrXs.Framework.Core.Util;
+﻿using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Net;
+using Area23.At.Framework.Core.Crypt.Cipher;
+using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+using Area23.At.Framework.Core.Crypt.CqrJd;
+using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Net.IpSocket;
+using Area23.At.Framework.Core.Net.WebHttp;
+using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Properties;
 using System;
@@ -17,8 +17,10 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Util;
-using EU.CqrXs.Framework.Core.Net.NameService;
+using Area23.At.Framework.Core.Net.NameService;
 using System.Media;
+using System.Threading.Tasks;
+using EU.CqrXs.WinForm.SecureChat.Gui.Controls;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -477,21 +479,48 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// PlaySoundFromResource - plays a sound embedded in application ressource file
         /// </summary>
         /// <param name="soundName">unique qualified name for sound</param>
-        protected virtual unsafe void PlaySoundFromResource(string soundName)
+        protected static bool PlaySoundFromResource(string soundName)
         {
+            bool played = false;
             if (true)
-            {
-                byte[] bytes = (byte[])EU.CqrXs.WinForm.SecureChat.Properties.Resources.ResourceManager.GetObject(soundName);
-                if (bytes != null && bytes.Length > 0)
+            {                
+                byte[] soundBytes = (byte[])EU.CqrXs.WinForm.SecureChat.Properties.Resources.ResourceManager.GetObject(soundName);
+
+                if (soundBytes != null && soundBytes.Length > 0)
                 {
-                    fixed (byte* bufferPtr = &bytes[0])
+                    try
                     {
-                        System.IO.UnmanagedMemoryStream ums = new UnmanagedMemoryStream(bufferPtr, bytes.Length);
-                        SoundPlayer player = new SoundPlayer(ums);
-                        player.Play();
+                        // Place the data into a stream
+                        using (MemoryStream ms = new MemoryStream(soundBytes))
+                        {
+                            // Construct the sound player
+                            SoundPlayer player = new SoundPlayer(ms);
+                            player.Play();
+                            played = true;
+                        }
                     }
+                    catch (Exception exSound)
+                    {
+                        Area23Log.LogStatic(exSound);
+                        played = false;
+                    }
+                    //fixed (byte* bufferPtr = &bytes[0])
+                    //{
+                    //    System.IO.UnmanagedMemoryStream ums = new UnmanagedMemoryStream(bufferPtr, bytes.Length);
+                    //    SoundPlayer player = new SoundPlayer(ums);                        
+                    //    player.Play();
+                    //}
                 }
             }
+
+            return played;
+        }
+
+
+
+        protected virtual async Task<bool> PlaySoundFromResourcesAsync(string soundName)
+        {
+            return await Task<bool>.Run<bool>(() => (PlaySoundFromResource(soundName)));
         }
 
         #endregion Media Methods

@@ -1,5 +1,5 @@
-﻿using EU.CqrXs.Framework.Core;
-using EU.CqrXs.Framework.Core.Net.WebHttp;
+﻿using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Net.WebHttp;
 using System.Net;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms

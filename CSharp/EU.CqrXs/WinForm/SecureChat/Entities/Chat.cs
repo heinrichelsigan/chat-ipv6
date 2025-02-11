@@ -1,5 +1,5 @@
-﻿using EU.CqrXs.Framework.Core;
-using EU.CqrXs.Framework.Core.Crypt.CqrJd;
+﻿using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Crypt.CqrJd;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -21,19 +21,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         // TODO: replace it in C# 9.0 to private static readonly lock _lock
         private static readonly object _lock = true;
         
-        internal int ChatId { get; set; }  
+        public int ChatId { get; set; }
 
-        internal CqrContact Friend { get; set; }
+        public CqrContact Friend { get; set; }
 
-        internal DateTime TimeStamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
-        internal DateTime? SaveStamp { get; set; }
+        public DateTime? SaveStamp { get; set; }
 
-        internal HashSet<DateTime> MyMsgTStamps { get; set; }
+        public HashSet<DateTime> MyMsgTStamps { get; set; }
 
-        internal HashSet<DateTime> FriendMsgTStamps { get; set; } 
+        public HashSet<DateTime> FriendMsgTStamps { get; set; }
 
-        internal Dictionary<DateTime, string> CqrMsgs {  get; set; }
+        public Dictionary<DateTime, string> CqrMsgs {  get; set; }
 
 
         public Chat()
@@ -46,7 +46,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             CqrMsgs = new Dictionary<DateTime, string>();
         }
 
-        public Chat(Contact friend) : this()
+        public Chat(CqrContact friend) : this()
         {
             Friend = friend;
             ChatId = friend.ContactId;

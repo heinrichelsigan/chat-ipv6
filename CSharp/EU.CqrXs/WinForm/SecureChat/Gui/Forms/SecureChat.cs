@@ -1,12 +1,13 @@
-﻿using EU.CqrXs.Framework.Core;
-using EU.CqrXs.Framework.Core.Net;
-using EU.CqrXs.Framework.Core.Crypt.Cipher;
-using EU.CqrXs.Framework.Core.Crypt.Cipher.Symmetric;
-using EU.CqrXs.Framework.Core.Crypt.CqrJd;
-using EU.CqrXs.Framework.Core.Crypt.EnDeCoding;
-using EU.CqrXs.Framework.Core.Net.IpSocket;
-using EU.CqrXs.Framework.Core.Net.WebHttp;
-using EU.CqrXs.Framework.Core.Util;
+﻿using Area23FwCore = Area23.At.Framework.Core;
+using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Net;
+using Area23.At.Framework.Core.Crypt.Cipher;
+using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+using Area23.At.Framework.Core.Crypt.CqrJd;
+using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Net.IpSocket;
+using Area23.At.Framework.Core.Net.WebHttp;
+using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Properties;
 using System;
@@ -17,7 +18,7 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Util;
-using EU.CqrXs.Framework.Core.Net.NameService;
+using Area23.At.Framework.Core.Net.NameService;
 using System.Media;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 
@@ -143,8 +144,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             StripStatusLabel.Text = "Setup Network";
-            PlaySoundFromResource("sound_sputnik");
+            await PlaySoundFromResourcesAsync("sound_train");
             await SetupNetwork();
+            
 
             if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ImageBase64))
             {
@@ -460,18 +462,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             else
                 this.ComboBoxSecretKey.Text = myServerKey;
 
-            CqrServerMsg serverMessage = new CqrServerMsg(myServerKey);
-            this.TextBoxPipe.Text = serverMessage.PipeString;
+            Cqr1stServerMsg srv1stMsg = new Cqr1stServerMsg(myServerKey);
+            this.TextBoxPipe.Text = srv1stMsg.PipeString;
 
             CqrContact myContact = Entities.Settings.Instance.MyContact;
             string plain = myContact.Name + Environment.NewLine + myContact.Email + Environment.NewLine +
                 myContact.Mobile + Environment.NewLine + myContact.Address + Environment.NewLine +
                 myContact.SecretKey + Environment.NewLine;
-            string encrypted = serverMessage.CqrSrvMsg(plain);
-            string response = serverMessage.SendCqrSrvMsg(plain, ServerIpAddress);
+            string encrypted = srv1stMsg.Cqr1stSrvMsg(plain);
+            string response = srv1stMsg.Send1stCqrSrvMsg(plain, ServerIpAddress);
 
             this.TextBoxSource.Text = encrypted + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            MsgContent msgContent = serverMessage.NCqrSrvMsg(encrypted);
+            MsgContent msgContent = srv1stMsg.NCqr1stSrvMsg(encrypted);
             this.TextBoxDestionation.Text = msgContent.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
             chat.AddMyMessage(plain);
@@ -780,12 +782,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (File.Exists(FileOpenDialog.FileName))
                 {
-                    string md5 = Framework.Core.Crypt.Hash.MD5Sum.Hash(FileOpenDialog.FileName, true);
-                    string sha256 = Framework.Core.Crypt.Hash.Sha256Sum.Hash(FileOpenDialog.FileName, true);
+                    string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(FileOpenDialog.FileName, true);
+                    string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(FileOpenDialog.FileName, true);
 
                     byte[] fileBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
                     string fileNameOnly = Path.GetFileName(FileOpenDialog.FileName);
-                    string mimeType = Framework.Core.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
+                    string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
 
                     string base64Mime = Base64.Encode(fileBytes);
 
@@ -1291,7 +1293,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             item.Checked = true;
                             if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                                 this.MenuNetworkItemIPv6Secure.Checked = true;
-                            ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
+                            ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                         }
                     }
 
@@ -1365,7 +1367,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 clientIpAddress = IPAddress.Parse(mi.Name);
 
                 ipSockListener?.Dispose();
-                ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
+                ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                 StripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
             }
         }

@@ -189,6 +189,20 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             return response;
         }
 
+
+        public string SendCqrSrvMsg(CqrContact sender, CqrContact recipient, string msg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        {
+            string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
+                CqrSrvMsg(sender, recipient, msg));
+
+            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
+
+            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+
+            return response;
+        }
+
         /// <summary>
         /// SendCqrPeerAttachment sends an attached base64 encoded file
         /// </summary>

@@ -1,5 +1,5 @@
-﻿using EU.CqrXs.Framework.Core.Util;
-using EU.CqrXs.Framework.Core.Crypt.EnDeCoding;
+﻿using Area23.At.Framework.Core.Util;
+using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Properties;
 using Org.BouncyCastle.Utilities;
@@ -14,10 +14,11 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using EU.CqrXs.Framework.Core.Crypt.Cipher;
+using Area23.At.Framework.Core.Crypt.Cipher;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using Contact = EU.CqrXs.WinForm.SecureChat.Entities.Contact;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using Area23.At.Framework.Core.Crypt.CqrJd;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -60,7 +61,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
                 else if (_id > 0 && Entities.Settings.Instance.Contacts.Count > 0)
                 {
-                    foreach (Contact contact in Entities.Settings.Instance.Contacts)
+                    foreach (CqrContact contact in Entities.Settings.Instance.Contacts)
                     {
                         if (!string.IsNullOrEmpty(contact.Name))
                             comboBoxName.Items.Add(contact.Name);
@@ -101,7 +102,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                
                 if (!string.IsNullOrEmpty(currentSelectedName))
                 {
-                    foreach (Contact contact in Entities.Settings.Instance.Contacts)
+                    foreach (CqrContact contact in Entities.Settings.Instance.Contacts)
                     {
                         if (contact != null && contact.ContactId == currentId && currentId > 0)
                         {
@@ -120,7 +121,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     {
                         currentId = Entities.Settings.Instance.Contacts.Count + 1;
                         Entities.Settings.Instance.Contacts.Add(
-                            new Entities.Contact()
+                            new CqrContact()
                             {
                                 ContactId = currentId,
                                 Name = this.comboBoxName.Text ?? string.Empty,
@@ -172,7 +173,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string? currentSelectedName = (comboBoxName.SelectedItem != null) ? comboBoxName.SelectedItem.ToString() : null;
             if (!string.IsNullOrEmpty(currentSelectedName))
             {
-                foreach (Contact contact in Entities.Settings.Instance.Contacts)
+                foreach (CqrContact contact in Entities.Settings.Instance.Contacts)
                 {
                     if (contact != null && !string.IsNullOrEmpty(contact.Name) && contact.Name.Equals(currentSelectedName))
                     {
@@ -205,7 +206,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string? currentSelectedName = (comboBoxName.Text != null) ? comboBoxName.Text.ToString() : null;
             if (!string.IsNullOrEmpty(currentSelectedName))
             {
-                foreach (Contact contact in Entities.Settings.Instance.Contacts)
+                foreach (CqrContact contact in Entities.Settings.Instance.Contacts)
                 {
                     if (contact != null && !string.IsNullOrEmpty(contact.Name) && contact.Name.Equals(currentSelectedName, StringComparison.InvariantCultureIgnoreCase))
                     {

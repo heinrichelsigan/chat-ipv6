@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 namespace Area23.At.Framework.Core.Crypt.CqrJd
 {
 
+    /// <summary>
+    /// CqrContact is a contact for CqrJd
+    /// </summary>
     public class CqrContact
     {
         public int ContactId { get; set; }
@@ -102,6 +105,5 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
         }
 
     }
-
 
 }

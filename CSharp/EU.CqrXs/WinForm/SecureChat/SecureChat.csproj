@@ -33,6 +33,188 @@
     <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Entities\Contact.cs" />
+    <Compile Remove="Gui\Controls\LinkLabelsControl.cs" />
+    <Compile Remove="Gui\Controls\LinkLabelsControl.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Gui\Controls\LinkLabelsControl.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\Audio\sound_breakpoint.wav" />
+    <None Remove="Properties\Audio\sound_camera.wav" />
+    <None Remove="Properties\Audio\sound_chimes.wav" />
+    <None Remove="Properties\Audio\sound_click.wav" />
+    <None Remove="Properties\Audio\sound_coin.wav" />
+    <None Remove="Properties\Audio\sound_error.wav" />
+    <None Remove="Properties\Audio\sound_glasses.wav" />
+    <None Remove="Properties\Audio\sound_gong.wav" />
+    <None Remove="Properties\Audio\sound_hammer.wav" />
+    <None Remove="Properties\Audio\sound_laser.wav" />
+    <None Remove="Properties\Audio\sound_pluckpcm.wav" />
+    <None Remove="Properties\Audio\sound_push.wav" />
+    <None Remove="Properties\Audio\sound_romans.wav" />
+    <None Remove="Properties\Audio\sound_soft.wav" />
+    <None Remove="Properties\Audio\sound_space.wav" />
+    <None Remove="Properties\Audio\sound_sputnik.wav" />
+    <None Remove="Properties\Audio\sound_suction.wav" />
+    <None Remove="Properties\Audio\sound_top.wav" />
+    <None Remove="Properties\Audio\sound_train.wav" />
+    <None Remove="Properties\Audio\sound_type.wav" />
+    <None Remove="Properties\Audio\sound_ups.wav" />
+    <None Remove="Properties\Audio\sound_volatage.wav" />
+    <None Remove="Properties\Audio\sound_warning.wav" />
+    <None Remove="Properties\Audio\sound_whoosh.wav" />
+    <None Remove="Properties\Audio\sound_wind.wav" />
+    <None Remove="Properties\Image\AddAesArrow.gif" />
+    <None Remove="Properties\Image\AddAesArrowHover.gif" />
+    <None Remove="Properties\Image\a_hash.png" />
+    <None Remove="Properties\Image\a_right_key.png" />
+    <None Remove="Properties\Image\CableWireCut.png" />
+    <None Remove="Properties\Image\ClickToUpload.png" />
+    <None Remove="Properties\Image\CutNetworkWire.png" />
+    <None Remove="Properties\Image\decrypted.png" />
+    <None Remove="Properties\Image\encrypted.png" />
+    <None Remove="Properties\Image\file.png" />
+    <None Remove="Properties\Image\RemoteConnect.gif" />
+    <None Remove="Properties\Image\SatLink.png" />
+    <None Remove="Properties\Image\TransparentFormsIcon.ico" />
+    <None Remove="Properties\Image\WinFormAboutDialog.png" />
+    <None Remove="Resources\sound_arrow.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Audio\sound_arrow.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_camera.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_chimes.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_click.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_coin.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_error.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_glasses.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_gong.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_hammer.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_laser.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_pluckpcm.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_push.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_romans.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_soft.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_space.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_sputnik.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_suction.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_top.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_train.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_type.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_ups.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_volatage.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_warning.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_whoosh.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_wind.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\AddAesArrow.gif">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\AddAesArrowHover.gif">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\a_hash.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\a_right_key.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\CableWireCut.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\image_ClickToUpload.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\ClickToUpload.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\CutNetworkWire.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\decrypted.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\encrypted.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\file.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\RemoteConnect.gif">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\SatLink.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\TransparentFormsIcon.ico">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\image_WinFormAboutDialog.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\WinFormAboutDialog.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\sound_arrow.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
 
   <ItemGroup>
     <Folder Include="log\" />
@@ -48,7 +230,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Framework\Core\EU.CqrXs.Framework.Core.csproj" />
+    <EmbeddedResource Include="Properties\Audio\sound_breakpoint.wav">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
