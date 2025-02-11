@@ -498,20 +498,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #region Help About Info
 
-        protected internal void MenuItemHelp_Click(object sender, EventArgs e)
+        protected internal void MenuHelpItemViewHelp_Click(object sender, EventArgs e)
         {
             // TODO: implement it
             Help.ShowHelp(this, Constants.CQRXS_HELP_URL);
             // Help.ShowHelp(this, Constants.CQRXS_HELP_URL, HelpNavigator.TableOfContents, Constants.CQRXS_EU);
         }
 
-        protected internal void MenuItemAbout_Click(object sender, EventArgs e)
+        protected internal void MenuHelpItemAbout_Click(object sender, EventArgs e)
         {
             TransparentDialog dialog = new TransparentDialog();
             dialog.ShowDialog();
         }
 
-        protected internal void MenuItemInfo_Click(object sender, EventArgs e)
+        protected internal void MenuHelpItemInfo_Click(object sender, EventArgs e)
         {
             MessageBox.Show($"{Text} type {this.GetType()} Information MessageBox.", $"{Text} type {this.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

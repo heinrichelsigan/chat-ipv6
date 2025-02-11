@@ -60,13 +60,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         if (IPAddress.Parse(sip).Equals(ip))
                         {
                             if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 &&
-                                menuItemIPv6Secure.Checked)
+                                MenuNetworkItemIPv6Secure.Checked)
                             {
                                 serverIpAddress = ip;
                                 return serverIpAddress;
                             }
                             if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
-                                !menuItemIPv6Secure.Checked)
+                                !MenuNetworkItemIPv6Secure.Checked)
                             {
                                 serverIpAddress = ip;
                                 return serverIpAddress;
@@ -110,7 +110,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             catch (Exception exBase64)
             {
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
-                toolStripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
+                StripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
             }
         }
 
@@ -122,7 +122,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
                 // badge.Show();
-                MenuItemMyContact_Click(sender, e);
+                MenuContactsItemMyContact_Click(sender, e);
                 while (string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Name))
                 {
                     string notFullReason = string.Empty;
@@ -134,12 +134,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     //     notFullReason += "Mobile phone is missing!" + Environment.NewLine;
                     MessageBox.Show(notFullReason, "Please fill out your info fully", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    MenuItemMyContact_Click(sender, e);
+                    MenuContactsItemMyContact_Click(sender, e);
                 }
                 send1stReg = true;
             }
 
-            toolStripStatusLabel.Text = "Setup Network";
+            StripStatusLabel.Text = "Setup Network";
             PlaySoundFromResource("sound_sputnik");
             await SetupNetwork();
 
@@ -154,7 +154,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 Send_1st_Server_Registration(sender, e);
 
             AddContactsToIpContact();
-            toolStripStatusLabel.Text = "Secure Chat init done.";
+            StripStatusLabel.Text = "Secure Chat init done.";
         }
 
         #region thread save text and richtext box access       
@@ -249,7 +249,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
                     this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
             }
-            toolStripStatusLabel.Text = "Added new secret key => calculated new SecurePipe...";
+            StripStatusLabel.Text = "Added new secret key => calculated new SecurePipe...";
         }
 
         /// <summary>
@@ -285,7 +285,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
             ButtonKey_Click(sender, e);
-            toolStripStatusLabel.Text = "Changed secret key => calculated new SecurePipe...";
+            StripStatusLabel.Text = "Changed secret key => calculated new SecurePipe...";
         }
 
         #endregion SecretKey & SymmCipherPipe.PipeString + ComboBoxSecretKey FocusLeave TextUpdate SelectedIndexChanged
@@ -334,7 +334,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 PlaySoundFromResource("sound_warning");
             }
 
-            toolStripStatusLabel.Text = $"Added new partner ip address {partnerIpAddress.ToString()}.";
+            StripStatusLabel.Text = $"Added new partner ip address {partnerIpAddress.ToString()}.";
         }
 
         private void ComboBoxIpContact_TextUpdate(object sender, EventArgs e)
@@ -364,7 +364,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 return;
             }
             this.ComboBoxIpContact.BackColor = Color.White;
-            toolStripStatusLabel.Text = $"Selected partner ip address {partnerIpAddress.ToString()}.";
+            StripStatusLabel.Text = $"Selected partner ip address {partnerIpAddress.ToString()}.";
 
             if (SendInit_Click())
             {
@@ -421,7 +421,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
 
-            toolStripStatusLabel.Text = "Finished 1st registration";
+            StripStatusLabel.Text = "Finished 1st registration";
         }
 
         /// <summary>
@@ -456,7 +456,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     {
                         area23EvArgs = ((Area23EventArgs<ReceiveData>)e);
                         //TODO: Enable cross thread via delegate
-                        SetStatusText(toolStripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
+                        SetStatusText(StripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
 
                         string comboText = GetComboBoxText(ComboBoxIpContact);
                         if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.InvariantCultureIgnoreCase))
@@ -544,13 +544,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 // AppendText(TextBoxSource, unencrypted);
                 // Format_Lines_RichTextBox();
                 this.RichTextBoxChat.Text = string.Empty;
-                toolStripStatusLabel.Text = "Send init successfully";
+                StripStatusLabel.Text = "Send init successfully";
                 ButtonCheck.Image = Properties.de.Resources.RemoteConnect;
             }
             catch (Exception ex)
             {
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in SendInit_Click: {ex.Message}.\n", ex);
-                toolStripStatusLabel.Text = "Send init FAILED: " + ex.Message;
+                StripStatusLabel.Text = "Send init FAILED: " + ex.Message;
                 PlaySoundFromResource("sound_hammer");
                 return false;
             }
@@ -584,7 +584,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             if (string.IsNullOrEmpty(this.RichTextBoxChat.Text) || string.IsNullOrWhiteSpace(this.RichTextBoxChat.Text))
             {
-                toolStripStatusLabel.Text = "Nothing to send!";
+                StripStatusLabel.Text = "Nothing to send!";
                 PlaySoundFromResource("sound_warning");
                 return;
             }
@@ -602,13 +602,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 AppendText(TextBoxSource, unencrypted);
                 Format_Lines_RichTextBox();
                 this.RichTextBoxChat.Text = string.Empty;
-                toolStripStatusLabel.Text = "Send successfully";
+                StripStatusLabel.Text = "Send successfully";
                 PlaySoundFromResource("sound_arrow");
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in menuItemSend_Click: {ex.Message}.\n", ex);
-                toolStripStatusLabel.Text = "Send FAILED: " + ex.Message;
+                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
+                StripStatusLabel.Text = "Send FAILED: " + ex.Message;
                 PlaySoundFromResource("sound_warning");
             }
             // otherwise send message to registered user via server
@@ -637,22 +637,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             myServerKey = this.ComboBoxSecretKey.Text;
 
-            openFileDialog = openFileDialog ?? new OpenFileDialog();
-            openFileDialog.RestoreDirectory = true;
-            openFileDialog.AddExtension = false;
-            openFileDialog.CheckFileExists = true;
-            openFileDialog.CheckPathExists = true;
-            openFileDialog.Filter = "All files (*.*)|*.*|BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf";
-            DialogResult result = openFileDialog.ShowDialog();
+            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
+            FileOpenDialog.RestoreDirectory = true;
+            FileOpenDialog.AddExtension = false;
+            FileOpenDialog.CheckFileExists = true;
+            FileOpenDialog.CheckPathExists = true;
+            FileOpenDialog.Filter = "All files (*.*)|*.*|BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf";
+            DialogResult result = FileOpenDialog.ShowDialog();
             if (result == DialogResult.OK || result == DialogResult.Yes)
             {
-                if (File.Exists(openFileDialog.FileName))
+                if (File.Exists(FileOpenDialog.FileName))
                 {
-                    string md5 = Framework.Core.Crypt.Hash.MD5Sum.Hash(openFileDialog.FileName, true);
-                    string sha256 = Framework.Core.Crypt.Hash.Sha256Sum.Hash(openFileDialog.FileName, true);
+                    string md5 = Framework.Core.Crypt.Hash.MD5Sum.Hash(FileOpenDialog.FileName, true);
+                    string sha256 = Framework.Core.Crypt.Hash.Sha256Sum.Hash(FileOpenDialog.FileName, true);
 
-                    byte[] fileBytes = System.IO.File.ReadAllBytes(openFileDialog.FileName);
-                    string fileNameOnly = Path.GetFileName(openFileDialog.FileName);
+                    byte[] fileBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
+                    string fileNameOnly = Path.GetFileName(FileOpenDialog.FileName);
                     string mimeType = Framework.Core.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
 
                     string base64Mime = Base64.Encode(fileBytes);
@@ -674,12 +674,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         AppendText(TextBoxSource, mimeAttach.GetFileNameContentLength() + Environment.NewLine);
                         Format_Lines_RichTextBox();
                         this.RichTextBoxChat.Text = string.Empty;
-                        toolStripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
+                        StripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
                     }
                     catch (Exception ex)
                     {
                         Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
-                        toolStripStatusLabel.Text = "Attach FAILED: " + ex.Message;
+                        StripStatusLabel.Text = "Attach FAILED: " + ex.Message;
                         PlaySoundFromResource("sound_warning");
                     }
                 }
@@ -772,7 +772,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MenuItemMyContact_Click(object sender, EventArgs e)
+        private void MenuContactsItemMyContact_Click(object sender, EventArgs e)
         {
             ContactSettings contactSettings = new ContactSettings("My Contact Info", 0);
             contactSettings.ShowInTaskbar = true;
@@ -837,19 +837,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 contactId = Math.Max(contactId, c.ContactId);
             }
             contactId++;
-            openFileDialog = openFileDialog ?? new OpenFileDialog();
-            openFileDialog.RestoreDirectory = true;
-            openFileDialog.AddExtension = false;
-            openFileDialog.CheckFileExists = true;
-            openFileDialog.CheckPathExists = true;
-            openFileDialog.Filter = "CSV (*.csv)|*.csv|VCard (*.vcf)|*.vcf"; //|All files (*.*)|*.*";
-            DialogResult result = openFileDialog.ShowDialog();
+            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
+            FileOpenDialog.RestoreDirectory = true;
+            FileOpenDialog.AddExtension = false;
+            FileOpenDialog.CheckFileExists = true;
+            FileOpenDialog.CheckPathExists = true;
+            FileOpenDialog.Filter = "CSV (*.csv)|*.csv|VCard (*.vcf)|*.vcf"; //|All files (*.*)|*.*";
+            DialogResult result = FileOpenDialog.ShowDialog();
             if (result == DialogResult.OK || result == DialogResult.Yes)
             {
-                if (File.Exists(openFileDialog.FileName))
+                if (File.Exists(FileOpenDialog.FileName))
                 {
-                    string extension = Path.GetExtension(openFileDialog.FileName).ToLower();
-                    string[] lines = System.IO.File.ReadAllLines(openFileDialog.FileName);
+                    string extension = Path.GetExtension(FileOpenDialog.FileName).ToLower();
+                    string[] lines = System.IO.File.ReadAllLines(FileOpenDialog.FileName);
 
                     switch (extension)
                     {
@@ -1021,9 +1021,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e">EventArgs e</param>
         private void MenuView_ItemTopBottom_Click(object sender, EventArgs e)
         {
-            menuViewItemLeftRíght.Checked = false;
-            menuViewItemTopBottom.Checked = true;
-            menuViewItem1View.Checked = false;
+            MenuViewItemLeftRíght.Checked = false;
+            MenuViewItemTopBottom.Checked = true;
+            MenuViewItem1View.Checked = false;
 
             PanelCenter.Visible = true;
             RichTextBoxOneView.Visible = false;
@@ -1048,9 +1048,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e">EventArgs e</param>
         private void MenuView_ItemLeftRíght_Click(object sender, EventArgs e)
         {
-            menuViewItemLeftRíght.Checked = true;
-            menuViewItemTopBottom.Checked = false;
-            menuViewItem1View.Checked = false;
+            MenuViewItemLeftRíght.Checked = true;
+            MenuViewItemTopBottom.Checked = false;
+            MenuViewItem1View.Checked = false;
 
             PanelCenter.Visible = true;
             RichTextBoxOneView.Visible = false;
@@ -1075,9 +1075,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e">EventArgs e</param>
         private void MenuView_Item1View_Click(object sender, EventArgs e)
         {
-            menuViewItemLeftRíght.Checked = false;
-            menuViewItemTopBottom.Checked = false;
-            menuViewItem1View.Checked = true;
+            MenuViewItemLeftRíght.Checked = false;
+            MenuViewItemTopBottom.Checked = false;
+            MenuViewItem1View.Checked = true;
 
             PanelCenter.Visible = true;
             SplitChatView.Visible = false;
@@ -1130,7 +1130,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             List<string> myIpStrList = new List<string>();
             int mchecked = 0;
-            this.menuItemIPv6Secure.Checked = false;
+            this.MenuNetworkItemIPv6Secure.Checked = false;
             foreach (IPAddress addr in interfaceIPAddrs)
             {
                 if (addr != null)
@@ -1147,20 +1147,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             clientIpAddress = addr;
                             item.Checked = true;
                             if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                                this.menuItemIPv6Secure.Checked = true;
+                                this.MenuNetworkItemIPv6Secure.Checked = true;
                             ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                         }
                     }
 
                     myIpStrList.Add(addr.ToString());
-                    this.menuIItemMyIps.DropDownItems.Add(item);
+                    this.MenuNetworkItemMyIps.DropDownItems.Add(item);
                 }
             }
 
             ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily + " " + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
             extIpItem.Checked = true;
             extIpItem.Enabled = false;
-            this.menuItemExternalIp.DropDownItems.Add(extIpItem);
+            this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
 
             foreach (IPAddress addrProxy in addresses)
             {
@@ -1168,7 +1168,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     proxyList.Add(addrProxy.ToString());
                     if (addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork ||
-                        (addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 && this.menuItemIPv6Secure.Checked))
+                        (addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 && this.MenuNetworkItemIPv6Secure.Checked))
                     {
                         ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily + " " + addrProxy.ToString(), null, null, addrProxy.ToString());
                         this.MenuNetworkItemProxyServers.DropDownItems.Add(item);
@@ -1196,7 +1196,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             if (sender != null && sender is ToolStripMenuItem mi)
             {
-                foreach (ToolStripMenuItem dditem in this.menuIItemMyIps.DropDownItems)
+                foreach (ToolStripMenuItem dditem in this.MenuNetworkItemMyIps.DropDownItems)
                     dditem.Checked = false;
 
                 mi.Checked = true;
@@ -1204,7 +1204,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                 ipSockListener?.Dispose();
                 ipSockListener = new EU.CqrXs.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
-                toolStripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
+                StripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
             }
         }
 
@@ -1213,24 +1213,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private void toolStripMenuItemOpen_Click(object sender, EventArgs e)
         {
-            openFileDialog = openFileDialog ?? new OpenFileDialog();
-            openFileDialog.RestoreDirectory = true;
-            DialogResult result = openFileDialog.ShowDialog();
+            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
+            FileOpenDialog.RestoreDirectory = true;
+            DialogResult result = FileOpenDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                MessageBox.Show($"FileName: {openFileDialog.FileName} init directory: {openFileDialog.InitialDirectory}", $"{Text} type {openFileDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
 
         private void toolStripMenuItemLoad_Click(object sender, EventArgs e)
         {
-            openFileDialog = openFileDialog ?? new OpenFileDialog();
-            openFileDialog.RestoreDirectory = true;
-            DialogResult res = openFileDialog.ShowDialog();
+            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
+            FileOpenDialog.RestoreDirectory = true;
+            DialogResult res = FileOpenDialog.ShowDialog();
             if (res == DialogResult.OK)
             {
-                MessageBox.Show($"FileName: {openFileDialog.FileName} init directory: {openFileDialog.InitialDirectory}", $"{Text} type {openFileDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -1242,23 +1242,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         protected virtual byte[] OpenCryptFileDialog(ref string loadDir)
         {
-            if (openFileDialog == null)
-                openFileDialog = new OpenFileDialog();
+            if (FileOpenDialog == null)
+                FileOpenDialog = new OpenFileDialog();
             byte[] fileBytes;
             if (string.IsNullOrEmpty(loadDir))
                 loadDir = Environment.GetEnvironmentVariable("TEMP") ?? System.AppDomain.CurrentDomain.BaseDirectory;
             if (loadDir != null)
             {
-                openFileDialog.InitialDirectory = loadDir;
-                openFileDialog.RestoreDirectory = true;
+                FileOpenDialog.InitialDirectory = loadDir;
+                FileOpenDialog.RestoreDirectory = true;
             }
-            DialogResult diaOpenRes = openFileDialog.ShowDialog();
+            DialogResult diaOpenRes = FileOpenDialog.ShowDialog();
             if (diaOpenRes == DialogResult.OK || diaOpenRes == DialogResult.Yes)
             {
-                if (!string.IsNullOrEmpty(openFileDialog.FileName) && File.Exists(openFileDialog.FileName))
+                if (!string.IsNullOrEmpty(FileOpenDialog.FileName) && File.Exists(FileOpenDialog.FileName))
                 {
-                    loadDir = Path.GetDirectoryName(openFileDialog.FileName) ?? System.AppDomain.CurrentDomain.BaseDirectory;
-                    fileBytes = File.ReadAllBytes(openFileDialog.FileName);
+                    loadDir = Path.GetDirectoryName(FileOpenDialog.FileName) ?? System.AppDomain.CurrentDomain.BaseDirectory;
+                    fileBytes = File.ReadAllBytes(FileOpenDialog.FileName);
                     return fileBytes;
                 }
             }
@@ -1281,38 +1281,38 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             if (saveDir != null)
             {
-                saveFileDialog.InitialDirectory = saveDir;
-                saveFileDialog.RestoreDirectory = true;
-                saveFileDialog.DefaultExt = ext;
+                FileSaveDialog.InitialDirectory = saveDir;
+                FileSaveDialog.RestoreDirectory = true;
+                FileSaveDialog.DefaultExt = ext;
             }
-            saveFileDialog.FileName = fileName;
-            DialogResult diaRes = saveFileDialog.ShowDialog();
+            FileSaveDialog.FileName = fileName;
+            DialogResult diaRes = FileSaveDialog.ShowDialog();
             if (diaRes == DialogResult.OK || diaRes == DialogResult.Yes)
             {
                 if (content != null && content.Length > 0)
-                    System.IO.File.WriteAllBytes(saveFileDialog.FileName, content);
+                    System.IO.File.WriteAllBytes(FileSaveDialog.FileName, content);
 
                 // var badge = new TransparentBadge($"File {fileName} saved to directory {saveDir}.");
                 // badge.Show();
             }
 
-            return (saveFileDialog != null && saveFileDialog.FileName != null && File.Exists(saveFileDialog.FileName)) ? saveFileDialog.FileName : null;
+            return (FileSaveDialog != null && FileSaveDialog.FileName != null && File.Exists(FileSaveDialog.FileName)) ? FileSaveDialog.FileName : null;
         }
 
         #endregion LoadSaveChatContent
 
 
-        private void buttonAttach_Click(object sender, EventArgs e)
+        private void ButtonAttach_Click(object sender, EventArgs e)
         {
             this.MenuItemAttach_Click(sender, e);
         }
 
-        private void buttonSend_Click(object sender, EventArgs e)
+        private void ButtonSend_Click(object sender, EventArgs e)
         {
             this.MenuItemSend_Click(sender, e);
         }
 
-        private void buttonClear_Click(object sender, EventArgs e)
+        private void ButtonClear_Click(object sender, EventArgs e)
         {
             this.MenuItemClear_Click(sender, e);
         }

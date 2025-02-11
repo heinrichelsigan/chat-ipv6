@@ -244,19 +244,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e"></param>
         private void Image_Clicked(object sender, EventArgs e)
         {
-            openFileDialog.RestoreDirectory = true;
-            openFileDialog.AddExtension = false;
-            openFileDialog.CheckFileExists = true;
-            openFileDialog.Filter = "PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPEG (*.jpeg)|*.jpeg|JPG (*.jpg)|*.jpg|BMP (*.bmp)|*.bmp";
-            // openFileDialog.Filter = "Images|*.jpg|*.png|*.gif";
-            DialogResult diaRes = openFileDialog.ShowDialog();
+            FileOpenDialog.RestoreDirectory = true;
+            FileOpenDialog.AddExtension = false;
+            FileOpenDialog.CheckFileExists = true;
+            FileOpenDialog.Filter = "PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPEG (*.jpeg)|*.jpeg|JPG (*.jpg)|*.jpg|BMP (*.bmp)|*.bmp";
+            // FileOpenDialog.Filter = "Images|*.jpg|*.png|*.gif";
+            DialogResult diaRes = FileOpenDialog.ShowDialog();
             if (diaRes == DialogResult.OK)
             {
-                if (File.Exists(openFileDialog.FileName))
+                if (File.Exists(FileOpenDialog.FileName))
                 {
-                    byte[] bitmapBytes = System.IO.File.ReadAllBytes(openFileDialog.FileName);
+                    byte[] bitmapBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
                     base64image = Base64.Encode(bitmapBytes);
-                    Bitmap bmp = new Bitmap(openFileDialog.FileName);
+                    Bitmap bmp = new Bitmap(FileOpenDialog.FileName);
                     int h = bmp.Size.Height;
                     int w = bmp.Size.Width;
                     if (h > 150)

@@ -41,7 +41,7 @@
             textBoxAddress = new TextBox();
             pictureBoxImage = new PictureBox();
             okButton = new Button();
-            openFileDialog = new OpenFileDialog();
+            FileOpenDialog = new OpenFileDialog();
             tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)logoPictureBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxImage).BeginInit();
@@ -217,9 +217,9 @@
             okButton.TabIndex = 32;
             okButton.Text = "&OK";
             // 
-            // openFileDialog
+            // FileOpenDialog
             // 
-            openFileDialog.FileName = "openFileDialog";
+            FileOpenDialog.FileName = "FileOpenDialog";
             // 
             // ContactSettings
             // 
@@ -261,7 +261,7 @@
         private TextBox textBoxMobile;
         private TextBox textBoxEmail;
         private PictureBox pictureBoxImage;
-        private OpenFileDialog openFileDialog;
+        private OpenFileDialog FileOpenDialog;
         private ComboBox comboBoxName;
     }
 }
