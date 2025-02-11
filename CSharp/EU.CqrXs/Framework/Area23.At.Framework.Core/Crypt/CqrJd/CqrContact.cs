@@ -29,9 +29,23 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
         public string? ImageBase64 { get; set; }
 
 
+        public CqrContact()
+        {
+        }
+
+        public CqrContact(int contactId, string name, string email, string mobile, string address)
+        {
+            this.ContactId = contactId;
+            this.Name = name;
+            this.Email = email;
+            this.Mobile = mobile;
+            this.Address = address;
+        }
+
         public virtual string ToJson()
         {
-            string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
+            CqrContact cqrContact = new CqrContact(ContactId, Name, Email, Mobile, Address);
+            string jsonString = JsonConvert.SerializeObject(cqrContact, Formatting.Indented);
             return jsonString;
         }
 
@@ -48,7 +62,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
                     this.Email = cqrContactJson.Email;
                     this.Mobile = cqrContactJson.Mobile;
                     this.Address = cqrContactJson.Address;
-                    this.ImageBase64 = cqrContactJson.ImageBase64;
+                    // this.ImageBase64 = cqrContactJson.ImageBase64;
                     return cqrContactJson;
                 }
             }
@@ -72,6 +86,22 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
                 this.ImageBase64 + Environment.NewLine
                 );
         }
+
+        /// <summary>
+        /// <see cref="object[]">RowParams</see> gets an object array of row parameters to show in <see cref="System.Windows.Forms.DataGridView"/>
+        /// </summary>
+        public object[] GetRowParams()
+        {
+            List<object> oList = new List<object>();
+            oList.Add(ContactId);
+            oList.Add(Name);
+            oList.Add(Email);
+            oList.Add(Mobile);
+            oList.Add(Address);
+            return oList.ToArray();
+        }
+
     }
+
 
 }

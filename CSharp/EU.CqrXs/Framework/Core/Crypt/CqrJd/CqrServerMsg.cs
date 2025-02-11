@@ -148,23 +148,23 @@ namespace EU.CqrXs.Framework.Core.Crypt.CqrJd
             CqrMessage = cqrMessage.TrimEnd("\0".ToCharArray());
             byte[] allBytes = DeEnCoder.DecodeText(CqrMessage, encType);
 
-            byte[] cipherBytes = new byte[allBytes.Length];
-             Array.Copy(allBytes, cipherBytes, allBytes.Length);
+            //byte[] cipherBytes = new byte[allBytes.Length];
+            // Array.Copy(allBytes, cipherBytes, allBytes.Length);
 
-            byte[] unroundedMerryBytes = (LibPaths.CqrEncrypt) ? symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash) : cipherBytes;
-            string decrypted = EnDeCoder.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
-            while (decrypted[decrypted.Length - 1] == '\0')
-                decrypted = decrypted.Substring(0, decrypted.Length - 1);
+            //byte[] unroundedMerryBytes = (LibPaths.CqrEncrypt) ? symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash) : cipherBytes;
+            //string decrypted = EnDeCoder.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
+            //while (decrypted[decrypted.Length - 1] == '\0')
+            //    decrypted = decrypted.Substring(0, decrypted.Length - 1);
 
-            MsgContent msgContent = new MsgContent(decrypted);
-            string hashVerification = msgContent.VerificationHash();
-            if (!VerifyHash(hashVerification))
-            {
-                string hashSymShow = symmPipe.PipeString ?? "        ";
-                throw new InvalidOperationException(
-                    string.Format("SymmCiphers [{0}] in crypt pipeline doesn't match serverside key !?$* byte length={1}.",
-                        hashSymShow.Substring(0, 2) + "...." + hashSymShow.Substring(6), keyBytes.Length));
-            }
+            MsgContent msgContent = new MsgContent(EnDeCoder.GetString(allBytes));
+            // string hashVerification = msgContent.VerificationHash();
+            //if (!VerifyHash(hashVerification))
+            //{
+            //    string hashSymShow = symmPipe.PipeString ?? "        ";
+            //    throw new InvalidOperationException(
+            //        string.Format("SymmCiphers [{0}] in crypt pipeline doesn't match serverside key !?$* byte length={1}.",
+            //            hashSymShow.Substring(0, 2) + "...." + hashSymShow.Substring(6), keyBytes.Length));
+            //}
 
             return msgContent;
         }

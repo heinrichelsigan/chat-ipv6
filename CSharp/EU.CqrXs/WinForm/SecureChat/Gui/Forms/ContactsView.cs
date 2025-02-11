@@ -42,7 +42,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 contactsCount = contacts.Length;
                 foreach (Entities.Contact contact in contacts)
                 {
-                    this.dataGridContacts.Rows.Add(contact.RowParams);
+                    this.dataGridContacts.Rows.Add(contact.GetRowParams());
                 }
             }
         }
