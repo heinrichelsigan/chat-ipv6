@@ -13,9 +13,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
 
     /// <summary>
     /// CqrContact is a contact for CqrJd
-    /// </summary>
-    [DataContract(Name = "CqrContact")]
-    [Description("cqrxs.eu contact")]
+    /// </summary>EL
     public class CqrContact
     {
 

@@ -25,6 +25,9 @@ namespace EU.CqrXs.WinForm.SecureChat
         [STAThread]
         static void Main()
         {
+            if (PMutec == null)
+                mutex = new Mutex(true, progName);
+
             if (!mutex.WaitOne(1000, false))
             {                
                 NativeWrapper.Kernel32.AttachConsole(NativeWrapper.Kernel32.ATTACH_PARENT_PROCESS);
