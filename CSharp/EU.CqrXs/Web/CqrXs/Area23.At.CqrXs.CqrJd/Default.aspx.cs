@@ -99,18 +99,20 @@ namespace Area23.At.CqrXs.CqrJd
                 if (rq.Contains("TextBoxEncrypted="))
                 {
                     rq = rq.Substring(rq.IndexOf("TextBoxEncrypted=") + "TextBoxEncrypted=".Length);
-                    if (rq.Contains("ButtonSubmit=Submit"))
-                        rq = rq.Substring(0, rq.IndexOf("ButtonSubmit=Submit"));
-                    if (rq.Contains("TextBoxLastMsg="))
-                        rq = rq.Substring(0, rq.IndexOf("TextBoxLastMsg="));
                     if (rq.Contains("TextBoxDecrypted="))
                         rq = rq.Substring(0, rq.IndexOf("TextBoxDecrypted="));                    
                 }
-                
-                
+
+                if (Application["lastmsg"] != null)
+                    TextBoxLastMsg.Text = (string)Application["lastmsg"];
+                if (Application["lastdecrypted"] != null)
+                    this.preLast.InnerHtml = (string)Application["decrypted"];
+
+
                 Cqr1stServerMsg srv1stMsg = new Cqr1stServerMsg(myServerKey);
                 decrypted = string.Empty;
                 allStrng += "Msg: " + rq.ToString() + Environment.NewLine;
+                
                 Application["lastmsg"] = rq;
                 this.TextBoxEncrypted.Text = rq;
 

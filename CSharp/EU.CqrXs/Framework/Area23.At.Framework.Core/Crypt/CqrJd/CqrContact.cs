@@ -16,6 +16,8 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
     {
         public int ContactId { get; set; }
 
+        public Guid Cuid { get; set; }
+
         public string? Name { get; set; }
 
         public string? Email { get; set; }
@@ -45,6 +47,15 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             this.Address = address;
         }
 
+        public CqrContact(Guid guid, string name, string email, string mobile, string address)
+        {
+            this.Cuid = guid;
+            this.Name = name;
+            this.Email = email;
+            this.Mobile = mobile;
+            this.Address = address;
+        }
+
         public CqrContact(int contactId, string name, string email, string mobile, string address, CqrImage? cqrImage) : this(contactId, name, email, mobile, address)
         {
             ContactImage = cqrImage;
@@ -55,9 +66,19 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             ContactImage = CqrImage.FromDrawingImage(image);
         }
 
+
+        public CqrContact(int contactId, Guid cuid, string name, string email, string mobile, string address, CqrImage? cqrImage) : this(contactId, name, email, mobile, address)
+        {
+            Cuid = cuid;
+            ContactImage = cqrImage;
+        }
+
+
+ 
+
         public virtual string ToJson()
         {
-            CqrContact cqrContact = new CqrContact(ContactId, Name, Email, Mobile, Address, ContactImage); 
+            CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
             string jsonString = JsonConvert.SerializeObject(cqrContact, Formatting.Indented);
             return jsonString;
         }
@@ -71,6 +92,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
                 if (cqrContactJson != null && cqrContactJson.ContactId > -1 && !string.IsNullOrEmpty(cqrContactJson?.Name))
                 {
                     this.ContactId = cqrContactJson.ContactId;
+                    this.Cuid = cqrContactJson.Cuid;
                     this.Name = cqrContactJson.Name;
                     this.Email = cqrContactJson.Email;
                     this.Mobile = cqrContactJson.Mobile;
@@ -92,13 +114,17 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             return (
                 "NameEmail: " + this.NameEmail + ";" + Environment.NewLine +
                 "ContactId: " + this.ContactId + ";" + Environment.NewLine +
+                "Cuid: " + this.Cuid + ";" + Environment.NewLine +
                 "Name: " + this.Name + ";" + Environment.NewLine +
                 "Email: " + this.Email + ";" + Environment.NewLine +
                 "Mobile: " + this.Mobile + ";" + Environment.NewLine +
                 "Address: " + this.Address + ";" + Environment.NewLine +
-                this.ContactImage?.ImageBase64 + Environment.NewLine
+                "ImageFileName: " + this.ContactImage?.ImageFileName + ";" + Environment.NewLine +
+                "ImageMimeType: " + this.ContactImage?.ImageMimeType + ";" + Environment.NewLine +
+                "ImageBase64: " + this.ContactImage?.ImageBase64 + Environment.NewLine
                 );
         }
+
 
         /// <summary>
         /// <see cref="object[]">RowParams</see> gets an object array of row parameters to show in <see cref="System.Windows.Forms.DataGridView"/>

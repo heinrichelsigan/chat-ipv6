@@ -96,7 +96,7 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
         /// if server and client or both side use a different secret key 4 encryption</exception>
         public virtual MsgContent NCqrMsg(string cqrMessage, EncodingType encType = EncodingType.Base64)
         {
-            CqrMessage = cqrMessage.TrimEnd("\0".ToCharArray());
+            CqrMessage = cqrMessage.EndsWith("\0") ? cqrMessage.TrimEnd("\0".ToCharArray()) : cqrMessage;
 
             byte[] cipherBytes = DeEnCoder.DecodeText(CqrMessage, encType);
             byte[] unroundedMerryBytes = (LibPaths.CqrEncrypt) ? symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash) : cipherBytes;

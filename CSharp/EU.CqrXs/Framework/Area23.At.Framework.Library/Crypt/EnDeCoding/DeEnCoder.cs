@@ -76,11 +76,11 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
                 encodingType.ToString() + ", bool fromPlain = " + fromPlain + ", bool fromFile = " + fromFile + ")");
 
             // errMsg = string.Empty;
-            if (!EnDeCoder.IsValid(cipherText, encodingType))
-            {
-                // errMsg = $"Input Text is not a valid {encodingType.ToString()} string!";
-                throw new FormatException($"Input Text is not a valid {encodingType.ToString()} string!");
-            }
+            //if (!EnDeCoder.IsValid(cipherText, encodingType))
+            //{
+            //    // errMsg = $"Input Text is not a valid {encodingType.ToString()} string!";
+            //    throw new FormatException($"Input Text is not a valid {encodingType.ToString()} string!");
+            //}
 
             byte[] cipherBytes = cipherBytes = EnDeCoder.Decode(cipherText, encodingType, fromPlain, fromFile);
 
