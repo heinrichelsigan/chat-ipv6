@@ -53,18 +53,43 @@ namespace Area23.At.Framework.Library
         public const string CQRXS_EU = "cqrxs.eu";
         public const string IPV4_CQRXS_EU = "ipv4.cqrxs.eu";
         public const string IPV6_CQRXS_EU = "ipv6.cqrxs.eu";
-        public const string SPAIN_CQRXS_EU = "spain.cqrxs.eu";
-        public const string MILAN_CQRXS_EU = "it.cqrxs.eu";
-        public const string PARIS_CQRXS_EU = "fr.cqrxs.eu";
-        public const string FRANKFURT_CQRXS_EU = "de.cqrxs.eu";
-        public const string STOCKHOLM_CQRXS_EU = "se.cqrxs.eu";
-        public const string IRELAND_CQRXS_EU = "ie.cqrxs.eu";
-        public const string LONDON_CQRXS_EU = "uk.cqrxs.eu";
-        public const string ZURICH_CQRXS_EU = "ch.cqrxs.eu";
+
+        public const string ES_CQRXS_EU = "es.cqrxs.eu";
+        public const string MADRID_CQRXS_EU = "madrid.cqrxs.eu";
+        public const string BARCELONA_CQRXS_EU = "barcelona.cqrxs.eu";
+
+        public const string IT_CQRXS_EU = "it.cqrxs.eu";
+        public const string MILAN_CQRXS_EU = "milan.cqrxs.eu";
+        public const string SICILIENNE_CQRXS_EU = "sicilienne.cqrxs.eu";
+
+
+        public const string FR_CQRXS_EU = "fr.cqrxs.eu";
+        public const string PARIS_CQRXS_EU = "paris.cqrxs.eu";
+        public const string PARISIENNSE_CQRXS_EU = "parisienne.cqrxs.eu";
+        
+        public const string DE_CQRXS_EU = "de.cqrxs.eu";
+        public const string FRANKFURT_CQRXS_EU = "frankfurt.cqrxs.eu";
+        public const string BERLINERIN_CQRXS_EU = "berlinerin.cqrxs.eu";
+
+        public const string SE_CQRXS_EU = "se.cqrxs.eu";
+        public const string STOCKHOLM_CQRXS_EU = "stockholm.cqrxs.eu";
+
+        public const string IE_CQRXS_EU = "ie.cqrxs.eu";
+        public const string DUBLIN_CQRXS_EU = "dublin.cqrxs.eu";
+        public const string GALWAY_CQRXS_EU = "galway.cqrxs.eu";
+
+        public const string UK_CQRXS_EU = "uk.cqrxs.eu";
+        public const string LONDON_CQRXS_EU = "london.cqrxs.eu";
+        public const string EDINBURGH_CQRXS_EU = "edinburgh.cqrxs.eu";
+        
+        public const string CH_CQRXS_EU = "ch.cqrxs.eu";
+        public const string ZURICH_CQRXS_EU = "zurich.cqrxs.eu";
+        public const string BERNERIN_CQRXS_EU = "bernerin.cqrxs.eu";
 
 
         public const string CQRXS_URL = "https://cqrxs.eu/";
         public const string CQRXS_HELP_URL = "https://cqrxs.eu/help/";
+        public const string CQRXS_SERVICE_URL = "https://cqrxs.eu/cqrxs/cqrjd/";
 
         public const string ACK = "Ack";
         public const string NACK = "Nack";

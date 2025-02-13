@@ -1,19 +1,27 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Library.Crypt.CqrJd
 {
 
+
     /// <summary>
     /// CqrContact is a contact for CqrJd
     /// </summary>
+    [DataContract(Name = "CqrContact")]
+    [Description("cqrxs.eu contact")]
     public class CqrContact
     {
         public int ContactId { get; set; }
+
+        public Guid Cuid { get; set; }
 
         public string Name { get; set; }
 
@@ -28,7 +36,7 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
         public string NameEmail { get => Name + ((string.IsNullOrEmpty(Email)) ? string.Empty : ("<" + Email + ">")); }
 
 
-        public string ImageBase64 { get; set; }
+        public CqrImage ContactImage { get; set; }
 
 
         public CqrContact()
@@ -44,9 +52,40 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             this.Address = address;
         }
 
+        public CqrContact(Guid guid, string name, string email, string mobile, string address)
+        {
+            this.Cuid = guid;
+            this.Name = name;
+            this.Email = email;
+            this.Mobile = mobile;
+            this.Address = address;
+        }
+
+        public CqrContact(int contactId, string name, string email, string mobile, string address, CqrImage cqrImage) : this(contactId, name, email, mobile, address)
+        {
+            ContactImage = cqrImage;
+        }
+
+        public CqrContact(int contactId, Guid cuid, string name, string email, string mobile, string address, CqrImage cqrImage) : this(contactId, name, email, mobile, address)
+        {
+            Cuid = cuid;
+            ContactImage = cqrImage;
+        }
+
+        public CqrContact(int contactId, string name, string email, string mobile, string address, Image image) : this(contactId, name, email, mobile, address)
+        {
+            ContactImage = CqrImage.FromDrawingImage(image);
+        }
+
+        public CqrContact(int contactId, Guid cuid, string name, string email, string mobile, string address, Image image) : this(contactId, name, email, mobile, address)
+        {
+            Cuid = cuid;
+            ContactImage = CqrImage.FromDrawingImage(image);
+        }
+
         public virtual string ToJson()
         {
-            CqrContact cqrContact = new CqrContact(ContactId, Name, Email, Mobile, Address);
+            CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
             string jsonString = JsonConvert.SerializeObject(cqrContact, Formatting.Indented);
             return jsonString;
         }
@@ -60,11 +99,12 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
                 if (cqrContactJson != null && cqrContactJson.ContactId > -1 && !string.IsNullOrEmpty(cqrContactJson?.Name))
                 {
                     this.ContactId = cqrContactJson.ContactId;
+                    this.Cuid = cqrContactJson.Cuid;
                     this.Name = cqrContactJson.Name;
                     this.Email = cqrContactJson.Email;
                     this.Mobile = cqrContactJson.Mobile;
                     this.Address = cqrContactJson.Address;
-                    // this.ImageBase64 = cqrContactJson.ImageBase64;
+                    this.ContactImage = cqrContactJson.ContactImage;
                     return cqrContactJson;
                 }
             }
@@ -85,7 +125,7 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
                 "Email: " + this.Email + ";" + Environment.NewLine +
                 "Mobile: " + this.Mobile + ";" + Environment.NewLine +
                 "Address: " + this.Address + ";" + Environment.NewLine +
-                this.ImageBase64 + Environment.NewLine
+                this.ContactImage?.ImageBase64 + Environment.NewLine
                 );
         }
 

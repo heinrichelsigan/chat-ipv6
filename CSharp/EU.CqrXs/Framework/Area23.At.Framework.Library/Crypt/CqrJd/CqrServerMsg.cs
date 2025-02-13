@@ -5,8 +5,10 @@ using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Net.WebHttp;
 using Area23.At.Framework.Library.Util;
 using System;
+using System.ComponentModel;
 using System.Configuration;
 using System.Net;
+using System.Runtime.Serialization;
 
 namespace Area23.At.Framework.Library.Net.CqrJd
 {
@@ -15,6 +17,8 @@ namespace Area23.At.Framework.Library.Net.CqrJd
     /// <summary>
     /// Provides a secure encrypted message to send to the server or receive from server
     /// </summary>
+    [DataContract(Name = "CqrServerMsg")]
+    [Description("cqrxs.eu cqrservermsg")]
     public class CqrServerMsg : CqrBaseMsg
     {
 

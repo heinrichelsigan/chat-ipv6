@@ -148,9 +148,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             await SetupNetwork();
             
 
-            if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ImageBase64))
+            if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && Entities.Settings.Instance.MyContact.ContactImage != null && 
+                !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ContactImage.ImageBase64))
             {
-                Bitmap? bmp = (Bitmap?)Entities.Settings.Instance.MyContact.ImageBase64.Base64ToImage();
+                Bitmap? bmp = (Bitmap?)Entities.Settings.Instance.MyContact.ContactImage.ToDrawingBitmap();
                 if (bmp != null)
                     this.PictureBoxYou.Image = bmp;
             }
@@ -466,18 +467,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.TextBoxPipe.Text = srv1stMsg.PipeString;
 
             CqrContact myContact = Entities.Settings.Instance.MyContact;
-            string plain = myContact.Name + Environment.NewLine + myContact.Email + Environment.NewLine +
-                myContact.Mobile + Environment.NewLine + myContact.Address + Environment.NewLine +
-                myContact.SecretKey + Environment.NewLine;
-            string encrypted = srv1stMsg.Cqr1stSrvMsg(plain);
-            string response = srv1stMsg.Send1stCqrSrvMsg(plain, ServerIpAddress);
+            string encrypted = srv1stMsg.Cqr1stSrvMsg(myContact, EncodingType.Base64);
+            string response = srv1stMsg.Send1stCqrSrvMsg(myContact, ServerIpAddress, EncodingType.Base64);
 
             this.TextBoxSource.Text = encrypted + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            MsgContent msgContent = srv1stMsg.NCqr1stSrvMsg(encrypted);
-            this.TextBoxDestionation.Text = msgContent.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            if (srv1stMsg != null)
+            {
+                CqrContact receivedMyContact = srv1stMsg.NCqr1stSrvMsg(encrypted, EncodingType.Base64);
+                if (receivedMyContact != null)
+                    this.TextBoxDestionation.Text = receivedMyContact.ToJson() + "\n";
+            }
 
-            chat.AddMyMessage(plain);
-            chat.AddFriendMessage(msgContent.Message);
+            this.TextBoxDestionation.Text += response + "\r\n"; // + serverMessage.symmPipe.HexStages;
+
+            chat.AddMyMessage(myContact.ToJson());
+            chat.AddFriendMessage(response);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
@@ -918,33 +922,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             contactSettings.ShowInTaskbar = true;
             contactSettings.ShowDialog();
 
-            if (Settings.Instance.MyContact != null)
+            if (Settings.Instance.MyContact != null && Settings.Instance.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Instance.MyContact.ContactImage.ImageBase64))
             {
-                string base64image = Settings.Instance.MyContact.ImageBase64 ?? string.Empty;
-
-                if (!string.IsNullOrEmpty(base64image))
+                try
                 {
-                    try
-                    {
-                        Bitmap? bmp;
-                        byte[] bytes = Base64.Decode(base64image);
-                        using (MemoryStream ms = new MemoryStream(bytes))
-                        {
-                            bmp = new Bitmap(ms);
-                        }
-                        if (bmp != null)
-                            this.PictureBoxYou.Image = bmp;
+                    Bitmap? bmp = Settings.Instance.MyContact.ContactImage.ToDrawingBitmap();
+                    if (bmp != null)
+                        this.PictureBoxYou.Image = bmp;
 
-                    }
-                    catch (Exception exBmp)
-                    {
-                        CqrException.LastException = exBmp;
-                    }
-
-                    // var badge = new TransparentBadge("My contact added!");
-                    // badge.ShowDialog();
+                }
+                catch (Exception exBmp)
+                {
+                    CqrException.LastException = exBmp;
                 }
 
+                // var badge = new TransparentBadge("My contact added!");
+                // badge.ShowDialog();
             }
 
         }

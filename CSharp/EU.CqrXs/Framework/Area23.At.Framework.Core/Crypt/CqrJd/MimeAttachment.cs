@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core.Util;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
         public string Md5Hash { get; set; }
         public string Sha256Hash { get; set; }
 
-        public string MimeMsg { get; set; }
+        public string MimeMsg { get => this.GetMimeMessage(); }
 
         public MimeAttachment()
         {
@@ -34,7 +35,6 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             Md5Hash = string.Empty;
             Sha256Hash = string.Empty;
             Verification = string.Empty;
-            MimeMsg = string.Empty;
         }
 
         public MimeAttachment(string fileName, string mimeType, string base64Mime, string verification)
@@ -44,7 +44,6 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             Base64Mime = base64Mime;
             ContentLength = base64Mime.Length;
             Verification = verification;
-            MimeMsg = GetMimeMessage();
         }
 
         public MimeAttachment(string fileName, string mimeType, string base64Mime, string verification, string sMd5 = "", string sSha256 = "")
@@ -56,7 +55,6 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             Verification = verification;
             Md5Hash = sMd5;
             Sha256Hash = sSha256;
-            MimeMsg = GetMimeMessage();
         }
 
 
@@ -70,7 +68,6 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             Md5Hash = mimeAttachment.Md5Hash;
             Sha256Hash = mimeAttachment.Sha256Hash;
             Base64Mime = mimeAttachment.Base64Mime;
-            MimeMsg = mimeAttachment.MimeMsg;
         }
 
         public string GetMimeMessage()
@@ -87,6 +84,8 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             mimeMsg += Base64Mime + MIME_BASE64_FINISH;
             return mimeMsg;
         }
+
+
 
         public string GetWebPage()
         {
@@ -132,7 +131,6 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             Md5Hash = mimeAttachment.Md5Hash;
             Sha256Hash = mimeAttachment.Sha256Hash;
             Base64Mime = mimeAttachment.Base64Mime;
-            MimeMsg = mimeAttachment.MimeMsg;
 
             return (MimeAttachment)this;
 
@@ -140,7 +138,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
 
         public string GetFileNameContentLength()
         {
-            string fileCLen = FileName + "[" + ContentLength + "]";
+            string fileCLen = FileName + " [" + ContentLength + "]";
             return fileCLen;
         }
 
@@ -200,6 +198,9 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             MimeAttachment mimeAttach = new MimeAttachment(fileName, mimeType, mimeBase64, verification, md5, sha256);
             return mimeAttach;
         }
+
+
+
         public static string GetMimeMessage(string fileName, string mimeType, string base64Mime, string verification, string md5 = "", string sha256 = "")
         {
             string mimeMsg = $"Content-Type: {mimeType}; name=\"{fileName}\";\n";
@@ -214,6 +215,21 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             mimeMsg += base64Mime + MIME_BASE64_FINISH;
             return mimeMsg;
         }
+
+
+        public static string ToJson(MimeAttachment mimeAttachment)
+        {
+            string jsonText = JsonConvert.SerializeObject(mimeAttachment);
+            return jsonText;
+        }
+
+
+        public static MimeAttachment FromJson(string jsonText)
+        {
+            MimeAttachment mimeAttach = JsonConvert.DeserializeObject<MimeAttachment>(jsonText);
+            return mimeAttach;
+        }
+
 
 
     }

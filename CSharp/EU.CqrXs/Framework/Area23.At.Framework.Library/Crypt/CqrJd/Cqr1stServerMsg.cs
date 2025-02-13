@@ -1,15 +1,17 @@
-﻿using Area23.At.Framework.Core.Crypt.Cipher;
-using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
-using Area23.At.Framework.Core.Crypt.EnDeCoding;
-using Area23.At.Framework.Core.Net.WebHttp;
-using Area23.At.Framework.Core.Util;
+﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
+using Area23.At.Framework.Library.Net.WebHttp;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Net;
-using System.Security.Policy;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Area23.At.Framework.Core.Crypt.CqrJd
+namespace Area23.At.Framework.Library.Crypt.CqrJd
 {
+
 
     /// <summary>
     /// Provides a secure encrypted message to send to the server or receive from server
@@ -50,13 +52,12 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
         /// <returns>encrypted attachment msg via <see cref="SymmCipherPipe"/></returns>
         public string Cqr1stSrvMsgImage(CqrImage myImage, out MimeAttachment attachment, EncodingType encType = EncodingType.Base64)
         {
-            
+
             string md5 = Hash.MD5Sum.Hash(myImage.ImageData, myImage.ImageFileName);
             string sha256 = Hash.Sha256Sum.Hash(myImage.ImageData, myImage.ImageFileName);
             MimeAttachment mimeAttachment = new MimeAttachment(myImage.ImageFileName, myImage.ImageMimeType, myImage.ImageBase64, "", md5, sha256);
             return CqrMsgAttachment(myImage.ImageFileName, myImage.ImageMimeType, myImage.ImageBase64, out attachment, encType, md5, sha256);
         }
-
 
 
         /// <summary>
@@ -67,16 +68,15 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
         /// <returns><see cref="CqrContact"/>CqrContact decrypted string</returns>
         /// <exception cref="InvalidOperationException">will be thrown, 
         /// if server and client or both side use a different secret key 4 encryption</exception>
-        public CqrContact? NCqr1stSrvMsg(string cqrMessage, EncodingType encType = EncodingType.Base64)
+        public CqrContact NCqr1stSrvMsg(string cqrMessage, EncodingType encType = EncodingType.Base64)
         {
-            CqrContact? myContact = null;
+            CqrContact myContact = null;
             MsgContent msgContent = base.NCqrMsg(cqrMessage, encType);
             if (msgContent != null && !string.IsNullOrEmpty(msgContent.Message))
                 myContact = JsonConvert.DeserializeObject<CqrContact>(msgContent.Message);
             
             return myContact;
         }
-
 
 
         /// <summary>

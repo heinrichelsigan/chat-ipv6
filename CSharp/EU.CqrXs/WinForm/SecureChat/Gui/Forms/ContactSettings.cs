@@ -54,7 +54,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     this.textBoxEmail.Text = Settings.Instance.MyContact.Email;
                     this.textBoxMobile.Text = Settings.Instance.MyContact.Mobile;
                     this.textBoxAddress.Text = Settings.Instance.MyContact.Address;                    
-                    base64image = Entities.Settings.Instance.MyContact.ImageBase64 ?? string.Empty;
+                    base64image = Entities.Settings.Instance.MyContact.ContactImage?.ImageBase64 ?? string.Empty;
                     if (!string.IsNullOrEmpty(base64image))
                         this.pictureBoxImage.Image = base64image.Base64ToImage();
                 }
@@ -108,9 +108,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             contact.Name = this.comboBoxName.Text ?? string.Empty; // 
                             contact.Email = this.textBoxEmail.Text ?? string.Empty; //
                             contact.Mobile = this.textBoxMobile.Text ?? string.Empty; //
-                            contact.Address = this.textBoxAddress.Text ?? string.Empty;                           
-                            contact.ImageBase64 = (pictureBoxImage.Tag != null && pictureBoxImage.Tag.ToString() == "Upload image") ? 
-                                null : this.pictureBoxImage.Image.ToBase64();
+                            contact.Address = this.textBoxAddress.Text ?? string.Empty;
+                            contact.ContactImage = CqrImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString());
 
                             foundContact = true;
                             break;
@@ -127,8 +126,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                 Email = this.textBoxEmail.Text ?? string.Empty,
                                 Mobile = this.textBoxMobile.Text ?? string.Empty,
                                 Address = this.textBoxAddress.Text ?? string.Empty,
-                                ImageBase64 = (pictureBoxImage.Tag != null && pictureBoxImage.Tag.ToString() == "Upload image") ?
-                                    null : this.pictureBoxImage.Image.ToBase64()
+                                ContactImage = CqrImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString())
                             }); 
                     }
                 }
@@ -154,9 +152,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     Email = this.textBoxEmail.Text ?? string.Empty,
                     Mobile = this.textBoxMobile.Text ?? string.Empty,
                     Address = this.textBoxAddress.Text ?? string.Empty,
-                    ImageBase64 = (pictureBoxImage.Tag != null && pictureBoxImage.Tag.ToString() == "Upload image") ?
-                        null : this.pictureBoxImage.Image.ToBase64()
-                };                 
+                    ContactImage = CqrImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString())
+
+                };                  
                 Settings.Save(Entities.Settings.Instance);
             }
         }
@@ -180,15 +178,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         this.textBoxEmail.Text = contact.Email ?? string.Empty;
                         this.textBoxMobile.Text = contact.Mobile ?? string.Empty;
                         this.textBoxAddress.Text = contact.Address ?? string.Empty;
-                        base64image = contact.ImageBase64 ?? string.Empty;
+                        base64image = contact.ContactImage?.ImageBase64 ?? string.Empty;
                         if (!string.IsNullOrEmpty(base64image))
                         {
-                            pictureBoxImage.Tag = $"Contact image";
+                            pictureBoxImage.Tag = contact.ContactImage?.ImageFileName;
                             this.pictureBoxImage.Image = base64image.Base64ToImage();
                         }
                         else
                         {
-                            pictureBoxImage.Tag = "Upload {contact.ContactId} image";
+                            pictureBoxImage.Tag = $"ClickToUpload{contact.ContactId}.png";
                             using (MemoryStream memoryStream = new MemoryStream(Resources.ClickToUpload))
                             {
                                 pictureBoxImage.Image = new Bitmap(memoryStream);
@@ -214,15 +212,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         this.textBoxEmail.Text = contact.Email ?? string.Empty;
                         this.textBoxMobile.Text = contact.Mobile ?? string.Empty;
                         this.textBoxAddress.Text = contact.Address ?? string.Empty;
-                        base64image = contact.ImageBase64 ?? string.Empty;
+                        base64image = contact.ContactImage?.ImageBase64 ?? string.Empty;
                         if (!string.IsNullOrEmpty(base64image))
                         {
-                            pictureBoxImage.Tag = "Contact image";
-                            this.pictureBoxImage.Image = base64image.Base64ToImage();
+                            pictureBoxImage.Tag = contact.ContactImage?.ImageFileName;
+                            this.pictureBoxImage.Image = contact.ContactImage?.ToDrawingBitmap();
                         }
                         else
                         {
-                            pictureBoxImage.Tag = "Upload image";
+                            pictureBoxImage.Tag = "ClickToUpload.png";
                             using (MemoryStream memoryStream = new MemoryStream(Resources.ClickToUpload))
                             {
                                 pictureBoxImage.Image = new Bitmap(memoryStream);
@@ -244,6 +242,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e"></param>
         private void Image_Clicked(object sender, EventArgs e)
         {
+            string fileName = "";
             FileOpenDialog.RestoreDirectory = true;
             FileOpenDialog.AddExtension = false;
             FileOpenDialog.CheckFileExists = true;
@@ -254,6 +253,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (File.Exists(FileOpenDialog.FileName))
                 {
+                    CqrContact? cqrContact = Entities.Settings.Instance.Contacts.Where(c => c.ContactId == _id).ToList().FirstOrDefault();
+                    fileName = cqrContact?.Name?.Replace(" ", "");
+                    fileName += ((string.IsNullOrEmpty(fileName)) ? _id : "") + Path.GetExtension(FileOpenDialog.FileName);
+                    
                     byte[] bitmapBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
                     base64image = Base64.Encode(bitmapBytes);
                     Bitmap bmp = new Bitmap(FileOpenDialog.FileName);
@@ -268,7 +271,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     }
                     else
                         this.pictureBoxImage.Image = bmp;
-                    this.pictureBoxImage.Tag = "Contact " + _id;
+
+                    
+                    this.pictureBoxImage.Tag = fileName;
                 }
             }
         }

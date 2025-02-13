@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace Area23.At.Framework.Library.Crypt.CqrJd
 {
@@ -13,6 +15,8 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
     /// <summary>
     /// Provides abstract base class for secure encrypted message to send to the server or receive from server
     /// </summary>
+    [DataContract(Name = "CqrBaseMsg")]
+    [Description("cqrxs.eu cqrbasemsg")]
     public abstract class CqrBaseMsg
     {
         protected internal readonly string key;

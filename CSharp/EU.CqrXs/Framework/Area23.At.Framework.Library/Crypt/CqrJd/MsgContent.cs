@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +13,8 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
     /// <summary>
     /// Represtents a MsgContent
     /// </summary>
+    [DataContract(Name = "MsgContent")]
+    [Description("cqrxs.eu msgcontent")]
     public class MsgContent
     {
         protected internal Nullable<bool> _isMime;
