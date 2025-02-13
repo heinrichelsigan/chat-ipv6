@@ -121,11 +121,14 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             return (
                 "NameEmail: " + this.NameEmail + ";" + Environment.NewLine +
                 "ContactId: " + this.ContactId + ";" + Environment.NewLine +
+                "Cuid: " + this.Cuid + ";" + Environment.NewLine +
                 "Name: " + this.Name + ";" + Environment.NewLine +
                 "Email: " + this.Email + ";" + Environment.NewLine +
                 "Mobile: " + this.Mobile + ";" + Environment.NewLine +
                 "Address: " + this.Address + ";" + Environment.NewLine +
-                this.ContactImage?.ImageBase64 + Environment.NewLine
+                "ImageFileName: " + this.ContactImage.ImageFileName + ";" + Environment.NewLine +
+                "ImageMimeType: " + this.ContactImage.ImageMimeType + ";" + Environment.NewLine +
+                "ImageBase64: " + this.ContactImage?.ImageBase64 + Environment.NewLine
                 );
         }
 

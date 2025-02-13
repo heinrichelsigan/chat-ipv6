@@ -3,9 +3,11 @@ using Area23.At.Framework.Library.Net.WebHttp;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +18,8 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
     /// <summary>
     /// Provides a secure encrypted message to send to the server or receive from server
     /// </summary>
+    [DataContract(Name = "Cqr1stServerMsg")]
+    [Description("cqrxs.eu cqr1stservermsg")]
     public class Cqr1stServerMsg : CqrBaseMsg
     {
 

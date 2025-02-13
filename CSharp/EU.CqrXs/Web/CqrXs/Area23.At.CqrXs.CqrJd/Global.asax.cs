@@ -41,15 +41,15 @@ namespace Area23.At.CqrXs.CqrJd
             HostLogHelper.LogRequest(sender, e, "begin request");
 
             string url = HttpContext.Current.Request.Url.ToString();
-            byte[] bytes = Request.InputStream.ToByteArray();
-            string rq = Encoding.UTF8.GetString(bytes);
-            if (url.Contains("Default.aspx") || url.Contains("Cqr") || url.Contains("Error.aspx"))
-            {
+            //byte[] bytes = Request.InputStream.ToByteArray();
+            //string rq = Encoding.UTF8.GetString(bytes);
+            //if (url.Contains("Default.aspx") || url.Contains("Cqr") || url.Contains("Error.aspx"))
+            //{
 
-            } else {
-                if (rq.Contains("TextBoxEncrypted=") && rq.Contains("nTextBoxDecrypted=") && rq.Contains("ButtonSubmit=Submit"))
-                    Response.Redirect(LibPaths.BaseAppPath + "Default.aspx");
-            }
+            //} else {
+            //    if (rq.Contains("TextBoxEncrypted=") && rq.Contains("nTextBoxDecrypted=") && rq.Contains("ButtonSubmit=Submit"))
+            //        Response.Redirect(LibPaths.BaseAppPath + "Default.aspx");
+            //}
 
             return;
         }

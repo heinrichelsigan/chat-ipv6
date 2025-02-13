@@ -14,7 +14,7 @@ namespace EU.CqrXs.Web.WcfTestService
         {
             SwaggerWcfEndpoint.FilterVisibleTags = FilterVisibleTags;
             SwaggerWcfEndpoint.FilterHiddenTags = FilterHiddenTags;
-            SwaggerWcfEndpoint.DisableSwaggerUI = false;
+            SwaggerWcfEndpoint.DisableSwaggerUI = false;            
 
             try
             {

@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace Area23.At.Framework.Library.Crypt.CqrJd
 {
@@ -15,6 +17,8 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
     /// <summary>
     /// CqrImage is a image for a <see cref="CqrContact"/>
     /// </summary>
+    [DataContract(Name = "CqrImage")]
+    [Description("cqrxs.eu image")]
     public class CqrImage
     {
         /// <summary>
