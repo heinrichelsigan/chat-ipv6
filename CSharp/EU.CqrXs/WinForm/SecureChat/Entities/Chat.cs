@@ -148,7 +148,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             }
             catch (Exception ex)
             {
-                CqrException.LastException = ex;
+                CqrException.SetLastException(ex);
                 return false;
             }
             return true;

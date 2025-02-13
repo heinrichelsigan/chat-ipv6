@@ -133,8 +133,10 @@
     <Compile Include="Crypt\CqrJd\Cqr1stServerMsg.cs" />
     <Compile Include="Crypt\CqrJd\CqrBaseMsg.cs" />
     <Compile Include="Crypt\CqrJd\CqrContact.cs" />
+    <Compile Include="Crypt\CqrJd\CqrException.cs" />
     <Compile Include="Crypt\CqrJd\CqrImage.cs" />
     <Compile Include="Crypt\CqrJd\CqrPeer2PeerMsg.cs" />
+    <Compile Include="Crypt\CqrJd\CqrSettings.cs" />
     <Compile Include="Crypt\CqrJd\MimeAttachment.cs" />
     <Compile Include="Crypt\CqrJd\MsgContent.cs" />
     <Compile Include="Crypt\EnDeCoding\Hex32.cs" />

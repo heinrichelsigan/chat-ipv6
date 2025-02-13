@@ -45,22 +45,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             this.Text = name;
             _id = id;
-            if (Settings.Instance != null)
+            if (Settings.Singleton != null)
             {
-                if (_id == 0 && Settings.Instance.MyContact != null)
+                if (_id == 0 && Settings.Singleton.MyContact != null)
                 {
-                    this.Text = Settings.Instance.MyContact.ContactId + " " + Settings.Instance.MyContact.Name;
-                    this.comboBoxName.Text = Settings.Instance.MyContact.Name;
-                    this.textBoxEmail.Text = Settings.Instance.MyContact.Email;
-                    this.textBoxMobile.Text = Settings.Instance.MyContact.Mobile;
-                    this.textBoxAddress.Text = Settings.Instance.MyContact.Address;                    
-                    base64image = Entities.Settings.Instance.MyContact.ContactImage?.ImageBase64 ?? string.Empty;
+                    this.Text = Settings.Singleton.MyContact.ContactId + " " + Settings.Singleton.MyContact.Name;
+                    this.comboBoxName.Text = Settings.Singleton.MyContact.Name;
+                    this.textBoxEmail.Text = Settings.Singleton.MyContact.Email;
+                    this.textBoxMobile.Text = Settings.Singleton.MyContact.Mobile;
+                    this.textBoxAddress.Text = Settings.Singleton.MyContact.Address;                    
+                    base64image = Entities.Settings.Singleton.MyContact.ContactImage?.ImageBase64 ?? string.Empty;
                     if (!string.IsNullOrEmpty(base64image))
                         this.pictureBoxImage.Image = base64image.Base64ToImage();
                 }
-                else if (_id > 0 && Entities.Settings.Instance.Contacts.Count > 0)
+                else if (_id > 0 && Entities.Settings.Singleton.Contacts.Count > 0)
                 {
-                    foreach (CqrContact contact in Entities.Settings.Instance.Contacts)
+                    foreach (CqrContact contact in Entities.Settings.Singleton.Contacts)
                     {
                         if (!string.IsNullOrEmpty(contact.Name))
                             comboBoxName.Items.Add(contact.Name);
@@ -101,7 +101,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                
                 if (!string.IsNullOrEmpty(currentSelectedName))
                 {
-                    foreach (CqrContact contact in Entities.Settings.Instance.Contacts)
+                    foreach (CqrContact contact in Entities.Settings.Singleton.Contacts)
                     {
                         if (contact != null && contact.ContactId == currentId && currentId > 0)
                         {
@@ -117,8 +117,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     }
                     if (!foundContact)
                     {
-                        currentId = Entities.Settings.Instance.Contacts.Count + 1;
-                        Entities.Settings.Instance.Contacts.Add(
+                        currentId = Entities.Settings.Singleton.Contacts.Count + 1;
+                        Entities.Settings.Singleton.Contacts.Add(
                             new CqrContact()
                             {
                                 ContactId = currentId,
@@ -130,7 +130,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             }); 
                     }
                 }
-                Entities.Settings.Save(Entities.Settings.Instance);
+                Settings.SaveSettings(Entities.Settings.Singleton);
                 return;
             }
         }
@@ -145,7 +145,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             if (_id == 0 && !string.IsNullOrEmpty(this.comboBoxName.Text))
             {
-                Settings.Instance.MyContact = new CqrContact()
+                Settings.Singleton.MyContact = new CqrContact()
                 {
                     ContactId = 0,
                     Name = this.comboBoxName.Text ?? string.Empty,
@@ -155,7 +155,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     ContactImage = CqrImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString())
 
                 };                  
-                Settings.Save(Entities.Settings.Instance);
+                Settings.SaveSettings(Entities.Settings.Singleton);
             }
         }
 
@@ -170,7 +170,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string? currentSelectedName = (comboBoxName.SelectedItem != null) ? comboBoxName.SelectedItem.ToString() : null;
             if (!string.IsNullOrEmpty(currentSelectedName))
             {
-                foreach (CqrContact contact in Entities.Settings.Instance.Contacts)
+                foreach (CqrContact contact in Entities.Settings.Singleton.Contacts)
                 {
                     if (contact != null && !string.IsNullOrEmpty(contact.Name) && contact.Name.Equals(currentSelectedName))
                     {
@@ -203,7 +203,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string? currentSelectedName = (comboBoxName.Text != null) ? comboBoxName.Text.ToString() : null;
             if (!string.IsNullOrEmpty(currentSelectedName))
             {
-                foreach (CqrContact contact in Entities.Settings.Instance.Contacts)
+                foreach (CqrContact contact in Entities.Settings.Singleton.Contacts)
                 {
                     if (contact != null && !string.IsNullOrEmpty(contact.Name) && contact.Name.Equals(currentSelectedName, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -253,7 +253,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (File.Exists(FileOpenDialog.FileName))
                 {
-                    CqrContact? cqrContact = Entities.Settings.Instance.Contacts.Where(c => c.ContactId == _id).ToList().FirstOrDefault();
+                    CqrContact? cqrContact = Entities.Settings.Singleton.Contacts.Where(c => c.ContactId == _id).ToList().FirstOrDefault();
                     fileName = cqrContact?.Name?.Replace(" ", "");
                     fileName += ((string.IsNullOrEmpty(fileName)) ? _id : "") + Path.GetExtension(FileOpenDialog.FileName);
                     

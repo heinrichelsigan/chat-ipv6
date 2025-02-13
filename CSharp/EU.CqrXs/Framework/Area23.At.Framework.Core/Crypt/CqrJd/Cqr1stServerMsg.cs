@@ -97,6 +97,12 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
             string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
 
+
+            if (srvIp == null || string.IsNullOrEmpty(srvIp.ToString()))
+            {
+                srvIp = IPAddress.Parse(ConfigurationManager.AppSettings["ServerIPv4"].ToString());
+            }
+
             string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
 
             return response;
@@ -119,6 +125,11 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
 
             string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
             string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
+
+            if (srvIp == null || string.IsNullOrEmpty(srvIp.ToString()))
+            {
+                srvIp = IPAddress.Parse(ConfigurationManager.AppSettings["ServerIPv4"].ToString());
+            }
 
             string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
 

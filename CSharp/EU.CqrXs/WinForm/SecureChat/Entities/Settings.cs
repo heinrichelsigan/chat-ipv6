@@ -13,35 +13,17 @@ using System.Threading.Tasks;
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
 
-    public class Settings : IDisposable
+    public class Settings : CqrSettings, IDisposable
     {
-        // TODO: replace it in C# 9.0 to private static readonly lock _lock
-        private static readonly object _lock = true;               
-
-        private static readonly Lazy<Settings> _instance =
+        protected new static readonly Lazy<Settings> _instance =
             new Lazy<Settings>(() => new Settings());
-        
+
         private static bool _disposed = false;
         private static bool _destructed = false;
 
         #region properties
-        public static Settings Instance { get => _instance.Value; }
 
-        public DateTime TimeStamp { get; set; }
-        
-        public DateTime? SaveStamp { get; set; }
-
-        public CqrContact MyContact { get; set; }
-
-        public List<CqrContact> Contacts { get; set; }
-
-        public List<string> FriendIPs { get; set; }
-        
-        public List<string> MyIPs { get; set; }
-
-        public List<string> Proxies {  get; set; }
-
-        public List<string> SecretKeys { get; set; }
+        public static Settings Singleton { get => (Settings)_instance.Value; }
 
         #endregion properties
 
@@ -50,22 +32,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         /// <summary>
         /// Settings constructor maybe needed public for NewTonSoftJson serializing object
         /// </summary>
-        public Settings()
-        {
-            TimeStamp = DateTime.Now;
-            Contacts = new List<CqrContact>();
-            FriendIPs = new List<string>();
-            MyIPs = new List<string>();
-            Proxies = new List<string>();
-            SecretKeys = new List<string>();
-            MyContact = new CqrContact() { ContactId = 0 }; 
-        }
+        public Settings() : base() { }
 
-        public Settings(DateTime timeStamp) : this()
-        {
-            TimeStamp = timeStamp;
-            Load();
-        }
+        public Settings(DateTime timeStamp) : base(timeStamp) { }
 
         #endregion ctor Settings() Settings(DateTime timeStamp) => Load()
 
@@ -77,7 +46,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         /// and deserialize it to singleton instance <see cref="Settings"/> of <seealso cref="Lazy{Settings}"/>
         /// </summary>
         /// <returns>singelton <see cref="Settings.Instance"/></returns>
-        public static Settings? Load()
+        public static Settings? LoadSettings()
         {
             string settingsJsonString = string.Empty;
             Settings? settings = null;
@@ -94,7 +63,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             }
             catch (Exception ex)
             {
-                CqrException.LastException = ex;
+                CqrException.SetLastException(ex);
             }
 
             if (settings != null)
@@ -117,11 +86,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         /// </summary>
         /// <param name="settings">settings to save</param>
         /// <returns>true on successfully save</returns>
-        public static bool Save(Settings? settings)
+        public static bool SaveSettings(Settings? settings)
         {
             string saveString = string.Empty;
             if (settings == null)
-                settings = Settings.Instance;
+                settings = Settings.Singleton;
             try
             {
                 settings.SaveStamp = DateTime.Now;
@@ -130,7 +99,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             }
             catch (Exception ex)
             {                
-                CqrException.LastException = ex;                
+                CqrException.SetLastException(ex);                
                 return false;
             }
             return true;
@@ -152,7 +121,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 lock (_lock)
                 {
                     _destructed = true;
-                    _disposed = Settings.Save(Instance);
+                    _disposed = Settings.SaveSettings(Singleton);
                 }
             }
 

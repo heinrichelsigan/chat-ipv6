@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 namespace Area23.At.Framework.Library.Crypt.CqrJd
 {
 
-
     /// <summary>
     /// Represtents a MimeAttachment
     /// </summary>
@@ -19,7 +18,11 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
     [Description("cqrxs.eu mime base64 attachment")]
     public class MimeAttachment
     {
+
         internal const string MIME_BASE64_FINISH = "\n\r\n";
+
+        #region properties 
+
         public string FileName { get; set; }
         public string Base64Type { get; set; }
         public string Base64Mime { get; set; }
@@ -30,6 +33,10 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
         public string Sha256Hash { get; set; }
 
         public string MimeMsg { get => this.GetMimeMessage(); }
+
+        #endregion properties 
+
+        #region ctors
 
         public MimeAttachment()
         {
@@ -62,7 +69,6 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             Sha256Hash = sSha256;
         }
 
-
         public MimeAttachment(string plainText)
         {
             MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(plainText);
@@ -74,6 +80,10 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             Sha256Hash = mimeAttachment.Sha256Hash;
             Base64Mime = mimeAttachment.Base64Mime;
         }
+
+        #endregion ctors
+
+        #region members
 
         public string GetMimeMessage()
         {
@@ -89,8 +99,6 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             mimeMsg += Base64Mime + MIME_BASE64_FINISH;
             return mimeMsg;
         }
-
-
 
         public string GetWebPage()
         {
@@ -146,6 +154,10 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             string fileCLen = FileName + " [" + ContentLength + "]";
             return fileCLen;
         }
+
+        #endregion members
+
+        #region static members
 
         public static MimeAttachment GetBase64Attachment(string plainAttachment)
         {
@@ -204,8 +216,6 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             return mimeAttach;
         }
 
-
-
         public static string GetMimeMessage(string fileName, string mimeType, string base64Mime, string verification, string md5 = "", string sha256 = "")
         {
             string mimeMsg = $"Content-Type: {mimeType}; name=\"{fileName}\";\n";
@@ -221,13 +231,11 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             return mimeMsg;
         }
 
-
         public static string ToJson(MimeAttachment mimeAttachment)
         {
             string jsonText = JsonConvert.SerializeObject(mimeAttachment);
             return jsonText;
         }
-
 
         public static MimeAttachment FromJson(string jsonText)
         {
@@ -235,7 +243,7 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             return mimeAttach;
         }
 
-
+        #endregion static members
 
     }
 

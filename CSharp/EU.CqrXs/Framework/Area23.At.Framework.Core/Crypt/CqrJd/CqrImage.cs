@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Area23.At.Framework.Core.Util;
 using System.Drawing.Imaging;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace Area23.At.Framework.Core.Crypt.CqrJd
 {
@@ -16,8 +18,13 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
     /// <summary>
     /// CqrImage is a image for a <see cref="CqrContact"/>
     /// </summary>
+    [DataContract(Name = "CqrImage")]
+    [Description("cqrxs.eu image")]
     public class CqrImage
     {
+
+        #region properties
+
         /// <summary>
         /// File Name with extension of Image
         /// </summary>
@@ -38,21 +45,13 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
         /// </summary>
         public string ImageBase64 { get; set; }
 
+        #endregion properties
+
+        #region constructors
 
         /// <summary>
-        /// Ctor with filename and byte[] data
+        /// Default empty constructor (needed for json serialize & deserialize)
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="data"></param>
-        public CqrImage(string fileName, byte[] data)
-        {
-            ImageFileName = fileName;            
-            ImageData = data;
-            ImageMimeType = MimeType.GetMimeType(ImageData, ImageFileName);
-            ImageBase64 = Convert.ToBase64String(ImageData, 0, ImageData.Length);
-        }
-
-
         public CqrImage()
         {
             ImageFileName = string.Empty;
@@ -61,6 +60,19 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             ImageBase64 = "";
         }
 
+
+        /// <summary>
+        /// Ctor with filename and byte[] data
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="data"></param>
+        public CqrImage(string fileName, byte[] data)
+        {
+            ImageFileName = fileName;
+            ImageData = data;
+            ImageMimeType = MimeType.GetMimeType(ImageData, ImageFileName);
+            ImageBase64 = Convert.ToBase64String(ImageData, 0, ImageData.Length);
+        }
 
         /// <summary>
         /// Ctor with filename and mime encoded base64 string
@@ -94,6 +106,10 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             }
         }
 
+        #endregion constructors
+
+        #region members
+
         public virtual string ToJson()
         {
             CqrImage image = new CqrImage(ImageFileName, ImageData);
@@ -123,7 +139,6 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
 
             return null;
         }
-
       
         public virtual Bitmap? ToDrawingBitmap()
         {
@@ -137,6 +152,9 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             return bmpImage;
         }
 
+        #endregion members
+
+        #region static members
 
         public static void SaveCqrImage(CqrImage image, string directoryPath)
         {
@@ -181,7 +199,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
                 return null;
 
             CqrImage? cqrImage;
-            ImageFormat format = image.RawFormat;
+            // ImageFormat format = image.RawFormat;
             byte[] imageData;
             string fileName = (string.IsNullOrEmpty(imgName)) ? string.Empty : imgName;
 
@@ -193,67 +211,57 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
                     if (image.RawFormat == ImageFormat.Tiff)
                     {
                         fileName += "tif";
-                        format = ImageFormat.Tiff;
                         image.Save(ms, ImageFormat.Tiff);
                     }
                     else if (image.RawFormat == ImageFormat.Png)
                     {
                         fileName += "png";
-                        format = ImageFormat.Png;
                         image.Save(ms, ImageFormat.Png);
                     }
                     else if (image.RawFormat == ImageFormat.Jpeg)
                     {
                         fileName += "jpg";
-                        format = ImageFormat.Jpeg;
                         image.Save(ms, ImageFormat.Jpeg);
                     }
                     else if (image.RawFormat == ImageFormat.Gif)
                     {
                         fileName += "gif";
-                        format = ImageFormat.Gif;
                         image.Save(ms, ImageFormat.Gif);
                     }
                     else if (image.RawFormat == ImageFormat.Bmp || image.RawFormat == ImageFormat.MemoryBmp)
                     {
                         fileName += "bmp";
-                        format = ImageFormat.Bmp;
                         image.Save(ms, ImageFormat.Bmp);
                     }
                     else if (image.RawFormat == ImageFormat.Exif)
                     {
                         fileName += "exif";
-                        format = ImageFormat.Exif;
                         image.Save(ms, ImageFormat.Exif);
                     }
                     else if (image.RawFormat == ImageFormat.Wmf)
                     {
-                        format = ImageFormat.Wmf;
                         fileName += "wmf";
                         image.Save(ms, ImageFormat.Wmf);
                     }
                     else if (image.RawFormat == ImageFormat.Emf)
-                    {
-                        format = ImageFormat.Emf;
+                    {                        
                         fileName += "emf";
                         image.Save(ms, ImageFormat.Emf);
                     }
                     else if (image.RawFormat == ImageFormat.Icon)
                     {
-                        format = ImageFormat.Icon;
                         fileName += "ico";
                         image.Save(ms, ImageFormat.Icon);
                     }
                     else
                     {
                         fileName += "raw";
-                        format = image.RawFormat;
                         image.Save(ms, image.RawFormat);
                     }
                 }
                 else
                 {
-                    switch (Path.GetExtension(fileName))
+                    switch (Path.GetExtension(fileName).ToLower())
                     {
                         case "tif":
                         case "tiff":
@@ -290,6 +298,10 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
                         case ".wmf":
                             image.Save(ms, ImageFormat.Wmf);
                             break;
+                        case "ico":
+                        case ".ico":
+                            image.Save(ms, ImageFormat.Icon);
+                            break;                        
                         default:
                             image.Save(ms, image.RawFormat);
                             break;
@@ -304,6 +316,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             return cqrImage;
         }
 
+        #endregion static members
     }
 
 }

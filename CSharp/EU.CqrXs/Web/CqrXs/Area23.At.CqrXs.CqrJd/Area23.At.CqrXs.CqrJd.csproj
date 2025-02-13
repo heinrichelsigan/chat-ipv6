@@ -249,6 +249,7 @@
     <Content Include="log\20240324_Area23.At.Mono.log" />
     <None Include="packages.config" />
     <Content Include="Qr\urlshort.json" />
+    <None Include="Properties\PublishProfiles\CqrXs.CqrJd_Release.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

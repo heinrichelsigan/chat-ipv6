@@ -21,6 +21,9 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
     [Description("cqrxs.eu image")]
     public class CqrImage
     {
+
+        #region properties 
+
         /// <summary>
         /// File Name with extension of Image
         /// </summary>
@@ -40,6 +43,21 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
         /// Base64 mime encoded string of raw data
         /// </summary>
         public string ImageBase64 { get; set; }
+
+        #endregion properties 
+
+        #region constructors
+
+        /// <summary>
+        /// Default empty constructor (needed for json serialize & deserialize)
+        /// </summary>
+        public CqrImage()
+        {
+            ImageFileName = string.Empty;
+            ImageData = new byte[0];
+            ImageMimeType = string.Empty;
+            ImageBase64 = "";
+        }
 
 
         /// <summary>
@@ -87,6 +105,10 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             }
         }
 
+        #endregion constructors
+
+        #region members
+
         public virtual string ToJson()
         {
             CqrImage image = new CqrImage(ImageFileName, ImageData);
@@ -117,11 +139,9 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             return null;
         }
 
-
         public virtual Bitmap ToDrawingBitmap()
         {
             Bitmap bmpImage;
-
             using (MemoryStream ms = new MemoryStream(ImageData))
             {
                 bmpImage = new Bitmap(ms, true);
@@ -129,7 +149,6 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
 
             return bmpImage;
         }
-
 
         public static void SaveCqrImage(CqrImage image, string directoryPath)
         {
@@ -142,6 +161,9 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             return;
         }
 
+        #endregion members
+
+        #region static members
 
         public static CqrImage LoadCqrImage(string imageFilePath)
         {
@@ -174,35 +196,116 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
                 return null;
 
             CqrImage cqrImage;
+            // ImageFormat format = image.RawFormat;
             byte[] imageData;
-            string fileName = imgName ?? string.Empty;
-            if (string.IsNullOrEmpty(imgName))
-            {
-                fileName = DateTime.Now.Area23DateTimeWithMillis() + "_image.";
-                if (image.RawFormat == ImageFormat.Tiff)
-                    fileName += "tif";
-                else if (image.RawFormat == ImageFormat.Png)
-                    fileName += "png";
-                else if (image.RawFormat == ImageFormat.Jpeg)
-                    fileName += "jpg";
-                else if (image.RawFormat == ImageFormat.Gif)
-                    fileName += "gif";
-                else if (image.RawFormat == ImageFormat.Bmp || image.RawFormat == ImageFormat.MemoryBmp)
-                    fileName += "bmp";
-                else if (image.RawFormat == ImageFormat.Exif)
-                    fileName += "exif";
-                else if (image.RawFormat == ImageFormat.Wmf)
-                    fileName += "wmf";
-                else if (image.RawFormat == ImageFormat.Emf)
-                    fileName += "emf";
-                else if (image.RawFormat == ImageFormat.Icon)
-                    fileName += "ico";
-                else
-                    fileName += "raw";
-            }
+            string fileName = (string.IsNullOrEmpty(imgName)) ? string.Empty : imgName;
+
             using (MemoryStream ms = new MemoryStream())
             {
-                image?.Save(ms, image.RawFormat);
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    fileName += DateTime.Now.Area23DateTimeWithMillis() + "_image.";
+                    if (image.RawFormat == ImageFormat.Tiff)
+                    {
+                        fileName += "tif";
+                        image.Save(ms, ImageFormat.Tiff);
+                    }
+                    else if (image.RawFormat == ImageFormat.Png)
+                    {
+                        fileName += "png";
+                        image.Save(ms, ImageFormat.Png);
+                    }
+                    else if (image.RawFormat == ImageFormat.Jpeg)
+                    {
+                        fileName += "jpg";
+                        image.Save(ms, ImageFormat.Jpeg);
+                    }
+                    else if (image.RawFormat == ImageFormat.Gif)
+                    {
+                        fileName += "gif";
+                        image.Save(ms, ImageFormat.Gif);
+                    }
+                    else if (image.RawFormat == ImageFormat.Bmp || image.RawFormat == ImageFormat.MemoryBmp)
+                    {
+                        fileName += "bmp";
+                        image.Save(ms, ImageFormat.Bmp);
+                    }
+                    else if (image.RawFormat == ImageFormat.Exif)
+                    {
+                        fileName += "exif";
+                        image.Save(ms, ImageFormat.Exif);
+                    }
+                    else if (image.RawFormat == ImageFormat.Wmf)
+                    {
+                        fileName += "wmf";
+                        image.Save(ms, ImageFormat.Wmf);
+                    }
+                    else if (image.RawFormat == ImageFormat.Emf)
+                    {
+                        fileName += "emf";
+                        image.Save(ms, ImageFormat.Emf);
+                    }
+                    else if (image.RawFormat == ImageFormat.Icon)
+                    {
+                        fileName += "ico";
+                        image.Save(ms, ImageFormat.Icon);
+                    }
+                    else
+                    {
+                        fileName += "raw";
+                        image.Save(ms, image.RawFormat);
+                    }
+                }
+                else
+                {
+                    switch (Path.GetExtension(fileName).ToLower())
+                    {
+                        case "tif":
+                        case "tiff":
+                        case ".tif":
+                            image.Save(ms, ImageFormat.Tiff);
+                            break;
+                        case "png":
+                        case ".png":
+                            image.Save(ms, ImageFormat.Png);
+                            break;
+                        case "jpg":
+                        case "jpeg":
+                        case ".jpg":
+                        case ".jpeg":
+                            image.Save(ms, ImageFormat.Jpeg);
+                            break;
+                        case "gif":
+                        case ".gif":
+                            image.Save(ms, ImageFormat.Gif);
+                            break;
+                        case "bmp":
+                        case ".bmp":
+                            image.Save(ms, ImageFormat.Bmp);
+                            break;
+                        case "exif":
+                        case ".exif":
+                            image.Save(ms, ImageFormat.Exif);
+                            break;
+                        case "emf":
+                        case ".emf":
+                            image.Save(ms, ImageFormat.Emf);
+                            break;
+                        case "wmf":
+                        case ".wmf":
+                            image.Save(ms, ImageFormat.Wmf);
+                            break;
+                        case "ico":
+                        case ".ico":
+                            image.Save(ms, ImageFormat.Icon);
+                            break;
+                        default:
+                            image.Save(ms, image.RawFormat);
+                            break;
+                    }
+                }
+
+
                 imageData = ms.ToByteArray();
                 cqrImage = new CqrImage(fileName, imageData);
             }
@@ -210,7 +313,8 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             return cqrImage;
         }
 
-    }
+        #endregion static members
 
+    }
 
 }

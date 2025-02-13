@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace Area23.At.Framework.Core.Crypt.CqrJd
 {
@@ -12,15 +14,20 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
     /// <summary>
     /// CqrContact is a contact for CqrJd
     /// </summary>
+    [DataContract(Name = "CqrContact")]
+    [Description("cqrxs.eu contact")]
     public class CqrContact
     {
+
+        #region properties
+
         public int ContactId { get; set; }
 
         public Guid Cuid { get; set; }
 
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
-        public string? Email { get; set; }
+        public string Email { get; set; }
 
         public string? Mobile { get; set; }
 
@@ -28,17 +35,28 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
 
         public string? SecretKey { get; set; }
 
-        public string? NameEmail { get => Name + ((string.IsNullOrEmpty(Email)) ? string.Empty : ("<" + Email + ">")); }
-
-
+        
         public CqrImage? ContactImage { get; set; }
 
+        public string? NameEmail { get => string.IsNullOrEmpty(Email) ? Name : $"{Name} <{Email}>"; }
+
+        #endregion properties
+
+        #region constructors
 
         public CqrContact()
         {
+            ContactId = -1;
+            Cuid = Guid.Empty;
+            Name = string.Empty;
+            Email = string.Empty;
+            Mobile = string.Empty;
+            Address = string.Empty;
+            SecretKey = string.Empty;
+            ContactImage = null;
         }
 
-        public CqrContact(int contactId, string name, string email, string mobile, string address)
+        public CqrContact(int contactId, string name, string email, string? mobile, string? address)
         {
             this.ContactId = contactId;
             this.Name = name;
@@ -47,7 +65,7 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             this.Address = address;
         }
 
-        public CqrContact(Guid guid, string name, string email, string mobile, string address)
+        public CqrContact(Guid guid, string name, string email, string? mobile, string? address)
         {
             this.Cuid = guid;
             this.Name = name;
@@ -56,25 +74,31 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             this.Address = address;
         }
 
-        public CqrContact(int contactId, string name, string email, string mobile, string address, CqrImage? cqrImage) : this(contactId, name, email, mobile, address)
+        public CqrContact(int contactId, string name, string email, string? mobile, string? address, CqrImage? cqrImage) : this(contactId, name, email, mobile, address)
         {
             ContactImage = cqrImage;
         }
 
-        public CqrContact(int contactId, string name, string email, string mobile, string address, Image image): this(contactId, name, email, mobile, address) 
-        {            
-            ContactImage = CqrImage.FromDrawingImage(image);
-        }
-
-
-        public CqrContact(int contactId, Guid cuid, string name, string email, string mobile, string address, CqrImage? cqrImage) : this(contactId, name, email, mobile, address)
+        public CqrContact(int contactId, Guid cuid, string name, string email, string? mobile, string? address, CqrImage? cqrImage) : this(contactId, name, email, mobile, address)
         {
             Cuid = cuid;
             ContactImage = cqrImage;
         }
 
+        public CqrContact(int contactId, string name, string email, string? mobile, string? address, Image? image) : this(contactId, name, email, mobile, address)
+        {
+            ContactImage = CqrImage.FromDrawingImage(image);
+        }
 
- 
+        public CqrContact(int contactId, Guid cuid, string name, string email, string? mobile, string? address, Image? image) : this(contactId, name, email, mobile, address)
+        {
+            Cuid = cuid;
+            ContactImage = CqrImage.FromDrawingImage(image);
+        }
+
+        #endregion constructors
+
+        #region members
 
         public virtual string ToJson()
         {
@@ -83,9 +107,9 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             return jsonString;
         }
 
-        public virtual CqrContact? FromJson(string jsonText)
+        public virtual CqrContact FromJson(string jsonText)
         {
-            CqrContact? cqrContactJson;
+            CqrContact cqrContactJson;
             try
             {
                 cqrContactJson = JsonConvert.DeserializeObject<CqrContact>(jsonText);
@@ -119,12 +143,11 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
                 "Email: " + this.Email + ";" + Environment.NewLine +
                 "Mobile: " + this.Mobile + ";" + Environment.NewLine +
                 "Address: " + this.Address + ";" + Environment.NewLine +
-                "ImageFileName: " + this.ContactImage?.ImageFileName + ";" + Environment.NewLine +
-                "ImageMimeType: " + this.ContactImage?.ImageMimeType + ";" + Environment.NewLine +
+                "ImageFileName: " + this.ContactImage.ImageFileName + ";" + Environment.NewLine +
+                "ImageMimeType: " + this.ContactImage.ImageMimeType + ";" + Environment.NewLine +
                 "ImageBase64: " + this.ContactImage?.ImageBase64 + Environment.NewLine
                 );
         }
-
 
         /// <summary>
         /// <see cref="object[]">RowParams</see> gets an object array of row parameters to show in <see cref="System.Windows.Forms.DataGridView"/>
@@ -139,6 +162,8 @@ namespace Area23.At.Framework.Core.Crypt.CqrJd
             oList.Add(Address);
             return oList.ToArray();
         }
+
+        #endregion members
 
     }
 

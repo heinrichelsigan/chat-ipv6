@@ -54,9 +54,25 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
         /// <param name="attachment">out <see cref="MimeAttachment"/></param>
         /// <param name="encType"><see cref="EncodingType"/></param>
         /// <returns>encrypted attachment msg via <see cref="SymmCipherPipe"/></returns>
-        public string Cqr1stSrvMsgImage(CqrImage myImage, out MimeAttachment attachment, EncodingType encType = EncodingType.Base64)
+        public string Cqr1stSrvMsgImage(CqrContact myContact, HashSet<CqrContact> contacts, EncodingType encType = EncodingType.Base64)
         {
+            CqrImage myImage = myContact.ContactImage;
+            string md5 = Hash.MD5Sum.Hash(myImage.ImageData, myImage.ImageFileName);
+            string sha256 = Hash.Sha256Sum.Hash(myImage.ImageData, myImage.ImageFileName);
+            MimeAttachment mimeAttachment = new MimeAttachment(myImage.ImageFileName, myImage.ImageMimeType, myImage.ImageBase64, "", md5, sha256);
+            MimeAttachment attachment; 
+            return CqrMsgAttachment(myImage.ImageFileName, myImage.ImageMimeType, myImage.ImageBase64, out attachment, encType, md5, sha256);
+        }
 
+        /// <summary>
+        /// Cqr1stSrvMsgImg encrypts the picture of user as attchment
+        /// </summary>
+        /// <param name="myImage"><see cref="CqrImage"/></param>        
+        /// <param name="attachment">out <see cref="MimeAttachment"/></param>
+        /// <param name="encType"><see cref="EncodingType"/></param>
+        /// <returns>encrypted attachment msg via <see cref="SymmCipherPipe"/></returns>
+        public string Cqr1stSrvMsgImg(CqrImage myImage, out MimeAttachment attachment, EncodingType encType = EncodingType.Base64)
+        {
             string md5 = Hash.MD5Sum.Hash(myImage.ImageData, myImage.ImageFileName);
             string sha256 = Hash.Sha256Sum.Hash(myImage.ImageData, myImage.ImageFileName);
             MimeAttachment mimeAttachment = new MimeAttachment(myImage.ImageFileName, myImage.ImageMimeType, myImage.ImageBase64, "", md5, sha256);
@@ -117,7 +133,12 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
         /// <returns>response string</returns>
         public string Send1stCqrSrvImage(CqrImage myImage, IPAddress srvIp, out MimeAttachment mimeAttachment, EncodingType encodingType = EncodingType.Base64)
         {
-            string encryptedAttach = Cqr1stSrvMsgImage(myImage, out mimeAttachment, encodingType);
+            string md5 = Hash.MD5Sum.Hash(myImage.ImageData, myImage.ImageFileName);
+            string sha256 = Hash.Sha256Sum.Hash(myImage.ImageData, myImage.ImageFileName);
+            MimeAttachment attachment = new MimeAttachment(myImage.ImageFileName, myImage.ImageMimeType, myImage.ImageBase64, "", md5, sha256);
+            CqrMsgAttachment(myImage.ImageFileName, myImage.ImageMimeType, myImage.ImageBase64, out mimeAttachment, encodingType, md5, sha256);
+
+            string encryptedAttach = Cqr1stSrvMsgImg(myImage, out mimeAttachment, encodingType);
             string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
                 encryptedAttach);
 

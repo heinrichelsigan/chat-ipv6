@@ -581,7 +581,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             catch (Exception exFormClose)
             {
-                CqrException.LastException = exFormClose;
+                CqrException.SetLastException(exFormClose);
                 Area23Log.LogStatic(exFormClose);
             }
             try
@@ -590,7 +590,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             catch (Exception exFormDispose)
             {
-                CqrException.LastException = exFormDispose;
+                CqrException.SetLastException(exFormDispose);
                 Area23Log.LogStatic(exFormDispose);
             }
 
@@ -618,7 +618,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string settingsNotSavedReason = string.Empty;
             try
             {
-                if (!Entities.Settings.Save(null))
+                if (!Entities.Settings.SaveSettings(null))
                     settingsNotSavedReason = (CqrException.LastException != null) ?
                         CqrException.LastException.Message : "Unknown reason!";
             }
@@ -650,7 +650,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     }
                     catch (Exception exForm)
                     {
-                        CqrException.LastException = exForm;
+                        CqrException.SetLastException(exForm);
                         Area23Log.LogStatic(exForm);
                     }
                 }
@@ -663,7 +663,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             catch (Exception ex)
             {
-                CqrException.LastException = ex;
+                CqrException.SetLastException(ex);
                 Area23Log.LogStatic(ex);
             }
 

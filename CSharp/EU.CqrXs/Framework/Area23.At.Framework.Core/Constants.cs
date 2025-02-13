@@ -117,6 +117,7 @@ namespace Area23.At.Framework.Core
         public const string JSON_SAVE_FILE = "urlshort.json";
         public const string JSON_SETTINGS_FILE = "settings.json";
         public const string CQR_CHAT_FILE = "cqr{0}chat.json";
+        public const string PREVIOUS_EXCEPTION = "previous_exception";
         public const string LAST_EXCEPTION = "last_exception";
         public const string COOL_CRYPT_SPLIT = "+-;,:→⇛\t ";
 

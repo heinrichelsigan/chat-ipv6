@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 namespace Area23.At.Framework.Library.Crypt.CqrJd
 {
 
-
     /// <summary>
     /// CqrContact is a contact for CqrJd
     /// </summary>
@@ -19,6 +18,9 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
     [Description("cqrxs.eu contact")]
     public class CqrContact
     {
+
+        #region properties
+
         public int ContactId { get; set; }
 
         public Guid Cuid { get; set; }
@@ -33,14 +35,27 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
 
         public string SecretKey { get; set; }
 
-        public string NameEmail { get => Name + ((string.IsNullOrEmpty(Email)) ? string.Empty : ("<" + Email + ">")); }
-
 
         public CqrImage ContactImage { get; set; }
 
 
+        public string NameEmail { get => string.IsNullOrEmpty(Email) ? Name : $"{Name} <{Email}>"; }
+
+
+        #endregion properties
+
+        #region constructors
+
         public CqrContact()
         {
+            ContactId = -1;
+            Cuid = Guid.Empty;
+            Name = string.Empty;
+            Email = string.Empty;
+            Mobile = string.Empty;
+            Address = string.Empty;
+            SecretKey = string.Empty;
+            ContactImage = null;
         }
 
         public CqrContact(int contactId, string name, string email, string mobile, string address)
@@ -82,6 +97,10 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             Cuid = cuid;
             ContactImage = CqrImage.FromDrawingImage(image);
         }
+
+        #endregion constructors
+
+        #region members
 
         public virtual string ToJson()
         {
@@ -146,6 +165,8 @@ namespace Area23.At.Framework.Library.Crypt.CqrJd
             return oList.ToArray();
         }
 
+        #endregion members
+    
     }
 
 }

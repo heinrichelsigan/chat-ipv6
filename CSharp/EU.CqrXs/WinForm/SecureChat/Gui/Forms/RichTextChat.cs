@@ -120,19 +120,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private async void RichTextChat_Load(object sender, EventArgs e)
         {
             bool send1stReg = false;
-            if (Entities.Settings.Load() == null || Entities.Settings.Instance == null || Entities.Settings.Instance.MyContact == null)
+            if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null)
             {
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
                 // badge.Show();
                 MenuContactsItemMyContact_Click(sender, e);
-                while (string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Name))
+                while (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name))
                 {
                     string notFullReason = string.Empty;
-                    if (string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Name))
+                    if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name))
                         notFullReason += "Name is missing!" + Environment.NewLine;
-                    if (string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Email))
+                    if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email))
                         notFullReason += "Email Address is missing!" + Environment.NewLine;
-                    // if (string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.Mobile))
+                    // if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Mobile))
                     //     notFullReason += "Mobile phone is missing!" + Environment.NewLine;
                     MessageBox.Show(notFullReason, "Please fill out your info fully", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -146,10 +146,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             await SetupNetwork();
 
 
-            if (Entities.Settings.Instance != null && Entities.Settings.Instance.MyContact != null && Entities.Settings.Instance.MyContact.ContactImage != null &&
-                !string.IsNullOrEmpty(Entities.Settings.Instance.MyContact.ContactImage.ImageBase64))
+            if (Entities.Settings.Singleton != null && Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null &&
+                !string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
-                Bitmap? bmp = (Bitmap?)Entities.Settings.Instance.MyContact.ContactImage.ToDrawingBitmap();
+                Bitmap? bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
                 if (bmp != null)
                     this.PictureBoxYou.Image = bmp;
             }
@@ -237,10 +237,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
             ButtonKey_Click(sender, e);
-            if (Entities.Settings.Instance != null)
+            if (Entities.Settings.Singleton != null)
             {
-                if (!Entities.Settings.Instance.SecretKeys.Contains(this.ComboBoxSecretKey.Text))
-                    Entities.Settings.Instance.SecretKeys.Add(this.ComboBoxSecretKey.Text);
+                if (!Entities.Settings.Singleton.SecretKeys.Contains(this.ComboBoxSecretKey.Text))
+                    Entities.Settings.Singleton.SecretKeys.Add(this.ComboBoxSecretKey.Text);
                 if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
                     this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
             }
@@ -311,12 +311,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             this.ComboBoxIp.BackColor = Color.White;
 
-            if (Entities.Settings.Instance != null && SendInit_Click())
+            if (Entities.Settings.Singleton != null && SendInit_Click())
             {
                 PlaySoundFromResource("sound_laser");
 
-                if (!Entities.Settings.Instance.FriendIPs.Contains(this.ComboBoxIp.Text))
-                    Entities.Settings.Instance.FriendIPs.Add(this.ComboBoxIp.Text);
+                if (!Entities.Settings.Singleton.FriendIPs.Contains(this.ComboBoxIp.Text))
+                    Entities.Settings.Singleton.FriendIPs.Add(this.ComboBoxIp.Text);
                 if (!this.MenuNetworkComboBoxFriendIp.Items.Contains(partnerIpAddress.ToString()))
                     this.MenuNetworkComboBoxFriendIp.Items.Add(partnerIpAddress.ToString());
                 this.MenuNetworkComboBoxFriendIp.Text = partnerIpAddress.ToString();
@@ -324,7 +324,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 if (!this.ComboBoxIp.Items.Contains(this.ComboBoxIp.Text))
                     this.ComboBoxIp.Items.Add(partnerIpAddress.ToString());
 
-                Entities.Settings.Save(Entities.Settings.Instance);
+                Entities.Settings.SaveSettings(Entities.Settings.Singleton);
             }
             else
             {
@@ -399,7 +399,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             try
             {
 
-                foreach (CqrContact c in Entities.Settings.Instance.Contacts)
+                foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
                 {
                     if (c.NameEmail.Equals(this.ComboBoxContacts.Text, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -464,7 +464,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             Cqr1stServerMsg srv1stMsg = new Cqr1stServerMsg(myServerKey);
             this.TextBoxPipe.Text = srv1stMsg.PipeString;
 
-            CqrContact myContact = Entities.Settings.Instance.MyContact;
+            CqrContact myContact = Entities.Settings.Singleton.MyContact;
             string encrypted = srv1stMsg.Cqr1stSrvMsg(myContact, EncodingType.Base64);
             string response = srv1stMsg.Send1stCqrSrvMsg(myContact, ServerIpAddress, EncodingType.Base64);
 
@@ -595,7 +595,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             myServerKey = this.ComboBoxSecretKey.Text;
-            string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Instance.MyContact.NameEmail;
+            string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
             try
             {
@@ -652,11 +652,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ComboBoxContacts.BackColor = Color.White;
 
 
-            string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Instance.MyContact.NameEmail;
+            string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
-            CqrContact myContact = Entities.Settings.Instance.MyContact;
+            CqrContact myContact = Entities.Settings.Singleton.MyContact;
             CqrContact? friendContact = null;
-            foreach (CqrContact c in Entities.Settings.Instance.Contacts)
+            foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
             {
                 if (c.NameEmail.Equals(this.ComboBoxContacts.Text, StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -901,7 +901,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             string ipContact = this.ComboBoxContacts.Text;
             this.ComboBoxContacts.Items.Clear();
-            foreach (CqrContact ct in Entities.Settings.Instance.Contacts)
+            foreach (CqrContact ct in Entities.Settings.Singleton.Contacts)
             {
                 if (ct != null && !string.IsNullOrEmpty(ct.NameEmail))
                     this.ComboBoxContacts.Items.Add(ct.NameEmail);
@@ -931,7 +931,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     }
                     catch (Exception exBmp)
                     {
-                        CqrException.LastException = exBmp;
+                        CqrException.SetLastException(exBmp);
                     }
 
                     // var badge = new TransparentBadge("My contact added!");
@@ -960,10 +960,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private void MenuContactstemImport_Click(object sender, EventArgs e)
         {
-            int contactId = Entities.Settings.Instance.Contacts.Count;
+            int contactId = Entities.Settings.Singleton.Contacts.Count;
             string cname = string.Empty, cemail = string.Empty, cmobile = string.Empty, cphone = string.Empty, caddress = string.Empty;
             HashSet<string> names = new HashSet<string>();
-            foreach (CqrContact c in Entities.Settings.Instance.Contacts)
+            foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
             {
                 if (!string.IsNullOrEmpty(c.Name) && !names.Contains(c.Name))
                     names.Add(c.Name);
@@ -1042,13 +1042,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                     if (!string.IsNullOrEmpty(cemail))
                                     {
                                         CqrContact contact = new CqrContact() { ContactId = contactId++, Name = cname, Email = cemail, Mobile = cmobile };
-                                        Entities.Settings.Instance.Contacts.Add(contact);
+                                        Entities.Settings.Singleton.Contacts.Add(contact);
                                     }
                                 }
 
                             }
 
-                            Entities.Settings.Save(Entities.Settings.Instance);
+                            Entities.Settings.SaveSettings(Entities.Settings.Singleton);
                             break;
                         case "vcf":
                         case ".vcf":
@@ -1123,7 +1123,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                         if (!string.IsNullOrEmpty(cemail))
                                         {
                                             CqrContact contact = new CqrContact() { ContactId = contactId++, Name = cname, Email = cemail, Mobile = cmobile };
-                                            Entities.Settings.Instance.Contacts.Add(contact);
+                                            Entities.Settings.Singleton.Contacts.Add(contact);
                                         }
                                     }
                                 }
@@ -1131,7 +1131,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                             }
 
-                            Entities.Settings.Save(Entities.Settings.Instance);
+                            Entities.Settings.SaveSettings(Entities.Settings.Singleton);
                             break;
                         default:
                             break;
@@ -1226,7 +1226,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             List<IPAddress> addresses = new List<IPAddress>();
             string[] proxyStrs = Resources.Proxies.Split(";,".ToCharArray());
-            List<string> proxySets = Entities.Settings.Instance.Proxies;
+            List<string> proxySets = Entities.Settings.Singleton.Proxies;
             if (proxyStrs.Length >= proxySets.Count)
             {
                 proxySets = new List<string>(proxyStrs);
@@ -1241,7 +1241,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
                 catch (Exception ex)
                 {
-                    CqrException.LastException = ex;
+                    CqrException.SetLastException(ex);
                     Area23Log.LogStatic(ex);
                 }
             }
@@ -1257,7 +1257,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
                 catch (Exception ex)
                 {
-                    CqrException.LastException = ex;
+                    CqrException.SetLastException(ex);
                     Area23Log.LogStatic(ex);
                 }
             }
@@ -1314,7 +1314,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
             }
 
-            foreach (var friendIp in Entities.Settings.Instance.FriendIPs)
+            foreach (var friendIp in Entities.Settings.Singleton.FriendIPs)
             {
                 if (!string.IsNullOrEmpty(friendIp))
                 {
@@ -1333,11 +1333,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
             }
 
-            if (Entities.Settings.Instance != null)
+            if (Entities.Settings.Singleton != null)
             {
-                Entities.Settings.Instance.Proxies = proxyList;
-                Entities.Settings.Instance.MyIPs = myIpStrList;
-                Entities.Settings.Save(Entities.Settings.Instance);
+                Entities.Settings.Singleton.Proxies = proxyList;
+                Entities.Settings.Singleton.MyIPs = myIpStrList;
+                Entities.Settings.SaveSettings(Entities.Settings.Singleton);
             }
 
         }
