@@ -23,9 +23,11 @@ using System.Windows.Shapes;
 using System.Xml.Linq;
 using System.Data.SqlTypes;
 using Area23.At.Framework.Library.Util;
-using Area23.At.Framework.Library.Crypt.CqrJd;
+using Area23.At.Framework.Library.CqrXs.CqrSrv;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using System.Net;
 using System.Configuration;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {
@@ -161,9 +163,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
 
 
-        protected virtual CqrContact FindContactByNameEmail(HashSet<CqrContact> contacts, CqrContact searchContact)
+        protected virtual CqrContact FindContactByNameEmail(HashSet<CqrContact> cHashSet, CqrContact searchContact)
         {
-            CqrContact cqrFoundContact = JsonContacts.FindContactByNameEmail(contacts, searchContact);
+            CqrContact cqrFoundContact = JsonContacts.FindContactByNameEmail(cHashSet, searchContact);
             return cqrFoundContact;
         }
 

@@ -16,11 +16,13 @@ using System.Web.DynamicData;
 using System.Windows.Shapes;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Policy;
-using Area23.At.Framework.Library.Crypt.CqrJd;
-using Area23.At.Framework.Library.Net.CqrJd;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.CqrXs.CqrSrv;
+using Area23.At.Framework.Library.Net;
 using Newtonsoft.Json.Serialization;
 using System.Configuration;
 using System.Text;
+using Area23.At.Framework.Library.CqrXs;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {
@@ -79,7 +81,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     this.preLast.InnerHtml = (string)Application["lastdecrypted"];
 
 
-                Cqr1stServerMsg srv1stMsg = new Cqr1stServerMsg(myServerKey);
+                SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
                 decrypted = string.Empty;
                 allStrng += "Msg: " + rq.ToString() + Environment.NewLine;
                 
@@ -90,7 +92,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 {
                     if (!string.IsNullOrEmpty(rq) && rq.Length >= 8)
                     {
-                        myContact = srv1stMsg.NCqr1stSrvMsg(rq);
+                        myContact = srv1stMsg.NCqrSrvMsg1(rq);
                         decrypted = myContact.ToJson();                        
                     }
                 }

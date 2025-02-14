@@ -8,10 +8,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Services;
 using Area23.At;
-using Area23.At.Framework.Library.Net.CqrJd;
-using Area23.At.Framework.Library.Crypt.CqrJd;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.CqrXs.CqrSrv;
 using EU.CqrXs.CqrSrv.CqrJd.Util;
 using Newtonsoft.Json;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.CqrXs.CqrSrv;
+using Area23.At.Framework.Library.CqrXs;
 
 
 namespace EU.CqrXs.CqrSrv.CqrJd
@@ -54,15 +57,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 myServerKey = HttpContext.Current.Request.UserHostAddress;                
             myServerKey += Constants.APP_NAME;
 
-            Cqr1stServerMsg srv1stMsg = new Cqr1stServerMsg(myServerKey);
-            Cqr1stServerMsg cqrSrvResponseMsg = new Cqr1stServerMsg(myServerKey);
+            SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
+            SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
+            SrvMsg responseSrvMsg = new SrvMsg(myServerKey);
             HttpContext.Current.Application["lastmsg"] = cryptMsg;
 
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    _contact = srv1stMsg.NCqr1stSrvMsg(cryptMsg);
+                    _contact = srv1stMsg.NCqrSrvMsg1(cryptMsg);
                     _decrypted = _contact.ToJson();
                 }
             }
@@ -72,7 +76,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
-            responseMsg = cqrSrvResponseMsg.CqrMsg("", EncodingType.Base64);
+            responseMsg = responseSrvMsg.CqrSrvMsg("", EncodingType.Base64);
 
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
@@ -94,15 +98,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         foundCt.ContactImage = _contact.ContactImage;
 
                     
-                    responseMsg = cqrSrvResponseMsg.Cqr1stSrvMsg(foundCt, EncodingType.Base64);
+                    responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
                 }
                 else
                 {
                     if (_contact.Cuid == null || _contact.Cuid == Guid.Empty)
                         _contact.Cuid = new Guid();
                     _contacts.Add(_contact);
+                    foundCt = _contact;
 
-                    responseMsg = cqrSrvResponseMsg.Cqr1stSrvMsg(foundCt, EncodingType.Base64);
+                    responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
                 }
 
                 JsonContacts.SaveJsonContacts(_contacts);
@@ -136,9 +141,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 myServerKey = HttpContext.Current.Request.UserHostAddress;
             myServerKey += Constants.APP_NAME;
 
-            CqrServerMsg cqrServerMsg = new CqrServerMsg(myServerKey);
-            CqrServerMsg cqrResponseMsg = new CqrServerMsg(myServerKey);
-            Cqr1stServerMsg cqrSrvResponseMsg = new Cqr1stServerMsg(myServerKey);
+            SrvMsg cqrServerMsg = new SrvMsg(myServerKey);
+            SrvMsg cqrResponseMsg = new SrvMsg(myServerKey);
+            SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
 
             HttpContext.Current.Application["lastmsg"] = cryptMsgSrv;
 
@@ -146,7 +151,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             {
                 if (!string.IsNullOrEmpty(cryptMsgSrv) && cryptMsgSrv.Length >= 8)
                 {
-                    MsgContent msgCt = cqrServerMsg.NCqrMsg(cryptMsgSrv, EncodingType.Base64);
+                    MsgContent msgCt = cqrServerMsg.NCqrSrvMsg(cryptMsgSrv, EncodingType.Base64);
                     _decrypted = msgCt.Message;
                 }
             }
@@ -156,13 +161,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
-            responseMsg = cqrResponseMsg.CqrMsg(Constants.ACK, EncodingType.Base64);
+            responseMsg = cqrResponseMsg.CqrSrvMsg(Constants.ACK, EncodingType.Base64);
 
             if (!string.IsNullOrEmpty(_decrypted))
             {
                 Application["lastdecrypted"] = _decrypted;
                 CqrContact ctret = _contacts.ToList().Where(c => c.Cuid == to || c.Cuid == from).ToList().FirstOrDefault();
-                string reStr = cqrSrvResponseMsg.Cqr1stSrvMsg(ctret, EncodingType.Base64);
+                string reStr = cqrSrvResponseMsg.CqrSrvMsg1(ctret, EncodingType.Base64);
 
                 return reStr;
             }
