@@ -39,14 +39,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         #region Properties
 
         protected internal static IPAddress? externalIPAddress;
-        internal static IPAddress? ExternalIpAddress
+        public static IPAddress? ExternalIpAddress
         {
             get
             {
                 if (externalIPAddress != null)
                     return externalIPAddress;
 
-                externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://cqrxs.eu/net/R.aspx");
+                externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://ipv4.cqrxs.eu/net/R.aspx");
                 return externalIPAddress;
             }
         }
