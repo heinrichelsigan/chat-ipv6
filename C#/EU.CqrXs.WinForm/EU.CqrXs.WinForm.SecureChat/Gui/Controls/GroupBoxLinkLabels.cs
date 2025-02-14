@@ -1,5 +1,4 @@
-﻿using Area23.At.Framework.Core.Crypt.CqrJd;
-using Area23.At.Framework.Core;
+﻿using Area23.At.Framework.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 {

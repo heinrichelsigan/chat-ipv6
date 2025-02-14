@@ -1,5 +1,7 @@
 ﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Crypt.CqrJd;
+using Area23.At.Framework.Core.CqrXs;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System;

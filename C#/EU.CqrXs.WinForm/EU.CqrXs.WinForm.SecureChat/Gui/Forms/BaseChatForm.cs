@@ -2,7 +2,8 @@
 using Area23.At.Framework.Core.Net;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
-using Area23.At.Framework.Core.Crypt.CqrJd;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Net.WebHttp;
@@ -21,6 +22,7 @@ using Area23.At.Framework.Core.Net.NameService;
 using System.Media;
 using System.Threading.Tasks;
 using EU.CqrXs.WinForm.SecureChat.Gui.Controls;
+using Area23.At.Framework.Core.CqrXs;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {

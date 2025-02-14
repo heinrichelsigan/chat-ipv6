@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Crypt.CqrJd;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.CqrXs.CqrSrv;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

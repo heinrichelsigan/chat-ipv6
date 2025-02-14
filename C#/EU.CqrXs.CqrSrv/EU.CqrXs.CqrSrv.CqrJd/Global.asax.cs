@@ -8,7 +8,8 @@ using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Text;
-using Area23.At.Framework.Library.Crypt.CqrJd;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.CqrXs.CqrSrv;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {

@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
-using Area23.At.Framework.Core.Crypt.CqrJd;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {

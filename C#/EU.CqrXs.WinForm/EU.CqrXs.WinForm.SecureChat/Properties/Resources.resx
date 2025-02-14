@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Proxies" xml:space="preserve">
-    <value>15.188.56.225;18.101.101.108;2a05:d011:cdf:3a00:75d:d95d:136e:9e41;2a05:d012:209:ee04:4dd9:b939:bc98:8080</value>
+    <value>18.101.101.108;2a05:d011:cdf:3a00:75d:d95d:136e:9e41;15.188.56.225;2a05:d012:209:ee04:4dd9:b939:bc98:8080</value>
     <comment>cqrxs.eu;paris.area23.at;parisienne.area23.at</comment>
   </data>
   <data name="github_uri" xml:space="preserve">
