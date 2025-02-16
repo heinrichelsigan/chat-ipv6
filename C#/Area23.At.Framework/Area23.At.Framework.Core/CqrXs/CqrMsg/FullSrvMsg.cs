@@ -7,9 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using System.Xml.Linq;
+using System.Text.Json.Serialization;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
+
+    [JsonObject]
+    [Serializable]
     public class FullSrvMsg<TC> : MsgContent where TC : class
     {
         #region properties

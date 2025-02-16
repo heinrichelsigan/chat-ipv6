@@ -11,6 +11,7 @@ using Area23.At.Framework.Core.Util;
 using System.Drawing.Imaging;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -18,7 +19,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// <summary>
     /// CqrImage is a image for a <see cref="CqrContact"/>
     /// </summary>
-    [DataContract(Name = "CqrImage")]
+    [JsonObject]
     [Serializable]
     public class CqrImage
     {

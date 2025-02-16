@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Area23.At.Framework.Core.Util;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -16,8 +18,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// <summary>
     /// Represtents a MsgContent
     /// </summary>
-    [DataContract(Name = "MsgContent")]
-    [Description("cqrxs.eu msgcontent")]
+    [JsonObject]
+    [Serializable]
     public class MsgContent
     {
         protected internal Nullable<bool> _isMime;
@@ -127,8 +129,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             _isMime = false;
             if (_rawMessage.StartsWith("Content-Type: ") && _rawMessage.Contains("Content-Verification: ") && _rawMessage.Contains("Content-Length: "))
             {
-                string checkContentLength = _rawMessage.Substring(_rawMessage.IndexOf("Content-Length: ") + "Content-Length: ".Length);
-                checkContentLength = checkContentLength.Substring(0, checkContentLength.IndexOf(";\n"));
+                string checkContentLength = _rawMessage.GetSubStringByPattern("Content-Length: ", true, "", ";\n", false, StringComparison.CurrentCulture);                 
                 int contentLen = 0;
                 if (!Int32.TryParse(checkContentLength, out contentLen))
                     contentLen = -1;
@@ -180,7 +181,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
             if (IsMimeAttachment())
             {
-                _hash = _rawMessage.Substring(_rawMessage.IndexOf("Content-Verification: ") + "Content-Verification: ".Length);
+                _hash = _rawMessage.GetSubStringByPattern("Content-Verification: ", true, "", ";\n", false, StringComparison.CurrentCulture);
                 // _hash = _rawMessage.Substring(0, _rawMessage.IndexOf(";\n"));
             }
 

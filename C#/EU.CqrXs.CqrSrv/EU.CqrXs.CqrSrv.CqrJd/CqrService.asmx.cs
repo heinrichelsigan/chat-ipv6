@@ -129,6 +129,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
             else
                 _contacts = JsonContacts.LoadJsonContacts();
+            
+            Area23Log.LogStatic($"CqrService.asmx: Send1stSrvMsg(...) {_contacts.Count} Contacts loaded!");
 
             _literalClientIp = HttpContext.Current.Request.UserHostAddress;
 
@@ -137,6 +139,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             else
                 myServerKey = HttpContext.Current.Request.UserHostAddress;
             myServerKey += Constants.APP_NAME;
+            Area23Log.LogStatic("myServerKey = " + myServerKey);
 
             SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
             SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
@@ -149,6 +152,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 {
                     _contact = srv1stMsg.NCqrSrvMsg1(srvMsg1.ToString());
                     _decrypted = _contact.ToJson();
+                    Area23Log.LogStatic("Received & decrypted: " + _decrypted);
                 }
             }
             catch (Exception ex)
@@ -166,6 +170,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, _contact);
                 if (foundCt != null)
                 {
+                    Area23Log.LogStatic("found contact: " + foundCt.ToString());
                     foundCt.ContactId = _contact.ContactId;
                     if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
                         foundCt.Cuid = new Guid();
@@ -178,6 +183,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
                         foundCt.ContactImage = _contact.ContactImage;
 
+                    _decrypted = foundCt.ToJson();
 
                     responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
                 }
@@ -186,10 +192,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     if (_contact.Cuid == null || _contact.Cuid == Guid.Empty)
                         _contact.Cuid = new Guid();
                     _contacts.Add(_contact);
+                    Area23Log.LogStatic("contact added: " + _contact.ToString());
+                    _decrypted = _contact.ToJson();
                     foundCt = _contact;
-
+                    
                     responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
                 }
+
+                Application["lastdecrypted"] = _decrypted;
 
                 JsonContacts.SaveJsonContacts(_contacts);
             }

@@ -11,52 +11,34 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 {
 
 
-    public partial class CqrRawPost
+    public partial class R
     {
 
         /// <summary>
-        /// form1 control.
+        /// header control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.HtmlControls.HtmlHead header;
 
         /// <summary>
-        /// TextBoxSubmit control.
+        /// title control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextBoxSubmit;
+        protected global::System.Web.UI.HtmlControls.HtmlTitle title;
 
         /// <summary>
-        /// TextBoxLastMsg control.
+        /// literalUserHost control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextBoxLastMsg;
-
-        /// <summary>
-        /// ButtonSubmit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ButtonSubmit;
-
-        /// <summary>
-        /// pre1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pre1;
+        protected global::System.Web.UI.WebControls.Literal literalUserHost;
     }
 }

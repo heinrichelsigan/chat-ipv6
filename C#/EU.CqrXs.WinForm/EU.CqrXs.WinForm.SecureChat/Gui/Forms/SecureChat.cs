@@ -502,10 +502,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     this.TextBoxDestionation.Text = receivedMyContact.ToJson() + "\n";
             }
 
-            this.TextBoxDestionation.Text += response + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            string reducedResponse = string.Empty;
+            if (response.Contains(Constants.DECRYPTED_TEXT_AREA))
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_AREA, true, "", 
+                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);                
+            else if (response.Contains(Constants.DECRYPTED_TEXT_BOX))
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_BOX, true, ">", 
+                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);              
+
+            this.TextBoxDestionation.Text += reducedResponse + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
             chat.AddMyMessage(myContact.ToJson());
-            chat.AddFriendMessage(response);
+            chat.AddFriendMessage(reducedResponse);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();

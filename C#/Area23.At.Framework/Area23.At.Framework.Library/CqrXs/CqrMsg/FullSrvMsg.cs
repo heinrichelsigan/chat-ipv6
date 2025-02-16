@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 {
 
+    [JsonObject]
+    [Serializable]
     public class FullSrvMsg<TC> : MsgContent where TC : class
     {
         #region properties

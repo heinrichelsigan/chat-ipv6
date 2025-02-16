@@ -15,7 +15,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
     /// <summary>
     /// CqrContact is a contact for CqrJd
     /// </summary>
-    [DataContract(Name = "CqrContact")]
+    [JsonObject]
     [Serializable]
     public class CqrContact : MsgContent
     {
@@ -150,16 +150,19 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         public override string ToString()
         {
             return
-                "NameEmail: " + NameEmail + ";" + Environment.NewLine +
-                "ContactId: " + ContactId + ";" + Environment.NewLine +
-                "Cuid: " + Cuid + ";" + Environment.NewLine +
-                "Name: " + Name + ";" + Environment.NewLine +
-                "Email: " + Email + ";" + Environment.NewLine +
-                "Mobile: " + Mobile + ";" + Environment.NewLine +
-                "Address: " + Address + ";" + Environment.NewLine +
-                "ImageFileName: " + ContactImage.ImageFileName + ";" + Environment.NewLine +
-                "ImageMimeType: " + ContactImage.ImageMimeType + ";" + Environment.NewLine +
-                "ImageBase64: " + ContactImage.ImageBase64 + Environment.NewLine
+                "\"ContactId\": \t\"" + ContactId + "\";" + Environment.NewLine +
+                "\"Cuid\": \t\"" + Cuid + "\";" + Environment.NewLine +
+                "\"Name\": \t\"" + Name + "\";" + Environment.NewLine +
+                "\"Email\": \t\"" + Email ?? "" + "\";" + Environment.NewLine +
+                "\"Mobile\": \t\"" + Mobile ?? "" + "\";" + Environment.NewLine +
+                "\"Address\": \t\"" + Address ?? "" + "\";" + Environment.NewLine +
+                "\"NameEmail\": \t\"" + NameEmail ?? "" + "\";" + Environment.NewLine +
+                ((ContactImage != null) ?
+                    "\"ContactImage\": \t" + Environment.NewLine +
+                    "\"ContactImage.ImageFileName\": \t\"" + ContactImage.ImageFileName + "\";" + Environment.NewLine +
+                    "\"ContactImage.ImageMimeType\": \t\"" + ContactImage.ImageMimeType + "\";" + Environment.NewLine +
+                    "\"ContactImage.ImageBase64\": \t\"" + ContactImage.ImageBase64 + "\";" + Environment.NewLine
+                    : "")
                 ;
         }
 

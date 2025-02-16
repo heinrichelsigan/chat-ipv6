@@ -129,10 +129,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Area23.At.Framework\Area23.At.Framework.Library\Area23.At.Framework.Library.csproj">
-      <Project>{4133904b-c57a-4f45-ad85-537aa97f765f}</Project>
-      <Name>Area23.At.Framework.Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SwaggerWcf\SwaggerWcf.csproj">
       <Project>{0ad6efbc-412f-4c0e-8e0a-0faf28151b55}</Project>
       <Name>SwaggerWcf</Name>

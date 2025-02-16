@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 {
+    
+    [Serializable]
     public enum MsgEnum
     {
         None = 0,

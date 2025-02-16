@@ -14,8 +14,10 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
     /// <summary>
     /// Represtents a MimeAttachment
-    /// </summary>
-    [DataContract(Name = "MimeAttachment")]
+    /// [DataContract(Name = "MimeAttachment")]
+    /// </summary>    
+    [JsonObject]
+    [Serializable]
     public class MimeAttachment : MsgContent
     {
 
@@ -216,33 +218,20 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         {
             string restString = plainAttachment;
 
-            string mimeType = restString.Substring(restString.IndexOf("Content-Type: ") + "Content-Type: ".Length);
-            // restString = mimeType.Substring(mimeType.IndexOf("; name=\"") + "; name=\"".Length);
-            mimeType = mimeType.Substring(0, mimeType.IndexOf(";"));
-
-            string fileName = restString.Substring(restString.IndexOf("; name=\"") + "; name=\"".Length);
-            fileName = fileName.Substring(0, fileName.IndexOf("\";"));
-
-            string contentLengthString = restString.Substring(restString.IndexOf("Content-Length: ") + "Content-Length: ".Length);
-            contentLengthString = contentLengthString.Substring(0, contentLengthString.IndexOf(";\n"));
+            string mimeType = restString.GetSubStringByPattern("Content-Type: ", true, "", ";", false);
+            string fileName = restString.GetSubStringByPattern("; name=\"", true, "", "\";", false);
+            string contentLengthString = restString.GetSubStringByPattern("Content-Length: ", true, "", ";\n", false);
             string contentLenString = string.Empty;
             foreach (char ch in contentLengthString.ToCharArray())
-            {
                 if (Char.IsDigit(ch) || Char.IsNumber(ch) || ch == '.')
                     contentLenString += ch.ToString();
-            }
             int contentLen = Int32.Parse(contentLenString);
 
-            restString = restString.Substring(restString.IndexOf("Content-Verification: ") + "Content-Verification: ".Length);
-            string verification = restString.Substring(0, restString.IndexOf(";"));
+            string verification = restString.GetSubStringByPattern("Content-Verification: ", true, "", ";", false);
+            string md5 = restString.GetSubStringByPattern("md5=\"", true, "", "\";", false);
+            string sha256 = restString.GetSubStringByPattern("sha256=\"", true, "", "\";", false);
 
-            string md5 = restString.Substring(restString.IndexOf("md5=\"") + "md5 =\"".Length);
-            md5 = md5.Substring(0, md5.IndexOf("\";"));
-
-            string sha256 = restString.Substring(restString.IndexOf("sha256=\"") + "sha256=\"".Length);
-            sha256 = sha256.Substring(0, sha256.IndexOf("\";"));
-
-
+            restString = restString.Substring(restString.IndexOf("Content-Verification: ") + "Content-Verification: ".Length);            
             string mimeBase64 = restString.Substring(restString.IndexOf(";\n") + ";\n".Length);
             restString = restString.Substring(restString.IndexOf(";\n") + ";\n".Length);
             try

@@ -21,7 +21,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
     /// <summary>
     /// Provides a secure encrypted message to send to the server or receive from server
     /// </summary>
-    [DataContract(Name = "SrvMsg1")]
     public class SrvMsg1 : BaseMsg
     {
         internal CqrContact? MsgContact { get; set; }
@@ -101,9 +100,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <returns></returns>
         public string Send1st_CqrSrvMsg1(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
-            myContact._hash = PipeString;            
-            string msg = Newtonsoft.Json.JsonConvert.SerializeObject(myContact);
-            string encMsg = CqrBaseMsg(msg, encodingType);
+            myContact._hash = PipeString;
+            
+            // string msg = Newtonsoft.Json.JsonConvert.SerializeObject(myContact);
+            // string encMsg = CqrBaseMsg(msg, encodingType);
+            string encMsg = CqrSrvMsg1(myContact, encodingType);
             string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
                 encMsg);
 
