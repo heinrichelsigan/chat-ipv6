@@ -30,9 +30,12 @@ using System.Data.SqlTypes;
 using System.Net;
 
 
-
 namespace EU.CqrXs.CqrSrv.CqrJd
 {
+
+    /// <summary>
+    /// CqrJdBasePage is base page of Default
+    /// </summary>
     public abstract class CqrJdBasePage : System.Web.UI.Page
     {
         protected System.Collections.Generic.Queue<string> mqueue = new Queue<string>();

@@ -26,6 +26,10 @@ using Area23.At.Framework.Library.CqrXs;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {
+
+    /// <summary>
+    /// Default TesWebForm for cqrxs.eu
+    /// </summary>
     public partial class Default : CqrJdBasePage
     {
 
@@ -167,4 +171,5 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
 
     }
+
 }
