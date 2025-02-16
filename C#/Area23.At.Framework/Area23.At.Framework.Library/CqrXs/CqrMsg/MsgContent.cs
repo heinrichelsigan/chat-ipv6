@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +22,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         protected internal Nullable<bool> _isMime;
         protected internal string _hash;
         protected internal string _message;
+        protected internal string _rawMessage;
 
         public bool IsMime { get => IsMimeAttachment(); }
 
@@ -27,18 +30,32 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         public string Message { get => _message; }
 
+        public string RawMessage { get => _rawMessage; }
+
+
+        #region ctor
 
         public MsgContent()
         {
             _message = string.Empty;
+            _rawMessage = string.Empty;
+            _hash = string.Empty;
         }
 
         public MsgContent(string msg)
         {
-            _message = msg;
+            _message = msg;            
         }
 
-        public MsgContent GetMsgContent(string plainMsg)
+        public MsgContent(string msg, string hash)
+        {
+            _message = msg;
+            _hash = hash;
+        }
+
+        #endregion ctor
+
+        public MsgContent SetMsgContent(string plainMsg)
         {
             MsgContent msgContent = new MsgContent(plainMsg);
             _message = msgContent.Message;
@@ -65,6 +82,25 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
             return _isMime.Value;
         }
+
+        public virtual string ToJson()
+        {
+            string jsonText = JsonConvert.SerializeObject(this);
+            return jsonText;
+        }
+
+        public virtual T FromJson<T>(string jsonText)
+        {
+            T t = JsonConvert.DeserializeObject<T>(jsonText);
+            if (t != null && t is MsgContent mc)
+            {
+                this._hash = mc.Hash;
+                this._message = mc.Message;
+                this._rawMessage = mc.RawMessage;
+            }
+            return t;
+        }
+        
 
         public virtual string VerificationHash()
         {
@@ -93,17 +129,20 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             return mimeAttachment;
         }
 
-        public static MsgContent GetMessageContent(string plainMsg)
-        {
-            MsgContent msgContent = new MsgContent(plainMsg);
 
-            return msgContent;
-        }
 
         public override string ToString()
         {
             return _message.ToString();
         }
+
+        public static MsgContent GetMessageContent(string plainMsg)
+        {
+            MsgContent msgContent = new MsgContent(plainMsg);
+            return msgContent;
+        }
+
+
     }
 
 }

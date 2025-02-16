@@ -20,10 +20,10 @@ namespace Area23.At.Framework.Core
         public const int MAX_KEY_LEN = 4096;
         public const int MAX_PIPE_LEN = 8;
         public const int MAX_SERVER_SOCKET_ADDRESSES = 16;
-        public const int CLOSING_TIMEOUT = 6000;
-        public const int MIN_SOCKET_BYTE_BUFFEER = 65536;   // 64 KB Buffer
-        public const int SOCKET_BYTE_BUFFEER = 1048576;     //  1 MB Buffer
-        public const int MAX_BYTE_BUFFEER = 4194240;        //  4 MB Buffer
+        public const int CLOSING_TIMEOUT = 1000;
+        public const int MIN_SOCKET_BYTE_BUFFEER = 65536;   //  64 KB Buffer  2^16
+        public const int SOCKET_BYTE_BUFFEER = 4194304;     //  4 MB Buffer   2^22
+        public const int MAX_BYTE_BUFFEER = 16777216;       //  16 MB Buffer  2^24  
         public const bool CQR_ENCRYPT = true;
         public const bool ZEN_MATRIX_SYMMETRIC = false;
 
@@ -73,7 +73,7 @@ namespace Area23.At.Framework.Core
         public const string ENTER_SECRET_KEY = "[enter secret key here]";
         public const string ENTER_IP_CONTACT = "[Enter IPv4/IPv6 or select Contact]";
         public const string ENTER_IP = "[Enter peer IPv4/IPv6]";
-        public const string ENTER_CONTACT = "[Enter peer IPv4/IPv6]";
+        public const string ENTER_CONTACT = "[Select Contact]";
 
         public const string AUTHOR = "Heinrich Elsigan";
         public const string AUTHOR_EMAIL = "heinrich.elsigan@area23.at";

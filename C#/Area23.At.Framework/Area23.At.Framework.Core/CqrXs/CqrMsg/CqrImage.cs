@@ -19,7 +19,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// CqrImage is a image for a <see cref="CqrContact"/>
     /// </summary>
     [DataContract(Name = "CqrImage")]
-    [Description("cqrxs.eu image")]
     public class CqrImage
     {
 
@@ -59,7 +58,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ImageMimeType = string.Empty;
             ImageBase64 = "";
         }
-
 
         /// <summary>
         /// Ctor with filename and byte[] data

@@ -411,6 +411,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal delegate void SetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox, string text);
 
+        internal delegate void SetComboBackColorCallback(System.Windows.Forms.ComboBox comboBox, Color color);
 
         internal string GetComboBoxText(System.Windows.Forms.ComboBox comboBox)
         {
@@ -449,7 +450,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (comboBox.InvokeRequired)
             {
-                SetComboBoxTextCallback setComboBoxTextCallback = 
+                SetComboBoxTextCallback setComboBoxTextCallback =
                     delegate (System.Windows.Forms.ComboBox cmbx, string txt)
                     {
                         if (cmbx != null && txt != null)
@@ -468,6 +469,34 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (comboBox != null && setText != null)
                     comboBox.Text = setText;
+            }
+        }
+
+        internal void SetComboBoxBackColor(System.Windows.Forms.ComboBox comboBox, Color color)
+        {
+            Color setColor = (color != null) ? color : Color.Transparent;
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (comboBox.InvokeRequired)
+            {
+                SetComboBackColorCallback setComboBackColorCallback =
+                    delegate (System.Windows.Forms.ComboBox cmbx, Color colr)
+                    {
+                        if (cmbx != null && colr != null)
+                            cmbx.BackColor = colr;
+                    };
+                try
+                {
+                    comboBox.Invoke(setComboBackColorCallback, new object[] { comboBox, color });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetComboBoxBackColor ComboBox = {comboBox.Name}, Colore = \"{color}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (comboBox != null && color != null)
+                    comboBox.BackColor = color;
             }
         }
 

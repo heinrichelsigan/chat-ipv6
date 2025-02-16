@@ -15,7 +15,6 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
     /// CqrContact is a contact for CqrJd
     /// </summary>
     [DataContract(Name = "CqrContact")]
-    [Description("cqrxs.eu contact")]
     public class CqrContact
     {
 

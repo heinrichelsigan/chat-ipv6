@@ -808,7 +808,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
 
                             // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                            pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, EncodingType.Base64, Constants.CHAT_PORT, md5, sha256);
+                            pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
 
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);

@@ -170,6 +170,12 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             return (failureCnt == 0);
         }
 
+
+        public override string ToString()
+        {
+            return this.CqrMessage;
+        }
+
     }
 
 }

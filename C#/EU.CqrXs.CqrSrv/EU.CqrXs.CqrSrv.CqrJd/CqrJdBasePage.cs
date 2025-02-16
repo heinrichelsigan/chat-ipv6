@@ -1,8 +1,13 @@
 ﻿using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.Win32Api;
+using Area23.At.Framework.Library.Util;
+using Area23.At.Framework.Library.CqrXs;
+using Area23.At.Framework.Library.CqrXs.CqrSrv;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using EU.CqrXs.CqrSrv.CqrJd.Util;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
@@ -22,12 +27,9 @@ using System.Text;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using System.Data.SqlTypes;
-using Area23.At.Framework.Library.Util;
-using Area23.At.Framework.Library.CqrXs.CqrSrv;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using System.Net;
-using System.Configuration;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
+
+
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {

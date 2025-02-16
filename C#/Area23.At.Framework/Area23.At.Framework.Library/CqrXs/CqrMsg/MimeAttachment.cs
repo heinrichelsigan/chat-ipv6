@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -84,6 +85,19 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         #endregion ctors
 
         #region members
+
+
+        public override string ToJson()
+        {
+            string jsonText = JsonConvert.SerializeObject(this);
+            return jsonText;
+        }
+
+        public override MsgContent FromJson<T>(string jsonText)
+        {
+            MimeAttachment mimeAttach = JsonConvert.DeserializeObject<T>(jsonText);
+            return mimeAttach;
+        }
 
         public string GetMimeMessage()
         {
@@ -252,17 +266,6 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             return mimeMsg;
         }
 
-        public static string ToJson(MimeAttachment mimeAttachment)
-        {
-            string jsonText = JsonConvert.SerializeObject(mimeAttachment);
-            return jsonText;
-        }
-
-        public static MimeAttachment FromJson(string jsonText)
-        {
-            MimeAttachment mimeAttach = JsonConvert.DeserializeObject<MimeAttachment>(jsonText);
-            return mimeAttach;
-        }
 
         #endregion static members
 

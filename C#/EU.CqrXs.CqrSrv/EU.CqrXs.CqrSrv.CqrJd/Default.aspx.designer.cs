@@ -24,6 +24,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// DivPost control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl DivPost;
+
+        /// <summary>
         /// LiteralServerIPv4 control.
         /// </summary>
         /// <remarks>
@@ -112,5 +121,23 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl preLast;
+
+        /// <summary>
+        /// DivContacr control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl DivContacr;
+
+        /// <summary>
+        /// LiteralJson control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal LiteralJson;
     }
 }

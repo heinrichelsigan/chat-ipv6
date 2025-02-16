@@ -172,7 +172,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (send1stReg)
                 Send_1st_Server_Registration(sender, e);
 
-            this.StripProgressBar.Value = 100;
+            this.StripProgressBar.Value = 100;            
             StripStatusLabel.Text = "Secure Chat init done.";
         }
 
@@ -227,11 +227,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 myServerKey = this.ComboBoxSecretKey.Text;
             }
 
-            // TODO: test case later
-
             SrvMsg serverMessage = new SrvMsg(myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
-
         }
 
 
@@ -270,7 +267,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e">EventArgs e</param>
         private void ComboBoxSecretKey_TextUpdate(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text))
+            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
+                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
                 return;
             }
@@ -295,7 +293,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
             ButtonKey_Click(sender, e);
-            StripStatusLabel.Text = "Changed secret key => calculated new SecurePipe...";
+            if (Entities.Settings.Singleton != null)
+            {
+                if (!Entities.Settings.Singleton.SecretKeys.Contains(this.ComboBoxSecretKey.Text))
+                    Entities.Settings.Singleton.SecretKeys.Add(this.ComboBoxSecretKey.Text);
+                if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
+                    this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
+            }
+            StripStatusLabel.Text = "Added new secret key => calculated new SecurePipe...";
         }
 
         #endregion SecretKey & SymmCipherPipe.PipeString + ComboBoxSecretKey FocusLeave TextUpdate SelectedIndexChanged
@@ -520,10 +525,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (string.IsNullOrEmpty(myServerKey))
             {
                 myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
-                if (!string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) &&
-                    !this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+
+                string comboBoxSecKeyText = this.GetComboBoxText(ComboBoxSecretKey);
+                if (!string.IsNullOrEmpty(comboBoxSecKeyText) &&
+                    !comboBoxSecKeyText.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    myServerKey = this.ComboBoxSecretKey.Text;
+                    myServerKey = this.GetComboBoxText(ComboBoxSecretKey);
                 }
             }
 
@@ -565,7 +572,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         if (exCrypt is InvalidOperationException)
                         {
                             MessageBox.Show(((InvalidOperationException)exCrypt).Message, "Invalid or non matching secret key for decrypt.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                            SetComboBoxBackColor(ComboBoxSecretKey, Color.OrangeRed);
                         }
                         else
                         {
@@ -825,7 +832,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
 
                             // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                            pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, EncodingType.Base64, Constants.CHAT_PORT, md5, sha256);
+                            pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
 
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
@@ -1378,7 +1385,25 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 mi.Checked = true;
                 clientIpAddress = IPAddress.Parse(mi.Name);
 
-                ipSockListener?.Dispose();
+                try
+                {
+                    if (ipSockListener != null)
+                        ipSockListener.Dispose();
+                }
+                catch (Exception exi)
+                {
+                    Area23Log.LogStatic(exi);
+                }
+                try
+                {
+                    ipSockListener = null;
+                }
+                catch (Exception exi)
+                {
+                    Area23Log.LogStatic(exi);
+                }
+
+                Thread.Sleep(Constants.CLOSING_TIMEOUT);
                 ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                 StripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
             }

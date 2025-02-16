@@ -22,7 +22,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
     [DataContract(Name = "SrvMsg1")]
     public class SrvMsg1 : BaseMsg
     {
-
+        protected internal CqrContact MsgContact { get; set; }
 
         /// <summary>
         /// SrvMsg1 constructor with srvKey
@@ -42,6 +42,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         /// <exception cref="InvalidDataException"></exception>
         public string CqrSrvMsg1(CqrContact myContact, EncodingType encType)
         {
+            MsgContact = myContact;
             string msg = JsonConvert.SerializeObject(myContact);
             return CqrBaseMsg(msg, encType);
         }
@@ -56,6 +57,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         /// <returns>encrypted attachment msg via <see cref="SymmCipherPipe"/></returns>
         public string CqrAttachmentSrvMsg1(CqrContact myContact, out MimeAttachment attachment, EncodingType encType = EncodingType.Base64)
         {
+            MsgContact = myContact;
             CqrImage myImage = myContact.ContactImage;
             string md5 = Area23.At.Framework.Library.Crypt.Hash.MD5Sum.Hash(myImage.ImageData, myImage.ImageFileName);
             string sha256 = Area23.At.Framework.Library.Crypt.Hash.Sha256Sum.Hash(myImage.ImageData, myImage.ImageFileName);
@@ -80,7 +82,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType);
             if (msgContent != null && !string.IsNullOrEmpty(msgContent.Message))
                 myContact = JsonConvert.DeserializeObject<CqrContact>(msgContent.Message);
-            
+
+            MsgContact = myContact;
             return myContact;
         }
 
@@ -95,6 +98,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         /// <returns></returns>
         public string Send1st_CqrSrvMsg1(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
+            MsgContact = myContact;
             string msg = JsonConvert.SerializeObject(myContact);
             string encMsg = CqrBaseMsg(msg, encodingType);
             string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
