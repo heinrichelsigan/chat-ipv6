@@ -24,6 +24,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
     {
         protected internal CqrContact MsgContact { get; set; }
 
+        public SrvMsg1() { }
+
         /// <summary>
         /// SrvMsg1 constructor with srvKey
         /// </summary>

@@ -68,7 +68,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         protected void Application_Error(object sender, EventArgs e)
         {
             HostLogHelper.LogRequest(sender, e, "Application Error");
-            Response.Redirect(Request.ApplicationPath + "/Error.aspx");
+            // Response.Redirect(Request.ApplicationPath + "/Error.aspx");
         }
 
 
