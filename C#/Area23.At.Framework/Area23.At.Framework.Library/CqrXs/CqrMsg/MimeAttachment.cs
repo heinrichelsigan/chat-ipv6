@@ -16,7 +16,6 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
     /// Represtents a MimeAttachment
     /// </summary>
     [DataContract(Name = "MimeAttachment")]
-    [Description("cqrxs.eu mime base64 attachment")]
     public class MimeAttachment : MsgContent
     {
 
@@ -93,10 +92,29 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             return jsonText;
         }
 
-        public override MsgContent FromJson<T>(string jsonText)
+        public override T FromJson<T>(string jsonText)
         {
-            MimeAttachment mimeAttach = JsonConvert.DeserializeObject<T>(jsonText);
-            return mimeAttach;
+            T t = JsonConvert.DeserializeObject<T>(jsonText);
+            if (t != null) 
+            {
+                if (t is MsgContent mc)
+                {
+                    this._hash = mc.Hash;
+                    this._message = mc.Message;
+                    this._rawMessage = mc.RawMessage;
+                }
+                if (t is MimeAttachment ma)
+                {
+                    this.ContentLength = ma.ContentLength;
+                    this.Base64Mime = ma.Base64Mime;
+                    this.Base64Type = ma.Base64Type;
+                    this.FileName = ma.FileName;
+                    this.Md5Hash = ma.Md5Hash;
+                    this.Sha256Hash = ma.Sha256Hash;
+                    this.Verification = ma.Verification;
+                }
+            }
+            return t;
         }
 
         public string GetMimeMessage()

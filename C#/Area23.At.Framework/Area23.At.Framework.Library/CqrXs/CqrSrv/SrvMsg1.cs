@@ -43,9 +43,12 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         public string CqrSrvMsg1(CqrContact myContact, EncodingType encType)
         {
             MsgContact = myContact;
-            string msg = JsonConvert.SerializeObject(myContact);
-            return CqrBaseMsg(msg, encType);
+            MsgContact._hash = PipeString;
+            MsgContact._message = JsonConvert.SerializeObject(myContact);
+            MsgContact._rawMessage = MsgContact.Message + "\n" + PipeString + "\0";
+            return CqrBaseMsg(MsgContact, encType);
         }
+
 
 
         /// <summary>
