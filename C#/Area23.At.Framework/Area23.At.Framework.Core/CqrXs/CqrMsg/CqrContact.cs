@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -14,11 +15,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// <summary>
     /// CqrContact is a contact for CqrJd
     /// </summary>EL
+    [DataContract(Name = "CqrContact")]
+    [Serializable]
     public class CqrContact : MsgContent
     {
 
         #region properties
-
+        
         public int ContactId { get; set; }
 
         public Guid Cuid { get; set; }
@@ -32,7 +35,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public string? Address { get; set; }
 
         public string? SecretKey { get; set; }
-
 
         public CqrImage? ContactImage { get; set; }
 
@@ -108,15 +110,15 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         public override string ToJson()
         {
-            // CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
-            string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
+            CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
+            string jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(cqrContact, Formatting.Indented);
             this._rawMessage = jsonString;
             return jsonString;
         }
 
         public override TType? FromJson<TType>(string jsonText) where TType : default
         {
-            TType? tt = JsonConvert.DeserializeObject<TType>(jsonText);
+            TType? tt = Newtonsoft.Json.JsonConvert.DeserializeObject<TType>(jsonText);
             try
             {
                 if (tt != null && tt is CqrContact cqrContactJson)
@@ -144,6 +146,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
             return default(TType);
         }
+
+
 
         public override string ToString()
         {

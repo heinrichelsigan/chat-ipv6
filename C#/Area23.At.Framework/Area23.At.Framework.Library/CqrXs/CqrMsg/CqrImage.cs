@@ -19,6 +19,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
     /// </summary>
     [DataContract(Name = "CqrImage")]
     [Description("cqrxs.eu image")]
+    [Serializable]
     public class CqrImage
     {
 
@@ -26,7 +27,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         /// <summary>
         /// File Name with extension of Image
-        /// </summary>
+        /// </summary>       
         public string ImageFileName { get; set; }
 
         /// <summary>

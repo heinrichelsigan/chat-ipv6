@@ -11,6 +11,9 @@ using System.Security.Policy;
 using Area23.At.Framework.Core.Crypt.Hash;
 using System.Runtime.Serialization;
 using System.Windows.Interop;
+using static QRCoder.Core.PayloadGenerator;
+using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 {
@@ -41,9 +44,10 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <exception cref="InvalidDataException"></exception>
         public string CqrSrvMsg1(CqrContact myContact, EncodingType encType)
         {
+            myContact._hash = PipeString;
             MsgContact = myContact;
             MsgContact._hash = PipeString;
-            MsgContact._message = JsonConvert.SerializeObject(myContact);
+            MsgContact._message = Newtonsoft.Json.JsonConvert.SerializeObject(myContact, Formatting.None);
             MsgContact._rawMessage = MsgContact.Message + "\n" + PipeString + "\0";            
             return CqrBaseMsg(MsgContact, encType);
         }
@@ -97,8 +101,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <returns></returns>
         public string Send1st_CqrSrvMsg1(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
-            MsgContact = myContact;
-            string msg = JsonConvert.SerializeObject(myContact);
+            myContact._hash = PipeString;            
+            string msg = Newtonsoft.Json.JsonConvert.SerializeObject(myContact);
             string encMsg = CqrBaseMsg(msg, encodingType);
             string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
                 encMsg);

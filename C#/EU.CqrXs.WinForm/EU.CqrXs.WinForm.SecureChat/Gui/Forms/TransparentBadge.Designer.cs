@@ -63,8 +63,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         }
         #endregion
 
-        private ToolStripSeparator toolStripSeparator3;
-        private ToolStripMenuItem toolStripMenuItemOpen;
         private Label labelBadge;
     }
 }

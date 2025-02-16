@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
@@ -44,9 +45,16 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         /// <exception cref="InvalidDataException"></exception>
         public string CqrSrvMsg1(CqrContact myContact, EncodingType encType)
         {
+            myContact._hash = PipeString;
             MsgContact = myContact;
             MsgContact._hash = PipeString;
-            MsgContact._message = JsonConvert.SerializeObject(myContact);
+            JsonSerializer serializer = new JsonSerializer();
+            StringBuilder stringBuilder = new StringBuilder();
+            using (var stringWriter = new StringWriter(stringBuilder))
+            {
+                serializer.Serialize(stringWriter, myContact);
+            }
+            MsgContact._message = stringBuilder.ToString();
             MsgContact._rawMessage = MsgContact.Message + "\n" + PipeString + "\0";
             return CqrBaseMsg(MsgContact, encType);
         }

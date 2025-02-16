@@ -19,6 +19,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// CqrImage is a image for a <see cref="CqrContact"/>
     /// </summary>
     [DataContract(Name = "CqrImage")]
+    [Serializable]
     public class CqrImage
     {
 
@@ -111,7 +112,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public virtual string ToJson()
         {
             CqrImage image = new CqrImage(ImageFileName, ImageData);
-            string jsonString = JsonConvert.SerializeObject(image, Formatting.Indented);
+            string jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(image, Formatting.Indented);
             return jsonString;
         }
 
@@ -120,7 +121,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             CqrImage? cqrJsonImage;
             try
             {
-                cqrJsonImage = JsonConvert.DeserializeObject<CqrImage>(jsonText);
+                cqrJsonImage = Newtonsoft.Json.JsonConvert.DeserializeObject<CqrImage>(jsonText);
                 if (cqrJsonImage != null && !string.IsNullOrEmpty(cqrJsonImage?.ImageFileName) && !string.IsNullOrEmpty(cqrJsonImage?.ImageBase64))
                 {
                     ImageFileName = cqrJsonImage.ImageFileName;

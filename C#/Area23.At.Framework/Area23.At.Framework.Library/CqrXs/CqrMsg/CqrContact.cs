@@ -14,12 +14,14 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
     /// <summary>
     /// CqrContact is a contact for CqrJd
-    /// </summary>EL
+    /// </summary>
+    [DataContract(Name = "CqrContact")]
+    [Serializable]
     public class CqrContact : MsgContent
     {
 
         #region properties
-
+        
         public int ContactId { get; set; }
 
         public Guid Cuid { get; set; }
@@ -33,7 +35,6 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         public string Address { get; set; }
 
         public string SecretKey { get; set; }
-
 
         public CqrImage ContactImage { get; set; }
 

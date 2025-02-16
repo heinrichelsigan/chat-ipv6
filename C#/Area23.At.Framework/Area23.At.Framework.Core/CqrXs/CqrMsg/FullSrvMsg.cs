@@ -89,4 +89,5 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         }
 
     }
+
 }

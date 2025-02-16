@@ -933,11 +933,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal MenuStrip StripMenu;
         private StatusStrip StripStatus;
-        private ToolStripMenuItem toolStripMenuMain;
         
-        private ToolStripMenuItem toolStripMenuItemOld;
         private ToolStripSeparator MenuNetworkSeparatorIp;
-        private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem toolStripMenuItemOpen;
         private ToolStripMenuItem toolStripMenuItemClose;
         
@@ -991,13 +988,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripMenuItem MenuHelpItemInfo;
         private ToolStripMenuItem MenuHelpItemAbout;
 
-        private ToolStripMenuItem toolStripMenuTForms;
         private ToolStripProgressBar StripProgressBar;
         private ToolStripStatusLabel StripStatusLabel;                        
 
-        private ToolStripMenuItem toolStripMenuItem4;
-        private ToolStripMenuItem toolStripMenuItem5;
-        private ToolStripSeparator toolStripSeparator2;
 
         private OpenFileDialog FileOpenDialog;
         private SaveFileDialog FileSaveDialog;

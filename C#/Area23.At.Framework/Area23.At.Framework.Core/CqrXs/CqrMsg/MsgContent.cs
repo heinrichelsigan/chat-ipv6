@@ -141,13 +141,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         public virtual string ToJson()
         {
-            string jsonText = JsonConvert.SerializeObject(this);
+            string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(this);
             return jsonText;
         }
 
         public virtual TType? FromJson<TType>(string jsonText)
         {
-            TType? t = JsonConvert.DeserializeObject<TType>(jsonText);
+            TType? t = Newtonsoft.Json.JsonConvert.DeserializeObject<TType>(jsonText);
             if (t != null && t is MsgContent mc)
             {
                 this._hash = mc.Hash;

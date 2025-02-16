@@ -24,8 +24,7 @@ using Area23.At.Framework.Core.Net.NameService;
 using System.Media;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using Org.BouncyCastle.Pqc.Crypto.Lms;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
+
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -63,7 +62,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 IEnumerable<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
                 foreach (IPAddress ip in list)
                 {
-                    foreach (string sip in Settings.Instance.Proxies)
+                    foreach (string sip in Settings.Singleton.Proxies)
                     {
                         if (IPAddress.Parse(sip).Equals(ip))
                         {
@@ -84,7 +83,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
                 foreach (IPAddress ip in list)
                 {
-                    foreach (string sip in Settings.Instance.Proxies)
+                    foreach (string sip in Settings.Singleton.Proxies)
                     {
                         if (IPAddress.Parse(sip).Equals(ip) && ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
@@ -948,14 +947,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             contactSettings.ShowInTaskbar = true;
             contactSettings.ShowDialog();
 
-            if (Settings.Instance.MyContact != null && Settings.Instance.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Instance.MyContact.ContactImage.ImageBase64))
+            if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
                 try
                 {
-                    Bitmap? bmp = Settings.Instance.MyContact.ContactImage.ToDrawingBitmap();
+                    Bitmap? bmp = Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
                     if (bmp != null)
                         this.PictureBoxYou.Image = bmp;
 
+                    Settings.SaveSettings(Settings.Singleton);
                 }
                 catch (Exception exBmp)
                 {

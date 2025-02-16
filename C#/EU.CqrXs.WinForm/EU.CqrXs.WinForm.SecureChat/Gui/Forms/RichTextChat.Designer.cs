@@ -70,11 +70,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuHelpItemViewHelp = new ToolStripMenuItem();
             MenuHelpItemInfo = new ToolStripMenuItem();
             MenuHelpItemAbout = new ToolStripMenuItem();
-            MenuEdit = new ToolStripMenuItem();
-            MenuEditItemCut = new ToolStripMenuItem();
-            MenuEditItemCopy = new ToolStripMenuItem();
-            MenuIEditItemPaste = new ToolStripMenuItem();
-            MenuEditItemSelectAll = new ToolStripMenuItem();
+            MenuOptions = new ToolStripMenuItem();
+            MenuOptionsItemCompress = new ToolStripMenuItem();
+            MenuOptionsItemFileSecure = new ToolStripMenuItem();
+            MenuOptionsItemClearAllOnClose = new ToolStripMenuItem();
+            MenuOptionsItemDontSendProfilePictures = new ToolStripMenuItem();
             FileOpenDialog = new OpenFileDialog();
             FileSaveDialog = new SaveFileDialog();
             StripStatus = new StatusStrip();
@@ -121,7 +121,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             StripMenu.BackColor = SystemColors.MenuBar;
             StripMenu.Font = new Font("Lucida Sans Unicode", 10F);
             StripMenu.GripStyle = ToolStripGripStyle.Visible;
-            StripMenu.Items.AddRange(new ToolStripItem[] { MenuFile, MenuView, MenuNetwork, MenuCommands, MenuContacts, MenuHelp });
+            StripMenu.Items.AddRange(new ToolStripItem[] { MenuFile, MenuView, MenuNetwork, MenuCommands, MenuContacts, MenuOptions, MenuHelp });
             StripMenu.Location = new Point(0, 0);
             StripMenu.Name = "StripMenu";
             StripMenu.RenderMode = ToolStripRenderMode.System;
@@ -492,50 +492,52 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuHelpItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
             MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;
             // 
-            // MenuEdit
+            // MenuOptions
             // 
-            MenuEdit.BackColor = SystemColors.MenuBar;
-            MenuEdit.DropDownItems.AddRange(new ToolStripItem[] { MenuEditItemCut, MenuEditItemCopy, MenuIEditItemPaste, MenuEditItemSelectAll });
-            MenuEdit.Enabled = false;
-            MenuEdit.Name = "MenuEdit";
-            MenuEdit.Size = new Size(46, 21);
-            MenuEdit.Text = "Edit";
+            MenuOptions.BackColor = SystemColors.MenuBar;
+            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures });
+            MenuOptions.Enabled = false;
+            MenuOptions.Name = "MenuOptions";
+            MenuOptions.Size = new Size(46, 21);
+            MenuOptions.Text = "Options";
             // 
-            // MenuEditItemCut
+            // MenuOptionsItemCompress
             // 
-            MenuEditItemCut.BackColor = SystemColors.Menu;
-            MenuEditItemCut.Enabled = false;
-            MenuEditItemCut.Name = "MenuEditItemCut";
-            MenuEditItemCut.ShortcutKeys = Keys.Control | Keys.X;
-            MenuEditItemCut.Size = new Size(164, 22);
-            MenuEditItemCut.Text = "Cat ✂";
+            MenuOptionsItemCompress.BackColor = SystemColors.Menu;
+            MenuOptionsItemCompress.Enabled = false;
+            MenuOptionsItemCompress.Name = "MenuOptionsItemCompress";
+            MenuOptionsItemCompress.Checked = false;
+            MenuOptionsItemCompress.Size = new Size(164, 22);
+            MenuOptionsItemCompress.Text = "🗜Compress 📁files before ✉sending";
             // 
-            // MenuEditItemCopy
+            // MenuOptionsItemFileSecure
             // 
-            MenuEditItemCopy.BackColor = SystemColors.Menu;
-            MenuEditItemCopy.Enabled = false;
-            MenuEditItemCopy.Name = "MenuEditItemCopy";
-            MenuEditItemCopy.ShortcutKeys = Keys.Control | Keys.C;
-            MenuEditItemCopy.Size = new Size(164, 22);
-            MenuEditItemCopy.Text = "Copy";
+            MenuOptionsItemFileSecure.BackColor = SystemColors.Menu;
+            MenuOptionsItemFileSecure.Enabled = false;
+            MenuOptionsItemFileSecure.Name = "MenuOptionsItemFileSecure";
+            MenuOptionsItemFileSecure.Checked = false;
+            MenuOptionsItemFileSecure.Size = new Size(164, 22);
+            MenuOptionsItemFileSecure.Text = "✉send only 🔒secure 📁ffiles";
+            MenuOptionsItemFileSecure.ToolTipText = "e.g.images, pdf, ps, rtf, instead of possible macro virus containing formats";
             // 
-            // MenuIEditItemPaste
+            // MenuOptionsItemClearAllOnClose
             // 
-            MenuIEditItemPaste.BackColor = SystemColors.Menu;
-            MenuIEditItemPaste.Enabled = false;
-            MenuIEditItemPaste.Name = "MenuIEditItemPaste";
-            MenuIEditItemPaste.ShortcutKeys = Keys.Control | Keys.V;
-            MenuIEditItemPaste.Size = new Size(164, 22);
-            MenuIEditItemPaste.Text = "Paste";
+            MenuOptionsItemClearAllOnClose.BackColor = SystemColors.Menu;
+            MenuOptionsItemClearAllOnClose.Enabled = false;
+            MenuOptionsItemClearAllOnClose.Name = "MenuOptionsItemClearAllOnClose";
+            MenuOptionsItemClearAllOnClose.Checked = false;
+            MenuOptionsItemClearAllOnClose.Size = new Size(164, 22);
+            MenuOptionsItemClearAllOnClose.Text = "✂␡ all chats, 📁attachments on close";
+            MenuOptionsItemClearAllOnClose.ToolTipText = "When closing this application, ␡ all chats, saved 📁attachments and private 🔑keys";
             // 
-            // MenuEditItemSelectAll
+            // MenuOptionsItemDontSendProfilePictures
             // 
-            MenuEditItemSelectAll.BackColor = SystemColors.Menu;
-            MenuEditItemSelectAll.Enabled = false;
-            MenuEditItemSelectAll.Name = "MenuEditItemSelectAll";
-            MenuEditItemSelectAll.ShortcutKeys = Keys.Control | Keys.A;
-            MenuEditItemSelectAll.Size = new Size(164, 22);
-            MenuEditItemSelectAll.Text = "Select All";
+            MenuOptionsItemDontSendProfilePictures.BackColor = SystemColors.Menu;
+            MenuOptionsItemDontSendProfilePictures.Enabled = false;
+            MenuOptionsItemDontSendProfilePictures.Name = "MenuOptionsItemDontSendProfilePictures";
+            MenuOptionsItemDontSendProfilePictures.Checked = false;
+            MenuOptionsItemDontSendProfilePictures.Size = new Size(164, 22);
+            MenuOptionsItemDontSendProfilePictures.Text = "Don't send profile pictures";
             // 
             // FileOpenDialog
             // 
@@ -913,83 +915,90 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private Panel PanelDestination;
         private Panel PanelCenter;
         private Panel PanelBottom;
-        private TextBox TextBoxPipe;
         private ComboBox ComboBoxIp;
         private ComboBox ComboBoxSecretKey;
+        private ComboBox ComboBoxContacts;
         private SplitContainer SplitChatView;
         private TextBox TextBoxSource;
         private TextBox TextBoxDestionation;
-        private Button ButtonKey;
+        private TextBox TextBoxPipe;
+        private RichTextBox RichTextBoxOneView;
         private RichTextBox RichTextBoxChat;
         private PictureBox PictureBoxYou;
         private PictureBox PictureBoxPartner;
+        private Button ButtonKey;
+        private Button ButtonAttach;
+        private Button ButtonSend;
+        private Button ButtonClear;
+        private Button ButtonCheck;
+        private Controls.GroupBoxLinkLabels GroupBoxLinks;
 
         internal MenuStrip StripMenu;
         private StatusStrip StripStatus;
         private ToolStripMenuItem toolStripMenuMain;
-        private ToolStripMenuItem MenuHelpItemAbout;
-        private ToolStripMenuItem toolStripMenuItemOld;
+
         private ToolStripSeparator MenuNetworkSeparatorIp;
-        private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem toolStripMenuItemOpen;
         private ToolStripMenuItem toolStripMenuItemClose;
-        private ToolStripMenuItem MenuHelpItemInfo;
+
         private ToolStripMenuItem toolStripMenuItemExit;
-        private ToolStripMenuItem MenuView;
+
         private ToolStripMenuItem MenuFile;
         private ToolStripMenuItem MenuFileItemOpen;
         private ToolStripMenuItem MenuFileItemSave;
-        private ToolStripMenuItem MenuFileItemExit;
-        private ToolStripMenuItem toolStripMenuTForms;
-        private ToolStripMenuItem MenuHelp;
-        private ToolStripMenuItem MenuHelpItemViewHelp;
-        private ToolStripProgressBar StripProgressBar;
-        private ToolStripStatusLabel StripStatusLabel;
         private ToolStripSeparator MenuFileSeparator;
-        private ToolStripMenuItem MenuNetwork;
-        private ToolStripMenuItem MenuNetworkItemMyIps;
-        private ToolStripMenuItem MenuItemFriendIp;
-        private ToolStripMenuItem MenuNetworkItemProxyServers;
-        private ToolStripComboBox MenuNetworkComboBoxFriendIp;
-        private ToolStripMenuItem MenuNetworkItemIPv6Secure;
-        private ToolStripMenuItem MenuCommands;
-        private ToolStripMenuItem MenuCommandsItemSend;
-        private ToolStripMenuItem MenuEdit;
-        private ToolStripMenuItem MenuCommandsItemRefresh;
-        private ToolStripMenuItem MenuCommandsItemClear;
-        private ToolStripMenuItem MenuEditItemCut;
-        private ToolStripMenuItem MenuEditItemCopy;
-        private ToolStripMenuItem MenuIEditItemPaste;
-        private ToolStripMenuItem MenuEditItemSelectAll;
+        private ToolStripMenuItem MenuFileItemPersist;
+        private ToolStripSeparator MenuFileSeparatorExit;
+        private ToolStripMenuItem MenuFileItemExit;
+
+        private ToolStripMenuItem MenuView;
         private ToolStripMenuItem MenuViewItemLeftRíght;
         private ToolStripMenuItem MenuViewItemTopBottom;
         private ToolStripMenuItem MenuViewItem1View;
+
+
+        private ToolStripMenuItem MenuNetwork;
+        private ToolStripMenuItem MenuNetworkItemMyIps;
+        private ToolStripMenuItem MenuItemExternalIp;
+        private ToolStripMenuItem MenuItemFriendIp;
+        private ToolStripComboBox MenuNetworkComboBoxFriendIp;
+        private ToolStripMenuItem MenuNetworkItemProxyServers;
+        private ToolStripMenuItem MenuNetworkItemIPv6Secure;
+
+        private ToolStripMenuItem MenuCommands;
+        private ToolStripMenuItem MenuCommandsItemSend;
+        private ToolStripMenuItem MenuCommandsItemRefresh;
+        private ToolStripMenuItem MenuCommandsItemClear;
+        private ToolStripMenuItem MenuCommandsItemAttach;
+        private ToolStripSeparator MenuCommandsSeperator;
+
         private ToolStripMenuItem MenuContacts;
         private ToolStripMenuItem MenuContactstemImport;
         private ToolStripMenuItem MenuContactsItemAdd;
         private ToolStripMenuItem MenuContactsItemView;
         private ToolStripMenuItem MenuContactsItemMe;
-        private RichTextBox RichTextBoxOneView;
-        private ToolStripMenuItem MenuItemExternalIp;
         private ToolStripSeparator MenuContactsSeparetor;
         private ToolStripMenuItem MenuContactstemExport;
-        private ToolStripMenuItem MenuFileItemPersist;
-        private ToolStripSeparator MenuFileSeparatorExit;
-        private ToolStripMenuItem MenuCommandsItemAttach;
-        private ToolStripSeparator MenuCommandsSeperator;
-        private ToolStripMenuItem toolStripMenuItem4;
-        private ToolStripMenuItem toolStripMenuItem5;
-        private ToolStripSeparator toolStripSeparator2;
+
+        private ToolStripMenuItem MenuOptions;
+        private ToolStripMenuItem MenuOptionsItemCompress;
+        private ToolStripMenuItem MenuOptionsItemFileSecure;
+        private ToolStripMenuItem MenuOptionsItemClearAllOnClose;
+        private ToolStripMenuItem MenuOptionsItemDontSendProfilePictures;
+
+        private ToolStripMenuItem MenuHelp;
+        private ToolStripMenuItem MenuHelpItemViewHelp;
+        private ToolStripMenuItem MenuHelpItemInfo;
+        private ToolStripMenuItem MenuHelpItemAbout;
+
+        private ToolStripProgressBar StripProgressBar;
+        private ToolStripStatusLabel StripStatusLabel;
 
         private OpenFileDialog FileOpenDialog;
         private SaveFileDialog FileSaveDialog;
 
-        private Button ButtonAttach;
-        private Controls.GroupBoxLinkLabels GroupBoxLinks;
-        private Button ButtonSend;
-        private Button ButtonClear;
-        private Button ButtonCheck;
-        private ComboBox ComboBoxContacts;
+
+
     }
 
 }
