@@ -18,6 +18,8 @@ using Area23.At.Framework.Core.Crypt.Cipher;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core;
+using Newtonsoft.Json;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -154,7 +156,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     Address = this.textBoxAddress.Text ?? string.Empty,
                     ContactImage = CqrImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString())
 
-                };                  
+                };       
+                AppDomain.CurrentDomain.SetData(Constants.MY_CONTACT, JsonConvert.SerializeObject(Settings.Singleton.MyContact));
                 Settings.SaveSettings(Entities.Settings.Singleton);
             }
         }

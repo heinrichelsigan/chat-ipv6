@@ -5,6 +5,7 @@ using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Win32Api;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
@@ -15,6 +16,7 @@ namespace EU.CqrXs.WinForm.SecureChat
     {
         internal static string progName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
         private static Mutex mutex = new Mutex(true, progName);
+        static internal int mode = 0;
 
         internal static Mutex PMutec
         {
@@ -25,7 +27,7 @@ namespace EU.CqrXs.WinForm.SecureChat
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             if (PMutec == null)
                 mutex = new Mutex(true, progName);
@@ -38,13 +40,30 @@ namespace EU.CqrXs.WinForm.SecureChat
                 MessageBox.Show($"Another instance of {progName} is already running!", $"{progName}: multiple startup!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return;
             }
+
+            if (args != null && args.Length > 0)
+            {
+                foreach (string arg in args)
+                {
+                    if (arg.ToLower().Contains("peer"))
+                        mode += 0x2;
+                    if (arg.ToLower().Contains("server"))
+                        mode += 0x4;
+                }
+            }
+
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetHighDpiMode(HighDpiMode.DpiUnawareGdiScaled);
             ApplicationConfiguration.Initialize();
-            Form newChat = (Form)(new Gui.Forms.SecureChat());
+            Form newChat;
+            if (mode % 2 == 0)
+                newChat = (Form)(new Gui.Forms.Peer2PeerChat());
+            else
+                newChat = (Form)(new Gui.Forms.SecureChat());
+
             Application.Run(newChat);
             
             ReleaseCloseDisposeMutex(mutex);

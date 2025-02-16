@@ -73,6 +73,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuOptionsItemFileSecure = new ToolStripMenuItem();
             MenuOptionsItemClearAllOnClose = new ToolStripMenuItem();
             MenuOptionsItemDontSendProfilePictures = new ToolStripMenuItem();
+            MenuOptionsItemOnlyPeer2Peer = new ToolStripMenuItem();
             FileOpenDialog = new OpenFileDialog();
             FileSaveDialog = new SaveFileDialog();
             StripStatus = new StatusStrip();
@@ -493,35 +494,35 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // MenuOptions
             // 
             MenuOptions.BackColor = SystemColors.MenuBar;
-            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures });
-            MenuOptions.Enabled = false;
+            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures, MenuOptionsItemOnlyPeer2Peer  });
+            MenuOptions.Enabled = true;
             MenuOptions.Name = "MenuOptions";
             MenuOptions.Size = new Size(46, 21);
-            MenuOptions.Text = "Options";
+            MenuOptions.Text = "options";
             // 
             // MenuOptionsItemCompress
             // 
             MenuOptionsItemCompress.BackColor = SystemColors.Menu;
-            MenuOptionsItemCompress.Enabled = false;
+            MenuOptionsItemCompress.Enabled = true;
             MenuOptionsItemCompress.Name = "MenuOptionsItemCompress";
             MenuOptionsItemCompress.Checked = false;
             MenuOptionsItemCompress.Size = new Size(164, 22);
-            MenuOptionsItemCompress.Text = "🗜Compress 📁files before ✉sending";
+            MenuOptionsItemCompress.Text = "🗜compress 📁files before ✉sending";
             // 
             // MenuOptionsItemFileSecure
             // 
             MenuOptionsItemFileSecure.BackColor = SystemColors.Menu;
-            MenuOptionsItemFileSecure.Enabled = false;
+            MenuOptionsItemFileSecure.Enabled = true;
             MenuOptionsItemFileSecure.Name = "MenuOptionsItemFileSecure";
             MenuOptionsItemFileSecure.Checked = false;
             MenuOptionsItemFileSecure.Size = new Size(164, 22);
-            MenuOptionsItemFileSecure.Text = "✉send only 🔒secure 📁ffiles";
+            MenuOptionsItemFileSecure.Text = "✉send only 🔒secure 📁files";
             MenuOptionsItemFileSecure.ToolTipText = "e.g.images, pdf, ps, rtf, instead of possible macro virus containing formats";
             // 
             // MenuOptionsItemClearAllOnClose
             // 
             MenuOptionsItemClearAllOnClose.BackColor = SystemColors.Menu;
-            MenuOptionsItemClearAllOnClose.Enabled = false;
+            MenuOptionsItemClearAllOnClose.Enabled = true;
             MenuOptionsItemClearAllOnClose.Name = "MenuOptionsItemClearAllOnClose";
             MenuOptionsItemClearAllOnClose.Checked = false;
             MenuOptionsItemClearAllOnClose.Size = new Size(164, 22);
@@ -531,11 +532,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // MenuOptionsItemDontSendProfilePictures
             // 
             MenuOptionsItemDontSendProfilePictures.BackColor = SystemColors.Menu;
-            MenuOptionsItemDontSendProfilePictures.Enabled = false;
+            MenuOptionsItemDontSendProfilePictures.Enabled = true;
             MenuOptionsItemDontSendProfilePictures.Name = "MenuOptionsItemDontSendProfilePictures";
             MenuOptionsItemDontSendProfilePictures.Checked = false;
             MenuOptionsItemDontSendProfilePictures.Size = new Size(164, 22);
-            MenuOptionsItemDontSendProfilePictures.Text = "Don't send profile pictures";
+            MenuOptionsItemDontSendProfilePictures.Text = "don't send profile pictures";
+            // 
+            // MenuOptionsItemOnlyPeer2Peer
+            // 
+            MenuOptionsItemDontSendProfilePictures.BackColor = SystemColors.Menu;
+            MenuOptionsItemDontSendProfilePictures.Enabled = true;
+            MenuOptionsItemDontSendProfilePictures.Name = "MenuOptionsItemOnlyPeer2Peer";
+            MenuOptionsItemDontSendProfilePictures.Checked = false;
+            MenuOptionsItemDontSendProfilePictures.Size = new Size(164, 22);
+            MenuOptionsItemDontSendProfilePictures.Text = "only peer-2-peer chat";
             // 
             // FileOpenDialog
             // 
@@ -932,13 +942,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private Controls.GroupBoxLinkLabels GroupBoxLinks;
 
         internal MenuStrip StripMenu;
-        private StatusStrip StripStatus;
-        
-        private ToolStripSeparator MenuNetworkSeparatorIp;
-        private ToolStripMenuItem toolStripMenuItemOpen;
-        private ToolStripMenuItem toolStripMenuItemClose;
-        
-        private ToolStripMenuItem toolStripMenuItemExit;        
+        private StatusStrip StripStatus;                       
         
         private ToolStripMenuItem MenuFile;
         private ToolStripMenuItem MenuFileItemOpen;
@@ -961,6 +965,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripComboBox MenuNetworkComboBoxFriendIp;
         private ToolStripMenuItem MenuNetworkItemProxyServers;
         private ToolStripMenuItem MenuNetworkItemIPv6Secure;
+        private ToolStripSeparator MenuNetworkSeparatorIp;
 
         private ToolStripMenuItem MenuCommands;
         private ToolStripMenuItem MenuCommandsItemSend;        
@@ -982,7 +987,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripMenuItem MenuOptionsItemFileSecure;
         private ToolStripMenuItem MenuOptionsItemClearAllOnClose;
         private ToolStripMenuItem MenuOptionsItemDontSendProfilePictures;
-        
+        private ToolStripMenuItem MenuOptionsItemOnlyPeer2Peer;
+
+
         private ToolStripMenuItem MenuHelp;
         private ToolStripMenuItem MenuHelpItemViewHelp;
         private ToolStripMenuItem MenuHelpItemInfo;

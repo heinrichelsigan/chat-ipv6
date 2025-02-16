@@ -115,6 +115,20 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             return response;
         }
 
+        public string Send1st_CqrSrvMsg1(string serializedContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        {            
+            string encMsg = CqrBaseMsg(serializedContact, encodingType);
+            string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
+                encMsg);
+
+            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
+
+            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+
+            return response;
+        }
+
 
     }
 

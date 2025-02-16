@@ -74,6 +74,7 @@ namespace Area23.At.Framework.Core
         public const string ENTER_IP_CONTACT = "[Enter IPv4/IPv6 or select Contact]";
         public const string ENTER_IP = "[Enter peer IPv4/IPv6]";
         public const string ENTER_CONTACT = "[Select Contact]";
+        public const string MY_CONTACT = "MyContact";
 
         public const string AUTHOR = "Heinrich Elsigan";
         public const string AUTHOR_EMAIL = "heinrich.elsigan@area23.at";

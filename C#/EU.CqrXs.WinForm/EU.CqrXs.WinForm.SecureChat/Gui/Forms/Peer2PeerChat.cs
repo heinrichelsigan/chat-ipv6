@@ -30,9 +30,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
 
     /// <summary>
-    /// SecureChat main form
+    /// Peer2PeerChat main form
     /// </summary>
-    public partial class SecureChat : BaseChatForm
+    public partial class Peer2PeerChat : BaseChatForm
     {
 
         #region fields        
@@ -102,7 +102,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <summary>
         /// Ctor
         /// </summary>
-        public SecureChat() : base()
+        public Peer2PeerChat() : base()
         {
             InitializeComponent();
             TextBoxSource.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
@@ -123,7 +123,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         }
 
 
-        private async void SecureChat_Load(object sender, EventArgs e)
+        private async void Peer2PeerChat_Load(object sender, EventArgs e)
         {
             bool send1stReg = false;
             this.StripProgressBar.Value = 0;
@@ -487,7 +487,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.StripProgressBar.Value = 50;
 
             CqrContact myContact = Entities.Settings.Singleton.MyContact;
-            string ser = (string)AppDomain.CurrentDomain.GetData(Constants.MY_CONTACT);
             string encrypted = srv1stMsg.CqrSrvMsg1(myContact, EncodingType.Base64);
             Thread.Sleep(100);
 

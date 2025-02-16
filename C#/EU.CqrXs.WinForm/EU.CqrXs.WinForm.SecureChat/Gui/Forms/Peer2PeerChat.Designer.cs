@@ -1,11 +1,9 @@
-﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Net.WebHttp;
+﻿using Area23.At.Framework.Core.Net.WebHttp;
 using System.Net;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
-
-    partial class RichTextChat
+    partial class Peer2PeerChat
     {
         /// <summary>
         /// Required designer variable.
@@ -66,15 +64,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuContactsSeparetor = new ToolStripSeparator();
             MenuContactstemImport = new ToolStripMenuItem();
             MenuContactstemExport = new ToolStripMenuItem();
-            MenuHelp = new ToolStripMenuItem();
-            MenuHelpItemViewHelp = new ToolStripMenuItem();
-            MenuHelpItemInfo = new ToolStripMenuItem();
-            MenuHelpItemAbout = new ToolStripMenuItem();
             MenuOptions = new ToolStripMenuItem();
             MenuOptionsItemCompress = new ToolStripMenuItem();
             MenuOptionsItemFileSecure = new ToolStripMenuItem();
             MenuOptionsItemClearAllOnClose = new ToolStripMenuItem();
             MenuOptionsItemDontSendProfilePictures = new ToolStripMenuItem();
+            MenuHelp = new ToolStripMenuItem();
+            MenuHelpItemViewHelp = new ToolStripMenuItem();
+            MenuHelpItemInfo = new ToolStripMenuItem();
+            MenuHelpItemAbout = new ToolStripMenuItem();
             FileOpenDialog = new OpenFileDialog();
             FileSaveDialog = new SaveFileDialog();
             StripStatus = new StatusStrip();
@@ -101,6 +99,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonAttach = new Button();
             ButtonSend = new Button();
             ButtonClear = new Button();
+            MenuOptionsItemOnlyPeer2Peer = new ToolStripMenuItem();
             StripMenu.SuspendLayout();
             StripStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
@@ -440,6 +439,48 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuContactstemExport.Text = "export contacts";
             MenuContactstemExport.ToolTipText = "export contacts to a json file";
             // 
+            // MenuOptions
+            // 
+            MenuOptions.BackColor = SystemColors.MenuBar;
+            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures, MenuOptionsItemOnlyPeer2Peer });
+            MenuOptions.Name = "MenuOptions";
+            MenuOptions.Size = new Size(72, 21);
+            MenuOptions.Text = "options";
+            // 
+            // MenuOptionsItemCompress
+            // 
+            MenuOptionsItemCompress.BackColor = SystemColors.Menu;
+            MenuOptionsItemCompress.Enabled = false;
+            MenuOptionsItemCompress.Name = "MenuOptionsItemCompress";
+            MenuOptionsItemCompress.Size = new Size(335, 22);
+            MenuOptionsItemCompress.Text = "🗜compress 📁files before ✉sending";
+            // 
+            // MenuOptionsItemFileSecure
+            // 
+            MenuOptionsItemFileSecure.BackColor = SystemColors.Menu;
+            MenuOptionsItemFileSecure.Checked = true;
+            MenuOptionsItemFileSecure.CheckState = CheckState.Checked;
+            MenuOptionsItemFileSecure.Name = "MenuOptionsItemFileSecure";
+            MenuOptionsItemFileSecure.Size = new Size(335, 22);
+            MenuOptionsItemFileSecure.Text = "✉send only 🔒secure 📁files";
+            MenuOptionsItemFileSecure.ToolTipText = "e.g.images, pdf, ps, rtf, instead of possible macro virus containing formats";
+            // 
+            // MenuOptionsItemClearAllOnClose
+            // 
+            MenuOptionsItemClearAllOnClose.BackColor = SystemColors.Menu;
+            MenuOptionsItemClearAllOnClose.Name = "MenuOptionsItemClearAllOnClose";
+            MenuOptionsItemClearAllOnClose.Size = new Size(335, 22);
+            MenuOptionsItemClearAllOnClose.Text = "✂␡ all chats, 📁attachments on close";
+            MenuOptionsItemClearAllOnClose.ToolTipText = "When closing this application, ␡ all chats, saved 📁attachments and private 🔑keys";
+            // 
+            // MenuOptionsItemDontSendProfilePictures
+            // 
+            MenuOptionsItemDontSendProfilePictures.BackColor = SystemColors.Menu;
+            MenuOptionsItemDontSendProfilePictures.Enabled = false;
+            MenuOptionsItemDontSendProfilePictures.Name = "MenuOptionsItemDontSendProfilePictures";
+            MenuOptionsItemDontSendProfilePictures.Size = new Size(335, 22);
+            MenuOptionsItemDontSendProfilePictures.Text = "don't send profile pictures";
+            // 
             // MenuHelp
             // 
             MenuHelp.BackColor = SystemColors.MenuBar;
@@ -491,53 +532,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuHelpItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuHelpItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
             MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;
-            // 
-            // MenuOptions
-            // 
-            MenuOptions.BackColor = SystemColors.MenuBar;
-            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures });
-            MenuOptions.Enabled = false;
-            MenuOptions.Name = "MenuOptions";
-            MenuOptions.Size = new Size(46, 21);
-            MenuOptions.Text = "Options";
-            // 
-            // MenuOptionsItemCompress
-            // 
-            MenuOptionsItemCompress.BackColor = SystemColors.Menu;
-            MenuOptionsItemCompress.Enabled = false;
-            MenuOptionsItemCompress.Name = "MenuOptionsItemCompress";
-            MenuOptionsItemCompress.Checked = false;
-            MenuOptionsItemCompress.Size = new Size(164, 22);
-            MenuOptionsItemCompress.Text = "🗜Compress 📁files before ✉sending";
-            // 
-            // MenuOptionsItemFileSecure
-            // 
-            MenuOptionsItemFileSecure.BackColor = SystemColors.Menu;
-            MenuOptionsItemFileSecure.Enabled = false;
-            MenuOptionsItemFileSecure.Name = "MenuOptionsItemFileSecure";
-            MenuOptionsItemFileSecure.Checked = false;
-            MenuOptionsItemFileSecure.Size = new Size(164, 22);
-            MenuOptionsItemFileSecure.Text = "✉send only 🔒secure 📁ffiles";
-            MenuOptionsItemFileSecure.ToolTipText = "e.g.images, pdf, ps, rtf, instead of possible macro virus containing formats";
-            // 
-            // MenuOptionsItemClearAllOnClose
-            // 
-            MenuOptionsItemClearAllOnClose.BackColor = SystemColors.Menu;
-            MenuOptionsItemClearAllOnClose.Enabled = false;
-            MenuOptionsItemClearAllOnClose.Name = "MenuOptionsItemClearAllOnClose";
-            MenuOptionsItemClearAllOnClose.Checked = false;
-            MenuOptionsItemClearAllOnClose.Size = new Size(164, 22);
-            MenuOptionsItemClearAllOnClose.Text = "✂␡ all chats, 📁attachments on close";
-            MenuOptionsItemClearAllOnClose.ToolTipText = "When closing this application, ␡ all chats, saved 📁attachments and private 🔑keys";
-            // 
-            // MenuOptionsItemDontSendProfilePictures
-            // 
-            MenuOptionsItemDontSendProfilePictures.BackColor = SystemColors.Menu;
-            MenuOptionsItemDontSendProfilePictures.Enabled = false;
-            MenuOptionsItemDontSendProfilePictures.Name = "MenuOptionsItemDontSendProfilePictures";
-            MenuOptionsItemDontSendProfilePictures.Checked = false;
-            MenuOptionsItemDontSendProfilePictures.Size = new Size(164, 22);
-            MenuOptionsItemDontSendProfilePictures.Text = "Don't send profile pictures";
             // 
             // FileOpenDialog
             // 
@@ -865,7 +859,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonClear.UseVisualStyleBackColor = true;
             ButtonClear.Click += ButtonClear_Click;
             // 
-            // RichTextChat
+            // MenuOptionsItemOnlyPeer2Peer
+            // 
+            MenuOptionsItemOnlyPeer2Peer.Checked = true;
+            MenuOptionsItemOnlyPeer2Peer.CheckState = CheckState.Checked;
+            MenuOptionsItemOnlyPeer2Peer.Enabled = false;
+            MenuOptionsItemOnlyPeer2Peer.Name = "MenuOptionsItemOnlyPeer2Peer";
+            MenuOptionsItemOnlyPeer2Peer.Size = new Size(335, 22);
+            MenuOptionsItemOnlyPeer2Peer.Text = "only peer-2-peer chat";
+            MenuOptionsItemOnlyPeer2Peer.ToolTipText = "Don't connect to server, only peer 2 peer chat";
+            // 
+            // Peer2PeerChat
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -884,11 +888,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             Font = new Font("Lucida Sans Unicode", 10F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenuStrip = StripMenu;
-            Name = "RichTextChat";
+            Name = "Peer2PeerChat";
             SizeGripStyle = SizeGripStyle.Show;
-            Text = "RichTextChat";
+            Text = "Peer2PeerChat";
             FormClosing += FormClose_Click;
-            Load += RichTextChat_Load;
+            Load += Peer2PeerChat_Load;
             StripMenu.ResumeLayout(false);
             StripMenu.PerformLayout();
             StripStatus.ResumeLayout(false);
@@ -914,7 +918,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private Panel PanelEnCodeCrypt;
         private Panel PanelDestination;
         private Panel PanelCenter;
-        private Panel PanelBottom;
+        private Panel PanelBottom;        
         private ComboBox ComboBoxIp;
         private ComboBox ComboBoxSecretKey;
         private ComboBox ComboBoxContacts;
@@ -923,19 +927,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private TextBox TextBoxDestionation;
         private TextBox TextBoxPipe;
         private RichTextBox RichTextBoxOneView;
-        private RichTextBox RichTextBoxChat;
+        private RichTextBox RichTextBoxChat;                
         private PictureBox PictureBoxYou;
         private PictureBox PictureBoxPartner;
         private Button ButtonKey;
         private Button ButtonAttach;
         private Button ButtonSend;
         private Button ButtonClear;
-        private Button ButtonCheck;
+        private Button ButtonCheck;        
         private Controls.GroupBoxLinkLabels GroupBoxLinks;
 
         internal MenuStrip StripMenu;
-        private StatusStrip StripStatus;
-
+        private StatusStrip StripStatus;                      
+        
         private ToolStripMenuItem MenuFile;
         private ToolStripMenuItem MenuFileItemOpen;
         private ToolStripMenuItem MenuFileItemSave;
@@ -943,13 +947,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripMenuItem MenuFileItemPersist;
         private ToolStripSeparator MenuFileSeparatorExit;
         private ToolStripMenuItem MenuFileItemExit;
-
+        
         private ToolStripMenuItem MenuView;
         private ToolStripMenuItem MenuViewItemLeftRíght;
         private ToolStripMenuItem MenuViewItemTopBottom;
         private ToolStripMenuItem MenuViewItem1View;
-
-
+              
+              
         private ToolStripMenuItem MenuNetwork;
         private ToolStripMenuItem MenuNetworkItemMyIps;
         private ToolStripMenuItem MenuItemExternalIp;
@@ -960,7 +964,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripSeparator MenuNetworkSeparatorIp;
 
         private ToolStripMenuItem MenuCommands;
-        private ToolStripMenuItem MenuCommandsItemSend;
+        private ToolStripMenuItem MenuCommandsItemSend;        
         private ToolStripMenuItem MenuCommandsItemRefresh;
         private ToolStripMenuItem MenuCommandsItemClear;
         private ToolStripMenuItem MenuCommandsItemAttach;
@@ -979,21 +983,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private ToolStripMenuItem MenuOptionsItemFileSecure;
         private ToolStripMenuItem MenuOptionsItemClearAllOnClose;
         private ToolStripMenuItem MenuOptionsItemDontSendProfilePictures;
-
+        
         private ToolStripMenuItem MenuHelp;
         private ToolStripMenuItem MenuHelpItemViewHelp;
         private ToolStripMenuItem MenuHelpItemInfo;
         private ToolStripMenuItem MenuHelpItemAbout;
 
         private ToolStripProgressBar StripProgressBar;
-        private ToolStripStatusLabel StripStatusLabel;
+        private ToolStripStatusLabel StripStatusLabel;                        
 
 
         private OpenFileDialog FileOpenDialog;
         private SaveFileDialog FileSaveDialog;
-
-
-
+        private ToolStripMenuItem MenuOptionsItemOnlyPeer2Peer;
     }
-
 }
