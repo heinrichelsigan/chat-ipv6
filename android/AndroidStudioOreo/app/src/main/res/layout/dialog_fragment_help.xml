@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="4dp"
+    android:layout_margin="4dp"
+    android:background="@color/colorSupuBackground"
+    tools:context="eu.georgtoth.supu.ui.dialogfragment.HelpDialog">
+
+    <ImageView
+        android:id="@+id/appHeader"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="#880000"
+        android:baselineAlignBottom="false"
+        android:contentDescription="@string/app_name"
+        android:scaleType="center"
+        android:src="@drawable/header" />
+
+    <TextView
+        android:id="@+id/helpTextView"
+        android:layout_width="match_parent"
+        android:layout_height="168dp"
+        android:layout_margin="20dp"
+        android:maxHeight="192dp"
+        android:scrollbars="horizontal"
+        android:text="@string/help_help"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:background="@color/bgWhite"
+        android:textColor="@color/bgBlackDark"
+        tools:maxHeight="320dp" />
+
+    <TextView
+        android:id                  ="@+id/builtWithTextView"
+        android:layout_width        ="match_parent"
+        android:layout_height       ="wrap_content"
+        android:textSize            ="12sp"
+        android:textStyle           ="normal"
+        android:textColor="@color/colorYellowAlert"
+        android:layout_marginLeft   ="20dp"
+        android:layout_marginRight  ="20dp"
+        android:text                ="@string/build_with" />
+
+
+    <!-- Button
+        android:id           ="@+id/learnMoreButton"
+        android:layout_width ="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft   ="20dp"
+        android:layout_marginRight  ="20dp"
+        android:text         ="@string/learn_more" /-->
+    <!-- Button
+        android:id           ="@+id/backButton"
+        android:layout_width ="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft   ="20dp"
+        android:layout_marginRight  ="20dp"
+        android:text         ="@string/back_button" /-->
+
+</LinearLayout>

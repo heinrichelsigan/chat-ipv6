@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="rid">
+
+        <item name="r_A4"  type="id" format="integer">400040</item>
+        <item name="r_B4"  type="id" format="integer">401040</item>
+        <item name="r_C4"  type="id" format="integer">402040</item>
+        <item name="r_D4"  type="id" format="integer">404040</item>
+        <item name="r_E4"  type="id" format="integer">404040</item>
+        <item name="r_F4"  type="id" format="integer">405040</item>
+        <item name="r_G4"  type="id" format="integer">406040</item>
+        <item name="r_H4"  type="id" format="integer">407040</item>
+        <item name="r_I4"  type="id" format="integer">408040</item>
+        <item name="r_J4"  type="id" format="integer">409040</item>
+
+
+        <item name="r_A5"  type="id" format="integer">400050</item>
+        <item name="r_B5"  type="id" format="integer">401050</item>
+        <item name="r_C5"  type="id" format="integer">402050</item>
+        <item name="r_D5"  type="id" format="integer">404050</item>
+        <item name="r_E5"  type="id" format="integer">404050</item>
+        <item name="r_F5"  type="id" format="integer">405050</item>
+        <item name="r_G5"  type="id" format="integer">406050</item>
+        <item name="r_H5"  type="id" format="integer">407050</item>
+        <item name="r_I5"  type="id" format="integer">408050</item>
+        <item name="r_J5"  type="id" format="integer">409050</item>
+
+        <item name="r_A6"  type="id" format="integer">400060</item>
+        <item name="r_B6"  type="id" format="integer">401060</item>
+        <item name="r_C6"  type="id" format="integer">402060</item>
+        <item name="r_D6"  type="id" format="integer">404060</item>
+        <item name="r_E6"  type="id" format="integer">404060</item>
+        <item name="r_F6"  type="id" format="integer">405060</item>
+        <item name="r_G6"  type="id" format="integer">406060</item>
+        <item name="r_H6"  type="id" format="integer">407060</item>
+        <item name="r_I6"  type="id" format="integer">408060</item>
+        <item name="r_J6"  type="id" format="integer">409060</item>
+
+        <item name="r_A9"  type="id" format="integer">400090</item>
+        <item name="r_B9"  type="id" format="integer">401090</item>
+        <item name="r_C9"  type="id" format="integer">402090</item>
+        <item name="r_D9"  type="id" format="integer">403090</item>
+        <item name="r_E9"  type="id" format="integer">404090</item>
+        <item name="r_F9"  type="id" format="integer">405090</item>
+        <item name="r_G9"  type="id" format="integer">406090</item>
+        <item name="r_H9"  type="id" format="integer">407090</item>
+        <item name="r_I9"  type="id" format="integer">408090</item>
+        <item name="r_J9"  type="id" format="integer">409090</item>
+    </array>
+
+
+    <array name="idI">
+
+        <item name="i_a0"  type="id" format="string">A0</item>
+        <item name="i_b0"  type="id" format="string">B0</item>
+        <item name="i_c0"  type="id" format="string">C0</item>
+        <item name="i_d0"  type="id" format="string">D0</item>
+        <item name="i_e0"  type="id" format="string">E0</item>
+        <item name="i_f0"  type="id" format="string">F0</item>
+        <item name="i_g0"  type="id" format="string">G0</item>
+        <item name="i_h0"  type="id" format="string">H0</item>
+        <item name="i_i0"  type="id" format="string">i0</item>
+        <item name="i_j0"  type="id" format="string">j0</item>
+
+        <item name="i_a1"  type="id" format="string">A1</item>
+        <item name="i_b1"  type="id" format="string">B1</item>
+        <item name="i_c1"  type="id" format="string">C1</item>
+        <item name="i_d1"  type="id" format="string">D1</item>
+        <item name="i_e1"  type="id" format="string">E1</item>
+        <item name="i_f1"  type="id" format="string">F1</item>
+        <item name="i_g1"  type="id" format="string">G1</item>
+        <item name="i_h1"  type="id" format="string">H1</item>
+        <item name="i_i1"  type="id" format="string">i1</item>
+        <item name="i_j1"  type="id" format="string">j1</item>
+
+        <item name="i_a2"  type="id" format="string">A2</item>
+        <item name="i_b2"  type="id" format="string">B2</item>
+        <item name="i_c2"  type="id" format="string">C2</item>
+        <item name="i_d2"  type="id" format="string">D2</item>
+        <item name="i_e2"  type="id" format="string">E2</item>
+        <item name="i_f2"  type="id" format="string">F2</item>
+        <item name="i_g2"  type="id" format="string">G2</item>
+        <item name="i_h2"  type="id" format="string">H2</item>
+        <item name="i_i2"  type="id" format="string">i2</item>
+        <item name="i_j2"  type="id" format="string">j2</item>
+
+        <item name="i_a3"  type="id" format="string">A3</item>
+        <item name="i_b3"  type="id" format="string">B3</item>
+        <item name="i_c3"  type="id" format="string">C3</item>
+        <item name="i_d3"  type="id" format="string">D3</item>
+        <item name="i_e3"  type="id" format="string">E3</item>
+        <item name="i_f3"  type="id" format="string">F3</item>
+        <item name="i_g3"  type="id" format="string">G3</item>
+        <item name="i_h3"  type="id" format="string">H3</item>
+        <item name="i_i3"  type="id" format="string">i3</item>
+        <item name="i_j3"  type="id" format="string">j3</item>
+
+        <item name="i_a4"  type="id" format="string">A4</item>
+        <item name="i_b4"  type="id" format="string">B4</item>
+        <item name="i_c4"  type="id" format="string">C4</item>
+        <item name="i_d4"  type="id" format="string">D4</item>
+        <item name="i_e4"  type="id" format="string">E4</item>
+        <item name="i_f4"  type="id" format="string">F4</item>
+        <item name="i_g4"  type="id" format="string">G4</item>
+        <item name="i_h4"  type="id" format="string">H4</item>
+        <item name="i_i4"  type="id" format="string">i4</item>
+        <item name="i_j4"  type="id" format="string">j4</item>
+
+        <item name="i_a5"  type="id" format="string">A5</item>
+        <item name="i_b5"  type="id" format="string">B5</item>
+        <item name="i_c5"  type="id" format="string">C5</item>
+        <item name="i_d5"  type="id" format="string">D5</item>
+        <item name="i_e5"  type="id" format="string">E5</item>
+        <item name="i_f5"  type="id" format="string">F5</item>
+        <item name="i_g5"  type="id" format="string">G5</item>
+        <item name="i_h5"  type="id" format="string">H5</item>
+        <item name="i_i5"  type="id" format="string">i5</item>
+        <item name="i_j5"  type="id" format="string">j5</item>
+
+        <item name="i_a6"  type="id" format="string">A6</item>
+        <item name="i_b6"  type="id" format="string">B6</item>
+        <item name="i_c6"  type="id" format="string">C6</item>
+        <item name="i_d6"  type="id" format="string">D6</item>
+        <item name="i_e6"  type="id" format="string">E6</item>
+        <item name="i_f6"  type="id" format="string">F6</item>
+        <item name="i_g6"  type="id" format="string">G6</item>
+        <item name="i_h6"  type="id" format="string">H6</item>
+        <item name="i_i6"  type="id" format="string">i6</item>
+        <item name="i_j6"  type="id" format="string">j6</item>
+
+        <item name="i_a7"  type="id" format="string">A7</item>
+        <item name="i_b7"  type="id" format="string">B7</item>
+        <item name="i_c7"  type="id" format="string">C7</item>
+        <item name="i_d7"  type="id" format="string">D7</item>
+        <item name="i_e7"  type="id" format="string">E7</item>
+        <item name="i_f7"  type="id" format="string">F7</item>
+        <item name="i_g7"  type="id" format="string">G7</item>
+        <item name="i_h7"  type="id" format="string">H7</item>
+        <item name="i_i7"  type="id" format="string">i7</item>
+        <item name="i_j7"  type="id" format="string">j7</item>
+
+        <item name="i_a8"  type="id" format="string">A8</item>
+        <item name="i_b8"  type="id" format="string">B8</item>
+        <item name="i_c8"  type="id" format="string">C8</item>
+        <item name="i_d8"  type="id" format="string">D8</item>
+        <item name="i_e8"  type="id" format="string">E8</item>
+        <item name="i_f8"  type="id" format="string">F8</item>
+        <item name="i_g8"  type="id" format="string">G8</item>
+        <item name="i_h8"  type="id" format="string">H8</item>
+        <item name="i_i8"  type="id" format="string">i8</item>
+        <item name="i_j8"  type="id" format="string">j8</item>
+
+        <item name="i_a9"  type="id" format="string">A9</item>
+        <item name="i_b9"  type="id" format="string">B9</item>
+        <item name="i_c9"  type="id" format="string">C9</item>
+        <item name="i_d9"  type="id" format="string">D9</item>
+        <item name="i_e9"  type="id" format="string">E9</item>
+        <item name="i_f9"  type="id" format="string">F9</item>
+        <item name="i_g9"  type="id" format="string">G9</item>
+        <item name="i_h9"  type="id" format="string">H9</item>
+        <item name="i_i9"  type="id" format="string">i9</item>
+        <item name="i_j9"  type="id" format="string">j9</item>
+    </array>
+
+
+</resources>

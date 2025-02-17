@@ -243,6 +243,7 @@
   <ItemGroup>
     <Compile Include="Area23Log.cs" />
     <Compile Include="CqrXs\CqrException.cs" />
+    <Compile Include="CqrXs\CqrMsg\ClientSrvMsg.cs" />
     <Compile Include="CqrXs\CqrMsg\FullSrvMsg.cs" />
     <Compile Include="CqrXs\CqrMsg\MsgEnum.cs" />
     <Compile Include="CqrXs\CqrSettings.cs" />

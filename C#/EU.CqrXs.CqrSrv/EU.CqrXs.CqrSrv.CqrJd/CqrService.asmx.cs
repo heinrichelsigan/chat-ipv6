@@ -15,6 +15,7 @@ using EU.CqrXs.CqrSrv.CqrJd.Util;
 using Newtonsoft.Json;
 using System.IO;
 using Area23.At.Framework.Library.Util;
+using System.Reflection;
 
 
 
@@ -77,7 +78,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
-            responseMsg = responseSrvMsg.CqrSrvMsg("", EncodingType.Base64);
+            responseMsg = responseSrvMsg.CqrBaseMsg("", EncodingType.Base64);
 
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
@@ -170,7 +171,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
-            responseMsg = responseSrvMsg.CqrSrvMsg("", EncodingType.Base64);
+            responseMsg = responseSrvMsg.CqrBaseMsg("", EncodingType.Base64);
             string dummyContent = "";
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
@@ -212,7 +213,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     }
                 }
 
-                responseMsg = responseSrvMsg.CqrSrvMsg(dummyContent);
+                responseMsg = responseSrvMsg.CqrBaseMsg(dummyContent);
 
 
             }
@@ -255,7 +256,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             {
                 if (!string.IsNullOrEmpty(cryptMsgSrv) && cryptMsgSrv.Length >= 8)
                 {
-                    MsgContent msgCt = cqrServerMsg.NCqrSrvMsg(cryptMsgSrv, EncodingType.Base64);
+                    MsgContent msgCt = cqrServerMsg.NCqrBaseMsg(cryptMsgSrv, EncodingType.Base64);
                     _decrypted = msgCt.Message;
                 }
             }
@@ -265,7 +266,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
-            responseMsg = cqrResponseMsg.CqrSrvMsg(Constants.ACK, EncodingType.Base64);
+            responseMsg = cqrResponseMsg.CqrBaseMsg(Constants.ACK, EncodingType.Base64);
 
             if (!string.IsNullOrEmpty(_decrypted))
             {
@@ -313,7 +314,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             {
                 if (!string.IsNullOrEmpty(cryptMsgSrv) && cryptMsgSrv.Length >= 8)
                 {
-                    MsgContent msgCt = cqrServerMsg.NCqrSrvMsg(cryptMsgSrv, EncodingType.Base64);
+                    MsgContent msgCt = cqrServerMsg.NCqrBaseMsg(cryptMsgSrv, EncodingType.Base64);
                     _decrypted = msgCt.Message;
                 }
             }
@@ -323,7 +324,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
-            responseMsg = cqrResponseMsg.CqrSrvMsg(Constants.ACK, EncodingType.Base64);
+            responseMsg = cqrResponseMsg.CqrBaseMsg(Constants.ACK, EncodingType.Base64);
 
            // TODO:
 
@@ -332,7 +333,53 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
 
+        [WebMethod] 
+        public string UpdateContacts(string cryptMsg)
+        {
+            return cryptMsg;
+        }
 
+
+        [WebMethod]
+        public string TestService()
+        {
+
+            string ret = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().GetName().FullName) +
+                Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            object[] sattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+            if (sattributes.Length > 0)
+            {
+                AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)sattributes[0];
+                if (titleAttribute.Title != "")
+                    ret = titleAttribute.Title;
+            }
+            ret += "\n" +Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            object[] oattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+            if (oattributes.Length > 0)            
+                ret += "\n" +((AssemblyDescriptionAttribute)oattributes[0]).Description;
+
+            object[] pattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+            if (pattributes.Length > 0)
+                ret += "\n" + ((AssemblyProductAttribute)pattributes[0]).Product;
+
+            object[] crattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+            if (crattributes.Length > 0)
+                ret += "\n" + ((AssemblyCopyrightAttribute)crattributes[0]).Copyright;
+
+            object[] cpattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+            if (cpattributes.Length > 0)
+                ret += "\n"  + ((AssemblyCompanyAttribute)cpattributes[0]).Company;
+
+
+            return ret;
+
+        }
+
+    
+    
+    
     }
 
 

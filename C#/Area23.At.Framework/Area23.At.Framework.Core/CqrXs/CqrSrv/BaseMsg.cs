@@ -17,7 +17,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// <summary>
     /// Provides abstract base class for secure encrypted message to send to the server or receive from server
     /// </summary>
-    [DataContract(Name = "BaseMsg")]
     public abstract class BaseMsg
     {
         protected internal readonly string key;
@@ -28,7 +27,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         protected internal readonly SymmCipherPipe symmPipe;
 
 
-        public string PipeString { get; set; }
+        public string PipeString { get; internal set; }
 
 
         public string CqrMessage { get; protected internal set; }
@@ -61,11 +60,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public virtual string CqrBaseMsg(string msg, EncodingType encType = EncodingType.Base64)
         {
             MsgContent msc;
-            if (msg.Contains(PipeString) && msg.IndexOf(PipeString) < msg.Length - 7)
+            if (msg.Contains(PipeString) && msg.IndexOf(PipeString) > msg.Length - 10)
                 msc = new MsgContent(msg, MsgEnum.None);
             else
                 msc = new MsgContent(msg, PipeString);
-            
+
             byte[] msgBytes = DeEnCoder.GetBytesFromString(msc.RawMessage);
 
             byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
@@ -121,7 +120,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public virtual string CqrBaseAttachment(string fileName, string mimeType, string base64Mime, out MimeAttachment attachment,
             EncodingType encType = EncodingType.Base64, string sMd5 = "", string sSha256 = "")
         {
-            attachment = new MimeAttachment(fileName, mimeType, base64Mime, symmPipe.PipeString, sMd5, sSha256);            
+            attachment = new MimeAttachment(fileName, mimeType, base64Mime, symmPipe.PipeString, sMd5, sSha256);
+            attachment._isMime = true;
             string mimeMsg = attachment.MimeMsg;
             mimeMsg += "\n" + symmPipe.PipeString + "\0";
             byte[] msgBytes = DeEnCoder.GetBytesFromString(mimeMsg);
@@ -142,7 +142,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// if server and client or both side use a different secret key 4 encryption</exception>
         public virtual MsgContent NCqrBaseMsg(string cqrMessage, EncodingType encType = EncodingType.Base64)
         {
-            CqrMessage = cqrMessage.EndsWith("\0") ? cqrMessage.TrimEnd("\0".ToCharArray()) : cqrMessage;
+            CqrMessage = cqrMessage.TrimEnd("\0".ToCharArray());
 
             byte[] cipherBytes = DeEnCoder.DecodeText(CqrMessage, encType);
             byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash) : cipherBytes;
@@ -153,7 +153,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             MsgEnum msgEnum = (decrypted.IsValidJson()) ? MsgEnum.JsonSerialized : MsgEnum.RawWithHashAtEnd;
             MsgContent msgContent = new MsgContent(decrypted, msgEnum);
             string hashVerification = msgContent.Hash;
-            if (!VerifyHash(hashVerification))
+            if (!VerifyHash(hashVerification, symmPipe.PipeString))
             {
                 string hashSymShow = symmPipe.PipeString ?? "        ";
                 throw new InvalidOperationException(
@@ -163,7 +163,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
             return msgContent;
         }
-
 
 
 
@@ -202,13 +201,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// </summary>
         /// <param name="hash">verification hash parsed out of msg</param>
         /// <returns>true, if msg could be verified, otherwise false</returns>
-        protected internal virtual bool VerifyHash(string hash)
+        protected internal virtual bool VerifyHash(string hash, string pipeClientOrServer)
         {
             int failureCnt = 0;
-            int minLen = Math.Min(hash.Length, symmPipe.PipeString.Length);
+            int minLen = Math.Min(hash.Length, pipeClientOrServer.Length);
             for (int ic = 0; ic < minLen; ic++)
             {
-                if (hash[ic] != symmPipe.PipeString[ic])
+                if (hash[ic] != pipeClientOrServer[ic])
                     failureCnt += ic;
             }
 

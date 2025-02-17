@@ -1,0 +1,1225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:background="@color/colorSupuBackground">
+
+	<GridLayout
+		android:id="@+id/GridLayoutHeaderPicture"
+		android:layout_width="match_parent"
+		android:layout_height="36dp"
+		android:orientation="vertical"
+		android:columnCount="1"
+		android:rowCount="1"
+		android:stretchMode="columnWidth">
+		<ImageView
+			android:layout_width="match_parent"
+			android:layout_height="36dp"
+			android:background="@color/colorSupuBackground"
+			android:baselineAlignBottom="false"
+			android:contentDescription="@string/app_name"
+			android:scaleType="center"
+			android:src="@drawable/header" />
+	</GridLayout>
+
+	<FrameLayout
+		android:id="@+id/headerTextLayout"
+		android:tag="@string/sync_header"
+		android:layout_width="match_parent"
+		android:minWidth="320dp"
+		android:layout_marginStart="24dp"
+		android:layout_marginEnd="24dp"
+		android:layout_height="64dp"
+		android:layout_marginTop="36dp"
+		android:scaleType="center"
+		android:orientation="vertical">
+		<TextView
+			android:id="@+id/motionLabel"
+			android:layout_width="match_parent"
+			android:layout_height="64dp"
+			android:scaleType="center"
+			android:textAlignment="center"
+			android:textSize="20sp"
+			android:background="@color/colorSupuBackground"
+			android:textColor="@color/colorYellowAlert"
+			android:text="@string/header7_string"
+			/>
+	</FrameLayout>
+
+
+	<GridLayout
+		android:id="@+id/GridLayoutBoard"
+		android:layout_marginTop="100dp"
+		android:layout_marginStart="24dp"
+		android:layout_marginEnd="24dp"
+		android:layout_width="280dp"
+		android:layout_height="210dp"
+		android:columnWidth="40dp"
+		android:columnCount="7"
+		android:orientation="vertical"
+		android:rowCount="7"
+		android:stretchMode="columnWidth">
+
+		<LinearLayout
+			android:id="@+id/a6"
+			android:tag="@string/f_a6"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="0"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/b6"
+			android:tag="@string/f_b6"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="1"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/c6"
+			android:tag="@string/f_c6"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="2"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/d6"
+			android:tag="@string/f_d6"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="3"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/e6"
+			android:tag="@string/f_e6"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="4"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/f6"
+			android:tag="@string/f_f6"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="5"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/g6"
+			android:tag="@string/f_g6"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="6"
+			android:background="@drawable/stone7colorv">
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:id="@+id/a5"
+			android:tag="@string/f_a5"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="1"
+			android:layout_column="0"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/b5"
+			android:tag="@string/f_b5"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="1"
+			android:layout_column="1"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/c5"
+			android:tag="@string/f_c5"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="1"
+			android:layout_column="2"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/d5"
+			android:tag="@string/f_d5"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="1"
+			android:layout_column="3"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/e5"
+			android:tag="@string/f_e5"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="1"
+			android:layout_column="4"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/f5"
+			android:tag="@string/f_f5"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="1"
+			android:layout_column="5"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/g5"
+			android:tag="@string/f_g5"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="1"
+			android:layout_column="6"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:id="@+id/a4"
+			android:tag="@string/f_a4"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="2"
+			android:layout_column="0"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/b4"
+			android:tag="@string/f_b4"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="2"
+			android:layout_column="1"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/c4"
+			android:tag="@string/f_c4"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="2"
+			android:layout_column="2"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/d4"
+			android:tag="@string/f_d4"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="2"
+			android:layout_column="3"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/e4"
+			android:tag="@string/f_e4"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="2"
+			android:layout_column="4"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/f4"
+			android:tag="@string/f_f4"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="2"
+			android:layout_column="5"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/g4"
+			android:tag="@string/f_g4"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="2"
+			android:layout_column="6"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:id="@+id/a3"
+			android:tag="@string/f_a3"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="3"
+			android:layout_column="0"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/b3"
+			android:tag="@string/f_b3"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="3"
+			android:layout_column="1"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/c3"
+			android:tag="@string/f_c3"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="3"
+			android:layout_column="2"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/d3"
+			android:tag="@string/f_d3"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="3"
+			android:layout_column="3"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/e3"
+			android:tag="@string/f_e3"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="3"
+			android:layout_column="4"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/f3"
+			android:tag="@string/f_f3"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="3"
+			android:layout_column="5"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/g3"
+			android:tag="@string/f_g3"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="3"
+			android:layout_column="6"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:id="@+id/a2"
+			android:tag="@string/f_a2"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="4"
+			android:layout_column="0"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/b2"
+			android:tag="@string/f_b2"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="4"
+			android:layout_column="1"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/c2"
+			android:tag="@string/f_c2"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="4"
+			android:layout_column="2"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/d2"
+			android:tag="@string/f_d2"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="4"
+			android:layout_column="3"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/e2"
+			android:tag="@string/f_e2"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="4"
+			android:layout_column="4"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/f2"
+			android:tag="@string/f_f2"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="4"
+			android:layout_column="5"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/g2"
+			android:tag="@string/f_g2"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="4"
+			android:layout_column="6"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:id="@+id/a1"
+			android:tag="@string/f_a1"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="5"
+			android:layout_column="0"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/b1"
+			android:tag="@string/f_b1"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="5"
+			android:layout_column="1"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/c1"
+			android:tag="@string/f_c1"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="5"
+			android:layout_column="2"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/d1"
+			android:tag="@string/f_d1"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="5"
+			android:layout_column="3"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/e1"
+			android:tag="@string/f_e1"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="5"
+			android:layout_column="4"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/f1"
+			android:tag="@string/f_f1"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="5"
+			android:layout_column="5"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/g1"
+			android:tag="@string/f_g1"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="5"
+			android:layout_column="6"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:id="@+id/a0"
+			android:tag="@string/f_a0"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="6"
+			android:layout_column="0"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/b0"
+			android:tag="@string/f_b0"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="6"
+			android:layout_column="1"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/c0"
+			android:tag="@string/f_c0"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="6"
+			android:layout_column="2"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/d0"
+			android:tag="@string/f_d0"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="6"
+			android:layout_column="3"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/e0"
+			android:tag="@string/f_e0"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="6"
+			android:layout_column="4"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/f0"
+			android:tag="@string/f_f0"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="6"
+			android:layout_column="5"
+			android:background="@drawable/stone7colorw">
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/g0"
+			android:tag="@string/f_g0"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="6"
+			android:layout_column="6"
+			android:background="@drawable/stone7colorv">
+
+		</LinearLayout>
+
+
+	</GridLayout>
+
+
+	<GridLayout
+		android:id="@+id/GridLayoutStones"
+		android:layout_marginTop="336dp"
+		android:layout_marginStart="24dp"
+		android:layout_marginEnd="24dp"
+		android:layout_width="284dp"
+		android:layout_height="30dp"
+		android:columnWidth="32dp"
+		android:columnCount="7"
+		android:orientation="vertical"
+		android:rowCount="1"
+		android:stretchMode="columnWidth">
+
+		<LinearLayout
+			android:id="@+id/xa0"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="0"
+			android:background="@drawable/stone7colorw">
+
+			<ImageView
+				android:id="@+id/gem0a"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_a0"
+				android:src="@drawable/stone7color0"
+				android:visibility="visible" />
+
+			<ImageView
+				android:id="@+id/gem1a"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_a1"
+				android:src="@drawable/stone7color0"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem2a"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_a2"
+				android:src="@drawable/stone7color0"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem3a"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_a3"
+				android:src="@drawable/stone7color0"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem4a"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_a4"
+				android:src="@drawable/stone7color0"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem5a"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_a5"
+				android:src="@drawable/stone7color0"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem6a"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_a6"
+				android:src="@drawable/stone7color0"
+				android:visibility="invisible" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/xb1"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="1"
+			android:background="@drawable/stone7colorv">
+
+			<ImageView
+				android:id="@+id/gem0b"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_b0"
+				android:src="@drawable/stone7color1"
+				android:visibility="visible" />
+
+			<ImageView
+				android:id="@+id/gem1b"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_b1"
+				android:src="@drawable/stone7color1"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem2b"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_b2"
+				android:src="@drawable/stone7color1"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem3b"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_b3"
+				android:src="@drawable/stone7color1"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem4b"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_b4"
+				android:src="@drawable/stone7color1"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem5b"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_b5"
+				android:src="@drawable/stone7color1"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem6b"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_b6"
+				android:src="@drawable/stone7color1"
+				android:visibility="invisible" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/xc2"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="2"
+			android:background="@drawable/stone7colorw">
+
+			<ImageView
+				android:id="@+id/gem0c"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_c0"
+				android:src="@drawable/stone7color2"
+				android:visibility="visible" />
+
+			<ImageView
+				android:id="@+id/gem1c"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_c1"
+				android:src="@drawable/stone7color2"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem2c"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_c2"
+				android:src="@drawable/stone7color2"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem3c"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_c3"
+				android:src="@drawable/stone7color2"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem4c"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_c4"
+				android:src="@drawable/stone7color2"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem5c"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_c5"
+				android:src="@drawable/stone7color2"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem6c"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_c6"
+				android:src="@drawable/stone7color2"
+				android:visibility="invisible" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/xd3"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="3"
+			android:background="@drawable/stone7colorv">
+
+			<ImageView
+				android:id="@+id/gem0d"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_d0"
+				android:src="@drawable/stone7color3"
+				android:visibility="visible" />
+
+			<ImageView
+				android:id="@+id/gem1d"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_d1"
+				android:src="@drawable/stone7color3"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem2d"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_d2"
+				android:src="@drawable/stone7color3"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem3d"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_d3"
+				android:src="@drawable/stone7color3"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem4d"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_d4"
+				android:src="@drawable/stone7color3"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem5d"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_d5"
+				android:src="@drawable/stone7color3"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem6d"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_d6"
+				android:src="@drawable/stone7color3"
+				android:visibility="invisible" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/xe4"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="4"
+			android:background="@drawable/stone7colorw">
+
+			<ImageView
+				android:id="@+id/gem0e"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_e0"
+				android:src="@drawable/stone7color4"
+				android:visibility="visible" />
+
+			<ImageView
+				android:id="@+id/gem1e"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_e1"
+				android:src="@drawable/stone7color4"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem2e"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_e2"
+				android:src="@drawable/stone7color4"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem3e"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_e3"
+				android:src="@drawable/stone7color4"
+				android:visibility="invisible" />
+
+
+			<ImageView
+				android:id="@+id/gem4e"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_e4"
+				android:src="@drawable/stone7color4"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem5e"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_e5"
+				android:src="@drawable/stone7color4"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem6e"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/s_e6"
+				android:src="@drawable/stone7color4"
+				android:visibility="invisible" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/xf5"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="5"
+			android:background="@drawable/stone7colorv">
+
+			<ImageView
+				android:id="@+id/gem0f"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color5"
+				android:contentDescription="@string/s_f0"
+				android:visibility="visible" />
+
+			<ImageView
+				android:id="@+id/gem1f"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color5"
+				android:contentDescription="@string/s_f1"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem2f"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color5"
+				android:contentDescription="@string/s_f2"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem3f"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color5"
+				android:contentDescription="@string/s_f3"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem4f"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color5"
+				android:contentDescription="@string/s_f4"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem5f"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color5"
+				android:contentDescription="@string/s_f5"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem6f"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color5"
+				android:contentDescription="@string/s_f6"
+				android:visibility="invisible" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/xg6"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="6"
+			android:background="@drawable/stone7colorw">
+
+			<ImageView
+				android:id="@+id/gem0g"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color6"
+				android:contentDescription="@string/s_g0"
+				android:visibility="visible" />
+
+			<ImageView
+				android:id="@+id/gem1g"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color6"
+				android:contentDescription="@string/s_g1"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem2g"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color6"
+				android:contentDescription="@string/s_g2"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem3g"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color6"
+				android:contentDescription="@string/s_g3"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem4g"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color6"
+				android:contentDescription="@string/s_g4"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem5g"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color6"
+				android:contentDescription="@string/s_g5"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/gem6g"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/stone7color6"
+				android:contentDescription="@string/s_g6"
+				android:visibility="invisible" />
+		</LinearLayout>
+
+	</GridLayout>
+
+
+	<GridLayout
+		android:id="@+id/dropBoardLayout"
+		android:layout_marginTop="392dp"
+		android:layout_marginStart="24dp"
+		android:layout_marginEnd="24dp"
+		android:layout_width="284dp"
+		android:layout_height="30dp"
+		android:columnWidth="32dp"
+		android:columnCount="7"
+		android:orientation="vertical"
+		android:rowCount="1"
+		android:stretchMode="columnWidth">
+
+		<LinearLayout
+			android:id="@+id/za0"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="0"
+			android:background="@drawable/stone7colorv">
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/zb1"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="1"
+			android:background="@drawable/stone7colorw">
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/zc2"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="2"
+			android:background="@drawable/stone7colorv">
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/zd3"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="3"
+			android:background="@drawable/stone7colorw">
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/ze4"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="4"
+			android:background="@drawable/stone7colorv">
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/zf5"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="5"
+			android:background="@drawable/stone7colorw">
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/zg6"
+			android:layout_width="40dp"
+			android:layout_height="30dp"
+			android:orientation="vertical"
+			android:layout_row="0"
+			android:layout_column="6"
+			android:background="@drawable/stone7colorv">
+		</LinearLayout>
+
+	</GridLayout>
+
+</FrameLayout>

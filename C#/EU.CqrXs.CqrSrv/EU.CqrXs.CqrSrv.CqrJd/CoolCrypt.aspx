@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
  <title>Simple uu and base64 en-/decode tool (apache2 mod_mono)</title>
- <link rel="stylesheet" href="../res/css/area23.at.mono.css" />
+ <link rel="stylesheet" href="res/css/area23.at.mono.css" />
  <meta name="keywords" content="encode decode uuencode uudecode mime base64 aes encrypt decrypt" />
  <meta name="description" content="https://github.com/heinrichelsigan/chat-ipv6" />
  <meta name="author" content="Heinrich Elsigan (he@area23.at)" />
@@ -15,15 +15,15 @@
          var divAes = document.getElementById("DivAesImprove");
          if (divAes != null) {
              divAes.setAttribute("style", "padding-left: 40px; margin-left: 2px; background-image: url('../res/img/AesBGFile.gif'); background-repeat: no-repeat; background-color: transparent;");
-             divAes.style.backgroundImage = "url('../res/img/AesBGFile.gif')";
+             divAes.style.backgroundImage = "url('res/img/AesBGFile.gif')";
          }
      }
 
      function changeCryptBackgroundText() {
          var divAes = document.getElementById("DivAesImprove");
          if (divAes != null) {
-             divAes.setAttribute("style", "padding-left: 40px; margin-left: 2px; background-image: url('../res/img/AesBGText.gif'); background-repeat: no-repeat; background-color: transparent;");
-             divAes.style.backgroundImage = "url('../res/img/AesBGText.gif')";
+             divAes.setAttribute("style", "padding-left: 40px; margin-left: 2px; background-image: url('res/img/AesBGText.gif'); background-repeat: no-repeat; background-color: transparent;");
+             divAes.style.backgroundImage = "url('res/img/AesBGText.gif')";
          }
      }
 
@@ -40,7 +40,7 @@
                 </span>
                 <span class="centerSpan" style="width: 72px">&nbsp&nbsp;Secret&nbsp;key:&nbsp;</span>
                 <span class="centerSpan" style="width: 72px"><asp:ImageButton ID="ImageButton_Key" runat="server"  
-                    OnClick="Button_Key_Click" ClientIDMode="Static" ImageUrl="../res/img/a_right_key.png" 
+                    OnClick="Button_Key_Click" ClientIDMode="Static" ImageUrl="res/img/a_right_key.png" 
                     AlternateText="save your user key in session" /></span>
                 <span class="centerSpan" style="max-width: 400px;">                
                     <asp:TextBox ID="TextBox_Key" runat="server" Text="heinrich.elsigan@area23.at"                        
@@ -58,7 +58,7 @@
                 </span>
                 <span class="centerSpan" style="width: 72px">Key&nbsp;hash/iv:&nbsp;</span>
                 <span class="centerSpan" style="width: 72px"><asp:ImageButton ID="ImageButton_Hash" runat="server"  
-                    OnClick="Button_Hash_Click" ClientIDMode="Static" ImageUrl="../res/img/a_hash.png" 
+                    OnClick="Button_Hash_Click" ClientIDMode="Static" ImageUrl="res/img/a_hash.png" 
                     AlternateText="Generate new hash from key" /></span>                
                 <span class="centerSpan" style="max-width: 400px;"><asp:TextBox ID="TextBox_IV" runat="server" 
                     ToolTip="key generated hash" ReadOnly="true" Text="" MaxLength="192"  Width="480px"  style="width: 480px;" />
@@ -69,7 +69,7 @@
                 </span>
             </div>
         </div>
-        <div id="DivAesImprove" runat="server" style="padding-left: 40px; margin-left: 2px; background-image: url('../res/img/AesImproveBG.gif'); background-repeat: no-repeat; background-color: transparent;">
+        <div id="DivAesImprove" runat="server" style="padding-left: 40px; margin-left: 2px; background-image: url('res/img/AesImproveBG.gif'); background-repeat: no-repeat; background-color: transparent;">
     
             <div class="odDiv">
                 <span class="leftSpan" style="width: 72px;">                      
@@ -111,10 +111,10 @@
                     </asp:DropDownList>
                 </span>
                 <span class="centerSpan" style="width: 72px;"> 
-                    <asp:ImageButton ID="ImageButton_Add" ClientIDMode="Static" runat="server" ImageUrl="../res/img/AddAesArrow.gif" 
+                    <asp:ImageButton ID="ImageButton_Add" ClientIDMode="Static" runat="server" ImageUrl="res/img/AddAesArrow.gif" 
                         OnClick="ImageButton_Add_Click" AlternateText="Add symetric chiffer algorithm"
-                        onmouseover="document.getElementById('ImageButton_Add').src='../res/img/AddAesArrowHover.gif'"                     
-                        onmouseout="document.getElementById('ImageButton_Add').src='../res/img/AddAesArrow.gif'" />
+                        onmouseover="document.getElementById('ImageButton_Add').src='res/img/AddAesArrowHover.gif'"                     
+                        onmouseout="document.getElementById('ImageButton_Add').src='res/img/AddAesArrow.gif'" />
                 </span>
                 <span class="centerSpan" style="max-width: 400px;">
                     <asp:TextBox ID="TextBox_Encryption" runat="server" ReadOnly="true" TextMode="SingleLine" MaxLength="512" 
@@ -163,8 +163,8 @@
             </div>     
             <div class="odDiv">                       
                 <span id="SpanLeftFile" runat="server" class="leftSpan" style="vertical-align: top;" visible="false">
-                    <a id="aUploaded" runat="server" alt="Uploaded File" href="../res/img/file.png">
-                        <img id="img1" runat="server" border="0" alt="" src="../res/img/file.png" />
+                    <a id="aUploaded" runat="server" alt="Uploaded File" href="res/img/file.png">
+                        <img id="img1" runat="server" border="0" alt="" src="res/img/file.png" />
                     </a>
                 </span>
                 <span id="SpanLabel" runat="server" class="centerSpan" visible="False">
@@ -172,8 +172,8 @@
                 </span>
                 <span class="centerSpan">&nbsp;</span>
                 <span id="SpanRightFile" runat="server" class="rightSpan" style="vertical-align: top;" visible="false">
-                    <a id="aTransFormed" runat="server" alt="Transformed File" href="../res/fortune.u8">
-                        <img id="imgOut" runat="server" border="0" alt="File transformed" src="../res/img/file.png" />
+                    <a id="aTransFormed" runat="server" alt="Transformed File" href="res/fortune.u8">
+                        <img id="imgOut" runat="server" border="0" alt="File transformed" src="res/img/file.png" />
                     </a>
                 </span>                
             </div>

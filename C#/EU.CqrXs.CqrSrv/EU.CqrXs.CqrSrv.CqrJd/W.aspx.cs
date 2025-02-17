@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Windows.Media;
+using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.Util;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
@@ -45,8 +46,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             Bitmap bmp = (Bitmap)MergeImage(ipAddress, saveName);
            
             string r = Request.RawUrl.ToString();
-            img.Src = r.Substring(0, r.LastIndexOf("/") + 1) + "res/" + saveName;
-            img.Alt = ipAddress;            
+            hrefi.HRef = r.Substring(0, r.LastIndexOf("/") + 1) + "res/" + saveName;
+            hrefi.InnerText = "res/" + saveName;
+            hrefi.Target = "_blank";
         }
 
         protected System.Drawing.Image MergeImage(string hexstring, string saveName)
@@ -74,42 +76,49 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
             System.Drawing.Bitmap ximage = new System.Drawing.Bitmap(phypath + "whiteCanvas.png");
             System.Drawing.Bitmap zimage = new Bitmap(ximage, wlen, 200);
-            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(zimage))
+            try
             {
-                int addInt = 0, w = 60, offset = 0;
-                for (int i = 0; (i < hexstring.Length); i++)
+                using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(zimage))
                 {
-                    w = 60;
-                    char ch = hexstring[i];
-
-                    if (ch == '0' || ch == '1' || ch == '2' || ch == '3' || ch == '4' ||
-                        ch == '5' || ch == '6' || ch == '7' || ch == '8' || ch == '9' ||
-                        ch == 'a' || ch == 'b' || ch == 'c' || ch == 'd' || ch == 'e' || ch == 'f')
-                        bmpName = phypath + ch.ToString() + ".png";
-                    else if (ch == ':')
+                    int addInt = 0, w = 60, offset = 0;
+                    for (int i = 0; (i < hexstring.Length); i++)
                     {
-                        bmpName = phypath + "col.png";
-                        w = 12;
-                    }
-                    else
-                    {
-                        bmpName = phypath + "point.png";
-                        w = 12;
-                    }
+                        w = 60;
+                        char ch = hexstring[i];
 
-                    yimage = new Bitmap(bmpName);
-                    g.DrawImage(yimage, new System.Drawing.Rectangle(offset, 0, w, 200));
-                    g.Flush();
-                    g.Save();
-                    offset += w;
+                        if (ch == '0' || ch == '1' || ch == '2' || ch == '3' || ch == '4' ||
+                            ch == '5' || ch == '6' || ch == '7' || ch == '8' || ch == '9' ||
+                            ch == 'a' || ch == 'b' || ch == 'c' || ch == 'd' || ch == 'e' || ch == 'f')
+                            bmpName = phypath + ch.ToString() + ".png";
+                        else if (ch == ':')
+                        {
+                            bmpName = phypath + "col.png";
+                            w = 12;
+                        }
+                        else
+                        {
+                            bmpName = phypath + "point.png";
+                            w = 12;
+                        }
+
+                        yimage = new Bitmap(bmpName);
+                        g.DrawImage(yimage, new System.Drawing.Rectangle(offset, 0, w, 200));
+                        try { g.Flush(); } catch (Exception exf) { Area23Log.LogStatic(exf); }
+                        // try { g.Save(); } catch (Exception exs) { Area23Log.LogStatic(exs); }
+                        offset += w;
+                    }
+                    
+                    // try { g.Flush(); } catch (Exception exf) { Area23Log.LogStatic(exf); }
+                    try { g.Save(); } catch (Exception exs) { Area23Log.LogStatic(exs); }
                 }
-                g.Flush();
-                g.Save();
+
+                string fName = phypath + saveName;
+                zimage.Save(fName, ImageFormat.Png);
             }
-
-            string fName = phypath + saveName;
-            zimage.Save(fName, ImageFormat.Png);
-
+            catch (Exception edr)
+            {
+                Area23Log.LogStatic(edr);
+            }
             return (zimage);
         }
 

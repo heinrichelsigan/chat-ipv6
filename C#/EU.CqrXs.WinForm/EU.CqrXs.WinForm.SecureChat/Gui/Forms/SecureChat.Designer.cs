@@ -31,6 +31,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             StripMenu = new MenuStrip();
             MenuFile = new ToolStripMenuItem();
             MenuFileItemOpen = new ToolStripMenuItem();
@@ -64,16 +65,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuContactsSeparetor = new ToolStripSeparator();
             MenuContactstemImport = new ToolStripMenuItem();
             MenuContactstemExport = new ToolStripMenuItem();
-            MenuHelp = new ToolStripMenuItem();
-            MenuHelpItemViewHelp = new ToolStripMenuItem();
-            MenuHelpItemInfo = new ToolStripMenuItem();
-            MenuHelpItemAbout = new ToolStripMenuItem();
-            MenuOptions =  new ToolStripMenuItem();
+            MenuOptions = new ToolStripMenuItem();
             MenuOptionsItemCompress = new ToolStripMenuItem();
             MenuOptionsItemFileSecure = new ToolStripMenuItem();
             MenuOptionsItemClearAllOnClose = new ToolStripMenuItem();
             MenuOptionsItemDontSendProfilePictures = new ToolStripMenuItem();
             MenuOptionsItemOnlyPeer2Peer = new ToolStripMenuItem();
+            MenuHelp = new ToolStripMenuItem();
+            MenuHelpItemViewHelp = new ToolStripMenuItem();
+            MenuHelpItemInfo = new ToolStripMenuItem();
+            MenuHelpItemAbout = new ToolStripMenuItem();
             FileOpenDialog = new OpenFileDialog();
             FileSaveDialog = new SaveFileDialog();
             StripStatus = new StatusStrip();
@@ -93,13 +94,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             RichTextBoxChat = new RichTextBox();
             PictureBoxPartner = new PictureBox();
             PanelDestination = new Panel();
-            GroupBoxLinks = new Controls.GroupBoxLinkLabels();
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
             ButtonAttach = new Button();
             ButtonSend = new Button();
             ButtonClear = new Button();
+            dragnDropGroupBox = new Controls.DragNDropGroupBox(components);
             StripMenu.SuspendLayout();
             StripStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
@@ -273,14 +274,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
             MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { MenuItemExternalIp });
             MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
-            MenuNetworkItemMyIps.Size = new Size(180, 22);
+            MenuNetworkItemMyIps.Size = new Size(177, 22);
             MenuNetworkItemMyIps.Text = "my ip's";
             // 
             // MenuItemExternalIp
             // 
             MenuItemExternalIp.BackColor = SystemColors.MenuBar;
             MenuItemExternalIp.Name = "MenuItemExternalIp";
-            MenuItemExternalIp.Size = new Size(180, 22);
+            MenuItemExternalIp.Size = new Size(160, 22);
             MenuItemExternalIp.Text = "External Ip's";
             // 
             // MenuItemFriendIp
@@ -288,7 +289,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuItemFriendIp.BackColor = SystemColors.MenuBar;
             MenuItemFriendIp.DropDownItems.AddRange(new ToolStripItem[] { MenuNetworkComboBoxFriendIp });
             MenuItemFriendIp.Name = "MenuItemFriendIp";
-            MenuItemFriendIp.Size = new Size(180, 22);
+            MenuItemFriendIp.Size = new Size(177, 22);
             MenuItemFriendIp.Text = "friend ip's";
             MenuItemFriendIp.ToolTipText = "You can enter here directly friend ip's, if your connection is free of SNAT/DNAT";
             // 
@@ -302,7 +303,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             MenuNetworkItemProxyServers.BackColor = SystemColors.MenuBar;
             MenuNetworkItemProxyServers.Name = "MenuNetworkItemProxyServers";
-            MenuNetworkItemProxyServers.Size = new Size(180, 22);
+            MenuNetworkItemProxyServers.Size = new Size(177, 22);
             MenuNetworkItemProxyServers.Text = "proxies";
             MenuNetworkItemProxyServers.ToolTipText = "proxies are needed mainly to connect to people, where no endpoint to endpoint ip connection is possible";
             // 
@@ -311,14 +312,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuNetworkSeparatorIp.BackColor = SystemColors.MenuBar;
             MenuNetworkSeparatorIp.ForeColor = SystemColors.ActiveBorder;
             MenuNetworkSeparatorIp.Name = "MenuNetworkSeparatorIp";
-            MenuNetworkSeparatorIp.Size = new Size(177, 6);
+            MenuNetworkSeparatorIp.Size = new Size(174, 6);
             // 
             // MenuNetworkItemIPv6Secure
             // 
             MenuNetworkItemIPv6Secure.BackColor = SystemColors.MenuBar;
             MenuNetworkItemIPv6Secure.Name = "MenuNetworkItemIPv6Secure";
             MenuNetworkItemIPv6Secure.ShortcutKeys = Keys.Control | Keys.D6;
-            MenuNetworkItemIPv6Secure.Size = new Size(180, 22);
+            MenuNetworkItemIPv6Secure.Size = new Size(177, 22);
             MenuNetworkItemIPv6Secure.Text = "ip6 cqr";
             MenuNetworkItemIPv6Secure.ToolTipText = "you can check it only, when you have an ipv6 address and you want to chat only to partners, where ip6 connect is possible";
             // 
@@ -336,7 +337,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuCommandsItemSend.BackColor = SystemColors.MenuBar;
             MenuCommandsItemSend.Name = "MenuCommandsItemSend";
             MenuCommandsItemSend.ShortcutKeys = Keys.Control | Keys.S;
-            MenuCommandsItemSend.Size = new Size(180, 22);
+            MenuCommandsItemSend.Size = new Size(178, 22);
             MenuCommandsItemSend.Text = "send";
             MenuCommandsItemSend.ToolTipText = "sends a message";
             MenuCommandsItemSend.Click += MenuItemSend_Click;
@@ -346,7 +347,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuCommandsItemAttach.BackColor = SystemColors.MenuBar;
             MenuCommandsItemAttach.Name = "MenuCommandsItemAttach";
             MenuCommandsItemAttach.ShortcutKeys = Keys.Control | Keys.A;
-            MenuCommandsItemAttach.Size = new Size(180, 22);
+            MenuCommandsItemAttach.Size = new Size(178, 22);
             MenuCommandsItemAttach.Text = "attach";
             MenuCommandsItemAttach.ToolTipText = "attaches file to send; in prototype only  file extension image audio and video is supported";
             MenuCommandsItemAttach.Click += MenuItemAttach_Click;
@@ -355,14 +356,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             MenuCommandsSeperator.BackColor = SystemColors.MenuBar;
             MenuCommandsSeperator.Name = "MenuCommandsSeperator";
-            MenuCommandsSeperator.Size = new Size(177, 6);
+            MenuCommandsSeperator.Size = new Size(175, 6);
             // 
             // MenuCommandsItemRefresh
             // 
             MenuCommandsItemRefresh.BackColor = SystemColors.MenuBar;
             MenuCommandsItemRefresh.Name = "MenuCommandsItemRefresh";
             MenuCommandsItemRefresh.ShortcutKeys = Keys.Control | Keys.R;
-            MenuCommandsItemRefresh.Size = new Size(180, 22);
+            MenuCommandsItemRefresh.Size = new Size(178, 22);
             MenuCommandsItemRefresh.Text = "refresh";
             MenuCommandsItemRefresh.ToolTipText = "refreshes, when the terminal is flushed";
             MenuCommandsItemRefresh.Click += MenuItemRefresh_Click;
@@ -372,7 +373,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuCommandsItemClear.BackColor = SystemColors.MenuBar;
             MenuCommandsItemClear.Name = "MenuCommandsItemClear";
             MenuCommandsItemClear.ShortcutKeys = Keys.Control | Keys.Delete;
-            MenuCommandsItemClear.Size = new Size(180, 22);
+            MenuCommandsItemClear.Size = new Size(178, 22);
             MenuCommandsItemClear.Text = "clear";
             MenuCommandsItemClear.ToolTipText = "clears completey all chat windows";
             MenuCommandsItemClear.Click += MenuItemClear_Click;
@@ -439,6 +440,49 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuContactstemExport.Text = "export contacts";
             MenuContactstemExport.ToolTipText = "export contacts to a json file";
             // 
+            // MenuOptions
+            // 
+            MenuOptions.BackColor = SystemColors.MenuBar;
+            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures, MenuOptionsItemOnlyPeer2Peer });
+            MenuOptions.Name = "MenuOptions";
+            MenuOptions.Size = new Size(72, 21);
+            MenuOptions.Text = "options";
+            // 
+            // MenuOptionsItemCompress
+            // 
+            MenuOptionsItemCompress.BackColor = SystemColors.Menu;
+            MenuOptionsItemCompress.Name = "MenuOptionsItemCompress";
+            MenuOptionsItemCompress.Size = new Size(335, 22);
+            MenuOptionsItemCompress.Text = "🗜compress 📁files before ✉sending";
+            // 
+            // MenuOptionsItemFileSecure
+            // 
+            MenuOptionsItemFileSecure.BackColor = SystemColors.Menu;
+            MenuOptionsItemFileSecure.Name = "MenuOptionsItemFileSecure";
+            MenuOptionsItemFileSecure.Size = new Size(335, 22);
+            MenuOptionsItemFileSecure.Text = "✉send only 🔒secure 📁files";
+            MenuOptionsItemFileSecure.ToolTipText = "e.g.images, pdf, ps, rtf, instead of possible macro virus containing formats";
+            // 
+            // MenuOptionsItemClearAllOnClose
+            // 
+            MenuOptionsItemClearAllOnClose.BackColor = SystemColors.Menu;
+            MenuOptionsItemClearAllOnClose.Name = "MenuOptionsItemClearAllOnClose";
+            MenuOptionsItemClearAllOnClose.Size = new Size(335, 22);
+            MenuOptionsItemClearAllOnClose.Text = "✂␡ all chats, 📁attachments on close";
+            MenuOptionsItemClearAllOnClose.ToolTipText = "When closing this application, ␡ all chats, saved 📁attachments and private 🔑keys";
+            // 
+            // MenuOptionsItemDontSendProfilePictures
+            // 
+            MenuOptionsItemDontSendProfilePictures.BackColor = SystemColors.Menu;
+            MenuOptionsItemDontSendProfilePictures.Name = "MenuOptionsItemDontSendProfilePictures";
+            MenuOptionsItemDontSendProfilePictures.Size = new Size(335, 22);
+            MenuOptionsItemDontSendProfilePictures.Text = "only peer-2-peer chat";
+            // 
+            // MenuOptionsItemOnlyPeer2Peer
+            // 
+            MenuOptionsItemOnlyPeer2Peer.Name = "MenuOptionsItemOnlyPeer2Peer";
+            MenuOptionsItemOnlyPeer2Peer.Size = new Size(335, 22);
+            // 
             // MenuHelp
             // 
             MenuHelp.BackColor = SystemColors.MenuBar;
@@ -490,62 +534,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuHelpItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuHelpItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
             MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;
-            // 
-            // MenuOptions
-            // 
-            MenuOptions.BackColor = SystemColors.MenuBar;
-            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures, MenuOptionsItemOnlyPeer2Peer  });
-            MenuOptions.Enabled = true;
-            MenuOptions.Name = "MenuOptions";
-            MenuOptions.Size = new Size(46, 21);
-            MenuOptions.Text = "options";
-            // 
-            // MenuOptionsItemCompress
-            // 
-            MenuOptionsItemCompress.BackColor = SystemColors.Menu;
-            MenuOptionsItemCompress.Enabled = true;
-            MenuOptionsItemCompress.Name = "MenuOptionsItemCompress";
-            MenuOptionsItemCompress.Checked = false;
-            MenuOptionsItemCompress.Size = new Size(164, 22);
-            MenuOptionsItemCompress.Text = "🗜compress 📁files before ✉sending";
-            // 
-            // MenuOptionsItemFileSecure
-            // 
-            MenuOptionsItemFileSecure.BackColor = SystemColors.Menu;
-            MenuOptionsItemFileSecure.Enabled = true;
-            MenuOptionsItemFileSecure.Name = "MenuOptionsItemFileSecure";
-            MenuOptionsItemFileSecure.Checked = false;
-            MenuOptionsItemFileSecure.Size = new Size(164, 22);
-            MenuOptionsItemFileSecure.Text = "✉send only 🔒secure 📁files";
-            MenuOptionsItemFileSecure.ToolTipText = "e.g.images, pdf, ps, rtf, instead of possible macro virus containing formats";
-            // 
-            // MenuOptionsItemClearAllOnClose
-            // 
-            MenuOptionsItemClearAllOnClose.BackColor = SystemColors.Menu;
-            MenuOptionsItemClearAllOnClose.Enabled = true;
-            MenuOptionsItemClearAllOnClose.Name = "MenuOptionsItemClearAllOnClose";
-            MenuOptionsItemClearAllOnClose.Checked = false;
-            MenuOptionsItemClearAllOnClose.Size = new Size(164, 22);
-            MenuOptionsItemClearAllOnClose.Text = "✂␡ all chats, 📁attachments on close";
-            MenuOptionsItemClearAllOnClose.ToolTipText = "When closing this application, ␡ all chats, saved 📁attachments and private 🔑keys";
-            // 
-            // MenuOptionsItemDontSendProfilePictures
-            // 
-            MenuOptionsItemDontSendProfilePictures.BackColor = SystemColors.Menu;
-            MenuOptionsItemDontSendProfilePictures.Enabled = true;
-            MenuOptionsItemDontSendProfilePictures.Name = "MenuOptionsItemDontSendProfilePictures";
-            MenuOptionsItemDontSendProfilePictures.Checked = false;
-            MenuOptionsItemDontSendProfilePictures.Size = new Size(164, 22);
-            MenuOptionsItemDontSendProfilePictures.Text = "don't send profile pictures";
-            // 
-            // MenuOptionsItemOnlyPeer2Peer
-            // 
-            MenuOptionsItemDontSendProfilePictures.BackColor = SystemColors.Menu;
-            MenuOptionsItemDontSendProfilePictures.Enabled = true;
-            MenuOptionsItemDontSendProfilePictures.Name = "MenuOptionsItemOnlyPeer2Peer";
-            MenuOptionsItemDontSendProfilePictures.Checked = false;
-            MenuOptionsItemDontSendProfilePictures.Size = new Size(164, 22);
-            MenuOptionsItemDontSendProfilePictures.Text = "only peer-2-peer chat";
             // 
             // FileOpenDialog
             // 
@@ -771,7 +759,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // PictureBoxPartner
             // 
-            PictureBoxPartner.Location = new Point(2, 366);
+            PictureBoxPartner.Location = new Point(826, 552);
             PictureBoxPartner.Margin = new Padding(1);
             PictureBoxPartner.Name = "PictureBoxPartner";
             PictureBoxPartner.Padding = new Padding(1);
@@ -782,28 +770,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // PanelDestination
             // 
             PanelDestination.BackColor = SystemColors.ActiveCaption;
+            PanelDestination.Controls.Add(dragnDropGroupBox);
             PanelDestination.Controls.Add(PictureBoxYou);
-            PanelDestination.Controls.Add(GroupBoxLinks);
-            PanelDestination.Controls.Add(PictureBoxPartner);
             PanelDestination.ForeColor = SystemColors.ActiveCaptionText;
             PanelDestination.Location = new Point(824, 32);
             PanelDestination.Margin = new Padding(0);
             PanelDestination.Name = "PanelDestination";
             PanelDestination.Size = new Size(152, 515);
             PanelDestination.TabIndex = 70;
-            // 
-            // GroupBoxLinks
-            // 
-            GroupBoxLinks.BackColor = SystemColors.ControlLightLight;
-            GroupBoxLinks.Font = new Font("Lucida Sans Unicode", 9F);
-            GroupBoxLinks.Location = new Point(1, 151);
-            GroupBoxLinks.Margin = new Padding(1);
-            GroupBoxLinks.Name = "GroupBoxLinks";
-            GroupBoxLinks.Padding = new Padding(1);
-            GroupBoxLinks.Size = new Size(151, 213);
-            GroupBoxLinks.TabIndex = 80;
-            GroupBoxLinks.TabStop = false;
-            GroupBoxLinks.Text = "Attachments";
             // 
             // PanelCenter
             // 
@@ -873,6 +847,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonClear.UseVisualStyleBackColor = true;
             ButtonClear.Click += ButtonClear_Click;
             // 
+            // dragnDropGroupBox
+            // 
+            dragnDropGroupBox.AllowDrop = true;
+            dragnDropGroupBox.BackColor = SystemColors.ControlLightLight;
+            dragnDropGroupBox.Font = new Font("Lucida Sans Unicode", 9F);
+            dragnDropGroupBox.Location = new Point(2, 362);
+            dragnDropGroupBox.Margin = new Padding(1);
+            dragnDropGroupBox.Name = "dragnDropGroupBox";
+            dragnDropGroupBox.Padding = new Padding(1);
+            dragnDropGroupBox.Size = new Size(148, 148);
+            dragnDropGroupBox.TabIndex = 81;
+            dragnDropGroupBox.TabStop = false;
+            dragnDropGroupBox.Text = "Drag'N'Drop Box";
+            // 
             // SecureChat
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
@@ -881,6 +869,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(976, 711);
             Controls.Add(ButtonClear);
+            Controls.Add(PictureBoxPartner);
             Controls.Add(ButtonSend);
             Controls.Add(ButtonAttach);
             Controls.Add(PanelCenter);
@@ -1001,8 +990,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private OpenFileDialog FileOpenDialog;
         private SaveFileDialog FileSaveDialog;
-        
-        
-        
+        private Controls.DragNDropGroupBox dragnDropGroupBox;
     }
 }

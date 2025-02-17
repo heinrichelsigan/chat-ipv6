@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#880000"
+    tools:context="eu.georgtoth.supu.ui.dialogfragment.AboutDialog">
+
+    <!-- ImageView
+        android:id 					="@+id/appHeader"
+        android:layout_width 		="match_parent"
+        android:layout_height 		="64dp"
+        android:background 			="#880000"
+        android:baselineAlignBottom	="false"
+        android:contentDescription 	="@string/app_name"
+        android:scaleType 			="center"
+        android:src 				="@drawable/header" /-->
+
+    <ImageView
+        android:id 					="@+id/appHeaderClose"
+        android:layout_width 		="match_parent"
+        android:layout_height 		="23dp"
+        android:background 			="#880000"
+        android:baselineAlignBottom	="false"
+        android:contentDescription 	="@string/action_exit"
+        android:scaleType 			="center"
+        android:src 				="@drawable/about_oben_hoover" />
+
+    <ImageView
+        android:id 					="@+id/appIdea"
+        android:layout_width 		="match_parent"
+        android:layout_height 		="107dp"
+        android:background 			="#880000"
+        android:baselineAlignBottom	="false"
+        android:contentDescription	="@string/app_idea"
+        android:scaleType 			="center"
+        android:src 				="@drawable/idea_hoover" />
+
+    <ImageView
+        android:id 					="@+id/appCode"
+        android:layout_width 		="match_parent"
+        android:layout_height 		="107dp"
+        android:background 			="#880000"
+        android:baselineAlignBottom	="false"
+        android:contentDescription 	="@string/app_code"
+        android:scaleType 			="center"
+        android:src 				="@drawable/programming_hoover" />
+
+    <ImageView
+        android:id 					="@+id/appBottom"
+        android:layout_width 		="match_parent"
+        android:layout_height 		="24dp"
+        android:background 			="#880000"
+        android:baselineAlignBottom	="false"
+        android:contentDescription 	="@string/app_bottom"
+        android:scaleType 			="center"
+        android:src					="@drawable/unten_vers" />
+
+
+    <TextView
+        android:id                	="@+id/builtWithTextView"
+        android:layout_width      	="match_parent"
+        android:layout_height     	="wrap_content"
+        android:layout_marginLeft 	="48dp"
+        android:layout_marginRight	="48dp"
+        android:layout_marginTop 	="12dp"
+        android:textSize            ="11sp"
+        android:textStyle           ="normal"
+        android:textColor			="#FFFFBB33"
+        android:text              	="@string/build_with" />
+
+    <!-- Button
+        android:id           ="@+id/backButton"
+        android:layout_width ="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop 	="12dp"
+        android:layout_marginLeft 	="48dp"
+        android:layout_marginRight	="48dp"
+        android:text         ="@string/back_button" /-->
+
+</LinearLayout>

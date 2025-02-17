@@ -1,0 +1,149 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="eu.georgtoth.supu.MainActivity">
+    <item
+        android:id="@+id/action_start"
+        android:orderInCategory="100"
+        android:title="@string/action_start"
+        android:enabled="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_save"
+        android:orderInCategory="150"
+        android:title="@string/action_save"
+        android:icon="@drawable/save"
+        android:enabled="true"
+        app:showAsAction="never" />
+    <group android:id="@+id/group_load"  android:visible="true">
+        <item
+            android:id="@+id/action_load"
+            android:orderInCategory="200"
+            android:title="@string/action_load"
+            app:showAsAction="collapseActionView">
+            <menu>
+                <item android:id="@+id/load_slot0"
+                    android:orderInCategory="210"
+                    android:title="@string/load_slot0"
+                    android:enabled="false" />
+                <item android:id="@+id/load_slot1"
+                    android:orderInCategory="211"
+                    android:title="@string/load_slot1"
+                    android:enabled="false" />
+                <item android:id="@+id/load_slot2"
+                    android:orderInCategory="212"
+                    android:title="@string/load_slot2"
+                    android:enabled="false" />
+                <item android:id="@+id/load_slot3"
+                    android:orderInCategory="213"
+                    android:title="@string/load_slot3"
+                    android:enabled="false" />
+                <item android:id="@+id/load_slot4"
+                    android:orderInCategory="214"
+                    android:title="@string/load_slot4"
+                    android:enabled="false" />
+                <item android:id="@+id/load_slot5"
+                    android:orderInCategory="215"
+                    android:title="@string/load_slot5"
+                    android:enabled="false" />
+                <item android:id="@+id/load_slot6"
+                    android:orderInCategory="216"
+                    android:title="@string/load_slot6"
+                    android:enabled="false" />
+            </menu>
+        </item>
+    </group>
+    <group android:id="@+id/group_layout"  android:visible="true">
+        <item
+            android:id="@+id/action_options"
+            android:orderInCategory="400"
+            android:title="@string/action_options"
+            app:showAsAction="collapseActionView">
+            <menu>
+                <item android:id="@+id/action_visualhelp"
+                    android:checkable="true"
+                    android:checked="false"
+                    android:orderInCategory="1200"
+                    android:title="@string/action_visualhelp"
+                    android:enabled="true" />
+
+                <group android:id="@+id/group_level"
+                    android:menuCategory="secondary"
+                    android:visible="true">
+                    <item
+                        android:id="@+id/action_level"
+                        android:orderInCategory="500"
+                        android:title="@string/action_level"
+                        app:showAsAction="collapseActionView">
+                        <menu>
+                            <item android:id="@+id/action_five"
+                                android:orderInCategory="2050"
+                                android:title="@string/action_five"
+                                android:enabled="true" />
+                            <item android:id="@+id/action_six"
+                                android:orderInCategory="2060"
+                                android:title="@string/action_six"
+                                android:enabled="true" />
+                            <item android:id="@+id/action_seven"
+                                android:orderInCategory="2070"
+                                android:title="@string/action_seven"
+                                android:enabled="true" />
+                            <item android:id="@+id/action_eight"
+                                android:orderInCategory="2080"
+                                android:title="@string/action_eight"
+                                android:enabled="true" />
+                            <item android:id="@+id/action_nine"
+                                android:orderInCategory="2090"
+                                android:title="@string/action_nine"
+                                android:enabled="true" />
+                            <item android:id="@+id/action_ten"
+                                android:orderInCategory="2100"
+                                android:title="@string/action_ten"
+                                android:enabled="true" />
+                            <item android:id="@+id/action_twelfe"
+                                android:orderInCategory="2100"
+                                android:title="@string/action_twelfe"
+                                android:enabled="false" />
+                        </menu>
+                    </item>
+                </group>
+                <item android:id="@+id/action_gameautomation"
+                    android:orderInCategory="4000"
+                    android:title="@string/action_gameautomation"
+                    android:enabled="true"
+                    android:checkable="true"
+                    android:checked="false" />
+                <item android:id="@+id/action_direction"
+                    android:orderInCategory="4500"
+                    android:title="@string/action_direction"
+                    android:enabled="true"
+                    android:checkable="true"
+                    android:checked="false"  />
+            </menu>
+        </item>
+    </group>
+    <item
+        android:id="@+id/action_screenshot"
+        android:orderInCategory="9000"
+        android:title="@string/action_screenshot"
+        android:icon="@drawable/camera"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="9100"
+        android:title="@string/action_help"
+        android:icon="@drawable/help"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="9200"
+        android:title="@string/action_about"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_exit"
+        android:orderInCategory="9900"
+        android:title="@string/action_exit"
+        android:icon="@drawable/exit"
+        android:enabled="true"
+        app:showAsAction="never" />
+</menu>

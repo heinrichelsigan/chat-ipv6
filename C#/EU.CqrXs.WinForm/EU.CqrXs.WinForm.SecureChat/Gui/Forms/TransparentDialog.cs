@@ -109,5 +109,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
         #endregion
+    
+    
+    
     }
 }

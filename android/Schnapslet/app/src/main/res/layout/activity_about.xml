@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearRoot"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    tools:context=".AboutActivity">
+
+    <TextView
+        android:id 					="@+id/helpTextView"
+        android:layout_width 		="match_parent"
+        android:minWidth            ="280dp"
+        android:layout_height 		="284dp"
+        android:minHeight           ="272dp"
+        android:maxHeight 			="320dp"
+        android:layout_marginLeft 	="8dp"
+        android:layout_marginRight 	="8dp"
+        android:layout_marginTop 	="12dp"
+        android:layout_marginBottom	="4dp"
+        android:scrollbars 			="horizontal"
+        android:background          ="@color/colorBackLight"
+        android:text 				="@string/help_text"
+        android:textSize 			="12sp"
+        android:textStyle 			="bold"
+        tools:maxHeight 			="320dp" />
+
+    <TextView
+        android:id                	="@+id/builtWithTextView"
+        android:layout_width      	="match_parent"
+        android:layout_height     	="wrap_content"
+        android:minHeight           ="28dp"
+        android:layout_marginLeft 	="8dp"
+        android:layout_marginRight 	="8dp"
+        android:layout_marginTop 	="4dp"
+        android:layout_marginBottom	="4dp"
+        android:textColor           ="@color/colorLighter"
+        android:background          ="@color/colorAccent"
+        android:textSize 			="14sp"
+        android:textStyle           ="normal"
+        android:text              	="@string/build_with" />
+
+    <Button
+        android:id                  ="@+id/learnMoreButton"
+        android:layout_width        ="match_parent"
+        android:layout_height       ="wrap_content"
+        android:layout_marginLeft 	="8dp"
+        android:layout_marginRight 	="8dp"
+        android:layout_marginTop 	="4dp"
+        android:layout_marginBottom ="4dp"
+        android:background          ="@color/colorBackButton"
+        android:textColor 			="@color/colorLighter"
+        android:textStyle           ="bold"
+        android:textSize            ="16sp"
+        android:text                ="@string/learn_more" />
+    <Button
+        android:id                  ="@+id/backButton"
+        android:layout_width        ="match_parent"
+        android:layout_height       ="wrap_content"
+        android:layout_marginLeft 	="8dp"
+        android:layout_marginRight 	="8dp"
+        android:layout_marginTop 	="4dp"
+        android:layout_marginBottom ="4dp"
+        android:background          ="@color/colorBackButton"
+        android:textColor 			="@color/colorLighter"
+        android:textStyle           ="bold"
+        android:textSize            ="16sp"
+        android:text                ="@string/back_button" />
+
+</LinearLayout>

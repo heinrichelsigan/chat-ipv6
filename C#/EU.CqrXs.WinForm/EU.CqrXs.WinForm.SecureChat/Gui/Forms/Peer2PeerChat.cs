@@ -690,22 +690,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
 
-            SrvMsg serverMessage = new SrvMsg(myContact, friendContact, myServerKey);
+            SrvMsg serverMessage = new SrvMsg(myContact, friendContact, myServerKey, myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
 
 
+            FullSrvMsg<CqrContact> fmsg = new FullSrvMsg<CqrContact>(myContact, friendContact, myContact, serverMessage.PipeString);
 
+            string encrypted = serverMessage.CqrSrvMsg<CqrContact>(fmsg, MsgKind.Server, EncodingType.Base64);
+            string response = serverMessage.Send_CqrSrvMsgT<CqrContact>(fmsg, ServerIpAddress, EncodingType.Base64);
 
-            string plain = myContact.ToJson() + Environment.NewLine + friendContact.ToJson() + Environment.NewLine;
-            string encrypted = serverMessage.CqrSrvMsg(myContact, friendContact, plain);
-            string response = serverMessage.Send_CqrSrvMsg(encrypted, ServerIpAddress, EncodingType.Base64);
+            this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
+            FullSrvMsg<CqrContact> rfmsg = serverMessage.NCqrSrvMsg<CqrContact>(encrypted, EncodingType.Base64);
+            this.TextBoxDestionation.Text = rfmsg.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
-            this.TextBoxSource.Text = encrypted + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            MsgContent msgContent = serverMessage.NCqrSrvMsg(encrypted);
-            this.TextBoxDestionation.Text = msgContent.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
-
-            chat.AddMyMessage(plain);
-            chat.AddFriendMessage(msgContent.Message);
+            chat.AddMyMessage(fmsg.Message);
+            chat.AddFriendMessage(rfmsg.Message);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();

@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="W.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.W" %>
-
+<%@ Register TagPrefix="uc" TagName="ImageFontControl" Src="~/ImageFontControl.ascx" %>
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -9,7 +9,9 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            <img src="#" id="img" runat="server" border="0" alt="" />
+            <uc:ImageFontControl ID="imageFontControl" runat="server" />
+            <br />
+            <a href="#" id="hrefi" runat="server"></a>
         </div>        
     </form>
 </body>

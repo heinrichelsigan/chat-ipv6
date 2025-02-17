@@ -42,12 +42,21 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// img control.
+        /// imageFontControl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlImage img;
+        protected global::EU.CqrXs.CqrSrv.CqrJd.ImageFontControl imageFontControl;
+
+        /// <summary>
+        /// hrefi control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor hrefi;
     }
 }

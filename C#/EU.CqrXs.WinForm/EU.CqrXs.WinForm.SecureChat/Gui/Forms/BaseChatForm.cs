@@ -1,6 +1,11 @@
-﻿using Area23.At.Framework.Core;
+﻿using Area23FwCore = Area23.At.Framework.Core;
+using Area23.At.Framework.Core;
 using Area23.At.Framework.Core.CqrXs;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.CqrXs.CqrSrv;
+using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Net.WebHttp;
+using EU.CqrXs.WinForm.SecureChat.Entities;
 using System.Media;
 using System.Net;
 
@@ -494,6 +499,37 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         #endregion ComboBox
 
         #endregion thread save WinForm delegate callbacks
+
+
+        public MimeAttachment? SendAttachment(string filename, string secretKey, IPAddress partnerIpAddress)
+        {
+
+            MimeAttachment? mimeAttach = null;
+
+            if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
+            {
+                string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(filename, true);
+                string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(filename, true);
+
+                byte[] fileBytes = System.IO.File.ReadAllBytes(filename);
+                string fileNameOnly = Path.GetFileName(filename);
+                string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
+
+                string base64Mime = Base64.Encode(fileBytes);
+
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(secretKey);
+
+                
+                    // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
+
+                string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
+                System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);           
+            }
+
+            return mimeAttach;
+
+        }
 
         #region Media Methods
 

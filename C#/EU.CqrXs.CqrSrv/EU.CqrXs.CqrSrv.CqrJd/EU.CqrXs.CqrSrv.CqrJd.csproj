@@ -178,10 +178,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CoolCrypt.aspx" />
+    <Content Include="ChatRoomService.asmx" />
     <Content Include="CqrService.asmx" />
     <Content Include="Default.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="ImageFontControl.ascx" />
     <Content Include="R.aspx" />
     <None Include="log\20240324_Area23.At.Mono.log" />
     <Content Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
@@ -211,6 +213,7 @@
     <Content Include="res\img\AesBGText.png" />
     <Content Include="res\img\AesImproveBG.gif" />
     <Content Include="res\img\a_hash.png" />
+    <Content Include="res\img\a_right_key.png" />
     <Content Include="res\img\b.png" />
     <Content Include="res\img\c.png" />
     <Content Include="res\img\col.png" />
@@ -239,6 +242,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseWebService.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CoolCrypt.aspx.cs">
       <DependentUpon>CoolCrypt.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -250,6 +256,10 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="CqrController.cs" />
+    <Compile Include="ChatRoomService.asmx.cs">
+      <DependentUpon>ChatRoomService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CqrService.asmx.cs">
       <DependentUpon>CqrService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -270,6 +280,13 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="ImageFontControl.ascx.cs">
+      <DependentUpon>ImageFontControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ImageFontControl.ascx.designer.cs">
+      <DependentUpon>ImageFontControl.ascx</DependentUpon>
     </Compile>
     <Compile Include="R.aspx.cs">
       <DependentUpon>R.aspx</DependentUpon>
