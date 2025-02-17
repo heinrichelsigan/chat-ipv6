@@ -11,6 +11,7 @@ using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
+using System.Security.Policy;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 {
@@ -97,6 +98,29 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 
             return CqrMessage;
         }
+
+
+        public string CqrSrvMsg<T>(CqrContact sender, CqrContact receipient, T tcontent, EncodingType encType = EncodingType.Base64) where T : class
+        {
+            if (sender == null || receipient == null)
+                throw new InvalidDataException("CqrSender contact or CqrRecipient conact are null.");
+
+            FullSrvMsg<T> fullMsg = new FullSrvMsg<T>(sender, receipient, tcontent);
+
+            CqrSender = sender;
+            CqrRecipient = receipient;
+            fullMsg._hash = PipeString;
+            string allMsg = fullMsg.ToJson();
+            fullMsg._message = allMsg;
+            fullMsg._rawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
+            byte[] headerBytes = DeEnCoder.GetBytesFromString(allMsg);
+            byte[] msgBytes = DeEnCoder.GetBytesFromString(fullMsg._rawMessage);
+            byte[] cqrMsgBytes = (LibPaths.CqrEncrypt) ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
+            CqrMessage = DeEnCoder.EncodeBytes(cqrMsgBytes, encType);
+
+            return CqrMessage;
+        }
+
 
         /// <summary>
         /// CqrServerAttachment encrypts a file attchment message

@@ -13,9 +13,8 @@ using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.CqrXs.CqrSrv;
 using EU.CqrXs.CqrSrv.CqrJd.Util;
 using Newtonsoft.Json;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
-using Area23.At.Framework.Library.CqrXs.CqrSrv;
-using Area23.At.Framework.Library.CqrXs;
+using System.IO;
+using Area23.At.Framework.Library.Util;
 
 
 
@@ -39,7 +38,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         string responseMsg = string.Empty;
 
         [WebMethod]       
-        public string Send1StSrvString(string cryptMsg)
+        public string Send1StSrvMsg(string cryptMsg)
         {            
             myServerKey = string.Empty;
             _decrypted = string.Empty;
@@ -107,6 +106,17 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     if (_contact.Cuid == null || _contact.Cuid == Guid.Empty)
                         _contact.Cuid = new Guid();
                     _contacts.Add(_contact);
+
+                    string dir = ConfigurationManager.AppSettings["SpoolerDirectory"].ToString();
+                    if (Directory.Exists(dir)) 
+                    {
+                        string userDir = Path.Combine(dir, _contact.Cuid.ToString());
+                        Directory.CreateDirectory(userDir);
+                        string processed = Area23.At.Framework.Library.Util.ProcessCmd.Execute(
+                            "/usr/local/bin/createLink.sh",
+                            userDir + " " + _contact.Email + " " + _contact.NameEmail + " ", false);
+                    }
+                    
                     foundCt = _contact;
 
                     responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
@@ -121,7 +131,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
         [WebMethod]
-        public string Send1StSrvMsg(SrvMsg1 srvMsg1)
+        public string PollMyInbox(string cryptMsg)
         {
             myServerKey = string.Empty;
             _decrypted = string.Empty;
@@ -132,8 +142,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
             else
                 _contacts = JsonContacts.LoadJsonContacts();
-            
-            Area23Log.LogStatic($"CqrService.asmx: Send1stSrvMsg(...) {_contacts.Count} Contacts loaded!");
 
             _literalClientIp = HttpContext.Current.Request.UserHostAddress;
 
@@ -142,20 +150,18 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             else
                 myServerKey = HttpContext.Current.Request.UserHostAddress;
             myServerKey += Constants.APP_NAME;
-            Area23Log.LogStatic("myServerKey = " + myServerKey);
 
             SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
             SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
             SrvMsg responseSrvMsg = new SrvMsg(myServerKey);
-            HttpContext.Current.Application["lastmsg"] = srvMsg1.CqrMessage;
+            HttpContext.Current.Application["lastmsg"] = cryptMsg;
 
             try
             {
-                if (!string.IsNullOrEmpty(srvMsg1.ToString()) && srvMsg1.ToString().Length >= 8)
+                if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    _contact = srv1stMsg.NCqrSrvMsg1(srvMsg1.ToString());
+                    _contact = srv1stMsg.NCqrSrvMsg1(cryptMsg);
                     _decrypted = _contact.ToJson();
-                    Area23Log.LogStatic("Received & decrypted: " + _decrypted);
                 }
             }
             catch (Exception ex)
@@ -165,7 +171,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             }
 
             responseMsg = responseSrvMsg.CqrSrvMsg("", EncodingType.Base64);
-
+            string dummyContent = "";
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
                 Application["lastdecrypted"] = _decrypted;
@@ -173,40 +179,43 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, _contact);
                 if (foundCt != null)
                 {
-                    Area23Log.LogStatic("found contact: " + foundCt.ToString());
-                    foundCt.ContactId = _contact.ContactId;
-                    if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
-                        foundCt.Cuid = new Guid();
-                    if (!string.IsNullOrEmpty(_contact.Address))
-                        foundCt.Address = _contact.Address;
-                    if (!string.IsNullOrEmpty(_contact.Mobile))
-                        foundCt.Mobile = _contact.Mobile;
+                    if (foundCt.Cuid == _contact.Cuid &&
+                        foundCt.NameEmail == _contact.NameEmail &&
+                        foundCt.Mobile == _contact.Mobile)
+                    // && foundCt.Address == _contact.Address && foundCt.Mobile == _contact.Mobile)
+                    {
+                        string dir = ConfigurationManager.AppSettings["SpoolerDirectory"].ToString();
+                        if (Directory.Exists(dir))
+                        {                            
+                            string userDir = Path.Combine(dir, _contact.Cuid.ToString());
+                            if (Directory.Exists(userDir))
+                            {
+                                responseSrvMsg = new SrvMsg(foundCt, foundCt, myServerKey);
 
-                    if (_contact.ContactImage != null && !string.IsNullOrEmpty(_contact.ContactImage.ImageFileName) &&
-                        !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
-                        foundCt.ContactImage = _contact.ContactImage;
+                                foreach (var dirs in Directory.GetDirectories(userDir))
+                                {
+                                    dummyContent += dirs + Environment.NewLine;
+                                    Area23Log.LogStatic("dir = " + dirs);
+                                    // Todo: GET  contact uid for directory and
+                                    // if contact guid == dirname exists
+                                    foreach (var files in Directory.GetFiles(dirs))
+                                    {
+                                        Area23Log.LogStatic(files);
+                                        dummyContent += files + Environment.NewLine;
+                                    }
+                                }
+                            }
 
-                    _decrypted = foundCt.ToJson();
-
-                    responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
+                        }
+                        
+                        // todo read messages
+                    }
                 }
-                else
-                {
-                    if (_contact.Cuid == null || _contact.Cuid == Guid.Empty)
-                        _contact.Cuid = new Guid();
-                    _contacts.Add(_contact);
-                    Area23Log.LogStatic("contact added: " + _contact.ToString());
-                    _decrypted = _contact.ToJson();
-                    foundCt = _contact;
-                    
-                    responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
-                }
 
-                Application["lastdecrypted"] = _decrypted;
+                responseMsg = responseSrvMsg.CqrSrvMsg(dummyContent);
 
-                JsonContacts.SaveJsonContacts(_contacts);
+
             }
-
 
             return responseMsg;
 
@@ -216,7 +225,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
 
         [WebMethod]
-        public string SendSrvMsg(Guid from, Guid to, string cryptMsgSrv, string cryptMsgPartner)
+        public string SendValidatedSrvMsg(Guid from, Guid to, string cryptMsgSrv, string cryptMsgPartner)
         {
             myServerKey = string.Empty;
             _decrypted = string.Empty;
@@ -267,6 +276,56 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 return reStr;
             }
 
+
+            return responseMsg;
+
+        }
+
+
+        [WebMethod]
+        public string SendSrvMsg(string cryptMsgSrv, string cryptMsgPartner)
+        {
+            myServerKey = string.Empty;
+            _decrypted = string.Empty;
+            responseMsg = string.Empty;
+            _contact = null;
+
+            if (Application[Constants.JSON_CONTACTS] != null)
+                _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
+            else
+                _contacts = JsonContacts.LoadJsonContacts();
+
+            _literalClientIp = HttpContext.Current.Request.UserHostAddress;
+
+            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
+                myServerKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
+            else
+                myServerKey = HttpContext.Current.Request.UserHostAddress;
+            myServerKey += Constants.APP_NAME;
+
+            SrvMsg cqrServerMsg = new SrvMsg(myServerKey);
+            SrvMsg cqrResponseMsg = new SrvMsg(myServerKey);
+            SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
+
+            HttpContext.Current.Application["lastmsg"] = cryptMsgSrv;
+
+            try
+            {
+                if (!string.IsNullOrEmpty(cryptMsgSrv) && cryptMsgSrv.Length >= 8)
+                {
+                    MsgContent msgCt = cqrServerMsg.NCqrSrvMsg(cryptMsgSrv, EncodingType.Base64);
+                    _decrypted = msgCt.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                CqrException.SetLastException(ex);
+                Area23Log.LogStatic(ex);
+            }
+
+            responseMsg = cqrResponseMsg.CqrSrvMsg(Constants.ACK, EncodingType.Base64);
+
+           // TODO:
 
             return responseMsg;
 
