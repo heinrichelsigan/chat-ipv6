@@ -144,6 +144,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
 
+
+
         public virtual IPAddress GetClientExternalIp()
         {
             string externalClientIp = Request.UserHostAddress;
@@ -191,6 +193,165 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         {
             JsonContacts.SaveJsonContacts(contacts);
         }
+
+
+
+
+        /// <summary>
+        /// Get Image mime type for image bytes
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static string GetMimeTypeForImageBytes(byte[] bytes)
+        {
+            using (MemoryStream ms = new MemoryStream(bytes))
+            using (System.Drawing.Image img = System.Drawing.Image.FromStream(ms))
+            {
+                return ImageCodecInfo.GetImageEncoders().First(codec => codec.FormatID == img.RawFormat.Guid).MimeType;
+            }
+        }
+
+
+        /// <summary>
+        /// Saves a byte[] to a fileName
+        /// </summary>
+        /// <param name="bytes">byte[] of raw data</param>
+        /// <param name="outMsg"></param>
+        /// <param name="fileName">filename to save</param>
+        /// <param name="directoryName">directory where to save file</param>
+        /// <returns>fileName under which it was saved really</returns>
+        protected virtual string ByteArrayToFile(byte[] bytes, out string outMsg, string fileName = null, string directoryName = null)
+        {
+            outMsg = String.Empty;
+            string strPath = LibPaths.SystemDirOutPath;
+            if (!string.IsNullOrEmpty(directoryName) && Directory.Exists(directoryName))
+            {
+                strPath = directoryName;
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = Constants.DateFile + Guid.NewGuid().ToString();
+            }
+            string ext = "hex";
+
+            if (fileName.LastIndexOf(".") < (fileName.Length - 8))
+                fileName += "." + ext;
+
+            string newFileName = fileName;
+
+
+            try
+            {
+                while (System.IO.File.Exists(strPath + fileName))
+                {
+                    newFileName = fileName.Contains(Constants.DateFile) ?
+                        Constants.DateFile + Guid.NewGuid().ToString() + "_" + fileName :
+                        Constants.DateFile + fileName;
+                    outMsg = String.Format("{0} already exists on server, saving it to {1}", fileName, newFileName);
+                    fileName = newFileName;
+                }
+                using (var fs = new FileStream(strPath + fileName, FileMode.Create, FileAccess.Write))
+                {
+                    fs.Write(bytes, 0, bytes.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                Area23Log.LogStatic(ex);
+            }
+
+            if (System.IO.File.Exists(strPath + fileName))
+            {
+                string mimeType = MimeType.GetMimeType(bytes, strPath + fileName);
+                if (fileName.EndsWith("tmp"))
+                {
+                    string extR = MimeType.GetFileExtForMimeTypeApache(mimeType);
+                    if (extR.ToLowerInvariant().Equals("hex") || extR.ToLowerInvariant().Equals("oct"))
+                        newFileName = fileName;
+                    else
+                    {
+                        newFileName = fileName.Replace("tmp", extR);
+                        System.IO.File.Move(strPath + fileName, LibPaths.SystemDirOutPath + newFileName);
+                    }
+
+                    outMsg = newFileName;
+                    return newFileName;
+                }
+                else
+                {
+                    outMsg = fileName;
+                    return fileName;
+                }
+            }
+
+            outMsg = null;
+            return null;
+        }
+
+        protected virtual string StringToFile(string encodedText, out string outMsg, string fileName = null, string directoryName = null)
+        {
+            string strPath = LibPaths.SystemDirOutPath;
+            if (!String.IsNullOrEmpty(directoryName) && Directory.Exists(directoryName))
+            {
+                strPath = directoryName;
+            }
+            outMsg = String.Empty;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = Constants.DateFile + Guid.NewGuid().ToString();
+            }
+            string ext = "hex";
+
+            if (fileName.LastIndexOf(".") < (fileName.Length - 12))
+                fileName += "." + ext;
+
+            string newFileName = fileName;
+
+            // strPath = LibPaths.SystemDirOutPath + fileName;
+            try
+            {
+                while (System.IO.File.Exists(strPath + fileName))
+                {
+                    newFileName = fileName.Contains(Constants.DateFile) ?
+                        Constants.DateFile + Guid.NewGuid().ToString() + "_" + fileName :
+                        Constants.DateFile + fileName;
+                    // strPath = LibPaths.SystemDirOutPath + newFileName;
+                    outMsg = String.Format("{0} already exists on server, saving it to {1}", fileName, newFileName);
+                    fileName = newFileName;
+                }
+                File.WriteAllText(strPath + fileName, encodedText, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                Area23Log.LogStatic(ex);
+            }
+
+            if (System.IO.File.Exists(strPath + fileName))
+            {
+                outMsg = fileName;
+                return fileName;
+            }
+            outMsg = null;
+            return null;
+        }
+
+        protected virtual byte[] GetFileByteArray(string filename)
+        {
+            FileStream oFileStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+
+            // Create a byte array of file size.
+            byte[] FileByteArrayData = new byte[oFileStream.Length];
+
+            //Read file in bytes from stream into the byte array
+            oFileStream.Read(FileByteArrayData, 0, System.Convert.ToInt32(oFileStream.Length));
+
+            //Close the File Stream
+            oFileStream.Close();
+
+            return FileByteArrayData; //return the byte data
+        }
+
 
 
     }
