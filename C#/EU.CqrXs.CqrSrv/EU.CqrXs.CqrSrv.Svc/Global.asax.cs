@@ -12,10 +12,12 @@ namespace EU.CqrXs.CqrSrv.Svc
     {
         protected void Application_Start(object sender, EventArgs e)
         {
-            SwaggerWcfEndpoint.FilterVisibleTags = FilterVisibleTags;
-            SwaggerWcfEndpoint.FilterHiddenTags = FilterHiddenTags;
-            SwaggerWcfEndpoint.DisableSwaggerUI = false;            
-
+            try
+            {
+                SwaggerWcfEndpoint.FilterVisibleTags = FilterVisibleTags;
+                SwaggerWcfEndpoint.FilterHiddenTags = FilterHiddenTags;
+                SwaggerWcfEndpoint.DisableSwaggerUI = false;
+            } catch { }
             try
             {
                 // route with a simple class

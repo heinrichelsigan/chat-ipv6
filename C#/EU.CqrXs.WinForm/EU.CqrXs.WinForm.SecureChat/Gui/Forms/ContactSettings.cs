@@ -18,6 +18,8 @@ using Area23.At.Framework.Core.Crypt.Cipher;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core;
+using Newtonsoft.Json;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -154,7 +156,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     Address = this.textBoxAddress.Text ?? string.Empty,
                     ContactImage = CqrImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString())
 
-                };                  
+                };       
+                AppDomain.CurrentDomain.SetData(Constants.MY_CONTACT, JsonConvert.SerializeObject(Settings.Singleton.MyContact));
                 Settings.SaveSettings(Entities.Settings.Singleton);
             }
         }
@@ -246,7 +249,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             FileOpenDialog.RestoreDirectory = true;
             FileOpenDialog.AddExtension = false;
             FileOpenDialog.CheckFileExists = true;
-            FileOpenDialog.Filter = "PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPEG (*.jpeg)|*.jpeg|JPG (*.jpg)|*.jpg|BMP (*.bmp)|*.bmp";
+            FileOpenDialog.Filter = "Images (*.png, *.jpg, *.gif, *.bmp, *.exif)|*.png;*.jpg;*.jpeg;*.gif;*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPEG (*.jpeg)|*.jpeg|JPG (*.jpg)|*.jpg|BMP (*.bmp)|*.bmp";
             // FileOpenDialog.Filter = "Images|*.jpg|*.png|*.gif";
             DialogResult diaRes = FileOpenDialog.ShowDialog();
             if (diaRes == DialogResult.OK)

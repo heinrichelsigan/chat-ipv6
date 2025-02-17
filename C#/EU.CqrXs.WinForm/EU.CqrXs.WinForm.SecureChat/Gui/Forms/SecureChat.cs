@@ -27,6 +27,7 @@ using Org.BouncyCastle.Pqc.Crypto.Lms;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
 
+
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
 
@@ -63,7 +64,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 IEnumerable<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
                 foreach (IPAddress ip in list)
                 {
-                    foreach (string sip in Settings.Instance.Proxies)
+                    foreach (string sip in Settings.Singleton.Proxies)
                     {
                         if (IPAddress.Parse(sip).Equals(ip))
                         {
@@ -84,7 +85,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
                 foreach (IPAddress ip in list)
                 {
-                    foreach (string sip in Settings.Instance.Proxies)
+                    foreach (string sip in Settings.Singleton.Proxies)
                     {
                         if (IPAddress.Parse(sip).Equals(ip) && ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
@@ -172,7 +173,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (send1stReg)
                 Send_1st_Server_Registration(sender, e);
 
-            this.StripProgressBar.Value = 100;
+            this.StripProgressBar.Value = 100;            
             StripStatusLabel.Text = "Secure Chat init done.";
         }
 
@@ -231,7 +232,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             SrvMsg serverMessage = new SrvMsg(myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
-
         }
 
 
@@ -270,7 +270,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e">EventArgs e</param>
         private void ComboBoxSecretKey_TextUpdate(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text))
+            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
+                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
                 return;
             }
@@ -295,7 +296,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
             ButtonKey_Click(sender, e);
-            StripStatusLabel.Text = "Changed secret key => calculated new SecurePipe...";
+            if (Entities.Settings.Singleton != null)
+            {
+                if (!Entities.Settings.Singleton.SecretKeys.Contains(this.ComboBoxSecretKey.Text))
+                    Entities.Settings.Singleton.SecretKeys.Add(this.ComboBoxSecretKey.Text);
+                if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
+                    this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
+            }
+            StripStatusLabel.Text = "Added new secret key => calculated new SecurePipe...";
         }
 
         #endregion SecretKey & SymmCipherPipe.PipeString + ComboBoxSecretKey FocusLeave TextUpdate SelectedIndexChanged
@@ -483,6 +491,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.StripProgressBar.Value = 50;
 
             CqrContact myContact = Entities.Settings.Singleton.MyContact;
+            string ser = (string)AppDomain.CurrentDomain.GetData(Constants.MY_CONTACT);
             string encrypted = srv1stMsg.CqrSrvMsg1(myContact, EncodingType.Base64);
             Thread.Sleep(100);
 
@@ -497,10 +506,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     this.TextBoxDestionation.Text = receivedMyContact.ToJson() + "\n";
             }
 
-            this.TextBoxDestionation.Text += response + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            string reducedResponse = string.Empty;
+            if (response.Contains(Constants.DECRYPTED_TEXT_AREA))
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_AREA, true, "", 
+                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);                
+            else if (response.Contains(Constants.DECRYPTED_TEXT_BOX))
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_BOX, true, ">", 
+                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);              
+
+            this.TextBoxDestionation.Text += reducedResponse + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
             chat.AddMyMessage(myContact.ToJson());
-            chat.AddFriendMessage(response);
+            chat.AddFriendMessage(reducedResponse);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
@@ -520,10 +537,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             if (string.IsNullOrEmpty(myServerKey))
             {
                 myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
-                if (!string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) &&
-                    !this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+
+                string comboBoxSecKeyText = this.GetComboBoxText(ComboBoxSecretKey);
+                if (!string.IsNullOrEmpty(comboBoxSecKeyText) &&
+                    !comboBoxSecKeyText.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    myServerKey = this.ComboBoxSecretKey.Text;
+                    myServerKey = this.GetComboBoxText(ComboBoxSecretKey);
                 }
             }
 
@@ -565,7 +584,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         if (exCrypt is InvalidOperationException)
                         {
                             MessageBox.Show(((InvalidOperationException)exCrypt).Message, "Invalid or non matching secret key for decrypt.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
+                            SetComboBoxBackColor(ComboBoxSecretKey, Color.OrangeRed);
                         }
                         else
                         {
@@ -825,7 +844,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
 
                             // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                            pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, EncodingType.Base64, Constants.CHAT_PORT, md5, sha256);
+                            pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
 
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
@@ -941,14 +960,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             contactSettings.ShowInTaskbar = true;
             contactSettings.ShowDialog();
 
-            if (Settings.Instance.MyContact != null && Settings.Instance.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Instance.MyContact.ContactImage.ImageBase64))
+            if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
                 try
                 {
-                    Bitmap? bmp = Settings.Instance.MyContact.ContactImage.ToDrawingBitmap();
+                    Bitmap? bmp = Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
                     if (bmp != null)
                         this.PictureBoxYou.Image = bmp;
 
+                    Settings.SaveSettings(Settings.Singleton);
                 }
                 catch (Exception exBmp)
                 {
@@ -1378,7 +1398,25 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 mi.Checked = true;
                 clientIpAddress = IPAddress.Parse(mi.Name);
 
-                ipSockListener?.Dispose();
+                try
+                {
+                    if (ipSockListener != null)
+                        ipSockListener.Dispose();
+                }
+                catch (Exception exi)
+                {
+                    Area23Log.LogStatic(exi);
+                }
+                try
+                {
+                    ipSockListener = null;
+                }
+                catch (Exception exi)
+                {
+                    Area23Log.LogStatic(exi);
+                }
+
+                Thread.Sleep(Constants.CLOSING_TIMEOUT);
                 ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                 StripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
             }
