@@ -12,6 +12,10 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace EU.CqrXs.WinForm.SecureChat
 {
+
+    /// <summary>
+    /// Main Program entrance for <see cref="Gui.Forms.SecureChat"/> or <see cref="Gui.Forms.Peer2PeerChat"/>
+    /// </summary>
     internal static class Program
     {
         internal static string progName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
@@ -59,10 +63,10 @@ namespace EU.CqrXs.WinForm.SecureChat
             Application.SetHighDpiMode(HighDpiMode.DpiUnawareGdiScaled);
             ApplicationConfiguration.Initialize();
             Form newChat;
-            if (mode % 2 == 0)
-                newChat = (Form)(new Gui.Forms.Peer2PeerChat());
-            else
-                newChat = (Form)(new Gui.Forms.SecureChat());
+            // if (mode % 2 == 0)
+            //     newChat = (Form)(new Gui.Forms.Peer2PeerChat());
+            // else
+            newChat = (Form)(new Gui.Forms.SecureChat());
 
             Application.Run(newChat);
             

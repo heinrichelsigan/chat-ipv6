@@ -1,9 +1,5 @@
-﻿using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
-using Area23.At.Framework.Library.Crypt.Cipher;
-using Area23.At.Framework.Library.Crypt.EnDeCoding;
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.Cipher;
-using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
@@ -14,10 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
 
-namespace Area23.At.Framework.Library.CqrXs.CqrSrv
-namespace Area23.At.Framework.Core.CqrXs.CqrSrv
+namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
 
     /// <summary>

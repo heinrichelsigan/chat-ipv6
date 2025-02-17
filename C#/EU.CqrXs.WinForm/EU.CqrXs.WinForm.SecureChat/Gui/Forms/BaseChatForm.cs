@@ -1,33 +1,24 @@
 ﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Net;
-using Area23.At.Framework.Core.Crypt.Cipher;
-using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
-using Area23.At.Framework.Core.Crypt.EnDeCoding;
-using Area23.At.Framework.Core.Net.IpSocket;
-using Area23.At.Framework.Core.Net.WebHttp;
-using Area23.At.Framework.Core.Util;
-using EU.CqrXs.WinForm.SecureChat.Entities;
-using EU.CqrXs.WinForm.SecureChat.Properties;
-using System;
-using System.Configuration;
-using System.Net;
-using System.Reflection;
-using System.Text;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using EU.CqrXs.WinForm.SecureChat.Util;
-using Area23.At.Framework.Core.Net.NameService;
-using System.Media;
-using System.Threading.Tasks;
-using EU.CqrXs.WinForm.SecureChat.Gui.Controls;
 using Area23.At.Framework.Core.CqrXs;
+using Area23.At.Framework.Core.Net.WebHttp;
+using System.Media;
+using System.Net;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
+
+
+    /// <summary>
+    /// BaseChat Form is common base class for <see cref="SecureChat"/>, <see cref="Peer2PeerChat"/> and <see cref="RichTextChat"/>
+    /// BaseChat contains mainly:
+    /// thread independent delegate accessor to <see cref="System.Windows.Forms"  /> 
+    /// basic member to play sounds <see cref="PlaySoundFromResource(string)" /> and <see cref="PlaySoundFromResourcesAsync(string)"/> 
+    /// help, info and <see cref="TransparentDialog">about dialog</see> menu events 
+    /// close and exit <see cref="AppCloseAllFormsExit"/>
+    /// </summary>
     public class BaseChatForm : Form
     {
+
         #region fields
 
         protected string savedFile = string.Empty;

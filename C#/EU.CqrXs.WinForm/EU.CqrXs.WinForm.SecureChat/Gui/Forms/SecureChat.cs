@@ -22,10 +22,8 @@ using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using Area23.At.Framework.Core.Net.NameService;
 using System.Media;
-using static QRCoder.Core.PayloadGenerator.SwissQrCode;
-using Org.BouncyCastle.Pqc.Crypto.Lms;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
+using System.Windows.Controls.Primitives;
+
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
@@ -498,12 +496,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.StripProgressBar.Value = 60;
             string response = srv1stMsg.Send1st_CqrSrvMsg1(myContact, ServerIpAddress, EncodingType.Base64);
 
-            this.TextBoxSource.Text = encrypted + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
+            this.TextBoxSource.Text = "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
             if (srv1stMsg != null)
             {
                 CqrContact? receivedMyContact = srv1stMsg.NCqrSrvMsg1(encrypted, EncodingType.Base64);
                 if (receivedMyContact != null)
-                    this.TextBoxDestionation.Text = receivedMyContact.ToJson() + "\n";
+                    this.TextBoxSource.Text = receivedMyContact.ToJson() + "\n";
             }
 
             string reducedResponse = string.Empty;

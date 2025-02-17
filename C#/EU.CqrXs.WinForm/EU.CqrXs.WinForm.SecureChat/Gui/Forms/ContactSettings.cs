@@ -1,28 +1,19 @@
-﻿using Area23.At.Framework.Core.Util;
+﻿using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Properties;
-using Org.BouncyCastle.Utilities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+using Newtonsoft.Json;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Area23.At.Framework.Core.Crypt.Cipher;
-using static QRCoder.Core.PayloadGenerator.SwissQrCode;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core;
-using Newtonsoft.Json;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
+
+    /// <summary>
+    /// ContactSettings is Form to Edit <see cref="CqrContact"/>
+    /// </summary>
     partial class ContactSettings : Form
     {
         private int _id = 1;

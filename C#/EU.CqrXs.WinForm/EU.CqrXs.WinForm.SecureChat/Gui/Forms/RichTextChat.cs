@@ -20,8 +20,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Controls;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
+
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms

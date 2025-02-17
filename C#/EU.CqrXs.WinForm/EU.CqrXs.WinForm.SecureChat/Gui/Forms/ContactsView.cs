@@ -1,19 +1,11 @@
-﻿using EU.CqrXs.WinForm.SecureChat.Gui.Forms;
-using EU.CqrXs.WinForm.SecureChat;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using EU.CqrXs.WinForm.SecureChat.Properties;
-using System.Reflection.Metadata;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
+
+    /// <summary>
+    /// ContactsView views <see cref="CqrContact"/>
+    /// </summary>
     partial class ContactsView : System.Windows.Forms.Form
     {
 

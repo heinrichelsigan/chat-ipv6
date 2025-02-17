@@ -88,9 +88,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                 myContact = JsonConvert.DeserializeObject<CqrContact>(msgContent.Message);
 
             return myContact;
-        }
-
-            return MsgContact;
+            
         }
 
 

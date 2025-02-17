@@ -144,10 +144,20 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public virtual Bitmap? ToDrawingBitmap()
         {
             Bitmap? bmpImage;
-
-            using (MemoryStream ms = new MemoryStream(ImageData))
+            if (ImageData == null || ImageData.Length == 0)
             {
-                bmpImage = new Bitmap(ms, true);
+                byte[] data = Convert.FromBase64String(ImageBase64);
+                using (MemoryStream ms = new MemoryStream(data))
+                {
+                    bmpImage = new Bitmap(ms, true);
+                }
+            }
+            else
+            {
+                using (MemoryStream ms = new MemoryStream(ImageData))
+                {
+                    bmpImage = new Bitmap(ms, true);
+                }
             }
 
             return bmpImage;

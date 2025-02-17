@@ -21,9 +21,6 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using Area23.At.Framework.Core.Net.NameService;
-using System.Media;
-using static QRCoder.Core.PayloadGenerator.SwissQrCode;
-using Org.BouncyCastle.Pqc.Crypto.Lms;
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
