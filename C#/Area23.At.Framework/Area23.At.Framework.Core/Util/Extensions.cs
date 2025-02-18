@@ -551,9 +551,9 @@ namespace Area23.At.Framework.Core.Util
             if (!string.IsNullOrEmpty(patternEnd) && substring.Contains(patternEnd, comparasionType))
             {
                 if (!lastIndex)
-                    substring = substring.Substring(0, substring.IndexOf(patternEnd, comparasionType) + patternEnd.Length);
+                    substring = substring.Substring(0, substring.IndexOf(patternEnd, comparasionType));
                 else
-                    substring = substring.Substring(0, substring.LastIndexOf(patternEnd, comparasionType) + patternEnd.Length);                                
+                    substring = substring.Substring(0, substring.LastIndexOf(patternEnd, comparasionType));                                
             }
 
             return substring;
