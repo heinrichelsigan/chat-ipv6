@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml.Linq;
+using System.Net.Sockets;
 
 namespace Area23.At.Framework.Core.Util
 {
@@ -851,6 +852,27 @@ namespace Area23.At.Framework.Core.Util
 
         #endregion serializer_xml_json
 
+        #region System.Net extension methods
+
+        public static string ShortInfo(this AddressFamily addrFamily)
+        {
+            switch (addrFamily)
+            {
+                case AddressFamily.InterNetwork: return " IPv4 ";
+                case AddressFamily.InterNetworkV6: return " IPv6 ";
+                case AddressFamily.Unix: return " Unix ";
+                case AddressFamily.Irda: return " Irda ";
+                case AddressFamily.Atm: return "  Atm ";
+                case AddressFamily.Ccitt: return "Ccitt ";
+                case AddressFamily.Ecma: return " Ecma ";
+                case AddressFamily.Ipx: return "  Ipx ";
+                // case AddressFamily.Osi:
+                case AddressFamily.Iso: return "  Iso ";
+                default: return "      ";
+            }
+        }
+
+        #endregion System.Net extension methods
 
         #region genericsT_extensions
 

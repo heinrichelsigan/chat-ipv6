@@ -11,9 +11,9 @@ using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Net.NameService;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Util;
-using EU.CqrXs.WinForm.RichTextChat.Entities;
-using EU.CqrXs.WinForm.RichTextChat.Properties;
-using EU.CqrXs.WinForm.RichTextChat.Util;
+using EU.CqrXs.WinForm.SecureChat.Entities;
+using EU.CqrXs.WinForm.SecureChat.Properties;
+using EU.CqrXs.WinForm.SecureChat.Util;
 using System;
 using System.Configuration;
 using System.Net;
@@ -23,7 +23,7 @@ using System.Windows.Controls;
 
 
 
-namespace EU.CqrXs.WinForm.RichTextChat.Gui.Forms
+namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
 
 
@@ -1284,7 +1284,7 @@ namespace EU.CqrXs.WinForm.RichTextChat.Gui.Forms
             {
                 if (addr != null)
                 {
-                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily + " " + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
+                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily.ShortInfo()+ addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
                     item.Checked = false;
                     item.BackColor = SystemColors.MenuBar;
                     item.ForeColor = SystemColors.GrayText;
@@ -1320,7 +1320,7 @@ namespace EU.CqrXs.WinForm.RichTextChat.Gui.Forms
                 }
             }
 
-            ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily + " " + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
+            ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily.ShortInfo()+ ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
             extIpItem.Checked = true;
             extIpItem.Enabled = false;
             this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
@@ -1337,7 +1337,7 @@ namespace EU.CqrXs.WinForm.RichTextChat.Gui.Forms
                     proxyList.Add(addrProxy.ToString());
 
 
-                    ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily + " " + addrProxy.ToString(), null, null, addrProxy.ToString());
+                    ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily.ShortInfo() + addrProxy.ToString(), null, null, addrProxy.ToString());
                     if ((addrProxy.AddressFamily == ServerIpAddress.AddressFamily) &&
                         (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {

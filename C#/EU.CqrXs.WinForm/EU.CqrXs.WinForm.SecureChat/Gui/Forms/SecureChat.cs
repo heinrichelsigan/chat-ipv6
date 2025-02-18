@@ -1272,12 +1272,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         #endregion SplitChatWindowLayout
 
 
+        /// <summary>
+        /// SetupNetwork async method to setup network
+        /// </summary>
+        /// <returns><see cref="Task"/></returns>
+
         internal async Task SetupNetwork()
         {
             List<string> proxyList = new List<string>();
-            List<IPAddress> addresses = GetProxiesFromSettingsResources(ref proxyList);            
+            List<IPAddress> addresses = GetProxiesFromSettingsResources(ref proxyList);
+            SetStatusText(StripStatusLabel, $"Setup Network: Several proxy addresses fetched.");
             List<IPAddress> interfaceIPAddrs = await NetworkAddresses.GetIpAddressesAsync();
+            SetStatusText(StripStatusLabel, $"Setup Network: All network interfaces addresses fetched.");
             List<IPAddress> connectedIPs = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
+            SetStatusText(StripStatusLabel, $"Setup Network: All active connected ip addresses fetched.");
+
 
             List<string> myIpStrList = new List<string>();
             int mchecked = 0;
@@ -1286,7 +1295,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (addr != null)
                 {
-                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily + " " + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
+                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily.ShortInfo() + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
                     item.Checked = false;
                     item.BackColor = SystemColors.MenuBar;
                     item.ForeColor = SystemColors.GrayText;
@@ -1322,11 +1331,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
             }
 
-            ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily + " " + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
+            SetStatusText(StripStatusLabel, $"Setup Network: All interface addresses added to menu. Not connected if addrs grayed.");
+
+            ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily.ShortInfo() + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
             extIpItem.Checked = true;
             extIpItem.Enabled = false;
             this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
 
+            SetStatusText(StripStatusLabel, $"Setup Network: External client ip address added to menu.");
 
 
             mchecked = 0;
@@ -1339,7 +1351,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     proxyList.Add(addrProxy.ToString());
 
 
-                    ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily + " " + addrProxy.ToString(), null, null, addrProxy.ToString());
+                    ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily.ShortInfo() + addrProxy.ToString(), null, ServerProxyAddressSelected, addrProxy.ToString());
                     if ((addrProxy.AddressFamily == ServerIpAddress.AddressFamily) &&
                         (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {
@@ -1353,6 +1365,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
 
             }
+
+            SetStatusText(StripStatusLabel, $"Setup Network: Proxy ips added to menu.");
 
             foreach (var friendIp in Entities.Settings.Singleton.FriendIPs)
             {
@@ -1380,6 +1394,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 Entities.Settings.SaveSettings(Entities.Settings.Singleton);
             }
 
+            SetStatusText(StripStatusLabel, $"Setup Network complete!");
         }
 
 
@@ -1391,14 +1406,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e"></param>
         public void IPInterfaceAddressSelected(object sender, EventArgs e)
         {
-            if (sender != null && sender is ToolStripMenuItem mi)
+            if (sender != null && sender is ToolStripMenuItem newAddrIf)
             {
+                ToolStripMenuItem? oldAddrIf = null;
+
                 foreach (ToolStripMenuItem dditem in this.MenuNetworkItemMyIps.DropDownItems)
-                    dditem.Checked = false;
+                    if (dditem.Checked)
+                        oldAddrIf = dditem;
 
-                mi.Checked = true;
-                clientIpAddress = IPAddress.Parse(mi.Name);
-
+                              
+                try
+                {
+                    clientIpAddress = IPAddress.Parse(newAddrIf.Name);
+                    newAddrIf.Checked = true;
+                    if (oldAddrIf != null) 
+                        oldAddrIf.Checked = false;
+                }
+                catch (Exception exc)
+                {
+                    Area23Log.LogStatic(exc);
+                }
                 try
                 {
                     if (ipSockListener != null)
@@ -1419,7 +1446,44 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                 Thread.Sleep(Constants.CLOSING_TIMEOUT);
                 ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
-                StripStatusLabel.Text = "Listening on " + clientIpAddress.ToString() + ":" + Constants.CHAT_PORT;
+                SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
+            }
+        }
+
+
+        public void ServerProxyAddressSelected(object sender, EventArgs e)
+        {
+            if (sender != null && sender is ToolStripMenuItem newProxyItem)
+            { 
+                List<IPAddress> ips =  new List<IPAddress>();
+                ToolStripMenuItem? oldProxyItem = null;
+                foreach (ToolStripMenuItem dditem in this.MenuNetworkItemProxyServers.DropDownItems)
+                    if (dditem.Checked == true)
+                        oldProxyItem = dditem;
+
+                try
+                {
+                    IPAddress newSrvAddr = IPAddress.Parse(newProxyItem.Name);
+
+                    string resp = TcpClientWebRequest.MakeWebRequest(newSrvAddr, out ips);
+
+                    if (resp != null && ips != null && ips.Count > 2 && ips.ElementAt(2) != null)
+                    {                        
+                        serverIpAddress = newSrvAddr;
+                        newProxyItem.Checked = true;
+                        if (oldProxyItem != null && oldProxyItem.Checked)
+                            oldProxyItem.Checked = false;
+
+                        SetStatusText(StripStatusLabel, $"ServerIp set to {serverIpAddress.AddressFamily.ShortInfo()} {serverIpAddress.ToString()}");                       
+                    }
+                }
+                catch (Exception exi)
+                {
+                    Area23Log.LogStatic(exi);
+                }
+               
+                Thread.Sleep(Constants.CLOSING_TIMEOUT);
+                
             }
         }
 

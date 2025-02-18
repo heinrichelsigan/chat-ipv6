@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Library.Net.NameService;
 using Area23.At.Framework.Library.Net.WebHttp;
+using Area23.At.Framework.Library.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -68,15 +69,17 @@ namespace Area23.At.Framework.Library.Net
 
             foreach (IPAddress serverIp in serverIps)
             {
-                IPAddress clientIp;
+                
+                List<IPAddress> clientIPs = new List<IPAddress>();
                 string resp = string.Empty;
                 try
-                {
-                    resp = TcpClientWebRequest.MakeWebRequest(serverIp);
-
-                    clientIp = IPAddress.Parse(resp);
-                    if (!validAddrs.Contains(clientIp))
-                        validAddrs.Add(clientIp);
+                {                    
+                    resp = TcpClientWebRequest.MakeWebRequest(serverIp, out clientIPs);
+                    foreach (IPAddress clientIp in clientIPs)
+                    {
+                        if (!validAddrs.Contains(clientIp))
+                            validAddrs.Add(clientIp);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -156,7 +159,7 @@ namespace Area23.At.Framework.Library.Net
 
                     Enum.Parse(typeof(AddressFamily), addressFamily.ToString(), true);
                     throw new ProtocolViolationException(
-                        $"System.Net.Sockets.AddressFamily {addrFamily} value {Convert.ToUInt32((int)addressFamily)} is not supported! " +
+                        $"System.Net.Sockets.AddressFamily  {addrFamily} {addressFamily.ShortInfo()} value {Convert.ToUInt32((int)addressFamily)} is not supported! " +
                         $"Only AddressFamily Unix Internetwork InterNetworkV6 are supported.");
                     break;
             }

@@ -62,14 +62,16 @@ namespace Area23.At.Framework.Core.Net
 
             foreach (IPAddress serverIp in serverIps)
             {
-                IPAddress clientIp, realClientIp;
+                List<IPAddress> clientIPs = new List<IPAddress>();
                 string resp = string.Empty;
                 try
                 {
-                    resp = TcpClientWebRequest.MakeWebRequest(serverIp, out clientIp, out realClientIp);
-                    clientIp = clientIp ?? IPAddress.Parse(resp);
-                    if (!validAddrs.Contains(clientIp))
-                        validAddrs.Add(clientIp);
+                    resp = TcpClientWebRequest.MakeWebRequest(serverIp, out clientIPs);
+                    foreach (IPAddress cIp in clientIPs)
+                    {
+                        if (!validAddrs.Contains(cIp))
+                            validAddrs.Add(cIp);
+                    }
                 }
                 catch (Exception ex)
                 {

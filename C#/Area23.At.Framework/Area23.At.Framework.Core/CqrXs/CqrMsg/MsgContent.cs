@@ -137,7 +137,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             _isMime = false;
             if (_rawMessage.StartsWith("Content-Type: ") && _rawMessage.Contains("Content-Verification: ") && _rawMessage.Contains("Content-Length: "))
             {
-                string checkContentLength = _rawMessage.GetSubStringByPattern("Content-Length: ", true, "", ";\n", false, StringComparison.CurrentCulture);                 
+                string checkContentLength = _rawMessage.GetSubStringByPattern("Content-Length: ", true, "", ";\n", false, StringComparison.CurrentCultureIgnoreCase);                 
                 int contentLen = 0;
                 if (!Int32.TryParse(checkContentLength, out contentLen))
                     contentLen = -1;

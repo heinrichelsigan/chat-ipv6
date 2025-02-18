@@ -5,11 +5,12 @@ using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Net.WebHttp;
+using Area23.At.Framework.Core.Net.NameService;
 using EU.CqrXs.WinForm.SecureChat.Entities;
+using EU.CqrXs.WinForm.SecureChat.Properties;
 using System.Media;
 using System.Net;
-using Area23.At.Framework.Core.Net.NameService;
-using EU.CqrXs.WinForm.SecureChat.Properties;
+using System.Windows.Forms;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -38,15 +39,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
 
+        protected internal static DateTime LastExternalTime = DateTime.MinValue;
         protected internal static IPAddress? externalIPAddress;
         public static IPAddress? ExternalIpAddress
         {
             get
             {
-                if (externalIPAddress != null)
+                if (externalIPAddress != null && DateTime.Now.Subtract(LastExternalTime).TotalSeconds < 1800)
+                {                    
                     return externalIPAddress;
+                }
 
-                externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://ipv4.cqrxs.eu/net/R.aspx");
+                LastExternalTime = DateTime.Now;
+                externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://cqrxs.eu/cqrsrv/cqrjd/R.aspx");
                 return externalIPAddress;
             }
         }
@@ -60,9 +65,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
         #region thread save WinForm delegate callbacks
-
-
-
         
         #region TextBox&RichTextBox
 
@@ -414,6 +416,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal delegate void SetComboBackColorCallback(System.Windows.Forms.ComboBox comboBox, Color color);
 
+        /// <summary>
+        /// thread save deleagte to get text out of a <see cref="ComboBox"/>
+        /// </summary>
+        /// <param name="comboBox"><see cref="ComboBox"/> from which text to get</param>
+        /// <returns><see cref="string"/> text from <see cref="ComboBox.Text" /></returns>
         internal string GetComboBoxText(System.Windows.Forms.ComboBox comboBox)
         {
             string reText = string.Empty;
@@ -443,7 +450,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             return reText;
         }
 
-
+        /// <summary>
+        /// thread save deleagte to set text in a <see cref="ComboBox"/>
+        /// </summary>
+        /// <param name="comboBox"><see cref="ComboBox.Text" /> where set text <see cref="string"/></param>
+        /// <param name="text">string text to set</param>
         internal void SetComboBoxText(System.Windows.Forms.ComboBox comboBox, string text)
         {
             string setText = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
@@ -473,6 +484,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
+        /// <summary>
+        /// thread save deleagte to change <see cref="ComboBox.BackColor" />
+        /// </summary>
+        /// <param name="comboBox"><see cref="ComboBox"/> where you want to change <see cref="ComboBox.BackColor"/></param>
+        /// <param name="color"><see cref="Color"/> to set as new <see cref="ComboBox.BackColor"/></param>
         internal void SetComboBoxBackColor(System.Windows.Forms.ComboBox comboBox, Color color)
         {
             Color setColor = (color != null) ? color : Color.Transparent;
@@ -504,6 +520,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         #endregion ComboBox
 
         #endregion thread save WinForm delegate callbacks
+
 
 
         public MimeAttachment? SendAttachment(string filename, string secretKey, IPAddress partnerIpAddress)

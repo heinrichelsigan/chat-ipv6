@@ -1283,7 +1283,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (addr != null)
                 {
-                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily + " " + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
+                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily.ShortInfo() + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
                     item.Checked = false;
                     item.BackColor = SystemColors.MenuBar;
                     item.ForeColor = SystemColors.GrayText;
@@ -1319,7 +1319,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 }
             }
 
-            ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily + " " + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
+            ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily.ShortInfo() + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
             extIpItem.Checked = true;
             extIpItem.Enabled = false;
             this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
@@ -1336,7 +1336,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     proxyList.Add(addrProxy.ToString());
 
 
-                    ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily + " " + addrProxy.ToString(), null, null, addrProxy.ToString());
+                    ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily.ShortInfo() + addrProxy.ToString(), null, null, addrProxy.ToString());
                     if ((addrProxy.AddressFamily == ServerIpAddress.AddressFamily) &&
                         (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {

@@ -10,6 +10,7 @@ using System.Text;
 using System.Xml.Linq;
 using System.Drawing;
 using System.Net;
+using System.Net.Sockets;
 
 namespace Area23.At.Framework.Library.Util
 {
@@ -549,9 +550,9 @@ namespace Area23.At.Framework.Library.Util
             if (!string.IsNullOrEmpty(patternEnd) && substring.Contains(patternEnd))
             {
                 if (!lastIndex)
-                    substring = substring.Substring(0, substring.IndexOf(patternEnd) + patternEnd.Length);
+                    substring = substring.Substring(0, substring.IndexOf(patternEnd));
                 else
-                    substring = substring.Substring(0, substring.LastIndexOf(patternEnd) + patternEnd.Length);
+                    substring = substring.Substring(0, substring.LastIndexOf(patternEnd));
             }
 
             return substring;
@@ -841,6 +842,27 @@ namespace Area23.At.Framework.Library.Util
 
         #endregion serializer_xml_json
 
+        #region System.Net extension methods
+
+        public static string ShortInfo(this AddressFamily addrFamily)
+        {
+            switch (addrFamily)
+            {
+                case AddressFamily.InterNetwork: return " IPv4 ";
+                case AddressFamily.InterNetworkV6: return " IPv6 ";
+                case AddressFamily.Unix: return " Unix ";
+                case AddressFamily.Irda: return " Irda ";
+                case AddressFamily.Atm: return "  Atm ";
+                case AddressFamily.Ccitt: return "Ccitt ";
+                case AddressFamily.Ecma: return " Ecma ";
+                case AddressFamily.Ipx: return "  Ipx ";
+                // case AddressFamily.Osi:
+                case AddressFamily.Iso: return "  Iso ";
+                default: return "      ";
+            }
+        }
+
+        #endregion System.Net extension methods
 
         #region genericsT_extensions
 
