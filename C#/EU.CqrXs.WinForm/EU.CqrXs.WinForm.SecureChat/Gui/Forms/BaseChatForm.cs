@@ -8,6 +8,8 @@ using Area23.At.Framework.Core.Net.WebHttp;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using System.Media;
 using System.Net;
+using Area23.At.Framework.Core.Net.NameService;
+using EU.CqrXs.WinForm.SecureChat.Properties;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -34,6 +36,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #region Properties
 
+
+
         protected internal static IPAddress? externalIPAddress;
         public static IPAddress? ExternalIpAddress
         {
@@ -46,6 +50,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 return externalIPAddress;
             }
         }
+        
         #endregion Properties
 
         /// <summary>
@@ -530,6 +535,57 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             return mimeAttach;
 
         }
+
+        /// <summary>
+        /// GetProxiesFromSettingsResources 
+        /// </summary>
+        /// <returns>list of ip addr of proxies</returns>
+
+        public List<IPAddress> GetProxiesFromSettingsResources(ref List<string> proxyList)
+        {
+
+            List<IPAddress> addresses = new List<IPAddress>();
+
+            string[] proxyStrs = Resources.Proxies.Split(";,".ToCharArray());
+            List<string> proxySets = Entities.Settings.Singleton.Proxies;
+            if (proxyStrs.Length >= proxySets.Count)
+            {
+                proxySets = new List<string>(proxyStrs);
+            }
+            foreach (string proxyS in proxySets)
+            {
+                try
+                {
+                    IPAddress ip = IPAddress.Parse(proxyS);
+                    addresses.Add(ip);
+
+                }
+                catch (Exception ex)
+                {
+                    CqrException.SetLastException(ex);
+                    Area23Log.LogStatic(ex);
+                }
+            }
+            string[] proxyNameStrs = Resources.ProxyNames.Split(";,".ToCharArray());
+            proxyList = new List<string>();
+            foreach (string proxyStr in proxyNameStrs)
+            {
+                try
+                {
+                    foreach (var netIp in DnsHelper.GetIpAddrsByHostName(proxyStr))
+                        if (!addresses.Contains(netIp))
+                            addresses.Add(netIp);
+                }
+                catch (Exception ex)
+                {
+                    CqrException.SetLastException(ex);
+                    Area23Log.LogStatic(ex);
+                }
+            }
+
+            return addresses;
+        }
+
 
         #region Media Methods
 

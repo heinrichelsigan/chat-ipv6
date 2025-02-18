@@ -120,13 +120,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
                 StripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
             }
+            dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
+            this.StripProgressBar.Value = 0;
         }
 
 
         private async void SecureChat_Load(object sender, EventArgs e)
         {
             bool send1stReg = false;
-            this.StripProgressBar.Value = 0;
+            
             if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null)
             {
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
@@ -173,7 +175,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             this.StripProgressBar.Value = 100;            
             StripStatusLabel.Text = "Secure Chat init done.";
-            dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
+            
         }
 
         #region thread save text and richtext box access       
@@ -1272,46 +1274,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal async Task SetupNetwork()
         {
-
-            List<IPAddress> addresses = new List<IPAddress>();
-            string[] proxyStrs = Resources.Proxies.Split(";,".ToCharArray());
-            List<string> proxySets = Entities.Settings.Singleton.Proxies;
-            if (proxyStrs.Length >= proxySets.Count)
-            {
-                proxySets = new List<string>(proxyStrs);
-            }
-            foreach (string proxyS in proxySets)
-            {
-                try
-                {
-                    IPAddress ip = IPAddress.Parse(proxyS);
-                    addresses.Add(ip);
-
-                }
-                catch (Exception ex)
-                {
-                    CqrException.SetLastException(ex);
-                    Area23Log.LogStatic(ex);
-                }
-            }
-            string[] proxyNameStrs = Resources.ProxyNames.Split(";,".ToCharArray());
             List<string> proxyList = new List<string>();
-            foreach (string proxyStr in proxyNameStrs)
-            {
-                try
-                {
-                    foreach (var netIp in DnsHelper.GetIpAddrsByHostName(proxyStr))
-                        if (!addresses.Contains(netIp))
-                            addresses.Add(netIp);
-                }
-                catch (Exception ex)
-                {
-                    CqrException.SetLastException(ex);
-                    Area23Log.LogStatic(ex);
-                }
-            }
-
-
+            List<IPAddress> addresses = GetProxiesFromSettingsResources(ref proxyList);            
             List<IPAddress> interfaceIPAddrs = await NetworkAddresses.GetIpAddressesAsync();
             List<IPAddress> connectedIPs = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
 
@@ -1324,19 +1288,33 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily + " " + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
                     item.Checked = false;
+                    item.BackColor = SystemColors.MenuBar;
+                    item.ForeColor = SystemColors.GrayText;
 
-                    if (connectedIPs != null && connectedIPs.Count > 0 &&
-                        Extensions.BytesCompare(addr.GetAddressBytes(), connectedIPs.ElementAt(0).GetAddressBytes()) == 0 &&
-                        addr.AddressFamily == connectedIPs.ElementAt(0).AddressFamily)
+                    if (connectedIPs != null && connectedIPs.Count > 0)
                     {
-                        if (mchecked++ == 0)
+                        foreach (IPAddress connectedIp in connectedIPs)
                         {
-                            clientIpAddress = addr;
-                            item.Checked = true;
-                            if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                                this.MenuNetworkItemIPv6Secure.Checked = true;
-                            ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
+                            if ((Extensions.BytesCompare(addr.GetAddressBytes(), connectedIp.GetAddressBytes()) == 0) &&
+                                (addr.AddressFamily == connectedIp.AddressFamily))
+                            {
+                                item.ForeColor = SystemColors.MenuText;
+                                item.BackColor = SystemColors.Menu;
+
+                                if (mchecked++ == 0)
+                                {
+                                    item.BackColor = SystemColors.MenuHighlight;
+                                    clientIpAddress = addr;
+                                    item.Checked = true;
+                                    if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                                        this.MenuNetworkItemIPv6Secure.Checked = true;
+                                    ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
+                                }
+
+                                break;
+                            }
                         }
+                       
                     }
 
                     myIpStrList.Add(addr.ToString());
@@ -1349,18 +1327,31 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             extIpItem.Enabled = false;
             this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
 
+
+
+            mchecked = 0;
             foreach (IPAddress addrProxy in addresses)
             {
-                if (addrProxy != null)
+                if (addrProxy != null &&
+                    ((addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) ||
+                    (addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)))
                 {
                     proxyList.Add(addrProxy.ToString());
-                    if (addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork ||
-                        (addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 && this.MenuNetworkItemIPv6Secure.Checked))
+
+
+                    ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily + " " + addrProxy.ToString(), null, null, addrProxy.ToString());
+                    if ((addrProxy.AddressFamily == ServerIpAddress.AddressFamily) &&
+                        (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {
-                        ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily + " " + addrProxy.ToString(), null, null, addrProxy.ToString());
-                        this.MenuNetworkItemProxyServers.DropDownItems.Add(item);
+                        if (!MenuNetworkItemIPv6Secure.Checked && addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                        { ; }
+                        else
+                            item.Checked = true;
                     }
+
+                    this.MenuNetworkItemProxyServers.DropDownItems.Add(item);
                 }
+
             }
 
             foreach (var friendIp in Entities.Settings.Singleton.FriendIPs)
