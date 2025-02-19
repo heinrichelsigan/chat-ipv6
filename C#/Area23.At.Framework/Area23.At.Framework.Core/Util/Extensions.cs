@@ -854,6 +854,17 @@ namespace Area23.At.Framework.Core.Util
 
         #region System.Net extension methods
 
+        public static bool IsSameIp(this IPAddress ip1, IPAddress ip2, AddressFamily? addrFamily = null)
+        {
+            if (addrFamily == null || !addrFamily.HasValue)
+                return ((Extensions.BytesCompare(ip1.GetAddressBytes(), ip2.GetAddressBytes()) == 0) &&
+                    (ip1.AddressFamily == ip2.AddressFamily));
+
+            return ((Extensions.BytesCompare(ip1.GetAddressBytes(), ip2.GetAddressBytes()) == 0) &&
+                    (ip1.AddressFamily == ip2.AddressFamily) &&
+                    (ip1.AddressFamily == addrFamily.Value));                
+        }
+
         public static string ShortInfo(this AddressFamily addrFamily)
         {
             switch (addrFamily)
@@ -948,12 +959,60 @@ namespace Area23.At.Framework.Core.Util
             return tt;
         }
 
+
+        public static bool SetNull(params object[] os)
+        {
+            if (os == null || os.Length == 0)
+                return true;
+
+            bool error = false;
+            for (int i = 0; i < os.Length; i++)
+            {
+                object o = os[i];
+                try
+                {
+                    if (o != null)
+                        o = null;
+                }
+                catch (Exception exNull)
+                {
+                    error = true;
+                    Area23Log.LogStatic($"Error in Ext SetNull(params object[] os): {o} {exNull.Message} ...");
+                }
+            }
+
+            return !error;
+        }
+
+        public static bool SetNullT<T>(params T[]? ts) where T : class?
+        {
+            bool error = false;
+            if (ts == null || ts.Length == 0)
+                return true;
+
+            for (int it = 0; it < ts.Length; it++)
+            {
+                T? t = ts[it];
+                try
+                {
+                    if (t != null)
+                        t = null;
+                }
+                catch (Exception exNull)
+                {
+                    error = true;
+                    Area23Log.LogStatic($"Error in Ext SetNullT<T>(params T[] ts) {t.ToString()} {exNull.Message} ....");
+                }
+            }
+
+            return !error;
+
+        }
     }
 
-
     /// <summary>
-    /// Static class alternative for System.Drawing.Color Extension Methods
-    /// </summary>
+        /// Static class alternative for System.Drawing.Color Extension Methods
+        /// </summary>
     public static class ColorFrom
     {
         #region Extensions.ColorFrom static methods

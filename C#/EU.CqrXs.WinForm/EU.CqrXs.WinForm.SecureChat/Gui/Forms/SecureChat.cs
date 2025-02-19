@@ -23,6 +23,8 @@ using EU.CqrXs.WinForm.SecureChat.Util;
 using Area23.At.Framework.Core.Net.NameService;
 using System.Media;
 using System.Windows.Controls.Primitives;
+using EU.CqrXs.WinForm.SecureChat.Gui.Controls;
+using System.Net.Sockets;
 
 
 
@@ -50,45 +52,40 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #region Properties
 
-        private static IPAddress? serverIpAddress;
+        private static IPAddress? _serverIpAddress;
         internal IPAddress? ServerIpAddress
         {
             get
             {
-                if (serverIpAddress != null)
-                    return serverIpAddress;
+                if (_serverIpAddress != null && !_serverIpAddress.IsIPv6UniqueLocal)
+                    return _serverIpAddress;
 
                 // TODO: change it
-                IEnumerable<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                List<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
                 foreach (IPAddress ip in list)
                 {
-                    foreach (string sip in Settings.Singleton.Proxies)
+                    if (Proxies.Contains(ip))
                     {
-                        if (IPAddress.Parse(sip).Equals(ip))
+                        if (ip.AddressFamily == AddressFamily.InterNetworkV6 && MenuNetworkItemIPv6Secure.Checked)
                         {
-                            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 &&
-                                MenuNetworkItemIPv6Secure.Checked)
-                            {
-                                serverIpAddress = ip;
-                                return serverIpAddress;
-                            }
-                            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
-                                !MenuNetworkItemIPv6Secure.Checked)
-                            {
-                                serverIpAddress = ip;
-                                return serverIpAddress;
-                            }
+                            _serverIpAddress = ip;
+                            return _serverIpAddress;
+                        }
+                        if (ip.AddressFamily == AddressFamily.InterNetwork && !MenuNetworkItemIPv6Secure.Checked)
+                        {
+                            _serverIpAddress = ip;
+                            return _serverIpAddress;
                         }
                     }
                 }
                 foreach (IPAddress ip in list)
                 {
-                    foreach (string sip in Settings.Singleton.Proxies)
+                    foreach (IPAddress proxyIp in Proxies)
                     {
-                        if (IPAddress.Parse(sip).Equals(ip) && ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        if (ip.IsSameIp(proxyIp, AddressFamily.InterNetwork))
                         {
-                            serverIpAddress = ip;
-                            return serverIpAddress;
+                            _serverIpAddress = ip;
+                            return _serverIpAddress;
                         }
                     }
                 }
@@ -921,7 +918,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         }
 
         /// <summary>
-        /// SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="GroupBoxLinks"/>
+        /// SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="AttachmentListControl"/>
         /// </summary>
         /// <param name="mimeAttachment"><see cref="MimeAttachment"/></param>
         protected internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
@@ -940,7 +937,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             byte[] fileBytes = Base64.Decode(base64);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
-            GroupBoxLinks.SetNameFilePath(fileName, filePath);
+            attachmentListControl.SetNameFilePath(fileName, filePath);            
         }
 
 
@@ -1012,15 +1009,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private void MenuContactstemImport_Click(object sender, EventArgs e)
         {
             int contactId = Entities.Settings.Singleton.Contacts.Count;
+            int contactsImported = 0;
             string cname = string.Empty, cemail = string.Empty, cmobile = string.Empty, cphone = string.Empty, caddress = string.Empty;
-            HashSet<string> names = new HashSet<string>();
+            string firstImport = string.Empty;
+            string lastImport = string.Empty;
+
+            HashSet<string> exCnames = new HashSet<string>();
+            HashSet<string> exCemails = new HashSet<string>();
             foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
             {
-                if (!string.IsNullOrEmpty(c.Name) && !names.Contains(c.Name))
-                    names.Add(c.Name);
+                if (!string.IsNullOrEmpty(c.Name) && !exCnames.Contains(c.Name))
+                    exCnames.Add(c.Name);
+                if (!string.IsNullOrEmpty(c.Email) && c.Email.IsEmail() && !exCemails.Contains(c.Email))
+                    exCemails.Add(c.Email);
                 contactId = Math.Max(contactId, c.ContactId);
             }
             contactId++;
+            
             FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
             FileOpenDialog.RestoreDirectory = true;
             FileOpenDialog.AddExtension = false;
@@ -1034,11 +1039,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     string extension = Path.GetExtension(FileOpenDialog.FileName).ToLower();
                     string[] lines = System.IO.File.ReadAllLines(FileOpenDialog.FileName);
+                    
 
                     switch (extension)
                     {
                         case "csv":
                         case ".csv":
+                          
                             int csvCnt = 0;
                             List<int> mailfields = new List<int>();
                             List<int> phonefields = new List<int>();
@@ -1065,9 +1072,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                 {
                                     if (j == 0 || j == 2)
                                     {
-                                        cname += fields[j] + " ";
+                                        if (!string.IsNullOrEmpty(fields[j]) && !string.IsNullOrWhiteSpace(fields[j]))
+                                            cname += fields[j] + " ";
                                     }
-                                    if (j == 3)
+                                    if (j == 3 && !string.IsNullOrWhiteSpace(cname) && cname.EndsWith(' '))
                                         cname = cname.TrimEnd(' ');
 
                                     if (mailfields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsEmail())
@@ -1088,12 +1096,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                     }
                                 }
                                 cmobile = (string.IsNullOrEmpty(cmobile)) ? cphone : cmobile;
-                                if (!string.IsNullOrEmpty(cname) && !names.Contains(cname))
+                                if (!string.IsNullOrEmpty(cname) && !exCnames.Contains(cname))
                                 {
-                                    if (!string.IsNullOrEmpty(cemail))
+                                    if (!string.IsNullOrEmpty(cemail) && !exCemails.Contains(cemail))
                                     {
-                                        CqrContact contact = new CqrContact() { ContactId = contactId++, Name = cname, Email = cemail, Mobile = cmobile };
+                                        CqrContact contact = new CqrContact()
+                                        {
+                                            ContactId = contactId++,
+                                            Cuid = Guid.NewGuid(),
+                                            Name = cname,
+                                            Email = cemail,
+                                            Mobile = cmobile
+                                        };
                                         Entities.Settings.Singleton.Contacts.Add(contact);
+                                        if (string.IsNullOrEmpty(firstImport) && contactsImported == 0)
+                                            firstImport = contact.NameEmail;
+                                        else if (contactsImported > 0)
+                                            lastImport = contact.NameEmail;
+                                        contactsImported++;
                                     }
                                 }
 
@@ -1169,12 +1189,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                 {
                                     vcfCnt++;
                                     beginEndVcard = false;
-                                    if (!string.IsNullOrEmpty(cname) && !names.Contains(cname))
+                                    if (!string.IsNullOrEmpty(cname) && !exCnames.Contains(cname))
                                     {
                                         if (!string.IsNullOrEmpty(cemail))
                                         {
-                                            CqrContact contact = new CqrContact() { ContactId = contactId++, Name = cname, Email = cemail, Mobile = cmobile };
+                                            CqrContact contact = new CqrContact() { ContactId = contactId++, Cuid = Guid.NewGuid(), Name = cname, Email = cemail, Mobile = cmobile };
                                             Entities.Settings.Singleton.Contacts.Add(contact);
+                                            if (string.IsNullOrEmpty(firstImport) && contactsImported == 0)
+                                                firstImport = contact.NameEmail;
+                                            else if (contactsImported > 0)
+                                                lastImport = contact.NameEmail;
+                                            contactsImported++;
                                         }
                                     }
                                 }
@@ -1182,12 +1207,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                             }
 
-                            Entities.Settings.SaveSettings(Entities.Settings.Singleton);
+                            Entities.Settings.SaveSettings(Entities.Settings.Singleton);                            
+
                             break;
                         default:
                             break;
 
                     }
+
+
+                    string importedMsg = $"{contactsImported} new contacts imported!";
+                    if (!string.IsNullOrEmpty(firstImport))
+                        importedMsg += $"\nFirst: {firstImport}";
+                    if (!string.IsNullOrEmpty(lastImport))
+                        importedMsg += $"\n Last: {lastImport}";
+                    MessageBox.Show(importedMsg, $"Contacts import finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
@@ -1278,9 +1312,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <returns><see cref="Task"/></returns>
 
         internal async Task SetupNetwork()
-        {
-            List<string> proxyList = new List<string>();
-            List<IPAddress> addresses = GetProxiesFromSettingsResources(ref proxyList);
+        {            
+            List<IPAddress> addresses = GetProxiesFromSettingsResources();
             SetStatusText(StripStatusLabel, $"Setup Network: Several proxy addresses fetched.");
             List<IPAddress> interfaceIPAddrs = await NetworkAddresses.GetIpAddressesAsync();
             SetStatusText(StripStatusLabel, $"Setup Network: All network interfaces addresses fetched.");
@@ -1342,6 +1375,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
             mchecked = 0;
+            List<string> proxyList = new List<string>();
             foreach (IPAddress addrProxy in addresses)
             {
                 if (addrProxy != null &&
@@ -1414,39 +1448,43 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     if (dditem.Checked)
                         oldAddrIf = dditem;
 
-                              
+                IPAddress clIp = clientIpAddress;
                 try
                 {
-                    clientIpAddress = IPAddress.Parse(newAddrIf.Name);
-                    newAddrIf.Checked = true;
-                    if (oldAddrIf != null) 
-                        oldAddrIf.Checked = false;
+                    if (IPAddress.TryParse(newAddrIf.Name, out clIp))
+                    {
+                        newAddrIf.Checked = true;
+                        if (oldAddrIf != null)
+                            oldAddrIf.Checked = false;
+                        clientIpAddress = clIp;
+
+                        try
+                        {
+                            if (ipSockListener != null)
+                                ipSockListener.Dispose();
+                        }
+                        catch (Exception exi)
+                        {
+                            Area23Log.LogStatic(exi);
+                        }
+                        try
+                        {
+                            ipSockListener = null;
+                        }
+                        catch (Exception exi)
+                        {
+                            Area23Log.LogStatic(exi);
+                        }
+
+                        Thread.Sleep(Constants.CLOSING_TIMEOUT);
+                        ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
+                        SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
+                    }
                 }
                 catch (Exception exc)
                 {
                     Area23Log.LogStatic(exc);
-                }
-                try
-                {
-                    if (ipSockListener != null)
-                        ipSockListener.Dispose();
-                }
-                catch (Exception exi)
-                {
-                    Area23Log.LogStatic(exi);
-                }
-                try
-                {
-                    ipSockListener = null;
-                }
-                catch (Exception exi)
-                {
-                    Area23Log.LogStatic(exi);
-                }
-
-                Thread.Sleep(Constants.CLOSING_TIMEOUT);
-                ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
-                SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
+                }                
             }
         }
 
@@ -1469,12 +1507,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                     if (resp != null && ips != null && ips.Count > 2 && ips.ElementAt(2) != null)
                     {                        
-                        serverIpAddress = newSrvAddr;
+                        _serverIpAddress = newSrvAddr;
                         newProxyItem.Checked = true;
                         if (oldProxyItem != null && oldProxyItem.Checked)
                             oldProxyItem.Checked = false;
 
-                        SetStatusText(StripStatusLabel, $"ServerIp set to {serverIpAddress.AddressFamily.ShortInfo()} {serverIpAddress.ToString()}");                       
+                        SetStatusText(StripStatusLabel, $"ServerIp set to {_serverIpAddress.AddressFamily.ShortInfo()} {_serverIpAddress.ToString()}");
                     }
                 }
                 catch (Exception exi)

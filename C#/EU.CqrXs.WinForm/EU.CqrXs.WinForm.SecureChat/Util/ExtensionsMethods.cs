@@ -13,7 +13,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
         internal static bool IsPhoneOrMobile(this string phoneMobile)
         {
             bool result = true;
-            char[] allowed = "+0123456789 -/".ToCharArray();
+            char[] allowed = "+0123456789 -/_\\.\t".ToCharArray();
             if (phoneMobile.Length <= 3)
                 result = false;
             else

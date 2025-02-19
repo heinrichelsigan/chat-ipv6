@@ -29,7 +29,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.dataGridContacts.Rows.Clear();
             // DataGridViewRow row = new DataGridViewRow();
             string userCreatorOwner = Environment.UserName;            
-            if ((contacts = Entities.Settings.Instance.Contacts.ToArray()) != null)
+            if ((contacts = Entities.Settings.Singleton.Contacts.ToArray()) != null)
             {
                 contactsCount = contacts.Length;
                 foreach (CqrContact contact in contacts)

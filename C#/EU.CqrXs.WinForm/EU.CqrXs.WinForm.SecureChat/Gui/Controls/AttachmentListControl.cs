@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core;
+﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,12 +10,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Microsoft.AspNetCore.Components;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 {
-    public partial class GroupBoxLinkLabels : GroupBox
+    public partial class AttachmentListControl : UserControl
     {
 
         int linksCount = 0;
@@ -22,40 +21,53 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
         public int LinksNum { get => ((linksCount % 8) + 1); }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string HeaderText { get => this.Text; set => this.Text = value; }
+        public string HeaderText { get => this.labelHeaderText.Text; set => this.labelHeaderText.Text = value; }
 
         internal delegate void SetLinkLabelTextCallback(LinkLabel linkLabel, string text);
         internal delegate void AddLinkLabelLinksCallback(LinkLabel linkLabel, string linkUrl);
         internal delegate void SetLinkLabelVisibleCallback(LinkLabel linkLabel, bool visible);
 
-        public GroupBoxLinkLabels()
+        public AttachmentListControl()
         {
             components = new System.ComponentModel.Container();
             InitializeComponent();
-
-            if (!Directory.Exists(LibPaths.AttachmentFilesDir))
-                Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
         }
 
-        public GroupBoxLinkLabels(IContainer container)
+
+
+        public AttachmentListControl(IContainer container)
         {
             if (container == null)
                 container = new System.ComponentModel.Container();
-            container.Add(this);           
+            container.Add(this);
             components = container;
 
             InitializeComponent();
 
-            if (!Directory.Exists(LibPaths.AttachmentFilesDir))
-                Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
+            CreateAttachDirectory();
         }
 
 
-        public GroupBoxLinkLabels(string headerText, IContainer container) : this(container)
+        public AttachmentListControl(string headerText, IContainer container) : this(container)
         {
             this.Text = headerText;
         }
 
+
+
+        public void CreateAttachDirectory()
+        {
+
+            try
+            {
+                if (!Directory.Exists(LibPaths.AttachmentFilesDir))
+                    Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
+            }
+            catch (Exception dirEx)
+            {
+                Area23Log.LogStatic(dirEx);
+            }
+        }
 
         public void SetNameUri(string linkLabelName, Uri uri)
         {
@@ -112,6 +124,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 
         public void SetMimeAttachmentTextLink(MimeAttachment mimeAttachment)
         {
+            CreateAttachDirectory();
             string fileName = mimeAttachment.FileName;
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
             byte[] fileBytes = Area23.At.Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
@@ -240,4 +253,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 
 
     }
+
+
 }

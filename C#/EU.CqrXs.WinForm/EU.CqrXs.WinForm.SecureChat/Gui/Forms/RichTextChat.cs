@@ -20,6 +20,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Controls;
+using System.Net.Sockets;
 
 
 
@@ -57,33 +58,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     return serverIpAddress;
 
                 // TODO: change it
-                IEnumerable<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                List<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
                 foreach (IPAddress ip in list)
                 {
-                    foreach (string sip in Settings.Singleton.Proxies)
+                    if (Proxies.Contains(ip))
                     {
-                        if (IPAddress.Parse(sip).Equals(ip))
+                        if (ip.AddressFamily == AddressFamily.InterNetworkV6 && MenuNetworkItemIPv6Secure.Checked)
                         {
-                            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 &&
-                                MenuNetworkItemIPv6Secure.Checked)
-                            {
-                                serverIpAddress = ip;
-                                return serverIpAddress;
-                            }
-                            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
-                                !MenuNetworkItemIPv6Secure.Checked)
-                            {
-                                serverIpAddress = ip;
-                                return serverIpAddress;
-                            }
+                            serverIpAddress = ip;
+                            return serverIpAddress;
+                        }
+                        if (ip.AddressFamily == AddressFamily.InterNetwork && !MenuNetworkItemIPv6Secure.Checked)
+                        {
+                            serverIpAddress = ip;
+                            return serverIpAddress;
                         }
                     }
                 }
                 foreach (IPAddress ip in list)
                 {
-                    foreach (string sip in Settings.Singleton.Proxies)
+                    foreach (IPAddress proxyIp in Proxies)
                     {
-                        if (IPAddress.Parse(sip).Equals(ip) && ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        if (ip.IsSameIp(proxyIp, AddressFamily.InterNetwork))
                         {
                             serverIpAddress = ip;
                             return serverIpAddress;
@@ -938,7 +934,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             byte[] fileBytes = Base64.Decode(base64);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
-            GroupBoxLinks.SetNameFilePath(fileName, filePath);
+            // GroupBoxLinks.SetNameFilePath(fileName, filePath);
         }
 
 
@@ -1272,8 +1268,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal async Task SetupNetwork()
         {
-            List<string> proxyList = new List<string>();
-            List<IPAddress> addresses = GetProxiesFromSettingsResources(ref proxyList);
+            List<IPAddress> addresses = GetProxiesFromSettingsResources();
             List<IPAddress> interfaceIPAddrs = await NetworkAddresses.GetIpAddressesAsync();
             List<IPAddress> connectedIPs = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
 
@@ -1328,6 +1323,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
             mchecked = 0;
+            List<string> proxyList = new List<string>();
             foreach (IPAddress addrProxy in addresses)
             {
                 if (addrProxy != null &&

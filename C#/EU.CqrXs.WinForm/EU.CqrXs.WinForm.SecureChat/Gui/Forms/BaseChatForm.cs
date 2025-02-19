@@ -11,6 +11,7 @@ using EU.CqrXs.WinForm.SecureChat.Properties;
 using System.Media;
 using System.Net;
 using System.Windows.Forms;
+using Area23.At.Framework.Core.Util;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -32,30 +33,47 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         protected string savedFile = string.Empty;
         protected string loadDir = string.Empty;
         private System.ComponentModel.IContainer components = null;
+        protected internal static DateTime LastExternalTime = DateTime.MinValue;
+        protected internal static IPAddress? _externalIPAddress;
+        protected internal static List<string> _sProxies = new List<string>();
+        protected internal static List<IPAddress> _proxies = new List<IPAddress>();
+        protected internal static Lock _sLock = new Lock(), _sLock0 = new Lock(), _sLock1 = new Lock();
+        protected internal Lock _lock = new Lock();
 
         #endregion fields
 
         #region Properties
 
+        public static bool ProxiesInSettings
+        {
+            get => (Entities.Settings.Singleton != null && Entities.Settings.Singleton.Proxies != null &&
+                Entities.Settings.Singleton.Proxies.Count > 0);
+        }
 
+        public static bool FriendIPsInSettings
+        {
+            get => (Entities.Settings.Singleton != null && Entities.Settings.Singleton.FriendIPs != null &&
+                Entities.Settings.Singleton.FriendIPs.Count > 0);
+        }
 
-        protected internal static DateTime LastExternalTime = DateTime.MinValue;
-        protected internal static IPAddress? externalIPAddress;
+        
         public static IPAddress? ExternalIpAddress
         {
             get
             {
-                if (externalIPAddress != null && DateTime.Now.Subtract(LastExternalTime).TotalSeconds < 1800)
+                if (_externalIPAddress != null && DateTime.Now.Subtract(LastExternalTime).TotalSeconds < 1800)
                 {                    
-                    return externalIPAddress;
+                    return _externalIPAddress;
                 }
 
                 LastExternalTime = DateTime.Now;
-                externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://cqrxs.eu/cqrsrv/cqrjd/R.aspx");
-                return externalIPAddress;
+                _externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx");
+                return _externalIPAddress;
             }
         }
         
+        public static List<IPAddress> Proxies { get => GetProxiesFromSettingsResources(); }
+
         #endregion Properties
 
         /// <summary>
@@ -558,49 +576,68 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <returns>list of ip addr of proxies</returns>
 
-        public List<IPAddress> GetProxiesFromSettingsResources(ref List<string> proxyList)
+        public static List<IPAddress> GetProxiesFromSettingsResources()
         {
-
-            List<IPAddress> addresses = new List<IPAddress>();
-
-            string[] proxyStrs = Resources.Proxies.Split(";,".ToCharArray());
-            List<string> proxySets = Entities.Settings.Singleton.Proxies;
-            if (proxyStrs.Length >= proxySets.Count)
+            lock (_sLock0)
             {
-                proxySets = new List<string>(proxyStrs);
-            }
-            foreach (string proxyS in proxySets)
-            {
-                try
-                {
-                    IPAddress ip = IPAddress.Parse(proxyS);
-                    addresses.Add(ip);
-
-                }
-                catch (Exception ex)
-                {
-                    CqrException.SetLastException(ex);
-                    Area23Log.LogStatic(ex);
-                }
-            }
-            string[] proxyNameStrs = Resources.ProxyNames.Split(";,".ToCharArray());
-            proxyList = new List<string>();
-            foreach (string proxyStr in proxyNameStrs)
-            {
-                try
-                {
-                    foreach (var netIp in DnsHelper.GetIpAddrsByHostName(proxyStr))
-                        if (!addresses.Contains(netIp))
-                            addresses.Add(netIp);
-                }
-                catch (Exception ex)
-                {
-                    CqrException.SetLastException(ex);
-                    Area23Log.LogStatic(ex);
-                }
+                if (_proxies != null && _proxies.Count > 0)
+                    return _proxies;
             }
 
-            return addresses;
+            lock (_sLock1)
+            { 
+                _proxies = new List<IPAddress>();
+                _sProxies = (BaseChatForm.ProxiesInSettings) ? Entities.Settings.Singleton.Proxies :
+                    new List<string>(Resources.Proxies.Split(";,".ToCharArray()));
+                foreach (string proxyS in _sProxies)
+                {
+                    try
+                    {
+                        if (IPAddress.TryParse(proxyS, out IPAddress? outAddr))
+                            if (outAddr != null)
+                                _proxies.Add(outAddr);
+                    }
+                    catch (Exception ex)
+                    {
+                        CqrException.SetLastException(ex);
+                        Area23Log.LogStatic(ex);
+                    }
+                }
+                List<IPAddress> cqrXsEuIpList = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                foreach (IPAddress euIp in cqrXsEuIpList)
+                {
+                    try
+                    {
+                        if (!_proxies.Contains(euIp))
+                            _proxies.Add(euIp);
+                    }
+                    catch (Exception ex)
+                    {
+                        CqrException.SetLastException(ex);
+                        Area23Log.LogStatic(ex);
+                    }
+                }
+                string[] proxyNameStrs = Resources.ProxyNames.Split(";,".ToCharArray());
+                foreach (string proxyStr in proxyNameStrs)
+                {
+                    try
+                    {
+                        foreach (IPAddress netIp in DnsHelper.GetIpAddrsByHostName(proxyStr))
+                            if (!_proxies.Contains(netIp))
+                                _proxies.Add(netIp);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        CqrException.SetLastException(ex);
+                        Area23Log.LogStatic(ex);
+                    }
+                }
+
+                _sProxies = _proxies.ConvertAll(x => x.ToString());
+            }
+
+            return _proxies;
         }
 
 

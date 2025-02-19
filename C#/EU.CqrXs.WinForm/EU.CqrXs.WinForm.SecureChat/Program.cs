@@ -68,8 +68,10 @@ namespace EU.CqrXs.WinForm.SecureChat
             // else
             newChat = (Form)(new Gui.Forms.SecureChat());
 
+            // var form1 = new EU.CqrXs.WinForm.SecureChat.Gui.Forms.Form1();
+            // Application.Run(form1);
             Application.Run(newChat);
-            
+
             ReleaseCloseDisposeMutex(mutex);
 
         }

@@ -47,45 +47,45 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #region Properties
 
-        private static IPAddress? serverIpAddress;
+        private static IPAddress? _serverIpAddress;
         internal IPAddress? ServerIpAddress
         {
             get
             {
-                if (serverIpAddress != null)
-                    return serverIpAddress;
+                if (_serverIpAddress != null && !_serverIpAddress.IsIPv6UniqueLocal)
+                    return _serverIpAddress;
 
                 // TODO: change it
-                IEnumerable<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
-                foreach (IPAddress ip in list)
+                List<IPAddress> ipList = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                foreach (IPAddress srvIp in ipList)
                 {
-                    foreach (string sip in Settings.Singleton.Proxies)
+                    foreach (IPAddress proxyIp in BaseChatForm.Proxies)
                     {
-                        if (IPAddress.Parse(sip).Equals(ip))
+                        if (srvIp.Equals(proxyIp))
                         {
-                            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 &&
+                            if (srvIp.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 &&
                                 MenuNetworkItemIPv6Secure.Checked)
                             {
-                                serverIpAddress = ip;
-                                return serverIpAddress;
+                                _serverIpAddress = srvIp;
+                                return _serverIpAddress;
                             }
-                            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
+                            if (srvIp.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
                                 !MenuNetworkItemIPv6Secure.Checked)
                             {
-                                serverIpAddress = ip;
-                                return serverIpAddress;
+                                _serverIpAddress = srvIp;
+                                return _serverIpAddress;
                             }
                         }
                     }
                 }
-                foreach (IPAddress ip in list)
+                foreach (IPAddress srvIp in ipList)
                 {
-                    foreach (string sip in Settings.Singleton.Proxies)
+                    foreach (IPAddress proxyIp in BaseChatForm.Proxies)
                     {
-                        if (IPAddress.Parse(sip).Equals(ip) && ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        if (srvIp.Equals(proxyIp) && srvIp.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
-                            serverIpAddress = ip;
-                            return serverIpAddress;
+                            _serverIpAddress = srvIp;
+                            return _serverIpAddress;
                         }
                     }
                 }
@@ -1270,9 +1270,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
         internal async Task SetupNetwork()
-        {
-            List<string> proxyList = new List<string>();
-            List<IPAddress> addresses = GetProxiesFromSettingsResources(ref proxyList);
+        {            
+            List<IPAddress> addresses = GetProxiesFromSettingsResources();
             List<IPAddress> interfaceIPAddrs = await NetworkAddresses.GetIpAddressesAsync();
             List<IPAddress> connectedIPs = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
 
@@ -1292,8 +1291,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     {
                         foreach (IPAddress connectedIp in connectedIPs)
                         {
-                            if ((Extensions.BytesCompare(addr.GetAddressBytes(), connectedIp.GetAddressBytes()) == 0) &&
-                                (addr.AddressFamily == connectedIp.AddressFamily))
+                            if (addr.IsSameIp(connectedIp))
                             {
                                 item.ForeColor = SystemColors.MenuText;
                                 item.BackColor = SystemColors.Menu;
@@ -1325,8 +1323,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
 
 
-
             mchecked = 0;
+            List<string> proxyList = new List<string>();
             foreach (IPAddress addrProxy in addresses)
             {
                 if (addrProxy != null &&
@@ -1341,7 +1339,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {
                         if (!MenuNetworkItemIPv6Secure.Checked && addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                        {; }
+                        { ; }
                         else
                             item.Checked = true;
                     }
@@ -1351,13 +1349,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             }
 
-            foreach (var friendIp in Entities.Settings.Singleton.FriendIPs)
+            foreach (string sFriendIp in Entities.Settings.Singleton.FriendIPs)
             {
-                if (!string.IsNullOrEmpty(friendIp))
+                if (!string.IsNullOrEmpty(sFriendIp))
                 {
                     try
                     {
-                        IPAddress ipFriendAddr = IPAddress.Parse(friendIp);
+                        IPAddress ipFriendAddr = IPAddress.Parse(sFriendIp);
                         if (!MenuNetworkComboBoxFriendIp.Items.Contains(ipFriendAddr.ToString()))
                             MenuNetworkComboBoxFriendIp.Items.Add(ipFriendAddr.ToString());
                         if (!ComboBoxIp.Items.Contains(ipFriendAddr.ToString()))

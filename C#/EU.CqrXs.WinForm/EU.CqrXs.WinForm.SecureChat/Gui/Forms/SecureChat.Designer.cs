@@ -93,6 +93,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             TextBoxPipe = new TextBox();
             RichTextBoxChat = new RichTextBox();
             PanelDestination = new Panel();
+            peerServerSwitchControl1 = new Controls.PeerServerSwitchControl();
+            attachmentListControl = new Controls.AttachmentListControl(components);
             dragnDropGroupBox = new Controls.DragNDropGroupBox(components);
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
@@ -638,7 +640,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // PictureBoxYou
             // 
             PictureBoxYou.BackgroundImageLayout = ImageLayout.Stretch;
-            PictureBoxYou.Location = new Point(2, 1);
+            PictureBoxYou.Location = new Point(2, 50);
             PictureBoxYou.Margin = new Padding(1);
             PictureBoxYou.Name = "PictureBoxYou";
             PictureBoxYou.Padding = new Padding(1);
@@ -763,6 +765,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // PanelDestination
             // 
             PanelDestination.BackColor = SystemColors.ActiveCaption;
+            PanelDestination.Controls.Add(peerServerSwitchControl1);
+            PanelDestination.Controls.Add(attachmentListControl);
             PanelDestination.Controls.Add(dragnDropGroupBox);
             PanelDestination.Controls.Add(PictureBoxYou);
             PanelDestination.ForeColor = SystemColors.ActiveCaptionText;
@@ -772,16 +776,38 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelDestination.Size = new Size(152, 515);
             PanelDestination.TabIndex = 70;
             // 
+            // peerServerSwitchControl1
+            // 
+            peerServerSwitchControl1.AllowDrop = true;
+            peerServerSwitchControl1.AutoValidate = AutoValidate.EnableAllowFocusChange;
+            peerServerSwitchControl1.BackColor = SystemColors.GradientActiveCaption;
+            peerServerSwitchControl1.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            peerServerSwitchControl1.Location = new Point(0, 0);
+            peerServerSwitchControl1.Margin = new Padding(0);
+            peerServerSwitchControl1.Name = "peerServerSwitchControl1";
+            peerServerSwitchControl1.Size = new Size(152, 48);
+            peerServerSwitchControl1.TabIndex = 84;
+            // 
+            // attachmentListControl
+            // 
+            attachmentListControl.BackColor = SystemColors.ControlLightLight;
+            attachmentListControl.Font = new Font("Lucida Sans Unicode", 9F);
+            attachmentListControl.Location = new Point(0, 199);
+            attachmentListControl.Margin = new Padding(0);
+            attachmentListControl.Name = "attachmentListControl";
+            attachmentListControl.Size = new Size(152, 192);
+            attachmentListControl.TabIndex = 83;
+            // 
             // dragnDropGroupBox
             // 
             dragnDropGroupBox.AllowDrop = true;
             dragnDropGroupBox.BackColor = SystemColors.ControlLightLight;
             dragnDropGroupBox.Font = new Font("Lucida Sans Unicode", 9F);
-            dragnDropGroupBox.Location = new Point(2, 364);
-            dragnDropGroupBox.Margin = new Padding(1);
+            dragnDropGroupBox.Location = new Point(2, 392);
+            dragnDropGroupBox.Margin = new Padding(0);
             dragnDropGroupBox.Name = "dragnDropGroupBox";
-            dragnDropGroupBox.Padding = new Padding(1);
-            dragnDropGroupBox.Size = new Size(148, 148);
+            dragnDropGroupBox.Padding = new Padding(0);
+            dragnDropGroupBox.Size = new Size(148, 120);
             dragnDropGroupBox.TabIndex = 81;
             dragnDropGroupBox.TabStop = false;
             dragnDropGroupBox.Text = "   Drag'N'Drop Box";
@@ -980,5 +1006,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private SaveFileDialog FileSaveDialog;
         private Controls.DragNDropGroupBox dragnDropGroupBox;
         private ToolStripProgressBar StripProgressBar;
+        private Controls.AttachmentListControl attachmentListControl;
+        private Controls.PeerServerSwitchControl peerServerSwitchControl1;
     }
 }

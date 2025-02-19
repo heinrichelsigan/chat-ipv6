@@ -35,11 +35,14 @@
 
   <ItemGroup>
     <Compile Remove="Entities\Contact.cs" />
+    <Compile Remove="Gui\Controls\DragNDropControl.cs" />
+    <Compile Remove="Gui\Controls\DragNDropControl.Designer.cs" />
     <Compile Remove="Gui\Controls\LinkLabelsControl.cs" />
     <Compile Remove="Gui\Controls\LinkLabelsControl.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Remove="Gui\Controls\DragNDropControl.resx" />
     <EmbeddedResource Remove="Gui\Controls\LinkLabelsControl.resx" />
   </ItemGroup>
 
@@ -220,7 +223,6 @@
     <Folder Include="log\" />
     <Folder Include="Properties\text\" />
     <Folder Include="Properties\en\" />
-    <Folder Include="Properties\fr\" />
     <Folder Include="Properties\it\" />
     <Folder Include="Properties\pl\" />
   </ItemGroup>
@@ -265,6 +267,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Properties\fr\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -278,6 +285,10 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\de\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\fr\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>

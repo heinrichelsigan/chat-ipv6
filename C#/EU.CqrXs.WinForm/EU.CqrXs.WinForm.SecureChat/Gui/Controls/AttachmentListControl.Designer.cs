@@ -1,15 +1,13 @@
-﻿using System.Windows.Forms;
-
-namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
+﻿namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 {
-    partial class GroupBoxLinkLabels
+    partial class AttachmentListControl
     {
-        /// <summary>
+        /// <summary> 
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// <summary> 
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -24,12 +22,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 
         #region Component Designer generated code
 
-        /// <summary>
+        /// <summary> 
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
-        {            
+        {
+            labelHeaderText = new Label();
             LinkLabel8 = new LinkLabel();
             LinkLabel7 = new LinkLabel();
             LinkLabel6 = new LinkLabel();
@@ -40,15 +39,25 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             LinkLabel1 = new LinkLabel();
             SuspendLayout();
             // 
+            // labelHeaderText
+            // 
+            labelHeaderText.AutoSize = true;
+            labelHeaderText.Font = new Font("Trebuchet MS", 9.75F);
+            labelHeaderText.Location = new Point(21, 0);
+            labelHeaderText.Name = "labelHeaderText";
+            labelHeaderText.Size = new Size(102, 18);
+            labelHeaderText.TabIndex = 0;
+            labelHeaderText.Text = "Attachment List";
+            // 
             // LinkLabel8
             // 
             LinkLabel8.AutoSize = true;
             LinkLabel8.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel8.Location = new Point(1, 187);
+            LinkLabel8.Location = new Point(1, 164);
             LinkLabel8.Margin = new Padding(1, 0, 1, 0);
             LinkLabel8.Name = "LinkLabel8";
             LinkLabel8.Size = new Size(64, 15);
-            LinkLabel8.TabIndex = 88;
+            LinkLabel8.TabIndex = 96;
             LinkLabel8.TabStop = true;
             LinkLabel8.Text = "LinkLabel8";
             LinkLabel8.Visible = false;
@@ -57,11 +66,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             // 
             LinkLabel7.AutoSize = true;
             LinkLabel7.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel7.Location = new Point(1, 163);
+            LinkLabel7.Location = new Point(1, 144);
             LinkLabel7.Margin = new Padding(1, 0, 1, 0);
             LinkLabel7.Name = "LinkLabel7";
             LinkLabel7.Size = new Size(64, 15);
-            LinkLabel7.TabIndex = 87;
+            LinkLabel7.TabIndex = 95;
             LinkLabel7.TabStop = true;
             LinkLabel7.Text = "LinkLabel7";
             LinkLabel7.Visible = false;
@@ -70,11 +79,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             // 
             LinkLabel6.AutoSize = true;
             LinkLabel6.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel6.Location = new Point(1, 140);
+            LinkLabel6.Location = new Point(1, 124);
             LinkLabel6.Margin = new Padding(1, 0, 1, 0);
             LinkLabel6.Name = "LinkLabel6";
             LinkLabel6.Size = new Size(64, 15);
-            LinkLabel6.TabIndex = 86;
+            LinkLabel6.TabIndex = 94;
             LinkLabel6.TabStop = true;
             LinkLabel6.Text = "LinkLabel6";
             LinkLabel6.Visible = false;
@@ -83,11 +92,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             // 
             LinkLabel5.AutoSize = true;
             LinkLabel5.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel5.Location = new Point(1, 117);
+            LinkLabel5.Location = new Point(1, 104);
             LinkLabel5.Margin = new Padding(1, 0, 1, 0);
             LinkLabel5.Name = "LinkLabel5";
             LinkLabel5.Size = new Size(64, 15);
-            LinkLabel5.TabIndex = 85;
+            LinkLabel5.TabIndex = 93;
             LinkLabel5.TabStop = true;
             LinkLabel5.Text = "LinkLabel5";
             LinkLabel5.Visible = false;
@@ -96,11 +105,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             // 
             LinkLabel4.AutoSize = true;
             LinkLabel4.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel4.Location = new Point(1, 94);
+            LinkLabel4.Location = new Point(1, 84);
             LinkLabel4.Margin = new Padding(1, 0, 1, 0);
             LinkLabel4.Name = "LinkLabel4";
             LinkLabel4.Size = new Size(64, 15);
-            LinkLabel4.TabIndex = 84;
+            LinkLabel4.TabIndex = 92;
             LinkLabel4.TabStop = true;
             LinkLabel4.Text = "LinkLabel4";
             LinkLabel4.Visible = false;
@@ -109,11 +118,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             // 
             LinkLabel3.AutoSize = true;
             LinkLabel3.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel3.Location = new Point(1, 71);
+            LinkLabel3.Location = new Point(1, 64);
             LinkLabel3.Margin = new Padding(1, 0, 1, 0);
             LinkLabel3.Name = "LinkLabel3";
             LinkLabel3.Size = new Size(64, 15);
-            LinkLabel3.TabIndex = 83;
+            LinkLabel3.TabIndex = 91;
             LinkLabel3.TabStop = true;
             LinkLabel3.Text = "LinkLabel3";
             LinkLabel3.Visible = false;
@@ -122,11 +131,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             // 
             LinkLabel2.AutoSize = true;
             LinkLabel2.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel2.Location = new Point(1, 48);
+            LinkLabel2.Location = new Point(1, 44);
             LinkLabel2.Margin = new Padding(1, 0, 1, 0);
             LinkLabel2.Name = "LinkLabel2";
             LinkLabel2.Size = new Size(64, 15);
-            LinkLabel2.TabIndex = 82;
+            LinkLabel2.TabIndex = 90;
             LinkLabel2.TabStop = true;
             LinkLabel2.Text = "LinkLabel2";
             LinkLabel2.Visible = false;
@@ -135,41 +144,39 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             // 
             LinkLabel1.AutoSize = true;
             LinkLabel1.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel1.Location = new Point(1, 25);
+            LinkLabel1.Location = new Point(1, 24);
             LinkLabel1.Margin = new Padding(1, 0, 1, 0);
             LinkLabel1.Name = "LinkLabel1";
             LinkLabel1.Size = new Size(64, 15);
-            LinkLabel1.TabIndex = 81;
+            LinkLabel1.TabIndex = 89;
             LinkLabel1.TabStop = true;
             LinkLabel1.Text = "LinkLabel1";
             LinkLabel1.Visible = false;
             // 
-            // GroupBoxLinkLabels
-            //                         
-            this.Controls.Add(LinkLabel8);
-            this.Controls.Add(LinkLabel7);
-            this.Controls.Add(LinkLabel6);
-            this.Controls.Add(LinkLabel5);
-            this.Controls.Add(LinkLabel4);
-            this.Controls.Add(LinkLabel3);
-            this.Controls.Add(LinkLabel2);
-            this.Controls.Add(LinkLabel1);
-            this.BackColor = SystemColors.ControlLightLight;
-            this.Font = new Font("Lucida Sans Unicode", 9F);
-            this.Location = new Point(0, 0);
-            this.Margin = new Padding(0);
-            this.Name = "GroupBoxLinkLabels";
-            this.Padding = new Padding(1);
-            this.Size = new Size(151, 213);
-            this.TabIndex = 81;
-            this.TabStop = false;
-            this.Text = "GroupBoxLinkLabels";
+            // AttachmentListControl
+            // 
+            AutoScaleMode = AutoScaleMode.None;
+            BackColor = SystemColors.ControlLightLight;
+            Controls.Add(LinkLabel8);
+            Controls.Add(LinkLabel7);
+            Controls.Add(LinkLabel6);
+            Controls.Add(LinkLabel5);
+            Controls.Add(LinkLabel4);
+            Controls.Add(LinkLabel3);
+            Controls.Add(LinkLabel2);
+            Controls.Add(LinkLabel1);
+            Controls.Add(labelHeaderText);
+            Font = new Font("Lucida Sans Unicode", 9F);
+            Margin = new Padding(0);
+            Name = "AttachmentListControl";
+            Size = new Size(152, 192);
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
+        private Label labelHeaderText;
         private LinkLabel LinkLabel8;
         private LinkLabel LinkLabel7;
         private LinkLabel LinkLabel6;
