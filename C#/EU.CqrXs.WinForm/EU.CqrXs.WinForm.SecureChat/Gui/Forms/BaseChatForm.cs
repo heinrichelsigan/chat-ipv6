@@ -12,6 +12,13 @@ using System.Media;
 using System.Net;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
+using NLog.Targets.Wrappers;
+using System.Windows.Controls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using static System.Windows.Forms.MonthCalendar;
+using Org.BouncyCastle.Utilities;
+using System.Drawing.Imaging;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -92,13 +99,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal delegate void AppendRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, string text);
 
-        internal delegate void SelectRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, int start, int length);
+        internal delegate void RichTextFromPositionWithLengthAlignCallback(
+                System.Windows.Forms.RichTextBox richArea, 
+                int pos0, 
+                int len, 
+                HorizontalAlignment hlr
+            );
 
         internal delegate void SelectionAlignmentRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, HorizontalAlignment leftRight);
 
         internal delegate int GetFirstCharIndexFromLineRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, int lineNr);
 
         internal delegate void ClearRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, bool clear = true);
+
+        internal delegate int GetLastIndexOfSubstringCallback(System.Windows.Forms.RichTextBox richTextBox, string pattern);
+        
+        internal delegate void DeselectAllRichTextCallback(System.Windows.Forms.RichTextBox richTextBox);
 
 
         /// <summary>
@@ -168,34 +184,73 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
-        internal void SelectRichText(System.Windows.Forms.RichTextBox richTextBox, int start, int length)
+        internal void RichTextFromPositionWithLengthAlign(
+            System.Windows.Forms.RichTextBox richTextBox, 
+            int start,  
+            int length, 
+            HorizontalAlignment hAlignment = HorizontalAlignment.Left)
         {
-            if (start < 0)
-                start = 0;
+            start = (start < 0) ? 0 : start;
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             // If these threads are different, it returns true.
             if (richTextBox.InvokeRequired)
             {
-                SelectRichTextCallback selectRichTextCallback = // new AppendTextCallback(SetTextSpooler);
-                    delegate (System.Windows.Forms.RichTextBox textArea, int charStart, int charLength)
+                RichTextFromPositionWithLengthAlignCallback richTextFromPositionWithLengthAlignCallback = // new AppendTextCallback(SetTextSpooler);
+                    delegate (System.Windows.Forms.RichTextBox richArea, int pos0, int len, HorizontalAlignment hlr)
                     {
-                        if (textArea != null && textArea.Text != null)
-                            textArea.Select(charStart, charLength);
+                        if (richArea != null && !string.IsNullOrEmpty(richArea.Text))
+                        {
+                            richArea.DeselectAll();
+                            richArea.Select((pos0 < 0) ? 0 : pos0, len);
+                            richArea.SelectionAlignment = hlr;                            
+                            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(pos0.ToString() + len.ToString());
+                            string hex = bytes.ToHexString();
+
+                            Color c = Color.AliceBlue;
+                            if (hlr == HorizontalAlignment.Left)
+                                c = new Color().FromXrgb($"ff{hex.Substring(0, 2)}{hex.Substring(2, 2)}");
+                            if (hlr == HorizontalAlignment.Right)
+                                c = new Color().FromXrgb($"{hex.Substring(0, 2)}{hex.Substring(2, 2)}ff");
+                            if (hlr == HorizontalAlignment.Center)
+                                c = new Color().FromXrgb($"{hex.Substring(0, 2)}ff{hex.Substring(2, 2)}");
+                            richArea.SelectionBackColor = c;
+                            // richArea.DeselectAll();
+                        }
                     };
                 try
                 {
-                    richTextBox.Invoke(selectRichTextCallback, new object[] { richTextBox, start, length });
+                    richTextBox.Invoke(
+                        richTextFromPositionWithLengthAlignCallback,
+                        new object[] { richTextBox, start, length, hAlignment });
                     // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate select rich text: \"{start},{length}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx("RichTextFromPositionWithLengthAlign",
+                        $"Exception in delegate RichTextFromPositionWithLengthAlign RichTextBox: " +
+                        $"RichTextFromPositionWithLengthAlign(RichTextBox richTextBox = \"{richTextBox.Name}\", int start = {start}, int length = {length}, HorizontalAlignment hAlignment = {hAlignment}) ...\n", exDelegate);
                 }
             }
             else
             {
-                if (richTextBox != null && richTextBox.Text != null)
-                    richTextBox.Select(start, length);
+                if (richTextBox != null && !string.IsNullOrEmpty(richTextBox.Text))
+                {
+                    richTextBox.DeselectAll();
+                    richTextBox.Select((start < 0) ? 0 : start, length);
+                    richTextBox.SelectionAlignment = hAlignment;
+                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(start.ToString() + length.ToString());
+                    string hex = bytes.ToHexString();
+
+                    Color c = Color.AliceBlue;
+                    if (hAlignment == HorizontalAlignment.Left)
+                        c = new Color().FromXrgb($"ff{hex.Substring(0, 2)}{hex.Substring(2, 2)}");
+                    if (hAlignment == HorizontalAlignment.Right)
+                        c = new Color().FromXrgb($"{hex.Substring(0, 2)}{hex.Substring(2, 2)}ff");
+                    if (hAlignment == HorizontalAlignment.Center)
+                        c = new Color().FromXrgb($"{hex.Substring(0, 2)}ff{hex.Substring(2, 2)}");
+                    richTextBox.SelectionBackColor = c;
+                    // richTextBox.DeselectAll();
+                }
             }
         }
 
@@ -258,6 +313,78 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             return -1;
         }
+
+        internal int GetLastIndexOfSubstring(System.Windows.Forms.RichTextBox richTextBox, string pattern)
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (richTextBox.InvokeRequired)
+            {
+                GetLastIndexOfSubstringCallback getLastIndexOfSubstringCallback = // new AppendTextCallback(SetTextSpooler);
+                    delegate (System.Windows.Forms.RichTextBox textArea, string patterns)
+                    {
+                        if (textArea != null &&
+                            !string.IsNullOrEmpty(textArea.Text) &&
+                            !string.IsNullOrEmpty(patterns)) {
+                            if (textArea.Text.Contains(patterns, StringComparison.InvariantCultureIgnoreCase) ||
+                                textArea.Text.IndexOf(patterns) > -1)
+                            {
+                                return textArea.Text.LastIndexOf(patterns);
+                            }
+                        }
+
+                        return -1;
+                    };
+                try
+                {
+                    richTextBox.Invoke(getLastIndexOfSubstringCallback, new object[] { richTextBox, pattern });
+                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetLastIndexOfSubstring(richTextBox = {richTextBox.Name}, pattern = {pattern}).\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (richTextBox != null  && !string.IsNullOrEmpty(richTextBox.Text) && !string.IsNullOrEmpty(pattern) && richTextBox.Text.Contains(pattern))
+                    return richTextBox.Text.LastIndexOf(pattern);
+            }
+            return -1;
+        }
+
+
+        internal void DeselectAllRichText(System.Windows.Forms.RichTextBox richTextBox)
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (richTextBox.InvokeRequired)
+            {
+                DeselectAllRichTextCallback deselectAllRichTextCallback = // new AppendTextCallback(SetTextSpooler);
+                    delegate (System.Windows.Forms.RichTextBox textArea)
+                    {
+                        if (textArea != null && !string.IsNullOrEmpty(textArea.Text))
+                            textArea.DeselectAll();
+                        return;
+                    };
+                try
+                {
+                    richTextBox.Invoke(deselectAllRichTextCallback, new object[] { richTextBox });
+                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate DeselectAllRichText(richTextBox = {richTextBox.Name}).\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (richTextBox != null && !string.IsNullOrEmpty(richTextBox.Text))
+                    richTextBox.DeselectAll();
+            }
+            return;
+        }
+
 
         internal void ClearRichText(System.Windows.Forms.RichTextBox richTextBox, bool clear = true)
         {
@@ -391,6 +518,365 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #endregion LinkLabel
 
+        #region ToolStripItemCollection
+
+        internal delegate string GetMenuItemTextCallback(ToolStripMenuItem menuItem);
+        internal delegate void SetMenuItemTextCallback(ToolStripMenuItem menuItem, string text);
+
+        internal string GetMenuItemText(ToolStripMenuItem mItem)
+        {
+            string reText = string.Empty;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            {
+                GetMenuItemTextCallback getMenuItemTextCallback = delegate (ToolStripMenuItem tsMenuItem) 
+                {
+                    return (tsMenuItem != null && tsMenuItem.Text != null) ? tsMenuItem.Text : string.Empty;
+                };
+                try
+                {
+                    reText = (string)mItem.GetCurrentParent().Invoke(getMenuItemTextCallback, new object[] { mItem });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItemText menuItem = {mItem.Name}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                reText = (mItem != null && mItem.Text != null) ? mItem.Text : string.Empty;
+            }
+
+            return reText;
+        }
+        internal void SetMenuItemText(ToolStripMenuItem mItem, string text)
+        {
+            string setText = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            {
+                SetMenuItemTextCallback setMenuItemTextCallback = delegate (ToolStripMenuItem tsMenuItem, string setText)
+                {
+                    if (tsMenuItem != null && setText != null)
+                        tsMenuItem.Text = setText;                    
+                };
+                try
+                {
+                    mItem.GetCurrentParent()?.Invoke(setMenuItemTextCallback, new object[] { mItem, setText });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, text: \"{text}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (mItem != null && setText != null)
+                    mItem.Text = setText;
+            }
+        }
+
+
+        internal delegate Color GetMenuItemForeColorCallback(ToolStripMenuItem menuItem);
+        internal delegate void SetMenuItemForeColorCallback(ToolStripMenuItem menuItem, Color foreColor);
+
+        internal Color GetMenuItemForeColor(ToolStripMenuItem mItem)
+        {
+            Color foreColor = SystemColors.MenuText;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            {
+                GetMenuItemForeColorCallback getMenuItemForeColorCallback = delegate (ToolStripMenuItem tsMenuItem)
+                {
+                    return (tsMenuItem != null && tsMenuItem.ForeColor != null) ? tsMenuItem.ForeColor : SystemColors.MenuText;
+                };
+                try
+                {
+                    foreColor = (Color)mItem.GetCurrentParent().Invoke(getMenuItemForeColorCallback, new object[] { mItem });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItemForeColor menuItem = {mItem.Name}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                foreColor = (mItem != null && mItem.ForeColor != null) ? mItem.ForeColor : SystemColors.MenuText;
+            }
+
+            return foreColor;
+        }
+        internal void SetMenuItemForeColor(ToolStripMenuItem mItem, Color foreColor)
+        {
+            Color fgColor = (foreColor != null) ? foreColor : SystemColors.MenuText;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            {
+                SetMenuItemForeColorCallback setMenuItemForeColorCallback = delegate (ToolStripMenuItem tsMenuItem, Color fgColor)
+                {
+                    if (tsMenuItem != null && fgColor != null)
+                        tsMenuItem.ForeColor = fgColor;
+                };
+                try
+                {
+                    mItem.GetCurrentParent()?.Invoke(setMenuItemForeColorCallback, new object[] { mItem, fgColor});
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, Color: \"{foreColor}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (mItem != null && fgColor != null)
+                    mItem.ForeColor = fgColor;
+            }
+        }
+
+
+        internal delegate Color GetMenuItemBackColorCallback(ToolStripMenuItem menuItem);
+        internal delegate void SetMenuItemBackColorCallback(ToolStripMenuItem menuItem, Color backColor);
+
+        internal Color GetMenuItemBackColor(ToolStripMenuItem mItem)
+        {
+            Color bgColor = SystemColors.MenuBar;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            {
+                GetMenuItemBackColorCallback getMenuItemBackColorCallback = delegate (ToolStripMenuItem tsMenuItem)
+                {
+                    return (tsMenuItem != null && tsMenuItem.BackColor != null) ? tsMenuItem.BackColor : SystemColors.MenuBar;
+                };
+                try
+                {
+                    bgColor = (Color)mItem.GetCurrentParent().Invoke(getMenuItemBackColorCallback, new object[] { mItem });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItemBackColor menuItem = {mItem.Name}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                bgColor = (mItem != null && mItem.BackColor != null) ? mItem.BackColor : SystemColors.MenuBar;
+            }
+
+            return bgColor;
+        }
+        internal void SetMenuItemBackColor(ToolStripMenuItem mItem, Color backColor)
+        {
+            Color bgColor = (backColor != null) ? backColor : SystemColors.MenuBar;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            {
+                SetMenuItemBackColorCallback setMenuItemBackColorCallback = delegate (ToolStripMenuItem tsMenuItem, Color bgColor)
+                {
+                    if (tsMenuItem != null && bgColor != null)
+                        tsMenuItem.BackColor = bgColor;
+                };
+                try
+                {
+                    mItem.GetCurrentParent()?.Invoke(setMenuItemBackColorCallback, new object[] { mItem, bgColor });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetMenuItemBackColor menu item: {mItem.Name}, Color: \"{bgColor}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (mItem != null && bgColor != null)
+                    mItem.BackColor = bgColor;
+            }
+        }
+
+
+        internal delegate bool GetMenuItemCheckedCallback(ToolStripMenuItem menuItem);
+        internal delegate void SetMenuItemCheckedCallback(ToolStripMenuItem menuItem, bool mchecked);
+        internal bool GetMenuItemChecked(ToolStripMenuItem mItem)
+        {
+            bool mchecked = false;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            {
+                GetMenuItemCheckedCallback getMenuItemCheckedCallback = delegate (ToolStripMenuItem tsMenuItem)
+                {
+                    return (tsMenuItem != null) ? tsMenuItem.Checked : false;
+                };
+                try
+                {
+                    mchecked = (bool)mItem.GetCurrentParent().Invoke(getMenuItemCheckedCallback, new object[] { mItem });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItemChecked menuItem = {mItem.Name}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                mchecked = (mItem != null) ? mItem.Checked : false;
+            }
+
+            return mchecked;
+        }
+        internal void SetMenuItemChecked(ToolStripMenuItem mItem, bool mchecked)
+        {            
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if ((mItem.GetCurrentParent() != null) && mItem.GetCurrentParent().InvokeRequired)
+            {
+                SetMenuItemCheckedCallback setMenuItemCheckedCallback = delegate (ToolStripMenuItem tsMenuItem, bool miChecked)
+                {
+                    if (tsMenuItem != null)
+                        tsMenuItem.Checked = miChecked;
+                };
+                try
+                {
+                    mItem.GetCurrentParent()?.Invoke(setMenuItemCheckedCallback, new object[] { mItem, mchecked });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetMenuItemChecked menu item: {mItem.Name}, checked: \"{mchecked}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (mItem != null)
+                    mItem.Checked = mchecked;
+            }
+        }
+
+        internal delegate ToolStripItemCollection GetMenuItemsCallback(ToolStripMenuItem menuItem);
+        internal delegate void AddMenuItemToItemsCallack(ToolStripMenuItem menuItem, ToolStripDropDownItem tsddItem);
+
+        internal delegate System.Windows.Forms.ComboBox.ObjectCollection? GetMenuDropDownItemsCallback(ToolStripComboBox tsCombo);
+        internal delegate void AddMenuItemToMenuComboBoxCallack(ToolStripComboBox tsCombo, object o);
+
+        internal ToolStripItemCollection GetMenuItems(ToolStripMenuItem mItem)
+        {
+
+            ToolStripItemCollection tscol = new ToolStripItemCollection(mItem.GetCurrentParent(), new ToolStripDropDownItem[0]);
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            {
+                GetMenuItemsCallback getMenuItemsCallback = delegate (ToolStripMenuItem tsMenuItem)
+                {
+                    return (tsMenuItem != null && tsMenuItem.DropDown != null && tsMenuItem.DropDownItems != null) ?
+                        tsMenuItem.DropDown.Items : new ToolStripItemCollection(tsMenuItem.GetCurrentParent(), new ToolStripMenuItem[0]);
+                };
+                try
+                {
+                    tscol = (ToolStripItemCollection)mItem.GetCurrentParent().Invoke(getMenuItemsCallback, new object[] { mItem });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItems menuItem = {mItem.Name}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                tscol = (mItem != null && mItem.DropDown != null && mItem.DropDownItems != null) ? 
+                    mItem.DropDown.Items : new ToolStripItemCollection(mItem.GetCurrentParent(), new ToolStripMenuItem[0]);
+                
+            }
+
+            return tscol;
+        }
+        internal void AddMenuItemToItems(ToolStripMenuItem mItem, ToolStripDropDownItem tsddItem)
+        {
+            ToolStripMenuItem addItem = (mItem != null && tsddItem != null) ?
+                (ToolStripMenuItem)tsddItem: new ToolStripMenuItem();                
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            {
+                AddMenuItemToItemsCallack addMenuItemToItemsCallack =
+                    delegate (ToolStripMenuItem tsMenuItem, ToolStripDropDownItem ddItem)
+                {
+                    if (tsMenuItem != null && tsMenuItem.DropDown != null && tsMenuItem.DropDown.Items != null &&  ddItem != null)
+                        tsMenuItem.DropDown.Items.Add((ToolStripMenuItem)ddItem);
+                };
+                try
+                {
+                    mItem.GetCurrentParent()?.Invoke(addMenuItemToItemsCallack, new object[] { mItem, addItem });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AddMenuItemToItems menu item: {mItem.Name}, add item: \"{addItem.Name}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (mItem != null && mItem.DropDown != null && mItem.DropDown.Items != null && addItem != null)
+                    mItem.DropDown.Items.Add(addItem);
+            }
+        }
+        
+        internal System.Windows.Forms.ComboBox.ObjectCollection? GetMenuDropDownItems(ToolStripComboBox tsCbx) 
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (tsCbx != null && tsCbx.GetCurrentParent() != null && tsCbx.GetCurrentParent().InvokeRequired)
+            {
+                GetMenuDropDownItemsCallback getMenuDropDownItemsCallback = delegate (ToolStripComboBox tsComboBox)
+                {
+                    return (tsComboBox != null && tsComboBox.Items != null) ?
+                        tsComboBox.Items : null;
+                };
+                try
+                {
+                    return (System.Windows.Forms.ComboBox.ObjectCollection?)tsCbx.GetCurrentParent().Invoke(getMenuDropDownItemsCallback, new object[] { tsCbx });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuDropDownItems menuItemComboBox = {tsCbx.Name}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                return (tsCbx != null && tsCbx.Items != null) ?
+                    tsCbx.Items : null;
+
+            }
+
+            return null;
+        }
+        internal void AddMenuItemToMenuComboBox(ToolStripComboBox tsCombo, object obj)
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (tsCombo != null && obj != null && tsCombo.GetCurrentParent() != null && tsCombo.GetCurrentParent().InvokeRequired)
+            {
+                AddMenuItemToMenuComboBoxCallack addMenuItemToMenuComboBoxCallack =
+                    delegate (ToolStripComboBox tsComboBox, object o)
+                    {
+                        if (tsComboBox != null && tsComboBox.Items != null && o != null)
+                            tsComboBox.Items.Add(o);
+                    };
+                try
+                {
+                    tsCombo.GetCurrentParent()?.Invoke(addMenuItemToMenuComboBoxCallack, new object[] { tsCombo, obj });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AddMenuItemToMenuComboBox menu combo box: {tsCombo.Name}, add object: \"{obj}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (tsCombo != null && tsCombo.Items != null && obj != null)
+                    tsCombo.Items.Add(obj);
+            }
+        }
+
+
+        #endregion ToolStripItemCollection
+
         #region ToolStripStatusLabel
 
         internal delegate void SetToolStripStatusLabelTextCallback(ToolStripStatusLabel statusLabel, string text);
@@ -429,10 +915,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         #region ComboBox
 
         internal delegate string GetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox);
-
+        internal delegate System.Windows.Forms.ComboBox.ObjectCollection? GetComboBoxItemsCallback(System.Windows.Forms.ComboBox tsCombo);
         internal delegate void SetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox, string text);
-
         internal delegate void SetComboBackColorCallback(System.Windows.Forms.ComboBox comboBox, Color color);
+        internal delegate void AddItemToComboBoxCallack(System.Windows.Forms.ComboBox comboBox, object o);
 
         /// <summary>
         /// thread save deleagte to get text out of a <see cref="ComboBox"/>
@@ -535,10 +1021,66 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
+
+        internal System.Windows.Forms.ComboBox.ObjectCollection? GetComboBoxItems(System.Windows.Forms.ComboBox comboBox)
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (comboBox != null && comboBox.InvokeRequired)
+            {
+                GetComboBoxItemsCallback getComboBoxItemsCallback = delegate (System.Windows.Forms.ComboBox comboBx)
+                {
+                    return (comboBx != null && comboBx.Items != null) ? comboBx.Items : null;
+                };
+                try
+                {
+                    return (System.Windows.Forms.ComboBox.ObjectCollection?)comboBox.Invoke(getComboBoxItemsCallback, new object[] { comboBox });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetComboBoxItems ComboBox = {comboBox.Name}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                return (comboBox != null && comboBox.Items != null) ? comboBox.Items : null;
+
+            }
+
+            return null;
+        }
+
+        internal void AddItemToComboBox(System.Windows.Forms.ComboBox comboBox, object obj)
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (comboBox != null && obj != null && comboBox.InvokeRequired)
+            {
+                AddItemToComboBoxCallack addItemToComboBoxCallack =
+                    delegate (System.Windows.Forms.ComboBox comboBx, object o)
+                    {
+                        if (comboBx != null && comboBx.Items != null && o != null)
+                            comboBx.Items.Add(o);
+                    };
+                try
+                {
+                    comboBox.Invoke(addItemToComboBoxCallack, new object[] { comboBox, obj });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AddMenuItemToComboBox combo box: {comboBox.Name}, add object: \"{obj}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (comboBox != null && comboBox.Items != null && obj != null)
+                    comboBox.Items.Add(obj);
+            }
+        }
+
+
+
         #endregion ComboBox
 
         #endregion thread save WinForm delegate callbacks
-
 
 
         public MimeAttachment? SendAttachment(string filename, string secretKey, IPAddress partnerIpAddress)

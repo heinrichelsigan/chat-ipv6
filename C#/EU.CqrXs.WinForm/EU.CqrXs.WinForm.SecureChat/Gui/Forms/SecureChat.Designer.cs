@@ -824,14 +824,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // RichTextBoxOneView
             // 
+            RichTextBoxOneView.AcceptsTab = true;
             RichTextBoxOneView.Dock = DockStyle.Fill;
             RichTextBoxOneView.Location = new Point(0, 0);
             RichTextBoxOneView.Margin = new Padding(2);
             RichTextBoxOneView.Name = "RichTextBoxOneView";
             RichTextBoxOneView.Size = new Size(800, 460);
+            RichTextBoxOneView.Visible = false;
+            RichTextBoxOneView.ReadOnly = true;
             RichTextBoxOneView.TabIndex = 36;
             RichTextBoxOneView.Text = "";
-            RichTextBoxOneView.Visible = false;
             // 
             // PanelBottom
             // 

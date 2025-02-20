@@ -40,7 +40,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
 
         public Chat()
         {
-            TimeStamp = DateTime.Now;
+            TimeStamp = DateTime.Today;
             ChatId = 0;
             Friend = Entities.Settings.Instance.MyContact;
             MyMsgTStamps = new HashSet<DateTime>();
@@ -101,33 +101,46 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         }
 
 
-        public void AddMessage(string message, int chatId)
+        public string AddMessage(string message, int chatId)
         {
             if (chatId == 0)
-                AddMyMessage(message);
+                return AddMyMessage(message);
             else if (chatId > 0)
-                AddFriendMessage(message);
+                return AddFriendMessage(message);
+            return string.Empty;
         }
 
-        public void AddMyMessage(string message)
+        public string AddMyMessage(string message)
         {
+            string returnMes = string.Empty;
             if (!string.IsNullOrEmpty(message))
             {
                 DateTime myMsgTime = DateTime.Now;
                 MyMsgTStamps.Add(myMsgTime);
+                if (!message.EndsWith("\n") && !message.EndsWith("\n\0") && !message.EndsWith(Environment.NewLine))
+                    message += Environment.NewLine;
                 CqrMsgs.Add(myMsgTime, message);
+                returnMes = myMsgTime.ToString("[yy-MM-dd HH:mm:ss]") + " \n" + message;                                
             }
+
+            return returnMes;
         }
 
 
-        public void AddFriendMessage(string message)
+        public string AddFriendMessage(string message)
         {
+            string returnMes = string.Empty;
             if (!string.IsNullOrEmpty(message))
             {
                 DateTime myMsgTime = DateTime.Now;
                 FriendMsgTStamps.Add(myMsgTime);
+                if (!message.EndsWith("\n") && !message.EndsWith("\n\0") && !message.EndsWith(Environment.NewLine))
+                    message += Environment.NewLine;
                 CqrMsgs.Add(myMsgTime, message);
+                returnMes = myMsgTime.ToString("[yy-MM-dd HH:mm:ss]") + " \n" + message;                
             }
+
+            return returnMes;
         }
 
         /// <summary>
@@ -176,20 +189,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             return _disposed;
         }
 
-        ~Chat()
-        {
-            if (!Dispose(true))
-            {                
-                string fileName = LibPaths.SystemDirPath + String.Format(Constants.CQR_CHAT_FILE, ChatId);
-                throw new CqrException($"~Chat(): couldn't save chat {ChatId} to {fileName}.", CqrException.LastException);
-            }
+        //~Chat()
+        //{
+        //    if (!Dispose(true))
+        //    {                
+        //        string fileName = LibPaths.SystemDirPath + String.Format(Constants.CQR_CHAT_FILE, ChatId);
+        //        throw new CqrException($"~Chat(): couldn't save chat {ChatId} to {fileName}.", CqrException.LastException);
+        //    }
                 
-            _disposed = true;
-            SaveStamp = null;
-            CqrMsgs.Clear();
-            FriendMsgTStamps.Clear();
-            MyMsgTStamps.Clear();
-        }
+        //    _disposed = true;
+        //    SaveStamp = null;
+        //    CqrMsgs.Clear();
+        //    FriendMsgTStamps.Clear();
+        //    MyMsgTStamps.Clear();
+        //}
 
 
         #endregion Dispose() Dispose(bool disposing) ~Chat()

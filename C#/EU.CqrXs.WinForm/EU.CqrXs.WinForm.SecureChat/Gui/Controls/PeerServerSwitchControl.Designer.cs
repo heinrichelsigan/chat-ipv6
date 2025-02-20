@@ -40,7 +40,7 @@
             // 
             labelServer.AutoSize = true;
             labelServer.Font = new Font("Lucida Sans Unicode", 9.5F);
-            labelServer.Location = new Point(1, 0);
+            labelServer.Location = new Point(78, 1);
             labelServer.Margin = new Padding(1, 0, 1, 0);
             labelServer.Name = "labelServer";
             labelServer.Size = new Size(73, 16);
@@ -51,7 +51,7 @@
             // 
             labelPeer.AutoSize = true;
             labelPeer.Font = new Font("Lucida Sans Unicode", 9.5F);
-            labelPeer.Location = new Point(79, 0);
+            labelPeer.Location = new Point(1, 1);
             labelPeer.Margin = new Padding(1, 0, 1, 0);
             labelPeer.Name = "labelPeer";
             labelPeer.Size = new Size(75, 16);
