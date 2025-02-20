@@ -1507,6 +1507,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             extIpItem.Checked = true;
             extIpItem.Enabled = false;
             AddMenuItemToItems(this.MenuItemExternalIp, (ToolStripDropDownItem)extIpItem);
+            try
+            {
+                if (ExternalIpAddressV6 != null)
+                {
+                    ToolStripMenuItem extIpV6Item = new ToolStripMenuItem(ExternalIpAddressV6.AddressFamily.ShortInfo() + ExternalIpAddressV6.ToString(), null, null, ExternalIpAddressV6.ToString());
+                    extIpV6Item.Checked = true;
+                    extIpV6Item.Enabled = false;
+                    AddMenuItemToItems(this.MenuItemExternalIp, (ToolStripDropDownItem)extIpV6Item);
+                }
+            }
+            catch (Exception exV6)
+            {
+                Area23Log.LogStatic(exV6);
+            }
+
             // this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
 
             SetStatusText(StripStatusLabel, $"Setup Network: External client ip address added to menu.");
