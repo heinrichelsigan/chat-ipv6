@@ -128,7 +128,6 @@ Cache-Control: no-cache";
         }
 
 
-
         public static string? FormatResponseFromTcp(string? resp)
         {
             if (resp != null && resp.Contains("::ffff:"))
@@ -144,6 +143,8 @@ Cache-Control: no-cache";
 
             return resp;
         }
+
+    
     }
 
 }
