@@ -247,9 +247,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Gui\Forms\BaseChatForm.cs" />
-    <Compile Update="Gui\Forms\Peer2PeerChat.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Gui\Forms\Peer2PeerChat.cs" />
     <Compile Update="Gui\Forms\SecureChat.cs">
       <SubType>Form</SubType>
     </Compile>

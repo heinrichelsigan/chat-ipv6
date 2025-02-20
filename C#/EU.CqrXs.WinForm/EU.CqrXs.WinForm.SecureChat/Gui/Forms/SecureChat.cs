@@ -32,6 +32,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
 
+
     /// <summary>
     /// SecureChat main form
     /// </summary>
@@ -45,9 +46,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         internal static int chatCnt = 0;
         internal static Chat? chat;
 
-        private static IPAddress? clientIpAddress;
-        private static IPAddress? partnerIpAddress;
-        private static Listener? ipSockListener;
+        protected internal static IPAddress? clientIpAddress;
+        protected internal static IPAddress? partnerIpAddress;
+        protected internal static Listener? ipSockListener;
 
         #endregion fields
 
@@ -127,7 +128,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private async void SecureChat_Load(object sender, EventArgs e)
         {
             bool send1stReg = false;
-            
+
             if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null)
             {
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
@@ -158,23 +159,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             this.StripProgressBar.Value = 50;
 
-            if (Entities.Settings.Singleton != null && Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null && 
+            if (Entities.Settings.Singleton != null && Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null &&
                 !string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
                 Bitmap? bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
                 if (bmp != null)
                     this.PictureBoxYou.Image = bmp;
             }
-            
+
             AddContactsToIpContact();
             this.StripProgressBar.Value = 70;
 
             if (send1stReg)
                 Send_1st_Server_Registration(sender, e);
 
-            this.StripProgressBar.Value = 100;            
+            this.StripProgressBar.Value = 100;
             StripStatusLabel.Text = "Secure Chat init done.";
-            
+
         }
 
         #region thread save text and richtext box access       
@@ -331,10 +332,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 PlaySoundFromResource("sound_warning");
                 return;
             }
-            
+
             try
-            {                
-                partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
+            {
+                if (!IPAddress.TryParse(this.ComboBoxIp.Text, out partnerIpAddress))
+                    throw new InvalidOperationException($"IPAddress {this.ComboBoxIp.Text ?? string.Empty} is not parsable!");
             }
             catch (Exception exIpContact)
             {
@@ -351,29 +353,44 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 PlaySoundFromResource("sound_laser");
 
-                if (!Entities.Settings.Singleton.FriendIPs.Contains(this.ComboBoxIp.Text))
-                    Entities.Settings.Singleton.FriendIPs.Add(this.ComboBoxIp.Text);
-                if (!this.MenuNetworkComboBoxFriendIp.Items.Contains(partnerIpAddress.ToString()))
-                    this.MenuNetworkComboBoxFriendIp.Items.Add(partnerIpAddress.ToString());
-                
-                try
-                {
-                    this.MenuNetworkComboBoxFriendIp.Text = partnerIpAddress.ToString();
-                } catch { }
-
-                if (!this.ComboBoxIp.Items.Contains(this.ComboBoxIp.Text))
-                    this.ComboBoxIp.Items.Add(partnerIpAddress.ToString());
-
-                Entities.Settings.SaveSettings(Entities.Settings.Singleton);
+                AddIpToFriendList(sender, e);
             }
             else
             {
                 ButtonCheck.Image = Properties.de.Resources.CableWireCut;
                 PlaySoundFromResource("sound_warning");
             }
-            
+
             SetStatusText(StripStatusLabel, $"Added new partner ip address {partnerIpAddress.ToString()}.");
 
+        }
+
+        internal void AddIpToFriendList(object sender, EventArgs e)
+        {
+            string comboIpText = GetComboBoxText(this.ComboBoxIp);
+            if (!string.IsNullOrEmpty(comboIpText))
+            {
+                if (IPAddress.TryParse(comboIpText, out partnerIpAddress))
+                {
+                    if (!Entities.Settings.Singleton.FriendIPs.Contains(comboIpText))
+                        Entities.Settings.Singleton.FriendIPs.Add(comboIpText);
+                    var comboMenuItems = GetMenuDropDownItems(MenuNetworkComboBoxFriendIp);
+                    if (!comboMenuItems.Contains(partnerIpAddress.ToString()))
+                        AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, partnerIpAddress.ToString());
+
+                    try
+                    {
+                        this.MenuNetworkComboBoxFriendIp.Text = partnerIpAddress.ToString();
+                    }
+                    catch { }
+
+                    var ipComboItems = GetComboBoxItems(ComboBoxIp);
+                    if (!ipComboItems.Contains(comboIpText))
+                        AddItemToComboBox(ComboBoxIp, partnerIpAddress.ToString());
+
+                    Entities.Settings.SaveSettings(Entities.Settings.Singleton);
+                }
+            }
         }
 
 
@@ -433,13 +450,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 PlaySoundFromResource("sound_warning");
                 return;
             }
-            
+
             bool foundContact = false;
             CqrContact? friendContact = null;
             string exContactMsg = "";
             try
-            {                
-                
+            {
+
                 foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
                 {
                     if (c.NameEmail.Equals(this.ComboBoxContacts.Text, StringComparison.InvariantCultureIgnoreCase))
@@ -460,7 +477,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 this.ComboBoxContacts.BackColor = Color.Violet;
                 PlaySoundFromResource("sound_warning");
-                MessageBox.Show($"Cannot parse Contact from string \"{ComboBoxContacts.Text}\": {exContactMsg}", "Please enter a valid contact address", MessageBoxButtons.OK, MessageBoxIcon.Warning);                
+                MessageBox.Show($"Cannot parse Contact from string \"{ComboBoxContacts.Text}\": {exContactMsg}", "Please enter a valid contact address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
@@ -502,7 +519,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             else
                 this.ComboBoxSecretKey.Text = myServerKey;
-            
+
             SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
             this.TextBoxPipe.Text = srv1stMsg.PipeString;
             Thread.Sleep(100);
@@ -527,11 +544,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             string reducedResponse = string.Empty;
             if (response.Contains(Constants.DECRYPTED_TEXT_AREA))
-                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_AREA, true, "", 
-                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);                
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_AREA, true, "",
+                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);
             else if (response.Contains(Constants.DECRYPTED_TEXT_BOX))
-                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_BOX, true, ">", 
-                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);              
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_BOX, true, ">",
+                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);
 
             this.TextBoxDestionation.Text += reducedResponse + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
@@ -584,7 +601,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.CurrentCulture))
                         {
                             PlaySoundFromResource("sound_breakpoint");
-                            SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
+                            if (IPAddress.TryParse(area23EvArgs.GenericTData.ClientIPAddr, out partnerIpAddress))
+                            {
+                                SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
+                                AddIpToFriendList(sender, e);
+                            }
 
                         }
                         encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
@@ -725,7 +746,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     friendContact = c;
                     break;
-                }                    
+                }
             }
 
 
@@ -871,9 +892,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
-                            
+
                             string userMsg = chat.AddMyMessage(mimeAttach.GetFileNameContentLength());
-                            AppendText(TextBoxSource, userMsg);                            
+                            AppendText(TextBoxSource, userMsg);
                             Format_Lines_RichTextBox();
                             this.RichTextBoxChat.Text = string.Empty;
                             StripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
@@ -899,7 +920,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (ev.GenericTData < 1)
                 {
-                    
+
                     SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
                     try
                     {
@@ -909,7 +930,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     catch (Exception ex)
                     {
                     }
-                        
+
                 }
                 else if (ev.GenericTData > 1)
                 {
@@ -922,10 +943,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     catch (Exception ex)
                     {
                     }
-                    
+
                 }
                 else
-                {                    
+                {
                     try
                     {
                         this.ComboBoxContacts.Enabled = true;
@@ -949,7 +970,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 if (!string.IsNullOrEmpty(t) && IPAddress.TryParse(t, out IPAddress pi))
                 {
                     MimeAttachment sndMimeAttch = SendAttachment(ea.GenericTData, myServerKey, pi);
-                    if (sndMimeAttch != null) 
+                    if (sndMimeAttch != null)
                     {
                         string userMsg = chat.AddMyMessage(sndMimeAttch.GetFileNameContentLength());
                         AppendText(TextBoxSource, userMsg);
@@ -958,7 +979,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         StripStatusLabel.Text = $"File {sndMimeAttch.FileName} send successfully!";
                     }
                 }
-                
+
             }
         }
 
@@ -1032,7 +1053,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             byte[] fileBytes = Base64.Decode(base64);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
-            attachmentListControl.SetNameFilePath(fileName, filePath);            
+            attachmentListControl.SetNameFilePath(fileName, filePath);
         }
 
 
@@ -1120,7 +1141,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 contactId = Math.Max(contactId, c.ContactId);
             }
             contactId++;
-            
+
             FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
             FileOpenDialog.RestoreDirectory = true;
             FileOpenDialog.AddExtension = false;
@@ -1134,13 +1155,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     string extension = Path.GetExtension(FileOpenDialog.FileName).ToLower();
                     string[] lines = System.IO.File.ReadAllLines(FileOpenDialog.FileName);
-                    
+
 
                     switch (extension)
                     {
                         case "csv":
                         case ".csv":
-                          
+
                             int csvCnt = 0;
                             List<int> mailfields = new List<int>();
                             List<int> phonefields = new List<int>();
@@ -1302,7 +1323,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                             }
 
-                            Entities.Settings.SaveSettings(Entities.Settings.Singleton);                            
+                            Entities.Settings.SaveSettings(Entities.Settings.Singleton);
 
                             break;
                         default:
@@ -1407,7 +1428,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <returns><see cref="Task"/></returns>
 
         internal async Task SetupNetwork()
-        {            
+        {
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
             SetStatusText(StripStatusLabel, $"Setup Network: Several proxy addresses fetched.");
             List<IPAddress> interfaceIPAddrs = await NetworkAddresses.GetIpAddressesAsync();
@@ -1425,7 +1446,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily.ShortInfo() + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
                     item.Checked = false;
-                    
+
                     if (IPAddress.IsLoopback(addr))
                     {
                         item.BackColor = SystemColors.ActiveCaption;
@@ -1438,21 +1459,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         item.BackColor = SystemColors.MenuBar;
                         item.ForeColor = SystemColors.GrayText;
                         SetMenuItemForeColor(item, SystemColors.GrayText);
-                        SetMenuItemBackColor(item, SystemColors.MenuBar);                        
+                        SetMenuItemBackColor(item, SystemColors.MenuBar);
                     }
 
                     if (connectedIPs != null && connectedIPs.Count > 0)
                     {
                         foreach (IPAddress connectedIp in connectedIPs)
                         {
-                            if (addr.IsSameIp(connectedIp)) 
+                            if (addr.IsSameIp(connectedIp))
                             {
                                 item.BackColor = SystemColors.MenuBar;
                                 item.ForeColor = SystemColors.MenuText;
                                 SetMenuItemForeColor(item, SystemColors.MenuText);
                                 SetMenuItemBackColor(item, SystemColors.MenuBar);
-                                
-                                
+
+
                                 if (mchecked++ == 0)
                                 {
                                     item.BackColor = SystemColors.MenuHighlight;
@@ -1464,14 +1485,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                                     item.Checked = true;
                                     if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                                         SetMenuItemChecked(this.MenuNetworkItemIPv6Secure, true);
-                                        // this.MenuNetworkItemIPv6Secure.Checked = true;
+                                    // this.MenuNetworkItemIPv6Secure.Checked = true;
                                     ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                                 }
 
                                 break;
                             }
                         }
-                       
+
                     }
 
                     myIpStrList.Add(addr.ToString());
@@ -1511,7 +1532,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         {; }
                         else
                             SetMenuItemChecked(item, true);
-                            // item.Checked = true;
+                        // item.Checked = true;
                     }
 
                     AddMenuItemToItems(MenuNetworkItemProxyServers, (ToolStripDropDownItem)item);
@@ -1604,12 +1625,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
                         ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                         SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
+
+                        if (IPAddress.IsLoopback(clientIpAddress))
+                        {
+                            if (clientIpAddress.AddressFamily == AddressFamily.InterNetwork)
+                                SetComboBoxText(this.ComboBoxIp, "127.0.0.1");
+                            else if (clientIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
+                                if (clientIpAddress.ToString().Contains("::1"))
+                                    SetComboBoxText(this.ComboBoxIp, "::1");
+
+                            ComboBoxIp_FocusLeave(sender, e);
+                        }
                     }
                 }
                 catch (Exception exc)
                 {
                     Area23Log.LogStatic(exc);
-                }                
+                }
             }
         }
 
@@ -1617,8 +1649,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         public void ServerProxyAddressSelected(object sender, EventArgs e)
         {
             if (sender != null && sender is ToolStripMenuItem newProxyItem)
-            { 
-                List<IPAddress> ips =  new List<IPAddress>();
+            {
+                List<IPAddress> ips = new List<IPAddress>();
                 ToolStripMenuItem? oldProxyItem = null;
                 foreach (ToolStripMenuItem dditem in this.MenuNetworkItemProxyServers.DropDownItems)
                     if (dditem.Checked == true)
@@ -1631,7 +1663,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     string resp = TcpClientWebRequest.MakeWebRequest(newSrvAddr, out ips);
 
                     if (resp != null && ips != null && ips.Count > 2 && ips.ElementAt(2) != null)
-                    {                        
+                    {
                         _serverIpAddress = newSrvAddr;
                         newProxyItem.Checked = true;
                         if (oldProxyItem != null && oldProxyItem.Checked)
@@ -1644,9 +1676,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     Area23Log.LogStatic(exi);
                 }
-               
+
                 Thread.Sleep(Constants.CLOSING_TIMEOUT);
-                
+
             }
         }
 

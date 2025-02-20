@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using Area23.At.Framework.Core.Net.NameService;
 using System.Net.Sockets;
+using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
@@ -31,7 +32,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
     /// <summary>
     /// Peer2PeerChat main form
     /// </summary>
-    public partial class Peer2PeerChat : BaseChatForm
+    public partial class Peer2PeerChat : MenuChat
     {
 
         #region fields        
@@ -758,7 +759,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuItemSend_Click(object sender, EventArgs e)
+        protected internal override void MenuItemSend_Click(object sender, EventArgs e)
         {
             // TODO: implement it via socket directly or to registered user
             // if Ip is pingable and reachable and connectable
@@ -817,7 +818,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuItemAttach_Click(object sender, EventArgs e)
+        protected internal override void MenuItemAttach_Click(object sender, EventArgs e)
         {
             if (chat == null)
                 chat = new Chat(0);
@@ -948,7 +949,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
         }
 
-        private void MenuItemRefresh_Click(object sender, EventArgs e)
+        protected internal override void MenuItemRefresh_Click(object sender, EventArgs e)
         {
             byte[] b0 = ExternalIpAddress.ToExternalBytes();
             Version? assVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -977,7 +978,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MenuItemClear_Click(object sender, EventArgs e)
+        protected internal override void MenuItemClear_Click(object sender, EventArgs e)
         {
             // TODO: add warning and saving here
             PlaySoundFromResource("sound_glasses");
@@ -1027,8 +1028,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #region Contacts
 
-        private void AddContactsToIpContact()
+        protected internal override void AddContactsToIpContact()
         {
+            // base.AddContactsByRefComboBox(ref this.ComboBoxContacts);
             string ipContact = this.ComboBoxContacts.Text;
             this.ComboBoxContacts.Items.Clear();
             foreach (CqrContact ct in Entities.Settings.Singleton.Contacts)
@@ -1038,14 +1040,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             this.ComboBoxContacts.Text = ipContact;
         }
+      
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MenuContactsItemMyContact_Click(object sender, EventArgs e)
+        protected internal override void MenuContactsItemMyContact_Click(object sender, EventArgs e)
         {
+            Bitmap? bmp = null;
             ContactSettings contactSettings = new ContactSettings("My Contact Info", 0);
             contactSettings.ShowInTaskbar = true;
             contactSettings.ShowDialog();
@@ -1054,257 +1058,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 try
                 {
-                    Bitmap? bmp = Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
+                    bmp = Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
                     if (bmp != null)
-                        this.PictureBoxYou.Image = bmp;
-
-                    Settings.SaveSettings(Settings.Singleton);
+                        this.PictureBoxYou.Image = bmp;                    
                 }
                 catch (Exception exBmp)
                 {
                     CqrException.SetLastException(exBmp);
                 }
 
-                // var badge = new TransparentBadge("My contact added!");
-                // badge.ShowDialog();
+                Settings.SaveSettings(Settings.Singleton);
             }
 
-        }
-
-        private void MenuItemAddContact_Click(object sender, EventArgs e)
-        {
-            ContactSettings contactSettings = new ContactSettings("Add Contact Info", 1);
-            contactSettings.ShowInTaskbar = true;
-            contactSettings.ShowDialog();
-
-            AddContactsToIpContact();
-        }
-
-
-        private void MenuContactsItemView_Click(object sender, EventArgs e)
-        {
-            ContactsView cview = new ContactsView();
-            cview.ShowDialog();
-        }
-
-        private void MenuContactstemImport_Click(object sender, EventArgs e)
-        {
-            int contactId = Entities.Settings.Singleton.Contacts.Count;
-            int contactsImported = 0;
-            string cname = string.Empty, cemail = string.Empty, cmobile = string.Empty, cphone = string.Empty, caddress = string.Empty;
-            string firstImport = string.Empty;
-            string lastImport = string.Empty;
-
-            HashSet<string> exCnames = new HashSet<string>();
-            HashSet<string> exCemails = new HashSet<string>();
-            foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
-            {
-                if (!string.IsNullOrEmpty(c.Name) && !exCnames.Contains(c.Name))
-                    exCnames.Add(c.Name);
-                if (!string.IsNullOrEmpty(c.Email) && c.Email.IsEmail() && !exCemails.Contains(c.Email))
-                    exCemails.Add(c.Email);
-                contactId = Math.Max(contactId, c.ContactId);
-            }
-            contactId++;
-
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            FileOpenDialog.AddExtension = false;
-            FileOpenDialog.CheckFileExists = true;
-            FileOpenDialog.CheckPathExists = true;
-            FileOpenDialog.Filter = "CSV (*.csv)|*.csv|VCard (*.vcf)|*.vcf"; //|All files (*.*)|*.*";
-            DialogResult result = FileOpenDialog.ShowDialog();
-            if (result == DialogResult.OK || result == DialogResult.Yes)
-            {
-                if (File.Exists(FileOpenDialog.FileName))
-                {
-                    string extension = Path.GetExtension(FileOpenDialog.FileName).ToLower();
-                    string[] lines = System.IO.File.ReadAllLines(FileOpenDialog.FileName);
-
-
-                    switch (extension)
-                    {
-                        case "csv":
-                        case ".csv":
-
-                            int csvCnt = 0;
-                            List<int> mailfields = new List<int>();
-                            List<int> phonefields = new List<int>();
-                            List<int> mobilefields = new List<int>();
-
-                            string[] attributes = lines[0].Split(',');
-                            foreach (string attribute in attributes)
-                            {
-                                if (attribute.ToLower().Contains("e-mail") || attribute.ToLower().Contains("email") || attribute.ToLower().Contains("mail"))
-                                    mailfields.Add(csvCnt);
-                                if (attribute.ToLower().Contains("phone"))
-                                    phonefields.Add(csvCnt);
-                                if (attribute.ToLower().Contains("mobil"))
-                                    mobilefields.Add(csvCnt);
-                                csvCnt++;
-                            }
-
-                            for (int i = 1; i < lines.Length; i++)
-                            {
-                                csvCnt = 0;
-                                cname = string.Empty; cemail = string.Empty; cphone = string.Empty; cmobile = string.Empty;
-                                string[] fields = lines[i].Split(',');
-                                for (int j = 0; j < fields.Length; j++)
-                                {
-                                    if (j == 0 || j == 2)
-                                    {
-                                        if (!string.IsNullOrEmpty(fields[j]) && !string.IsNullOrWhiteSpace(fields[j]))
-                                            cname += fields[j] + " ";
-                                    }
-                                    if (j == 3 && !string.IsNullOrWhiteSpace(cname) && cname.EndsWith(' '))
-                                        cname = cname.TrimEnd(' ');
-
-                                    if (mailfields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsEmail())
-                                    {
-                                        if (string.IsNullOrEmpty(cemail))
-                                            cemail = fields[j];
-                                    }
-
-                                    if (phonefields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsPhoneOrMobile())
-                                    {
-                                        if (string.IsNullOrEmpty(cphone))
-                                            cphone = fields[j];
-                                    }
-                                    if (mobilefields.Contains(j) && !string.IsNullOrEmpty(fields[j]) && fields[j].IsPhoneOrMobile())
-                                    {
-                                        if (string.IsNullOrEmpty(cmobile))
-                                            cmobile = fields[j];
-                                    }
-                                }
-                                cmobile = (string.IsNullOrEmpty(cmobile)) ? cphone : cmobile;
-                                if (!string.IsNullOrEmpty(cname) && !exCnames.Contains(cname))
-                                {
-                                    if (!string.IsNullOrEmpty(cemail) && !exCemails.Contains(cemail))
-                                    {
-                                        CqrContact contact = new CqrContact()
-                                        {
-                                            ContactId = contactId++,
-                                            Cuid = Guid.NewGuid(),
-                                            Name = cname,
-                                            Email = cemail,
-                                            Mobile = cmobile
-                                        };
-                                        Entities.Settings.Singleton.Contacts.Add(contact);
-                                        if (string.IsNullOrEmpty(firstImport) && contactsImported == 0)
-                                            firstImport = contact.NameEmail;
-                                        else if (contactsImported > 0)
-                                            lastImport = contact.NameEmail;
-                                        contactsImported++;
-                                    }
-                                }
-
-                            }
-
-                            Entities.Settings.SaveSettings(Entities.Settings.Singleton);
-                            break;
-                        case "vcf":
-                        case ".vcf":
-
-                            int vcfCnt = 0;
-                            bool beginEndVcard = false;
-
-
-                            for (int i = 0; i < lines.Length; i++)
-                            {
-
-                                if (lines[i].ToUpper().StartsWith("BEGIN:VCARD"))
-                                {
-                                    beginEndVcard = true;
-                                    cname = string.Empty; cemail = string.Empty; cphone = string.Empty; cmobile = string.Empty; caddress = string.Empty;
-                                }
-
-
-                                if (beginEndVcard)
-                                {
-                                    string tmpString = string.Empty;
-                                    if (lines[i].ToUpper().StartsWith("FN:"))
-                                    {
-                                        tmpString = lines[i].Substring(3);
-                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
-                                            cname = tmpString;
-                                    }
-                                    if (lines[i].ToUpper().StartsWith("N:") && string.IsNullOrEmpty(cname))
-                                    {
-                                        tmpString = lines[i].Substring(2).Replace(";", " ").TrimEnd(' ');
-                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
-                                            cname = tmpString;
-                                    }
-                                    if (lines[i].ToUpper().Contains("EMAIL") && lines[i].Contains("@") && string.IsNullOrEmpty(cemail))
-                                    {
-                                        tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
-                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsEmail())
-                                            cemail = tmpString;
-                                    }
-
-                                    if (lines[i].ToUpper().Contains("TEL") && lines[i].Contains("CELL") && string.IsNullOrEmpty(cmobile))
-                                    {
-                                        tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
-                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsPhoneOrMobile())
-                                            cmobile = tmpString;
-                                    }
-                                    if (lines[i].ToUpper().Contains("TEL") && string.IsNullOrEmpty(cmobile))
-                                    {
-                                        tmpString = lines[i].Substring(lines[i].LastIndexOf(':')).Trim(':');
-                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3 && tmpString.IsPhoneOrMobile())
-                                            cmobile = tmpString;
-                                    }
-                                    if (lines[i].ToUpper().Contains("ADR") && string.IsNullOrEmpty(caddress))
-                                    {
-                                        tmpString = lines[i].Substring(lines[i].IndexOf(':')).Trim(':').Replace(";;;", " ").Replace(";;", " ").Replace(";", " ");
-                                        if (!string.IsNullOrEmpty(tmpString) && tmpString.Length > 3)
-                                            caddress = tmpString;
-                                    }
-
-                                    // TODO Photo add
-
-
-                                }
-
-
-                                if (lines[i].ToUpper().StartsWith("END:VCARD"))
-                                {
-                                    vcfCnt++;
-                                    beginEndVcard = false;
-                                    if (!string.IsNullOrEmpty(cname) && !exCnames.Contains(cname))
-                                    {
-                                        if (!string.IsNullOrEmpty(cemail))
-                                        {
-                                            CqrContact contact = new CqrContact() { ContactId = contactId++, Cuid = Guid.NewGuid(), Name = cname, Email = cemail, Mobile = cmobile };
-                                            Entities.Settings.Singleton.Contacts.Add(contact);
-                                            if (string.IsNullOrEmpty(firstImport) && contactsImported == 0)
-                                                firstImport = contact.NameEmail;
-                                            else if (contactsImported > 0)
-                                                lastImport = contact.NameEmail;
-                                            contactsImported++;
-                                        }
-                                    }
-                                }
-
-
-                            }
-
-                            Entities.Settings.SaveSettings(Entities.Settings.Singleton);
-
-                            break;
-                        default:
-                            break;
-
-                    }
-
-
-                    string importedMsg = $"{contactsImported} new contacts imported!";
-                    if (!string.IsNullOrEmpty(firstImport))
-                        importedMsg += $"\nFirst: {firstImport}";
-                    if (!string.IsNullOrEmpty(lastImport))
-                        importedMsg += $"\n Last: {lastImport}";
-                    MessageBox.Show(importedMsg, $"Contacts import finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
         }
 
         #endregion Contacts
@@ -1318,7 +1083,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuView_ItemTopBottom_Click(object sender, EventArgs e)
+        protected internal override void MenuView_ItemTopBottom_Click(object sender, EventArgs e)
         {
             MenuViewItemLeftRíght.Checked = false;
             MenuViewItemTopBottom.Checked = true;
@@ -1345,7 +1110,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuView_ItemLeftRíght_Click(object sender, EventArgs e)
+        protected internal override void MenuView_ItemLeftRíght_Click(object sender, EventArgs e)
         {
             MenuViewItemLeftRíght.Checked = true;
             MenuViewItemTopBottom.Checked = false;
@@ -1372,7 +1137,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuView_Item1View_Click(object sender, EventArgs e)
+        protected internal override void MenuView_Item1View_Click(object sender, EventArgs e)
         {
             MenuViewItemLeftRíght.Checked = false;
             MenuViewItemTopBottom.Checked = false;
@@ -1635,99 +1400,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             }
         }
-
-
-        #region LoadSaveChatContent
-
-        private void toolStripMenuItemOpen_Click(object sender, EventArgs e)
-        {
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            DialogResult result = FileOpenDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-
-        private void toolStripMenuItemLoad_Click(object sender, EventArgs e)
-        {
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            DialogResult res = FileOpenDialog.ShowDialog();
-            if (res == DialogResult.OK)
-            {
-                MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-
-        protected internal virtual void toolStripMenuItemSave_Click(object sender, EventArgs e)
-        {
-            SafeFileName();
-        }
-
-        protected virtual byte[] OpenCryptFileDialog(ref string loadDir)
-        {
-            if (FileOpenDialog == null)
-                FileOpenDialog = new OpenFileDialog();
-            byte[] fileBytes;
-            if (string.IsNullOrEmpty(loadDir))
-                loadDir = Environment.GetEnvironmentVariable("TEMP") ?? System.AppDomain.CurrentDomain.BaseDirectory;
-            if (loadDir != null)
-            {
-                FileOpenDialog.InitialDirectory = loadDir;
-                FileOpenDialog.RestoreDirectory = true;
-            }
-            DialogResult diaOpenRes = FileOpenDialog.ShowDialog();
-            if (diaOpenRes == DialogResult.OK || diaOpenRes == DialogResult.Yes)
-            {
-                if (!string.IsNullOrEmpty(FileOpenDialog.FileName) && File.Exists(FileOpenDialog.FileName))
-                {
-                    loadDir = Path.GetDirectoryName(FileOpenDialog.FileName) ?? System.AppDomain.CurrentDomain.BaseDirectory;
-                    fileBytes = File.ReadAllBytes(FileOpenDialog.FileName);
-                    return fileBytes;
-                }
-            }
-
-            fileBytes = new byte[0];
-            return fileBytes;
-        }
-
-        protected virtual string SafeFileName(string? filePath = "", byte[]? content = null)
-        {
-            string? saveDir = Environment.GetEnvironmentVariable("TEMP");
-            string ext = ".hex";
-            string fileName = DateTime.Now.Area23DateTimeWithSeconds() + ext;
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                fileName = System.IO.Path.GetFileName(filePath);
-                saveDir = System.IO.Path.GetDirectoryName(filePath);
-                ext = System.IO.Path.GetExtension(filePath);
-            }
-
-            if (saveDir != null)
-            {
-                FileSaveDialog.InitialDirectory = saveDir;
-                FileSaveDialog.RestoreDirectory = true;
-                FileSaveDialog.DefaultExt = ext;
-            }
-            FileSaveDialog.FileName = fileName;
-            DialogResult diaRes = FileSaveDialog.ShowDialog();
-            if (diaRes == DialogResult.OK || diaRes == DialogResult.Yes)
-            {
-                if (content != null && content.Length > 0)
-                    System.IO.File.WriteAllBytes(FileSaveDialog.FileName, content);
-
-                // var badge = new TransparentBadge($"File {fileName} saved to directory {saveDir}.");
-                // badge.Show();
-            }
-
-            return (FileSaveDialog != null && FileSaveDialog.FileName != null && File.Exists(FileSaveDialog.FileName)) ? FileSaveDialog.FileName : null;
-        }
-
-        #endregion LoadSaveChatContent
 
 
         private void ButtonAttach_Click(object sender, EventArgs e)

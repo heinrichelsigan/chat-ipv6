@@ -40,9 +40,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         internal static int chatCnt = 0;
         internal static Chat? chat;
 
-        private static IPAddress? clientIpAddress;
-        private static IPAddress? partnerIpAddress;
-        private static Listener? ipSockListener;
+        protected internal static IPAddress? clientIpAddress;
+        protected internal static IPAddress? partnerIpAddress;
+        protected internal static Listener? ipSockListener;
 
         #endregion fields
 
@@ -329,7 +329,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             try
             {
-                partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
+                if (!IPAddress.TryParse(this.ComboBoxIp.Text, out partnerIpAddress))
+                    throw new InvalidOperationException($"IPAddress {this.ComboBoxIp.Text ?? string.Empty} is not parsable!");                
             }
             catch (Exception exIpContact)
             {
@@ -346,21 +347,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 PlaySoundFromResource("sound_laser");
 
-                if (!Entities.Settings.Singleton.FriendIPs.Contains(this.ComboBoxIp.Text))
-                    Entities.Settings.Singleton.FriendIPs.Add(this.ComboBoxIp.Text);
-                if (!this.MenuNetworkComboBoxFriendIp.Items.Contains(partnerIpAddress.ToString()))
-                    this.MenuNetworkComboBoxFriendIp.Items.Add(partnerIpAddress.ToString());
-
-                try
-                {
-                    this.MenuNetworkComboBoxFriendIp.Text = partnerIpAddress.ToString();
-                }
-                catch { }
-
-                if (!this.ComboBoxIp.Items.Contains(this.ComboBoxIp.Text))
-                    this.ComboBoxIp.Items.Add(partnerIpAddress.ToString());
-
-                Entities.Settings.SaveSettings(Entities.Settings.Singleton);
+                AddIpToFriendList(sender, e);
             }
             else
             {
@@ -370,6 +357,34 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             SetStatusText(StripStatusLabel, $"Added new partner ip address {partnerIpAddress.ToString()}.");
 
+        }
+
+        internal void AddIpToFriendList(object sender, EventArgs e)
+        {
+            string comboIpText = GetComboBoxText(this.ComboBoxIp);
+            if (!string.IsNullOrEmpty(comboIpText))
+            {
+                if (IPAddress.TryParse(comboIpText, out partnerIpAddress))
+                {
+                    if (!Entities.Settings.Singleton.FriendIPs.Contains(comboIpText))
+                        Entities.Settings.Singleton.FriendIPs.Add(comboIpText);
+                    var comboMenuItems = GetMenuDropDownItems(MenuNetworkComboBoxFriendIp);
+                    if (!comboMenuItems.Contains(partnerIpAddress.ToString()))
+                        AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, partnerIpAddress.ToString());                    
+
+                    try
+                    {
+                        this.MenuNetworkComboBoxFriendIp.Text = partnerIpAddress.ToString();
+                    }
+                    catch { }
+
+                    var ipComboItems = GetComboBoxItems(ComboBoxIp);
+                    if (!ipComboItems.Contains(comboIpText))
+                        AddItemToComboBox(ComboBoxIp, partnerIpAddress.ToString());
+
+                    Entities.Settings.SaveSettings(Entities.Settings.Singleton);
+                }
+            }
         }
 
 
@@ -580,7 +595,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.CurrentCulture))
                         {
                             PlaySoundFromResource("sound_breakpoint");
-                            SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
+                            if (IPAddress.TryParse(area23EvArgs.GenericTData.ClientIPAddr, out partnerIpAddress))
+                            {
+                                SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
+                                AddIpToFriendList(sender, e);
+                            }
 
                         }
                         encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
@@ -1577,7 +1596,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         newAddrIf.Checked = true;
                         if (oldAddrIf != null)
                             oldAddrIf.Checked = false;
-                        clientIpAddress = clIp;
+                        clientIpAddress = clIp;                        
 
                         try
                         {
@@ -1600,6 +1619,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
                         ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
                         SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
+
+                        if (IPAddress.IsLoopback(clientIpAddress))
+                        {
+                            if (clientIpAddress.AddressFamily == AddressFamily.InterNetwork)
+                                SetComboBoxText(this.ComboBoxIp, "127.0.0.1");
+                            else if (clientIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
+                                if (clientIpAddress.ToString().Contains("::1"))
+                                    SetComboBoxText(this.ComboBoxIp, "::1");
+                            
+                            ComboBoxIp_FocusLeave(sender, e);
+                        }
                     }
                 }
                 catch (Exception exc)

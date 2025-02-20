@@ -4,6 +4,7 @@ using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Win32Api;
 using EU.CqrXs.WinForm.SecureChat.Entities;
+using EU.CqrXs.WinForm.SecureChat.Gui.Forms;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -62,15 +63,17 @@ namespace EU.CqrXs.WinForm.SecureChat
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetHighDpiMode(HighDpiMode.DpiUnawareGdiScaled);
             ApplicationConfiguration.Initialize();
-            Form newChat;
+
             // if (mode % 2 == 0)
             //     newChat = (Form)(new Gui.Forms.Peer2PeerChat());
             // else
-            newChat = (Form)(new Gui.Forms.SecureChat());
 
-            // var form1 = new EU.CqrXs.WinForm.SecureChat.Gui.Forms.Form1();
-            // Application.Run(form1);
-            Application.Run(newChat);
+            // Form newChat = (Form)(new Gui.Forms.SecureChat());
+            // Peer2PeerChat peer2PeerChat = new EU.CqrXs.WinForm.SecureChat.Gui.Forms.Peer2PeerChat();
+            RichTextChat richTextChat = new RichTextChat();
+            Application.Run(richTextChat);
+            // Application.Run(peer2PeerChat);
+            // Application.Run(newChat);
 
             ReleaseCloseDisposeMutex(mutex);
 

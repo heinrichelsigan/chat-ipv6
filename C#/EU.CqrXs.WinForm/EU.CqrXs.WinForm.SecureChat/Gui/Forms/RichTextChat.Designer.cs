@@ -619,12 +619,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // PictureBoxYou
             // 
+            PictureBoxYou.BackColor = SystemColors.ButtonShadow;
             PictureBoxYou.BackgroundImageLayout = ImageLayout.Stretch;
-            PictureBoxYou.Location = new Point(10, 56);
+            PictureBoxYou.Location = new Point(7, 55);
             PictureBoxYou.Margin = new Padding(1);
             PictureBoxYou.Name = "PictureBoxYou";
             PictureBoxYou.Padding = new Padding(1);
-            PictureBoxYou.Size = new Size(150, 148);
+            PictureBoxYou.Size = new Size(155, 155);
             PictureBoxYou.TabIndex = 71;
             PictureBoxYou.TabStop = false;
             // 
@@ -683,7 +684,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonCheck.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
             ButtonCheck.ForeColor = SystemColors.ActiveCaptionText;
             ButtonCheck.Image = Properties.de.Resources.CableWireCut;
-            ButtonCheck.Location = new Point(791, 2);
+            ButtonCheck.Location = new Point(792, 2);
             ButtonCheck.Margin = new Padding(1);
             ButtonCheck.Name = "ButtonCheck";
             ButtonCheck.Padding = new Padding(1);
@@ -734,12 +735,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // RichTextBoxChat
             // 
+            RichTextBoxChat.BackColor = SystemColors.ButtonHighlight;
             RichTextBoxChat.BorderStyle = BorderStyle.FixedSingle;
             RichTextBoxChat.ForeColor = SystemColors.WindowText;
-            RichTextBoxChat.Location = new Point(0, 0);
+            RichTextBoxChat.Location = new Point(6, 6);
             RichTextBoxChat.Margin = new Padding(1);
             RichTextBoxChat.Name = "RichTextBoxChat";
-            RichTextBoxChat.Size = new Size(824, 136);
+            RichTextBoxChat.Size = new Size(820, 120);
             RichTextBoxChat.TabIndex = 41;
             RichTextBoxChat.Text = "";
             // 
@@ -754,7 +756,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelDestination.Location = new Point(826, 32);
             PanelDestination.Margin = new Padding(0);
             PanelDestination.Name = "PanelDestination";
-            PanelDestination.Size = new Size(168, 591);
+            PanelDestination.Size = new Size(168, 653);
             PanelDestination.TabIndex = 70;
             // 
             // peerServerSwitchControl1
@@ -772,24 +774,25 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // attachmentListControl
             // 
-            attachmentListControl.BackColor = SystemColors.ControlLightLight;
+            attachmentListControl.BackColor = SystemColors.GradientActiveCaption;
             attachmentListControl.Font = new Font("Lucida Sans Unicode", 9F);
-            attachmentListControl.Location = new Point(0, 215);
+            attachmentListControl.Location = new Point(4, 216);
             attachmentListControl.Margin = new Padding(0);
             attachmentListControl.Name = "attachmentListControl";
-            attachmentListControl.Size = new Size(168, 192);
+            attachmentListControl.Size = new Size(160, 192);
             attachmentListControl.TabIndex = 83;
             // 
             // dragnDropGroupBox
             // 
             dragnDropGroupBox.AllowDrop = true;
-            dragnDropGroupBox.BackColor = SystemColors.ControlLightLight;
+            dragnDropGroupBox.BackColor = SystemColors.AppWorkspace;
             dragnDropGroupBox.Font = new Font("Lucida Sans Unicode", 8.5F);
-            dragnDropGroupBox.Location = new Point(10, 416);
+            dragnDropGroupBox.ForeColor = SystemColors.ActiveCaptionText;
+            dragnDropGroupBox.Location = new Point(10, 411);
             dragnDropGroupBox.Margin = new Padding(1);
             dragnDropGroupBox.Name = "dragnDropGroupBox";
             dragnDropGroupBox.Padding = new Padding(1);
-            dragnDropGroupBox.Size = new Size(150, 131);
+            dragnDropGroupBox.Size = new Size(150, 120);
             dragnDropGroupBox.TabIndex = 81;
             dragnDropGroupBox.TabStop = false;
             dragnDropGroupBox.Text = "   Drag'N'Drop Box";
@@ -819,7 +822,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // PanelBottom
             // 
-            PanelBottom.BackColor = SystemColors.ControlLight;
+            PanelBottom.BackColor = SystemColors.ActiveCaption;
             PanelBottom.Controls.Add(RichTextBoxChat);
             PanelBottom.ForeColor = SystemColors.ActiveCaptionText;
             PanelBottom.Location = new Point(0, 549);
@@ -830,7 +833,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // ButtonAttach
             // 
-            ButtonAttach.Location = new Point(836, 582);
+            ButtonAttach.Location = new Point(836, 568);
             ButtonAttach.Margin = new Padding(2);
             ButtonAttach.Name = "ButtonAttach";
             ButtonAttach.Padding = new Padding(1);
@@ -842,7 +845,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // ButtonClear
             // 
-            ButtonClear.Location = new Point(836, 655);
+            ButtonClear.Location = new Point(836, 648);
             ButtonClear.Margin = new Padding(2);
             ButtonClear.Name = "ButtonClear";
             ButtonClear.Padding = new Padding(1);
@@ -854,7 +857,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             // ButtonSend
             // 
-            ButtonSend.Location = new Point(836, 618);
+            ButtonSend.Location = new Point(836, 607);
             ButtonSend.Margin = new Padding(2);
             ButtonSend.Name = "ButtonSend";
             ButtonSend.Padding = new Padding(1);

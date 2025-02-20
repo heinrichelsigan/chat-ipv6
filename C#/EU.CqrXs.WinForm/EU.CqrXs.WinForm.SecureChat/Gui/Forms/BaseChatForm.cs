@@ -22,7 +22,7 @@ using System.Drawing.Imaging;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
-
+    // make it abstract l8r again
 
     /// <summary>
     /// BaseChat Form is common base class for <see cref="SecureChat"/>, <see cref="Peer2PeerChat"/> and <see cref="RichTextChat"/>
@@ -41,7 +41,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         protected string loadDir = string.Empty;
         private System.ComponentModel.IContainer components = null;
         protected internal static DateTime LastExternalTime = DateTime.MinValue;
-        protected internal static IPAddress? _externalIPAddress;
+        protected internal static IPAddress? _externalIPAddress, _externalIPAddressV6;
         protected internal static List<string> _sProxies = new List<string>();
         protected internal static List<IPAddress> _proxies = new List<IPAddress>();
         protected internal static Lock _sLock = new Lock(), _sLock0 = new Lock(), _sLock1 = new Lock();
@@ -78,7 +78,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 return _externalIPAddress;
             }
         }
-        
+
+
+        public static IPAddress? ExternalIpAddressV6
+        {
+            get
+            {
+                if (_externalIPAddressV6 != null && DateTime.Now.Subtract(LastExternalTime).TotalSeconds < 1800)
+                {
+                    return _externalIPAddressV6;
+                }
+
+                try
+                {
+                    LastExternalTime = DateTime.Now;
+                    _externalIPAddressV6 = WebClientRequest.ExternalClientIpFromServer("https://ipv6.cqrxs.eu/cqrsrv/cqrjd/R.aspx");
+                } 
+                catch (Exception noIPv6Ex)
+                {
+                    Area23Log.LogStatic(noIPv6Ex);
+                    _externalIPAddressV6 = null;
+                }
+                return _externalIPAddressV6;
+            }
+        }
+
+
         public static List<IPAddress> Proxies { get => GetProxiesFromSettingsResources(); }
 
         #endregion Properties
@@ -1280,7 +1305,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">FormClosingEventArgs e</param>
-        protected internal void FormClose_Click(object sender, FormClosingEventArgs e)
+        protected internal virtual void FormClose_Click(object sender, FormClosingEventArgs e)
         {
             if (Application.OpenForms.Count < 2)
             {
@@ -1316,7 +1341,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        protected internal void MenuFileItemExit_Click(object sender, EventArgs e)
+        protected virtual void MenuFileItemExit_Click(object sender, EventArgs e)
         {
             AppCloseAllFormsExit();
         }
@@ -1325,7 +1350,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// AppCloseAllFormsExit closes all open forms and exit and finally unlocks Mutex
         /// </summary>
         /// <exception cref="ApplicationException"></exception>
-        public virtual void AppCloseAllFormsExit()
+        internal virtual void AppCloseAllFormsExit()
         {
             string settingsNotSavedReason = string.Empty;
             try
