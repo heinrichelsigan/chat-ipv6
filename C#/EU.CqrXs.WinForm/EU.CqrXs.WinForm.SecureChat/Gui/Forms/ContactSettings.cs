@@ -138,16 +138,42 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             if (_id == 0 && !string.IsNullOrEmpty(this.comboBoxName.Text))
             {
-                Settings.Singleton.MyContact = new CqrContact()
+                CqrImage? imgTest = null;
+                try
                 {
-                    ContactId = 0,
-                    Name = this.comboBoxName.Text ?? string.Empty,
-                    Email = this.textBoxEmail.Text ?? string.Empty,
-                    Mobile = this.textBoxMobile.Text ?? string.Empty,
-                    Address = this.textBoxAddress.Text ?? string.Empty,
-                    ContactImage = CqrImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString())
-
-                };       
+                    imgTest = CqrImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString());
+                }
+                catch (Exception exi)
+                {
+                    Area23Log.LogStatic(exi);
+                    imgTest = null;
+                }
+                if (Settings.Singleton.MyContact == null)
+                {
+                    Settings.Singleton.MyContact = new CqrContact()
+                    {
+                        ContactId = 0,
+                        Name = this.comboBoxName.Text ?? string.Empty,
+                        Email = this.textBoxEmail.Text ?? string.Empty,
+                        Mobile = this.textBoxMobile.Text ?? string.Empty,
+                        Address = this.textBoxAddress.Text ?? string.Empty                         
+                    };
+                    if (imgTest != null)
+                        Settings.Singleton.MyContact.ContactImage = imgTest;
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(comboBoxName.Text))
+                        Settings.Singleton.MyContact.Name = comboBoxName.Text;
+                    if (!string.IsNullOrEmpty(textBoxEmail.Text))
+                        Settings.Singleton.MyContact.Email = textBoxEmail.Text;
+                    if (!string.IsNullOrEmpty(textBoxMobile.Text))
+                        Settings.Singleton.MyContact.Mobile = textBoxMobile.Text;
+                    if (!string.IsNullOrEmpty(textBoxAddress.Text))
+                        Settings.Singleton.MyContact.Address = textBoxAddress.Text;
+                    if (imgTest != null)
+                        Settings.Singleton.MyContact.ContactImage = imgTest;
+                }
                 AppDomain.CurrentDomain.SetData(Constants.MY_CONTACT, JsonConvert.SerializeObject(Settings.Singleton.MyContact));
                 Settings.SaveSettings(Entities.Settings.Singleton);
             }

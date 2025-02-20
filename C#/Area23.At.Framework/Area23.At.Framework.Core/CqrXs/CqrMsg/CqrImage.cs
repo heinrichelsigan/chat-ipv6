@@ -220,7 +220,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             if (image == null)
                 return null;
 
-            CqrImage? cqrImage;
+            CqrImage? cqrImage = null;
             // ImageFormat format = image.RawFormat;
             byte[] imageData;
             string fileName = string.IsNullOrEmpty(imgName) ? string.Empty : imgName;
@@ -275,10 +275,28 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         fileName += "ico";
                         image.Save(ms, ImageFormat.Icon);
                     }
+                    else if (image.RawFormat == ImageFormat.Heif)
+                    {
+                        fileName += "heif";
+                        image.Save(ms, ImageFormat.Heif);
+                    }
+                    else if (image.RawFormat == ImageFormat.Webp)
+                    {
+                        fileName += "webp";
+                        image.Save(ms, ImageFormat.Webp);
+                    }
                     else
                     {
-                        fileName += "raw";
-                        image.Save(ms, image.RawFormat);
+                        try
+                        {
+                            fileName += "bmp";
+                            image.Save(ms, ImageFormat.Bmp);
+                        }
+                        catch (Exception exImg)
+                        {
+                            Area23Log.LogStatic(exImg);
+                            return null;
+                        }
                     }
                 }
                 else
