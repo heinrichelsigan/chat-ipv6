@@ -27,7 +27,6 @@ using System.Net.Sockets;
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
 
-
     /// <summary>
     /// RichTextChat main form
     /// </summary>
@@ -189,8 +188,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                     if (tuple.Key > chat.TimeStamp)
                     {
-                        string patternDate = tuple.Key.ToString("[yy-MM-dd HH:mm:ss]:");
-                        string line = patternDate + "\r\n" + tuple.Value;
+                        string patternDate = tuple.Key.ToString("[yy-MM-dd HH:mm:ss]");
+                        string line = patternDate + " " + tuple.Value;
                         if (!line.EndsWith("\r\n") && !line.EndsWith("\n") && !line.EndsWith("\n\0") && !line.EndsWith(Environment.NewLine))
                             line += "\n";
 
@@ -940,11 +939,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             if (e is Area23EventArgs<string> ea)
             {
+                if (chat == null)
+                    chat = new Chat(0);
                 string t = GetComboBoxText(this.ComboBoxIp);
                 if (!string.IsNullOrEmpty(t) && IPAddress.TryParse(t, out IPAddress pi))
                 {
-                    var s = SendAttachment(ea.GenericTData, myServerKey, pi);
+                    MimeAttachment sndMimeAttch = SendAttachment(ea.GenericTData, myServerKey, pi);
+                    if (sndMimeAttch != null)
+                    {
+                        string userMsg = chat.AddMyMessage(sndMimeAttch.GetFileNameContentLength());
+                        AppendText(TextBoxSource, userMsg);
+                        Format_Lines_RichTextBox();
+                        this.RichTextBoxChat.Text = string.Empty;
+                        StripStatusLabel.Text = $"File {sndMimeAttch.FileName} send successfully!";
+                    }
                 }
+
             }
         }
 
@@ -1514,18 +1524,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     try
                     {
+                        if (IPAddress.TryParse(friendIp, out IPAddress ipFriendAddr))
+                        {
+                            var comboMenuItems = GetMenuDropDownItems(MenuNetworkComboBoxFriendIp);
+                            if (!comboMenuItems.Contains(ipFriendAddr.ToString()))
+                                AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, ipFriendAddr.ToString());
+                            var comboItems = GetComboBoxItems(this.ComboBoxIp);
 
-                        IPAddress ipFriendAddr = IPAddress.Parse(friendIp);
-                        var comboItems = GetMenuDropDownItems(MenuNetworkComboBoxFriendIp);
-                        if (!comboItems.Contains(ipFriendAddr.ToString()))
-                            AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, ipFriendAddr.ToString());
-
-                        if (!comboItems.Contains(ipFriendAddr.ToString()))
-                            AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, ipFriendAddr.ToString());
+                            if (!comboItems.Contains(ipFriendAddr.ToString()))
+                                AddItemToComboBox(this.ComboBoxIp, ipFriendAddr.ToString());
+                        }
                     }
                     catch (Exception exFriendIp)
                     {
-                        // TODO: log
+                        Area23Log.LogStatic("Error when adding friendIps + " + exFriendIp.Message);
                     }
                 }
             }

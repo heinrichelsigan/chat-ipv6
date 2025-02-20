@@ -32,12 +32,12 @@
             SuspendLayout();
             AllowDrop = true;
             this.BackColor = SystemColors.ControlLightLight;
-            this.Font = new Font("Lucida Sans Unicode", 9F);
+            this.Font = new Font("Lucida Sans Unicode", 8.5F);
             this.Location = new Point(0, 0);
-            this.Margin = new Padding(0);
+            this.Margin = new Padding(1);
             this.Name = "DragNDropGroupBox";
             this.Padding = new Padding(1);
-            this.Size = new Size(151, 151);
+            this.Size = new Size(144, 112);
             this.TabIndex = 81;
             this.TabStop = false;
             this.Text = "Drag and Drop Area";

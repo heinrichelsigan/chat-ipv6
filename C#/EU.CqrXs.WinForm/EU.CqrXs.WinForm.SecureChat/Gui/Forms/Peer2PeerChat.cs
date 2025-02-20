@@ -189,8 +189,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                     if (tuple.Key > chat.TimeStamp)
                     {
-                        string patternDate = tuple.Key.ToString("[yy-MM-dd HH:mm:ss]:");
-                        string line = patternDate + "\r\n" + tuple.Value;
+                        string patternDate = tuple.Key.ToString("[yy-MM-dd HH:mm:ss]");
+                        string line = patternDate + " " + tuple.Value;
                         if (!line.EndsWith("\r\n") && !line.EndsWith("\n") && !line.EndsWith("\n\0") && !line.EndsWith(Environment.NewLine))
                             line += "\n";
 
@@ -1514,18 +1514,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     try
                     {
+                        if (IPAddress.TryParse(friendIp, out IPAddress ipFriendAddr))
+                        {
+                            var comboMenuItems = GetMenuDropDownItems(MenuNetworkComboBoxFriendIp);
+                            if (!comboMenuItems.Contains(ipFriendAddr.ToString()))
+                                AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, ipFriendAddr.ToString());
+                            var comboItems = GetComboBoxItems(this.ComboBoxIp);
 
-                        IPAddress ipFriendAddr = IPAddress.Parse(friendIp);
-                        var comboItems = GetMenuDropDownItems(MenuNetworkComboBoxFriendIp);
-                        if (!comboItems.Contains(ipFriendAddr.ToString()))
-                            AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, ipFriendAddr.ToString());
-
-                        if (!comboItems.Contains(ipFriendAddr.ToString()))
-                            AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, ipFriendAddr.ToString());
+                            if (!comboItems.Contains(ipFriendAddr.ToString()))
+                                AddItemToComboBox(this.ComboBoxIp, ipFriendAddr.ToString());
+                        }
                     }
                     catch (Exception exFriendIp)
                     {
-                        // TODO: log
+                        Area23Log.LogStatic("Error when adding friendIps + " + exFriendIp.Message);
                     }
                 }
             }

@@ -38,8 +38,11 @@
             // 
             // labelServer
             // 
+            labelServer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             labelServer.AutoSize = true;
-            labelServer.Font = new Font("Lucida Sans Unicode", 9.5F);
+            labelServer.BackColor = SystemColors.GradientInactiveCaption;
+            labelServer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            labelServer.ForeColor = SystemColors.Highlight;
             labelServer.Location = new Point(78, 1);
             labelServer.Margin = new Padding(1, 0, 1, 0);
             labelServer.Name = "labelServer";
@@ -50,13 +53,13 @@
             // labelPeer
             // 
             labelPeer.AutoSize = true;
-            labelPeer.Font = new Font("Lucida Sans Unicode", 9.5F);
+            labelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Bold);
             labelPeer.Location = new Point(1, 1);
             labelPeer.Margin = new Padding(1, 0, 1, 0);
             labelPeer.Name = "labelPeer";
-            labelPeer.Size = new Size(75, 16);
+            labelPeer.Size = new Size(76, 16);
             labelPeer.TabIndex = 0;
-            labelPeer.Text = "Peer 2 Peer";
+            labelPeer.Text = "Peer2Peer";
             // 
             // trackBarPeerServer
             // 

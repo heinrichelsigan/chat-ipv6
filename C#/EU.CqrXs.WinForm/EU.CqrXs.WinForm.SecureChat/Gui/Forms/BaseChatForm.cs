@@ -200,20 +200,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     {
                         if (richArea != null && !string.IsNullOrEmpty(richArea.Text))
                         {
-                            richArea.DeselectAll();
-                            richArea.Select((pos0 < 0) ? 0 : pos0, len);
-                            richArea.SelectionAlignment = hlr;                            
-                            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(pos0.ToString() + len.ToString());
-                            string hex = bytes.ToHexString();
+                            pos0 = (pos0 < 0) ? 0 : pos0;
+                            richArea.Select(pos0, len);
+                            richArea.SelectionAlignment = hlr;
+                            //byte[] bytes = System.Text.Encoding.UTF8.GetBytes(pos0.ToString() + len.ToString());
+                            //string hex = bytes.ToHexString();
 
-                            Color c = Color.AliceBlue;
-                            if (hlr == HorizontalAlignment.Left)
-                                c = new Color().FromXrgb($"ff{hex.Substring(0, 2)}{hex.Substring(2, 2)}");
-                            if (hlr == HorizontalAlignment.Right)
-                                c = new Color().FromXrgb($"{hex.Substring(0, 2)}{hex.Substring(2, 2)}ff");
-                            if (hlr == HorizontalAlignment.Center)
-                                c = new Color().FromXrgb($"{hex.Substring(0, 2)}ff{hex.Substring(2, 2)}");
-                            richArea.SelectionBackColor = c;
+                            //Color c = Color.AliceBlue;
+                            //if (hlr == HorizontalAlignment.Left)
+                            //    c = new Color().FromXrgb($"ff{hex.Substring(0, 2)}{hex.Substring(2, 2)}");
+                            //if (hlr == HorizontalAlignment.Right)
+                            //    c = new Color().FromXrgb($"{hex.Substring(0, 2)}{hex.Substring(2, 2)}ff");
+                            //if (hlr == HorizontalAlignment.Center)
+                            //    c = new Color().FromXrgb($"{hex.Substring(0, 2)}ff{hex.Substring(2, 2)}");
+                            //richArea.SelectionBackColor = c;
+                            richArea.Update();
                             // richArea.DeselectAll();
                         }
                     };
@@ -235,21 +236,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (richTextBox != null && !string.IsNullOrEmpty(richTextBox.Text))
                 {
-                    richTextBox.DeselectAll();
+                    
                     richTextBox.Select((start < 0) ? 0 : start, length);
                     richTextBox.SelectionAlignment = hAlignment;
-                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(start.ToString() + length.ToString());
-                    string hex = bytes.ToHexString();
+                    //byte[] bytes = System.Text.Encoding.UTF8.GetBytes(start.ToString() + length.ToString());
+                    //string hex = bytes.ToHexString();
 
-                    Color c = Color.AliceBlue;
-                    if (hAlignment == HorizontalAlignment.Left)
-                        c = new Color().FromXrgb($"ff{hex.Substring(0, 2)}{hex.Substring(2, 2)}");
-                    if (hAlignment == HorizontalAlignment.Right)
-                        c = new Color().FromXrgb($"{hex.Substring(0, 2)}{hex.Substring(2, 2)}ff");
-                    if (hAlignment == HorizontalAlignment.Center)
-                        c = new Color().FromXrgb($"{hex.Substring(0, 2)}ff{hex.Substring(2, 2)}");
-                    richTextBox.SelectionBackColor = c;
+                    //Color c = Color.AliceBlue;
+                    //if (hAlignment == HorizontalAlignment.Left)
+                    //    c = new Color().FromXrgb($"ff{hex.Substring(0, 2)}{hex.Substring(2, 2)}");
+                    //if (hAlignment == HorizontalAlignment.Right)
+                    //    c = new Color().FromXrgb($"{hex.Substring(0, 2)}{hex.Substring(2, 2)}ff");
+                    //if (hAlignment == HorizontalAlignment.Center)
+                    //    c = new Color().FromXrgb($"{hex.Substring(0, 2)}ff{hex.Substring(2, 2)}");
+                    //richTextBox.SelectionBackColor = c;
                     // richTextBox.DeselectAll();
+                    richTextBox.Update();
                 }
             }
         }
