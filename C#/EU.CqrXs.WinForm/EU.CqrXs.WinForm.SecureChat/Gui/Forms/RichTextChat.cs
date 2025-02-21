@@ -108,7 +108,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
             Load += new System.EventHandler(async (sender, e) => await RichTextChat_Load(sender, e));            
             attachmentListControl.OnDragNDrop += OnDragNDrop;
-            dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
             this.peerServerSwitchControl1.FireUpChanged += TooglePeerServer;
             this.StripProgressBar.Value = 0;
         }

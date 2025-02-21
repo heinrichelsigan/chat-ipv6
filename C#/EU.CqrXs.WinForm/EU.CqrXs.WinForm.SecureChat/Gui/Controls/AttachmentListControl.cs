@@ -28,7 +28,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
         internal delegate void SetLinkLabelTextCallback(LinkLabel linkLabel, string text);
         internal delegate void AddLinkLabelLinksCallback(LinkLabel linkLabel, string linkUrl);
         internal delegate void SetLinkLabelVisibleCallback(LinkLabel linkLabel, bool visible);
-        
+
         public AttachmentListControl()
         {
             components = new System.ComponentModel.Container();
@@ -297,6 +297,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
         #endregion thread save WinForm delegate callbacks
 
 
+        private void AttachmentList_ShowToolTip(object sender, EventArgs e)
+        {
+            // this.toolTip1.SetToolTip(this, "Drag'n Drop Files here or click on \"Attach\"");
+            this.toolTip1.Show("Drag'n Drop Files here or click on \"Attach\"", this, 24, 48, 4000);
+        }
+
+        private void AttachmentList_HideToolTip(object sender, EventArgs e)
+        {
+            this.toolTip1.Hide(this);
+        }
     }
 
 

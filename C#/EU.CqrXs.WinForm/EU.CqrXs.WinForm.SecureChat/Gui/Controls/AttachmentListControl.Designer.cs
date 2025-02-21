@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             labelHeaderText = new Label();
             LinkLabel8 = new LinkLabel();
             LinkLabel7 = new LinkLabel();
@@ -37,6 +38,7 @@
             LinkLabel3 = new LinkLabel();
             LinkLabel2 = new LinkLabel();
             LinkLabel1 = new LinkLabel();
+            toolTip1 = new ToolTip(components);
             SuspendLayout();
             // 
             // labelHeaderText
@@ -44,10 +46,11 @@
             labelHeaderText.AutoSize = true;
             labelHeaderText.Font = new Font("Trebuchet MS", 9.75F);
             labelHeaderText.Location = new Point(21, 0);
+            labelHeaderText.Margin = new Padding(1, 0, 1, 0);
             labelHeaderText.Name = "labelHeaderText";
-            labelHeaderText.Size = new Size(102, 18);
+            labelHeaderText.Size = new Size(82, 18);
             labelHeaderText.TabIndex = 0;
-            labelHeaderText.Text = "Attachment List";
+            labelHeaderText.Text = "Attachments";
             // 
             // LinkLabel8
             // 
@@ -153,11 +156,17 @@
             LinkLabel1.Text = "LinkLabel1";
             LinkLabel1.Visible = false;
             // 
+            // toolTip1
+            // 
+            toolTip1.IsBalloon = true;
+            toolTip1.ToolTipIcon = ToolTipIcon.Info;
+            toolTip1.ToolTipTitle = "Drag'n Drop Files here or click on Attach";
+            // 
             // AttachmentListControl
             // 
-            AutoScaleMode = AutoScaleMode.None;
-            BackColor = SystemColors.ControlLightLight;
             AllowDrop = true;
+            AutoScaleMode = AutoScaleMode.None;
+            BackColor = SystemColors.ButtonFace;
             Controls.Add(LinkLabel8);
             Controls.Add(LinkLabel7);
             Controls.Add(LinkLabel6);
@@ -167,13 +176,15 @@
             Controls.Add(LinkLabel2);
             Controls.Add(LinkLabel1);
             Controls.Add(labelHeaderText);
-            DragDrop += AttachmentList_DragDrop;
-            DragEnter += AttachmentList_DragEnter;
-            DragLeave += AttachmentList_DragLeave;            
             Font = new Font("Lucida Sans Unicode", 9F);
             Margin = new Padding(0);
             Name = "AttachmentListControl";
             Size = new Size(152, 192);
+            DragDrop += AttachmentList_DragDrop;
+            DragEnter += AttachmentList_DragEnter;
+            DragLeave += AttachmentList_DragLeave;
+            MouseEnter += AttachmentList_ShowToolTip;
+            MouseLeave += AttachmentList_HideToolTip;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -189,5 +200,6 @@
         private LinkLabel LinkLabel3;
         private LinkLabel LinkLabel2;
         private LinkLabel LinkLabel1;
+        private ToolTip toolTip1;
     }
 }
