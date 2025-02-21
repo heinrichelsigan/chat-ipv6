@@ -20,7 +20,7 @@ using static System.Windows.Forms.MonthCalendar;
 using Org.BouncyCastle.Utilities;
 using System.Drawing.Imaging;
 
-namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
+namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
 {
     // make it abstract l8r again
 
@@ -53,23 +53,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         public static bool ProxiesInSettings
         {
-            get => (Entities.Settings.Singleton != null && Entities.Settings.Singleton.Proxies != null &&
-                Entities.Settings.Singleton.Proxies.Count > 0);
+            get => Settings.Singleton != null && Settings.Singleton.Proxies != null &&
+                Settings.Singleton.Proxies.Count > 0;
         }
 
         public static bool FriendIPsInSettings
         {
-            get => (Entities.Settings.Singleton != null && Entities.Settings.Singleton.FriendIPs != null &&
-                Entities.Settings.Singleton.FriendIPs.Count > 0);
+            get => Settings.Singleton != null && Settings.Singleton.FriendIPs != null &&
+                Settings.Singleton.FriendIPs.Count > 0;
         }
 
-        
+
         public static IPAddress? ExternalIpAddress
         {
             get
             {
                 if (_externalIPAddress != null && DateTime.Now.Subtract(LastExternalTime).TotalSeconds < 1800)
-                {                    
+                {
                     return _externalIPAddress;
                 }
 
@@ -93,7 +93,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     LastExternalTime = DateTime.Now;
                     _externalIPAddressV6 = WebClientRequest.ExternalClientIpFromServer("https://ipv6.cqrxs.eu/cqrsrv/cqrjd/R.aspx");
-                } 
+                }
                 catch (Exception noIPv6Ex)
                 {
                     Area23Log.LogStatic(noIPv6Ex);
@@ -115,7 +115,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
         #region thread save WinForm delegate callbacks
-        
+
         #region TextBox&RichTextBox
 
         internal delegate void SetTextCallback(System.Windows.Forms.TextBox textBox, string text);
@@ -125,9 +125,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         internal delegate void AppendRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, string text);
 
         internal delegate void RichTextFromPositionWithLengthAlignCallback(
-                System.Windows.Forms.RichTextBox richArea, 
-                int pos0, 
-                int len, 
+                System.Windows.Forms.RichTextBox richArea,
+                int pos0,
+                int len,
                 HorizontalAlignment hlr
             );
 
@@ -138,7 +138,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         internal delegate void ClearRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, bool clear = true);
 
         internal delegate int GetLastIndexOfSubstringCallback(System.Windows.Forms.RichTextBox richTextBox, string pattern);
-        
+
         internal delegate void DeselectAllRichTextCallback(System.Windows.Forms.RichTextBox richTextBox);
 
 
@@ -149,7 +149,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="text"><see cref="string">string text</see> to set</param>
         internal void AppendText(System.Windows.Forms.TextBox textBox, string text)
         {
-            string textToAppend = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+            string textToAppend = !string.IsNullOrEmpty(text) ? text : string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             // If these threads are different, it returns true.
@@ -166,9 +166,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     textBox.Invoke(appendTextDelegate, new object[] { textBox, textToAppend });
                     // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AppendText text: \"{text}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AppendText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -180,7 +180,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal void AppendRichText(System.Windows.Forms.RichTextBox richTextBox, string text)
         {
-            string textToAppend = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+            string textToAppend = !string.IsNullOrEmpty(text) ? text : string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             // If these threads are different, it returns true.
@@ -197,9 +197,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     richTextBox.Invoke(appendRichTextDelegate, new object[] { richTextBox, textToAppend });
                     // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AppendRichText text: \"{text}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AppendRichText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -210,12 +210,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         }
 
         internal void RichTextFromPositionWithLengthAlign(
-            System.Windows.Forms.RichTextBox richTextBox, 
-            int start,  
-            int length, 
+            System.Windows.Forms.RichTextBox richTextBox,
+            int start,
+            int length,
             HorizontalAlignment hAlignment = HorizontalAlignment.Left)
         {
-            start = (start < 0) ? 0 : start;
+            start = start < 0 ? 0 : start;
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             // If these threads are different, it returns true.
             if (richTextBox.InvokeRequired)
@@ -225,7 +225,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     {
                         if (richArea != null && !string.IsNullOrEmpty(richArea.Text))
                         {
-                            pos0 = (pos0 < 0) ? 0 : pos0;
+                            pos0 = pos0 < 0 ? 0 : pos0;
                             richArea.Select(pos0, len);
                             richArea.SelectionAlignment = hlr;
                             //byte[] bytes = System.Text.Encoding.UTF8.GetBytes(pos0.ToString() + len.ToString());
@@ -250,7 +250,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         new object[] { richTextBox, start, length, hAlignment });
                     // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
                     Area23Log.Logger.LogOriginMsgEx("RichTextFromPositionWithLengthAlign",
                         $"Exception in delegate RichTextFromPositionWithLengthAlign RichTextBox: " +
@@ -261,8 +261,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (richTextBox != null && !string.IsNullOrEmpty(richTextBox.Text))
                 {
-                    
-                    richTextBox.Select((start < 0) ? 0 : start, length);
+
+                    richTextBox.Select(start < 0 ? 0 : start, length);
                     richTextBox.SelectionAlignment = hAlignment;
                     //byte[] bytes = System.Text.Encoding.UTF8.GetBytes(start.ToString() + length.ToString());
                     //string hex = bytes.ToHexString();
@@ -298,9 +298,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     richTextBox.Invoke(selectionAlignmentRichTextCallback, new object[] { richTextBox, leftRight });
                     // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SelectionAlignmentRichText: \"{leftRight}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SelectionAlignmentRichText: \"{leftRight}\".\n", exDelegate);
                 }
             }
             else
@@ -328,9 +328,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     richTextBox.Invoke(getFirstCharIndexFromLineRichTextCallback, new object[] { richTextBox, lineNr });
                     // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetFirstCharIndexFromLineRichText({lineNr}).\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetFirstCharIndexFromLineRichText({lineNr}).\n", exDelegate);
                 }
             }
             else
@@ -352,7 +352,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     {
                         if (textArea != null &&
                             !string.IsNullOrEmpty(textArea.Text) &&
-                            !string.IsNullOrEmpty(patterns)) {
+                            !string.IsNullOrEmpty(patterns))
+                        {
                             if (textArea.Text.Contains(patterns, StringComparison.InvariantCultureIgnoreCase) ||
                                 textArea.Text.IndexOf(patterns) > -1)
                             {
@@ -367,14 +368,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     richTextBox.Invoke(getLastIndexOfSubstringCallback, new object[] { richTextBox, pattern });
                     // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetLastIndexOfSubstring(richTextBox = {richTextBox.Name}, pattern = {pattern}).\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetLastIndexOfSubstring(richTextBox = {richTextBox.Name}, pattern = {pattern}).\n", exDelegate);
                 }
             }
             else
             {
-                if (richTextBox != null  && !string.IsNullOrEmpty(richTextBox.Text) && !string.IsNullOrEmpty(pattern) && richTextBox.Text.Contains(pattern))
+                if (richTextBox != null && !string.IsNullOrEmpty(richTextBox.Text) && !string.IsNullOrEmpty(pattern) && richTextBox.Text.Contains(pattern))
                     return richTextBox.Text.LastIndexOf(pattern);
             }
             return -1;
@@ -399,9 +400,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     richTextBox.Invoke(deselectAllRichTextCallback, new object[] { richTextBox });
                     // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate DeselectAllRichText(richTextBox = {richTextBox.Name}).\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate DeselectAllRichText(richTextBox = {richTextBox.Name}).\n", exDelegate);
                 }
             }
             else
@@ -431,9 +432,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     richTextBox.Invoke(clearRichTextCallback, new object[] { richTextBox, clear });
                     // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate ClearRichText: \"{exDelegate.Message}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate ClearRichText: \"{exDelegate.Message}\".\n", exDelegate);
                 }
             }
             else
@@ -460,12 +461,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="text"><see cref="string">string text</see> to set</param>
         internal void SetLinkLabelText(LinkLabel linkLabel, string text)
         {
-            string textToSet = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+            string textToSet = !string.IsNullOrEmpty(text) ? text : string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (linkLabel.InvokeRequired)
             {
-                SetLinkLabelTextCallback setTextDelegate = 
+                SetLinkLabelTextCallback setTextDelegate =
                     delegate (LinkLabel lnkLabel, string setText)
                     {
                         if (lnkLabel != null && lnkLabel.Text != null && setText != null)
@@ -475,9 +476,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     linkLabel.Invoke(setTextDelegate, new object[] { linkLabel, textToSet });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelText text: \"{text}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetLinkLabelText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -489,7 +490,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal void AddLinkLabelLinks(LinkLabel linkLabel, string link)
         {
-            string linkToAdd = (!string.IsNullOrEmpty(link)) ? link : string.Empty;
+            string linkToAdd = !string.IsNullOrEmpty(link) ? link : string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (linkLabel.InvokeRequired)
@@ -504,9 +505,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     linkLabel.Invoke(addLinkLabelLinksCallback, new object[] { linkLabel, link });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AddLinkLabelLinks: \"{link}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AddLinkLabelLinks: \"{link}\".\n", exDelegate);
                 }
             }
             else
@@ -517,11 +518,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         }
 
         internal void SetLinkLabelVisible(LinkLabel linkLabel, bool visible)
-        {           
+        {
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (linkLabel.InvokeRequired)
             {
-                SetLinkLabelVisibleCallback setLinkLabelVisibleCallback = 
+                SetLinkLabelVisibleCallback setLinkLabelVisibleCallback =
                     delegate (LinkLabel lnkLabel, bool vicible)
                     {
                         if (lnkLabel != null)
@@ -531,9 +532,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     linkLabel.Invoke(setLinkLabelVisibleCallback, new object[] { linkLabel, visible });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelVisible visible: \"{visible}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetLinkLabelVisible visible: \"{visible}\".\n", exDelegate);
                 }
             }
             else
@@ -557,29 +558,29 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
-                GetMenuItemTextCallback getMenuItemTextCallback = delegate (ToolStripMenuItem tsMenuItem) 
+                GetMenuItemTextCallback getMenuItemTextCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
-                    return (tsMenuItem != null && tsMenuItem.Text != null) ? tsMenuItem.Text : string.Empty;
+                    return tsMenuItem != null && tsMenuItem.Text != null ? tsMenuItem.Text : string.Empty;
                 };
                 try
                 {
                     reText = (string)mItem.GetCurrentParent().Invoke(getMenuItemTextCallback, new object[] { mItem });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItemText menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemText menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
             {
-                reText = (mItem != null && mItem.Text != null) ? mItem.Text : string.Empty;
+                reText = mItem != null && mItem.Text != null ? mItem.Text : string.Empty;
             }
 
             return reText;
         }
         internal void SetMenuItemText(ToolStripMenuItem mItem, string text)
         {
-            string setText = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+            string setText = !string.IsNullOrEmpty(text) ? text : string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
@@ -587,15 +588,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 SetMenuItemTextCallback setMenuItemTextCallback = delegate (ToolStripMenuItem tsMenuItem, string setText)
                 {
                     if (tsMenuItem != null && setText != null)
-                        tsMenuItem.Text = setText;                    
+                        tsMenuItem.Text = setText;
                 };
                 try
                 {
                     mItem.GetCurrentParent()?.Invoke(setMenuItemTextCallback, new object[] { mItem, setText });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, text: \"{text}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -618,27 +619,27 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 GetMenuItemForeColorCallback getMenuItemForeColorCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
-                    return (tsMenuItem != null && tsMenuItem.ForeColor != null) ? tsMenuItem.ForeColor : SystemColors.MenuText;
+                    return tsMenuItem != null && tsMenuItem.ForeColor != null ? tsMenuItem.ForeColor : SystemColors.MenuText;
                 };
                 try
                 {
                     foreColor = (Color)mItem.GetCurrentParent().Invoke(getMenuItemForeColorCallback, new object[] { mItem });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItemForeColor menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemForeColor menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
             {
-                foreColor = (mItem != null && mItem.ForeColor != null) ? mItem.ForeColor : SystemColors.MenuText;
+                foreColor = mItem != null && mItem.ForeColor != null ? mItem.ForeColor : SystemColors.MenuText;
             }
 
             return foreColor;
         }
         internal void SetMenuItemForeColor(ToolStripMenuItem mItem, Color foreColor)
         {
-            Color fgColor = (foreColor != null) ? foreColor : SystemColors.MenuText;
+            Color fgColor = foreColor != null ? foreColor : SystemColors.MenuText;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
@@ -650,11 +651,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 };
                 try
                 {
-                    mItem.GetCurrentParent()?.Invoke(setMenuItemForeColorCallback, new object[] { mItem, fgColor});
+                    mItem.GetCurrentParent()?.Invoke(setMenuItemForeColorCallback, new object[] { mItem, fgColor });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, Color: \"{foreColor}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, Color: \"{foreColor}\".\n", exDelegate);
                 }
             }
             else
@@ -677,27 +678,27 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 GetMenuItemBackColorCallback getMenuItemBackColorCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
-                    return (tsMenuItem != null && tsMenuItem.BackColor != null) ? tsMenuItem.BackColor : SystemColors.MenuBar;
+                    return tsMenuItem != null && tsMenuItem.BackColor != null ? tsMenuItem.BackColor : SystemColors.MenuBar;
                 };
                 try
                 {
                     bgColor = (Color)mItem.GetCurrentParent().Invoke(getMenuItemBackColorCallback, new object[] { mItem });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItemBackColor menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemBackColor menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
             {
-                bgColor = (mItem != null && mItem.BackColor != null) ? mItem.BackColor : SystemColors.MenuBar;
+                bgColor = mItem != null && mItem.BackColor != null ? mItem.BackColor : SystemColors.MenuBar;
             }
 
             return bgColor;
         }
         internal void SetMenuItemBackColor(ToolStripMenuItem mItem, Color backColor)
         {
-            Color bgColor = (backColor != null) ? backColor : SystemColors.MenuBar;
+            Color bgColor = backColor != null ? backColor : SystemColors.MenuBar;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
@@ -711,9 +712,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     mItem.GetCurrentParent()?.Invoke(setMenuItemBackColorCallback, new object[] { mItem, bgColor });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetMenuItemBackColor menu item: {mItem.Name}, Color: \"{bgColor}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemBackColor menu item: {mItem.Name}, Color: \"{bgColor}\".\n", exDelegate);
                 }
             }
             else
@@ -735,28 +736,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 GetMenuItemCheckedCallback getMenuItemCheckedCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
-                    return (tsMenuItem != null) ? tsMenuItem.Checked : false;
+                    return tsMenuItem != null ? tsMenuItem.Checked : false;
                 };
                 try
                 {
                     mchecked = (bool)mItem.GetCurrentParent().Invoke(getMenuItemCheckedCallback, new object[] { mItem });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItemChecked menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemChecked menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
             {
-                mchecked = (mItem != null) ? mItem.Checked : false;
+                mchecked = mItem != null ? mItem.Checked : false;
             }
 
             return mchecked;
         }
         internal void SetMenuItemChecked(ToolStripMenuItem mItem, bool mchecked)
-        {            
+        {
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            if ((mItem.GetCurrentParent() != null) && mItem.GetCurrentParent().InvokeRequired)
+            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
                 SetMenuItemCheckedCallback setMenuItemCheckedCallback = delegate (ToolStripMenuItem tsMenuItem, bool miChecked)
                 {
@@ -767,9 +768,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     mItem.GetCurrentParent()?.Invoke(setMenuItemCheckedCallback, new object[] { mItem, mchecked });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetMenuItemChecked menu item: {mItem.Name}, checked: \"{mchecked}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemChecked menu item: {mItem.Name}, checked: \"{mchecked}\".\n", exDelegate);
                 }
             }
             else
@@ -795,31 +796,31 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 GetMenuItemsCallback getMenuItemsCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
-                    return (tsMenuItem != null && tsMenuItem.DropDown != null && tsMenuItem.DropDownItems != null) ?
+                    return tsMenuItem != null && tsMenuItem.DropDown != null && tsMenuItem.DropDownItems != null ?
                         tsMenuItem.DropDown.Items : new ToolStripItemCollection(tsMenuItem.GetCurrentParent(), new ToolStripMenuItem[0]);
                 };
                 try
                 {
                     tscol = (ToolStripItemCollection)mItem.GetCurrentParent().Invoke(getMenuItemsCallback, new object[] { mItem });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuItems menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItems menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
             {
-                tscol = (mItem != null && mItem.DropDown != null && mItem.DropDownItems != null) ? 
+                tscol = mItem != null && mItem.DropDown != null && mItem.DropDownItems != null ?
                     mItem.DropDown.Items : new ToolStripItemCollection(mItem.GetCurrentParent(), new ToolStripMenuItem[0]);
-                
+
             }
 
             return tscol;
         }
         internal void AddMenuItemToItems(ToolStripMenuItem mItem, ToolStripDropDownItem tsddItem)
         {
-            ToolStripMenuItem addItem = (mItem != null && tsddItem != null) ?
-                (ToolStripMenuItem)tsddItem: new ToolStripMenuItem();                
+            ToolStripMenuItem addItem = mItem != null && tsddItem != null ?
+                (ToolStripMenuItem)tsddItem : new ToolStripMenuItem();
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
@@ -827,16 +828,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 AddMenuItemToItemsCallack addMenuItemToItemsCallack =
                     delegate (ToolStripMenuItem tsMenuItem, ToolStripDropDownItem ddItem)
                 {
-                    if (tsMenuItem != null && tsMenuItem.DropDown != null && tsMenuItem.DropDown.Items != null &&  ddItem != null)
+                    if (tsMenuItem != null && tsMenuItem.DropDown != null && tsMenuItem.DropDown.Items != null && ddItem != null)
                         tsMenuItem.DropDown.Items.Add((ToolStripMenuItem)ddItem);
                 };
                 try
                 {
                     mItem.GetCurrentParent()?.Invoke(addMenuItemToItemsCallack, new object[] { mItem, addItem });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AddMenuItemToItems menu item: {mItem.Name}, add item: \"{addItem.Name}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AddMenuItemToItems menu item: {mItem.Name}, add item: \"{addItem.Name}\".\n", exDelegate);
                 }
             }
             else
@@ -845,29 +846,29 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     mItem.DropDown.Items.Add(addItem);
             }
         }
-        
-        internal System.Windows.Forms.ComboBox.ObjectCollection? GetMenuDropDownItems(ToolStripComboBox tsCbx) 
+
+        internal System.Windows.Forms.ComboBox.ObjectCollection? GetMenuDropDownItems(ToolStripComboBox tsCbx)
         {
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (tsCbx != null && tsCbx.GetCurrentParent() != null && tsCbx.GetCurrentParent().InvokeRequired)
             {
                 GetMenuDropDownItemsCallback getMenuDropDownItemsCallback = delegate (ToolStripComboBox tsComboBox)
                 {
-                    return (tsComboBox != null && tsComboBox.Items != null) ?
+                    return tsComboBox != null && tsComboBox.Items != null ?
                         tsComboBox.Items : null;
                 };
                 try
                 {
                     return (System.Windows.Forms.ComboBox.ObjectCollection?)tsCbx.GetCurrentParent().Invoke(getMenuDropDownItemsCallback, new object[] { tsCbx });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetMenuDropDownItems menuItemComboBox = {tsCbx.Name}.\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuDropDownItems menuItemComboBox = {tsCbx.Name}.\n", exDelegate);
                 }
             }
             else
             {
-                return (tsCbx != null && tsCbx.Items != null) ?
+                return tsCbx != null && tsCbx.Items != null ?
                     tsCbx.Items : null;
 
             }
@@ -889,9 +890,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     tsCombo.GetCurrentParent()?.Invoke(addMenuItemToMenuComboBoxCallack, new object[] { tsCombo, obj });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AddMenuItemToMenuComboBox menu combo box: {tsCombo.Name}, add object: \"{obj}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AddMenuItemToMenuComboBox menu combo box: {tsCombo.Name}, add object: \"{obj}\".\n", exDelegate);
                 }
             }
             else
@@ -910,7 +911,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         internal void SetStatusText(ToolStripStatusLabel toolStatusLabel, string text)
         {
-            string setText = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+            string setText = !string.IsNullOrEmpty(text) ? text : string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (toolStatusLabel.GetCurrentParent() != null && toolStatusLabel.GetCurrentParent().InvokeRequired)
@@ -925,9 +926,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     toolStatusLabel.GetCurrentParent().Invoke(statusLabelSetTextCallback, new object[] { toolStatusLabel, setText });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetStatusText text: \"{text}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetStatusText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -959,23 +960,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (comboBox.InvokeRequired)
             {
-                GetComboBoxTextCallback getComboBoxTextCallback = 
+                GetComboBoxTextCallback getComboBoxTextCallback =
                     delegate (System.Windows.Forms.ComboBox cmbx)
                     {
-                        return (cmbx != null && cmbx.Text != null) ? cmbx.Text : string.Empty;
+                        return cmbx != null && cmbx.Text != null ? cmbx.Text : string.Empty;
                     };
                 try
                 {
                     reText = (string)comboBox.Invoke(getComboBoxTextCallback, new object[] { comboBox });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetComboBoxText ComboBox = {comboBox.Name}.\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxText ComboBox = {comboBox.Name}.\n", exDelegate);
                 }
             }
             else
             {
-                reText = (comboBox != null && comboBox.Text != null) ? comboBox.Text : string.Empty;
+                reText = comboBox != null && comboBox.Text != null ? comboBox.Text : string.Empty;
             }
 
             return reText;
@@ -988,7 +989,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="text">string text to set</param>
         internal void SetComboBoxText(System.Windows.Forms.ComboBox comboBox, string text)
         {
-            string setText = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+            string setText = !string.IsNullOrEmpty(text) ? text : string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (comboBox.InvokeRequired)
@@ -1003,9 +1004,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     comboBox.Invoke(setComboBoxTextCallback, new object[] { comboBox, setText });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetComboBoxText ComboBox = {comboBox.Name}, text = \"{text}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetComboBoxText ComboBox = {comboBox.Name}, text = \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -1022,7 +1023,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="color"><see cref="Color"/> to set as new <see cref="ComboBox.BackColor"/></param>
         internal void SetComboBoxBackColor(System.Windows.Forms.ComboBox comboBox, Color color)
         {
-            Color setColor = (color != null) ? color : Color.Transparent;
+            Color setColor = color != null ? color : Color.Transparent;
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (comboBox.InvokeRequired)
             {
@@ -1036,9 +1037,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     comboBox.Invoke(setComboBackColorCallback, new object[] { comboBox, color });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetComboBoxBackColor ComboBox = {comboBox.Name}, Colore = \"{color}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetComboBoxBackColor ComboBox = {comboBox.Name}, Colore = \"{color}\".\n", exDelegate);
                 }
             }
             else
@@ -1056,20 +1057,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 GetComboBoxItemsCallback getComboBoxItemsCallback = delegate (System.Windows.Forms.ComboBox comboBx)
                 {
-                    return (comboBx != null && comboBx.Items != null) ? comboBx.Items : null;
+                    return comboBx != null && comboBx.Items != null ? comboBx.Items : null;
                 };
                 try
                 {
                     return (System.Windows.Forms.ComboBox.ObjectCollection?)comboBox.Invoke(getComboBoxItemsCallback, new object[] { comboBox });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetComboBoxItems ComboBox = {comboBox.Name}.\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxItems ComboBox = {comboBox.Name}.\n", exDelegate);
                 }
             }
             else
             {
-                return (comboBox != null && comboBox.Items != null) ? comboBox.Items : null;
+                return comboBox != null && comboBox.Items != null ? comboBox.Items : null;
 
             }
 
@@ -1091,9 +1092,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     comboBox.Invoke(addItemToComboBoxCallack, new object[] { comboBox, obj });
                 }
-                catch (System.Exception exDelegate)
+                catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AddMenuItemToComboBox combo box: {comboBox.Name}, add object: \"{obj}\".\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AddMenuItemToComboBox combo box: {comboBox.Name}, add object: \"{obj}\".\n", exDelegate);
                 }
             }
             else
@@ -1120,20 +1121,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(filename, true);
                 string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(filename, true);
 
-                byte[] fileBytes = System.IO.File.ReadAllBytes(filename);
+                byte[] fileBytes = File.ReadAllBytes(filename);
                 string fileNameOnly = Path.GetFileName(filename);
-                string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
+                string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
 
                 string base64Mime = Base64.Encode(fileBytes);
 
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(secretKey);
 
-                
-                    // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+
+                // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
                 pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
 
                 string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
-                System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);           
+                File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
             }
 
             return mimeAttach;
@@ -1154,9 +1155,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
 
             lock (_sLock1)
-            { 
+            {
                 _proxies = new List<IPAddress>();
-                _sProxies = (BaseChatForm.ProxiesInSettings) ? Entities.Settings.Singleton.Proxies :
+                _sProxies = ProxiesInSettings ? Settings.Singleton.Proxies :
                     new List<string>(Resources.Proxies.Split(";,".ToCharArray()));
                 foreach (string proxyS in _sProxies)
                 {
@@ -1220,8 +1221,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         {
             bool played = false;
             if (true)
-            {                
-                byte[] soundBytes = (byte[])EU.CqrXs.WinForm.SecureChat.Properties.Resources.ResourceManager.GetObject(soundName);
+            {
+                byte[] soundBytes = (byte[])Resources.ResourceManager.GetObject(soundName);
 
                 if (soundBytes != null && soundBytes.Length > 0)
                 {
@@ -1257,7 +1258,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         protected virtual async Task<bool> PlaySoundFromResourcesAsync(string soundName)
         {
-            return await Task<bool>.Run<bool>(() => (PlaySoundFromResource(soundName)));
+            return await Task.Run(() => PlaySoundFromResource(soundName));
         }
 
         #endregion Media Methods
@@ -1279,7 +1280,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         protected internal void MenuHelpItemInfo_Click(object sender, EventArgs e)
         {
-            MessageBox.Show($"{Text} type {this.GetType()} Information MessageBox.", $"{Text} type {this.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"{Text} type {GetType()} Information MessageBox.", $"{Text} type {GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         #endregion Help About Info
@@ -1293,7 +1294,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && components != null)
             {
                 components.Dispose();
             }
@@ -1314,7 +1315,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             try
             {
-                this.Close();
+                Close();
             }
             catch (Exception exFormClose)
             {
@@ -1323,7 +1324,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             }
             try
             {
-                this.Dispose(true);
+                Dispose(true);
             }
             catch (Exception exFormDispose)
             {
@@ -1355,8 +1356,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string settingsNotSavedReason = string.Empty;
             try
             {
-                if (!Entities.Settings.SaveSettings(null))
-                    settingsNotSavedReason = (CqrException.LastException != null) ?
+                if (!Settings.SaveSettings(null))
+                    settingsNotSavedReason = CqrException.LastException != null ?
                         CqrException.LastException.Message : "Unknown reason!";
             }
             catch (Exception exSetSave)
@@ -1379,7 +1380,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     try
                     {
                         Form? form = Application.OpenForms[frmidx];
-                        if (form != null && form.Name != this.Name)
+                        if (form != null && form.Name != Name)
                         {
                             form.Close();
                             form.Dispose();

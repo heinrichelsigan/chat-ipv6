@@ -157,6 +157,7 @@
             // 
             AutoScaleMode = AutoScaleMode.None;
             BackColor = SystemColors.ControlLightLight;
+            AllowDrop = true;
             Controls.Add(LinkLabel8);
             Controls.Add(LinkLabel7);
             Controls.Add(LinkLabel6);
@@ -166,6 +167,9 @@
             Controls.Add(LinkLabel2);
             Controls.Add(LinkLabel1);
             Controls.Add(labelHeaderText);
+            DragDrop += AttachmentList_DragDrop;
+            DragEnter += AttachmentList_DragEnter;
+            DragLeave += AttachmentList_DragLeave;            
             Font = new Font("Lucida Sans Unicode", 9F);
             Margin = new Padding(0);
             Name = "AttachmentListControl";

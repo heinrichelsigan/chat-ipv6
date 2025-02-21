@@ -243,21 +243,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Gui\Forms\Base\ChatMenuForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Gui\Forms\RichTextChat.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\BaseChatForm.cs" />
+    <Compile Update="Gui\Forms\Base\BaseChatForm.cs" />
     <Compile Update="Gui\Forms\Peer2PeerChat.cs" />
     <Compile Update="Gui\Forms\SecureChat.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\TransparentBadge.cs">
+    <Compile Update="Gui\Forms\ToolWinDialogs\TransparentBadge.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\ContactsView.cs">
+    <Compile Update="Gui\Forms\ToolWinDialogs\ContactsView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\TransparentDialog.cs">
+    <Compile Update="Gui\Forms\ToolWinDialogs\TransparentDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Properties\de\Resources.Designer.cs">

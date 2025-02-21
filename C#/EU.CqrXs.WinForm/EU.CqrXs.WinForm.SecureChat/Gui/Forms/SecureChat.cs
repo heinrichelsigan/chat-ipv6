@@ -25,7 +25,7 @@ using System.Media;
 using System.Windows.Controls.Primitives;
 using EU.CqrXs.WinForm.SecureChat.Gui.Controls;
 using System.Net.Sockets;
-using Microsoft.AspNetCore.Mvc.Routing;
+using EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base;
 
 
 
@@ -120,6 +120,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 StripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
             }
             dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
+            attachmentListControl.OnDragNDrop += OnDragNDrop;
             this.peerServerSwitchControl1.FireUpChanged += TooglePeerServer;
             this.StripProgressBar.Value = 0;
         }

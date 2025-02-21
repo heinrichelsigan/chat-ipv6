@@ -10,7 +10,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        protected internal new System.ComponentModel.IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -31,9 +31,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        protected internal override void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            base.InitializeComponent();            
             SplitChatView = new SplitContainer();
             TextBoxSource = new TextBox();
             TextBoxDestionation = new TextBox();
@@ -56,8 +57,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonAttach = new Button();
             ButtonClear = new Button();
             ButtonSend = new Button();
-            StripMenu.SuspendLayout();
-            StripStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
             SplitChatView.Panel1.SuspendLayout();
             SplitChatView.Panel2.SuspendLayout();
@@ -264,7 +263,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelDestination.Location = new Point(826, 32);
             PanelDestination.Margin = new Padding(0);
             PanelDestination.Name = "PanelDestination";
-            PanelDestination.Size = new Size(168, 591);
+            PanelDestination.Size = new Size(168, 653);
             PanelDestination.TabIndex = 70;
             // 
             // peerServerSwitchControl1
@@ -379,7 +378,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
-            BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(996, 711);
             Controls.Add(ButtonClear);
             Controls.Add(ButtonSend);
@@ -388,20 +386,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             Controls.Add(PanelDestination);
             Controls.Add(PanelBottom);
             Controls.Add(PanelEnCodeCrypt);
-            Controls.Add(StripStatus);
-            Controls.Add(StripMenu);
-            Font = new Font("Lucida Sans Unicode", 10F);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            MainMenuStrip = StripMenu;
             Name = "Peer2PeerChat";
-            SizeGripStyle = SizeGripStyle.Show;
             Text = "Peer2PeerChat";
             FormClosing += FormClose_Click;
-            Load += Peer2PeerChat_Load;
-            StripMenu.ResumeLayout(false);
-            StripMenu.PerformLayout();
-            StripStatus.ResumeLayout(false);
-            StripStatus.PerformLayout();
+            Controls.SetChildIndex(PanelEnCodeCrypt, 0);
+            Controls.SetChildIndex(PanelBottom, 0);
+            Controls.SetChildIndex(PanelDestination, 0);
+            Controls.SetChildIndex(PanelCenter, 0);
+            Controls.SetChildIndex(ButtonAttach, 0);
+            Controls.SetChildIndex(ButtonSend, 0);
+            Controls.SetChildIndex(ButtonClear, 0);
             SplitChatView.Panel1.ResumeLayout(false);
             SplitChatView.Panel1.PerformLayout();
             SplitChatView.Panel2.ResumeLayout(false);

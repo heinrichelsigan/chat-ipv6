@@ -23,17 +23,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string HeaderText { get => this.labelHeaderText.Text; set => this.labelHeaderText.Text = value; }
 
+        public EventHandler<Area23EventArgs<string>> OnDragNDrop;
+
         internal delegate void SetLinkLabelTextCallback(LinkLabel linkLabel, string text);
         internal delegate void AddLinkLabelLinksCallback(LinkLabel linkLabel, string linkUrl);
         internal delegate void SetLinkLabelVisibleCallback(LinkLabel linkLabel, bool visible);
-
+        
         public AttachmentListControl()
         {
             components = new System.ComponentModel.Container();
             InitializeComponent();
         }
-
-
 
         public AttachmentListControl(IContainer container)
         {
@@ -68,6 +68,51 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
                 Area23Log.LogStatic(dirEx);
             }
         }
+
+
+        private void AttachmentList_DragEnter(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null)
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void AttachmentList_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null)
+            {
+                DateTime now = DateTime.UtcNow;
+                Text = "";
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        Text += $"+{Path.GetFileName(file)}";
+                        if (OnDragNDrop != null)
+                        {
+                            EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
+                            Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
+                            handler?.Invoke(this, area23EventArgs);
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Text = $"Exc:{ex.Message}";
+                    }
+                    Text += " ";
+                }
+            }
+        }
+
+        private void AttachmentList_DragLeave(object sender, EventArgs e)
+        {
+
+        }
+
 
         public void SetNameUri(string linkLabelName, Uri uri)
         {

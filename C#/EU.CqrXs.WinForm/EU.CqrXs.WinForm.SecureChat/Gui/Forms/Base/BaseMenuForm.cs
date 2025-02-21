@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 {
@@ -20,20 +21,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
     /// MenuChat inherited from <see cref="BaseChatForm"/> is abstraction for all menu items provided by derived classed,
     /// e.g. <see cref="SecureChat"/>, <see cref="RichTextChat"/>, <see cref="Peer2PeerChat"/>
     /// </summary>
-    public partial  class MenuChat : BaseChatForm
+    public partial  class BaseMenuForm : BaseChatForm
     {
 
         protected internal static bool send1stReg = false;
+        
+        #region Constructor BaseMenuForm BaseMenuForm_Load
 
         /// <summary>
         /// Ctor
         /// </summary>
-        public MenuChat() : base()
+        public BaseMenuForm() : base()
         {
             InitializeComponent();
+            Load += new System.EventHandler(async (sender, e) => await BaseMenuForm_Load(sender, e));
         }
 
-        private async void MenuChat_Load(object sender, EventArgs e)
+        /// <summary>
+        /// BaseMenuForm_Load first time forces you to enter your contact
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected internal virtual async Task BaseMenuForm_Load(object sender, EventArgs e)
         {            
 
             if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null)
@@ -41,7 +50,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
                 // badge.Show();
                 MenuContactsItemMyContact_Click(sender, e);
-                this.StripProgressBar.Value = 10;
                 while (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name))
                 {
                     string notFullReason = string.Empty;
@@ -53,12 +61,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     //     notFullReason += "Mobile phone is missing!" + Environment.NewLine;
                     MessageBox.Show(notFullReason, "Please fill out your info fully", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    this.StripProgressBar.Value = 20;
                     MenuContactsItemMyContact_Click(sender, e);
                 }
                 send1stReg = true;
             }
         }
+
+        #endregion Constructor BaseMenuForm BaseMenuForm_Load
+
 
         #region MenuView
 
@@ -81,7 +91,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         protected internal virtual void MenuItemClear_Click(object sender, EventArgs e) { /* make it abstract l8r again */ ; }
 
         #endregion MenuChatCommands
-
 
         #region MenuContacts
 
@@ -388,9 +397,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         #endregion MenuContacts
 
-
-        #region LoadSaveChatContent
-
+        #region MenuFile Open Save Click Eventhandler
 
         protected internal virtual void MenuFileItemOpen_Click(object sender, EventArgs e)
         {
@@ -402,7 +409,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
 
         protected internal virtual void MenuFileItemSave_Click(object sender, EventArgs e)
         {
@@ -468,7 +474,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             return (FileSaveDialog != null && FileSaveDialog.FileName != null && File.Exists(FileSaveDialog.FileName)) ? FileSaveDialog.FileName : null;
         }
 
-        #endregion LoadSaveChatContent
+        #endregion MenuFile Open Save Click Eventhandler
 
 
     }

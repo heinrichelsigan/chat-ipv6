@@ -7,22 +7,25 @@ using Area23.At.Framework.Core.Net;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Net.NameService;
 using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
+using EU.CqrXs.WinForm.SecureChat.Gui.Controls;
+using EU.CqrXs.WinForm.SecureChat.Gui.Forms;
+using EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base;
 using EU.CqrXs.WinForm.SecureChat.Properties;
+using EU.CqrXs.WinForm.SecureChat.Util;
 using System;
 using System.Configuration;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using EU.CqrXs.WinForm.SecureChat.Util;
-using Area23.At.Framework.Core.Net.NameService;
-using System.Net.Sockets;
-using static QRCoder.Core.PayloadGenerator.SwissQrCode;
+
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
@@ -32,7 +35,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
     /// <summary>
     /// Peer2PeerChat main form
     /// </summary>
-    public partial class Peer2PeerChat : MenuChat
+    public partial class Peer2PeerChat : BaseMenuForm
     {
 
         #region fields        
@@ -105,6 +108,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ComboBoxIp.Text = Constants.ENTER_IP;
             ComboBoxContacts.Text = Constants.ENTER_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
+            Load += new System.EventHandler(async (sender, e) => await Peer2PeerChat_Load(sender, e));
+            attachmentListControl.OnDragNDrop += OnDragNDrop;
+            dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
+            this.peerServerSwitchControl1.FireUpChanged += TooglePeerServer;
+            this.StripProgressBar.Value = 0;
+        }
+
+
+        protected internal virtual async Task Peer2PeerChat_Load(object sender, EventArgs e)
+        {
+            send1stReg = false;
+            this.StripProgressBar.Value = 10;
             try
             {
                 if (!Directory.Exists(LibPaths.AttachmentFilesDir))
@@ -115,44 +130,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
                 StripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
             }
-            dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
-            this.peerServerSwitchControl1.FireUpChanged += TooglePeerServer;
-            this.StripProgressBar.Value = 0;
-        }
 
+            this.StripProgressBar.Value = 20;
+            await base.BaseMenuForm_Load(sender, e);
 
-        private async void Peer2PeerChat_Load(object sender, EventArgs e)
-        {
-            bool send1stReg = false;
-
-            if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null)
-            {
-                // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
-                // badge.Show();
-                MenuContactsItemMyContact_Click(sender, e);
-                this.StripProgressBar.Value = 10;
-                while (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name))
-                {
-                    string notFullReason = string.Empty;
-                    if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name))
-                        notFullReason += "Name is missing!" + Environment.NewLine;
-                    if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email))
-                        notFullReason += "Email Address is missing!" + Environment.NewLine;
-                    // if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Mobile))
-                    //     notFullReason += "Mobile phone is missing!" + Environment.NewLine;
-                    MessageBox.Show(notFullReason, "Please fill out your info fully", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                    this.StripProgressBar.Value = 20;
-                    MenuContactsItemMyContact_Click(sender, e);
-                }
-                send1stReg = true;
-            }
             this.StripProgressBar.Value = 30;
-
-            StripStatusLabel.Text = "Setup Network";
             await PlaySoundFromResourcesAsync("sound_train");
-            await SetupNetwork();
 
+            this.StripProgressBar.Value = 40;
+            StripStatusLabel.Text = "Setup Network";
+
+            await SetupNetwork();
             this.StripProgressBar.Value = 50;
 
             if (Entities.Settings.Singleton != null && Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null &&
@@ -1157,7 +1145,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <returns><see cref="Task"/></returns>
 
-        internal async Task SetupNetwork()
+        
+        internal virtual async Task SetupNetwork()
         {
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
             SetStatusText(StripStatusLabel, $"Setup Network: Several proxy addresses fetched.");
@@ -1265,18 +1254,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     (addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)))
                 {
                     proxyList.Add(addrProxy.ToString());
-
-
+                    
                     ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily.ShortInfo() + addrProxy.ToString(), null, ServerProxyAddressSelected, addrProxy.ToString());
-                    if ((addrProxy.AddressFamily == ServerIpAddress.AddressFamily) &&
-                        (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
+                    if (ServerIpAddress != null && addrProxy.IsSameIp(ServerIpAddress))
                     {
-
-                        if (!GetMenuItemChecked(MenuNetworkItemIPv6Secure) && addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                        {; }
-                        else
+                        if ((addrProxy.AddressFamily == AddressFamily.InterNetworkV6 && GetMenuItemChecked(MenuNetworkItemIPv6Secure)) ||
+                            (addrProxy.AddressFamily == AddressFamily.InterNetwork))
+                        {
                             SetMenuItemChecked(item, true);
-                        // item.Checked = true;
+                            // item.Checked = true;
+                        }
                     }
 
                     AddMenuItemToItems(MenuNetworkItemProxyServers, (ToolStripDropDownItem)item);

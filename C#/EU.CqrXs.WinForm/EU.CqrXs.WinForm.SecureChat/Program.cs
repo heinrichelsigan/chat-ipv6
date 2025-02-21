@@ -3,8 +3,6 @@ using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Win32Api;
-using EU.CqrXs.WinForm.SecureChat.Entities;
-using EU.CqrXs.WinForm.SecureChat.Gui.Forms;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -22,6 +20,7 @@ namespace EU.CqrXs.WinForm.SecureChat
         internal static string progName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
         private static Mutex mutex = new Mutex(true, progName);
         static internal int mode = 0;
+        static internal string startFormSwitch = string.Empty;
 
         internal static Mutex PMutec
         {
@@ -51,9 +50,11 @@ namespace EU.CqrXs.WinForm.SecureChat
                 foreach (string arg in args)
                 {
                     if (arg.ToLower().Contains("peer"))
-                        mode += 0x2;
-                    if (arg.ToLower().Contains("server"))
-                        mode += 0x4;
+                        startFormSwitch = "peer";
+                    if (arg.ToLower().Contains("rich"))
+                        startFormSwitch = "rich";
+                    if (arg.ToLower().Contains("secure"))
+                        startFormSwitch = "secure";
                 }
             }
 
@@ -68,12 +69,23 @@ namespace EU.CqrXs.WinForm.SecureChat
             //     newChat = (Form)(new Gui.Forms.Peer2PeerChat());
             // else
 
-            // Form newChat = (Form)(new Gui.Forms.SecureChat());
-            // Peer2PeerChat peer2PeerChat = new EU.CqrXs.WinForm.SecureChat.Gui.Forms.Peer2PeerChat();
-            RichTextChat richTextChat = new RichTextChat();
-            Application.Run(richTextChat);
-            // Application.Run(peer2PeerChat);
-            // Application.Run(newChat);
+            switch (startFormSwitch)
+            {
+                case "peer":
+                    Gui.Forms.Peer2PeerChat peer2PeerChat = new Gui.Forms.Peer2PeerChat();
+                    Application.Run(peer2PeerChat);
+                    break;
+                case "rich":
+                    Gui.Forms.RichTextChat richTextChat = new Gui.Forms.RichTextChat();
+                    Application.Run(richTextChat);
+                    break;
+                case "secure":
+                default:
+                    Gui.Forms.SecureChat secureChat = new Gui.Forms.SecureChat();
+                    Application.Run(secureChat);
+                    break;
+            }          
+            
 
             ReleaseCloseDisposeMutex(mutex);
 

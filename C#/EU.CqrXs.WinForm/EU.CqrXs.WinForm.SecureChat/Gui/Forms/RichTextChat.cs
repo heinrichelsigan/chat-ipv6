@@ -3,25 +3,28 @@ using Area23.At.Framework.Core;
 using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
+using Area23.At.Framework.Core.Net;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
-using Area23.At.Framework.Core.Net;
-using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Net.NameService;
+using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
+using EU.CqrXs.WinForm.SecureChat.Gui.Controls;
+using EU.CqrXs.WinForm.SecureChat.Gui.Forms;
+using EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base;
 using EU.CqrXs.WinForm.SecureChat.Properties;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using System;
 using System.Configuration;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Windows.Controls;
-using System.Net.Sockets;
-
+using System.Windows.Forms;
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
@@ -103,6 +106,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ComboBoxIp.Text = Constants.ENTER_IP;
             ComboBoxContacts.Text = Constants.ENTER_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
+            Load += new System.EventHandler(async (sender, e) => await RichTextChat_Load(sender, e));            
+            attachmentListControl.OnDragNDrop += OnDragNDrop;
+            dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
+            this.peerServerSwitchControl1.FireUpChanged += TooglePeerServer;
+            this.StripProgressBar.Value = 0;
+        }
+
+
+        protected internal virtual async Task RichTextChat_Load(object sender, EventArgs e)
+        {
+            bool send1stReg = false;
             try
             {
                 if (!Directory.Exists(LibPaths.AttachmentFilesDir))
@@ -113,15 +127,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
                 StripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
             }
-            dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
-            this.peerServerSwitchControl1.FireUpChanged += TooglePeerServer;
-            this.StripProgressBar.Value = 0;
-        }
-
-
-        private async void RichTextChat_Load(object sender, EventArgs e)
-        {
-            bool send1stReg = false;
 
             if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null)
             {
