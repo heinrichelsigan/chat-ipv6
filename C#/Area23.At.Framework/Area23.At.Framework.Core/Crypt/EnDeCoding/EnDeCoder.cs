@@ -14,7 +14,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 
         static EnDeCoder() { }
 
-        public static string Encode(byte[] inBytes, EncodingType encodingType = EncodingType.Base64, bool fromPlain = false, bool fromFile = false)
+        public static string Encode(byte[] inBytes, EncodingType encodingType = EncodingType.Uu, bool fromPlain = false, bool fromFile = false)
         {
             switch (encodingType)
             {
@@ -29,7 +29,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             }
         }
 
-        public static byte[] Decode(string encodedString, EncodingType encodingType = EncodingType.Base64, bool fromPlain = false, bool fromFile = false)
+        public static byte[] Decode(string encodedString, EncodingType encodingType = EncodingType.Uu, bool fromPlain = false, bool fromFile = false)
         {
             switch (encodingType)
             {
@@ -44,7 +44,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             }
         }
 
-        public static bool IsValid(string encodedString, EncodingType encodingType = EncodingType.Base64)
+        public static bool IsValid(string encodedString, EncodingType encodingType = EncodingType.Uu)
         {
             switch (encodingType)
             {

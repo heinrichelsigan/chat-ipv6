@@ -57,7 +57,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// <param name="msg">plain text string</param>
         /// <param name="encType"><see cref="EncodingType"/></param>
         /// <returns>encrypted msg via <see cref="SymmCipherPipe"/></returns>
-        public virtual string CqrBaseMsg(string msg, EncodingType encType = EncodingType.Base64)
+        public virtual string CqrBaseMsg(string msg, EncodingType encType = EncodingType.Uu)
         {
             MsgContent msc;
             if (msg.Contains(PipeString) && msg.IndexOf(PipeString) > msg.Length - 10)
@@ -79,7 +79,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// <param name="msc">plain MsgContent</param>
         /// <param name="encType"><see cref="EncodingType"/></param>
         /// <returns>encrypted msg via <see cref="SymmCipherPipe"/></returns>
-        public virtual string CqrBaseMsg(MsgContent msc, EncodingType encType = EncodingType.Base64)
+        public virtual string CqrBaseMsg(MsgContent msc, EncodingType encType = EncodingType.Uu)
         {
             byte[] msgBytes = new byte[msc.RawMessage.Length];
             if (msc.MsgType == MsgEnum.None || msc.MsgType == MsgEnum.RawWithHashAtEnd)
@@ -118,7 +118,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// <param name="encType"><see cref="EncodingType"/></param>
         /// <returns>encrypted attachment msg via <see cref="SymmCipherPipe"/></returns>
         public virtual string CqrBaseAttachment(string fileName, string mimeType, string base64Mime, out MimeAttachment attachment,
-            EncodingType encType = EncodingType.Base64, string sMd5 = "", string sSha256 = "")
+            EncodingType encType = EncodingType.Uu, string sMd5 = "", string sSha256 = "")
         {
             attachment = new MimeAttachment(fileName, mimeType, base64Mime, symmPipe.PipeString, sMd5, sSha256);
             attachment._isMime = true;
@@ -140,7 +140,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// <returns>MsgContent Message plain text decrypted string</returns>
         /// <exception cref="InvalidOperationException">will be thrown, 
         /// if server and client or both side use a different secret key 4 encryption</exception>
-        public virtual MsgContent NCqrBaseMsg(string cqrMessage, EncodingType encType = EncodingType.Base64)
+        public virtual MsgContent NCqrBaseMsg(string cqrMessage, EncodingType encType = EncodingType.Uu)
         {
             CqrMessage = cqrMessage.TrimEnd("\0".ToCharArray());
 
