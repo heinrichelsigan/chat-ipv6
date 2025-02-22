@@ -14,7 +14,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
     /// <typeparam name="TC"></typeparam>
     [JsonObject]
     [Serializable]
-    public class FullSrvMsg<TC> : MsgContent where TC : class
+    public class FullSrvMsg<TC> : MsgContent // where TC : class, new()
     {
         #region properties
 
@@ -50,7 +50,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             Sender = null;
             Recipients = new List<CqrContact>();
             Recipient = null;
-            TContent = null;
+            TContent = default(TC);
         }
 
         public FullSrvMsg(string fm, MsgEnum msgArt = MsgEnum.JsonSerialized) : base()
@@ -101,7 +101,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                     if (fullSrvMsg != null && !string.IsNullOrEmpty(fullSrvMsg?.Message))
                     {
                         Sender = fullSrvMsg.Sender;
-                        Recipient = fullSrvMsg.Recipient;
+                        // Recipient = fullSrvMsg.Recipient;
+                        Recipients = fullSrvMsg.Recipients;
                         TContent = fullSrvMsg.TContent;
                     }
                     return tc;

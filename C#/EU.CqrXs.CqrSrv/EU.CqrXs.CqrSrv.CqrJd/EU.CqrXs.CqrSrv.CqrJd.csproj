@@ -303,6 +303,7 @@
     </Compile>
     <Compile Include="Util\GlobalAppSettings.cs" />
     <Compile Include="Util\HostLogHelper.cs" />
+    <Compile Include="Util\JsonChatRoom.cs" />
     <Compile Include="Util\JsonContacts.cs" />
     <Compile Include="Util\JsonHelper.cs" />
     <Compile Include="W.aspx.cs">
@@ -318,6 +319,8 @@
     <Content Include="res\urlshort.json" />
     <None Include="Properties\PublishProfiles\CqrXs.CqrJd_Release.pubxml" />
     <None Include="Properties\PublishProfiles\cqrxs.eu publish.pubxml" />
+    <Content Include="res\json\urlshort.json" />
+    <Content Include="res\json\contacts.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -327,6 +330,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="res\bin\" />
+    <Folder Include="res\out\" />
+    <Folder Include="res\qr\" />
+    <Folder Include="res\text\" />
+    <Folder Include="res\tmp\" />
+    <Folder Include="res\uu\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resource.resx">

@@ -75,17 +75,18 @@ namespace EU.CqrXs.WinForm.SecureChat
                     Gui.Forms.Peer2PeerChat peer2PeerChat = new Gui.Forms.Peer2PeerChat();
                     Application.Run(peer2PeerChat);
                     break;
-                case "rich":
-                    Gui.Forms.RichTextChat richTextChat = new Gui.Forms.RichTextChat();
-                    Application.Run(richTextChat);
-                    break;
                 case "secure":
-                default:
                     Gui.Forms.SecureChat secureChat = new Gui.Forms.SecureChat();
                     Application.Run(secureChat);
                     break;
-            }          
-            
+                case "rich":
+                default:                
+                    Gui.Forms.RichTextChat richTextChat = new Gui.Forms.RichTextChat();
+                    Application.Run(richTextChat);
+                    break;
+
+            }
+
 
             ReleaseCloseDisposeMutex(mutex);
 

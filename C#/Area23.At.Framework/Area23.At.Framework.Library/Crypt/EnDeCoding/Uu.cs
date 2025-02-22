@@ -8,9 +8,11 @@ using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Area23.At.Framework.Library.Crypt.EnDeCoding
 {
+
     /// <summary>
     /// Uu is unix2unix uuencode uudecode
     /// </summary>
@@ -71,12 +73,13 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
 
             string bytStr = EnDeCoder.GetString(inBytes);
             string uu = (new UUEncoder()).EncodeString(bytStr);
-            
+
 
             if (originalUue)
             {
                 bytStr = Encoding.UTF8.GetString(inBytes);
                 uu = (new UUEncoder()).EncodeString(bytStr);
+                uu = uu.Replace(" ", "`");
             }
             //else if (fromFile)
             //{
@@ -93,7 +96,7 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
                 // inBytes.ToFile(uuOutPath);
 
                 Area23Log.LogStatic($"ToUu: hexOutFile = {hexOutFile}, uuOutFile={uuOutFile}.");
-                
+
                 try
                 {
                     System.IO.File.WriteAllBytes(hexOutPath, inBytes);
@@ -157,6 +160,7 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
 
             if (originalUue)
             {
+                uuEncStr = uuEncStr.Replace(" ", "`");
                 plainStr = (new UUEncoder()).DecodeString(uuEncStr);
                 plainBytes = Encoding.UTF8.GetBytes(plainStr);
             }
@@ -209,6 +213,7 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
                         }
                     }
 
+                    Thread.Sleep(64);
                     Area23Log.LogStatic("FromUu: reading bytes from " + hexOutPath);
                     plainBytes = System.IO.File.ReadAllBytes(hexOutPath);
                     Area23Log.LogStatic("FromUu: read bytes from" + hexOutPath);
@@ -232,6 +237,7 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
         public static string UuEncode(string plainText)
         {
             string uue = (new UUEncoder()).EncodeString(plainText);
+            uue = uue.Replace(" ", "`");
             return uue;
         }
 
@@ -242,6 +248,7 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
         /// <returns>uudecoded plain text</returns>
         public static string UuDecode(string uuEncodedStr)
         {
+            uuEncodedStr = uuEncodedStr.Replace(" ", "`");
             string plainStr = (new UUEncoder()).DecodeString(uuEncodedStr);
             return plainStr;
         }
@@ -258,7 +265,7 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
                 uuEncodedStr = uuEncodedStr.Replace("\nend\n", "\n");
                 uuEncodedStr = uuEncodedStr.Replace("\nend", "\n");
             }
-                
+
             foreach (char ch in uuEncodedStr)
             {
                 if (!ValidCharList.Contains(ch))
@@ -310,7 +317,7 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
                 case 0:
                 default: break;
             }
-            
+
             List<byte> cod = new List<byte>();
             for (int i = 0; i < uuEnc.Length; i += 4)
             {
