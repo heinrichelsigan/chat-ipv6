@@ -530,16 +530,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             CqrContact myContact = Entities.Settings.Singleton.MyContact;
             string ser = (string)AppDomain.CurrentDomain.GetData(Constants.MY_CONTACT);
-            string encrypted = srv1stMsg.CqrSrvMsg1(myContact, EncodingType.Uu);
+            string encrypted = srv1stMsg.CqrSrvMsg1(myContact, EncodingType.Base64);
             Thread.Sleep(100);
 
             this.StripProgressBar.Value = 60;
-            string response = srv1stMsg.Send1st_CqrSrvMsg1(myContact, ServerIpAddress, EncodingType.Uu);
+            string response = srv1stMsg.Send1st_CqrSrvMsg1(myContact, ServerIpAddress, EncodingType.Base64);
 
             this.TextBoxSource.Text = "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
             if (srv1stMsg != null)
             {
-                CqrContact? receivedMyContact = srv1stMsg.NCqrSrvMsg1(encrypted, EncodingType.Uu);
+                CqrContact? receivedMyContact = srv1stMsg.NCqrSrvMsg1(encrypted, EncodingType.Base64);
                 if (receivedMyContact != null)
                     this.TextBoxSource.Text = receivedMyContact.ToJson() + "\n";
             }
@@ -685,7 +685,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 string comboIpText = GetComboBoxText(ComboBoxIp);
                 partnerIpAddress = IPAddress.Parse(comboIpText);
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Uu, Constants.CHAT_PORT);
+                pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
 
                 // chat.AddMyMessage(unencrypted);
                 // AppendText(TextBoxSource, unencrypted);
@@ -758,11 +758,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             FullSrvMsg<CqrContact> fmsg = new FullSrvMsg<CqrContact>(myContact, friendContact, myContact, serverMessage.PipeString);
 
-            string encrypted = serverMessage.CqrSrvMsg<CqrContact>(fmsg, MsgKind.Server, EncodingType.Uu);
-            string response = serverMessage.Send_CqrSrvMsgT<CqrContact>(fmsg, ServerIpAddress, EncodingType.Uu);
+            string encrypted = serverMessage.CqrSrvMsg<CqrContact>(fmsg, MsgKind.Server, EncodingType.Base64);
+            string response = serverMessage.Send_CqrSrvMsgT<CqrContact>(fmsg, ServerIpAddress, EncodingType.Base64);
 
             this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            FullSrvMsg<CqrContact> rfmsg = serverMessage.NCqrSrvMsg<CqrContact>(encrypted, EncodingType.Uu);
+            FullSrvMsg<CqrContact> rfmsg = serverMessage.NCqrSrvMsg<CqrContact>(encrypted, EncodingType.Base64);
             this.TextBoxDestionation.Text = rfmsg.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
             chat.AddMyMessage(fmsg.Message);
@@ -817,7 +817,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
                     Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                    pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Uu, Constants.CHAT_PORT);
+                    pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
 
                     string userMsg = chat.AddMyMessage(unencrypted);
                     AppendText(TextBoxSource, userMsg);
@@ -877,7 +877,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     string fileNameOnly = Path.GetFileName(FileOpenDialog.FileName);
                     string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
 
-                    string base64Mime = Base64.Encode(fileBytes);
+                    string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.InsertLineBreaks);
 
                     Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
 
@@ -889,8 +889,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                         {
                             partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
 
-                            // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Uu, Constants.CHAT_PORT);
-                            pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Uu);
+                            // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                            pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
 
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
@@ -1053,13 +1053,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 base64 = mimeAttachment.Base64Mime.Substring(0, mimeAttachment.ContentLength);
             Span<byte> mimeSpan = new Span<byte>();
 
-            byte[]? fileBytes = null; // = Base64.Decode(base64);
-            if (System.Convert.TryFromBase64String(base64, mimeSpan, out int bytesWritten))
-            {
-                fileBytes = new byte[Math.Max(bytesWritten, mimeSpan.Length)];
-                if (bytesWritten > 0)
-                    fileBytes = mimeSpan.ToArray();
-            }
+            byte[] fileBytes = System.Convert.FromBase64String(base64);
+            
 
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 

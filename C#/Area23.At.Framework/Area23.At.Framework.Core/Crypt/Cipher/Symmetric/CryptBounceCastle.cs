@@ -402,10 +402,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="inString">plain string to encrypt</param>
         /// <param name="encodingType">
         /// beware of using <see cref="EncodingType.Uu"/>; 
-        /// default <see cref="EncodingType.Uu"/>
+        /// default <see cref="EncodingType.Base64"/>
         /// </param>
         /// <returns>encoded encrypted string, default base64 encoded</returns>
-        public string EncryptString(string inString, EncodingType encodingType = EncodingType.Uu)
+        public string EncryptString(string inString, EncodingType encodingType = EncodingType.Base64)
         {
             byte[] plainTextData = EnDeCoder.GetBytes(inString);
             byte[] encryptedBytes = Encrypt(plainTextData);
@@ -420,10 +420,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="inCryptString">encoded encrypted string, default base64 encoded</param>
         /// <param name="encodingType">
         /// beware of using <see cref="EncodingType.Uu"/>; 
-        /// default <see cref="EncodingType.Uu"/>
+        /// default <see cref="EncodingType.Base64"/>
         /// </param>
         /// <returns>plain text decrypted string</returns>
-        public string DecryptString(string inCryptString, EncodingType encodingType = EncodingType.Uu)
+        public string DecryptString(string inCryptString, EncodingType encodingType = EncodingType.Base64)
         {
             byte[] cipherBytes = DeEnCoder.DecodeText(inCryptString, encodingType);
             byte[] plainData = Decrypt(cipherBytes);

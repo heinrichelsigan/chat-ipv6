@@ -114,7 +114,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
         {
             string fileName = mimeAttachment.FileName;
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
-            byte[] fileBytes = Area23.At.Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
+            byte[] fileBytes = Convert.FromBase64String(mimeAttachment.Base64Mime);
+                // Area23.At.Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
             SetNameFilePath(fileName, filePath);

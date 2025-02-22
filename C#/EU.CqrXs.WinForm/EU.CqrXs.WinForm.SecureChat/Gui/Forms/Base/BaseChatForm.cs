@@ -1125,13 +1125,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
                 string fileNameOnly = Path.GetFileName(filename);
                 string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
 
-                string base64Mime = Base64.Encode(fileBytes);
+                string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.InsertLineBreaks);
 
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(secretKey);
 
 
-                // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Uu, Constants.CHAT_PORT);
-                pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Uu);
+                // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
 
                 string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
                 File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);

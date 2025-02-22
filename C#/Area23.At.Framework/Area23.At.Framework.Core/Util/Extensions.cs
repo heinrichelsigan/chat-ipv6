@@ -439,7 +439,7 @@ namespace Area23.At.Framework.Core.Util
         /// <returns>MemoryStream</returns>
         public static MemoryStream Base64ToStream(this string base64)
         {
-            byte[] bytes = Base64.Decode(base64);
+            byte[] bytes = Convert.FromBase64String(base64);
             MemoryStream ms = new MemoryStream(bytes.Length);
             ms.Write(bytes, 0, bytes.Length);
             ms.Flush();
@@ -456,7 +456,7 @@ namespace Area23.At.Framework.Core.Util
             Bitmap? bitmap = null;
             try
             {
-                byte[] bytes = Base64.Decode(base64);
+                byte[] bytes = Convert.FromBase64String(base64);
                 using (MemoryStream ms = new MemoryStream(bytes))
                 {
                     bitmap = new Bitmap(ms);
@@ -785,7 +785,7 @@ namespace Area23.At.Framework.Core.Util
             try
             {
                 bytes = img.ToByteArray();
-                base64 = Crypt.EnDeCoding.Base64.Encode(bytes);
+                base64 = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks); // Crypt.EnDeCoding.Base64.Encode(bytes);
             }
             catch (Exception ex)
             {

@@ -79,7 +79,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="encType"><see cref="EncodingType"/></param>
         /// <returns>encrypted msg via <see cref="SymmCipherPipe"/></returns>
         /// <exception cref="InvalidDataException"></exception>
-        public string CqrSrvMsg(CqrContact sender, CqrContact receipient, string msg, EncodingType encType = EncodingType.Uu)
+        public string CqrSrvMsg(CqrContact sender, CqrContact receipient, string msg, EncodingType encType = EncodingType.Base64)
         {
             if (sender == null || receipient == null)
                 throw new InvalidDataException("CqrSender contact or CqrRecipient conact are null.");
@@ -110,7 +110,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="encType"><see cref="EncodingType"/></param>
         /// <returns>encrypted msg via <see cref="SymmCipherPipe"/></returns>
         /// <exception cref="InvalidDataException"></exception>
-        public string CqrSrvMsg<T>(CqrContact sender, CqrContact receipient, T tcontent, EncodingType encType = EncodingType.Uu) where T : class
+        public string CqrSrvMsg<T>(CqrContact sender, CqrContact receipient, T tcontent, EncodingType encType = EncodingType.Base64) where T : class
         {
             if (sender == null || receipient == null)
                 throw new InvalidDataException("CqrSender contact or CqrRecipient conact are null.");
@@ -132,7 +132,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        public string CqrSrvMsg<TC>(FullSrvMsg<TC> fullServMsg, MsgKind msgKind = MsgKind.Server, EncodingType encType = EncodingType.Uu) where TC : class
+        public string CqrSrvMsg<TC>(FullSrvMsg<TC> fullServMsg, MsgKind msgKind = MsgKind.Server, EncodingType encType = EncodingType.Base64) where TC : class
         {
             if (fullServMsg.Sender == null || fullServMsg.Recipient == null)
                 throw new InvalidDataException("CqrSender contact or CqrRecipient conact are null.");
@@ -159,7 +159,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        public string[] CqrSrvMsg<TS, TC>(FullSrvMsg<TS> fullServMsg, FullSrvMsg<TC> clientMsg, EncodingType encType = EncodingType.Uu)
+        public string[] CqrSrvMsg<TS, TC>(FullSrvMsg<TS> fullServMsg, FullSrvMsg<TC> clientMsg, EncodingType encType = EncodingType.Base64)
             where TS : class
             where TC : class
 
@@ -210,7 +210,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <returns><see cref="FullSrvMsg{T}"/></returns>
         /// <exception cref="InvalidOperationException">will be thrown, 
         /// if server and client or both side use a different secret key 4 encryption</exception>
-        public FullSrvMsg<TS> NCqrSrvMsg<TS>(string cqrMessage, EncodingType encType = EncodingType.Uu)
+        public FullSrvMsg<TS> NCqrSrvMsg<TS>(string cqrMessage, EncodingType encType = EncodingType.Base64)
             where TS : class
         {
             FullSrvMsg<TS> fullMsg = new FullSrvMsg<TS>();
@@ -224,7 +224,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
 
 
-        public FullSrvMsg<TC> NCqrClientMsgTC<TC>(string clientMessage, EncodingType encType = EncodingType.Uu)
+        public FullSrvMsg<TC> NCqrClientMsgTC<TC>(string clientMessage, EncodingType encType = EncodingType.Base64)
             where TC : class
         {
             FullSrvMsg<TC> clientMsg = new FullSrvMsg<TC>();
@@ -264,7 +264,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="cqrMessage">secure encrypted msg </param>
         /// <param name="encType"><see cref="EncodingType"/></param>
         /// <returns><see cref="FullSrvMsg{TC}"/></returns>
-        public FullSrvMsg<TC> NCqrSrvMsgSC<TC>(string cqrMessage, MsgKind msgKind = MsgKind.Server, EncodingType encType = EncodingType.Uu) 
+        public FullSrvMsg<TC> NCqrSrvMsgSC<TC>(string cqrMessage, MsgKind msgKind = MsgKind.Server, EncodingType encType = EncodingType.Base64) 
             where TC : class
         {
             FullSrvMsg<TC> fullMsg = new FullSrvMsg<TC>();
@@ -274,7 +274,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        public ClientSrvMsg<TS, TC> NCqrClientSrvMsgTSC<TS, TC>(string serverEncrypted, string clientEncrypted, EncodingType encType = EncodingType.Uu)
+        public ClientSrvMsg<TS, TC> NCqrClientSrvMsgTSC<TS, TC>(string serverEncrypted, string clientEncrypted, EncodingType encType = EncodingType.Base64)
             where TS : class
             where TC : class 
         {
@@ -295,7 +295,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="srvIp">public availible server ip address</param>
         /// <param name="encodingType"><see cref="EncodingType"/></param>
         /// <returns></returns>
-        public string Send_CqrSrvMsg(string msg, IPAddress srvIp, EncodingType encodingType = EncodingType.Uu)
+        public string Send_CqrSrvMsg(string msg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
             string encrypted = string.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
                 CqrBaseMsg(msg));
@@ -317,7 +317,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="srvIp">public availible server ip address</param>
         /// <param name="encodingType"><see cref="EncodingType"/></param>
         /// <returns></returns>
-        public string Send_CqrSrvMsgT<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Uu)
+        public string Send_CqrSrvMsgT<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
             where T : class
         {
             string encrypted = string.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
@@ -343,7 +343,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="srvIp">public availible server ip address</param>
         /// <param name="encodingType"><see cref="EncodingType"/></param>
         /// <returns></returns>
-        public string Send_CqrSrvMsgTTC<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Uu) 
+        public string Send_CqrSrvMsgTTC<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64) 
             where T : class
             where TC : class
         {
@@ -360,7 +360,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        //public string Send_CqrSrvMsg_Soap<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Uu) 
+        //public string Send_CqrSrvMsg_Soap<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64) 
         //    where T : class
         //    where TC : class
         //{

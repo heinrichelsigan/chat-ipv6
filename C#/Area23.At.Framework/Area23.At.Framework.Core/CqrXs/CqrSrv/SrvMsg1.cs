@@ -71,7 +71,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <returns><see cref="CqrContact"/>CqrContact decrypted string</returns>
         /// <exception cref="InvalidOperationException">will be thrown, 
         /// if server and client or both side use a different secret key 4 encryption</exception>
-        public CqrContact NCqrSrvMsg1(string cqrMessage, EncodingType encType = EncodingType.Uu)
+        public CqrContact NCqrSrvMsg1(string cqrMessage, EncodingType encType = EncodingType.Base64)
         {
             CqrContact myContact = null;
             MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType);
@@ -91,7 +91,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="encodingType"><+
         /// see cref="EncodingType"/></param>
         /// <returns></returns>
-        public string Send1st_CqrSrvMsg1(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Uu)
+        public string Send1st_CqrSrvMsg1(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
             MsgContact = myContact;
             string msg = JsonConvert.SerializeObject(myContact);
@@ -108,7 +108,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        public string Send1st_CqrSrvMsg1_Soap(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Uu)
+        public string Send1st_CqrSrvMsg1_Soap(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
                 
             myContact._hash = PipeString;
