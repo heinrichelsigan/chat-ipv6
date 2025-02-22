@@ -151,7 +151,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         public string GetWebPage()
         {
-            string html = $"<html>\n\t<head>\n\t\t<title>{FileName} {Base64Mime}</title>\n\t</head>";
+            string html = $"<html>\n\t<head>\n\t\t<title>{Base64Type}:{FileName}</title>\n\t</head>";
             html += $"\n\t<body>\n\t\t";
             if (MimeType.IsMimeTypeImage(Base64Type))
                 html += $"\n\t\t<img src=\"data:{Base64Type};base64,{Base64Mime}\" alt=\"{Base64Type} {FileName}\" />";
