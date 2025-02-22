@@ -133,13 +133,14 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     ClientSocket.ReceiveBufferSize = Constants.MAX_BYTE_BUFFEER;
                     SocketFlags flags = SocketFlags.None;
                     SocketError errorCode;
-                    int rsize = ClientSocket.Receive(buf, flags, out errorCode);
+                    long rsize = (long)ClientSocket.Receive(buf, flags, out errorCode);
                     // int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_BYTE_BUFFEER, flags, out errorCode);
+                    rsize = buf.ToArray().LongLength;
                     BufferedData = new byte[rsize];
 
-                    Array.Copy(buf.ToArray(), BufferedData, rsize);
+                    Array.Copy(buf.ToArray(), BufferedData, (int)rsize);
 
-                    ReceiveData receiveData = new ReceiveData(buf.ToArray(), rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
+                    ReceiveData receiveData = new ReceiveData(buf.ToArray(), (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
 
                     // byte[] sendData = new byte[8];
                     // sendData = Encoding.Default.GetBytes("ACK\r\n\0");
