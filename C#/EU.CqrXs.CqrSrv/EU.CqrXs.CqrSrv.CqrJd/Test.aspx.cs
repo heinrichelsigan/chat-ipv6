@@ -36,10 +36,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             if (!Page.IsPostBack)
             {
 
-                this.TextBoxSource.Text = string.Empty;
-                this.TextBoxEnDeCrypted.Text = string.Empty;
-                this.TextBoxPipeHash.Text = string.Empty;
-                this.TextBoxKey.Text = string.Empty;
+                //this.TextBoxSource.Text = string.Empty;
+                //this.TextBoxEnDeCrypted.Text = string.Empty;
+                //this.TextBoxPipeHash.Text = string.Empty;
+                //this.TextBoxKey.Text = string.Empty;
             }
         }
 
@@ -69,7 +69,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 
                 this.TextBoxKey.Text = myServerKey;
                 SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
-                this.TextBoxPipeHash.Text = srv1stMsg.PipeString; ;
 
                 try
                 {
@@ -78,7 +77,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         myServerKey = this.TextBoxKey.Text;
                         Application["ServerKey"] = myServerKey;
                         srv1stMsg = new SrvMsg1(myServerKey);
-                        this.TextBoxPipeHash.Text = myServerKey;
+                        this.TextBoxPipeHash.Text = srv1stMsg.PipeString;
 
                         if (!this.CheckBoxDecrypt.Checked)
                         {
@@ -118,7 +117,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     myServerKey = this.TextBoxKey.Text;
                     Application["ServerKey"] = myServerKey;
                     SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
-                    this.TextBoxPipeHash.Text = myServerKey;
+                    this.TextBoxPipeHash.Text = srv1stMsg.PipeString;
 
                     if (!this.CheckBoxDecrypt.Checked)
                     {
@@ -152,6 +151,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
                 this.TextBoxPipeHash.Text = myServerKey;
             }
+        }
+
+        protected void Buttonclear_Click(object sender, EventArgs e)
+        {
+            this.TextBoxEnDeCrypted.Text = string.Empty;
+            this.TextBoxSource.Text = string.Empty;
+
         }
     }
 

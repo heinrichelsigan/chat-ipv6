@@ -107,7 +107,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         Area23Log.LogStatic("Contact.ToJson(): " + decrypted);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception ex) 
                 {
                     CqrException.SetLastException(ex);
                     this.preOut.InnerText = ex.Message + ex.ToString();

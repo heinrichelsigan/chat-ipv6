@@ -1274,12 +1274,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
 
         protected internal void MenuHelpItemAbout_Click(object sender, EventArgs e)
         {
-            TransparentDialog dialog = new TransparentDialog();
-            dialog.ShowDialog();
+            TestForm testForm = new TestForm();
+            testForm.Show();
+            // TransparentDialog dialog = new TransparentDialog();
+            // dialog.ShowDialog();
         }
 
         protected internal void MenuHelpItemInfo_Click(object sender, EventArgs e)
-        {
+        {            
             MessageBox.Show($"{Text} type {GetType()} Information MessageBox.", $"{Text} type {GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 

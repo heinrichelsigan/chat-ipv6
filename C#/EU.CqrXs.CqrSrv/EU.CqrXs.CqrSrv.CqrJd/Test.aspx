@@ -39,6 +39,7 @@
                 <asp:TextBox ID="TextBoxEnDeCrypted" runat="server"  ReadOnly="true" TextMode="MultiLine" MaxLength="65536" Rows="10" Columns="48" ValidateRequestMode="Disabled" ToolTip="TextBox destination" Text="" Width="480px"></asp:TextBox>
                 <br />                               
                 <br />
+                <asp:Button ID="Buttonclear" runat="server" Text="Clear" ToolTip="Clear" OnClick="Buttonclear_Click" />
                 <asp:Button ID="ButtonSubmit" runat="server" Text="Submit" ToolTip="Submit" OnClick="ButtonSubmit_Click" />
             </div>
             <hr />
