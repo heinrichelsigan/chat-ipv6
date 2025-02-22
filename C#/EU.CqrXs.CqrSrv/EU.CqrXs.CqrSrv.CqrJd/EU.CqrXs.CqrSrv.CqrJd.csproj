@@ -180,7 +180,6 @@
     <Content Include="CoolCrypt.aspx" />
     <Content Include="ChatRoomService.asmx" />
     <Content Include="CqrService.asmx" />
-    <Content Include="Test.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="Global.asax" />
@@ -239,6 +238,7 @@
     <Content Include="res\js\gtag.js" />
     <Content Include="res\js\od.js" />
     <Content Include="res\js\rpn.js" />
+    <Content Include="TestForm.aspx" />
     <Content Include="W.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -264,13 +264,6 @@
     <Compile Include="CqrService.asmx.cs">
       <DependentUpon>CqrService.asmx</DependentUpon>
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Test.aspx.cs">
-      <DependentUpon>Test.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Test.aspx.designer.cs">
-      <DependentUpon>Test.aspx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -308,6 +301,13 @@
       <DependentUpon>Resource.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="TestForm.aspx.cs">
+      <DependentUpon>TestForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TestForm.aspx.designer.cs">
+      <DependentUpon>TestForm.aspx</DependentUpon>
     </Compile>
     <Compile Include="Util\GlobalAppSettings.cs" />
     <Compile Include="Util\HostLogHelper.cs" />

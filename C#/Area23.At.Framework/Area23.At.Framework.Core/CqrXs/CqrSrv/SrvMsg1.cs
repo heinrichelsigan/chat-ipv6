@@ -102,9 +102,24 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
             string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
 
-            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+            string response = string.Empty;
+            try
+            {
+                response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+            }
+            catch (Exception ex)
+            {
+                response = "Exception: " + ex.Message + "\n" + ex.ToString();
+            }
 
-            return response;
+            string reducedResponse = string.Empty;
+            if (response.Contains(Constants.DECRYPTED_TEXT_AREA))
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_AREA, true, "",
+                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);
+            else if (response.Contains(Constants.DECRYPTED_TEXT_BOX))
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_BOX, true, ">",
+                    Constants.DECRYPTED_TEXT_AREA_END, false, StringComparison.InvariantCulture);
+            return reducedResponse;
         }
 
 

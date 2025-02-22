@@ -6,7 +6,17 @@
     "Email": "",
     "Mobile": "",
     "Address": "",
-    "SecretKey": ""
+    "SecretKey": "",
+    "ContactImage": null,
+    "NameEmail": "",
+    "ClientIp": null,
+    "CharRoomId": null,
+    "ValidFrom": "0001-01-01T00:00:00",
+    "MsgType": 0,
+    "IsMime": false,
+    "Hash": "",
+    "Message": "",
+    "RawMessage": ""
   },
   {
     "ContactId": 1,
@@ -15,6 +25,35 @@
     "Email": "he@area23.at",
     "Mobile": "+43 650 7527928",
     "Address": "Theresianumgasse 6/28, 1040 Wien",
-    "SecretKey": "WNScVlGDB4UBQyiCnkRmSJgHcidpM1BWP20K49Z4txwtDhhormJ5HVlSqkug38DN+7c3QETkrncBk0nxgyVItb+GBXavWcGdJsYJcovBUHADshNrbZ/tBH5F41RiB7U5v4F3Jw0bNYQAa7KZZKMtmU1WYkbJsie0+SsRIQS5YJ/9DYzYezgeDgha1bUvWRF0dk5mcjZg4HfluCkN843iDtggCP4cQ7mqNscWOSOY+Hw="
+    "SecretKey": "WNScVlGDB4UBQyiCnkRmSJgHcidpM1BWP20K49Z4txwtDhhormJ5HVlSqkug38DN+7c3QETkrncBk0nxgyVItb+GBXavWcGdJsYJcovBUHADshNrbZ/tBH5F41RiB7U5v4F3Jw0bNYQAa7KZZKMtmU1WYkbJsie0+SsRIQS5YJ/9DYzYezgeDgha1bUvWRF0dk5mcjZg4HfluCkN843iDtggCP4cQ7mqNscWOSOY+Hw=",
+    "ContactImage": null,
+    "NameEmail": "Heinrich Elsigan <he@area23.at>",
+    "ClientIp": null,
+    "CharRoomId": null,
+    "ValidFrom": "0001-01-01T00:00:00",
+    "MsgType": 0,
+    "IsMime": false,
+    "Hash": "",
+    "Message": "",
+    "RawMessage": ""
+  },
+  {
+    "ContactId": -1,
+    "Cuid": "00000000-0000-0000-0000-000000000000",
+    "Name": "helsigan@area23.at",
+    "Email": "helsigan@outlook.at",
+    "Mobile": "",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "helsigan@area23.at <helsigan@outlook.at>",
+    "ClientIp": null,
+    "CharRoomId": null,
+    "ValidFrom": "0001-01-01T00:00:00",
+    "MsgType": 0,
+    "IsMime": false,
+    "Hash": "",
+    "Message": "",
+    "RawMessage": "{\r\n  \"ContactId\": -1,\r\n  \"Cuid\": \"00000000-0000-0000-0000-000000000000\",\r\n  \"Name\": \"helsigan@area23.at\",\r\n  \"Email\": \"helsigan@outlook.at\",\r\n  \"Mobile\": \"\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"helsigan@area23.at <helsigan@outlook.at>\",\r\n  \"ClientIp\": null,\r\n  \"CharRoomId\": null,\r\n  \"ValidFrom\": \"0001-01-01T00:00:00\",\r\n  \"MsgType\": 0,\r\n  \"IsMime\": false,\r\n  \"Hash\": \"\",\r\n  \"Message\": \"\",\r\n  \"RawMessage\": \"{\\r\\n  \\\"ContactId\\\": -1,\\r\\n  \\\"Cuid\\\": \\\"00000000-0000-0000-0000-000000000000\\\",\\r\\n  \\\"Name\\\": \\\"helsigan@area23.at\\\",\\r\\n  \\\"Email\\\": \\\"helsigan@outlook.at\\\",\\r\\n  \\\"Mobile\\\": \\\"\\\",\\r\\n  \\\"Address\\\": \\\"\\\",\\r\\n  \\\"SecretKey\\\": null,\\r\\n  \\\"ContactImage\\\": null,\\r\\n  \\\"NameEmail\\\": \\\"helsigan@area23.at <helsigan@outlook.at>\\\",\\r\\n  \\\"ClientIp\\\": null,\\r\\n  \\\"CharRoomId\\\": null,\\r\\n  \\\"ValidFrom\\\": \\\"0001-01-01T00:00:00\\\",\\r\\n  \\\"MsgType\\\": 0,\\r\\n  \\\"IsMime\\\": false,\\r\\n  \\\"Hash\\\": \\\"\\\",\\r\\n  \\\"Message\\\": \\\"\\\",\\r\\n  \\\"RawMessage\\\": \\\"{\\\\r\\\\n  \\\\\\\"ContactId\\\\\\\": -1,\\\\r\\\\n  \\\\\\\"Cuid\\\\\\\": \\\\\\\"00000000-0000-0000-0000-000000000000\\\\\\\",\\\\r\\\\n  \\\\\\\"Name\\\\\\\": \\\\\\\"helsigan@area23.at\\\\\\\",\\\\r\\\\n  \\\\\\\"Email\\\\\\\": \\\\\\\"helsigan@outlook.at\\\\\\\",\\\\r\\\\n  \\\\\\\"Mobile\\\\\\\": \\\\\\\"\\\\\\\",\\\\r\\\\n  \\\\\\\"Address\\\\\\\": \\\\\\\"\\\\\\\",\\\\r\\\\n  \\\\\\\"SecretKey\\\\\\\": null,\\\\r\\\\n  \\\\\\\"ContactImage\\\\\\\": null,\\\\r\\\\n  \\\\\\\"NameEmail\\\\\\\": \\\\\\\"helsigan@area23.at <helsigan@outlook.at>\\\\\\\",\\\\r\\\\n  \\\\\\\"ClientIp\\\\\\\": null,\\\\r\\\\n  \\\\\\\"CharRoomId\\\\\\\": null,\\\\r\\\\n  \\\\\\\"ValidFrom\\\\\\\": \\\\\\\"0001-01-01T00:00:00\\\\\\\",\\\\r\\\\n  \\\\\\\"MsgType\\\\\\\": 0,\\\\r\\\\n  \\\\\\\"IsMime\\\\\\\": false,\\\\r\\\\n  \\\\\\\"Hash\\\\\\\": \\\\\\\"\\\\\\\",\\\\r\\\\n  \\\\\\\"Message\\\\\\\": \\\\\\\"\\\\\\\",\\\\r\\\\n  \\\\\\\"RawMessage\\\\\\\": \\\\\\\"\\\\\\\"\\\\r\\\\n}\\\"\\r\\n}\"\r\n}"
   }
 ]

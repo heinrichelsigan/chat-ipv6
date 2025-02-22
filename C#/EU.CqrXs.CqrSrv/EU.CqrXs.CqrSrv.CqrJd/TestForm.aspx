@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Test.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.Test" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TestForm.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.TestForm" %>
 
 <!DOCTYPE html>
 
@@ -7,8 +7,8 @@
     <title>CqrJd Testform</title>
 </head>
 <body>
-    <form id="form1" runat="server" method="post" enctype="text/plain" submitdisabledcontrols="true" novalidate="novalidate" enableviewstate="false" style="background-color: transparent;">
-        <div id="DivPost" runat="server" visible="true">
+    <form id="form1" runat="server">
+        <div>
             <div>
                 <span style="display: block; border-style: outset; border-width: 1px; border-color: azure; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; font-size: larger">
                     ServerIPv4: <asp:Literal ID="LiteralServerIPv4" runat="server"></asp:Literal>
@@ -50,4 +50,3 @@
     </form>
 </body>
 </html>
-

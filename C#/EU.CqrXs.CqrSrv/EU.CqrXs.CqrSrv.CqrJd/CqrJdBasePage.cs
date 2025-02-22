@@ -131,12 +131,18 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             if (Application["lastmsg"] != null)
                 allStrng += "LastMsg: " + (string)Application["lastmsg"] + Environment.NewLine;
 
-            if (Request.Params["Authorization"] != null)
-                allStrng += "Authorization: " + Request.Params["Authorization"].ToString() + Environment.NewLine;
-
-            if ((Request.Files != null && Request.Files.Count > 0))
+            try
             {
+                if (Request.Params["Authorization"] != null)
+                    allStrng += "Authorization: " + Request.Params["Authorization"].ToString() + Environment.NewLine;
 
+                if ((Request.Files != null && Request.Files.Count > 0))
+                {
+
+                }
+            } catch (Exception ex)
+            {
+                Area23Log.LogStatic(ex);
             }
 
             initState = 0x4;

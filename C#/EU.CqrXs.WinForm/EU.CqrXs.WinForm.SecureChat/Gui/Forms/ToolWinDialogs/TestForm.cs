@@ -199,10 +199,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             CqrContact myContact = new CqrContact();
             if (Entities.Settings.Singleton.MyContact != null)
             {
-                myContact = Entities.Settings.Singleton.MyContact;
-                this.textBoxSource.Text = JsonConvert.SerializeObject(myContact);
                 SrvMsg1 srvMsg1 = new SrvMsg1(myServerKey);
                 _serverIp = IPAddress.Parse(textBoxServerIp.Text);
+                myContact = new CqrContact(Entities.Settings.Singleton.MyContact, srvMsg1.PipeString);
+                myContact.ContactImage = null;
+
+                this.textBoxSource.Text = JsonConvert.SerializeObject(myContact);
+                
+                
                 string encrypted = srvMsg1.CqrSrvMsg1(myContact, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
 
                 this.textBoxDestination.Text = encrypted;
