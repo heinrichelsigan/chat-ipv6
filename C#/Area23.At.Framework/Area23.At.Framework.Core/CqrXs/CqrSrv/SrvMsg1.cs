@@ -110,27 +110,29 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
         public string Send1st_CqrSrvMsg1_Soap(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
-                
+
             myContact._hash = PipeString;
-            string msg = Newtonsoft.Json.JsonConvert.SerializeObject(myContact);
+            CqrContact sendContact = new CqrContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
+            sendContact._hash = PipeString;
+
+            string msg = Newtonsoft.Json.JsonConvert.SerializeObject(sendContact);
             // string encMsg = CqrBaseMsg(msg, encodingType);
-            string encMsg = CqrSrvMsg1(myContact, encodingType);
-                // string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
-                //     encMsg);
+            string encMsg = CqrSrvMsg1(sendContact, encodingType);
+            // string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
+            //     encMsg);
 
-                string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
-                string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
-            
-                CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
 
-                string response = client.Send1StSrvMsg(encMsg);
-            
-                
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+
+            string response = client.Send1StSrvMsg(encMsg);
+
 
             //    string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
 
-                return response;
-        
+            return response;
+
         }
 
 

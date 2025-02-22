@@ -278,7 +278,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     fileName += ((string.IsNullOrEmpty(fileName)) ? _id : "") + Path.GetExtension(FileOpenDialog.FileName);
                     
                     byte[] bitmapBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
-                    base64image = Convert.ToBase64String(bitmapBytes, Base64FormattingOptions.InsertLineBreaks); 
+                    base64image = Convert.ToBase64String(bitmapBytes, Base64FormattingOptions.None); 
                     // Base64.Encode(bitmapBytes);
                     Bitmap bmp = new Bitmap(FileOpenDialog.FileName);
                     int h = bmp.Size.Height;

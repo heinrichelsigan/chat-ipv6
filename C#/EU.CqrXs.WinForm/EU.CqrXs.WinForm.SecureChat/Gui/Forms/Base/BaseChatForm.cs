@@ -1125,7 +1125,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
                 string fileNameOnly = Path.GetFileName(filename);
                 string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
 
-                string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.InsertLineBreaks);
+                string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.None);
 
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(secretKey);
 

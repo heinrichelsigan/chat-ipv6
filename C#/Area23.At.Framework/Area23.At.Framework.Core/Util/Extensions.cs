@@ -785,7 +785,7 @@ namespace Area23.At.Framework.Core.Util
             try
             {
                 bytes = img.ToByteArray();
-                base64 = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks); // Crypt.EnDeCoding.Base64.Encode(bytes);
+                base64 = Convert.ToBase64String(bytes, Base64FormattingOptions.None); // Crypt.EnDeCoding.Base64.Encode(bytes);
             }
             catch (Exception ex)
             {

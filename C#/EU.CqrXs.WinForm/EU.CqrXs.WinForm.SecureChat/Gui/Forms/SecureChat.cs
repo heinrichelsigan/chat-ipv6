@@ -873,11 +873,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(FileOpenDialog.FileName, true);
                     string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(FileOpenDialog.FileName, true);
 
+                    FileInfo fi = new FileInfo(FileOpenDialog.FileName);
+                    if (fi.Length > 475000)
+                    {
+                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds 475000 bytes.", "FileSize to large!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     byte[] fileBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
                     string fileNameOnly = Path.GetFileName(FileOpenDialog.FileName);
                     string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
 
-                    string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.InsertLineBreaks);
+                    string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.None);
 
                     Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
 
@@ -968,6 +975,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             {
                 if (chat == null)
                     chat = new Chat(0);
+                if (ea.GenericTData != null && File.Exists(ea.GenericTData))
+                {
+                    FileInfo fi = new FileInfo(ea.GenericTData);
+                    if (fi.Length > 475000)
+                    {
+                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds 475000 bytes.", "FileSize to large!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
                 string t = GetComboBoxText(this.ComboBoxIp);
                 if (!string.IsNullOrEmpty(t) && IPAddress.TryParse(t, out IPAddress pi))
                 {

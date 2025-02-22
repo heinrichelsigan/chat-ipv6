@@ -840,7 +840,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     string fileNameOnly = Path.GetFileName(FileOpenDialog.FileName);
                     string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
 
-                    string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.InsertLineBreaks);
+                    string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.None);
 
                     Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
 

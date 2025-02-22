@@ -153,7 +153,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             MsgEnum msgEnum = (decrypted.IsValidJson()) ? MsgEnum.JsonSerialized : MsgEnum.RawWithHashAtEnd;
             MsgContent msgContent = new MsgContent(decrypted, msgEnum);
             string hashVerification = msgContent.Hash;
-            if (!VerifyHash(hashVerification, symmPipe.PipeString))
+            bool verified = VerifyHash(hashVerification, symmPipe.PipeString);
+            if (!verified)
             {
                 string hashSymShow = symmPipe.PipeString ?? "        ";
                 throw new InvalidOperationException(

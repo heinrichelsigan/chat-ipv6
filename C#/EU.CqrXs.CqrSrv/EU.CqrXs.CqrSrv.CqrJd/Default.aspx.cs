@@ -90,6 +90,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
                 Area23Log.LogStatic("myServerKey = " + myServerKey);
                 SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
+                Application["ServerKey"] = myServerKey;
                 decrypted = string.Empty;
                 allStrng += "Msg: " + rq.ToString() + Environment.NewLine;
                 Area23Log.LogStatic("Msg: " + rq.ToString());
