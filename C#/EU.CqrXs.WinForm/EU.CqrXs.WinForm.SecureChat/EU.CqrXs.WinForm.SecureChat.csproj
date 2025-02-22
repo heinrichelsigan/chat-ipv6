@@ -225,6 +225,10 @@
     <Folder Include="Properties\en\" />
     <Folder Include="Properties\it\" />
     <Folder Include="Properties\pl\" />
+    <Folder Include="res\json\" />
+    <Folder Include="res\tmp\" />
+    <Folder Include="res\uu\" />
+    <Folder Include="res\out\" />
   </ItemGroup>
 
   <ItemGroup>
