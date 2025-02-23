@@ -111,7 +111,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.de {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://cqrxs.eu/net/CqrJD/Default.aspx;https://area23.at/net/CqrJD/Default.aspx;.
+        ///   Looks up a localized string similar to https://cqrxs.eu/cqrsrv/cqrjd/Default.aspx;https://ipv4.cqrxs.eu/cqrsrv/cqrjd/Default.aspx;.
         /// </summary>
         internal static string CqrServerUrlToPost {
             get {
@@ -129,7 +129,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.de {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 18.100.254.167;13.38.136.165;2a05:d011:cdf:3a00:726a:e8ec:f5ca:8caa;;2a05:d012:209:ee00:a8ba:d6c4:bd60:bab5.
+        ///   Looks up a localized string similar to 18.100.254.167;2a05:d011:cdf:3a00:75d:d95d:136e:9e41;2a05:d011:cdf:3a00:726a:e8ec:f5ca:8caa.
         /// </summary>
         internal static string Proxies {
             get {
@@ -138,7 +138,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.de {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to cqrxs.eu;paris.area23.at;paris.area23.at;ipv6.cqrxs.eu;virginia.area23.at;parisienne.area23.at.
+        ///   Looks up a localized string similar to cqrxs.eu;ipv6.cqrxs.eu;ipv4.cqrxs.eu;virginia.area23.at.
         /// </summary>
         internal static string ProxyNames {
             get {
@@ -157,7 +157,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.de {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx;https://pairs.area23.at/net/R.aspx.
+        ///   Looks up a localized string similar to https://cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv6.cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://area23.at/net/R.aspx;.
         /// </summary>
         internal static string RemoteIpUrls {
             get {

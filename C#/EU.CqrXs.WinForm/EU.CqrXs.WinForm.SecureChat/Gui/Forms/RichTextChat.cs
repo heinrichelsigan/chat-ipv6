@@ -1624,7 +1624,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     if (dditem.Checked)
                         oldAddrIf = dditem;
 
-                IPAddress clIp = clientIpAddress;
+                IPAddress? clIp = clientIpAddress;
                 try
                 {
                     if (IPAddress.TryParse(newAddrIf.Name, out clIp))
@@ -1685,30 +1685,31 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 foreach (ToolStripMenuItem dditem in this.MenuNetworkItemProxyServers.DropDownItems)
                     if (dditem.Checked == true)
                         oldProxyItem = dditem;
-
-                try
+                if (newProxyItem != null && !string.IsNullOrEmpty(newProxyItem.Name))
                 {
-                    IPAddress newSrvAddr = IPAddress.Parse(newProxyItem.Name);
-
-                    string resp = TcpClientWebRequest.MakeWebRequest(newSrvAddr, out ips);
-
-                    if (resp != null && ips != null && ips.Count > 2 && ips.ElementAt(2) != null)
+                    try
                     {
-                        _serverIpAddress = newSrvAddr;
-                        newProxyItem.Checked = true;
-                        if (oldProxyItem != null && oldProxyItem.Checked)
-                            oldProxyItem.Checked = false;
+                        IPAddress newSrvAddr = IPAddress.Parse(newProxyItem.Name);
 
-                        SetStatusText(StripStatusLabel, $"ServerIp set to {_serverIpAddress.AddressFamily.ShortInfo()} {_serverIpAddress.ToString()}");
+                        string resp = TcpClientWebRequest.MakeWebRequest(newSrvAddr, out ips);
+
+                        if (resp != null && ips != null && ips.Count > 2 && ips.ElementAt(2) != null)
+                        {
+                            _serverIpAddress = newSrvAddr;
+                            newProxyItem.Checked = true;
+                            if (oldProxyItem != null && oldProxyItem.Checked)
+                                oldProxyItem.Checked = false;
+
+                            SetStatusText(StripStatusLabel, $"ServerIp set to {_serverIpAddress.AddressFamily.ShortInfo()} {_serverIpAddress.ToString()}");
+                        }
                     }
-                }
-                catch (Exception exi)
-                {
-                    Area23Log.LogStatic(exi);
-                }
+                    catch (Exception exi)
+                    {
+                        Area23Log.LogStatic(exi);
+                    }
 
-                Thread.Sleep(Constants.CLOSING_TIMEOUT);
-
+                    Thread.Sleep(Constants.CLOSING_TIMEOUT);
+                }
             }
         }
 

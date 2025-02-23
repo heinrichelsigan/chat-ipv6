@@ -9,8 +9,8 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <StartupObject>EU.CqrXs.WinForm.SecureChat.Program</StartupObject>
     <RootNamespace>EU.CqrXs.WinForm.SecureChat</RootNamespace>
-    <AssemblyVersion>2.25.131</AssemblyVersion>
-    <FileVersion>2.25.131</FileVersion>
+    <AssemblyVersion>2.25.222</AssemblyVersion>
+    <FileVersion>2.25.222</FileVersion>
     <ErrorReport>send</ErrorReport>
     <Title>SecureChat</Title>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>		
@@ -19,18 +19,21 @@
 	<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>	
 	<PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
 	<IsTrimmable>true</IsTrimmable>
-	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>	  	
+	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+	<AnalysisLevel>latest</AnalysisLevel>
+	<EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
+	<SignAssembly>False</SignAssembly>	  	
 	<!-- PublishTrimmed>True</PublishTrimmed -->
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>5</WarningLevel>
+    <WarningLevel>4</WarningLevel>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
-    <WarningLevel>5</WarningLevel>
+    <WarningLevel>8</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -87,6 +90,10 @@
     <None Remove="Properties\Image\TransparentFormsIcon.ico" />
     <None Remove="Properties\Image\WinFormAboutDialog.png" />
     <None Remove="Resources\sound_arrow.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Properties\Icon\SatIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -298,6 +305,11 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\fr\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>

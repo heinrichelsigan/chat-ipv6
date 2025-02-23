@@ -556,7 +556,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
             string reText = string.Empty;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            if (mItem != null && mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
                 GetMenuItemTextCallback getMenuItemTextCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
@@ -615,7 +615,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
             Color foreColor = SystemColors.MenuText;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            if (mItem != null && mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
                 GetMenuItemForeColorCallback getMenuItemForeColorCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
@@ -642,7 +642,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
             Color fgColor = foreColor != null ? foreColor : SystemColors.MenuText;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            if (mItem != null && mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
                 SetMenuItemForeColorCallback setMenuItemForeColorCallback = delegate (ToolStripMenuItem tsMenuItem, Color fgColor)
                 {
@@ -674,7 +674,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
             Color bgColor = SystemColors.MenuBar;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            if (mItem != null && mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
                 GetMenuItemBackColorCallback getMenuItemBackColorCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
@@ -701,7 +701,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
             Color bgColor = backColor != null ? backColor : SystemColors.MenuBar;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            if (mItem != null && mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
                 SetMenuItemBackColorCallback setMenuItemBackColorCallback = delegate (ToolStripMenuItem tsMenuItem, Color bgColor)
                 {
@@ -732,7 +732,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
             bool mchecked = false;
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            if (mItem != null && mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
                 GetMenuItemCheckedCallback getMenuItemCheckedCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
@@ -757,7 +757,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
         internal void SetMenuItemChecked(ToolStripMenuItem mItem, bool mchecked)
         {
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            if (mItem != null && mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
                 SetMenuItemCheckedCallback setMenuItemCheckedCallback = delegate (ToolStripMenuItem tsMenuItem, bool miChecked)
                 {
@@ -792,12 +792,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
             ToolStripItemCollection tscol = new ToolStripItemCollection(mItem.GetCurrentParent(), new ToolStripDropDownItem[0]);
 
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
-            if (mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
+            if (mItem != null && mItem.GetCurrentParent() != null && mItem.GetCurrentParent().InvokeRequired)
             {
                 GetMenuItemsCallback getMenuItemsCallback = delegate (ToolStripMenuItem tsMenuItem)
                 {
-                    return tsMenuItem != null && tsMenuItem.DropDown != null && tsMenuItem.DropDownItems != null ?
-                        tsMenuItem.DropDown.Items : new ToolStripItemCollection(tsMenuItem.GetCurrentParent(), new ToolStripMenuItem[0]);
+                    return tsMenuItem != null && tsMenuItem.DropDown != null && tsMenuItem.DropDownItems != null 
+                        ? tsMenuItem.DropDown.Items 
+                        : new ToolStripItemCollection(tsMenuItem.GetCurrentParent(), new ToolStripMenuItem[0]);
                 };
                 try
                 {

@@ -118,20 +118,20 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Proxies" xml:space="preserve">
-    <value>18.101.101.108;2a05:d011:cdf:3a00:75d:d95d:136e:9e41;15.188.56.225;2a05:d012:209:ee04:4dd9:b939:bc98:8080</value>
-    <comment>cqrxs.eu;paris.area23.at;parisienne.area23.at</comment>
+    <value>18.101.101.108;2a05:d011:cdf:3a00:75d:d95d:136e:9e41</value>
+    <comment>cqrxs.eu</comment>
   </data>
   <data name="github_uri" xml:space="preserve">
     <value>https://github.com/heinrichelsigan/chat-ipv6</value>
   </data>
   <data name="ProxyNames" xml:space="preserve">
-    <value>cqrxs.eu;ipv6.cqrxs.eu;fr.cqrxs.eu;parisienne.cqrxs.eu</value>
+    <value>cqrxs.eu;ipv6.cqrxs.eu;ipv4.cqrxs.eu</value>
   </data>
   <data name="RemoteIpUrls" xml:space="preserve">
-    <value>https://cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx;https://pairs.area23.at/net/R.aspx</value>
+    <value>https://cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv6.cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx</value>
   </data>
   <data name="CqrServerUrlToPost" xml:space="preserve">
-    <value>https://cqrxs.eu/net/CqrJD/Default.aspx;https://area23.at/net/CqrJD/Default.aspx;</value>
+    <value>https://cqrxs.eu/cqrsrv/cqrjd/Default.aspx;https://ipv4.cqrxs.eu/cqrsrv/cqrjd/Default.aspx;https://ipv6.cqrxs.eu/cqrsrv/cqrjd/Default.aspx</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="sound_arrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -226,5 +226,8 @@
   </data>
   <data name="WinFormAboutDialog" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Properties\Image\WinFormAboutDialog.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="CableWireCutIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Properties\Icon\CableWireCutIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

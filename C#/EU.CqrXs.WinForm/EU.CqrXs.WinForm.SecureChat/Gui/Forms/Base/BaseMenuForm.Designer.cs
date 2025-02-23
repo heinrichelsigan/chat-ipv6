@@ -533,6 +533,7 @@
             ClientSize = new Size(996, 711);
             Controls.Add(StripStatus);
             Controls.Add(StripMenu);
+            Icon = Properties.fr.Resources.SatIcon;
             Font = new Font("Lucida Sans Unicode", 10F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenuStrip = StripMenu;

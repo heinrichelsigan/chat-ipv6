@@ -570,7 +570,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        internal void OnClientReceive(object sender, EventArgs e)
+        internal void OnClientReceive(object sender, Area23EventArgs<ReceiveData> eventReiveData)
         {
             if (string.IsNullOrEmpty(myServerKey))
             {
@@ -593,9 +593,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
 
                     Area23EventArgs<ReceiveData>? area23EvArgs = null;
-                    if (e != null && e is Area23EventArgs<ReceiveData>)
+                    if (eventReiveData != null && eventReiveData is Area23EventArgs<ReceiveData>)
                     {
-                        area23EvArgs = ((Area23EventArgs<ReceiveData>)e);
+                        area23EvArgs = ((Area23EventArgs<ReceiveData>)eventReiveData);
                         //TODO: Enable cross thread via delegate
                         SetStatusText(StripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
 
@@ -606,7 +606,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             if (IPAddress.TryParse(area23EvArgs.GenericTData.ClientIPAddr, out partnerIpAddress))
                             {
                                 SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
-                                AddIpToFriendList(sender, e);
+                                AddIpToFriendList(sender, new EventArgs());
                             }
 
                         }
@@ -1560,7 +1560,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
 
                     ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily.ShortInfo() + addrProxy.ToString(), null, ServerProxyAddressSelected, addrProxy.ToString());
-                    if ((addrProxy.AddressFamily == ServerIpAddress.AddressFamily) &&
+                    if ((addrProxy.AddressFamily == ServerIpAddress?.AddressFamily) &&
                         (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {
 
@@ -1630,7 +1630,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     if (dditem.Checked)
                         oldAddrIf = dditem;
 
-                IPAddress clIp = clientIpAddress;
+                IPAddress? clIp = clientIpAddress;
                 try
                 {
                     if (IPAddress.TryParse(newAddrIf.Name, out clIp))
@@ -1692,29 +1692,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                     if (dditem.Checked == true)
                         oldProxyItem = dditem;
 
-                try
+                if (newProxyItem != null && !string.IsNullOrEmpty(newProxyItem.Name))
                 {
-                    IPAddress newSrvAddr = IPAddress.Parse(newProxyItem.Name);
-
-                    string resp = TcpClientWebRequest.MakeWebRequest(newSrvAddr, out ips);
-
-                    if (resp != null && ips != null && ips.Count > 2 && ips.ElementAt(2) != null)
+                    try
                     {
-                        _serverIpAddress = newSrvAddr;
-                        newProxyItem.Checked = true;
-                        if (oldProxyItem != null && oldProxyItem.Checked)
-                            oldProxyItem.Checked = false;
+                        IPAddress newSrvAddr = IPAddress.Parse(newProxyItem.Name);
 
-                        SetStatusText(StripStatusLabel, $"ServerIp set to {_serverIpAddress.AddressFamily.ShortInfo()} {_serverIpAddress.ToString()}");
+                        string resp = TcpClientWebRequest.MakeWebRequest(newSrvAddr, out ips);
+
+                        if (resp != null && ips != null && ips.Count > 2 && ips.ElementAt(2) != null)
+                        {
+                            _serverIpAddress = newSrvAddr;
+                            newProxyItem.Checked = true;
+                            if (oldProxyItem != null && oldProxyItem.Checked)
+                                oldProxyItem.Checked = false;
+
+                            SetStatusText(StripStatusLabel, $"ServerIp set to {_serverIpAddress.AddressFamily.ShortInfo()} {_serverIpAddress.ToString()}");
+                        }
                     }
-                }
-                catch (Exception exi)
-                {
-                    Area23Log.LogStatic(exi);
-                }
+                    catch (Exception exi)
+                    {
+                        Area23Log.LogStatic(exi);
+                    }
 
-                Thread.Sleep(Constants.CLOSING_TIMEOUT);
+                    Thread.Sleep(Constants.CLOSING_TIMEOUT);
 
+                }
             }
         }
 
