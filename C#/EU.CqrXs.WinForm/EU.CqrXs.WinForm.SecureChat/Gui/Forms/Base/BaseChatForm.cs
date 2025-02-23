@@ -1274,10 +1274,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
 
         protected internal void MenuHelpItemAbout_Click(object sender, EventArgs e)
         {
-            TestForm testForm = new TestForm();
-            testForm.Show();
-            // TransparentDialog dialog = new TransparentDialog();
-            // dialog.ShowDialog();
+            
+            if ((AppDomain.CurrentDomain.GetData(Constants.CQRXS_TEST_FORM) != null) &&
+                Convert.ToBoolean(AppDomain.CurrentDomain.GetData(Constants.CQRXS_TEST_FORM)))
+            {
+                TestForm testForm = new TestForm();
+                testForm.Show();
+            }
+            TransparentDialog dialog = new TransparentDialog();
+            dialog.ShowDialog();
         }
 
         protected internal void MenuHelpItemInfo_Click(object sender, EventArgs e)

@@ -49,6 +49,10 @@ namespace EU.CqrXs.WinForm.SecureChat
             {
                 foreach (string arg in args)
                 {
+                    if (arg.ToLower().Contains("test"))
+                        AppDomain.CurrentDomain.SetData(Constants.CQRXS_TEST_FORM, true);
+                    if (arg.ToLower().Contains("fishonaes") || arg.ToLower().Contains("fish on aes"))
+                        AppDomain.CurrentDomain.SetData(Constants.FISH_ON_AES_ENGINE, true);
                     if (arg.ToLower().Contains("peer"))
                         startFormSwitch = "peer";
                     if (arg.ToLower().Contains("rich"))
