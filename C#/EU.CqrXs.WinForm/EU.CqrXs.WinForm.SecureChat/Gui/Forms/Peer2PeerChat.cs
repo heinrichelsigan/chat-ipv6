@@ -143,13 +143,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             await SetupNetwork();
             this.StripProgressBar.Value = 50;
             
-            Bitmap? bmp = Properties.fr.Resources.DefaultF40;
+            Bitmap? bmp = Properties.fr.Resources.DefaultF45;
             if (Entities.Settings.Singleton != null && Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null &&
                 !string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
                 bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
                 if (bmp == null)
-                    bmp = Properties.fr.Resources.DefaultF40;                
+                    bmp = Properties.fr.Resources.DefaultF45;                
             }
             this.PictureBoxYou.Image = bmp;
             
@@ -1045,14 +1045,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             contactSettings.ShowInTaskbar = true;
             contactSettings.ShowDialog();
 
-            Bitmap? bmp = Properties.fr.Resources.DefaultF40;
+            Bitmap? bmp = Properties.fr.Resources.DefaultF45;
             if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
                 try
                 {
                     bmp = Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
                     if (bmp == null)
-                        bmp = Properties.fr.Resources.DefaultF40;
+                        bmp = Properties.fr.Resources.DefaultF45;
                 }
                 catch (Exception exBmp)
                 {
