@@ -620,12 +620,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // PictureBoxYou
             // 
             PictureBoxYou.BackColor = SystemColors.ButtonShadow;
-            PictureBoxYou.BackgroundImageLayout = ImageLayout.Stretch;
+            PictureBoxYou.BackgroundImageLayout = ImageLayout.None;
             PictureBoxYou.Location = new Point(7, 55);
             PictureBoxYou.Margin = new Padding(1);
             PictureBoxYou.Name = "PictureBoxYou";
             PictureBoxYou.Padding = new Padding(1);
             PictureBoxYou.Size = new Size(155, 155);
+            PictureBoxYou.SizeMode = PictureBoxSizeMode.StretchImage;
             PictureBoxYou.TabIndex = 71;
             PictureBoxYou.TabStop = false;
             // 

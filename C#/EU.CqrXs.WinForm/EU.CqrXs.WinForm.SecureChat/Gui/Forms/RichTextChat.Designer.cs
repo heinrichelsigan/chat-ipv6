@@ -94,13 +94,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             RichTextBoxChat = new RichTextBox();
             PanelDestination = new Panel();
             peerServerSwitchControl1 = new Controls.PeerServerSwitchControl();
+            ButtonSend = new Button();
             attachmentListControl = new Controls.AttachmentListControl(components);
+            ButtonAttach = new Button();
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
-            ButtonAttach = new Button();
             ButtonClear = new Button();
-            ButtonSend = new Button();
             StripMenu.SuspendLayout();
             StripStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
@@ -625,6 +625,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PictureBoxYou.Name = "PictureBoxYou";
             PictureBoxYou.Padding = new Padding(1);
             PictureBoxYou.Size = new Size(155, 155);
+            PictureBoxYou.SizeMode = PictureBoxSizeMode.StretchImage;
             PictureBoxYou.TabIndex = 71;
             PictureBoxYou.TabStop = false;
             // 
@@ -772,6 +773,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             peerServerSwitchControl1.Size = new Size(152, 56);
             peerServerSwitchControl1.TabIndex = 84;
             // 
+            // ButtonSend
+            // 
+            ButtonSend.Location = new Point(7, 565);
+            ButtonSend.Margin = new Padding(2);
+            ButtonSend.Name = "ButtonSend";
+            ButtonSend.Padding = new Padding(1);
+            ButtonSend.Size = new Size(155, 35);
+            ButtonSend.TabIndex = 83;
+            ButtonSend.Text = "Send";
+            ButtonSend.UseVisualStyleBackColor = true;
+            ButtonSend.Click += ButtonSend_Click;
+            // 
             // attachmentListControl
             // 
             attachmentListControl.AllowDrop = true;
@@ -782,6 +795,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             attachmentListControl.Name = "attachmentListControl";
             attachmentListControl.Size = new Size(160, 292);
             attachmentListControl.TabIndex = 83;
+            // 
+            // ButtonAttach
+            // 
+            ButtonAttach.Location = new Point(8, 523);
+            ButtonAttach.Margin = new Padding(2);
+            ButtonAttach.Name = "ButtonAttach";
+            ButtonAttach.Padding = new Padding(1);
+            ButtonAttach.Size = new Size(154, 35);
+            ButtonAttach.TabIndex = 82;
+            ButtonAttach.Text = "Attach";
+            ButtonAttach.UseVisualStyleBackColor = true;
+            ButtonAttach.Click += ButtonAttach_Click;
             // 
             // PanelCenter
             // 
@@ -817,18 +842,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelBottom.Size = new Size(824, 136);
             PanelBottom.TabIndex = 40;
             // 
-            // ButtonAttach
-            // 
-            ButtonAttach.Location = new Point(8, 523);
-            ButtonAttach.Margin = new Padding(2);
-            ButtonAttach.Name = "ButtonAttach";
-            ButtonAttach.Padding = new Padding(1);
-            ButtonAttach.Size = new Size(154, 35);
-            ButtonAttach.TabIndex = 82;
-            ButtonAttach.Text = "Attach";
-            ButtonAttach.UseVisualStyleBackColor = true;
-            ButtonAttach.Click += ButtonAttach_Click;
-            // 
             // ButtonClear
             // 
             ButtonClear.Location = new Point(834, 641);
@@ -840,18 +853,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonClear.Text = "Clear";
             ButtonClear.UseVisualStyleBackColor = true;
             ButtonClear.Click += ButtonClear_Click;
-            // 
-            // ButtonSend
-            // 
-            ButtonSend.Location = new Point(7, 565);
-            ButtonSend.Margin = new Padding(2);
-            ButtonSend.Name = "ButtonSend";
-            ButtonSend.Padding = new Padding(1);
-            ButtonSend.Size = new Size(155, 35);
-            ButtonSend.TabIndex = 83;
-            ButtonSend.Text = "Send";
-            ButtonSend.UseVisualStyleBackColor = true;
-            ButtonSend.Click += ButtonSend_Click;
             // 
             // RichTextChat
             // 

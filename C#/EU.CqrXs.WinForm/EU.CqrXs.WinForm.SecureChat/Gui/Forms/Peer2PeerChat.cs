@@ -151,7 +151,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 if (bmp == null)
                     bmp = Properties.fr.Resources.DefaultF45;                
             }
-            this.PictureBoxYou.Image = bmp;
+            this.PictureBoxYou.Image = bmp;            
             
             AddContactsToIpContact();
             

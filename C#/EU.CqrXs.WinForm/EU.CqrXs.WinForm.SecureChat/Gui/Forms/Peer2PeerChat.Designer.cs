@@ -130,6 +130,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // PictureBoxYou
             // 
             PictureBoxYou.BackgroundImageLayout = ImageLayout.Stretch;
+            PictureBoxYou.SizeMode = PictureBoxSizeMode.StretchImage;
             PictureBoxYou.Location = new Point(10, 56);
             PictureBoxYou.Margin = new Padding(1);
             PictureBoxYou.Name = "PictureBoxYou";
