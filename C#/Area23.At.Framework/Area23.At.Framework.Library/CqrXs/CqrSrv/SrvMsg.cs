@@ -154,8 +154,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             byte[] cqrMsgBytes = msgBytes;
             if (LibPaths.CqrEncrypt)
                 cqrMsgBytes = (msgKind == MsgKind.Server) ?
-                    symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) :
-                    symmPipe.MerryGoRoundEncrpyt(msgBytes, cKey, cHash);
+                    symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash, fishOnAesEngine) :
+                    symmPipe.MerryGoRoundEncrpyt(msgBytes, cKey, cHash, fishOnAesEngine);
 
             CqrMessage = DeEnCoder.EncodeBytes(cqrMsgBytes, encType);
 

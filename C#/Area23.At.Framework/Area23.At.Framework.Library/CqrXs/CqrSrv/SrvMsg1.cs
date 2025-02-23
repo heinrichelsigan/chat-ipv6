@@ -53,6 +53,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             byte[] allBytes = DeEnCoder.GetBytesFromString(allMsg);
             byte[] msgBytes = DeEnCoder.GetBytesFromString(MsgContact._message);
             byte[] cqrMsgBytes = (LibPaths.CqrEncrypt) ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
+                symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash, fishOnAesEngine);
             CqrMessage = DeEnCoder.EncodeBytes(cqrMsgBytes, encType);
 
             return CqrBaseMsg(MsgContact, encType);
