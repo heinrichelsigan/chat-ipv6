@@ -36,10 +36,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     Fish2.Fish2GenWithKeyHash(secretKey, hashIv, true);
                     encryptBytes = Fish2.Encrypt(inBytes);
                     break;
-                case SymmCipherEnum.Fish3:
-                    Fish3.Fish3GenWithKeyHash(secretKey, hashIv, true);
-                    encryptBytes = Fish3.Encrypt(inBytes);
-                    break;
+                //case SymmCipherEnum.Fish3:
+                //    Fish3.Fish3GenWithKeyHash(secretKey, hashIv, true);
+                //    encryptBytes = Fish3.Encrypt(inBytes);
+                //    break;
                 //case SymmCipherEnum.Rijndael:
                 //    Rijndael.RijndaelGenWithNewKey(secretKey, hashIv, true);
                 //    encryptBytes = Rijndael.Encrypt(inBytes);
@@ -54,7 +54,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     break;
                 case SymmCipherEnum.BlowFish:
                 // case SymmCipherEnum.Fish2:
-                // case SymmCipherEnum.Fish3:
+                case SymmCipherEnum.Fish3:
                 case SymmCipherEnum.Camellia:
                 case SymmCipherEnum.Cast6:
                 case SymmCipherEnum.Gost28147:
@@ -108,10 +108,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     sameKey = Fish2.Fish2GenWithKeyHash(secretKey, hashIv, true);
                     decryptBytes = Fish2.Decrypt(cipherBytes);
                     break;
-                case SymmCipherEnum.Fish3:
-                    sameKey = Fish3.Fish3GenWithKeyHash(secretKey, hashIv, true);
-                    decryptBytes = Fish3.Decrypt(cipherBytes);
-                    break;
+                //case SymmCipherEnum.Fish3:
+                //    sameKey = Fish3.Fish3GenWithKeyHash(secretKey, hashIv, true);
+                //    decryptBytes = Fish3.Decrypt(cipherBytes);
+                //    break;
                 //case SymmCipherEnum.Rijndael:
                 //    sameKey = Rijndael.RijndaelGenWithNewKey(secretKey, hashIv, true);
                 //    decryptBytes = Rijndael.Decrypt(cipherBytes);
@@ -126,7 +126,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     break;
                 case SymmCipherEnum.BlowFish:
                 // case SymmCipherEnum.Fish2:
-                // case SymmCipherEnum.Fish3:
+                case SymmCipherEnum.Fish3:
                 case SymmCipherEnum.Camellia:
                 case SymmCipherEnum.Cast6:
                 case SymmCipherEnum.Gost28147:

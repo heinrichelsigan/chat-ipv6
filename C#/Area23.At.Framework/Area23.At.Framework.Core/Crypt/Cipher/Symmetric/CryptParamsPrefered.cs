@@ -25,7 +25,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// for parameter <see cref="Cipher"/>
         /// </summary>
         /// <param name="cipherAlgo"><see cref="SymmCipherEnum"/></param>
-        public CryptParamsPrefered(SymmCipherEnum cipherAlgo)
+        public CryptParamsPrefered(SymmCipherEnum cipherAlgo, bool fishOnAesEngine = false)
         {
             SymmCipher = cipherAlgo;
             switch (cipherAlgo)
@@ -42,12 +42,13 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.TwofishEngine();
                     break;
-                //case SymmCipherEnum.Fish3:
-                //    BlockSize = 256;
-                //    KeyLen = 32;
-                //    Mode = "ECB";
-                //    BlockCipher = new Org.BouncyCastle.Crypto.Engines.ThreefishEngine(BlockSize);
-                //    break;
+                case SymmCipherEnum.Fish3:
+                    BlockSize = 256;
+                    KeyLen = 32;
+                    Mode = "ECB";
+                    BlockCipher = (fishOnAesEngine) ? new Org.BouncyCastle.Crypto.Engines.AesEngine()
+                        : new Org.BouncyCastle.Crypto.Engines.ThreefishEngine(BlockSize);                        
+                    break;
                 case SymmCipherEnum.Camellia:
                     BlockSize = 128;
                     KeyLen = 16;
@@ -133,7 +134,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// for parameter <see cref="Cipher"/>
         /// </summary>
         /// <param name="cipherAlgo"><see cref="SymmCipherEnum"/></param>
-        public CryptParamsPrefered(SymmCipherEnum cipherAlgo, string key, string hash) : this(cipherAlgo)
+        public CryptParamsPrefered(SymmCipherEnum cipherAlgo, string key, string hash, bool fishOnAesEngine = false) 
+            : this(cipherAlgo, fishOnAesEngine)
         {
             SymmCipher = cipherAlgo;
             Key = key;
@@ -145,14 +147,14 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// </summary>
         /// <param name="cipherAlgo"><see cref="SymmCipherEnum"/></param>
         /// <returns><see cref="CryptParamsPrefered"/></returns>
-        public static CryptParamsPrefered RequestPreferedAlgorithm(SymmCipherEnum cipherAlgo)
+        public static CryptParamsPrefered RequestPreferedAlgorithm(SymmCipherEnum cipherAlgo, bool fishOnAesEngine = false)
         {
-            return new CryptParamsPrefered(cipherAlgo);
+            return new CryptParamsPrefered(cipherAlgo, fishOnAesEngine);
         }
 
-        public static IBlockCipher GetCryptParams(SymmCipherEnum cipherAlgo)
+        public static IBlockCipher GetCryptParams(SymmCipherEnum cipherAlgo, bool fishOnAesEngine = false)
         {
-            return new CryptParamsPrefered(cipherAlgo).BlockCipher;
+            return new CryptParamsPrefered(cipherAlgo, fishOnAesEngine).BlockCipher;
         }
 
     }

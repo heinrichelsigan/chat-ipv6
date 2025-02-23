@@ -90,6 +90,7 @@ namespace Area23.At.Framework.Library
         public const string CQRXS_URL = "https://cqrxs.eu/";
         public const string CQRXS_HELP_URL = "https://cqrxs.eu/help/";
         public const string CQRXS_SERVICE_URL = "https://cqrxs.eu/cqrxs/cqrjd/";
+        public const string FISH_ON_AES_ENGINE = "FishOnAesEngine";
 
         public const string ACK = "Ack";
         public const string NACK = "Nack";

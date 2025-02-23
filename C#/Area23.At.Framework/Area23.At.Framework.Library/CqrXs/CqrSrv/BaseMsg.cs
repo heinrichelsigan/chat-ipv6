@@ -26,7 +26,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         protected internal bool _isMimeAttachment = false;
 
         protected internal readonly SymmCipherPipe symmPipe;
-
+        protected internal static bool fishOnAesEngine = false;
 
         public string PipeString { get; internal set; }
 
@@ -44,6 +44,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             {
                 throw new ArgumentNullException("public BaseMsg(string srvKey = \"\")");
             }
+            fishOnAesEngine = (AppDomain.CurrentDomain.GetData(Constants.FISH_ON_AES_ENGINE) == null) ? false
+               : fishOnAesEngine = Convert.ToBoolean(AppDomain.CurrentDomain.GetData(Constants.FISH_ON_AES_ENGINE));
+
             key = srvKey;
             hash = DeEnCoder.KeyToHex(srvKey);
             keyBytes = CryptHelper.GetUserKeyBytes(key, hash, 16);
@@ -104,6 +107,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
                     msgBytes = DeEnCoder.GetBytesFromString(msc.RawMessage);
             }
             byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
+
             CqrMessage = DeEnCoder.EncodeBytes(cqrbytes, encType);
 
             return CqrMessage;
@@ -127,6 +131,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             byte[] msgBytes = DeEnCoder.GetBytesFromString(mimeMsg);
 
             byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
+
             CqrMessage = DeEnCoder.EncodeBytes(cqrbytes, encType);
 
             return CqrMessage;
@@ -140,18 +145,21 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         /// <returns>MsgContent Message plain text decrypted string</returns>
         /// <exception cref="InvalidOperationException">will be thrown, 
         /// if server and client or both side use a different secret key 4 encryption</exception>
-        public virtual MsgContent NCqrBaseMsg(string cqrMessage, EncodingType encType = EncodingType.Base64)
+        public virtual MsgContent NCqrBaseMsg(string cqrMessage, EncodingType encType = EncodingType.Base64, bool fishOnAes = false)
         {
+            if (fishOnAes) fishOnAesEngine = true;
+            
             CqrMessage = cqrMessage.TrimEnd("\0".ToCharArray());
+            byte[] cipherBytes = DeEnCoder.DecodeText(CqrMessage, encType);            
+            byte[] unroundedMerryBytes = (!LibPaths.CqrEncrypt) ? cipherBytes :
+                symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash, fishOnAesEngine);
 
-            byte[] cipherBytes = DeEnCoder.DecodeText(CqrMessage, encType);
-            byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash) : cipherBytes;
             string decrypted = EnDeCoder.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
-            while (decrypted[decrypted.Length - 1] == '\0')
-                decrypted = decrypted.Substring(0, decrypted.Length - 1);
-
+            while (decrypted[decrypted.Length - 1] == '\0') decrypted = decrypted.Substring(0, decrypted.Length - 1);
+            
             MsgEnum msgEnum = (decrypted.IsValidJson()) ? MsgEnum.JsonSerialized : MsgEnum.RawWithHashAtEnd;
-            MsgContent msgContent = new MsgContent(decrypted, msgEnum);
+
+            MsgContent msgContent = new MsgContent(decrypted, msgEnum);            
             string hashVerification = msgContent.Hash;
             bool verified = VerifyHash(hashVerification, symmPipe.PipeString);
             if (!verified)

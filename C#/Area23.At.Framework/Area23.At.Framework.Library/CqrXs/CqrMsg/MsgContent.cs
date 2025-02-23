@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Library.Util;
+﻿using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
+using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -192,8 +193,15 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                 // _hash = _rawMessage.Substring(0, _rawMessage.IndexOf(";\n"));
             }
 
-            if (_hash.Length > 4 && _rawMessage.Substring(_rawMessage.Length - _hash.Length).Equals(_hash, StringComparison.InvariantCulture))
-                msg = _rawMessage.Substring(0, _rawMessage.Length - _hash.Length);
+            try
+            {
+                if (_hash.Length > 4 && _rawMessage.Substring(_rawMessage.Length - _hash.Length).Equals(_hash, StringComparison.InvariantCulture))
+                    msg = _rawMessage.Substring(0, _rawMessage.Length - _hash.Length);
+            } catch (Exception exHash)
+            {
+                Area23Log.LogStatic("Couldn't verify hash, it's most an encryption bug in Aes pipe cycle: " + exHash.Message);
+                throw new FishRequiresAesEngineException("hash verification isn't possible, because of 1st bug, wrong crypto engine", exHash);
+            }
 
             return _hash ?? string.Empty;
         }

@@ -102,18 +102,25 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 {
                     if (!string.IsNullOrEmpty(rq) && rq.Length >= 8)
                     {
-                        myContact = srv1stMsg.NCqrSrvMsg1(rq);
-                        decrypted = myContact.ToJson();
+                        AppDomain.CurrentDomain.SetData(Constants.FISH_ON_AES_ENGINE, true);
+                        myContact = srv1stMsg.NCqrSrvMsg1(rq, Area23.At.Framework.Library.Crypt.EnDeCoding.EncodingType.Base64, true);
+                        decrypted = $"<textarea name=TextBoxDecrypted>\r\nThank you Mr./Mrs. for registration {myContact.Name} [{myContact.Email}],\r\n";
+
                         Area23Log.LogStatic("Contact.ToJson(): " + decrypted);
                     }
                 }
                 catch (Exception ex) 
                 {
                     CqrException.SetLastException(ex);
+                    decrypted = $"<textarea name=TextBoxDecrypted>\r\nThank you Mr./Mrs. for registration,\r\n";
                     this.preOut.InnerText = ex.Message + ex.ToString();
                     Area23Log.LogStatic(ex);
                 }
-
+                
+                decrypted += "\n\r\nPlease wait until 5.Mars 2025 on next version\r\n and download new client then from https://cqrxs.eu/, \n\r\n";
+                decrypted += "\r\nCurrently 3-fish rides on AesEngine,\r\n which is not propper and will be fixed soonly!\r\n\r\n";
+                decrypted += "\r\nSincerly he,\r\n have a nice day!\r\n\r\n</textarea>\r\n";
+                this.TextBoxDecrypted.Text = decrypted;
 
                 if (!string.IsNullOrEmpty(decrypted) && myContact != null && !string.IsNullOrEmpty(myContact.NameEmail))
                 {
@@ -153,8 +160,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     
                     SaveJsonContacts(_contacts);
                 }
-                
-                this.TextBoxDecrypted.Text = decrypted;
+                                
 
                 if ((string)Application["lastall"] != null)
                     this.preLast.InnerText = (string)Application["lastall"];

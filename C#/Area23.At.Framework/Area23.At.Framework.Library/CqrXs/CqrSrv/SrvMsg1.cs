@@ -52,8 +52,10 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 
             byte[] allBytes = DeEnCoder.GetBytesFromString(allMsg);
             byte[] msgBytes = DeEnCoder.GetBytesFromString(MsgContact._message);
+
             byte[] cqrMsgBytes = (LibPaths.CqrEncrypt) ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
-                symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash, fishOnAesEngine);
+                
+            
             CqrMessage = DeEnCoder.EncodeBytes(cqrMsgBytes, encType);
 
             return CqrBaseMsg(MsgContact, encType);
@@ -69,10 +71,11 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         /// <returns><see cref="CqrContact"/>CqrContact decrypted string</returns>
         /// <exception cref="InvalidOperationException">will be thrown, 
         /// if server and client or both side use a different secret key 4 encryption</exception>
-        public CqrContact NCqrSrvMsg1(string cqrMessage, EncodingType encType = EncodingType.Base64)
+        public CqrContact NCqrSrvMsg1(string cqrMessage, EncodingType encType = EncodingType.Base64, bool fishOnAes = false)
         {
+            if (fishOnAes) fishOnAesEngine = true;
             CqrContact myContact = null;
-            MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType);
+            MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType, fishOnAesEngine);
             if (msgContent != null && !string.IsNullOrEmpty(msgContent.Message))
                 myContact = JsonConvert.DeserializeObject<CqrContact>(msgContent.Message);
 
