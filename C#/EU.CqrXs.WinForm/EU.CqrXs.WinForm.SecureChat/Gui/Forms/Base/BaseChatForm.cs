@@ -14,9 +14,8 @@ using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
 using NLog.Targets.Wrappers;
 using System.Windows.Controls;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
-using static System.Windows.Forms.MonthCalendar;
+// using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+// using static System.Windows.Forms.MonthCalendar;
 using Org.BouncyCastle.Utilities;
 using System.Drawing.Imaging;
 
@@ -413,7 +412,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
             return;
         }
 
-
+        /// <summary>
+        /// ClearRichText thread save accessor
+        /// </summary>
+        /// <param name="richTextBox"></param>
+        /// <param name="clear"></param>
         internal void ClearRichText(System.Windows.Forms.RichTextBox richTextBox, bool clear = true)
         {
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
@@ -1318,7 +1321,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
         {
             if (Application.OpenForms.Count < 2)
             {
-                AppCloseAllFormsExit();
+                AppCloseAllFormsExit(sender, e);
                 return;
             }
             try
@@ -1352,14 +1355,53 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
         /// <param name="e">EventArgs e</param>
         protected virtual void MenuFileItemExit_Click(object sender, EventArgs e)
         {
-            AppCloseAllFormsExit();
+            AppCloseAllFormsExit(sender, e);
+        }
+
+
+        protected virtual void DeleteAllAttachmentAndChatsBeforeExit(object sender, EventArgs e)
+        {
+            if ((AppDomain.CurrentDomain.GetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE) != null) && 
+                    (Convert.ToBoolean(AppDomain.CurrentDomain.GetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE))))
+            {
+                if (Directory.Exists(LibPaths.AttachmentFilesDir))
+                {
+                    string[] entries = Directory.GetFileSystemEntries(LibPaths.AttachmentFilesDir);
+                    if (entries != null && entries.Length > 0)
+                    {
+                        DialogResult mResult =
+                            MessageBox.Show($"There are {entries.Length} entries in {LibPaths.AttachmentFilesDir}.\n" +
+                            "You want to clear them before exit?\n", "Clear attachment and chats?",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
+                        if (mResult == DialogResult.Yes)
+                        {
+                            entries = Directory.GetDirectories(LibPaths.AttachmentFilesDir);
+                            for (int d = 0; d < ((entries != null) ? entries.Length : 0); d++)
+                                try
+                                {
+                                    Directory.Delete(entries[d], true);
+                                }
+                                catch { }
+                            entries = Directory.GetFiles(LibPaths.AttachmentFilesDir);
+                            for (int f = 0; f < ((entries != null) ? entries.Length : 0); f++)
+                                try
+                                {
+                                    File.Delete(entries[f]);
+                                }
+                                catch { }
+                        }
+                    }
+                }
+            }
+
+        
         }
 
         /// <summary>
         /// AppCloseAllFormsExit closes all open forms and exit and finally unlocks Mutex
         /// </summary>
         /// <exception cref="ApplicationException"></exception>
-        internal virtual void AppCloseAllFormsExit()
+        internal virtual void AppCloseAllFormsExit(object sender, EventArgs e)
         {
             string settingsNotSavedReason = string.Empty;
             try
@@ -1377,8 +1419,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms.Base
             if (!string.IsNullOrEmpty(settingsNotSavedReason))
                 MessageBox.Show(settingsNotSavedReason, "Couldn't save chat settings", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            if (CqrException.LastException != null) // TODO: Remove this
-                MessageBox.Show(CqrException.LastException.ToString(), CqrException.LastException.Message, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            DeleteAllAttachmentAndChatsBeforeExit(sender, e);
+            // if (CqrException.LastException != null) // TODO: Remove this
+            // MessageBox.Show(CqrException.LastException.ToString(), CqrException.LastException.Message, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             int openForms = Application.OpenForms.Count;
             if (openForms > 1)

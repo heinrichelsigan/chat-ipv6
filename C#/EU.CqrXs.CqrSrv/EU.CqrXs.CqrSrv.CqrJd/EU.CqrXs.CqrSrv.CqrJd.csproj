@@ -186,7 +186,6 @@
     <Content Include="ImageFontControl.ascx" />
     <Content Include="R.aspx" />
     <None Include="log\20240324_Area23.At.Mono.log" />
-    <Content Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
     <Content Include="Qr\2024-03-24_19_18__894.png" />
     <Content Include="res\css\area23.at.mono.css" />
     <Content Include="res\css\fortune.css" />

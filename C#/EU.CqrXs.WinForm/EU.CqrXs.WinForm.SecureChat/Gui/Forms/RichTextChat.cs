@@ -157,13 +157,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             this.StripProgressBar.Value = 50;
 
+            Bitmap? bmp = Properties.fr.Resources.DefaultF40;
             if (Entities.Settings.Singleton != null && Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null &&
                 !string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
-                Bitmap? bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
-                if (bmp != null)
-                    this.PictureBoxYou.Image = bmp;
+                bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
+                if (bmp == null)
+                    bmp = Properties.fr.Resources.DefaultF40;                
             }
+            this.PictureBoxYou.Image = bmp;
+
 
             AddContactsToIpContact();
             this.StripProgressBar.Value = 70;
@@ -1101,25 +1104,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             contactSettings.ShowInTaskbar = true;
             contactSettings.ShowDialog();
 
+            Bitmap? bmp = Properties.fr.Resources.DefaultF40;
             if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
                 try
                 {
-                    Bitmap? bmp = Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
-                    if (bmp != null)
-                        this.PictureBoxYou.Image = bmp;
-
-                    Settings.SaveSettings(Settings.Singleton);
+                    bmp = Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
+                    if (bmp == null)
+                        bmp = Properties.fr.Resources.DefaultF40;
+                    else 
+                        Settings.SaveSettings(Settings.Singleton);
                 }
                 catch (Exception exBmp)
                 {
                     CqrException.SetLastException(exBmp);
                 }
-
-                // var badge = new TransparentBadge("My contact added!");
-                // badge.ShowDialog();
             }
-
+            this.PictureBoxYou.Image = bmp;
         }
 
         private void MenuItemAddContact_Click(object sender, EventArgs e)

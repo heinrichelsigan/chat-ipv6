@@ -92,15 +92,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             TextBoxPipe = new TextBox();
             RichTextBoxChat = new RichTextBox();
             PanelDestination = new Panel();
+            ButtonClear = new Button();
             peerServerSwitchControl1 = new Controls.PeerServerSwitchControl();
+            ButtonSend = new Button();
             attachmentListControl = new Controls.AttachmentListControl(components);
+            ButtonAttach = new Button();
             dragnDropGroupBox = new Controls.DragNDropGroupBox(components);
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
-            ButtonAttach = new Button();
-            ButtonClear = new Button();
-            ButtonSend = new Button();
             StripMenu.SuspendLayout();
             StripStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
@@ -450,6 +450,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             MenuOptionsItemClearAllOnClose.Size = new Size(335, 22);
             MenuOptionsItemClearAllOnClose.Text = "✂␡ all chats, 📁attachments on close";
             MenuOptionsItemClearAllOnClose.ToolTipText = "When closing this application, ␡ all chats, saved 📁attachments and private 🔑keys";
+            MenuOptionsItemClearAllOnClose.Click += MenuOptionsItemClearAllOnClose_Click;
             // 
             // MenuOptionsItemDontSendProfilePictures
             // 
@@ -761,6 +762,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelDestination.Size = new Size(168, 653);
             PanelDestination.TabIndex = 70;
             // 
+            // ButtonClear
+            // 
+            ButtonClear.Location = new Point(7, 616);
+            ButtonClear.Margin = new Padding(1);
+            ButtonClear.Name = "ButtonClear";
+            ButtonClear.Padding = new Padding(1);
+            ButtonClear.Size = new Size(155, 32);
+            ButtonClear.TabIndex = 84;
+            ButtonClear.Text = "Clear";
+            ButtonClear.UseVisualStyleBackColor = true;
+            ButtonClear.Click += ButtonClear_Click;
+            // 
             // peerServerSwitchControl1
             // 
             peerServerSwitchControl1.AllowDrop = true;
@@ -774,6 +787,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             peerServerSwitchControl1.Size = new Size(152, 48);
             peerServerSwitchControl1.TabIndex = 84;
             // 
+            // ButtonSend
+            // 
+            ButtonSend.Location = new Point(8, 575);
+            ButtonSend.Margin = new Padding(1);
+            ButtonSend.Name = "ButtonSend";
+            ButtonSend.Padding = new Padding(1);
+            ButtonSend.Size = new Size(154, 35);
+            ButtonSend.TabIndex = 83;
+            ButtonSend.Text = "Send";
+            ButtonSend.UseVisualStyleBackColor = true;
+            ButtonSend.Click += ButtonSend_Click;
+            // 
             // attachmentListControl
             // 
             attachmentListControl.AllowDrop = true;
@@ -784,6 +809,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             attachmentListControl.Name = "attachmentListControl";
             attachmentListControl.Size = new Size(160, 256);
             attachmentListControl.TabIndex = 83;
+            // 
+            // ButtonAttach
+            // 
+            ButtonAttach.Location = new Point(8, 538);
+            ButtonAttach.Margin = new Padding(1);
+            ButtonAttach.Name = "ButtonAttach";
+            ButtonAttach.Padding = new Padding(1);
+            ButtonAttach.Size = new Size(154, 33);
+            ButtonAttach.TabIndex = 82;
+            ButtonAttach.Text = "Attach";
+            ButtonAttach.UseVisualStyleBackColor = true;
+            ButtonAttach.Click += ButtonAttach_Click;
             // 
             // dragnDropGroupBox
             // 
@@ -833,42 +870,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelBottom.Name = "PanelBottom";
             PanelBottom.Size = new Size(824, 136);
             PanelBottom.TabIndex = 40;
-            // 
-            // ButtonAttach
-            // 
-            ButtonAttach.Location = new Point(8, 538);
-            ButtonAttach.Margin = new Padding(1);
-            ButtonAttach.Name = "ButtonAttach";
-            ButtonAttach.Padding = new Padding(1);
-            ButtonAttach.Size = new Size(154, 33);
-            ButtonAttach.TabIndex = 82;
-            ButtonAttach.Text = "Attach";
-            ButtonAttach.UseVisualStyleBackColor = true;
-            ButtonAttach.Click += ButtonAttach_Click;
-            // 
-            // ButtonClear
-            // 
-            ButtonClear.Location = new Point(7, 616);
-            ButtonClear.Margin = new Padding(1);
-            ButtonClear.Name = "ButtonClear";
-            ButtonClear.Padding = new Padding(1);
-            ButtonClear.Size = new Size(155, 32);
-            ButtonClear.TabIndex = 84;
-            ButtonClear.Text = "Clear";
-            ButtonClear.UseVisualStyleBackColor = true;
-            ButtonClear.Click += ButtonClear_Click;
-            // 
-            // ButtonSend
-            // 
-            ButtonSend.Location = new Point(8, 575);
-            ButtonSend.Margin = new Padding(1);
-            ButtonSend.Name = "ButtonSend";
-            ButtonSend.Padding = new Padding(1);
-            ButtonSend.Size = new Size(154, 35);
-            ButtonSend.TabIndex = 83;
-            ButtonSend.Text = "Send";
-            ButtonSend.UseVisualStyleBackColor = true;
-            ButtonSend.Click += ButtonSend_Click;
             // 
             // SecureChat
             // 

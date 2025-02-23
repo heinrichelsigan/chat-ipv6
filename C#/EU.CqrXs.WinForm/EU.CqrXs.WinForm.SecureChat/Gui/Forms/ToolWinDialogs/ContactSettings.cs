@@ -22,9 +22,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         public ContactSettings()
         {
             InitializeComponent();
+            pictureBoxImage.Image = null;
             using (MemoryStream memoryStream = new MemoryStream(Resources.ClickToUpload))
-            {
-                pictureBoxImage.Image = new Bitmap(memoryStream);
+            {                
+                pictureBoxImage.BackgroundImage = new Bitmap(memoryStream);
             }
             using (MemoryStream ms = new MemoryStream(Resources.WinFormAboutDialog))
             {
@@ -102,7 +103,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             contact.Email = this.textBoxEmail.Text ?? string.Empty; //
                             contact.Mobile = this.textBoxMobile.Text ?? string.Empty; //
                             contact.Address = this.textBoxAddress.Text ?? string.Empty;
-                            contact.ContactImage = CqrImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString());
+                            if (pictureBoxImage.Image != null)    
+                                contact.ContactImage = CqrImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString());
 
                             foundContact = true;
                             break;
@@ -141,7 +143,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 CqrImage? imgTest = null;
                 try
                 {
-                    imgTest = CqrImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString());
+                    if (pictureBoxImage.Image != null)
+                        imgTest = CqrImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString());
                 }
                 catch (Exception exi)
                 {
@@ -209,7 +212,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             pictureBoxImage.Tag = $"ClickToUpload{contact.ContactId}.png";
                             using (MemoryStream memoryStream = new MemoryStream(Resources.ClickToUpload))
                             {
-                                pictureBoxImage.Image = new Bitmap(memoryStream);
+                                pictureBoxImage.Image = null;
+                                pictureBoxImage.BackgroundImage = new Bitmap(memoryStream);
                             }
                         }
                     }

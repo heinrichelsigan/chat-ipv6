@@ -69,10 +69,6 @@ namespace EU.CqrXs.WinForm.SecureChat
             Application.SetHighDpiMode(HighDpiMode.DpiUnawareGdiScaled);
             ApplicationConfiguration.Initialize();
 
-            // if (mode % 2 == 0)
-            //     newChat = (Form)(new Gui.Forms.Peer2PeerChat());
-            // else
-
             switch (startFormSwitch)
             {
                 case "peer":
@@ -84,6 +80,7 @@ namespace EU.CqrXs.WinForm.SecureChat
                     Gui.Forms.RichTextChat richTextChat = new Gui.Forms.RichTextChat();
                     Application.Run(richTextChat);
                     break;
+
                 case "secure":
                 default:
                     Gui.Forms.SecureChat secureChat = new Gui.Forms.SecureChat();

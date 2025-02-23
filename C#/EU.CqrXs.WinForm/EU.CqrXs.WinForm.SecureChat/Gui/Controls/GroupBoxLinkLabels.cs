@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Microsoft.AspNetCore.Components;
 
 namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 {

@@ -142,16 +142,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             await SetupNetwork();
             this.StripProgressBar.Value = 50;
-
+            
+            Bitmap? bmp = Properties.fr.Resources.DefaultF40;
             if (Entities.Settings.Singleton != null && Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null &&
                 !string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
-                Bitmap? bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
-                if (bmp != null)
-                    this.PictureBoxYou.Image = bmp;
+                bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
+                if (bmp == null)
+                    bmp = Properties.fr.Resources.DefaultF40;                
             }
-
+            this.PictureBoxYou.Image = bmp;
+            
             AddContactsToIpContact();
+            
             this.StripProgressBar.Value = 70;
 
             if (send1stReg)
@@ -1038,27 +1041,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         /// <param name="e"></param>
         protected internal override void MenuContactsItemMyContact_Click(object sender, EventArgs e)
         {
-            Bitmap? bmp = null;
             ContactSettings contactSettings = new ContactSettings("My Contact Info", 0);
             contactSettings.ShowInTaskbar = true;
             contactSettings.ShowDialog();
 
+            Bitmap? bmp = Properties.fr.Resources.DefaultF40;
             if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
                 try
                 {
                     bmp = Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
-                    if (bmp != null)
-                        this.PictureBoxYou.Image = bmp;                    
+                    if (bmp == null)
+                        bmp = Properties.fr.Resources.DefaultF40;
                 }
                 catch (Exception exBmp)
                 {
                     CqrException.SetLastException(exBmp);
                 }
-
                 Settings.SaveSettings(Settings.Singleton);
             }
-
+            this.PictureBoxYou.Image = bmp;
         }
 
         #endregion Contacts
