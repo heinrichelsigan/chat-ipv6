@@ -45,7 +45,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
         /// <returns>CryptParams</returns>
         public static CryptParams GetCryptParams(CipherEnum cipherAlgo)
         {
-            return new CryptParams(cipherAlgo);           
+            return new CryptParams(cipherAlgo);
         }
 
 
@@ -60,9 +60,9 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
         /// </summary>
         /// <param name="symmCipherAlgo">symmetric prefered alogorithm to chipher</param>
         /// <returns><see cref="IBlockCipher"/></returns>
-        public static IBlockCipher GetPreferedBlockCipher(SymmCipherEnum symmCipherAlgo, bool fishOnAesEngine = false)
+        public static IBlockCipher GetPreferedBlockCipher(SymmCipherEnum symmCipherAlgo)
         {
-            CryptParamsPrefered cryptParamsPrefered = new CryptParamsPrefered(symmCipherAlgo, fishOnAesEngine);
+            CryptParamsPrefered cryptParamsPrefered = new CryptParamsPrefered(symmCipherAlgo);
             return cryptParamsPrefered.BlockCipher;
         }
 
@@ -117,7 +117,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
             // instead of using Constants.AUTHOR_EMAIL & Constants.AUTHOR_IV
             key = (string.IsNullOrEmpty(key)) ? Constants.AUTHOR_EMAIL : key;
             hash = (string.IsNullOrEmpty(hash)) ? Constants.AUTHOR_IV : hash;
-            
+
             byte[] keyBytes = EnDeCoder.GetBytes(key);
             byte[] hashBytes = EnDeCoder.GetBytes(hash);
 
@@ -155,7 +155,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
         /// <param name="keyLen">length of user key bytes, maximum length <see cref="Constants.MAX_KEY_LEN"/></param>
         /// <returns>Array of byte with length KeyLen</returns>
         public static byte[] GetUserKeyBytes(string key, string hash, int keyLen = 32)
-        {            
+        {
             // TODO: throw Exception, when secret key is null or empty,
             // instead of using Constants.AUTHOR_EMAIL & Constants.AUTHOR_IV
             key = (string.IsNullOrEmpty(key)) ? Constants.AUTHOR_EMAIL : key;

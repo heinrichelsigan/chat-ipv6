@@ -1012,16 +1012,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string iv = Constants.BC_START_MSG;
             byte[] keyBytes = CryptHelper.GetUserKeyBytes(privKey, iv, 16);
 
-            ZenMatrix.ZenMatrixGenWithBytes(keyBytes, true);
+            ZenMatrix zenM = new ZenMatrix(keyBytes, true);
+            // ZenMatrix.ZenMatrixGenWithBytes(keyBytes, true);
             TextBoxDestionation.Text = "| 0 | => | ";
-            foreach (sbyte sb in ZenMatrix.PermKeyHash)
+            foreach (sbyte sb in zenM.MatrixPermutationKey)
             {
                 TextBoxDestionation.Text += sb.ToString("x1") + " ";
             }
             TextBoxDestionation.Text += "| \r\n";
-            for (int zeni = 1; zeni < ZenMatrix.PermKeyHash.Count; zeni++)
+            for (int zeni = 1; zeni < zenM.PermutationKeyHash.Count; zeni++)
             {
-                sbyte sb = (sbyte)ZenMatrix.PermKeyHash.ElementAt(zeni);
+                sbyte sb = (sbyte)zenM.PermutationKeyHash.ElementAt(zeni);
                 TextBoxDestionation.Text += "| " + zeni.ToString("x1") + " | => | " + sb.ToString("x1") + " | " + "\r\n";
             }
             // this.TextBoxDestionation.Text += ZenMatrix.EncryptString(this.RichTextBoxChat.Text) + "\n";

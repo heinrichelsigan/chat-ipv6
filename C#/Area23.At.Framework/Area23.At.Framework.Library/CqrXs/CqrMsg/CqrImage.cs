@@ -161,18 +161,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
             return bmpImage;
         }
-
-        public static void SaveCqrImage(CqrImage image, string directoryPath)
-        {
-            if (!Directory.Exists(directoryPath))
-                throw new DirectoryNotFoundException($"Directory {directoryPath} could not be found.");
-
-            string saveFileName = Path.Combine(directoryPath, image.ImageFileName);
-            File.WriteAllBytes(saveFileName, image.ImageData);
-
-            return;
-        }
-
+        
         #endregion members
 
         #region static members
@@ -188,6 +177,17 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             CqrImage image = new CqrImage(fileName, data);
             return image;
 
+        }
+
+        public static void SaveCqrImage(CqrImage image, string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+                throw new DirectoryNotFoundException($"Directory {directoryPath} could not be found.");
+
+            string saveFileName = Path.Combine(directoryPath, image.ImageFileName);
+            File.WriteAllBytes(saveFileName, image.ImageData);
+
+            return;
         }
 
         public static Image ToDrawingImage(CqrImage cqrImage)
@@ -212,7 +212,6 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
             return (Image)bmpImage;
         }
-
 
         public static CqrImage FromDrawingImage(System.Drawing.Image image, string imgName = "")
         {

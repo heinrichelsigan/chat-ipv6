@@ -4,7 +4,6 @@ using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 {
 
-
     /// <summary>
     /// CryptParamsPrefered prefered params for symmetric block cipher
     /// </summary>
@@ -30,6 +29,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             SymmCipher = cipherAlgo;
             switch (cipherAlgo)
             {
+                case SymmCipherEnum.Aes:
+                    BlockSize = 256;
+                    KeyLen = 32;
+                    Mode = "ECB";
+                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.AesEngine();
+                    break;
                 case SymmCipherEnum.BlowFish:
                     BlockSize = 64;
                     KeyLen = 8;
@@ -46,8 +51,11 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     BlockSize = 256;
                     KeyLen = 32;
                     Mode = "ECB";
-                    BlockCipher = (fishOnAesEngine) ? new Org.BouncyCastle.Crypto.Engines.AesEngine()
-                        : new Org.BouncyCastle.Crypto.Engines.ThreefishEngine(BlockSize);                        
+                    // TODO: ugly hack because of 1st version bug
+                    if (fishOnAesEngine)
+                        BlockCipher = new Org.BouncyCastle.Crypto.Engines.AesEngine();
+                    else
+                        BlockCipher = new Org.BouncyCastle.Crypto.Engines.ThreefishEngine(BlockSize);
                     break;
                 case SymmCipherEnum.Camellia:
                     BlockSize = 128;
@@ -55,17 +63,17 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.CamelliaLightEngine();
                     break;
-                case SymmCipherEnum.RC532:
-                    BlockSize = 256;
-                    KeyLen = 32;
-                    Mode = "ECB";
-                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.RC532Engine();
-                    break;
                 case SymmCipherEnum.Cast6:
                     BlockSize = 256;
                     KeyLen = 32;
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.Cast6Engine();
+                    break;
+                case SymmCipherEnum.Des3:
+                    BlockSize = 128;
+                    KeyLen = 16;
+                    Mode = "ECB";
+                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.DesEdeEngine();
                     break;
                 case SymmCipherEnum.Gost28147:
                     BlockSize = 256;
@@ -78,6 +86,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     KeyLen = 32;
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.IdeaEngine();
+                    break;
+                case SymmCipherEnum.RC532:
+                    BlockSize = 256;
+                    KeyLen = 32;
+                    Mode = "ECB";
+                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.RC532Engine();
                     break;
                 //case "RC564":
                 //    BlockSize = 256;
@@ -115,7 +129,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.XteaEngine();
                     break;
-                case SymmCipherEnum.Aes:
                 default:
                     BlockSize = 256;
                     KeyLen = 32;
@@ -134,7 +147,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// for parameter <see cref="Cipher"/>
         /// </summary>
         /// <param name="cipherAlgo"><see cref="SymmCipherEnum"/></param>
-        public CryptParamsPrefered(SymmCipherEnum cipherAlgo, string key, string hash, bool fishOnAesEngine = false) 
+        public CryptParamsPrefered(SymmCipherEnum cipherAlgo, string key, string hash, bool fishOnAesEngine = false)
             : this(cipherAlgo, fishOnAesEngine)
         {
             SymmCipher = cipherAlgo;

@@ -29,6 +29,12 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             SymmCipher = cipherAlgo;
             switch (cipherAlgo)
             {
+                case SymmCipherEnum.Aes:
+                    BlockSize = 256;
+                    KeyLen = 32;
+                    Mode = "ECB";
+                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.AesEngine();
+                    break;
                 case SymmCipherEnum.BlowFish:
                     BlockSize = 64;
                     KeyLen = 8;
@@ -56,18 +62,18 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                     KeyLen = 16;
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.CamelliaLightEngine();
-                    break;
-                case SymmCipherEnum.RC532:
-                    BlockSize = 256;
-                    KeyLen = 32;
-                    Mode = "ECB";
-                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.RC532Engine();
-                    break;
+                    break;                
                 case SymmCipherEnum.Cast6:
                     BlockSize = 256;
                     KeyLen = 32;
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.Cast6Engine();
+                    break;
+                case SymmCipherEnum.Des3:
+                    BlockSize = 128;
+                    KeyLen = 16;
+                    Mode = "ECB";
+                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.DesEdeEngine();
                     break;
                 case SymmCipherEnum.Gost28147:
                     BlockSize = 256;
@@ -80,6 +86,12 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                     KeyLen = 32;
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.IdeaEngine();
+                    break;
+                case SymmCipherEnum.RC532:
+                    BlockSize = 256;
+                    KeyLen = 32;
+                    Mode = "ECB";
+                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.RC532Engine();
                     break;
                 //case "RC564":
                 //    BlockSize = 256;
@@ -117,7 +129,6 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.XteaEngine();
                     break;
-                case SymmCipherEnum.Aes:
                 default:
                     BlockSize = 256;
                     KeyLen = 32;

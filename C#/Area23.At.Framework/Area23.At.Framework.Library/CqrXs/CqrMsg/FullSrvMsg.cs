@@ -91,7 +91,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             return jsonText;
         }
 
-        public new FullSrvMsg<TC> FromJson(string jsonText)
+        public FullSrvMsg<TC> FromJson(string jsonText)
         {
             FullSrvMsg<TC> tc = JsonConvert.DeserializeObject<FullSrvMsg<TC>>(jsonText);
             try
