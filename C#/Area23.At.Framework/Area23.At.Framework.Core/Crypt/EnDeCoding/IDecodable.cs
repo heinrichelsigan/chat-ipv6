@@ -12,24 +12,25 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
     {
         IDecodable Decodable { get; }
 
-        public static HashSet<char>? ValidCharList { get; private set; } 
+        public static HashSet<char>? ValidCharList { get; private set; }
 
-        public string Encode(byte[] inBytes)
+        public virtual string EnCode(byte[] inBytes)
         {
             return Decodable.Encode(inBytes);
         }
 
-        public byte[] Decode(string encodedString)
+        public virtual byte[] DeCode(string encodedString) 
         {
             return Decodable.Decode(encodedString);
         }
 
-        public abstract static byte[] DeCode(string encodedString);
+        public abstract byte[] Decode(string encodedString);
 
+        public abstract string Encode(byte[] inBytes);
 
-        public abstract static string EnCode(byte[] inBytes);
+        public abstract bool IsValid(string encodedString);
 
-        public bool IsValid(string encodedString)
+        public bool Validate(string encodedString)
         {
             if (ValidCharList != null)
             {

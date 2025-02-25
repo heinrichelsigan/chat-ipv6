@@ -14,31 +14,26 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         public const string VALID_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/=";
 
         #region common interface, interfaces for static members appear in C# 7.3 or later
-
-        public static HashSet<char>? ValidCharList { get; private set; } = new HashSet<char>(VALID_CHARS.ToCharArray());
-
+        
         public IDecodable Decodable => this;
+
+        public static HashSet<char>? ValidCharList { get; private set; } = new HashSet<char>(VALID_CHARS.ToCharArray());        
 
         /// <summary>
         /// Encodes byte[] to valid encode formatted string
         /// </summary>
         /// <param name="inBytes">byte array to encode</param>
         /// <returns>encoded string</returns>
-        public static string EnCode(byte[] inBytes)
-        {
-            return Base64.ToBase64(inBytes);
-        }
+        public string Encode(byte[] inBytes) => Base64.ToBase64(inBytes);        
 
         /// <summary>
         /// Decodes an encoded string to byte[]
         /// </summary>
         /// <param name="encodedString">encoded string</param>
         /// <returns>byte array</returns>
-        public static byte[] DeCode(string encodedString)
-        {
-            return Base64.FromBase64(encodedString);
-        }
-
+        public byte[] Decode(string encodedString) => Base64.FromBase64(encodedString);
+        
+        public bool IsValid(string encodedStr) => Base64.IsValidBase64(encodedStr);
 
         #endregion common interface, interfaces for static members appear in C# 7.3 or later
 

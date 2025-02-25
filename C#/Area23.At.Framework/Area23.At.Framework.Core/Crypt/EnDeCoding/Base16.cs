@@ -11,7 +11,9 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
     /// </summary>
     public class Base16 : IDecodable
     {
-        public const string VALID_CHARS = "0123456789ABCDEF";        
+        public const string VALID_CHARS = "0123456789ABCDEF";
+
+        #region common interface, interfaces for static members appear in C# 7.3 or later
 
         public IDecodable Decodable => this;
 
@@ -22,7 +24,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="inBytes">byte array to encode</param>
         /// <returns>hex16 encoded string</returns>
-        public static string EnCode(byte[] inBytes)
+        public string Encode(byte[] inBytes)
         {
             return Base16.ToBase16(inBytes);
         }
@@ -32,10 +34,14 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="hexString">hex16 encoded string</param>
         /// <returns></returns>
-        public static byte[] DeCode(string encodedString)
+        public byte[] Decode(string encodedString)
         {
             return Base16.FromBase16(encodedString);
         }
+
+        public bool IsValid(string encodedStr) => Base16.IsValidBase16(encodedStr);
+
+        #endregion common interface, interfaces for static members appear in C# 7.3 or later
 
 
         /// <summary>
@@ -100,7 +106,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         {
             foreach (char ch in inString)
             {
-                if (!ValidCharList.Contains(ch))
+                if (!VALID_CHARS.ToArray().Contains(ch))
                     return false;
             }
             return true;

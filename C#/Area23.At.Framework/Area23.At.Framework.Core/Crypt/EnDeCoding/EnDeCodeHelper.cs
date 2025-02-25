@@ -214,7 +214,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             IDecodable dec = encodingType.GetEnCoder();
             if (encodingType == EncodingType.Uu)
                 return Uu.Decode(encodedString, fromPlain, fromFile);
-            return dec.Decode(encodedString);            
+            return dec.Decode(encodedString);
         }
 
         public static bool IsValid(string encodedString, EncodingType encodingType = EncodingType.Base64)

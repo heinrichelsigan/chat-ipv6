@@ -23,7 +23,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="inBytes">byte array to encode</param>
         /// <returns>hex16 encoded string</returns>
-        public static string EnCode(byte[] inBytes)
+        public string Encode(byte[] inBytes)
         {
             return RawString.ToRawString(inBytes);
         }
@@ -33,11 +33,12 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="hexString">hex16 encoded string</param>
         /// <returns></returns>
-        public static byte[] DeCode(string encodedString)
+        public byte[] Decode(string encodedString)
         {
             return RawString.FromRawString(encodedString);
         }
 
+        public bool IsValid(string encodedStr) => true;
 
         public static string ToRawString(byte[] inBytes)
         {

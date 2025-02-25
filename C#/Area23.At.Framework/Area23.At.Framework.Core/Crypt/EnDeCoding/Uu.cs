@@ -31,12 +31,12 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 
         public static HashSet<char>? ValidCharList { get; private set; } = new HashSet<char>(VALID_CHARS.ToCharArray());
 
-        public static string EnCode(byte[] data) 
+        public string Encode(byte[] data) 
         {
             return Uu.Encode(data, false, false);
         }
 
-        public static byte[] DeCode(string encodedString)
+        public byte[] Decode(string encodedString)
         {
             return Uu.Decode(encodedString, false, false);
         }

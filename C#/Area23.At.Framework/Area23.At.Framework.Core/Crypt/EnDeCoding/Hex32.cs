@@ -27,7 +27,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="inBytes">byte array to encode</param>
         /// <returns>encoded string</returns>
-        public static string EnCode(byte[] inBytes)
+        public string Encode(byte[] inBytes)
         {
             return Hex32.ToHex32(inBytes);
         }
@@ -37,10 +37,13 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="encodedString">encoded string</param>
         /// <returns>byte array</returns>
-        public static byte[] DeCode(string encodedString)
+        public byte[] Decode(string encodedString)
         {
             return Hex32.FromHex32(encodedString);
         }
+
+        public bool IsValid(string encodedStr) => Hex32.IsValidHex32(encodedStr);
+
 
         #endregion common interface, interfaces for static members appear in C# 7.3 or later
 
@@ -184,6 +187,16 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             }
 
             return result.ToString();
+        }
+
+        public static bool IsValidHex32(string inString)
+        {
+            foreach (char ch in inString)
+            {
+                if (!VALID_CHARS.ToCharArray().Contains(ch))
+                    return false;
+            }
+            return true;
         }
 
     }
