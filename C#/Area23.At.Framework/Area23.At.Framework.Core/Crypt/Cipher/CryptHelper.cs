@@ -121,8 +121,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             key = (string.IsNullOrEmpty(key)) ? Constants.AUTHOR_EMAIL : key;
             hash = (string.IsNullOrEmpty(hash)) ? Constants.AUTHOR_IV : hash;
 
-            byte[] keyBytes = EnDeCoder.GetBytes(key);
-            byte[] hashBytes = EnDeCoder.GetBytes(hash);
+            byte[] keyBytes = EnDeCodeHelper.GetBytes(key);
+            byte[] hashBytes = EnDeCodeHelper.GetBytes(hash);
 
             List<Byte> outBytes = new List<byte>();
             if (!merge)

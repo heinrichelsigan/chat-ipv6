@@ -30,7 +30,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
             {
                 IPEndPoint serverIep = new IPEndPoint(serverIp, serverPort);
                 TcpClient tcpClient = new TcpClient();
-                byte[] data = EnDeCoder.GetBytes(msg);
+                byte[] data = EnDeCodeHelper.GetBytes(msg);
                 // byte[] data = Encoding.UTF8.GetBytes(msg);
                 tcpClient.SendBufferSize = Constants.MAX_BYTE_BUFFEER;
                 tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);

@@ -48,7 +48,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
                : fishOnAesEngine = Convert.ToBoolean(AppDomain.CurrentDomain.GetData(Constants.FISH_ON_AES_ENGINE));
 
             key = srvKey;
-            hash = DeEnCoder.KeyToHex(srvKey);
+            hash = EnDeCodeHelper.KeyToHex(srvKey);
             keyBytes = CryptHelper.GetUserKeyBytes(key, hash, 16);
             symmPipe = new SymmCipherPipe(keyBytes, 8);
             PipeString = symmPipe.PipeString;
@@ -69,10 +69,10 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             else
                 msc = new MsgContent(msg, PipeString);
 
-            byte[] msgBytes = DeEnCoder.GetBytesFromString(msc.RawMessage);
+            byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(msc.RawMessage);
 
             byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
-            CqrMessage = DeEnCoder.EncodeBytes(cqrbytes, encType);
+            CqrMessage = EnDeCodeHelper.EncodeBytes(cqrbytes, encType);
 
             return CqrMessage;
         }
@@ -91,24 +91,24 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
                 msc._hash = PipeString;
                 if (msc.RawMessage.EndsWith("\n" + PipeString + "\0") ||
                     msc.RawMessage.EndsWith("\n" + PipeString + "\0"))
-                    msgBytes = DeEnCoder.GetBytesFromString(msc.RawMessage);
+                    msgBytes = EnDeCodeHelper.GetBytesFromString(msc.RawMessage);
                 else
                 {
                     msc._rawMessage = msc.Message + "\n" + PipeString + "\0";
-                    msgBytes = DeEnCoder.GetBytesFromString(msc.RawMessage);
+                    msgBytes = EnDeCodeHelper.GetBytesFromString(msc.RawMessage);
                 }
             }
             else if (msc.MsgType == MsgEnum.JsonSerialized || msc.MsgType == MsgEnum.JsonDeserialized)
             {
                 msc._hash = PipeString;
                 if (!msc.RawMessage.IsValidJson())
-                    msgBytes = DeEnCoder.GetBytesFromString(JsonConvert.SerializeObject(msc));
+                    msgBytes = EnDeCodeHelper.GetBytesFromString(JsonConvert.SerializeObject(msc));
                 else
-                    msgBytes = DeEnCoder.GetBytesFromString(msc.RawMessage);
+                    msgBytes = EnDeCodeHelper.GetBytesFromString(msc.RawMessage);
             }
             byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
 
-            CqrMessage = DeEnCoder.EncodeBytes(cqrbytes, encType);
+            CqrMessage = EnDeCodeHelper.EncodeBytes(cqrbytes, encType);
 
             return CqrMessage;
         }
@@ -128,11 +128,11 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             attachment = new MimeAttachment(fileName, mimeType, base64Mime, symmPipe.PipeString, sMd5, sSha256);
             string mimeMsg = attachment.MimeMsg;
             mimeMsg += "\n" + symmPipe.PipeString + "\0";
-            byte[] msgBytes = DeEnCoder.GetBytesFromString(mimeMsg);
+            byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(mimeMsg);
 
             byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
 
-            CqrMessage = DeEnCoder.EncodeBytes(cqrbytes, encType);
+            CqrMessage = EnDeCodeHelper.EncodeBytes(cqrbytes, encType);
 
             return CqrMessage;
         }
@@ -150,11 +150,11 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             if (fishOnAes) fishOnAesEngine = true;
             
             CqrMessage = cqrMessage.TrimEnd("\0".ToCharArray());
-            byte[] cipherBytes = DeEnCoder.DecodeText(CqrMessage, encType);            
+            byte[] cipherBytes = EnDeCodeHelper.DecodeText(CqrMessage, encType);            
             byte[] unroundedMerryBytes = (!LibPaths.CqrEncrypt) ? cipherBytes :
                 symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash, fishOnAesEngine);
 
-            string decrypted = EnDeCoder.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
+            string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //EnDeCodeHelper.GetStringFromBytesTrimNulls(unroundedMerryBytes);
             while (decrypted[decrypted.Length - 1] == '\0') decrypted = decrypted.Substring(0, decrypted.Length - 1);
             
             MsgEnum msgEnum = (decrypted.IsValidJson()) ? MsgEnum.JsonSerialized : MsgEnum.RawWithHashAtEnd;

@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Crypt\EnDeCoding\DeEnCoder.cs" />
     <Compile Remove="Net\IpSocket\IpSocketSender.cs" />
     <Compile Remove="Net\IpSocket\IPSockListener.cs" />  
     <Compile Remove="Util\HttpContextWrapper.cs" />

@@ -160,7 +160,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     break;
             }
 
-            return DeEnCoder.GetBytesTrimNulls(decryptBytes);
+            return EnDeCodeHelper.GetBytesTrimNulls(decryptBytes);
         }
 
     }

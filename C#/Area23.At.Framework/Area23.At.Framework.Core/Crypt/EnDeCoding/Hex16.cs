@@ -9,23 +9,26 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
     /// <summary>
     /// Normal hexadecimal byte encoding / decoding
     /// </summary>
-    public static class Hex16
+    public class Hex16 : IDecodable
     {
         
-        public const string VALID_CHARS = "0123456789abcdef";        
-        private static readonly HashSet<char> ValidCharList = new HashSet<char>(VALID_CHARS.ToCharArray());
+        public const string VALID_CHARS = "0123456789abcdef"; 
 
 
         #region common interface, interfaces for static members appear in C# 7.3 or later
+
+        public IDecodable Decodable => throw new NotImplementedException();
+        
+        public static HashSet<char>? ValidCharList { get; private set; } = new HashSet<char>(VALID_CHARS.ToCharArray());
 
         /// <summary>
         /// Encodes byte[] to valid encode formatted string
         /// </summary>
         /// <param name="inBytes">byte array to encode</param>
         /// <returns>encoded string</returns>
-        public static string Encode(byte[] inBytes)
+        public static string EnCode(byte[] inBytes)
         {
-            return ToHex16(inBytes);
+            return Hex16.ToHex16(inBytes);
         }
 
         /// <summary>
@@ -33,20 +36,11 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="encodedString">encoded string</param>
         /// <returns>byte array</returns>
-        public static byte[] Decode(string encodedString)
+        public static byte[] DeCode(string encodedString)
         {
-            return FromHex16(encodedString);
+            return Hex16.FromHex16(encodedString);
         }
 
-        /// <summary>
-        /// Checks if a string is a valid encoded string
-        /// </summary>
-        /// <param name="encodedString">encoded string</param>
-        /// <returns>true, when encoding is OK, otherwise false, if encoding contains illegal characters</returns>
-        public static bool IsValid(string encodedString)
-        {
-            return IsValidHex16(encodedString);
-        }
 
         #endregion common interface, interfaces for static members appear in C# 7.3 or later
 
@@ -104,21 +98,12 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
                 bytes.Add(b);
             }
 
-            byte[] bytesUtf8 = EnDeCoder.GetBytes(hexStr);
+            byte[] bytesUtf8 = EnDeCodeHelper.GetBytes(hexStr);
             // return bytesUtf8
             return bytes.ToArray();
 
         }
 
-        public static bool IsValidHex16(string inString)
-        {
-            foreach (char ch in inString)
-            {
-                if (!ValidCharList.Contains(ch))
-                    return false;
-            }
-            return true;
-        }
 
     }
 

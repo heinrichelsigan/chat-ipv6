@@ -154,7 +154,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                     break;
             }
 
-            return DeEnCoder.GetBytesTrimNulls(decryptBytes);
+            return EnDeCodeHelper.GetBytesTrimNulls(decryptBytes);
         }
 
     }

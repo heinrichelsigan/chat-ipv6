@@ -560,7 +560,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 {
                     if (chat == null)
                         chat = new Chat(0);
-                    string encrypted = EnDeCoder.GetString(ipSockListener.BufferedData);
+                    string encrypted = EnDeCodeHelper.GetString(ipSockListener.BufferedData);
 
                     Area23EventArgs<ReceiveData>? area23EvArgs = null;
                     if (e != null && e is Area23EventArgs<ReceiveData>)
@@ -576,7 +576,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                             SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
 
                         }
-                        encrypted = EnDeCoder.GetString(area23EvArgs.GenericTData.BufferedData);
+                        encrypted = EnDeCodeHelper.GetString(area23EvArgs.GenericTData.BufferedData);
                     }
 
 
@@ -1000,7 +1000,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             string mimeFilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName + Constants.HTML_EXT);
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
 
-            byte[] attachBytes = EnDeCoder.GetBytes(mimeAttachment.GetWebPage());
+            byte[] attachBytes = EnDeCodeHelper.GetBytes(mimeAttachment.GetWebPage());
             System.IO.File.WriteAllBytes(mimeFilePath, attachBytes);
 
             string base64 = mimeAttachment.Base64Mime;

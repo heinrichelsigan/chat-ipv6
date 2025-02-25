@@ -27,14 +27,16 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
     /// Base32 encoding is a mapping for double hex from A-Z0-7 (32 chiffers per digit)
     /// <see href="https://gist.github.com/erdomke/9335c394c5cc65404c4cf9aceab04143"/>
     /// </summary>
-    public static class Base32
+    public class Base32 : IDecodable
     {
 
-        public const string VALID_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=";        
-        private static readonly HashSet<char> ValidCharList = new HashSet<char>(VALID_CHARS.ToCharArray());
+        public const string VALID_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=";
+        public static HashSet<char>? ValidCharList { get; private set; } = new HashSet<char>(VALID_CHARS.ToCharArray());
         
         private const int _mask = 31;
         private const int _shift = 5;
+
+        public IDecodable Decodable => throw new NotImplementedException();
 
         #region common interface, interfaces for static members appear in C# 7.3 or later
 
@@ -43,7 +45,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="inBytes">byte array to encode</param>
         /// <returns>encoded string</returns>
-        public static string Encode(byte[] inBytes)
+        public static string EnCode(byte[] inBytes)
         {
             return ToBase32(inBytes);
         }
@@ -53,7 +55,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="encodedString">encoded string</param>
         /// <returns>byte array</returns>
-        public static byte[] Decode(string encodedString)
+        public static byte[] DeCode(string encodedString)
         {
             return FromBase32(encodedString);
         }
