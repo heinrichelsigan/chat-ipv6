@@ -212,7 +212,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 this.textBoxDestination.Text = encrypted;
 
                 string response = srvMsg1.Send1st_CqrSrvMsg1_Soap(myContact, _serverIp, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
-                this.textBoxDestination.Text += "\n----------------------\n" + response;
+                SrvMsg1 srvRetMsg1 = new SrvMsg1(this.textBoxSecKey.Text);
+                
+                this.textBoxDestination.Text = response;
+
+                try
+                {
+                    CqrContact returnedContact = srvRetMsg1.NCqrSrvMsg1(response);
+                    this.textBoxSource.Text = JsonConvert.SerializeObject(returnedContact);
+                }
+                catch (Exception exRetMsg)
+                {
+                    this.textBoxSource.Text = $"Exception {exRetMsg.GetType()} {exRetMsg.Message}\n+{exRetMsg.ToString()}";
+                }
+                
             }
         }
     }

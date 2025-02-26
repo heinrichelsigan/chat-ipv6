@@ -74,13 +74,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 {
                     _contact = srv1stMsg.NCqrSrvMsg1(cryptMsg);
                     _decrypted = _contact.ToJson();
-                    Area23Log.LogStatic("Contact decrypted successfully: " + _decrypted);
+                    Area23Log.LogStatic("$Contact decrypted successfully: {_decrypted}\n");
                 }
             }
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic($"Exception {ex.GetType()} when decrypting contact: {ex.Message}\n\t{ex.ToString()}");
+                Area23Log.LogStatic($"Exception {ex.GetType()} when decrypting contact: {ex.Message}\n\t{ex.ToString()}\n");
             }
 
             responseMsg = responseSrvMsg.CqrBaseMsg("", EncodingType.Base64);
@@ -94,7 +94,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 {
                     foundCt.ContactId = _contact.ContactId;
                     if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
-                        foundCt.Cuid = new Guid();
+                        foundCt.Cuid = Guid.NewGuid();
                     if (!string.IsNullOrEmpty(_contact.Address))
                         foundCt.Address = _contact.Address;
                     if (!string.IsNullOrEmpty(_contact.Mobile))
@@ -104,13 +104,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
                         foundCt.ContactImage = _contact.ContactImage;
 
-                    Area23Log.LogStatic("Contact found, updating it and returning it.");
+                    Area23Log.LogStatic($"Contact found, updating it and returning it. {foundCt.Cuid} {foundCt.NameEmail}\n");
                     responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
                 }
                 else
                 {
-                    if (_contact.Cuid == null || _contact.Cuid == Guid.Empty)
-                        _contact.Cuid = new Guid();
+                    _contact.Cuid = Guid.NewGuid();
                     _contacts.Add(_contact);
 
                     //try
@@ -123,7 +122,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     //{
                     //    Area23Log.LogStatic(exCmdFail);
                     //}
-                    Area23Log.LogStatic("Contact not found in json, adding contact, giving a new Guid and returning it.");
+                    Area23Log.LogStatic($"Contact not found in json, adding contact, giving a new Guid {_contact.Cuid} and returning it.\n");
                     foundCt = _contact;
 
                     responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
