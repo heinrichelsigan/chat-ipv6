@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="EU.CqrXs.CqrSrv.Svc.CqrService" CodeBehind="CqrService.svc.cs" %>

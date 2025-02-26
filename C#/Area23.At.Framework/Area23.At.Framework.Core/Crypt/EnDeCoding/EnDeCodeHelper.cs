@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 {
+
+    /// <summary>
+    // static helper class for Encoding / Decoding
+    /// </summary>
     public static class EnDeCodeHelper
     {
 
@@ -70,7 +74,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
                 throw new FormatException($"Input Text is not a valid {encodingType.ToString()} string!");
             }
 
-            byte[] cipherBytes = cipherBytes = EnDeCodeHelper.Decode(cipherText, encodingType, fromPlain, fromFile);
+            byte[] cipherBytes = cipherBytes = IDecodable.DeCode(cipherText, encodingType);
 
             return cipherBytes;
         }
@@ -203,24 +207,22 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         public static string Encode(byte[] inBytes, EncodingType encodingType = EncodingType.Base64, bool fromPlain = false, bool fromFile = false)
         {
             IDecodable enc = encodingType.GetEnCoder();
-            if (encodingType == EncodingType.Uu) 
+            if (encodingType == EncodingType.Uu)
                 return Uu.Encode(inBytes, fromPlain, fromFile);
             return enc.Encode(inBytes);
 
         }
 
-        public static byte[] Decode(string encodedString, EncodingType encodingType = EncodingType.Base64, bool fromPlain = false, bool fromFile = false)
+        public static byte[] Decode(string encodedString, EncodingType encodingType = EncodingType.Base64)
         {
             IDecodable dec = encodingType.GetEnCoder();
-            if (encodingType == EncodingType.Uu)
-                return Uu.Decode(encodedString, fromPlain, fromFile);
             return dec.Decode(encodedString);
         }
 
         public static bool IsValid(string encodedString, EncodingType encodingType = EncodingType.Base64)
         {
             IDecodable dec = encodingType.GetEnCoder();
-            return dec.IsValid(encodedString);            
+            return dec.IsValid(encodedString);
         }
 
 
@@ -354,4 +356,5 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         #endregion GetByteCount
 
     }
+
 }

@@ -189,7 +189,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 
             }
 
-            Area23Log.LogStatic($"FromUu: Trying to get bytes from memory stream, instead {hexOutPath}");
+            Area23Log.LogStatic($"FromUu: Trying to get bytes from memory stream!");
             plainBytes = UuDecodeBytes(uuEncStr);
 
             Area23Log.LogStatic($"byte[{plainBytes.Length}] plainBytes = FromUu(string uuEncStr, bool originalUue = {originalUue}, fromFile = {fromFile}) ... FINISHED.");
