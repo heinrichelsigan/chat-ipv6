@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Configuration;
+using Area23.At.Framework.Core;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {
@@ -252,11 +252,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         {
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap))
             {
-                return new System.ServiceModel.EndpointAddress(ConfigurationManager.AppSettings["CqrServiceSoap"]);
+                return new System.ServiceModel.EndpointAddress(LibPaths.CqrServiceSoap);
             }
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12))
             {
-                return new System.ServiceModel.EndpointAddress(ConfigurationManager.AppSettings["CqrServiceSoap12"]);
+                return new System.ServiceModel.EndpointAddress(LibPaths.CqrServiceSoap12);
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }

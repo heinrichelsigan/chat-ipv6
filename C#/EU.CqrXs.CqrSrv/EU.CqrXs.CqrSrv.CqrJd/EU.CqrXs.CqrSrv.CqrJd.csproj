@@ -185,7 +185,6 @@
     <Content Include="Global.asax" />
     <Content Include="ImageFontControl.ascx" />
     <Content Include="R.aspx" />
-    <None Include="log\20240324_Area23.At.Mono.log" />
     <Content Include="Qr\2024-03-24_19_18__894.png" />
     <Content Include="res\css\area23.at.mono.css" />
     <Content Include="res\css\fortune.css" />
@@ -237,6 +236,8 @@
     <Content Include="res\js\gtag.js" />
     <Content Include="res\js\od.js" />
     <Content Include="res\js\rpn.js" />
+    <Content Include="Settings\Default.aspx" />
+    <Content Include="Settings\.htaccess" />
     <Content Include="TestForm.aspx" />
     <Content Include="W.aspx" />
     <Content Include="Web.config" />
@@ -301,6 +302,13 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Include="Settings\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Settings\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="TestForm.aspx.cs">
       <DependentUpon>TestForm.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -337,6 +345,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="log\" />
     <Folder Include="res\bin\" />
     <Folder Include="res\out\" />
     <Folder Include="res\qr\" />

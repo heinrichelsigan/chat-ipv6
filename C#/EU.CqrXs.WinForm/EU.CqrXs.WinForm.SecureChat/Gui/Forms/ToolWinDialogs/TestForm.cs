@@ -211,7 +211,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
                 this.textBoxDestination.Text = encrypted;
 
-                string response = srvMsg1.Send1st_CqrSrvMsg1(myContact, _serverIp, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
+                string response = srvMsg1.Send1st_CqrSrvMsg1_Soap(myContact, _serverIp, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
                 this.textBoxDestination.Text += "\n----------------------\n" + response;
             }
         }

@@ -536,7 +536,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             Thread.Sleep(100);
 
             this.StripProgressBar.Value = 60;
-            string response = srv1stMsg.Send1st_CqrSrvMsg1(myContact, ServerIpAddress, EncodingType.Base64);
+            string response = srv1stMsg.Send1st_CqrSrvMsg1_Soap(myContact, ServerIpAddress, EncodingType.Base64);
 
             this.TextBoxSource.Text = "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
             if (srv1stMsg != null)

@@ -17,6 +17,7 @@ using System.IO;
 using Area23.At.Framework.Library.Util;
 using System.Reflection;
 using System.Collections.Concurrent;
+using System.Web.Http.Controllers;
 
 
 
@@ -60,9 +61,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 myServerKey = HttpContext.Current.Request.UserHostAddress;                
             myServerKey += Constants.APP_NAME;
 
+            
             SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
             SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
-            SrvMsg responseSrvMsg = new SrvMsg(myServerKey);
+            SrvMsg responseSrvMsg = new SrvMsg(myServerKey, myServerKey);
+            Area23Log.LogStatic("myServerKey = " + myServerKey);
             HttpContext.Current.Application["lastmsg"] = cryptMsg;
 
             try
@@ -71,12 +74,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 {
                     _contact = srv1stMsg.NCqrSrvMsg1(cryptMsg);
                     _decrypted = _contact.ToJson();
+                    Area23Log.LogStatic("Contact decrypted successfully: " + _decrypted);
                 }
             }
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
+                Area23Log.LogStatic($"Exception {ex.GetType()} when decrypting contact: {ex.Message}\n\t{ex.ToString()}");
             }
 
             responseMsg = responseSrvMsg.CqrBaseMsg("", EncodingType.Base64);
@@ -100,7 +104,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
                         foundCt.ContactImage = _contact.ContactImage;
 
-
+                    Area23Log.LogStatic("Contact found, updating it and returning it.");
                     responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
                 }
                 else
@@ -109,17 +113,17 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         _contact.Cuid = new Guid();
                     _contacts.Add(_contact);
 
-                    try
-                    {
-                        string processed = Area23.At.Framework.Library.Util.ProcessCmd.Execute(
-                            "/usr/local/bin/createContact.sh",
-                            _contact.Name + " " + _contact.Email + " " +
-                            _contact.Mobile.Replace(" ", "") + " " + _contact.NameEmail + " ", false);
-                    } catch (Exception exCmdFail)
-                    {
-                        Area23Log.LogStatic(exCmdFail);
-                    }
-
+                    //try
+                    //{
+                    //    string processed = Area23.At.Framework.Library.Util.ProcessCmd.Execute(
+                    //        "/usr/local/bin/createContact.sh",
+                    //        _contact.Name + " " + _contact.Email + " " +
+                    //        _contact.Mobile.Replace(" ", "") + " " + _contact.NameEmail + " ", false);
+                    //} catch (Exception exCmdFail)
+                    //{
+                    //    Area23Log.LogStatic(exCmdFail);
+                    //}
+                    Area23Log.LogStatic("Contact not found in json, adding contact, giving a new Guid and returning it.");
                     foundCt = _contact;
 
                     responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
@@ -525,7 +529,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             if (cpattributes.Length > 0)
                 ret += "\n" + ((AssemblyCompanyAttribute)cpattributes[0]).Company;
 
-
+            string uhaddr = HttpContext.Current.Request.UserHostAddress;
+            Area23Log.LogStatic($"Test Method called from {uhaddr}, returning {ret}");
             return ret;
 
         }

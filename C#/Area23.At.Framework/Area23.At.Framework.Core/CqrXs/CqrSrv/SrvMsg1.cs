@@ -91,6 +91,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="encodingType"><+
         /// see cref="EncodingType"/></param>
         /// <returns></returns>
+        [Obsolete("Please use Send1st_CqrSrvMsg1_Soap(..)", true)]
         public string Send1st_CqrSrvMsg1(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
             MsgContact = myContact;
