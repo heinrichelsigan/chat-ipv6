@@ -1,8 +1,8 @@
-﻿namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
+﻿namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls.Panels
 {
-    partial class PeerServerSwitchControl
+    partial class PeerServerSwitchPanel
     {
-        /// <summary> 
+        /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
@@ -22,12 +22,13 @@
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
-        {            
+        {
+            components = new System.ComponentModel.Container();
             LabelServer = new Label();
             LabelPeer = new Label();
             ToolTipInfo = new ToolTip(components);
@@ -35,7 +36,7 @@
             ((System.ComponentModel.ISupportInitialize)TrackBarPeerServer).BeginInit();
             SuspendLayout();
             // 
-            // labLabelServerlServer
+            // LabelServer
             // 
             LabelServer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             LabelServer.AutoSize = true;
@@ -74,23 +75,21 @@
             TrackBarPeerServer.ValueChanged += TrackBarPeerServer_ValueChanged;
             //
             // ToolTipInfo
-            //
+            //            
             ToolTipInfo.UseAnimation = true;
             ToolTipInfo.UseFading = true;
             ToolTipInfo.ToolTipIcon = ToolTipIcon.Info;
             ToolTipInfo.ToolTipTitle = "Change mode between \"peer 2 peer\" and \"group session server chat\"";
             // 
-            // PeerServerSwitchControl
-            // 
-            AutoScaleMode = AutoScaleMode.None;
-            AutoValidate = AutoValidate.EnableAllowFocusChange;
+            // PeerServerSwitchPanel
+            //           
             BackColor = SystemColors.GradientActiveCaption;
             Controls.Add(TrackBarPeerServer);
             Controls.Add(LabelServer);
             Controls.Add(LabelPeer);
             Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(0);
-            Name = "PeerServerSwitchControl";
+            Name = "PeerServerSwitchPanel";
             Size = new Size(152, 52);
             MouseEnter += ShowToolTip;
             MouseLeave += HideToolTip;
@@ -106,4 +105,5 @@
         private ToolTip ToolTipInfo;
         private TrackBar TrackBarPeerServer;
     }
+
 }

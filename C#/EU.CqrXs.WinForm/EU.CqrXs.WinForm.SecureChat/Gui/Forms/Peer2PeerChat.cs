@@ -109,9 +109,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ComboBoxContacts.Text = Constants.ENTER_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
             Load += new System.EventHandler(async (sender, e) => await Peer2PeerChat_Load(sender, e));
-            attachmentListControl.OnDragNDrop += OnDragNDrop;
-            dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
-            this.peerServerSwitchControl1.FireUpChanged += TooglePeerServer;
+            this.LinkedLabels.OnDragNDrop += OnDragNDrop;
+            this.DragNDropGroupBox.OnDragNDrop += OnDragNDrop;
+            this.PeerServerSwitch.FireUpChanged += TooglePeerServer;
             this.StripProgressBar.Value = 0;
         }
 
@@ -1011,7 +1011,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 // Base64.Decode(base64);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
-            attachmentListControl.SetNameFilePath(fileName, filePath);
+            LinkedLabels.SetNameFilePath(fileName, filePath);
         }
 
 

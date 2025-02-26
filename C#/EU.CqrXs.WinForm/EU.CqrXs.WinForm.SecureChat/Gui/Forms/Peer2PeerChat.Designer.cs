@@ -48,9 +48,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             TextBoxPipe = new TextBox();
             RichTextBoxChat = new RichTextBox();
             PanelDestination = new Panel();
-            peerServerSwitchControl1 = new Controls.PeerServerSwitchControl();
-            attachmentListControl = new Controls.AttachmentListControl(components);
-            dragnDropGroupBox = new Controls.DragNDropGroupBox(components);
+            PeerServerSwitch = new Gui.Controls.Panels.PeerServerSwitchPanel();
+            LinkedLabels = new Gui.Controls.GroupBoxes.LinkLabelsBox();
+            DragNDropGroupBox = new Gui.Controls.GroupBoxes.DragNDropBox(components);
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
@@ -256,9 +256,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // PanelDestination
             // 
             PanelDestination.BackColor = SystemColors.ActiveCaption;
-            PanelDestination.Controls.Add(peerServerSwitchControl1);
-            PanelDestination.Controls.Add(attachmentListControl);
-            PanelDestination.Controls.Add(dragnDropGroupBox);
+            PanelDestination.Controls.Add(PeerServerSwitch);
+            PanelDestination.Controls.Add(LinkedLabels);
+            PanelDestination.Controls.Add(DragNDropGroupBox);
             PanelDestination.Controls.Add(PictureBoxYou);
             PanelDestination.ForeColor = SystemColors.ActiveCaptionText;
             PanelDestination.Location = new Point(826, 32);
@@ -267,42 +267,41 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             PanelDestination.Size = new Size(168, 653);
             PanelDestination.TabIndex = 70;
             // 
-            // peerServerSwitchControl1
+            // PeerServerSwitch
             // 
-            peerServerSwitchControl1.AllowDrop = true;
-            peerServerSwitchControl1.AutoValidate = AutoValidate.EnableAllowFocusChange;
-            peerServerSwitchControl1.BackColor = SystemColors.GradientActiveCaption;
-            peerServerSwitchControl1.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            peerServerSwitchControl1.Location = new Point(8, 0);
-            peerServerSwitchControl1.Margin = new Padding(1);
-            peerServerSwitchControl1.Name = "peerServerSwitchControl1";
-            peerServerSwitchControl1.Padding = new Padding(1);
-            peerServerSwitchControl1.Size = new Size(152, 48);
-            peerServerSwitchControl1.TabIndex = 84;
+            PeerServerSwitch.AllowDrop = false;
+            PeerServerSwitch.BackColor = SystemColors.GradientActiveCaption;
+            PeerServerSwitch.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            PeerServerSwitch.Location = new Point(8, 0);
+            PeerServerSwitch.Margin = new Padding(1);
+            PeerServerSwitch.Name = "PeerServerSwitch";
+            PeerServerSwitch.Padding = new Padding(1);
+            PeerServerSwitch.Size = new Size(152, 48);
+            PeerServerSwitch.TabIndex = 84;
             // 
-            // attachmentListControl
+            // LinkedLabels
             // 
-            attachmentListControl.BackColor = SystemColors.ControlLightLight;
-            attachmentListControl.Font = new Font("Lucida Sans Unicode", 9F);
-            attachmentListControl.Location = new Point(0, 215);
-            attachmentListControl.Margin = new Padding(0);
-            attachmentListControl.Name = "attachmentListControl";
-            attachmentListControl.Size = new Size(168, 192);
-            attachmentListControl.TabIndex = 83;
+            LinkedLabels.BackColor = SystemColors.ControlLightLight;
+            LinkedLabels.Font = new Font("Lucida Sans Unicode", 9F);
+            LinkedLabels.Location = new Point(0, 215);
+            LinkedLabels.Margin = new Padding(0);
+            LinkedLabels.Name = "LinkedLabels";
+            LinkedLabels.Size = new Size(168, 192);
+            LinkedLabels.TabIndex = 83;
             // 
-            // dragnDropGroupBox
+            // DragNDropGroupBox
             // 
-            dragnDropGroupBox.AllowDrop = true;
-            dragnDropGroupBox.BackColor = SystemColors.ControlLightLight;
-            dragnDropGroupBox.Font = new Font("Lucida Sans Unicode", 8.5F);
-            dragnDropGroupBox.Location = new Point(10, 416);
-            dragnDropGroupBox.Margin = new Padding(1);
-            dragnDropGroupBox.Name = "dragnDropGroupBox";
-            dragnDropGroupBox.Padding = new Padding(1);
-            dragnDropGroupBox.Size = new Size(150, 131);
-            dragnDropGroupBox.TabIndex = 81;
-            dragnDropGroupBox.TabStop = false;
-            dragnDropGroupBox.Text = "   Drag'N'Drop Box";
+            DragNDropGroupBox.AllowDrop = true;
+            DragNDropGroupBox.BackColor = SystemColors.ControlLightLight;
+            DragNDropGroupBox.Font = new Font("Lucida Sans Unicode", 8.5F);
+            DragNDropGroupBox.Location = new Point(10, 416);
+            DragNDropGroupBox.Margin = new Padding(1);
+            DragNDropGroupBox.Name = "DragNDropGroupBox";
+            DragNDropGroupBox.Padding = new Padding(1);
+            DragNDropGroupBox.Size = new Size(150, 131);
+            DragNDropGroupBox.TabIndex = 81;
+            DragNDropGroupBox.TabStop = false;
+            DragNDropGroupBox.Text = "   Drag'N'Drop Box";
             // 
             // PanelCenter
             // 
@@ -432,10 +431,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private Button ButtonAttach;
         private Button ButtonClear;
         private Button ButtonCheck;
-        private Controls.GroupBoxLinkLabels GroupBoxLinks;
-        private Controls.DragNDropGroupBox dragnDropGroupBox;
-        private Controls.AttachmentListControl attachmentListControl;
-        private Controls.PeerServerSwitchControl peerServerSwitchControl1;
+        private Gui.Controls.GroupBoxes.LinkLabelsBox LinkedLabels;
+        private Gui.Controls.GroupBoxes.DragNDropBox DragNDropGroupBox;
+        private Gui.Controls.Panels.PeerServerSwitchPanel PeerServerSwitch;
         private Button ButtonSend;
     
     }

@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+﻿using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,25 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
 {
     internal static class MiniToolBox
     {
+
+        /// <summary>
+        /// Creates Attachment Directory 
+        /// </summary>
+        internal static void CreateAttachDirectory()
+        {
+
+            try
+            {
+                if (!Directory.Exists(LibPaths.AttachmentFilesDir))
+                    Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
+            }
+            catch (Exception dirEx)
+            {
+                Area23Log.LogStatic($"Exeception: {dirEx.GetType()} {dirEx.Message}, when creating attachment directory: {LibPaths.AttachmentFilesDir}\n\t{dirEx}\n");
+            }
+        }
+
+
 
         internal static string ShowZenMatrixPermutation(string secretKey, string iv = "")
         {

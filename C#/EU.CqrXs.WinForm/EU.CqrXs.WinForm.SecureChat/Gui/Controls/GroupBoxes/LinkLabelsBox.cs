@@ -1,20 +1,12 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Util;
+using System.ComponentModel;
 
-namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
+namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls.GroupBoxes
 {
-    public partial class AttachmentListControl : UserControl
+    public partial class LinkLabelsBox : GroupBox
     {
 
         int linksCount = 0;
@@ -24,37 +16,37 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
         public int LinksNum { get => ((linksCount % 8) + 1); }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string HeaderText { get => this.labelHeaderText.Text; set => this.labelHeaderText.Text = value; }
+        public string HeaderText { get => this.Text; set => this.Text = value; }
 
         public EventHandler<Area23EventArgs<string>>? OnDragNDrop;
-
+        
         #region constructors
 
-        public AttachmentListControl()
+        public LinkLabelsBox()
         {
             components = new System.ComponentModel.Container();
-            InitializeComponent();            
+            InitializeComponent();
+
             MiniToolBox.CreateAttachDirectory();
         }
 
-        public AttachmentListControl(IContainer container)
+        public LinkLabelsBox(IContainer container)
         {
             if (container == null)
                 container = new System.ComponentModel.Container();
-            container.Add(this);
+            container.Add(this);           
             components = container;
             InitializeComponent();
             MiniToolBox.CreateAttachDirectory();
         }
 
 
-        public AttachmentListControl(string headerText, IContainer container) : this(container)
+        public LinkLabelsBox(string headerText, IContainer container) : this(container)
         {
             this.Text = headerText;
         }
 
         #endregion constructors
-
 
         #region thread save WinForm delegate callbacks
 
@@ -163,7 +155,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 
         #region DragNDrop
 
-        private void AttachmentList_DragEnter(object sender, DragEventArgs e)
+        private void LinkLabelsBox_DragEnter(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             if (files != null)
@@ -172,7 +164,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             }
         }
 
-        private void AttachmentList_DragDrop(object sender, DragEventArgs e)
+        private void LinkLabelsBox_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             if (files != null)
@@ -186,7 +178,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
                         Text += $"+{Path.GetFileName(file)}";
                         if (OnDragNDrop != null)
                         {
-                            EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
+                            EventHandler<Area23EventArgs<string>>? handler = OnDragNDrop;
                             Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
                             handler?.Invoke(this, area23EventArgs);
                         }
@@ -201,7 +193,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             }
         }
 
-        private void AttachmentList_DragLeave(object sender, EventArgs e)
+        private void LinkLabelsBox_DragLeave(object sender, EventArgs e)
         {
 
         }
@@ -211,24 +203,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 
         #region show / hide tooltip
 
-        private void AttachmentList_ShowToolTip(object sender, EventArgs e)
+        private void LinkLabelsBox_MouseEnter(object sender, EventArgs e)
         {
             if (DateTime.Now.Subtract(lastShownToolTip).TotalSeconds > 60)
             {
                 // this.toolTip1.SetToolTip(this, "Drag'n Drop Files here or click on \"Attach\"");
-                this.toolTip1.Show("Drag'n Drop Files here or click on \"Attach\"", this, 36, 72, 6000);
+                toolTip1.Show("Drag'n Drop Files here or click on \"Attach\"", this, 36, 72, 6000);
                 lastShownToolTip = DateTime.Now;
             }
         }
 
-        private void AttachmentList_HideToolTip(object sender, EventArgs e)
+        private void LinkLabelsBox_MouseLeave(object sender, EventArgs e)
         {
             System.Timers.Timer tPerformToolTipHide = new System.Timers.Timer { Interval = 1500 };
             tPerformToolTipHide.Elapsed += (s, en) =>
             {
                 this.Invoke(new Action(() =>
                 {
-                    this.toolTip1.Hide(this);
+                    toolTip1.Hide(this);
                 }));
                 tPerformToolTipHide.Stop(); // Stop the timer(otherwise keeps on calling)
             };
@@ -296,7 +288,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 
         public void SetMimeAttachmentTextLink(MimeAttachment mimeAttachment)
         {
-            MiniToolBox.CreateAttachDirectory();
             string fileName = mimeAttachment.FileName;
             string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
             byte[] fileBytes = Convert.FromBase64String(mimeAttachment.Base64Mime);
@@ -327,5 +318,4 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 
 
     }
-
 }

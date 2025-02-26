@@ -120,9 +120,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
                 StripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
             }
-            dragnDropGroupBox.OnDragNDrop += OnDragNDrop;
-            attachmentListControl.OnDragNDrop += OnDragNDrop;
-            this.peerServerSwitchControl1.FireUpChanged += TooglePeerServer;
+            this.DragNDropGroupBox.OnDragNDrop += OnDragNDrop;
+            this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
+            this.PeerServerSwitch.FireUpChanged += TooglePeerServer;
             this.StripProgressBar.Value = 0;
         }
 
@@ -1077,7 +1077,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
-            attachmentListControl.SetNameFilePath(fileName, filePath);
+            LinkedLabelsBox.SetNameFilePath(fileName, filePath);
         }
 
 

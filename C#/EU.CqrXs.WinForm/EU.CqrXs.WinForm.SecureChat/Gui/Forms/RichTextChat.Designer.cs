@@ -913,7 +913,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private Button ButtonAttach;
         private Button ButtonClear;
         private Button ButtonCheck;
-        private Controls.GroupBoxLinkLabels GroupBoxLinks;
+        private Gui.Controls.GroupBoxes.LinkLabelsBox GroupBoxLinks;
 
         internal MenuStrip StripMenu;
         private StatusStrip StripStatus;

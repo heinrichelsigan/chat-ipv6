@@ -1,6 +1,6 @@
-﻿namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
+﻿namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls.GroupBoxes
 {
-    partial class DragNDropGroupBox
+    partial class DragNDropBox
     {
         /// <summary>
         /// Required designer variable.
@@ -27,27 +27,37 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
-        {
-            components = new System.ComponentModel.Container();
+        {            
+            toolTip1 = new ToolTip(components);
             SuspendLayout();
+            // 
+            // toolTip1
+            // 
+            toolTip1.IsBalloon = true;
+            toolTip1.ToolTipIcon = ToolTipIcon.Info;
+            toolTip1.ToolTipTitle = "Drag'n Drop Files here or click on Attach";
             AllowDrop = true;
             this.BackColor = SystemColors.ControlLightLight;
             this.Font = new Font("Lucida Sans Unicode", 8.5F);
             this.Location = new Point(0, 0);
             this.Margin = new Padding(1);
-            this.Name = "DragNDropGroupBox";
+            this.Name = "DragNDropBox";
             this.Padding = new Padding(1);
             this.Size = new Size(144, 112);
             this.TabIndex = 81;
             this.TabStop = false;
             this.Text = "Drag and Drop Area";
-            DragDrop += GroupBox_DragDrop;
-            DragEnter += GroupBox_DragEnter;
-            DragLeave += GroupBox_DragLeave;
+            DragDrop += DragNDropBox_DragDrop;
+            DragEnter += DragNDropBox_DragEnter;
+            DragLeave += DragNDropBox_DragLeave;
+            MouseEnter += DragNDropBox_MouseEnter;
+            MouseLeave += DragNDropBox_MouseLeave;
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
+
+        private ToolTip toolTip1;
     }
 }

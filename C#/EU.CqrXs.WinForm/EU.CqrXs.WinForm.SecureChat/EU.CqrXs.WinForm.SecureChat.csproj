@@ -228,6 +228,7 @@
 
   <ItemGroup>
     <Folder Include="AttachFiles\" />
+    <Folder Include="Gui\Controls\UserControls\" />
     <Folder Include="log\" />
     <Folder Include="Properties\text\" />
     <Folder Include="Properties\en\" />

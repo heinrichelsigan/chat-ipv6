@@ -93,11 +93,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             RichTextBoxChat = new RichTextBox();
             PanelDestination = new Panel();
             ButtonClear = new Button();
-            peerServerSwitchControl1 = new Controls.PeerServerSwitchControl();
+            PeerServerSwitch = new Gui.Controls.Panels.PeerServerSwitchPanel();
             ButtonSend = new Button();
-            attachmentListControl = new Controls.AttachmentListControl(components);
+            LinkedLabelsBox = new Gui.Controls.GroupBoxes.LinkLabelsBox(components);
             ButtonAttach = new Button();
-            dragnDropGroupBox = new Controls.DragNDropGroupBox(components);
+            DragNDropGroupBox = new Gui.Controls.GroupBoxes.DragNDropBox(components);
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
@@ -750,11 +750,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             // 
             PanelDestination.BackColor = SystemColors.ActiveCaption;
             PanelDestination.Controls.Add(ButtonClear);
-            PanelDestination.Controls.Add(peerServerSwitchControl1);
+            PanelDestination.Controls.Add(PeerServerSwitch);
             PanelDestination.Controls.Add(ButtonSend);
-            PanelDestination.Controls.Add(attachmentListControl);
+            PanelDestination.Controls.Add(LinkedLabelsBox);
             PanelDestination.Controls.Add(ButtonAttach);
-            PanelDestination.Controls.Add(dragnDropGroupBox);
+            PanelDestination.Controls.Add(DragNDropGroupBox);
             PanelDestination.Controls.Add(PictureBoxYou);
             PanelDestination.ForeColor = SystemColors.ActiveCaptionText;
             PanelDestination.Location = new Point(826, 32);
@@ -775,18 +775,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonClear.UseVisualStyleBackColor = true;
             ButtonClear.Click += ButtonClear_Click;
             // 
-            // peerServerSwitchControl1
+            // PeerServerSwitch
             // 
-            peerServerSwitchControl1.AllowDrop = true;
-            peerServerSwitchControl1.AutoValidate = AutoValidate.EnableAllowFocusChange;
-            peerServerSwitchControl1.BackColor = SystemColors.GradientActiveCaption;
-            peerServerSwitchControl1.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            peerServerSwitchControl1.Location = new Point(8, 0);
-            peerServerSwitchControl1.Margin = new Padding(1);
-            peerServerSwitchControl1.Name = "peerServerSwitchControl1";
-            peerServerSwitchControl1.Padding = new Padding(1);
-            peerServerSwitchControl1.Size = new Size(152, 48);
-            peerServerSwitchControl1.TabIndex = 84;
+            PeerServerSwitch.AllowDrop = true;
+            PeerServerSwitch.BackColor = SystemColors.GradientActiveCaption;
+            PeerServerSwitch.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            PeerServerSwitch.Location = new Point(8, 0);
+            PeerServerSwitch.Margin = new Padding(1);
+            PeerServerSwitch.Name = "PeerServerSwitch";
+            PeerServerSwitch.Padding = new Padding(1);
+            PeerServerSwitch.Size = new Size(152, 48);
+            PeerServerSwitch.TabIndex = 84;
             // 
             // ButtonSend
             // 
@@ -800,16 +799,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonSend.UseVisualStyleBackColor = true;
             ButtonSend.Click += ButtonSend_Click;
             // 
-            // attachmentListControl
+            // LinkedLabelsBox
             // 
-            attachmentListControl.AllowDrop = true;
-            attachmentListControl.BackColor = SystemColors.GradientActiveCaption;
-            attachmentListControl.Font = new Font("Lucida Sans Unicode", 9F);
-            attachmentListControl.Location = new Point(4, 216);
-            attachmentListControl.Margin = new Padding(0);
-            attachmentListControl.Name = "attachmentListControl";
-            attachmentListControl.Size = new Size(160, 256);
-            attachmentListControl.TabIndex = 83;
+            LinkedLabelsBox.AllowDrop = true;
+            LinkedLabelsBox.BackColor = SystemColors.GradientActiveCaption;
+            LinkedLabelsBox.Font = new Font("Lucida Sans Unicode", 9F);
+            LinkedLabelsBox.Location = new Point(4, 216);
+            LinkedLabelsBox.Margin = new Padding(0);
+            LinkedLabelsBox.Name = "LinkedLabelsBox";
+            LinkedLabelsBox.Size = new Size(160, 256);
+            LinkedLabelsBox.TabIndex = 83;
             // 
             // ButtonAttach
             // 
@@ -823,20 +822,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
             ButtonAttach.UseVisualStyleBackColor = true;
             ButtonAttach.Click += ButtonAttach_Click;
             // 
-            // dragnDropGroupBox
+            // DragNDropGroupBox
             // 
-            dragnDropGroupBox.AllowDrop = true;
-            dragnDropGroupBox.BackColor = SystemColors.AppWorkspace;
-            dragnDropGroupBox.Font = new Font("Lucida Sans Unicode", 8.5F);
-            dragnDropGroupBox.ForeColor = SystemColors.ActiveCaptionText;
-            dragnDropGroupBox.Location = new Point(8, 478);
-            dragnDropGroupBox.Margin = new Padding(1);
-            dragnDropGroupBox.Name = "dragnDropGroupBox";
-            dragnDropGroupBox.Padding = new Padding(1);
-            dragnDropGroupBox.Size = new Size(154, 54);
-            dragnDropGroupBox.TabIndex = 81;
-            dragnDropGroupBox.TabStop = false;
-            dragnDropGroupBox.Text = "   Drag'N'Drop Box";
+            DragNDropGroupBox.AllowDrop = true;
+            DragNDropGroupBox.BackColor = SystemColors.AppWorkspace;
+            DragNDropGroupBox.Font = new Font("Lucida Sans Unicode", 8.5F);
+            DragNDropGroupBox.ForeColor = SystemColors.ActiveCaptionText;
+            DragNDropGroupBox.Location = new Point(8, 478);
+            DragNDropGroupBox.Margin = new Padding(1);
+            DragNDropGroupBox.Name = "DragNDropGroupBox";
+            DragNDropGroupBox.Padding = new Padding(1);
+            DragNDropGroupBox.Size = new Size(154, 54);
+            DragNDropGroupBox.TabIndex = 81;
+            DragNDropGroupBox.TabStop = false;
+            DragNDropGroupBox.Text = "   Drag'N'Drop Box";
             // 
             // PanelCenter
             // 
@@ -932,7 +931,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
         private Button ButtonAttach;
         private Button ButtonClear;
         private Button ButtonCheck;
-        private Controls.GroupBoxLinkLabels GroupBoxLinks;
+        private Gui.Controls.GroupBoxes.LinkLabelsBox GroupBoxLinks;
 
         internal MenuStrip StripMenu;
         private StatusStrip StripStatus;
@@ -989,10 +988,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Forms
 
         private OpenFileDialog FileOpenDialog;
         private SaveFileDialog FileSaveDialog;
-        private Controls.DragNDropGroupBox dragnDropGroupBox;
+        private Gui.Controls.GroupBoxes.DragNDropBox DragNDropGroupBox;
         private ToolStripProgressBar StripProgressBar;
-        private Controls.AttachmentListControl attachmentListControl;
-        private Controls.PeerServerSwitchControl peerServerSwitchControl1;
+        private Gui.Controls.GroupBoxes.LinkLabelsBox LinkedLabelsBox;
+        private Gui.Controls.Panels.PeerServerSwitchPanel PeerServerSwitch;
         private Button ButtonSend;
 
     }

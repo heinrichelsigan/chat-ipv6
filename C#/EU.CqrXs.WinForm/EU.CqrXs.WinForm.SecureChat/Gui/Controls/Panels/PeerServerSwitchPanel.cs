@@ -1,24 +1,29 @@
 ﻿using Area23.At.Framework.Core.Util;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
+namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls.Panels
 {
-    public partial class PeerServerSwitchControl : UserControl
+    public partial class PeerServerSwitchPanel : Panel
     {
         DateTime lastShownToolTip = DateTime.Today;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EventHandler<Area23EventArgs<int>>? FireUpChanged {  get; set; }
+        public EventHandler<Area23EventArgs<int>>? FireUpChanged { get; set; }
 
-        #region constructors
-
-        public PeerServerSwitchControl()
+        public PeerServerSwitchPanel()
         {
             components = new System.ComponentModel.Container();
+            components.Add(this);
             InitializeComponent();
         }
 
-        public PeerServerSwitchControl(IContainer container)
+        public PeerServerSwitchPanel(IContainer container)
         {
             if (container == null)
                 container = new System.ComponentModel.Container();
@@ -27,14 +32,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
             InitializeComponent();
         }
 
-        #endregion constructors
 
         private void TrackBarPeerServer_ValueChanged(object sender, EventArgs e)
         {
             if (FireUpChanged != null)
             {
                 SuspendResumeLayout(false);
-
                 switch (TrackBarPeerServer.Value)
                 {
                     case 1:
@@ -44,7 +47,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
                         LabelServer.BackColor = SystemColors.ActiveCaption;
                         LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Regular);
                         LabelPeer.ForeColor = SystemColors.ControlText;
-                        LabelPeer.BackColor = SystemColors.ActiveCaption;    
+                        LabelPeer.BackColor = SystemColors.ActiveCaption;
                         break;
                     case 2:
                         LabelServer.Location = new Point(68, 1);
@@ -60,13 +63,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
                         LabelServer.Location = new Point(78, 1);
                         LabelServer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Italic, GraphicsUnit.Point, 0);
                         LabelServer.ForeColor = SystemColors.GrayText;
-                        LabelServer.BackColor = SystemColors.InactiveCaption;
+                        LabelPeer.BackColor = SystemColors.InactiveCaption;
                         LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Bold);
                         LabelPeer.ForeColor = SystemColors.ControlText;
                         LabelPeer.BackColor = SystemColors.ActiveCaption;
                         break;
                 }
-
                 SuspendResumeLayout(true);
 
                 EventHandler<Area23EventArgs<int>> handler = FireUpChanged;
@@ -103,7 +105,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 
 
                 //        EventHandler<Area23EventArgs<int>> hnd = FireUpChanged;
-                //        Area23EventArgs<int> area23EventArgs = new Area23EventArgs<int>(trackBarPeerServer.Value);
+                //        Area23EventArgs<int> area23EventArgs = new Area23EventArgs<int>(TrackBarPeerServer.Value);
                 //        hnd?.Invoke(this, area23EventArgs);
                 //    }));
                 //    tLoadSwitchImage.Stop(); // Stop the timer(otherwise keeps on calling)
@@ -113,6 +115,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
                 #endregion old code switch always back to peer 2 peer
 
             }
+
         }
 
         /// <summary>
@@ -168,6 +171,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Gui.Controls
 
         #endregion show / hide tooltip
 
-
     }
+
 }
+
