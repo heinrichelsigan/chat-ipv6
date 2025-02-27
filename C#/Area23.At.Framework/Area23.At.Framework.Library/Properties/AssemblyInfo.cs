@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("area23.at Heinrich Elsigan")]
 [assembly: AssemblyProduct("area23.at FrameworkLibrary")]
-[assembly: AssemblyCopyright("Copyleft ©  2000-2040")]
+[assembly: AssemblyCopyright("Copyleft © 2000-2040")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
