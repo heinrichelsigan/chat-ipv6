@@ -93,14 +93,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             TextBoxPipe = new TextBox();
             RichTextBoxChat = new RichTextBox();
             PanelDestination = new Panel();
-            peerServerSwitchControl1 = new Controls.UserControls.PeerServerSwitchControl();
+            ButtonClear = new Button();
+            PeerServerSwitch = new Panels.PeerServerSwitchPanel(components);
             ButtonSend = new Button();
-            attachmentListControl = new Controls.UserControls.AttachmentListControl(components);
+            LinkedLabelsBox = new GroupBoxes.LinkLabelsBox(components);
             ButtonAttach = new Button();
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
-            ButtonClear = new Button();
             StripMenu.SuspendLayout();
             StripStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
@@ -450,6 +450,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuOptionsItemClearAllOnClose.Size = new Size(335, 22);
             MenuOptionsItemClearAllOnClose.Text = "✂␡ all chats, 📁attachments on close";
             MenuOptionsItemClearAllOnClose.ToolTipText = "When closing this application, ␡ all chats, saved 📁attachments and private 🔑keys";
+            MenuOptionsItemClearAllOnClose.Click += MenuOptionsItemClearAllOnClose_Click;
             // 
             // MenuOptionsItemDontSendProfilePictures
             // 
@@ -619,8 +620,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // PictureBoxYou
             // 
             PictureBoxYou.BackColor = SystemColors.ButtonShadow;
-            PictureBoxYou.BackgroundImageLayout = ImageLayout.Stretch;
-            PictureBoxYou.Location = new Point(7, 63);
+            PictureBoxYou.BackgroundImageLayout = ImageLayout.None;
+            PictureBoxYou.Location = new Point(7, 55);
             PictureBoxYou.Margin = new Padding(1);
             PictureBoxYou.Name = "PictureBoxYou";
             PictureBoxYou.Padding = new Padding(1);
@@ -738,71 +739,83 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             RichTextBoxChat.BackColor = SystemColors.ButtonHighlight;
             RichTextBoxChat.BorderStyle = BorderStyle.FixedSingle;
             RichTextBoxChat.ForeColor = SystemColors.WindowText;
-            RichTextBoxChat.Location = new Point(6, 6);
+            RichTextBoxChat.Location = new Point(8, 4);
             RichTextBoxChat.Margin = new Padding(1);
             RichTextBoxChat.Name = "RichTextBoxChat";
-            RichTextBoxChat.Size = new Size(820, 120);
+            RichTextBoxChat.Size = new Size(818, 126);
             RichTextBoxChat.TabIndex = 41;
             RichTextBoxChat.Text = "";
             // 
             // PanelDestination
             // 
             PanelDestination.BackColor = SystemColors.ActiveCaption;
-            PanelDestination.Controls.Add(peerServerSwitchControl1);
-            PanelDestination.Controls.Add(ButtonSend);
-            PanelDestination.Controls.Add(attachmentListControl);
-            PanelDestination.Controls.Add(ButtonAttach);
+            PanelDestination.Controls.Add(PeerServerSwitch);
+            PanelDestination.Controls.Add(LinkedLabelsBox);
             PanelDestination.Controls.Add(PictureBoxYou);
             PanelDestination.ForeColor = SystemColors.ActiveCaptionText;
             PanelDestination.Location = new Point(826, 32);
             PanelDestination.Margin = new Padding(0);
             PanelDestination.Name = "PanelDestination";
-            PanelDestination.Size = new Size(168, 653);
+            PanelDestination.Size = new Size(168, 520);
             PanelDestination.TabIndex = 70;
             // 
-            // peerServerSwitchControl1
+            // ButtonClear
             // 
-            peerServerSwitchControl1.AllowDrop = true;
-            peerServerSwitchControl1.AutoValidate = AutoValidate.EnableAllowFocusChange;
-            peerServerSwitchControl1.BackColor = SystemColors.GradientActiveCaption;
-            peerServerSwitchControl1.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            peerServerSwitchControl1.Location = new Point(8, 0);
-            peerServerSwitchControl1.Margin = new Padding(1);
-            peerServerSwitchControl1.Name = "peerServerSwitchControl1";
-            peerServerSwitchControl1.Padding = new Padding(1);
-            peerServerSwitchControl1.Size = new Size(152, 56);
-            peerServerSwitchControl1.TabIndex = 84;
+            ButtonClear.Location = new Point(833, 98);
+            ButtonClear.Margin = new Padding(1);
+            ButtonClear.Name = "ButtonClear";
+            ButtonClear.Padding = new Padding(1);
+            ButtonClear.Size = new Size(155, 32);
+            ButtonClear.TabIndex = 84;
+            ButtonClear.Text = "Clear";
+            ButtonClear.UseVisualStyleBackColor = true;
+            ButtonClear.Click += ButtonClear_Click;
+            // 
+            // PeerServerSwitch
+            // 
+            PeerServerSwitch.AllowDrop = true;
+            PeerServerSwitch.BackColor = SystemColors.GradientActiveCaption;
+            PeerServerSwitch.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            PeerServerSwitch.Location = new Point(8, 0);
+            PeerServerSwitch.Margin = new Padding(1);
+            PeerServerSwitch.Name = "PeerServerSwitch";
+            PeerServerSwitch.Padding = new Padding(1);
+            PeerServerSwitch.Size = new Size(152, 48);
+            PeerServerSwitch.TabIndex = 84;
             // 
             // ButtonSend
             // 
-            ButtonSend.Location = new Point(7, 565);
-            ButtonSend.Margin = new Padding(2);
+            ButtonSend.Location = new Point(834, 4);
+            ButtonSend.Margin = new Padding(1);
             ButtonSend.Name = "ButtonSend";
             ButtonSend.Padding = new Padding(1);
-            ButtonSend.Size = new Size(155, 35);
+            ButtonSend.Size = new Size(154, 35);
             ButtonSend.TabIndex = 83;
             ButtonSend.Text = "Send";
             ButtonSend.UseVisualStyleBackColor = true;
             ButtonSend.Click += ButtonSend_Click;
             // 
-            // attachmentListControl
+            // LinkedLabelsBox
             // 
-            attachmentListControl.AllowDrop = true;
-            attachmentListControl.BackColor = SystemColors.GradientActiveCaption;
-            attachmentListControl.Font = new Font("Lucida Sans Unicode", 9F);
-            attachmentListControl.Location = new Point(4, 226);
-            attachmentListControl.Margin = new Padding(0);
-            attachmentListControl.Name = "attachmentListControl";
-            attachmentListControl.Size = new Size(160, 292);
-            attachmentListControl.TabIndex = 83;
+            LinkedLabelsBox.AllowDrop = true;
+            LinkedLabelsBox.BackColor = SystemColors.GradientActiveCaption;
+            LinkedLabelsBox.Font = new Font("Lucida Sans Unicode", 9F);
+            LinkedLabelsBox.Location = new Point(4, 216);
+            LinkedLabelsBox.Margin = new Padding(0);
+            LinkedLabelsBox.Name = "LinkedLabelsBox";
+            LinkedLabelsBox.Padding = new Padding(0);
+            LinkedLabelsBox.Size = new Size(160, 284);
+            LinkedLabelsBox.TabIndex = 83;
+            LinkedLabelsBox.TabStop = false;
+            LinkedLabelsBox.Text = "LinkLabels";
             // 
             // ButtonAttach
             // 
-            ButtonAttach.Location = new Point(8, 523);
-            ButtonAttach.Margin = new Padding(2);
+            ButtonAttach.Location = new Point(833, 54);
+            ButtonAttach.Margin = new Padding(1);
             ButtonAttach.Name = "ButtonAttach";
             ButtonAttach.Padding = new Padding(1);
-            ButtonAttach.Size = new Size(154, 35);
+            ButtonAttach.Size = new Size(155, 33);
             ButtonAttach.TabIndex = 82;
             ButtonAttach.Text = "Attach";
             ButtonAttach.UseVisualStyleBackColor = true;
@@ -834,33 +847,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // PanelBottom
             // 
             PanelBottom.BackColor = SystemColors.ActiveCaption;
+            PanelBottom.Controls.Add(ButtonClear);
             PanelBottom.Controls.Add(RichTextBoxChat);
+            PanelBottom.Controls.Add(ButtonAttach);
+            PanelBottom.Controls.Add(ButtonSend);
             PanelBottom.ForeColor = SystemColors.ActiveCaptionText;
             PanelBottom.Location = new Point(0, 549);
             PanelBottom.Margin = new Padding(1);
             PanelBottom.Name = "PanelBottom";
-            PanelBottom.Size = new Size(824, 136);
+            PanelBottom.Size = new Size(994, 136);
             PanelBottom.TabIndex = 40;
-            // 
-            // ButtonClear
-            // 
-            ButtonClear.Location = new Point(834, 641);
-            ButtonClear.Margin = new Padding(2);
-            ButtonClear.Name = "ButtonClear";
-            ButtonClear.Padding = new Padding(1);
-            ButtonClear.Size = new Size(154, 35);
-            ButtonClear.TabIndex = 84;
-            ButtonClear.Text = "Clear";
-            ButtonClear.UseVisualStyleBackColor = true;
-            ButtonClear.Click += ButtonClear_Click;
             // 
             // RichTextChat
             // 
-            AutoScaleMode = AutoScaleMode.None;
+            AutoScaleDimensions = new SizeF(8F, 16F);
+            AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(996, 711);
-            Controls.Add(ButtonClear);
             Controls.Add(PanelCenter);
             Controls.Add(PanelDestination);
             Controls.Add(PanelBottom);
@@ -868,12 +872,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             Controls.Add(StripStatus);
             Controls.Add(StripMenu);
             Font = new Font("Lucida Sans Unicode", 10F);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenuStrip = StripMenu;
             Name = "RichTextChat";
             SizeGripStyle = SizeGripStyle.Show;
             Text = "RichTextChat";
             FormClosing += FormClose_Click;
+            Load += RichTextChat_Load;
             StripMenu.ResumeLayout(false);
             StripMenu.PerformLayout();
             StripStatus.ResumeLayout(false);
@@ -971,10 +976,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private OpenFileDialog FileOpenDialog;
         private SaveFileDialog FileSaveDialog;
         private ToolStripProgressBar StripProgressBar;
-        private Controls.UserControls.AttachmentListControl attachmentListControl;
-        private Controls.UserControls.PeerServerSwitchControl peerServerSwitchControl1;
+        private Controls.GroupBoxes.LinkLabelsBox LinkedLabelsBox;
+        private Controls.Panels.PeerServerSwitchPanel PeerServerSwitch;
         private Button ButtonSend;
-   
+
     }
 
 }
