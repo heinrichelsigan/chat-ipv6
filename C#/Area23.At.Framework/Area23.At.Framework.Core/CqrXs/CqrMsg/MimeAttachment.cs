@@ -18,29 +18,29 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// </summary>
     [JsonObject]
     [Serializable]
-    public class MimeAttachment : MsgContent
+    internal class MimeAttachment : MsgContent
     {
 
         internal const string MIME_BASE64_FINISH = "\n\r\n";
 
         #region properties 
 
-        public string FileName { get; set; }
-        public string Base64Type { get; set; }
-        public string Base64Mime { get; set; }
-        public int ContentLength { get; set; }
-        public string Verification { get; set; }
+        internal string FileName { get; set; }
+        internal string Base64Type { get; set; }
+        internal string Base64Mime { get; set; }
+        internal int ContentLength { get; set; }
+        internal string Verification { get; set; }
 
-        public string Md5Hash { get; set; }
-        public string Sha256Hash { get; set; }
+        internal string Md5Hash { get; set; }
+        internal string Sha256Hash { get; set; }
 
-        public string MimeMsg { get => this.GetMimeMessage(); }
+        internal string MimeMsg { get => this.GetMimeMessage(); }
 
         #endregion properties 
 
         #region ctors
 
-        public MimeAttachment() : base()
+        internal MimeAttachment() : base()
         {
             FileName = string.Empty;
             Base64Type = string.Empty;
@@ -51,7 +51,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Verification = string.Empty;
         }
 
-        public MimeAttachment(string fileName, string mimeType, string base64Mime, string verification)
+        internal MimeAttachment(string fileName, string mimeType, string base64Mime, string verification)
         {
             FileName = fileName;
             Base64Type = mimeType;
@@ -59,10 +59,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ContentLength = base64Mime.Length;
             Verification = verification;
             _hash = verification;
-            _isMime = true;
         }
 
-        public MimeAttachment(string fileName, string mimeType, string base64Mime, string verification, string sMd5 = "", string sSha256 = "")
+        internal MimeAttachment(string fileName, string mimeType, string base64Mime, string verification, string sMd5 = "", string sSha256 = "")
         {
             FileName = fileName;
             Base64Type = mimeType;
@@ -72,10 +71,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Md5Hash = sMd5;
             Sha256Hash = sSha256;
             _hash = verification;
-            _isMime = true;
         }
 
-        public MimeAttachment(string plainText, MsgEnum msgArt = MsgEnum.None)
+        internal MimeAttachment(string plainText, MsgEnum msgArt = MsgEnum.None)
         {
             if (msgArt == MsgEnum.None || msgArt == MsgEnum.RawWithHashAtEnd)
             {
@@ -88,9 +86,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 Sha256Hash = mimeAttachment.Sha256Hash;
                 Base64Mime = mimeAttachment.Base64Mime;
                 _hash = Verification;
-                _isMime = true;
             }
-            else if (msgArt == MsgEnum.JsonSerialized || msgArt == MsgEnum.JsonDeserialized)
+            else if (msgArt == MsgEnum.Json)
             {
                 this.FromJson<MimeAttachment>(plainText);
             }
@@ -117,7 +114,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     this._hash = mc.Hash;
                     this._message = mc.Message;
                     this._rawMessage = mc.RawMessage;
-                    _isMime = false;
                 }
                 if (t is MimeAttachment ma)
                 {
@@ -128,14 +124,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     this.Md5Hash = ma.Md5Hash;
                     this.Sha256Hash = ma.Sha256Hash;
                     this.Verification = ma.Verification;
-                    _isMime = true;
                 }
             }
             return t;
         }
 
 
-        public string GetMimeMessage()
+        internal string GetMimeMessage()
         {
             string mimeMsg = $"Content-Type: {Base64Type}; name=\"{FileName}\";\n";
             mimeMsg += $"Content-Transfer-Encoding: base64;\n";
@@ -150,7 +145,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return mimeMsg;
         }
 
-        public string GetWebPage()
+        internal string GetWebPage()
         {
             string html = $"<html>\n\t<head>\n\t\t<title>{FileName} {Base64Type}</title>\n\t</head>";
             html += $"\n\t<body>\n\t\t";
@@ -183,7 +178,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return html;
         }
 
-        public MimeAttachment GetMimeAttachment(string plainAttachment, MsgEnum msgArt = MsgEnum.None)
+        internal MimeAttachment GetMimeAttachment(string plainAttachment, MsgEnum msgArt = MsgEnum.None)
         {
             if (msgArt == MsgEnum.None)
             {
@@ -196,10 +191,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 Md5Hash = mimeAttachment.Md5Hash;
                 Sha256Hash = mimeAttachment.Sha256Hash;
                 Base64Mime = mimeAttachment.Base64Mime;
-                _isMime = true;
                 _hash = mimeAttachment.Verification;
             }
-            else if (msgArt == MsgEnum.JsonSerialized)
+            else if (msgArt == MsgEnum.Json)
             {
                 this.FromJson<MimeAttachment>(plainAttachment);
             }
@@ -208,17 +202,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         }
 
-        public string GetFileNameContentLength()
+        internal string GetFileNameContentLength()
         {
             string fileCLen = FileName + " [" + ContentLength + "]";
             return fileCLen;
         }
 
 
-        public override MimeAttachment ToMimeAttachment()
+        internal override MimeAttachment ToMimeAttachment()
         {
-            if (!IsMimeAttachment())
-                throw new InvalidCastException($"MsgContent Message={_message} isn't a mime attachment!");
+            // if (!IsMimeAttachment())
+            //     throw new InvalidCastException($"MsgContent Message={_message} isn't a mime attachment!");
 
             MimeAttachment mAttach = MimeAttachment.GetBase64Attachment(_message);
             this.Base64Mime = mAttach.Base64Mime;
@@ -230,8 +224,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             this.Sha256Hash = mAttach.Sha256Hash;
             this._hash = mAttach._hash;
             this._message = mAttach._message;
-            this._isMime = true;
-
 
             return mAttach;
         }
@@ -241,7 +233,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         #region static members
 
-        public static MimeAttachment GetBase64Attachment(string plainAttachment)
+        internal static MimeAttachment GetBase64Attachment(string plainAttachment)
         {
             string restString = plainAttachment;
 
@@ -286,7 +278,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return mimeAttach;
         }
 
-        public static string GetMimeMessage(string fileName, string mimeType, string base64Mime, string verification, string md5 = "", string sha256 = "")
+        internal static string GetMimeMessage(string fileName, string mimeType, string base64Mime, string verification, string md5 = "", string sha256 = "")
         {
             string mimeMsg = $"Content-Type: {mimeType}; name=\"{fileName}\";\n";
             mimeMsg += $"Content-Transfer-Encoding: base64;\n";

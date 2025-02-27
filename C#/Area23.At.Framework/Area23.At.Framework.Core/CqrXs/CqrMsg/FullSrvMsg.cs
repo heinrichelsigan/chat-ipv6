@@ -59,7 +59,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             TContent = null;
         }
 
-        public FullSrvMsg(string fm, MsgEnum msgArt = MsgEnum.JsonSerialized) : base()
+        public FullSrvMsg(string fm, MsgEnum msgArt = MsgEnum.Json) : base()
         {
             this.FromJson<FullSrvMsg<TC>>(fm);
         }

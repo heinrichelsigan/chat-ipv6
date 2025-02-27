@@ -12,6 +12,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         where TC : class
     {
 
+        public FullSrvMsg<TS>? ServerMsg { get; set; }
+        public FullSrvMsg<TC>? ClientMsg { get; set; }
+
+        string ServerMsgString { get; set; }
+
+        string ClientMsgString { get; set; }
+
         public ClientSrvMsg()
         {
             ServerMsgString = string.Empty;
@@ -33,12 +40,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         }
 
 
-        public FullSrvMsg<TS>? ServerMsg { get; set; }
-        public FullSrvMsg<TC>? ClientMsg { get; set; }
-
-        string ServerMsgString { get; set; }
-
-        string ClientMsgString { get; set; }
+        
 
 
     }

@@ -11,7 +11,6 @@ using Area23.At.Framework.Core.Util;
 using System.Drawing.Imaging;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -21,7 +20,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// </summary>
     [JsonObject]
     [Serializable]
-    public class CqrImage
+    public class CqrImage : MsgContent
     {
 
         #region properties
@@ -39,6 +38,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// <summary>
         /// byte[] of Image Raw Data
         /// </summary>
+        [JsonIgnore]
         internal byte[] ImageData { get; set; }
 
         /// <summary>

@@ -131,6 +131,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.fr {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Key_gray {
+            get {
+                object obj = ResourceManager.GetObject("Key_gray", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Key_right {
+            get {
+                object obj = ResourceManager.GetObject("Key_right", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon KeyIcon {

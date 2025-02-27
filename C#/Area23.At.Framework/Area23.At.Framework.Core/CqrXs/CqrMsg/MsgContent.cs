@@ -3,13 +3,16 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Linq;
+using System.Net.Mail;
 using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -21,15 +24,14 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     [JsonObject]
     [Serializable]
     public class MsgContent
-    {
-        protected internal Nullable<bool> _isMime;
+    {        
         internal string _hash;
         internal string _message;
         protected internal string _rawMessage;
 
         public MsgEnum MsgType { get; protected internal set; }
 
-        public bool IsMime { get => IsMimeAttachment(); }
+        // public bool IsMime { get => IsMimeAttachment(); }
 
         public string Hash { get => _hash; }
 
@@ -65,55 +67,89 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             _hash = string.Empty;
         }
 
-        public MsgContent(string msg, MsgEnum msgArt = MsgEnum.None)
+
+        /// <summary>
+        /// this constructor requires a serialized or rawstring in msg
+        /// </summary>
+        /// <param name="serializedString">serialized string</param>
+        /// <param name="msgArt">Serialization type</param>
+        public MsgContent(string serializedString, MsgEnum msgArt = MsgEnum.None)
         {
             switch (msgArt)
             {
-                case MsgEnum.JsonSerialized:
-                    MsgType = MsgEnum.JsonSerialized;
-                    MsgContent? c = this.FromJson<MsgContent>(msg);
-                    c._rawMessage = msg;
+                case MsgEnum.Json:                  
+                    MsgType = MsgEnum.Json;
+                    MsgContent? c = GetMsgContentType(serializedString, out Type cqrType, MsgEnum.Json);
+                    if (c != null)
+                    {
+                        _rawMessage = c._rawMessage;
+                        _hash = c._hash;
+                        _message = c._message;
+                    }
                     break;
-                case MsgEnum.JsonDeserialized:
-                    MsgType = MsgEnum.JsonDeserialized;
-                    _rawMessage = msg;
-                    _hash = VerificationHash(out _message);
-                    _rawMessage = JsonConvert.SerializeObject(this, Formatting.Indented);
+                case MsgEnum.Xml:
+                    MsgType = MsgEnum.Xml;
+                    MsgContent? cXml = GetMsgContentType(serializedString, out Type cqType, msgArt);
+                    if (cXml != null)
+                    {
+                        _rawMessage = cXml._rawMessage;
+                        _hash = cXml._hash;
+                        _message = cXml._message;
+                    }
                     break;
                 case MsgEnum.None:
                 case MsgEnum.RawWithHashAtEnd:
                 default:
                     MsgType = MsgEnum.RawWithHashAtEnd;
-                    _message = msg;
-                    _rawMessage = msg;
+                    _message = serializedString;
+                    _rawMessage = serializedString;
                     _hash = VerificationHash(out _message);
                     break;                
             }
             
         }
 
-        public MsgContent(string msg, string hash, MsgEnum msgArt = MsgEnum.RawWithHashAtEnd)
+        /// <summary>
+        /// this ctor requires a plainstring and serialize it in _rawMessage
+        /// </summary>
+        /// <param name="plainTextMsg">plain text message</param>
+        /// <param name="hash"></param>
+        /// <param name="msgArt"></param>
+        public MsgContent(string plainTextMsg, string hash, MsgEnum msgArt = MsgEnum.RawWithHashAtEnd)
         {
             MsgType = msgArt;
-            if (msgArt == MsgEnum.JsonSerialized || msgArt == MsgEnum.JsonDeserialized)
+            if (msgArt == MsgEnum.Json)
             {
-                _message = msg;
+                _message = plainTextMsg;
                 _hash = hash;
                 _rawMessage = this.ToJson();
             }
-            if (msgArt == MsgEnum.RawWithHashAtEnd || msgArt == MsgEnum.None)
+            if (msgArt == MsgEnum.Xml)
+            {
+                _message = plainTextMsg;
+                _hash = hash;
+                _rawMessage = Ext.SerializeToXml<MsgContent>(this);
+
+            }
+            if (msgArt == MsgEnum.RawWithHashAtEnd)
             {
                 _hash = hash;
-                if (msg.Contains(hash) && msg.IndexOf(hash) > (msg.Length - 10))
+                if (plainTextMsg.Contains(hash) && plainTextMsg.IndexOf(hash) > (plainTextMsg.Length - 10))
                 {
-                    _rawMessage = msg;
+                    _rawMessage = plainTextMsg;
                     _message = _rawMessage.Substring(0, _rawMessage.Length - _hash.Length);
                 }
                 else
                 {
-                    _message = msg;
+                    _message = plainTextMsg;
                     _rawMessage = _message + "\n" + hash + "\0";
                 }
+            }
+            if (msgArt == MsgEnum.None)
+            {
+                _hash = hash;
+                _message = plainTextMsg;
+                _rawMessage = this.ToString();
             }
         }
 
@@ -127,25 +163,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             _hash = msgContent._hash;
 
             return (MsgContent)this;
-        }
-
-        public virtual bool IsMimeAttachment()
-        {
-            if (_isMime.HasValue)
-                return _isMime.Value;
-
-            _isMime = false;
-            if (_rawMessage.StartsWith("Content-Type: ") && _rawMessage.Contains("Content-Verification: ") && _rawMessage.Contains("Content-Length: "))
-            {
-                string checkContentLength = _rawMessage.GetSubStringByPattern("Content-Length: ", true, "", ";\n", false, StringComparison.CurrentCultureIgnoreCase);                 
-                int contentLen = 0;
-                if (!Int32.TryParse(checkContentLength, out contentLen))
-                    contentLen = -1;
-
-                _isMime = (contentLen > 0);
-            }
-
-            return _isMime.Value;
         }
 
         public virtual string ToJson()
@@ -167,6 +184,25 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         }
 
 
+        public virtual string ToXml()
+        {
+            string xmlText = Ext.SerializeToXml<MsgContent>(this);
+            return xmlText;
+        }
+
+        public virtual T? FromXml<T>(string xmlText)
+        {
+            T? cqrT = Ext.DeserializeFromXml<T>(xmlText);
+            if (cqrT is MsgContent mc)
+            {
+                this._hash = mc._hash;
+                this._rawMessage = mc._rawMessage;
+                this._message = mc._message;
+            }
+            
+            return cqrT;
+        }
+
         public virtual string VerificationHash(out string msg)
         {
             msg = _message;
@@ -175,22 +211,35 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 return _hash;
             }
 
-            if (_rawMessage.Length > 8)            
+            if (_rawMessage.Length > 9) 
             {
                 // if (_message.Contains('\n') && _message.LastIndexOf('\n') < _message.Length)
-                string tmp = _rawMessage.Substring(_rawMessage.Length - 9);
+                string tmp = _rawMessage.Substring(_rawMessage.Length - 10);
                 if (tmp.Contains('\n') && tmp.IndexOf('\n') < 9)
+                {
                     _hash = tmp.Substring(tmp.LastIndexOf('\n') + 1);
+                    if (_hash.Contains("\0"))
+                        _hash = _hash.Substring(0, _hash.LastIndexOf("\0"));
+                }
             }
             else
             {
                 _hash = _rawMessage;
             }        
 
-            if (IsMimeAttachment())
+            if (IsCqrFile())
             {
-                _hash = _rawMessage.GetSubStringByPattern("Content-Verification: ", true, "", ";", false, StringComparison.InvariantCulture);
-                // _hash = _rawMessage.Substring(0, _rawMessage.IndexOf(";\n"));
+                CqrFile? cqFile = ToCqrFile();
+                // CqrFile? cfile = IsTo<CqrFile>(out CqrFile? t);
+                if (cqFile != null && !string.IsNullOrEmpty(cqFile.Hash))
+                {
+                    _hash = cqFile._hash;
+                    if (!string.IsNullOrEmpty(cqFile._message))
+                        msg = cqFile._message;
+
+                    return _hash;
+                }
+
             }
 
             if (_hash.Length > 4 && _rawMessage.Substring(_rawMessage.Length - _hash.Length).Equals(_hash, StringComparison.InvariantCulture))
@@ -199,26 +248,271 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return _hash ?? string.Empty;
         }
 
-        public virtual MimeAttachment ToMimeAttachment()
+        internal virtual MimeAttachment ToMimeAttachment()
         {
-            if (!IsMimeAttachment())
-                throw new InvalidCastException($"MsgContent Message={_rawMessage} isn't a mime attachment!");
+            //if (!IsMimeAttachment())
+            //    throw new InvalidCastException($"MsgContent Message={_rawMessage} isn't a mime attachment!");
 
             MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(_rawMessage);
             return mimeAttachment;
         }
 
 
-
         public override string ToString()
         {
-            return _message.ToString();
+            return $"\"_message\": {_message}\n" +
+                $"\"_hash\": {_hash}\n" +
+                $"\"_rawMessage\": {_rawMessage}\n" +
+                $"\"MsgType\": {this.MsgType}\n";
+
         }
 
         public static MsgContent SetMessageContent(string plainMsg)
         {
             MsgContent msgContent = new MsgContent(plainMsg);
             return msgContent;
+        }
+
+
+
+        public virtual bool IsCqrFile()
+        {
+            if (this is CqrFile cf && string.IsNullOrEmpty(cf.CqrFileName) && cf.Data != null)
+                return true;
+
+            CqrFile? cq = null;
+            try
+            {
+                cq = JsonConvert.DeserializeObject<CqrFile>(_rawMessage);
+                if (cq != null && !string.IsNullOrEmpty(cq.CqrFileName) && cq.Data != null)
+                    return true;
+            }
+            catch (Exception exCqrFile)
+            {
+                Area23Log.LogStatic(exCqrFile);
+            }
+
+            return false;
+        }
+
+        public virtual CqrFile? ToCqrFile()
+        {
+            if (this is CqrFile cf && string.IsNullOrEmpty(cf.CqrFileName) && cf.Data != null)
+                return cf;
+            
+            if (_rawMessage.IsValidJson() && _rawMessage.Contains("CqrFileName") && _rawMessage.Contains("Base64Type"))
+            {
+                return (CqrFile)JsonConvert.DeserializeObject<CqrFile>(_rawMessage);
+            }
+
+            return null;
+        }
+
+
+
+        ///// <summary>
+        ///// Generic Method, if a MsgContent is CqrFile, CqrImage, CqrContact, ...
+        ///// </summary>
+        ///// <typeparam name="T">MsgContent, CqrFile, CqrImage, CqrContact, FullSrvMsg<TC>, ...</typeparam>
+        ///// <returns>if it is, what it is</returns>
+
+        //public virtual bool Is<T>(out Type type, out T t) 
+        //    where T : MsgContent
+        //    where T : CqrFile
+        //    where T : CqrImage
+        //    where T : CqrContact
+        //    where T : FullSrvMsg<string>          
+        //    where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>
+        //    where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>>
+        //    where T : ClientSrvMsg<FullSrvMsg<CqrFile>, FullSrvMsg<CqrFile>>
+        //    where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>>
+        //    where T : ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>>
+        //{            
+        //    if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
+        //    {
+        //        t = (T)this;
+        //        type = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>);
+        //        return true;
+        //    }
+
+        //    if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>>)
+        //    {
+        //        t = (T)this;
+        //        type = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>>);
+        //        return true;
+        //    }                           
+        //    if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>>)
+        //    {
+        //        t = (T)this;
+        //        type = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>>);
+        //        return true;
+        //    }
+        //    if (this is ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>>)
+        //    {
+        //        t = (T)this;
+        //        type = typeof(ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>>);
+        //        return true;
+        //    }
+        //    if (this is FullSrvMsg<string> fsms)
+        //    {
+        //        type = typeof(FullSrvMsg<string>);
+        //        t = (T)this;
+        //        return true;
+        //    }
+        //    if (this is CqrContact ctc)
+        //    {
+        //        type = typeof(CqrContact);
+        //        t = (T)this;
+        //        return true;
+        //    }
+        //    if (this is CqrImage cimg)
+        //    {
+        //        type = typeof(CqrImage);
+        //        t = (T)this;
+        //        return true;
+        //    }
+        //    if (this is CqrFile cf && cf.Data != null && !string.IsNullOrEmpty(cf.CqrFileName))
+        //    {
+        //        type = typeof(CqrFile);
+        //        t = (T)this;
+        //        return true;
+        //    }
+
+        //    //if (this is Attachment)
+        //    //    return (Attachment)this;
+        //    type = typeof(MsgContent);
+        //    t = (T)this;
+        //    return true;          
+        //}
+
+
+        public virtual MsgContent IsTo<T>(out T? t)
+            where T : MsgContent
+            //where T : CqrFile, new()
+            //where T : CqrImage, new()
+            //where T : CqrContact, new()
+            ////where T : FullSrvMsg<string>
+            //where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>
+            //where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>>
+            //where T : ClientSrvMsg<FullSrvMsg<CqrFile>, FullSrvMsg<CqrFile>>
+            //where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>>
+            //where T : ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>>
+        {
+            t = null;
+            //if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>> csmss)
+            //    return csmss;
+            //if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>> csmsf)
+            //    return csmsf;
+            //if (this is ClientSrvMsg<FullSrvMsg<CqrFile>, FullSrvMsg<CqrFile>> csmff)
+            //    return csmff;
+            //if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>> csmsi)
+            //    return csmsi;
+            //if (this is ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>> csmii)
+            //    return csmii;
+            //TODO:
+            //if (this is FullSrvMsg<string>)
+            //    return (FullSrvMsg<string>)this;
+            if (this is CqrContact ctc)
+            {
+                return (CqrContact)ctc;
+            }
+            if (this is CqrImage cqrImg)
+            {
+                return (CqrImage)cqrImg;
+            }
+            if (this is CqrFile cqrf) // && cf.Data != null && !string.IsNullOrEmpty(cf.CqrFileName))
+            {
+                return (CqrFile)cqrf;
+            }
+            //if (this is Attachment)
+            //    return (Attachment)this;
+            
+            return (MsgContent)this;
+        }
+
+        public static MsgContent GetMsgContentType(string serString, out Type outType, MsgEnum msgType = MsgEnum.None)
+        {
+            outType = typeof(MsgContent);
+            switch (msgType)
+            {
+                case MsgEnum.Json:
+                    if (serString.IsValidJson())
+                    {
+                        //if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
+                        //{
+                        //    outType = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>);
+                        //    return (ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
+                        //        JsonConvert.DeserializeObject<ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>>(serString);
+                        //}
+                        //if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
+                        //{
+                        //    outType = typeof(FullSrvMsg<string>);
+                        //    return (FullSrvMsg<string>)JsonConvert.DeserializeObject<FullSrvMsg<string>>(serString);
+                        //}
+
+                        if (serString.Contains("CqrFileName") && serString.Contains("Base64Type"))
+                        {
+                            outType = typeof(CqrFile);
+                            CqrFile cqrFile = (CqrFile)JsonConvert.DeserializeObject<CqrFile>(serString);
+                            cqrFile._rawMessage = serString;
+                            return cqrFile;
+                        }
+                        if (serString.Contains("ImageFileName") && serString.Contains("ImageMimeType"))
+                        {
+                            outType = typeof(CqrImage);
+                            return (CqrImage)JsonConvert.DeserializeObject<CqrImage>(serString);
+                        }
+                        if (serString.Contains("ContactId") && serString.Contains("Cuid") && serString.Contains("Email"))
+                        {
+                            outType = typeof(CqrContact);
+                            return (CqrContact)JsonConvert.DeserializeObject<CqrContact>(serString);
+                        }
+
+                        outType = typeof(MsgContent);
+                        return (MsgContent)JsonConvert.DeserializeObject<MsgContent>(serString);
+                    }
+                    break;
+                case MsgEnum.Xml:
+                    if (serString.IsValidXml())
+                    {
+                        //if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
+                        //{
+                        //    outType = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>);
+                        //    return (ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
+                        //        Ext.DeserializeFromXml<ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>>(serString);                            
+                        //}
+                        //if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
+                        //{
+                        //    outType = typeof(FullSrvMsg<string>);
+                        //    return (FullSrvMsg<string>)Ext.DeserializeFromXml<FullSrvMsg<string>>(serString);
+                        //}
+
+                        if (serString.Contains("CqrFileName") && serString.Contains("Base64Type"))
+                        {
+                            outType = typeof(CqrFile);
+                            return (CqrFile)Ext.DeserializeFromXml<CqrFile>(serString);
+                        }
+                        if (serString.Contains("ImageFileName") && serString.Contains("ImageMimeType"))
+                        {
+                            outType = typeof(CqrImage);
+                            return (CqrImage)Ext.DeserializeFromXml<CqrImage>(serString);
+                        }
+                        if (serString.Contains("ContactId") && serString.Contains("Cuid") && serString.Contains("Email"))
+                        {
+                            outType = typeof(CqrContact);
+                            return (CqrContact)Ext.DeserializeFromXml<CqrContact>(serString);
+                        }
+
+                        outType = typeof(MsgContent);
+                        return (MsgContent)Ext.DeserializeFromXml<MsgContent>(serString);
+                    }
+                    break;
+                case MsgEnum.RawWithHashAtEnd:
+                case MsgEnum.None:
+                default: throw new NotImplementedException("GetMsgContentType(...): case MsgEnum.RawWithHashAtEnd and MsgEnum.None not implemented");
+            }
+
+            return null;
         }
 
     }

@@ -237,7 +237,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             while (decrypted[decrypted.Length - 1] == '\0')
                 decrypted = decrypted.Substring(0, decrypted.Length - 1);
 
-            MsgEnum msgEnum = (decrypted.IsValidJson()) ? MsgEnum.JsonSerialized : MsgEnum.RawWithHashAtEnd;
+            MsgEnum msgEnum = (decrypted.IsValidJson()) ? MsgEnum.Json : MsgEnum.RawWithHashAtEnd;
             MsgContent msgContent = new MsgContent(decrypted, msgEnum);
             string hashVerification = msgContent.Hash;
             if (!VerifyHash(hashVerification, clientSymmPipe.PipeString))

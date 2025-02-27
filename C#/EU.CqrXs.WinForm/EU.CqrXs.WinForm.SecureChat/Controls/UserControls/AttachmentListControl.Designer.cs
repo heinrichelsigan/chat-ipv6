@@ -45,7 +45,7 @@
             // 
             labelHeaderText.AutoSize = true;
             labelHeaderText.Font = new Font("Trebuchet MS", 9.75F);
-            labelHeaderText.Location = new Point(21, 0);
+            labelHeaderText.Location = new Point(0, 0);
             labelHeaderText.Margin = new Padding(1, 0, 1, 0);
             labelHeaderText.Name = "labelHeaderText";
             labelHeaderText.Size = new Size(82, 18);
@@ -56,7 +56,7 @@
             // 
             LinkLabel8.AutoSize = true;
             LinkLabel8.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel8.Location = new Point(1, 164);
+            LinkLabel8.Location = new Point(1, 175);
             LinkLabel8.Margin = new Padding(1, 0, 1, 0);
             LinkLabel8.Name = "LinkLabel8";
             LinkLabel8.Size = new Size(64, 15);
@@ -69,7 +69,7 @@
             // 
             LinkLabel7.AutoSize = true;
             LinkLabel7.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel7.Location = new Point(1, 144);
+            LinkLabel7.Location = new Point(1, 155);
             LinkLabel7.Margin = new Padding(1, 0, 1, 0);
             LinkLabel7.Name = "LinkLabel7";
             LinkLabel7.Size = new Size(64, 15);
@@ -82,7 +82,7 @@
             // 
             LinkLabel6.AutoSize = true;
             LinkLabel6.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel6.Location = new Point(1, 124);
+            LinkLabel6.Location = new Point(1, 135);
             LinkLabel6.Margin = new Padding(1, 0, 1, 0);
             LinkLabel6.Name = "LinkLabel6";
             LinkLabel6.Size = new Size(64, 15);
@@ -95,7 +95,7 @@
             // 
             LinkLabel5.AutoSize = true;
             LinkLabel5.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel5.Location = new Point(1, 104);
+            LinkLabel5.Location = new Point(1, 115);
             LinkLabel5.Margin = new Padding(1, 0, 1, 0);
             LinkLabel5.Name = "LinkLabel5";
             LinkLabel5.Size = new Size(64, 15);
@@ -108,7 +108,7 @@
             // 
             LinkLabel4.AutoSize = true;
             LinkLabel4.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel4.Location = new Point(1, 84);
+            LinkLabel4.Location = new Point(1, 95);
             LinkLabel4.Margin = new Padding(1, 0, 1, 0);
             LinkLabel4.Name = "LinkLabel4";
             LinkLabel4.Size = new Size(64, 15);
@@ -121,7 +121,7 @@
             // 
             LinkLabel3.AutoSize = true;
             LinkLabel3.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel3.Location = new Point(1, 64);
+            LinkLabel3.Location = new Point(1, 75);
             LinkLabel3.Margin = new Padding(1, 0, 1, 0);
             LinkLabel3.Name = "LinkLabel3";
             LinkLabel3.Size = new Size(64, 15);
@@ -134,7 +134,7 @@
             // 
             LinkLabel2.AutoSize = true;
             LinkLabel2.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel2.Location = new Point(1, 44);
+            LinkLabel2.Location = new Point(1, 55);
             LinkLabel2.Margin = new Padding(1, 0, 1, 0);
             LinkLabel2.Name = "LinkLabel2";
             LinkLabel2.Size = new Size(64, 15);
@@ -147,7 +147,7 @@
             // 
             LinkLabel1.AutoSize = true;
             LinkLabel1.Font = new Font("Lucida Sans Unicode", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabel1.Location = new Point(1, 24);
+            LinkLabel1.Location = new Point(1, 35);
             LinkLabel1.Margin = new Padding(1, 0, 1, 0);
             LinkLabel1.Name = "LinkLabel1";
             LinkLabel1.Size = new Size(64, 15);

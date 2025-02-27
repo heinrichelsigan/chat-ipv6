@@ -1116,10 +1116,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         #endregion thread save WinForm delegate callbacks
 
 
-        public MimeAttachment? SendAttachment(string filename, string secretKey, IPAddress partnerIpAddress)
+        public CqrFile? SendCqrFile(string filename, string secretKey, IPAddress partnerIpAddress)
         {
 
-            MimeAttachment? mimeAttach = null;
+            CqrFile? cfile = null;
 
             if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
             {
@@ -1127,24 +1127,51 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(filename, true);
 
                 byte[] fileBytes = File.ReadAllBytes(filename);
-                string fileNameOnly = Path.GetFileName(filename);
+                string fileNameOnly = Path.GetFileName(filename);                
+
                 string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
-
-                string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.None);
-
+                
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(secretKey);
+                cfile = new CqrFile(fileNameOnly, mimeType, fileBytes, pmsg.PipeString, md5, sha256);
+                var response = pmsg.Send_CqrFile(cfile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
 
-
-                // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
-
-                string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
-                File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
+                string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cfile.CqrFileName + Constants.BASE64_EXT);
+                File.WriteAllText(base64FilePath, cfile.ToBase64());
             }
 
-            return mimeAttach;
+            return cfile;
 
         }
+
+        //internal MimeAttachment? SendAttachment(string filename, string secretKey, IPAddress partnerIpAddress)
+        //{
+
+        //    MimeAttachment? mimeAttach = null;
+
+        //    if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
+        //    {
+        //        string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(filename, true);
+        //        string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(filename, true);
+
+        //        byte[] fileBytes = File.ReadAllBytes(filename);
+        //        string fileNameOnly = Path.GetFileName(filename);
+        //        string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
+
+        //        string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.None);
+
+        //        Peer2PeerMsg pmsg = new Peer2PeerMsg(secretKey);
+
+
+        //        // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+        //        pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
+
+        //        string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
+        //        File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
+        //    }
+
+        //    return mimeAttach;
+
+        //}
 
         /// <summary>
         /// GetProxiesFromSettingsResources 

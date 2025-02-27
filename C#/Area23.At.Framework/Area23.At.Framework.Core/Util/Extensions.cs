@@ -12,6 +12,8 @@ using System.Net;
 using System.Text;
 using System.Xml.Linq;
 using System.Net.Sockets;
+using System.Xml.Serialization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Area23.At.Framework.Core.Util
 {
@@ -1007,6 +1009,47 @@ namespace Area23.At.Framework.Core.Util
 
             return !error;
 
+        }
+       
+        public static string SerializeToXml<T>(T obj)
+        {
+            string xml = string.Empty;
+            try
+            {
+                using StringWriter writer = new StringWriter();
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                serializer.Serialize(writer, obj);
+                xml = writer.ToString();
+            }
+            catch (Exception exSerialize)
+            {
+                Area23Log.LogStatic($"Exception {exSerialize.GetType()} in static byte[]? SerializeToXml<T = {obj.GetType()}>(T obj, out serialized)  {exSerialize.Message}\n");
+                Area23Log.LogStatic(exSerialize);
+            }
+
+            return xml;
+
+        }
+
+
+        public static T? DeserializeFromXml<T>(string xml)
+        {
+            T? result = default(T);
+            try
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(T));
+                using (var tr = new StringReader(xml))
+                {
+                    result = (T)ser.Deserialize(tr);
+                }
+            }
+            catch (Exception exDeserialize)
+            {
+                Area23Log.LogStatic($"Exception {exDeserialize.GetType()} in static T? ({result.GetType()}) DeserializeFromXml<T = {result.GetType()}>(string xml) {exDeserialize.Message}\n");
+                Area23Log.LogStatic(exDeserialize);
+            }
+
+            return result;
         }
     }
 

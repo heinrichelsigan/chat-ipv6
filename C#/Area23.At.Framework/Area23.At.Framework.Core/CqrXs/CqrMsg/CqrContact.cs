@@ -69,7 +69,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ContactImage = null;
         }
 
-        public CqrContact(string cs, MsgEnum msgArt = MsgEnum.JsonSerialized)
+        public CqrContact(string cs, MsgEnum msgArt = MsgEnum.Json)
         {
             FromJson<CqrContact>(cs);
         }

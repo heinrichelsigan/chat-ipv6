@@ -630,12 +630,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         return;
                     }
                     string friendMsg = string.Empty;
-                    if (msgContent.IsMimeAttachment())
+                    if (msgContent.IsCqrFile())
                     {
-                        MimeAttachment mimeAttachment = msgContent.ToMimeAttachment();
-                        SetAttachmentTextLink(mimeAttachment);
-                        friendMsg = mimeAttachment.GetFileNameContentLength() + Environment.NewLine;
-                        PlaySoundFromResource("sound_wind");
+                        CqrFile? cqrFile = msgContent.ToCqrFile();
+                        if (cqrFile != null)
+                        {
+                            SetAttachmentTextLink(cqrFile);
+                            friendMsg = cqrFile.GetFileNameContentLength() + Environment.NewLine;
+                            PlaySoundFromResource("sound_wind");
+                        }
                     }
                     else
                     {
@@ -680,7 +683,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 string comboIpText = GetComboBoxText(ComboBoxIp);
                 partnerIpAddress = IPAddress.Parse(comboIpText);
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
 
                 // chat.AddMyMessage(unencrypted);
                 // AppendText(TextBoxSource, unencrypted);
@@ -812,7 +815,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
                     Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                    pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                    pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
 
                     string userMsg = chat.AddMyMessage(unencrypted);
                     AppendText(TextBoxSource, userMsg);
@@ -874,30 +877,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds 475000 bytes.", "FileSize to large!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
-
                     byte[] fileBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
                     string fileNameOnly = Path.GetFileName(FileOpenDialog.FileName);
                     string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
 
-                    string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.None);
-
                     Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                    CqrFile cqrFile = new CqrFile(fileNameOnly, mimeType, fileBytes, pmsg.PipeString, md5, sha256, MsgEnum.Json, EncodingType.Base64);
 
-                    MimeAttachment mimeAttach; // = new MimeAttachment(fileNameOnly, mimeType, base64Mime, pmsg.symmPipe.PipeString, md5, sha256);
                     if (!string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
                     {
-
                         try
                         {
                             partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
 
                             // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                            pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
+                            pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
 
-                            string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
-                            System.IO.File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
+                            string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
+                            System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
 
-                            string userMsg = chat.AddMyMessage(mimeAttach.GetFileNameContentLength());
+                            string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
                             AppendText(TextBoxSource, userMsg);
                             Format_Lines_RichTextBox();
                             this.RichTextBoxChat.Text = string.Empty;
@@ -978,21 +977,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds 475000 bytes.", "FileSize to large!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
-                }
-                string t = GetComboBoxText(this.ComboBoxIp);
-                if (!string.IsNullOrEmpty(t) && IPAddress.TryParse(t, out IPAddress pi))
-                {
-                    MimeAttachment sndMimeAttch = SendAttachment(ea.GenericTData, myServerKey, pi);
-                    if (sndMimeAttch != null)
+
+                    string t = GetComboBoxText(this.ComboBoxIp);
+                    if (!string.IsNullOrEmpty(t) && IPAddress.TryParse(t, out IPAddress pi))
                     {
-                        string userMsg = chat.AddMyMessage(sndMimeAttch.GetFileNameContentLength());
-                        AppendText(TextBoxSource, userMsg);
-                        Format_Lines_RichTextBox();
-                        this.RichTextBoxChat.Text = string.Empty;
-                        StripStatusLabel.Text = $"File {sndMimeAttch.FileName} send successfully!";
+                        CqrFile? cf = SendCqrFile(ea.GenericTData, myServerKey, pi);
+                        if (cf != null && cf.Data != null && !string.IsNullOrEmpty(cf.CqrFileName))
+                        {
+                            string userMsg = chat.AddMyMessage(cf.GetFileNameContentLength());
+                            AppendText(TextBoxSource, userMsg);
+                            Format_Lines_RichTextBox();
+                            this.RichTextBoxChat.Text = string.Empty;
+                            StripStatusLabel.Text = $"File {cf.CqrFileName} send successfully!";
+                        }
                     }
                 }
-
             }
         }
 
@@ -1051,24 +1050,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="AttachmentListControl"/>
         /// </summary>
         /// <param name="mimeAttachment"><see cref="MimeAttachment"/></param>
-        protected internal void SetAttachmentTextLink(MimeAttachment mimeAttachment)
+        protected internal void SetAttachmentTextLink(CqrFile cqrFile)
         {
-            string fileName = mimeAttachment.FileName;
-            string mimeFilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName + Constants.HTML_EXT);
-            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
+            string fileName = cqrFile.CqrFileName;
+            string mimeFilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.HTML_EXT);
+            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName);
 
-            byte[] attachBytes = EnDeCodeHelper.GetBytes(mimeAttachment.GetWebPage());
+            byte[] attachBytes = EnDeCodeHelper.GetBytes(cqrFile.GetWebPage());
             System.IO.File.WriteAllBytes(mimeFilePath, attachBytes);
 
-            string base64 = mimeAttachment.Base64Mime;
-            if (mimeAttachment.ContentLength < mimeAttachment.Base64Mime.Length)
-                base64 = mimeAttachment.Base64Mime.Substring(0, mimeAttachment.ContentLength);
-            Span<byte> mimeSpan = new Span<byte>();
-
-            byte[] fileBytes = System.Convert.FromBase64String(base64);
-
-
-            System.IO.File.WriteAllBytes(filePath, fileBytes);
+            System.IO.File.WriteAllBytes(filePath, cqrFile.Data);
 
             LinkedLabelsBox.SetNameFilePath(fileName, filePath);
         }

@@ -14,6 +14,11 @@ using EU.CqrXs.WinForm.SecureChat.Util;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
 {
+
+    /// <summary>
+    /// AttachmentListControl extends <see cref="UserControl"/> displays LinkedLabels for attachments 
+    /// and allows to drag and drop files into the Control from desktop or explorer
+    /// </summary>
     public partial class AttachmentListControl : UserControl
     {
 
@@ -27,6 +32,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
         public string HeaderText { get => this.labelHeaderText.Text; set => this.labelHeaderText.Text = value; }
 
         public EventHandler<Area23EventArgs<string>>? OnDragNDrop;
+        public LinkLabelLinkClickedEventHandler? LinkLabelFileOpen;
+        public LinkLabelLinkClickedEventHandler? LinkLabelUriOpen;
 
         #region constructors
 
@@ -110,7 +117,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
                     delegate (System.Windows.Forms.LinkLabel lnkLabel, string linkUrlToAdd)
                     {
                         if (lnkLabel != null && lnkLabel.Text != null && linkUrlToAdd != null)
+                        {
+                            lnkLabel.Links.Clear();
                             lnkLabel.Links.Add(0, linkUrlToAdd.Length, linkUrlToAdd);
+                        }
                     };
                 try
                 {
@@ -125,7 +135,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
             else
             {
                 if (linkLabel != null && linkLabel.Text != null && link != null)
+                {
+                    linkLabel.Links.Clear();
                     linkLabel.Links.Add(0, link.Length, link);
+                }
+                    
             }
         }
 
@@ -260,7 +274,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
 
             SetLinkLabelText(linkLabel0, linkLabelName);
             AddLinkLabelLinks(linkLabel0, uri.ToString());
-            linkLabel0.LinkClicked += LinkLabel_Uri_LinkClicked;
+            if (LinkLabelUriOpen == null)
+                LinkLabelUriOpen = new LinkLabelLinkClickedEventHandler(LinkLabel_Uri_LinkClicked);
+            linkLabel0.LinkClicked -= LinkLabelUriOpen;
+            linkLabel0.LinkClicked += LinkLabelUriOpen;
 
             ++linksCount;
         }
@@ -288,23 +305,27 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
 
             SetLinkLabelText(linkLabel0, linkLabelName);
             AddLinkLabelLinks(linkLabel0, filePath);
-            linkLabel0.LinkClicked += LinkLabel_File_LinkClicked;
+            if (LinkLabelFileOpen == null)
+                LinkLabelFileOpen = new LinkLabelLinkClickedEventHandler(LinkLabelFileOpen);
+            linkLabel0.LinkClicked -= LinkLabelFileOpen;
+            linkLabel0.LinkClicked += LinkLabelFileOpen;
 
             ++linksCount;
         }
 
 
-        public void SetMimeAttachmentTextLink(MimeAttachment mimeAttachment)
+        public void SetMimeAttachmentTextLink(CqrFile cqrFile)
         {
             MiniToolBox.CreateAttachDirectory();
-            string fileName = mimeAttachment.FileName;
-            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttachment.FileName);
-            byte[] fileBytes = Convert.FromBase64String(mimeAttachment.Base64Mime);
-                // Area23.At.Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
+            string fileName = cqrFile.CqrFileName;
+            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName);
+            byte[] fileBytes = cqrFile.Data;
+            // Area23.At.Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 
             SetNameFilePath(fileName, filePath);
         }
+
 
 
         protected internal void LinkLabel_Uri_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
