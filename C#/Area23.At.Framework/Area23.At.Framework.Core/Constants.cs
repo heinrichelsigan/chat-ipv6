@@ -40,6 +40,7 @@ namespace Area23.At.Framework.Core
         public const string APP_PATH = "https://area23.at/net/";
         public const string RPN_URL = "https://area23.at/net/RpnCalc.aspx";
         public const string GIT_URL = "https://github.com/heinrichelsigan/area23.at";
+        public const string GIT_CQR_URL = "https://github.com/heinrichelsigan/chat-ipv6";
         public const string URL_PIC = "https://area23.at/net/res/img/";
         public const string URL_PREFIX = "https://area23.at/net/res/";
         public const string AREA23_S = "https://area23.at/s/";

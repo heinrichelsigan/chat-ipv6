@@ -22,7 +22,9 @@
 	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
 	<AnalysisLevel>latest</AnalysisLevel>
 	<EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
-	<SignAssembly>False</SignAssembly>	  	
+	<SignAssembly>False</SignAssembly>
+	<Company>Heinrich Georg Elsigan</Company>
+	<Copyright>Copyleft © 2000-2040</Copyright>	  	
 	<!-- PublishTrimmed>True</PublishTrimmed -->
   </PropertyGroup>
 
@@ -38,15 +40,6 @@
 
   <ItemGroup>
     <Compile Remove="Entities\Contact.cs" />
-    <Compile Remove="Gui\Controls\DragNDropControl.cs" />
-    <Compile Remove="Gui\Controls\DragNDropControl.Designer.cs" />
-    <Compile Remove="Gui\Controls\LinkLabelsControl.cs" />
-    <Compile Remove="Gui\Controls\LinkLabelsControl.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="Gui\Controls\DragNDropControl.resx" />
-    <EmbeddedResource Remove="Gui\Controls\LinkLabelsControl.resx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -228,7 +221,6 @@
 
   <ItemGroup>
     <Folder Include="AttachFiles\" />
-    <Folder Include="Gui\Controls\UserControls\" />
     <Folder Include="log\" />
     <Folder Include="Properties\text\" />
     <Folder Include="Properties\en\" />
@@ -256,27 +248,30 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Gui\Forms\Base\ChatMenuForm.cs">
+    <Compile Update="Controls\Forms\Base\ChatMenuForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\RichTextChat.cs">
+    <Compile Update="Controls\Forms\RichTextChat.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\Base\BaseChatForm.cs" />
-    <Compile Update="Gui\Forms\Peer2PeerChat.cs" />
-    <Compile Update="Gui\Forms\SecureChat.cs">
+    <Compile Update="Controls\Forms\Base\BaseChatForm.cs" />
+    <Compile Update="Controls\Forms\Peer2PeerChat.cs" />
+    <Compile Update="Controls\Forms\SecureChat.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\ToolWinDialogs\TestForm.cs">
+    <Compile Update="Controls\Forms\ToolWinDialogs\TestForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\ToolWinDialogs\TransparentBadge.cs">
+    <Compile Update="Controls\Forms\ToolWinDialogs\TransparentBadge.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\ToolWinDialogs\ContactsView.cs">
+    <Compile Update="Controls\Forms\ToolWinDialogs\ContactsView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Gui\Forms\ToolWinDialogs\TransparentDialog.cs">
+    <Compile Update="Controls\Forms\ToolWinDialogs\Dialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\Forms\ToolWinDialogs\TransparentDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Properties\de\Resources.Designer.cs">

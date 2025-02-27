@@ -13,7 +13,7 @@ namespace EU.CqrXs.WinForm.SecureChat
 {
 
     /// <summary>
-    /// Main Program entrance for <see cref="Gui.Forms.SecureChat"/> or <see cref="Gui.Forms.Peer2PeerChat"/>
+    /// Main Program entrance for <see cref="Controls.Forms.SecureChat"/> or <see cref="Controls.Forms.Peer2PeerChat"/>
     /// </summary>
     internal static class Program
     {
@@ -72,18 +72,18 @@ namespace EU.CqrXs.WinForm.SecureChat
             switch (startFormSwitch)
             {
                 case "peer":
-                    Gui.Forms.Peer2PeerChat peer2PeerChat = new Gui.Forms.Peer2PeerChat();
+                    Controls.Forms.Peer2PeerChat peer2PeerChat = new Controls.Forms.Peer2PeerChat();
                     Application.Run(peer2PeerChat);
                     break;
                 
                 case "rich":                       
-                    Gui.Forms.RichTextChat richTextChat = new Gui.Forms.RichTextChat();
+                    Controls.Forms.RichTextChat richTextChat = new Controls.Forms.RichTextChat();
                     Application.Run(richTextChat);
                     break;
 
                 case "secure":
                 default:
-                    Gui.Forms.SecureChat secureChat = new Gui.Forms.SecureChat();
+                    Controls.Forms.SecureChat secureChat = new Controls.Forms.SecureChat();
                     Application.Run(secureChat);
                     break;
             }

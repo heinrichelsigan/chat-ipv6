@@ -152,6 +152,35 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
+        public CqrContact SendFirstSrvMsg(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        {
+
+            myContact._hash = PipeString;
+            CqrContact sendContact = new CqrContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
+            sendContact._hash = PipeString;
+
+            string msg = Newtonsoft.Json.JsonConvert.SerializeObject(sendContact);
+            string encMsg = CqrSrvMsg1(sendContact, encodingType);
+
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+            string response = client.Send1StSrvMsg(encMsg);
+
+            CqrContact? returnedContact = null;
+            returnedContact = NCqrSrvMsg1(response, EncodingType.Base64);
+
+            if (returnedContact != null)
+                return returnedContact;
+
+            var content = NCqrBaseMsg(response, EncodingType.Base64);
+            
+            returnedContact = JsonConvert.DeserializeObject<CqrContact>(content.Message);
+
+
+            return returnedContact;
+
+        }
+
+
     }
 
 }
