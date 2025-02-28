@@ -15,7 +15,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         None = 0,
         RawWithHashAtEnd = 1,
         Json = 2,
-        Xml = 3
+        Xml = 3,
+        MimeAttachment = 4
     }
 
     public enum MsgKind

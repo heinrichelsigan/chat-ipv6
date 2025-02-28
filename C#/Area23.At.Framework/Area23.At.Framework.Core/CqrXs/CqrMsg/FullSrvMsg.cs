@@ -19,7 +19,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// <typeparam name="TC"></typeparam>
     [JsonObject]
     [Serializable]
-    public class FullSrvMsg<TC> : MsgContent where TC : class
+    public class FullSrvMsg<TC> : MsgContent, ICqrMessagable where TC : class
     {
         #region properties
 

@@ -23,11 +23,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// </summary>
     [JsonObject]
     [Serializable]
-    public class MsgContent
-    {        
-        internal string _hash;
-        internal string _message;
-        protected internal string _rawMessage;
+    public class MsgContent : ICqrMessagable
+    {
+        public string _hash;
+        public string _message;
+        public string _rawMessage;
 
         public MsgEnum MsgType { get; protected internal set; }
 
@@ -45,8 +45,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     _message = _message.Substring(0, _message.LastIndexOf("\n" + _hash));
                 else if (_message.EndsWith(_hash + "\0"))
                     _message = _message.Substring(0, _message.LastIndexOf(_hash + "\0"));
-                // if (_message.EndsWith(_hash))
-                //     _message = _message.Substring(0, _message.IndexOf(_hash));
 
                 return _message;
             }
@@ -165,15 +163,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return (MsgContent)this;
         }
 
-        public virtual string ToJson()
-        {
-            string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(this);
-            return jsonText;
-        }
+        public virtual string ToJson() => Newtonsoft.Json.JsonConvert.SerializeObject(this);
 
-        public virtual TType? FromJson<TType>(string jsonText)
+        public virtual T? FromJson<T>(string jsonText)
         {
-            TType? t = Newtonsoft.Json.JsonConvert.DeserializeObject<TType>(jsonText);
+            T? t = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonText);
             if (t != null && t is MsgContent mc)
             {
                 this._hash = mc.Hash;
@@ -183,13 +177,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return t;
         }
 
-
-        public virtual string ToXml()
-        {
-            string xmlText = Ext.SerializeToXml<MsgContent>(this);
-            return xmlText;
-        }
-
+        public virtual string ToXml() => Ext.SerializeToXml<MsgContent>(this);
+       
         public virtual T? FromXml<T>(string xmlText)
         {
             T? cqrT = Ext.DeserializeFromXml<T>(xmlText);
@@ -248,16 +237,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return _hash ?? string.Empty;
         }
 
-        internal virtual MimeAttachment ToMimeAttachment()
-        {
-            //if (!IsMimeAttachment())
-            //    throw new InvalidCastException($"MsgContent Message={_rawMessage} isn't a mime attachment!");
-
-            MimeAttachment mimeAttachment = MimeAttachment.GetBase64Attachment(_rawMessage);
-            return mimeAttachment;
-        }
-
-
         public override string ToString()
         {
             return $"\"_message\": {_message}\n" +
@@ -266,13 +245,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 $"\"MsgType\": {this.MsgType}\n";
 
         }
-
-        public static MsgContent SetMessageContent(string plainMsg)
-        {
-            MsgContent msgContent = new MsgContent(plainMsg);
-            return msgContent;
-        }
-
 
 
         public virtual bool IsCqrFile()
@@ -309,127 +281,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         }
 
 
-
-        ///// <summary>
-        ///// Generic Method, if a MsgContent is CqrFile, CqrImage, CqrContact, ...
-        ///// </summary>
-        ///// <typeparam name="T">MsgContent, CqrFile, CqrImage, CqrContact, FullSrvMsg<TC>, ...</typeparam>
-        ///// <returns>if it is, what it is</returns>
-
-        //public virtual bool Is<T>(out Type type, out T t) 
-        //    where T : MsgContent
-        //    where T : CqrFile
-        //    where T : CqrImage
-        //    where T : CqrContact
-        //    where T : FullSrvMsg<string>          
-        //    where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>
-        //    where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>>
-        //    where T : ClientSrvMsg<FullSrvMsg<CqrFile>, FullSrvMsg<CqrFile>>
-        //    where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>>
-        //    where T : ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>>
-        //{            
-        //    if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
-        //    {
-        //        t = (T)this;
-        //        type = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>);
-        //        return true;
-        //    }
-
-        //    if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>>)
-        //    {
-        //        t = (T)this;
-        //        type = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>>);
-        //        return true;
-        //    }                           
-        //    if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>>)
-        //    {
-        //        t = (T)this;
-        //        type = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>>);
-        //        return true;
-        //    }
-        //    if (this is ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>>)
-        //    {
-        //        t = (T)this;
-        //        type = typeof(ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>>);
-        //        return true;
-        //    }
-        //    if (this is FullSrvMsg<string> fsms)
-        //    {
-        //        type = typeof(FullSrvMsg<string>);
-        //        t = (T)this;
-        //        return true;
-        //    }
-        //    if (this is CqrContact ctc)
-        //    {
-        //        type = typeof(CqrContact);
-        //        t = (T)this;
-        //        return true;
-        //    }
-        //    if (this is CqrImage cimg)
-        //    {
-        //        type = typeof(CqrImage);
-        //        t = (T)this;
-        //        return true;
-        //    }
-        //    if (this is CqrFile cf && cf.Data != null && !string.IsNullOrEmpty(cf.CqrFileName))
-        //    {
-        //        type = typeof(CqrFile);
-        //        t = (T)this;
-        //        return true;
-        //    }
-
-        //    //if (this is Attachment)
-        //    //    return (Attachment)this;
-        //    type = typeof(MsgContent);
-        //    t = (T)this;
-        //    return true;          
-        //}
-
-
-        public virtual MsgContent IsTo<T>(out T? t)
-            where T : MsgContent
-            //where T : CqrFile, new()
-            //where T : CqrImage, new()
-            //where T : CqrContact, new()
-            ////where T : FullSrvMsg<string>
-            //where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>
-            //where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>>
-            //where T : ClientSrvMsg<FullSrvMsg<CqrFile>, FullSrvMsg<CqrFile>>
-            //where T : ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>>
-            //where T : ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>>
-        {
-            t = null;
-            //if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>> csmss)
-            //    return csmss;
-            //if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrFile>> csmsf)
-            //    return csmsf;
-            //if (this is ClientSrvMsg<FullSrvMsg<CqrFile>, FullSrvMsg<CqrFile>> csmff)
-            //    return csmff;
-            //if (this is ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<CqrImage>> csmsi)
-            //    return csmsi;
-            //if (this is ClientSrvMsg<FullSrvMsg<CqrImage>, FullSrvMsg<CqrImage>> csmii)
-            //    return csmii;
-            //TODO:
-            //if (this is FullSrvMsg<string>)
-            //    return (FullSrvMsg<string>)this;
-            if (this is CqrContact ctc)
-            {
-                return (CqrContact)ctc;
-            }
-            if (this is CqrImage cqrImg)
-            {
-                return (CqrImage)cqrImg;
-            }
-            if (this is CqrFile cqrf) // && cf.Data != null && !string.IsNullOrEmpty(cf.CqrFileName))
-            {
-                return (CqrFile)cqrf;
-            }
-            //if (this is Attachment)
-            //    return (Attachment)this;
-            
-            return (MsgContent)this;
-        }
-
+        #region static members
+       
         public static MsgContent GetMsgContentType(string serString, out Type outType, MsgEnum msgType = MsgEnum.None)
         {
             outType = typeof(MsgContent);
@@ -444,11 +297,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         //    return (ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
                         //        JsonConvert.DeserializeObject<ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>>(serString);
                         //}
-                        //if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
-                        //{
-                        //    outType = typeof(FullSrvMsg<string>);
-                        //    return (FullSrvMsg<string>)JsonConvert.DeserializeObject<FullSrvMsg<string>>(serString);
-                        //}
+                        if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
+                        {
+                            outType = typeof(FullSrvMsg<string>);
+                            return (FullSrvMsg<string>)JsonConvert.DeserializeObject<FullSrvMsg<string>>(serString);
+                        }
 
                         if (serString.Contains("CqrFileName") && serString.Contains("Base64Type"))
                         {
@@ -481,12 +334,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         //    return (ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
                         //        Ext.DeserializeFromXml<ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>>(serString);                            
                         //}
-                        //if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
-                        //{
-                        //    outType = typeof(FullSrvMsg<string>);
-                        //    return (FullSrvMsg<string>)Ext.DeserializeFromXml<FullSrvMsg<string>>(serString);
-                        //}
-
+                        if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
+                        {
+                            outType = typeof(FullSrvMsg<string>);
+                            return (FullSrvMsg<string>)Ext.DeserializeFromXml<FullSrvMsg<string>>(serString);
+                        }
                         if (serString.Contains("CqrFileName") && serString.Contains("Base64Type"))
                         {
                             outType = typeof(CqrFile);
@@ -514,6 +366,15 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
             return null;
         }
+
+
+        public static MsgContent SetMessageContent(string plainMsg)
+        {
+            MsgContent msgContent = new MsgContent(plainMsg);
+            return msgContent;
+        }
+
+        #endregion static members
 
     }
 

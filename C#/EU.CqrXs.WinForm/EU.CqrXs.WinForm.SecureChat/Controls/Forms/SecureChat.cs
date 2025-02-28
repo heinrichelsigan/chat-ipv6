@@ -633,8 +633,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         return;
                     }
                     string friendMsg = string.Empty;
-                    CqrFile cqf = (CqrFile)msgContent.IsTo<CqrFile>(out CqrFile? t);
-                    Area23Log.LogStatic("CqrFile is true " + cqf.CqrFileName + "\n");
+                    try
+                    {
+                        CqrFile cqf = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
+                        Area23Log.LogStatic("CqrFile is true " + cqf.CqrFileName + "\n");
+                    }
+                    catch (Exception exif)
+                    {
+                        Area23Log.LogStatic("CqrFile failed " + exif.Message + "\n" + exif + "\n");
+                    }
+                    ;
                     
                     if (msgContent.IsCqrFile())
                     {

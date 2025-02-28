@@ -165,7 +165,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             {
                 CqrFile? cqFile = msgContent.ToCqrFile();
                 hash = cqFile._hash;
-                CqrFile? cfile = (CqrFile)msgContent.IsTo<CqrFile>(out CqrFile? t);
+                CqrFile? cfile = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
                 // hash = cfile._hash;
             }
 

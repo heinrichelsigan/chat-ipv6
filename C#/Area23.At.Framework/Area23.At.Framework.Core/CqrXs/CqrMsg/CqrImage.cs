@@ -20,7 +20,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// </summary>
     [JsonObject]
     [Serializable]
-    public class CqrImage : MsgContent
+    public class CqrImage : MsgContent, ICqrMessagable
     {
 
         #region properties

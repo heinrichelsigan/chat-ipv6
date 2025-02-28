@@ -18,7 +18,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// </summary>
     [JsonObject]
     [Serializable]
-    public class CqrContact : MsgContent
+    public class CqrContact : MsgContent, ICqrMessagable
     {
 
         #region properties
@@ -148,9 +148,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return jsonString;
         }
 
-        public override TType FromJson<TType>(string jsonText)
+        public override T FromJson<T>(string jsonText)
         {
-            TType tt = JsonConvert.DeserializeObject<TType>(jsonText);
+            T tt = JsonConvert.DeserializeObject<T>(jsonText);
             try
             {
                 if (tt != null && tt is CqrContact cqrContactJson)
@@ -176,7 +176,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 Area23Log.LogStatic(exJson);
             }
 
-            return default(TType);
+            return default(T);
         }
 
         public override string ToString()
