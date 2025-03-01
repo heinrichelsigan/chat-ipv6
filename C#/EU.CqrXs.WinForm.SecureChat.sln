@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Area23.At.Framework.Core", "Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj", "{63725020-F53A-4D59-9096-CA47CFC074E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.WinForm.SecureChat", "EU.CqrXs.WinForm\EU.CqrXs.WinForm.SecureChat\EU.CqrXs.WinForm.SecureChat.csproj", "{262E0374-0337-4A0A-9E67-D50297476977}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.WinForm.SecureChat", "EU.CqrXs.WinForm.SecureChat\EU.CqrXs.WinForm.SecureChat.csproj", "{262E0374-0337-4A0A-9E67-D50297476977}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
