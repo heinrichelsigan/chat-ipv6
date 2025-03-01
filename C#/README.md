@@ -23,7 +23,7 @@ Open solution <a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/C%
 <pre>EU.CqrXs/EU.CqrXs.WinForm.SecureChat.sln</pre>
 
 u can use Amazon elastic cache instead:
-<a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/doc/2025-03-01_AWS_Secure_Chat_With_Elastic_Cache.gif" target="_blank"><img src="https://raw.githubusercontent.com/heinrichelsigan/chat-ipv6/refs/heads/main/doc/2025-03-01_AWS_Secure_Chat_With_Elastic_Cache.gif" Cqrxs-cqrjd.gif" border="0" /></a> 
+<a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/doc/2025-03-01_AWS_Secure_Chat_With_Elastic_Cache.gif" target="_blank"><img src="https://raw.githubusercontent.com/heinrichelsigan/chat-ipv6/refs/heads/main/doc/2025-03-01_AWS_Secure_Chat_With_Elastic_Cache.gif"  border="0" /></a> 
 
 
 ## <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/C">CqrJd C</a>
