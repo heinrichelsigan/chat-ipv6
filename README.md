@@ -9,9 +9,8 @@ and can directly connect a secure tcp connection to another chat-client.
 
 ## <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/C">CqrJd C</a>
 
-## **Java** *ipv4/ipv6 EchoServer & EchoClient*
-<hr />
-
-<a href="LinuxTerm.png" target="_blank"><img src="LinuxTerm.png" border="0" /></a>
+## <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/Java">**Java**</a>
+#  *ipv4/ipv6 EchoServer & EchoClient*
 
 <hr />
+
