@@ -5,13 +5,18 @@ and can directly connect a secure tcp connection to another chat-client.
 
 <a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/doc/2025-01-29_CqrJd-Endpoint-to-Endpoint.gif" target="_blank"><img src="https://raw.githubusercontent.com/heinrichelsigan/chat-ipv6/refs/heads/main/doc/2025-01-29_CqrJd-Endpoint-to-Endpoint.gif" border="0" /></a>
 
-# CqrJd C#
+## <a aref="https://github.com/heinrichelsigan/chat-ipv6/tree/main/C%23">CqrJd C#</a>
+
 
 Open with Visual Studio <a href="https://visualstudio.microsoft.com/de/downloads/" target="_blank">free Community Edition</a> 
 <a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/CSharp/EU.CqrXs/EU.CqrXs.WinForm.SecureChat.sln" target="_blank">CSharp/EU.CqrXs/EU.CqrXs.WinForm.SecureChat.sln</a>
 <pre>CSharp/EU.CqrXs/EU.CqrXs.WinForm.SecureChat.sln</pre>
 
 <a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/doc/Cqrxs-cqrjd.gif" target="_blank"><img src="https://raw.githubusercontent.com/heinrichelsigan/chat-ipv6/refs/heads/main/doc/Cqrxs-cqrjd.gif" border="0" /></a> 
+
+
+## <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/C">CqrJd C</a>
+
 
 # **C** *a cloning ipv6 socket server & client*
 
@@ -28,14 +33,13 @@ client6.s and server6_clone.s will be compiled and linked with **gcc** and ***GN
   <b>make clean</b>
   rm -f client6 client6.o server6_clone server6_clone.o
   </pre>
- 
-<hr />
 
-<a href="LinuxTerm.png" target="_blank"><img src="LinuxTerm.png" border="0" /></a>
 
-# **Java** *ipv4/ipv6 EchoServer & EchoClient*
+## <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/java">CqrJd Java</a> 
 
-## compile java sources with any javac compiler
+## **Java** *ipv4/ipv6 EchoServer & EchoClient*
+
+compile java sources with any javac compiler
 
 ### Windows 
 
@@ -98,5 +102,10 @@ Receiving:
 172.31.20.156  =>      ec2-100-26-162-115.compute-1.amazonaws.com/100.26.162.115       uname -a : Linux ip-172-31-57-91 6.8.0-1019-aws #21-Ubuntu SMP Wed Nov  6 21:21:49 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
 finished
 ^C</pre>
+
+
+<hr />
+
+<a href="LinuxTerm.png" target="_blank"><img src="LinuxTerm.png" border="0" /></a>
 
 <hr />

@@ -221,7 +221,6 @@
 
   <ItemGroup>
     <Folder Include="AttachFiles\" />
-    <Folder Include="log\" />
     <Folder Include="Properties\text\" />
     <Folder Include="Properties\en\" />
     <Folder Include="Properties\it\" />
