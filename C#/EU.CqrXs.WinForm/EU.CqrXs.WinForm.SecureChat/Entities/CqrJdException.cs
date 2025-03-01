@@ -1,7 +1,8 @@
-﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.CqrXs;
+﻿using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
+using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System;
@@ -28,13 +29,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         public CqrJdException(string message) : base(message)
         {
             AppDomain.CurrentDomain.SetData(Constants.LAST_EXCEPTION, this);
-            Area23Log.LogStatic(this);
+            SLog.Log(this);
         }
 
         public CqrJdException(string message, Exception innerException) : base(message, innerException)
         {
             AppDomain.CurrentDomain.SetData(Constants.LAST_EXCEPTION, this);
-            Area23Log.LogStatic(this);
+            SLog.Log(this);
         }
 
         

@@ -1,7 +1,8 @@
-﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.CqrXs;
+﻿using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
+using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -93,7 +94,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             }
             catch (Exception ex)
             {
-                Area23Log.LogStatic(ex);
+                SLog.Log(ex);
                 // TODO: What shell we do with drunken saylor??
             }
 

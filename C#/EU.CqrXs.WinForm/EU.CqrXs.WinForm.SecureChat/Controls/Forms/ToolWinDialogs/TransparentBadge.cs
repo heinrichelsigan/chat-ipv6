@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
+using Area23.At.Framework.Core.Static;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {

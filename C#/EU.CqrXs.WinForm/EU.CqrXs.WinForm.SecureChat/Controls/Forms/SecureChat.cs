@@ -1,5 +1,4 @@
 ﻿using Area23FwCore = Area23.At.Framework.Core;
-using Area23.At.Framework.Core;
 using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
@@ -9,6 +8,7 @@ using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Net.WebHttp;
+using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Properties;
@@ -28,8 +28,6 @@ using System.Net.Sockets;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using Org.BouncyCastle.Utilities;
 
-
-
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
 
@@ -42,14 +40,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #region fields        
 
-        private string myServerKey = string.Empty;
+        private string? myServerKey = null, ipAddrString = null, contactNameEmail = null;
         internal static int attachCnt = 0;
         internal static int chatCnt = 0;
         internal static Chat? chat;
 
         protected internal static IPAddress? clientIpAddress;
         protected internal static IPAddress? partnerIpAddress;
-        protected internal static Listener? ipSockListener;
+        protected internal static Listener? ipSockListener;        
+        internal delegate void ClientSocket_DataReceived(object sender, Area23EventArgs<ReceiveData> eventReceived);
+        internal ClientSocket_DataReceived clientSocket_DataReceived;
+        internal EventHandler<Area23EventArgs<ReceiveData>> receivedDataEventHandler;
 
         #endregion fields
 
@@ -238,15 +239,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private void ButtonKey_Click(object sender, EventArgs e)
         {
             myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
-            if (!string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) &&
-                !this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                myServerKey = this.ComboBoxSecretKey.Text;
-            }
-
-            // TODO: test case later
-
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+                return;
+           
             SrvMsg serverMessage = new SrvMsg(myServerKey, myServerKey);
+            // TODO: SetText delegate AppendText()
             this.TextBoxPipe.Text = serverMessage.PipeString;
         }
 
@@ -258,15 +255,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private void ComboBoxSecretKey_FocusLeave(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return;
-            }
-            this.ComboBoxSecretKey.BackColor = Color.White;
+
             ButtonKey_Click(sender, e);
             if (Entities.Settings.Singleton != null)
             {
@@ -275,7 +266,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
                     this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
             }
-            StripStatusLabel.Text = "Added new secret key => calculated new SecurePipe...";
+            SetStatusText(StripStatusLabel, "Added new secret key => calculated new SecurePipe...");
         }
 
         /// <summary>
@@ -302,15 +293,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private void ComboBoxSecretKey_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
-                return;
-            }
-            this.ComboBoxSecretKey.BackColor = Color.White;
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+                return;            
             ButtonKey_Click(sender, e);
             if (Entities.Settings.Singleton != null)
             {
@@ -328,24 +312,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void ComboBoxIp_FocusLeave(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxIp.Text) ||
-                this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxIp.BackColor = Color.PeachPuff;
-                PlaySoundFromResource("sound_warning");
-                return;
-            }
 
+            if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
+                return ;
             try
             {
-                if (!IPAddress.TryParse(this.ComboBoxIp.Text, out partnerIpAddress))
+                if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
                     throw new InvalidOperationException($"IPAddress {this.ComboBoxIp.Text ?? string.Empty} is not parsable!");
             }
             catch (Exception exIpContact)
             {
                 MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIp.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxIp.BackColor = Color.Violet;
+                SetComboBoxBackColor(ComboBoxIp, Color.Violet);
                 PlaySoundFromResource("sound_warning");
                 return;
             }
@@ -446,14 +424,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void ComboBoxContacts_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxContacts.Text) ||
-                this.ComboBoxContacts.Text.Equals(Constants.ENTER_CONTACT, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a valid contact address!", "Please enter a valid contact", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxContacts.BackColor = Color.PeachPuff;
-                PlaySoundFromResource("sound_warning");
+            if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return;
-            }
 
             bool foundContact = false;
             CqrContact? friendContact = null;
@@ -463,7 +435,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
                 {
-                    if (c.NameEmail.Equals(this.ComboBoxContacts.Text, StringComparison.InvariantCultureIgnoreCase))
+                    if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                     {
                         foundContact = true;
                         friendContact = c;
@@ -479,15 +451,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             if (!foundContact)
             {
-                this.ComboBoxContacts.BackColor = Color.Violet;
+                SetComboBoxBackColor(ComboBoxContacts, Color.Violet);
                 PlaySoundFromResource("sound_warning");
                 MessageBox.Show($"Cannot parse Contact from string \"{ComboBoxContacts.Text}\": {exContactMsg}", "Please enter a valid contact address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
-
-            this.ComboBoxContacts.BackColor = Color.White;
-            StripStatusLabel.Text = $"Selected Contact {this.ComboBoxContacts.Text}.";
+            SetComboBoxBackColor(ComboBoxContacts, Color.White);
+            StripStatusLabel.Text = $"Selected Contact {contactNameEmail}.";
 
             if (SendInit_Contact())
             {
@@ -568,7 +539,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        internal void OnClientReceive(object sender, Area23EventArgs<ReceiveData> eventReiveData)
+        internal void OnClientReceive(object sender, Area23EventArgs<ReceiveData> eventReceived)
         {
             if (string.IsNullOrEmpty(myServerKey))
             {
@@ -591,9 +562,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     string encrypted = EnDeCodeHelper.GetString(ipSockListener.BufferedData);
 
                     Area23EventArgs<ReceiveData>? area23EvArgs = null;
-                    if (eventReiveData != null && eventReiveData is Area23EventArgs<ReceiveData>)
+                    if (eventReceived != null && eventReceived is Area23EventArgs<ReceiveData>)
                     {
-                        area23EvArgs = ((Area23EventArgs<ReceiveData>)eventReiveData);
+                        area23EvArgs = ((Area23EventArgs<ReceiveData>)eventReceived);
                         //TODO: Enable cross thread via delegate
                         SetStatusText(StripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
 
@@ -636,11 +607,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     try
                     {
                         CqrFile cqf = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
-                        Area23Log.LogStatic("CqrFile is true " + cqf.CqrFileName + "\n");
+                        SLog.Log("CqrFile is true " + cqf.CqrFileName + "\n");
                     }
                     catch (Exception exif)
                     {
-                        Area23Log.LogStatic("CqrFile failed " + exif.Message + "\n" + exif + "\n");
+                        SLog.Log("CqrFile failed " + exif.Message + "\n" + exif + "\n");
                     }
                     ;
                     
@@ -680,22 +651,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return false;
-            }
+            if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
+                return false;
 
-            myServerKey = this.ComboBoxSecretKey.Text;
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
-
-            try
+            try 
             {
-                string comboIpText = GetComboBoxText(ComboBoxIp);
-                partnerIpAddress = IPAddress.Parse(comboIpText);
+                if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
+                    throw new InvalidDataException("Cannot parse " + ipAddrString + " to IPAddress!");
+
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
                 pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
 
@@ -703,15 +669,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 // AppendText(TextBoxSource, unencrypted);
                 // Format_Lines_RichTextBox();
                 this.RichTextBoxChat.Text = string.Empty;
-                SetStatusText(StripStatusLabel, "Send init successfully");
-                // StripStatusLabel.Text = "Send init successfully";
+                SetStatusText(StripStatusLabel, $"Send init to {partnerIpAddress} successfully");
                 ButtonCheck.Image = Properties.de.Resources.RemoteConnect;
             }
             catch (Exception ex)
             {
                 Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in SendInit_Click: {ex.Message}.\n", ex);
-                SetStatusText(StripStatusLabel, "Send init FAILED: " + ex.Message);
-                // StripStatusLabel.Text = "Send init FAILED: " + ex.Message;
+                SetStatusText(StripStatusLabel, $"Sending to {ipAddrString} failed: {ex.Message}");
                 PlaySoundFromResource("sound_hammer");
                 return false;
             }
@@ -730,25 +694,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return false;
-            }
 
-            myServerKey = this.ComboBoxSecretKey.Text;
-            if (string.IsNullOrEmpty(this.ComboBoxContacts.Text) || this.ComboBoxContacts.Text.Equals(Constants.ENTER_CONTACT, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't choosen a valid contact", "Please select a valid contact", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxContacts.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
+            if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
-            }
-            ComboBoxContacts.BackColor = Color.White;
-
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
@@ -756,7 +706,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             CqrContact? friendContact = null;
             foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
             {
-                if (c.NameEmail.Equals(this.ComboBoxContacts.Text, StringComparison.InvariantCultureIgnoreCase))
+                if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                 {
                     friendContact = c;
                     break;
@@ -783,7 +733,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
 
-            StripStatusLabel.Text = "Finished 1st registration";
+            SetStatusText(StripStatusLabel, "Finished 1st registration");
 
             return true;
 
@@ -804,46 +754,39 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(this.RichTextBoxChat.Text) || string.IsNullOrWhiteSpace(this.RichTextBoxChat.Text))
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
             {
                 StripStatusLabel.Text = "Nothing to send!";
-                PlaySoundFromResource("sound_warning");
+                return;
+            }
+            if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
+            {
+                StripStatusLabel.Text = "Nothing to send (no ip addr).";
                 return;
             }
 
-            myServerKey = this.ComboBoxSecretKey.Text;
             string unencrypted = this.RichTextBoxChat.Text; //.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
 
-            if (!string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
+            try
             {
-                try
-                {
-                    partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
-                    Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                    pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+                if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
+                    throw new InvalidDataException("Cannot parse IPAddress " + ipAddrString);
 
-                    string userMsg = chat.AddMyMessage(unencrypted);
-                    AppendText(TextBoxSource, userMsg);
-                    Format_Lines_RichTextBox();
-                    this.RichTextBoxChat.Text = string.Empty;
-                    StripStatusLabel.Text = "Send successfully";
-                    PlaySoundFromResource("sound_arrow");
-                }
-                catch (Exception ex)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
-                    StripStatusLabel.Text = "Send FAILED: " + ex.Message;
-                    PlaySoundFromResource("sound_warning");
-                }
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+
+                string userMsg = chat.AddMyMessage(unencrypted);
+                AppendText(TextBoxSource, userMsg);
+                Format_Lines_RichTextBox();
+                this.RichTextBoxChat.Text = string.Empty;
+                StripStatusLabel.Text = $"Send to {partnerIpAddress} successfully.";
+                PlaySoundFromResource("sound_arrow");
+            }
+            catch (Exception ex)
+            {
+                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
+                SetStatusText(StripStatusLabel, $"Sending to {ipAddrString} failed: {ex.Message}");
+                PlaySoundFromResource("sound_warning");
             }
             // otherwise send message to registered user via server
             // Always encrypt via key
@@ -860,72 +803,53 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
             {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
+                SetStatusText(StripStatusLabel, "Nothing to send!");
+                return;
+            }
+            if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
+            {
+                SetStatusText(StripStatusLabel, "Nothing to send (no ip addr).");
                 return;
             }
 
             myServerKey = this.ComboBoxSecretKey.Text;
 
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            FileOpenDialog.AddExtension = false;
-            FileOpenDialog.CheckFileExists = true;
-            FileOpenDialog.CheckPathExists = true;
-            FileOpenDialog.Filter = "All files (*.*)|*.*|BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf";
+            FileOpenDialog = DialogFileOpen;
             DialogResult result = FileOpenDialog.ShowDialog();
-            if (result == DialogResult.OK || result == DialogResult.Yes)
+            if ((result == DialogResult.OK || result == DialogResult.Yes) && File.Exists(FileOpenDialog.FileName))
             {
-                if (File.Exists(FileOpenDialog.FileName))
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                CqrFile? cqrFile = GetCqrFileFromPath(FileOpenDialog.FileName, pmsg.PipeString);
+
+                if (cqrFile != null && !string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(FileOpenDialog.FileName, true);
-                    string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(FileOpenDialog.FileName, true);
-
-                    FileInfo fi = new FileInfo(FileOpenDialog.FileName);
-                    if (fi.Length > 475000)
+                    try
                     {
-                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds 475000 bytes.", "FileSize to large!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
+                        partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
+
+                        // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                        pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
+
+                        string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
+                        System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
+
+                        string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
+                        AppendText(TextBoxSource, userMsg);
+                        Format_Lines_RichTextBox();
+                        this.RichTextBoxChat.Text = string.Empty;
+                        SetStatusText(StripStatusLabel, $"File {cqrFile.CqrFileName} send to {partnerIpAddress} successfully!");
                     }
-                    byte[] fileBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
-                    string fileNameOnly = Path.GetFileName(FileOpenDialog.FileName);
-                    string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
-
-                    Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                    CqrFile cqrFile = new CqrFile(fileNameOnly, mimeType, fileBytes, pmsg.PipeString, md5, sha256, MsgEnum.Json, EncodingType.Base64);
-
-                    if (!string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
+                    catch (Exception ex)
                     {
-                        try
-                        {
-                            partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
-
-                            // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                            pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
-
-                            string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
-                            System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
-
-                            string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
-                            AppendText(TextBoxSource, userMsg);
-                            Format_Lines_RichTextBox();
-                            this.RichTextBoxChat.Text = string.Empty;
-                            StripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
-                        }
-                        catch (Exception ex)
-                        {
-                            Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
-                            StripStatusLabel.Text = "Attach FAILED: " + ex.Message;
-                            PlaySoundFromResource("sound_warning");
-                        }
+                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
+                        SetStatusText(StripStatusLabel, "Attach FAILED: " + ex.Message);
+                        PlaySoundFromResource("sound_warning");
                     }
-                    // otherwise send message to registered user via server
-                    // Always encrypt via key
                 }
+                // otherwise send message to registered user via server
+                // Always encrypt via key
 
             }
 
@@ -990,9 +914,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (ea.GenericTData != null && File.Exists(ea.GenericTData))
                 {
                     FileInfo fi = new FileInfo(ea.GenericTData);
-                    if (fi.Length > 475000)
+                    if (fi.Length > Constants.MAX_FILE_BYTE_BUFFEER)
                     {
-                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds 475000 bytes.", "FileSize to large!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds {Constants.MAX_FILE_BYTE_BUFFEER} bytes.", "FileSize larger > 6MB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
@@ -1006,7 +930,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             AppendText(TextBoxSource, userMsg);
                             Format_Lines_RichTextBox();
                             this.RichTextBoxChat.Text = string.Empty;
-                            StripStatusLabel.Text = $"File {cf.CqrFileName} send successfully!";
+                            SetStatusText(StripStatusLabel, $"File {cf.CqrFileName} send successfully!");
                         }
                     }
                 }
@@ -1172,11 +1096,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             contactId++;
 
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            FileOpenDialog.AddExtension = false;
-            FileOpenDialog.CheckFileExists = true;
-            FileOpenDialog.CheckPathExists = true;
+            FileOpenDialog = DialogFileOpen;
             FileOpenDialog.Filter = "CSV (*.csv)|*.csv|VCard (*.vcf)|*.vcf"; //|All files (*.*)|*.*";
             DialogResult result = FileOpenDialog.ShowDialog();
             if (result == DialogResult.OK || result == DialogResult.Yes)
@@ -1533,7 +1453,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                                         SetMenuItemChecked(this.MenuNetworkItemIPv6Secure, true);
                                     // this.MenuNetworkItemIPv6Secure.Checked = true;
-                                    ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
+                                    clientSocket_DataReceived =
+                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                        {
+                                            OnClientReceive(sender, eventReceived);
+                                        };
+                                    receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
+                                    ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                                 }
 
                                 break;
@@ -1566,7 +1492,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exV6)
             {
-                Area23Log.LogStatic(exV6);
+                SLog.Log(exV6);
             }
 
             // this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
@@ -1624,7 +1550,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exFriendIp)
                     {
-                        Area23Log.LogStatic("Error when adding friendIps + " + exFriendIp.Message);
+                        SLog.Log("Error when adding friendIps + " + exFriendIp.Message);
                     }
                 }
             }
@@ -1673,7 +1599,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            Area23Log.LogStatic(exi);
+                            SLog.Log(exi);
                         }
                         try
                         {
@@ -1681,11 +1607,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            Area23Log.LogStatic(exi);
+                            SLog.Log(exi);
                         }
 
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
-                        ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
+                        clientSocket_DataReceived =
+                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                        {
+                                            OnClientReceive(sender, eventReceived);
+                                        };
+                        receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
+                        ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                         SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
 
                         if (IPAddress.IsLoopback(clientIpAddress))
@@ -1702,7 +1634,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 catch (Exception exc)
                 {
-                    Area23Log.LogStatic(exc);
+                    SLog.Log(exc);
                 }
             }
         }
@@ -1738,7 +1670,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exi)
                     {
-                        Area23Log.LogStatic(exi);
+                        SLog.Log(exi);
                     }
 
                     Thread.Sleep(Constants.CLOSING_TIMEOUT);
@@ -1749,15 +1681,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         public void MenuOptionsItemClearAllOnClose_Click(object sender, EventArgs e)
         {
+            // TODO add to settings
             this.MenuOptionsItemClearAllOnClose.Checked = (!this.MenuOptionsItemClearAllOnClose.Checked);            
             AppDomain.CurrentDomain.SetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE, MenuOptionsItemClearAllOnClose.Checked);
         }
 
         #region LoadSaveChatContent
 
-        private void toolStripMenuItemOpen_Click(object sender, EventArgs e)
+        private void MenuFileItemOpen_Click(object sender, EventArgs e)
         {
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
+            FileOpenDialog = DialogFileOpen;
             FileOpenDialog.RestoreDirectory = true;
             DialogResult result = FileOpenDialog.ShowDialog();
             if (result == DialogResult.OK)
@@ -1766,17 +1699,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
-
-        private void toolStripMenuItemLoad_Click(object sender, EventArgs e)
-        {
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            DialogResult res = FileOpenDialog.ShowDialog();
-            if (res == DialogResult.OK)
-            {
-                MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
 
 
         protected internal virtual void toolStripMenuItemSave_Click(object sender, EventArgs e)

@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Net;
+using Area23.At.Framework.Core.Util;
+using Area23.At.Framework.Core.Static;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -148,11 +150,12 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return jsonString;
         }
 
-        public override T FromJson<T>(string jsonText)
+        public override T? FromJson<T>(string jsonText) where T : default
         {
-            T tt = JsonConvert.DeserializeObject<T>(jsonText);
+            T? tt = default(T);
             try
             {
+                tt = JsonConvert.DeserializeObject<T>(jsonText);
                 if (tt != null && tt is CqrContact cqrContactJson)
                 {
                     if (cqrContactJson != null && cqrContactJson.ContactId > -1 && !string.IsNullOrEmpty(cqrContactJson.Name))
@@ -164,19 +167,20 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         Mobile = cqrContactJson.Mobile;
                         Address = cqrContactJson.Address;
                         ContactImage = cqrContactJson.ContactImage;
-                        _message = cqrContactJson.Message;
-                        _hash = cqrContactJson.Hash;
-                        _rawMessage = cqrContactJson.RawMessage;
-                        return tt;
+                        _message = cqrContactJson._message;
+                        _hash = cqrContactJson._hash;
+                        _rawMessage = cqrContactJson._rawMessage;
+                        return (T?)tt;
                     }
                 }
             }
             catch (Exception exJson)
             {
-                Area23Log.LogStatic(exJson);
+                SLog.Log(exJson);
             }
 
-            return default(T);
+            return (T?)tt;
+
         }
 
         public override string ToString()

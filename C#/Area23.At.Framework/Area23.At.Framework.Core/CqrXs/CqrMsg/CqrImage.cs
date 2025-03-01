@@ -11,6 +11,7 @@ using Area23.At.Framework.Core.Util;
 using System.Drawing.Imaging;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Area23.At.Framework.Core.Static;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -111,6 +112,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         #region members
 
+        
         public virtual string ToJson()
         {
             CqrImage image = new CqrImage(ImageFileName, ImageData);
@@ -135,7 +137,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             }
             catch (Exception exJson)
             {
-                Area23Log.LogStatic(exJson);
+                SLog.Log(exJson);
             }
 
             return null;
@@ -294,7 +296,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         }
                         catch (Exception exImg)
                         {
-                            Area23Log.LogStatic(exImg);
+                            SLog.Log(exImg);
                             return null;
                         }
                     }

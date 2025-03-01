@@ -1,5 +1,6 @@
-﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Net.NameService;
+﻿using Area23.At.Framework.Core.Net.NameService;
+using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using System;
 using System.Collections.Generic;
@@ -360,7 +361,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exSound)
                     {
-                        Area23Log.LogStatic(exSound);
+                        SLog.Log(exSound);
                         played = false;
                     }
                     //fixed (byte* bufferPtr = &bytes[0])

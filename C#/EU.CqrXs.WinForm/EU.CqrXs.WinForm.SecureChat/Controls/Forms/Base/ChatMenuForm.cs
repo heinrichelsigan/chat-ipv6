@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
+using Area23.At.Framework.Core.Static;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -89,9 +90,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected internal ToolStripStatusLabel StripStatusLabel;
         protected internal ToolStripProgressBar StripProgressBar;
-
-        protected internal OpenFileDialog FileOpenDialog;
-        protected internal SaveFileDialog FileSaveDialog;
 
         #endregion win form component fields
 
@@ -186,8 +184,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuHelpItemViewHelp = new ToolStripMenuItem();
             MenuHelpItemInfo = new ToolStripMenuItem();
             MenuHelpItemAbout = new ToolStripMenuItem();
-            FileOpenDialog = new OpenFileDialog();
-            FileSaveDialog = new SaveFileDialog();
             StripStatus = new StatusStrip();
             StripStatusLabel = new ToolStripStatusLabel();
             StripProgressBar = new ToolStripProgressBar();
@@ -593,20 +589,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuHelpItemAbout.Text = "about";
             MenuHelpItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuHelpItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
-            MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;
-            // 
-            // FileOpenDialog
-            // 
-            FileOpenDialog.FileName = "FileOpenDialog";
-            FileOpenDialog.Title = "FileOpenDialog";
-            // 
-            // FileSaveDialog
-            // 
-            FileSaveDialog.InitialDirectory = "C:\\Windows\\Temp";
-            FileSaveDialog.RestoreDirectory = true;
-            FileSaveDialog.ShowHiddenFiles = true;
-            FileSaveDialog.SupportMultiDottedExtensions = true;
-            FileSaveDialog.Title = "Save File";
+            MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;            
             // 
             // StripStatus
             // 
@@ -792,11 +775,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             contactId++;
 
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            FileOpenDialog.AddExtension = false;
-            FileOpenDialog.CheckFileExists = true;
-            FileOpenDialog.CheckPathExists = true;
+            FileOpenDialog = DialogFileOpen;           
             FileOpenDialog.Filter = "CSV (*.csv)|*.csv|VCard (*.vcf)|*.vcf"; //|All files (*.*)|*.*";
             DialogResult result = FileOpenDialog.ShowDialog();
             if (result == DialogResult.OK || result == DialogResult.Yes)
@@ -998,8 +977,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected internal virtual void MenuFileItemOpen_Click(object sender, EventArgs e)
         {
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
+            FileOpenDialog = DialogFileOpen;
             DialogResult res = FileOpenDialog.ShowDialog();
             if (res == DialogResult.OK)
             {
@@ -1014,16 +992,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected internal virtual byte[] OpenCryptFileDialog(ref string loadDir)
         {
-            if (FileOpenDialog == null)
-                FileOpenDialog = new OpenFileDialog();
-            byte[] fileBytes;
-            if (string.IsNullOrEmpty(loadDir))
-                loadDir = Environment.GetEnvironmentVariable("TEMP") ?? System.AppDomain.CurrentDomain.BaseDirectory;
-            if (loadDir != null)
-            {
-                FileOpenDialog.InitialDirectory = loadDir;
-                FileOpenDialog.RestoreDirectory = true;
-            }
+            FileOpenDialog = DialogFileOpen;
+            byte[] fileBytes;            
             DialogResult diaOpenRes = FileOpenDialog.ShowDialog();
             if (diaOpenRes == DialogResult.OK || diaOpenRes == DialogResult.Yes)
             {
@@ -1041,6 +1011,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected internal virtual string SafeFileName(string? filePath = "", byte[]? content = null)
         {
+            FileSaveDialog = DialogFileSave;
             string? saveDir = Environment.GetEnvironmentVariable("TEMP");
             string ext = ".hex";
             string fileName = DateTime.Now.Area23DateTimeWithSeconds() + ext;

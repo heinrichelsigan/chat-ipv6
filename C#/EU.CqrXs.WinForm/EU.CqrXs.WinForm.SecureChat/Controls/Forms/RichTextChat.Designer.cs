@@ -74,9 +74,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuHelp = new ToolStripMenuItem();
             MenuHelpItemViewHelp = new ToolStripMenuItem();
             MenuHelpItemInfo = new ToolStripMenuItem();
-            MenuHelpItemAbout = new ToolStripMenuItem();
-            FileOpenDialog = new OpenFileDialog();
-            FileSaveDialog = new SaveFileDialog();
+            MenuHelpItemAbout = new ToolStripMenuItem();            
             StripStatus = new StatusStrip();
             StripStatusLabel = new ToolStripStatusLabel();
             StripProgressBar = new ToolStripProgressBar();
@@ -154,7 +152,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuFileItemOpen.Text = "open chats";
             MenuFileItemOpen.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuFileItemOpen.ToolTipText = "imports saved chats from a file";
-            MenuFileItemOpen.Click += toolStripMenuItemLoad_Click;
+            MenuFileItemOpen.Click += MenuFileItemOpen_Click;
             // 
             // MenuFileItemSave
             // 
@@ -514,20 +512,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuHelpItemAbout.Text = "about";
             MenuHelpItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuHelpItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
-            MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;
-            // 
-            // FileOpenDialog
-            // 
-            FileOpenDialog.FileName = "FileOpenDialog";
-            FileOpenDialog.Title = "FileOpenDialog";
-            // 
-            // FileSaveDialog
-            // 
-            FileSaveDialog.InitialDirectory = "C:\\Windows\\Temp";
-            FileSaveDialog.RestoreDirectory = true;
-            FileSaveDialog.ShowHiddenFiles = true;
-            FileSaveDialog.SupportMultiDottedExtensions = true;
-            FileSaveDialog.Title = "Save File";
+            MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;            
             // 
             // StripStatus
             // 
@@ -991,8 +976,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private ToolStripStatusLabel StripStatusLabel;
 
 
-        private OpenFileDialog FileOpenDialog;
-        private SaveFileDialog FileSaveDialog;
         private ToolStripProgressBar StripProgressBar;
         private Controls.GroupBoxes.LinkLabelsBox LinkedLabelsBox;
         private Controls.Panels.PeerServerSwitchPanel PeerServerSwitch;

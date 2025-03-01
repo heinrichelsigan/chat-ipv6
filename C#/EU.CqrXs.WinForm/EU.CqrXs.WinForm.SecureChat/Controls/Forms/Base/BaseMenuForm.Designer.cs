@@ -71,9 +71,7 @@
             MenuHelp = new ToolStripMenuItem();
             MenuHelpItemViewHelp = new ToolStripMenuItem();
             MenuHelpItemInfo = new ToolStripMenuItem();
-            MenuHelpItemAbout = new ToolStripMenuItem();
-            FileOpenDialog = new OpenFileDialog();
-            FileSaveDialog = new SaveFileDialog();
+            MenuHelpItemAbout = new ToolStripMenuItem();       
             StripStatus = new StatusStrip();
             StripStatusLabel = new ToolStripStatusLabel();
             StripProgressBar = new ToolStripProgressBar();
@@ -479,20 +477,7 @@
             MenuHelpItemAbout.Text = "about";
             MenuHelpItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuHelpItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
-            MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;
-            // 
-            // FileOpenDialog
-            // 
-            FileOpenDialog.FileName = "FileOpenDialog";
-            FileOpenDialog.Title = "FileOpenDialog";
-            // 
-            // FileSaveDialog
-            // 
-            FileSaveDialog.InitialDirectory = "C:\\Windows\\Temp";
-            FileSaveDialog.RestoreDirectory = true;
-            FileSaveDialog.ShowHiddenFiles = true;
-            FileSaveDialog.SupportMultiDottedExtensions = true;
-            FileSaveDialog.Title = "Save File";
+            MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;           
             // 
             // StripStatus
             // 
@@ -602,9 +587,6 @@
         protected internal ToolStripMenuItem MenuHelpItemAbout;
         protected internal ToolStripStatusLabel StripStatusLabel;
         protected internal ToolStripProgressBar StripProgressBar;
-
-        protected internal OpenFileDialog FileOpenDialog;
-        protected internal SaveFileDialog FileSaveDialog;
 
     }
 

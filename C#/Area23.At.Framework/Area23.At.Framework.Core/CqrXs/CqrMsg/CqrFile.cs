@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System;
@@ -200,14 +201,14 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         {
             if (msgArt == MsgEnum.None || msgArt == MsgEnum.RawWithHashAtEnd)
             {
-                throw new InvalidOperationException("CqrFile GetCqrFile(string encodedSerilizedOrRawText, MsgEnum msgArt = MsgEnum.Json)" +
+                throw new NotImplementedException("CqrFile GetCqrFile(string encodedSerilizedOrRawText, MsgEnum msgArt = MsgEnum.Json)" +
                     " is not implemented for MsgEnum.None and MsgEnum.RawWithHashAtEnd");
             }
             if (msgArt == MsgEnum.MimeAttachment)
             {               
                 Data = new byte[0];
 
-                bool mimeGot = GetBase64Attachment(encodedSerilizedOrRawText,
+                bool mimeGot = GetByBase64Attachment(encodedSerilizedOrRawText,
                     out string cqrFileName, out string base64Type,
                     out string md5Hash, out string sha256Hash,
                     out string mimeBase64, out string hash);
@@ -227,20 +228,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             }
             else if (msgArt == MsgEnum.Xml)
             {                
-                CqrFile? f = this.FromXml<CqrFile>(encodedSerilizedOrRawText);
-                if (f != null)
-                {
-                    this.CqrFileName = f.CqrFileName;
-                    this.Base64Type = f.Base64Type;
-                    this.Data = f.Data;
-                    this._rawMessage = f._rawMessage;
-                    this._hash = f._hash;
-                    this.Md5Hash = f.Md5Hash;
-                    this.Sha256Hash = f.Sha256Hash;
-                    this._message = f.Message;
-                    EnCodingType = f.EnCodingType;
-                    MsgType = MsgEnum.Xml;
-                }
+                this.FromXml<CqrFile>(encodedSerilizedOrRawText);
             }
             return this;
         }
@@ -326,7 +314,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
 
 
-        internal static bool GetBase64Attachment(string plainAttachment,
+        internal static bool GetByBase64Attachment(string plainAttachment,
             out string cqrFileName, out string base64Type,
             out string md5Hash, out string sha256Hash,
             out string mimeBase64, out string _hash)
@@ -368,7 +356,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 }
                 catch (Exception exMime)
                 {
-                    Area23Log.LogStatic(exMime);
+                    SLog.Log(exMime);                    
                 }
             }
             return isMimeAttachment;

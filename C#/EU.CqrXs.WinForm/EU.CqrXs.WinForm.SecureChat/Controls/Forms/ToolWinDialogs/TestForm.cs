@@ -1,5 +1,4 @@
-﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Net.NameService;
@@ -20,6 +19,8 @@ using System.Windows.Forms;
 using IDataObject_Com = System.Runtime.InteropServices.ComTypes.IDataObject;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
+using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -58,12 +59,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 this.textBoxServerIp.Text = (string)ConfigurationManager.AppSettings["ServerIPv4"];
                 _serverIp = IPAddress.Parse(textBoxServerIp.Text);
-                Area23Log.LogStatic("ServerIPv4: " + textBoxServerIp.Text);
+                SLog.Log("ServerIPv4: " + textBoxServerIp.Text);
             }
             if (ConfigurationManager.AppSettings["ServerIPv6"] != null)
             {
                 //this.textBoxServerIp6.Text = (string)ConfigurationManager.AppSettings["ServerIPv6"];
-                //Area23Log.LogStatic("ServerIPv6: " + textBoxServerIp6.Text);
+                //SLog.Log("ServerIPv6: " + textBoxServerIp6.Text);
             }
             this.textBoxExternalIp.Text = ExternalIpAddress.ToString();
 
@@ -115,7 +116,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exSound)
                     {
-                        Area23Log.LogStatic(exSound);
+                        SLog.Log(exSound);
                         played = false;
                     }
                     //fixed (byte* bufferPtr = &bytes[0])
@@ -179,7 +180,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 CqrException.SetLastException(ex);
                 this.textBoxDestination.Text += ex.ToString();
-                Area23Log.LogStatic(ex);
+                SLog.Log(ex);
             }
         }
 

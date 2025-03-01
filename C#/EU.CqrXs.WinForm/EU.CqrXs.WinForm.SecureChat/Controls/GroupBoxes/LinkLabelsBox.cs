@@ -1,5 +1,5 @@
-﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using System.ComponentModel;
@@ -473,7 +473,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     }
                     catch (Exception ex)
                     {
-                        Area23Log.LogStatic(ex);
+                        SLog.Log(ex);
                     }
                     gtext += " ";
                 }

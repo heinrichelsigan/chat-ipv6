@@ -1,5 +1,4 @@
 ﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Util;
+using Area23.At.Framework.Core.Static;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
 {

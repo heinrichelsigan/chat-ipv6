@@ -1,5 +1,4 @@
 ﻿using Area23FwCore = Area23.At.Framework.Core;
-using Area23.At.Framework.Core;
 using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
@@ -13,11 +12,13 @@ using System.Net;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
 using NLog.Targets.Wrappers;
-using System.Windows.Controls;  
+using System.Windows.Controls;
 // using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 // using static System.Windows.Forms.MonthCalendar;
 using Org.BouncyCastle.Utilities;
 using System.Drawing.Imaging;
+using Area23.At.Framework.Core.Static;
+using Org.BouncyCastle.Asn1.Pkcs;
 // using static System.Net.Mime.MediaTypeNames;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
@@ -46,6 +47,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         protected internal static List<IPAddress> _proxies = new List<IPAddress>();
         protected internal static Lock _sLock = new Lock(), _sLock0 = new Lock(), _sLock1 = new Lock();
         protected internal Lock _lock = new Lock();
+        protected internal OpenFileDialog FileOpenDialog;
+        protected internal SaveFileDialog FileSaveDialog;
 
         #endregion fields
 
@@ -96,7 +99,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception noIPv6Ex)
                 {
-                    Area23Log.LogStatic(noIPv6Ex);
+                    SLog.Log(noIPv6Ex);
                     _externalIPAddressV6 = null;
                 }
                 return _externalIPAddressV6;
@@ -105,6 +108,85 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
 
         public static List<IPAddress> Proxies { get => GetProxiesFromSettingsResources(); }
+
+
+        protected OpenFileDialog DialogFileOpen
+        {
+            get
+            {
+                if (FileOpenDialog == null)
+                {
+                    FileOpenDialog = new OpenFileDialog();
+
+                    string? udir = Environment.GetEnvironmentVariable("USERPROFILE");
+                    if (string.IsNullOrEmpty(udir) || !Directory.Exists(udir))
+                        udir = Application.StartupPath;
+                    if (string.IsNullOrEmpty(udir) || !Directory.Exists(udir))
+                        udir = Application.ExecutablePath;
+                    if (string.IsNullOrEmpty(udir) || !Directory.Exists(udir))
+                        udir = AppDomain.CurrentDomain.BaseDirectory;
+                    if (string.IsNullOrEmpty(udir) || !Directory.Exists(udir))
+                        udir = Application.UserAppDataPath;
+                    if (!string.IsNullOrEmpty(udir) && Directory.Exists(udir))
+                        FileOpenDialog.InitialDirectory = udir;
+                }
+
+                FileOpenDialog.FileName = "";
+                FileOpenDialog.Title = "CqrChat: choose file";
+
+                FileOpenDialog.Filter = "All files (*.*)|*.*|TXT (*.txt)|*.txt|PDF (*.pdf)|*.pdf|JPG (*.jpg)|*.jpg|PNG (*.png)|*.png|BMP (*.bmp)|*.bmp|GIF (*.gif)|*.gif";
+
+                FileOpenDialog.RestoreDirectory = true;
+                FileOpenDialog.ShowHiddenFiles = true;
+                FileOpenDialog.AddExtension = true;
+
+                FileOpenDialog.SupportMultiDottedExtensions = true;
+                FileOpenDialog.CheckPathExists = true;
+                FileOpenDialog.CheckFileExists = true;
+
+                return FileOpenDialog;
+            }
+        }
+
+
+        /// <summary>
+        /// DialogFileSave returns initialized FileSaveDialog type SaveFileDialog
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        protected SaveFileDialog DialogFileSave
+        {
+            get
+            {
+                if (FileSaveDialog == null)
+                {
+                    FileSaveDialog = new SaveFileDialog();
+                    string? udir = Environment.GetEnvironmentVariable("TEMP");
+                    if (string.IsNullOrEmpty(udir) || !Directory.Exists(udir))
+                        udir = Application.StartupPath;
+                    if (string.IsNullOrEmpty(udir) || !Directory.Exists(udir))
+                        udir = Application.ExecutablePath;
+                    if (string.IsNullOrEmpty(udir) || !Directory.Exists(udir))
+                        udir = AppDomain.CurrentDomain.BaseDirectory;
+                    if (string.IsNullOrEmpty(udir) || !Directory.Exists(udir))
+                        udir = Application.UserAppDataPath;
+                    if (!string.IsNullOrEmpty(udir) && Directory.Exists(udir))
+                        FileSaveDialog.InitialDirectory = udir;
+                }
+
+                FileSaveDialog.Title = "Save File";
+                FileSaveDialog.FileName = "";
+
+                FileSaveDialog.RestoreDirectory = true;
+                FileSaveDialog.ShowHiddenFiles = true;
+                FileSaveDialog.SupportMultiDottedExtensions = true;
+                FileSaveDialog.CheckPathExists = true;
+                FileSaveDialog.CheckFileExists = true;
+
+                return FileSaveDialog;
+            }
+        }
+
 
         #endregion Properties
 
@@ -947,11 +1029,48 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         #region ComboBox
 
+        internal delegate string? GetComboBoxNameCallback(System.Windows.Forms.ComboBox comboBox);
         internal delegate string GetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox);
         internal delegate System.Windows.Forms.ComboBox.ObjectCollection? GetComboBoxItemsCallback(System.Windows.Forms.ComboBox tsCombo);
         internal delegate void SetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox, string text);
         internal delegate void SetComboBackColorCallback(System.Windows.Forms.ComboBox comboBox, Color color);
+        internal delegate void FocusComboBoxCallback(System.Windows.Forms.ComboBox comboBox);
         internal delegate void AddItemToComboBoxCallack(System.Windows.Forms.ComboBox comboBox, object o);
+
+        /// <summary>
+        /// thread save deleagte to get name out of a <see cref="ComboBox"/>
+        /// </summary>
+        /// <param name="comboBox"><see cref="ComboBox"/> from which name to get</param>
+        /// <returns><see cref="string"/> name from <see cref="ComboBox.Text" /></returns>
+        internal string? GetComboBoxName(System.Windows.Forms.ComboBox comboBox)
+        {
+            string? getName = null;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (comboBox.InvokeRequired)
+            {
+                GetComboBoxNameCallback getComboBoxNameCallback =
+                    delegate (System.Windows.Forms.ComboBox cmbx)
+                    {
+                        return (cmbx != null && cmbx.Name != null) ? cmbx.Name : null;
+                    };
+                try
+                {
+                    getName = (string)comboBox.Invoke(getComboBoxNameCallback, new object[] { comboBox });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxName.\n", exDelegate);
+                }
+            }
+            else
+            {
+                getName = (comboBox != null && comboBox.Name != null) ? comboBox.Name : null;
+            }
+
+            return getName;
+        }
+
 
         /// <summary>
         /// thread save deleagte to get text out of a <see cref="ComboBox"/>
@@ -1020,7 +1139,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     comboBox.Text = setText;
             }
         }
-
+        
         /// <summary>
         /// thread save deleagte to change <see cref="ComboBox.BackColor" />
         /// </summary>
@@ -1051,6 +1170,39 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             {
                 if (comboBox != null && color != null)
                     comboBox.BackColor = color;
+            }
+        }
+
+        internal void FocusComboBox(System.Windows.Forms.ComboBox comboBox)
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (comboBox.InvokeRequired)
+            {
+                FocusComboBoxCallback focusComboBoxCallback =
+                    delegate (System.Windows.Forms.ComboBox cmbx)
+                    {
+                        if (cmbx != null)
+                        {
+                            // cmbx.BringToFront();
+                            cmbx.Focus();
+                        }
+                    };
+                try
+                {
+                    comboBox.Invoke(focusComboBoxCallback, new object[] { comboBox });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate FocusComboBox ComboBox = {comboBox.Name}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (comboBox != null) 
+                {                    
+                    comboBox.Focus();
+                    //comboBox.UseWaitCursor = true;
+                }
             }
         }
 
@@ -1115,6 +1267,68 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         #endregion thread save WinForm delegate callbacks
 
+        protected string? GetComboBoxMustHaveText(ref System.Windows.Forms.ComboBox comboBox)
+        {
+            string? cbName;
+            if (comboBox == null || ((cbName = GetComboBoxName(comboBox)) == null))
+                return null;
+            string cbText = GetComboBoxText(comboBox);
+            if (string.IsNullOrEmpty(cbText) || 
+                cbText.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase) ||
+                cbText.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase) ||
+                cbText.Equals(Constants.ENTER_IP_CONTACT, StringComparison.InvariantCultureIgnoreCase) ||
+                cbText.Equals(Constants.ENTER_CONTACT, StringComparison.InvariantCultureIgnoreCase) ||
+                (cbName.ToLower() == "comboboxip" && !IPAddress.TryParse(cbText, out IPAddress? ipAddress)))
+            {
+                PlaySoundFromResource("sound_warning");
+
+                switch (cbName.ToLower())
+                {                    
+                    case "comboboxsecretkey":
+                        SetComboBoxBackColor(comboBox, Color.LightCyan);
+                        MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        break;
+                    case "comboboxip":
+                        SetComboBoxBackColor(comboBox, Color.LightSkyBlue);
+                        MessageBox.Show("You haven't entered a valid ip address!", "Please enter a valid ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        break;
+                    case "comboboxcontacts":
+                        SetComboBoxBackColor(comboBox, Color.LightGreen);
+                        MessageBox.Show("You haven't entered any contact address!", "Please enter a contact address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        break;
+                    default: break;
+                }
+                                                
+                FocusComboBox(comboBox);
+
+                return null;
+            }
+
+            SetComboBoxBackColor(comboBox, Color.White);
+            return cbText;
+        }
+
+
+        protected CqrFile? GetCqrFileFromPath(string filePath, string cryptPipe)
+        {
+            CqrFile? cqrFile = null;
+            string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(filePath, true);
+            string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(filePath, true);
+
+            FileInfo fi = new FileInfo(filePath);
+            if (fi.Length > Constants.MAX_FILE_BYTE_BUFFEER)
+            {
+                MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds {Constants.MAX_FILE_BYTE_BUFFEER} bytes.", "FileSize larger > 6MB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return cqrFile;
+            }
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            string fileNameOnly = Path.GetFileName(filePath);
+            string mimeType = Area23FwCore.Static.MimeType.GetMimeType(fileBytes, fileNameOnly);
+
+            cqrFile = new CqrFile(fileNameOnly, mimeType, fileBytes, cryptPipe, md5, sha256, MsgEnum.Json, EncodingType.Base64);
+            return cqrFile;
+        }
 
         public CqrFile? SendCqrFile(string filename, string secretKey, IPAddress partnerIpAddress)
         {
@@ -1143,41 +1357,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         }
 
-        //internal MimeAttachment? SendAttachment(string filename, string secretKey, IPAddress partnerIpAddress)
-        //{
-
-        //    MimeAttachment? mimeAttach = null;
-
-        //    if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
-        //    {
-        //        string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(filename, true);
-        //        string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(filename, true);
-
-        //        byte[] fileBytes = File.ReadAllBytes(filename);
-        //        string fileNameOnly = Path.GetFileName(filename);
-        //        string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
-
-        //        string base64Mime = Convert.ToBase64String(fileBytes, Base64FormattingOptions.None);
-
-        //        Peer2PeerMsg pmsg = new Peer2PeerMsg(secretKey);
-
-
-        //        // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-        //        pmsg.Send_CqrPeerAttachment(fileNameOnly, mimeType, base64Mime, partnerIpAddress, out mimeAttach, Constants.CHAT_PORT, md5, sha256, MsgEnum.None, EncodingType.Base64);
-
-        //        string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, mimeAttach.FileName + Constants.BASE64_EXT);
-        //        File.WriteAllText(base64FilePath, mimeAttach.MimeMsg);
-        //    }
-
-        //    return mimeAttach;
-
-        //}
 
         /// <summary>
         /// GetProxiesFromSettingsResources 
         /// </summary>
         /// <returns>list of ip addr of proxies</returns>
-
         public static List<IPAddress> GetProxiesFromSettingsResources()
         {
             lock (_sLock0)
@@ -1202,7 +1386,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     catch (Exception ex)
                     {
                         CqrException.SetLastException(ex);
-                        Area23Log.LogStatic(ex);
+                        SLog.Log(ex);
                     }
                 }
                 List<IPAddress> cqrXsEuIpList = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
@@ -1216,7 +1400,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     catch (Exception ex)
                     {
                         CqrException.SetLastException(ex);
-                        Area23Log.LogStatic(ex);
+                        SLog.Log(ex);
                     }
                 }
                 string[] proxyNameStrs = Resources.ProxyNames.Split(";,".ToCharArray());
@@ -1232,7 +1416,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     catch (Exception ex)
                     {
                         CqrException.SetLastException(ex);
-                        Area23Log.LogStatic(ex);
+                        SLog.Log(ex);
                     }
                 }
 
@@ -1271,7 +1455,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     }
                     catch (Exception exSound)
                     {
-                        Area23Log.LogStatic(exSound);
+                        SLog.Log(exSound);
                         played = false;
                     }
                     //fixed (byte* bufferPtr = &bytes[0])
@@ -1361,7 +1545,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             catch (Exception exFormClose)
             {
                 CqrException.SetLastException(exFormClose);
-                Area23Log.LogStatic(exFormClose);
+                SLog.Log(exFormClose);
             }
             try
             {
@@ -1370,7 +1554,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             catch (Exception exFormDispose)
             {
                 CqrException.SetLastException(exFormDispose);
-                Area23Log.LogStatic(exFormDispose);
+                SLog.Log(exFormDispose);
             }
 
             return;
@@ -1442,7 +1626,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             }
             catch (Exception exSetSave)
             {
-                Area23Log.LogStatic(exSetSave);
+                SLog.Log(exSetSave);
                 settingsNotSavedReason = exSetSave.Message;
             }
 
@@ -1474,7 +1658,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     catch (Exception exForm)
                     {
                         CqrException.SetLastException(exForm);
-                        Area23Log.LogStatic(exForm);
+                        SLog.Log(exForm);
                     }
                 }
 
@@ -1487,7 +1671,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
+                SLog.Log(ex);
             }
 
             Application.ExitThread();

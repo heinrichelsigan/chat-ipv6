@@ -1,7 +1,8 @@
-using Area23.At.Framework.Core;
 using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
+using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Win32Api;
 using System;
 using System.Diagnostics;
@@ -114,7 +115,7 @@ namespace EU.CqrXs.WinForm.SecureChat
                     }
                     catch (Exception exRelease)
                     {
-                        Area23Log.LogStatic(exRelease);                        
+                        SLog.Log(exRelease);                        
                         CqrException.SetLastException(exRelease);
                         ex = exRelease;
                     }
@@ -124,7 +125,7 @@ namespace EU.CqrXs.WinForm.SecureChat
                     }
                     catch (Exception exClose)
                     {
-                        Area23Log.LogStatic(exClose);
+                        SLog.Log(exClose);
                         CqrException.SetLastException(exClose);
                         ex = exClose;
                     }
@@ -134,7 +135,7 @@ namespace EU.CqrXs.WinForm.SecureChat
                     }
                     catch (Exception exDispose)
                     {
-                        Area23Log.LogStatic(exDispose);
+                        SLog.Log(exDispose);
                         CqrException.SetLastException(exDispose);
                         ex = exDispose;
                     }
@@ -147,7 +148,7 @@ namespace EU.CqrXs.WinForm.SecureChat
             }
             catch (Exception exNull)
             {
-                Area23Log.LogStatic(exNull);
+                SLog.Log(exNull);
                 CqrException.SetLastException(exNull);
                 ex = exNull;
             }

@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using System.Xml.Linq;
 using System.Text.Json.Serialization;
+using Area23.At.Framework.Core.Util;
+using Area23.At.Framework.Core.Static;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -115,7 +117,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             }
             catch (Exception exJson)
             {
-                Area23Log.LogStatic(exJson);
+                SLog.Log(exJson);
             }
 
             return default(FullSrvMsg<TC>);

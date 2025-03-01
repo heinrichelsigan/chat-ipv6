@@ -14,6 +14,7 @@ using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using System.Windows.Interop;
 using Newtonsoft.Json;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
+using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using System.Runtime.InteropServices.JavaScript;
 
@@ -115,7 +116,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             }            
             else if (msgType == MsgEnum.Xml)
             {
-                cqrFile._rawMessage = Ext.SerializeToXml(cqrFile);
+                cqrFile._rawMessage = Utils.SerializeToXml(cqrFile);
             }
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cqrFile._rawMessage);
 

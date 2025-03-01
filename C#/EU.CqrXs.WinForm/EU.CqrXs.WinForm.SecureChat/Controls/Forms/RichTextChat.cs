@@ -1,5 +1,4 @@
 ﻿using Area23FwCore = Area23.At.Framework.Core;
-using Area23.At.Framework.Core;
 using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
@@ -11,6 +10,7 @@ using Area23.At.Framework.Core.Net.NameService;
 using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Util;
+using Area23.At.Framework.Core.Static;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Interop;
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
@@ -857,61 +858,40 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             myServerKey = this.ComboBoxSecretKey.Text;
 
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            FileOpenDialog.AddExtension = false;
-            FileOpenDialog.CheckFileExists = true;
-            FileOpenDialog.CheckPathExists = true;
-            FileOpenDialog.Filter = "All files (*.*)|*.*|BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf";
+            FileOpenDialog = DialogFileOpen;
             DialogResult result = FileOpenDialog.ShowDialog();
-            if (result == DialogResult.OK || result == DialogResult.Yes)
+            if ((result == DialogResult.OK || result == DialogResult.Yes) && File.Exists(FileOpenDialog.FileName))
             {
-                if (File.Exists(FileOpenDialog.FileName))
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                CqrFile? cqrFile = GetCqrFileFromPath(FileOpenDialog.FileName, pmsg.PipeString);
+
+                if (cqrFile != null && !string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(FileOpenDialog.FileName, true);
-                    string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(FileOpenDialog.FileName, true);
-
-                    FileInfo fi = new FileInfo(FileOpenDialog.FileName);
-                    if (fi.Length > 475000)
+                    try
                     {
-                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds 475000 bytes.", "FileSize to large!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
+                        partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
+
+                        // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                        pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
+
+                        string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
+                        System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
+
+                        string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
+                        AppendText(TextBoxSource, userMsg);
+                        Format_Lines_RichTextBox();
+                        this.RichTextBoxChat.Text = string.Empty;
+                        StripStatusLabel.Text = $"File {cqrFile.CqrFileName} send successfully!";
                     }
-                    byte[] fileBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
-                    string fileNameOnly = Path.GetFileName(FileOpenDialog.FileName);
-                    string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
-
-                    Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                    CqrFile cqrFile = new CqrFile(fileNameOnly, mimeType, fileBytes, pmsg.PipeString, md5, sha256, MsgEnum.Json, EncodingType.Base64);
-
-                    if (!string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
+                    catch (Exception ex)
                     {
-                        try
-                        {
-                            partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
-
-                            // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                            pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
-
-                            string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
-                            System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
-
-                            string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
-                            AppendText(TextBoxSource, userMsg);
-                            Format_Lines_RichTextBox();
-                            this.RichTextBoxChat.Text = string.Empty;
-                            StripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
-                        }
-                        catch (Exception ex)
-                        {
-                            Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
-                            StripStatusLabel.Text = "Attach FAILED: " + ex.Message;
-                            PlaySoundFromResource("sound_warning");
-                        }
+                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
+                        StripStatusLabel.Text = "Attach FAILED: " + ex.Message;
+                        PlaySoundFromResource("sound_warning");
                     }
-                    // otherwise send message to registered user via server
-                    // Always encrypt via key
                 }
+                // otherwise send message to registered user via server
+                // Always encrypt via key
 
             }
 
@@ -972,9 +952,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (ea.GenericTData != null && File.Exists(ea.GenericTData))
                 {
                     FileInfo fi = new FileInfo(ea.GenericTData);
-                    if (fi.Length > 475000)
+                    if (fi.Length > Constants.MAX_FILE_BYTE_BUFFEER)
                     {
-                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds 475000 bytes.", "FileSize to large!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds {Constants.MAX_FILE_BYTE_BUFFEER} bytes.",
+                            "FileSize larger > 6MB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
@@ -1150,11 +1131,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             contactId++;
 
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            FileOpenDialog.AddExtension = false;
-            FileOpenDialog.CheckFileExists = true;
-            FileOpenDialog.CheckPathExists = true;
+            FileOpenDialog = DialogFileOpen;
             FileOpenDialog.Filter = "CSV (*.csv)|*.csv|VCard (*.vcf)|*.vcf"; //|All files (*.*)|*.*";
             DialogResult result = FileOpenDialog.ShowDialog();
             if (result == DialogResult.OK || result == DialogResult.Yes)
@@ -1451,7 +1428,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// SetupNetwork async method to setup network
         /// </summary>
         /// <returns><see cref="Task"/></returns>
-
         internal async Task SetupNetwork()
         {
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
@@ -1544,7 +1520,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exV6)
             {
-                Area23Log.LogStatic(exV6);
+                SLog.Log(exV6);
             }
 
             // this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
@@ -1602,7 +1578,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exFriendIp)
                     {
-                        Area23Log.LogStatic("Error when adding friendIps + " + exFriendIp.Message);
+                        SLog.Log("Error when adding friendIps + " + exFriendIp.Message);
                     }
                 }
             }
@@ -1651,7 +1627,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            Area23Log.LogStatic(exi);
+                            SLog.Log(exi);
                         }
                         try
                         {
@@ -1659,7 +1635,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            Area23Log.LogStatic(exi);
+                            SLog.Log(exi);
                         }
 
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
@@ -1680,7 +1656,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 catch (Exception exc)
                 {
-                    Area23Log.LogStatic(exc);
+                    SLog.Log(exc);
                 }
             }
         }
@@ -1716,7 +1692,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exi)
                     {
-                        Area23Log.LogStatic(exi);
+                        SLog.Log(exi);
                     }
 
                     Thread.Sleep(Constants.CLOSING_TIMEOUT);
@@ -1733,22 +1709,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #region LoadSaveChatContent
 
-        private void toolStripMenuItemOpen_Click(object sender, EventArgs e)
-        {
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            DialogResult result = FileOpenDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
 
 
-        private void toolStripMenuItemLoad_Click(object sender, EventArgs e)
+        private void MenuFileItemOpen_Click(object sender, EventArgs e)
         {
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
+            FileOpenDialog = DialogFileOpen;
             DialogResult res = FileOpenDialog.ShowDialog();
             if (res == DialogResult.OK)
             {
@@ -1764,8 +1729,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected virtual byte[] OpenCryptFileDialog(ref string loadDir)
         {
-            if (FileOpenDialog == null)
-                FileOpenDialog = new OpenFileDialog();
+            FileOpenDialog = DialogFileOpen;
             byte[] fileBytes;
             if (string.IsNullOrEmpty(loadDir))
                 loadDir = Environment.GetEnvironmentVariable("TEMP") ?? System.AppDomain.CurrentDomain.BaseDirectory;
@@ -1838,6 +1802,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             this.MenuItemClear_Click(sender, e);
         }
+
+
+
 
 
     }

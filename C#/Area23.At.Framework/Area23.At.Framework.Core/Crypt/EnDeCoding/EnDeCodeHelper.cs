@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.Util;
+﻿using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// <returns>encoded encrypted string</returns>
         public static string EncodeBytes(byte[] encryptBytes, EncodingType encodingType = EncodingType.Base64, bool fromPlain = false, bool fromFile = false)
         {
-            Area23Log.LogStatic(
+            SLog.Log(
                 "EncodeEncryptedBytes(byte[] encryptBytes.[Length=" + encryptBytes.Length + "], EncodingType encodingType =  "
                 + encodingType.ToString() + ", bool fromPlain = " + fromPlain + ", bool fromFile = " + fromFile + ")");
 
@@ -64,7 +65,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// <returns>binary byte array</returns>
         public static byte[] DecodeText(string cipherText, /* out string errMsg, */ EncodingType encodingType = EncodingType.Base64, bool fromPlain = false, bool fromFile = false)
         {
-            Area23Log.LogStatic("EncodedTextToBytes(string cipherText[.Length " + cipherText.Length + "], EncodingType encodingType  = " +
+            SLog.Log("EncodedTextToBytes(string cipherText[.Length " + cipherText.Length + "], EncodingType encodingType  = " +
                 encodingType.ToString() + ", bool fromPlain = " + fromPlain + ", bool fromFile = " + fromFile + ")");
 
             // errMsg = string.Empty;

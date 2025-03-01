@@ -7,12 +7,12 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Static;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {
-    
-    
+
+
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="https://cqrjd.eu/cqrsrv/cqrjd/", ConfigurationName="EU.CqrXs.CqrSrv.CqrJd.CqrServiceSoap")]
     public interface CqrServiceSoap

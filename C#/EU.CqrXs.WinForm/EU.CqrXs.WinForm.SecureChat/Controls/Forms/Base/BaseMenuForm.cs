@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
+using Area23.At.Framework.Core.Static;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -195,11 +196,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             contactId++;
 
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            FileOpenDialog.AddExtension = false;
-            FileOpenDialog.CheckFileExists = true;
-            FileOpenDialog.CheckPathExists = true;
+            FileOpenDialog = DialogFileOpen;
             FileOpenDialog.Filter = "CSV (*.csv)|*.csv|VCard (*.vcf)|*.vcf"; //|All files (*.*)|*.*";
             DialogResult result = FileOpenDialog.ShowDialog();
             if (result == DialogResult.OK || result == DialogResult.Yes)
@@ -401,8 +398,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected internal virtual void MenuFileItemOpen_Click(object sender, EventArgs e)
         {
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
+            FileOpenDialog = DialogFileOpen;
             DialogResult res = FileOpenDialog.ShowDialog();
             if (res == DialogResult.OK)
             {
@@ -417,16 +413,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected internal virtual byte[] OpenCryptFileDialog(ref string loadDir)
         {
-            if (FileOpenDialog == null)
-                FileOpenDialog = new OpenFileDialog();
+            FileOpenDialog = DialogFileOpen;
             byte[] fileBytes;
-            if (string.IsNullOrEmpty(loadDir))
-                loadDir = Environment.GetEnvironmentVariable("TEMP") ?? System.AppDomain.CurrentDomain.BaseDirectory;
-            if (loadDir != null)
-            {
-                FileOpenDialog.InitialDirectory = loadDir;
-                FileOpenDialog.RestoreDirectory = true;
-            }
             DialogResult diaOpenRes = FileOpenDialog.ShowDialog();
             if (diaOpenRes == DialogResult.OK || diaOpenRes == DialogResult.Yes)
             {
@@ -456,7 +444,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             if (saveDir != null)
             {
-                FileSaveDialog.InitialDirectory = saveDir;
+                FileSaveDialog = DialogFileSave;
                 FileSaveDialog.RestoreDirectory = true;
                 FileSaveDialog.DefaultExt = ext;
             }

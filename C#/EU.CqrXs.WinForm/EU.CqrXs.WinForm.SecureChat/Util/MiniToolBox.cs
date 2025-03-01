@@ -1,5 +1,6 @@
-﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             }
             catch (Exception dirEx)
             {
-                Area23Log.LogStatic($"Exeception: {dirEx.GetType()} {dirEx.Message}, when creating attachment directory: {LibPaths.AttachmentFilesDir}\n\t{dirEx}\n");
+                SLog.Log($"Exeception: {dirEx.GetType()} {dirEx.Message}, when creating attachment directory: {LibPaths.AttachmentFilesDir}\n\t{dirEx}\n");
             }
         }
 

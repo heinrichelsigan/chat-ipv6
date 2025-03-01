@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.Util;
+﻿using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         public string Hash { get => _hash; }
 
+        //TODO:
+        [Obsolete("TODO: remove it with hash at end", false)]
         public string Message
         {
             get
@@ -95,7 +98,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         _message = cXml._message;
                     }
                     break;
-                case MsgEnum.None:
+                case MsgEnum.None: //TODO
+                    throw new NotImplementedException("TODO: implement reverse Reflection deserialization");
+
                 case MsgEnum.RawWithHashAtEnd:
                 default:
                     MsgType = MsgEnum.RawWithHashAtEnd;
@@ -126,7 +131,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             {
                 _message = plainTextMsg;
                 _hash = hash;
-                _rawMessage = Ext.SerializeToXml<MsgContent>(this);
+                _rawMessage = Utils.SerializeToXml<MsgContent>(this);
 
             }
             if (msgArt == MsgEnum.RawWithHashAtEnd)
@@ -171,17 +176,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             if (t != null && t is MsgContent mc)
             {
                 this._hash = mc.Hash;
-                this._message = mc.Message;
+                this._message = mc._message;
                 this._rawMessage = mc.RawMessage;
             }
             return t;
         }
 
-        public virtual string ToXml() => Ext.SerializeToXml<MsgContent>(this);
+        public virtual string ToXml() => Utils.SerializeToXml<MsgContent>(this);
        
         public virtual T? FromXml<T>(string xmlText)
         {
-            T? cqrT = Ext.DeserializeFromXml<T>(xmlText);
+            T? cqrT = Utils.DeserializeFromXml<T>(xmlText);
             if (cqrT is MsgContent mc)
             {
                 this._hash = mc._hash;
@@ -200,6 +205,21 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 return _hash;
             }
 
+            if (IsCqrFile())
+            {
+                CqrFile? cqFile = ToCqrFile();
+                // CqrFile? cfile = IsTo<CqrFile>(out CqrFile? t);
+                if (cqFile != null && !string.IsNullOrEmpty(cqFile.Hash))
+                {
+                    _hash = cqFile._hash;
+                    if (!string.IsNullOrEmpty(cqFile._message))
+                        msg = cqFile._message;
+
+                    return _hash;
+                }
+
+            }
+
             if (_rawMessage.Length > 9) 
             {
                 // if (_message.Contains('\n') && _message.LastIndexOf('\n') < _message.Length)
@@ -216,20 +236,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 _hash = _rawMessage;
             }        
 
-            if (IsCqrFile())
-            {
-                CqrFile? cqFile = ToCqrFile();
-                // CqrFile? cfile = IsTo<CqrFile>(out CqrFile? t);
-                if (cqFile != null && !string.IsNullOrEmpty(cqFile.Hash))
-                {
-                    _hash = cqFile._hash;
-                    if (!string.IsNullOrEmpty(cqFile._message))
-                        msg = cqFile._message;
-
-                    return _hash;
-                }
-
-            }
 
             if (_hash.Length > 4 && _rawMessage.Substring(_rawMessage.Length - _hash.Length).Equals(_hash, StringComparison.InvariantCulture))
                 msg = _rawMessage.Substring(0, _rawMessage.Length - _hash.Length);
@@ -239,11 +245,15 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         public override string ToString()
         {
-            return $"\"_message\": {_message}\n" +
-                $"\"_hash\": {_hash}\n" +
-                $"\"_rawMessage\": {_rawMessage}\n" +
-                $"\"MsgType\": {this.MsgType}\n";
+            string s = this.GetType().ToString() + "\n";
+            var fields = Static.Utils.GetAllFields(this.GetType());
+            foreach (var field in fields)           
+                s += field.Name + " \t\"" + field.GetRawConstantValue()?.ToString() + "\"\n";            
+            var props = Static.Utils.GetAllProperties(this.GetType());
+            foreach (var prp in props)
+                s += prp.Name + " \t\"" + prp.GetRawConstantValue()?.ToString() + "\"\n";
 
+            return s;
         }
 
 
@@ -261,7 +271,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             }
             catch (Exception exCqrFile)
             {
-                Area23Log.LogStatic(exCqrFile);
+                SLog.Log(exCqrFile);
             }
 
             return false;
@@ -332,31 +342,31 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         //{
                         //    outType = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>);
                         //    return (ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
-                        //        Ext.DeserializeFromXml<ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>>(serString);                            
+                        //        Utils.DeserializeFromXml<ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>>(serString);                            
                         //}
                         if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
                         {
                             outType = typeof(FullSrvMsg<string>);
-                            return (FullSrvMsg<string>)Ext.DeserializeFromXml<FullSrvMsg<string>>(serString);
+                            return (FullSrvMsg<string>)Utils.DeserializeFromXml<FullSrvMsg<string>>(serString);
                         }
                         if (serString.Contains("CqrFileName") && serString.Contains("Base64Type"))
                         {
                             outType = typeof(CqrFile);
-                            return (CqrFile)Ext.DeserializeFromXml<CqrFile>(serString);
+                            return (CqrFile)Utils.DeserializeFromXml<CqrFile>(serString);
                         }
                         if (serString.Contains("ImageFileName") && serString.Contains("ImageMimeType"))
                         {
                             outType = typeof(CqrImage);
-                            return (CqrImage)Ext.DeserializeFromXml<CqrImage>(serString);
+                            return (CqrImage)Utils.DeserializeFromXml<CqrImage>(serString);
                         }
                         if (serString.Contains("ContactId") && serString.Contains("Cuid") && serString.Contains("Email"))
                         {
                             outType = typeof(CqrContact);
-                            return (CqrContact)Ext.DeserializeFromXml<CqrContact>(serString);
+                            return (CqrContact)Utils.DeserializeFromXml<CqrContact>(serString);
                         }
 
                         outType = typeof(MsgContent);
-                        return (MsgContent)Ext.DeserializeFromXml<MsgContent>(serString);
+                        return (MsgContent)Utils.DeserializeFromXml<MsgContent>(serString);
                     }
                     break;
                 case MsgEnum.RawWithHashAtEnd:
@@ -365,13 +375,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             }
 
             return null;
-        }
-
-
-        public static MsgContent SetMessageContent(string plainMsg)
-        {
-            MsgContent msgContent = new MsgContent(plainMsg);
-            return msgContent;
         }
 
         #endregion static members

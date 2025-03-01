@@ -1,6 +1,7 @@
 ﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System;

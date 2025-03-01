@@ -1,5 +1,4 @@
 ﻿using Area23FwCore = Area23.At.Framework.Core;
-using Area23.At.Framework.Core;
 using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
@@ -27,6 +26,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using Area23.At.Framework.Core.Static;
 
 
 
@@ -830,56 +830,41 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             myServerKey = this.ComboBoxSecretKey.Text;
 
-            FileOpenDialog = FileOpenDialog ?? new OpenFileDialog();
-            FileOpenDialog.RestoreDirectory = true;
-            FileOpenDialog.AddExtension = false;
-            FileOpenDialog.CheckFileExists = true;
-            FileOpenDialog.CheckPathExists = true;
-            FileOpenDialog.Filter = "All files (*.*)|*.*|BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|GIF (*.gif)|*.gif|JPG (*.jpg)|*.jpg|PDF (*.pdf)|*.pdf";
+            FileOpenDialog = DialogFileOpen;
             DialogResult result = FileOpenDialog.ShowDialog();
-            if (result == DialogResult.OK || result == DialogResult.Yes)
+            if ((result == DialogResult.OK || result == DialogResult.Yes) && File.Exists(FileOpenDialog.FileName))
             {
-                if (File.Exists(FileOpenDialog.FileName))
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                CqrFile? cqrFile = GetCqrFileFromPath(FileOpenDialog.FileName, pmsg.PipeString);
+
+                if (cqrFile != null && !string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(FileOpenDialog.FileName, true);
-                    string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(FileOpenDialog.FileName, true);
 
-                    byte[] fileBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
-                    string fileNameOnly = Path.GetFileName(FileOpenDialog.FileName);                   
-                    string mimeType = Area23FwCore.Util.MimeType.GetMimeType(fileBytes, fileNameOnly);
-
-                    Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                    CqrFile cqrFile = new CqrFile(fileNameOnly, mimeType, fileBytes, pmsg.PipeString, md5, sha256, MsgEnum.Json, EncodingType.Base64);
-                    
-                    if (!string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
+                    try
                     {
-                        try
-                        {
-                            partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
+                        partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
 
-                            // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                            pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
+                        // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                        pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
 
-                            string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
-                            System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
+                        string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
+                        System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
 
-                            string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
-                            AppendText(TextBoxSource, userMsg);
-                            Format_Lines_RichTextBox();
-                            this.RichTextBoxChat.Text = string.Empty;
-                            StripStatusLabel.Text = $"File {fileNameOnly} send successfully!";
-                        }
-                        catch (Exception ex)
-                        {
-                            Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
-                            StripStatusLabel.Text = "Attach FAILED: " + ex.Message;
-                            PlaySoundFromResource("sound_warning");
-                        }
+                        string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
+                        AppendText(TextBoxSource, userMsg);
+                        Format_Lines_RichTextBox();
+                        this.RichTextBoxChat.Text = string.Empty;
+                        StripStatusLabel.Text = $"File {cqrFile.CqrFileName} send successfully!";
                     }
-                    // otherwise send message to registered user via server
-                    // Always encrypt via key
+                    catch (Exception ex)
+                    {
+                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
+                        StripStatusLabel.Text = "Attach FAILED: " + ex.Message;
+                        PlaySoundFromResource("sound_warning");
+                    }
                 }
-
+                // otherwise send message to registered user via server
+                // Always encrypt via key
             }
 
         }
@@ -1236,7 +1221,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exV6)
             {
-                Area23Log.LogStatic(exV6);
+                SLog.Log(exV6);
             }
             // this.MenuItemExternalIp.DropDownItems.Add(extIpItem);
 
@@ -1291,7 +1276,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exFriendIp)
                     {
-                        Area23Log.LogStatic("Error when adding friendIps + " + exFriendIp.Message);
+                        SLog.Log("Error when adding friendIps + " + exFriendIp.Message);
                     }
                 }
             }
@@ -1340,7 +1325,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            Area23Log.LogStatic(exi);
+                            SLog.Log(exi);
                         }
                         try
                         {
@@ -1348,7 +1333,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            Area23Log.LogStatic(exi);
+                            SLog.Log(exi);
                         }
 
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
@@ -1358,7 +1343,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 catch (Exception exc)
                 {
-                    Area23Log.LogStatic(exc);
+                    SLog.Log(exc);
                 }
             }
         }
@@ -1392,7 +1377,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 catch (Exception exi)
                 {
-                    Area23Log.LogStatic(exi);
+                    SLog.Log(exi);
                 }
 
                 Thread.Sleep(Constants.CLOSING_TIMEOUT);

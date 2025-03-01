@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Properties;
-using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Static;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
