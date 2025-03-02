@@ -2,7 +2,7 @@
 
 # <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/c">**c**</a>
 
-# <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/Java">**Java**</a>
+# <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/java">**java**</a>
 
 # <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/doc">Documentation</a>
 
