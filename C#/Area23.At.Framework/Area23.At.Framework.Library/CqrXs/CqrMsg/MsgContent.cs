@@ -4,10 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.SqlTypes;
 using System.Linq;
-using System.Net.Mail;
-using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -619,5 +616,6 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
 
 }
-×/
+
+*/
 
