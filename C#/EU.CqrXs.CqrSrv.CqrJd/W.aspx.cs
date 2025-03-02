@@ -80,7 +80,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             {
                 using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(zimage))
                 {
-                    int addInt = 0, w = 60, offset = 0;
+                    int w = 60, offset = 0;
                     for (int i = 0; (i < hexstring.Length); i++)
                     {
                         w = 60;

@@ -20,9 +20,9 @@ using System.Collections.Concurrent;
 using System.Web.Http.Controllers;
 
 
-
 namespace EU.CqrXs.CqrSrv.CqrJd
 {
+
     /// <summary>
     /// Summary description for CqrService
     /// </summary>
@@ -134,116 +134,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
             return responseMsg;
         
-        }
-
-
-        [WebMethod]
-        [Obsolete("SendValidatedSrvMsg is obsolete", false)]
-        public string SendValidatedSrvMsg(Guid from, Guid to, string cryptMsgSrv, string cryptMsgPartner)
-        {
-            myServerKey = string.Empty;
-            _decrypted = string.Empty;
-            responseMsg = string.Empty;
-            _contact = null;
-
-            if (Application[Constants.JSON_CONTACTS] != null)
-                _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
-            else
-                _contacts = JsonContacts.LoadJsonContacts();
-
-            _literalClientIp = HttpContext.Current.Request.UserHostAddress;
-
-            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
-                myServerKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
-            else
-                myServerKey = HttpContext.Current.Request.UserHostAddress;
-            myServerKey += Constants.APP_NAME;
-
-            SrvMsg cqrServerMsg = new SrvMsg(myServerKey);
-            SrvMsg cqrResponseMsg = new SrvMsg(myServerKey);
-            SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
-
-            HttpContext.Current.Application["lastmsg"] = cryptMsgSrv;
-
-            try
-            {
-                if (!string.IsNullOrEmpty(cryptMsgSrv) && cryptMsgSrv.Length >= 8)
-                {
-                    MsgContent msgCt = cqrServerMsg.NCqrBaseMsg(cryptMsgSrv, EncodingType.Base64);
-                    _decrypted = msgCt.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
-            }
-
-            responseMsg = cqrResponseMsg.CqrBaseMsg(Constants.ACK, EncodingType.Base64);
-
-            if (!string.IsNullOrEmpty(_decrypted))
-            {
-                Application["lastdecrypted"] = _decrypted;
-                CqrContact ctret = _contacts.ToList().Where(c => c.Cuid == to || c.Cuid == from).ToList().FirstOrDefault();
-                string reStr = cqrSrvResponseMsg.CqrSrvMsg1(ctret, EncodingType.Base64);
-
-                return reStr;
-            }
-
-
-            return responseMsg;
-
-        }
-
-
-        [WebMethod]
-        [Obsolete("SendSrvMsg is obsolete", false)]
-        public string SendSrvMsg(string cryptMsgSrv, string cryptMsgPartner)
-        {
-            myServerKey = string.Empty;
-            _decrypted = string.Empty;
-            responseMsg = string.Empty;
-            _contact = null;
-
-            if (Application[Constants.JSON_CONTACTS] != null)
-                _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
-            else
-                _contacts = JsonContacts.LoadJsonContacts();
-
-            _literalClientIp = HttpContext.Current.Request.UserHostAddress;
-
-            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
-                myServerKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
-            else
-                myServerKey = HttpContext.Current.Request.UserHostAddress;
-            myServerKey += Constants.APP_NAME;
-
-            SrvMsg cqrServerMsg = new SrvMsg(myServerKey);
-            SrvMsg cqrResponseMsg = new SrvMsg(myServerKey);
-            SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
-
-            HttpContext.Current.Application["lastmsg"] = cryptMsgSrv;
-
-            try
-            {
-                if (!string.IsNullOrEmpty(cryptMsgSrv) && cryptMsgSrv.Length >= 8)
-                {
-                    MsgContent msgCt = cqrServerMsg.NCqrBaseMsg(cryptMsgSrv, EncodingType.Base64);
-                    _decrypted = msgCt.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
-            }
-
-            responseMsg = cqrResponseMsg.CqrBaseMsg(Constants.ACK, EncodingType.Base64);
-
-           // TODO:
-
-            return responseMsg;
-
         }
 
 
@@ -544,7 +434,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             {
                 foundCt.ContactId = cqrContact.ContactId;
                 if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
-                    foundCt.Cuid = new Guid();
+                    foundCt.Cuid = Guid.NewGuid();
                 if (!string.IsNullOrEmpty(cqrContact.Address))
                     foundCt.Address = cqrContact.Address;
                 if (!string.IsNullOrEmpty(_contact.Mobile))
@@ -557,7 +447,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             else
             {
                 if (cqrContact.Cuid == null || cqrContact.Cuid == Guid.Empty)
-                    cqrContact.Cuid = new Guid();
+                    cqrContact.Cuid = Guid.NewGuid();
                 _contacts.Add(cqrContact);
                 foundCt = cqrContact;
             }

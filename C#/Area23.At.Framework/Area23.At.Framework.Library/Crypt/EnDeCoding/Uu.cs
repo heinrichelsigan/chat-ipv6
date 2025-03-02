@@ -156,7 +156,7 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
             string fromUuFunCall = "FromUu(string uuEncStr[.Length=" + uuEncStr.Length + "], bool originalUue = " + originalUue + ", bool fromFile = " + fromFile + ")";
             Area23Log.LogStatic(fromUuFunCall + "... STARTED.");
 
-            bool errInWin = false, errInUnix = false;
+            // bool errInWin = false, errInUnix = false;
             string plainStr = "";
             byte[] plainBytes = new byte[Math.Max(plainStr.Length, uuEncStr.Length)];
 

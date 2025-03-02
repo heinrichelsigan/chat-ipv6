@@ -32,12 +32,104 @@ namespace EU.CqrXs.CqrSrv.CqrJd
     [System.Web.Script.Services.ScriptService]
     public class ChatRoomService : BaseWebService
     {
-        
-        string responseMsg = string.Empty;
 
-        [WebMethod]       
+
+        [WebMethod]
+        public string Send1StSrvMsg(string cryptMsg)
+        {
+            myServerKey = string.Empty;
+            _decrypted = string.Empty;
+            responseMsg = string.Empty;
+            _contact = null;
+
+            if (Application[Constants.JSON_CONTACTS] != null)
+                _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
+            else
+                _contacts = JsonContacts.LoadJsonContacts();
+
+            _literalClientIp = HttpContext.Current.Request.UserHostAddress;
+
+            myServerKey = HttpContext.Current.Request.UserHostAddress;
+            myServerKey += Constants.APP_NAME;
+
+            SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
+            SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
+            SrvMsg responseSrvMsg = new SrvMsg(myServerKey, myServerKey);
+            Area23Log.LogStatic("myServerKey = " + myServerKey);
+            HttpContext.Current.Application["lastmsg"] = cryptMsg;
+
+            try
+            {
+                if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
+                {
+                    _contact = srv1stMsg.NCqrSrvMsg1(cryptMsg);
+                    _decrypted = _contact.ToJson();
+                    Area23Log.LogStatic("$Contact decrypted successfully: {_decrypted}\n");
+                }
+            }
+            catch (Exception ex)
+            {
+                CqrException.SetLastException(ex);
+                Area23Log.LogStatic($"Exception {ex.GetType()} when decrypting contact: {ex.Message}\n\t{ex.ToString()}\n");
+            }
+
+            responseMsg = responseSrvMsg.CqrBaseMsg("", EncodingType.Base64);
+
+            if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
+            {
+                Application["lastdecrypted"] = _decrypted;
+
+                CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, _contact);
+                if (foundCt != null)
+                {
+                    foundCt.ContactId = _contact.ContactId;
+                    if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
+                        foundCt.Cuid = Guid.NewGuid();
+                    if (!string.IsNullOrEmpty(_contact.Address))
+                        foundCt.Address = _contact.Address;
+                    if (!string.IsNullOrEmpty(_contact.Mobile))
+                        foundCt.Mobile = _contact.Mobile;
+
+                    if (_contact.ContactImage != null && !string.IsNullOrEmpty(_contact.ContactImage.ImageFileName) &&
+                        !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
+                        foundCt.ContactImage = _contact.ContactImage;
+
+                    Area23Log.LogStatic($"Contact found, updating it and returning it. {foundCt.Cuid} {foundCt.NameEmail}\n");
+                    responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
+                }
+                else
+                {
+                    _contact.Cuid = Guid.NewGuid();
+                    _contacts.Add(_contact);
+
+                    //try
+                    //{
+                    //    string processed = Area23.At.Framework.Library.Util.ProcessCmd.Execute(
+                    //        "/usr/local/bin/createContact.sh",
+                    //        _contact.Name + " " + _contact.Email + " " +
+                    //        _contact.Mobile.Replace(" ", "") + " " + _contact.NameEmail + " ", false);
+                    //} catch (Exception exCmdFail)
+                    //{
+                    //    Area23Log.LogStatic(exCmdFail);
+                    //}
+                    Area23Log.LogStatic($"Contact not found in json, adding contact, giving a new Guid {_contact.Cuid} and returning it.\n");
+                    foundCt = _contact;
+
+                    responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
+                }
+
+                JsonContacts.SaveJsonContacts(_contacts);
+            }
+
+
+            return responseMsg;
+
+        }
+
+
+        [WebMethod]
         public string ChatRoomInvite(string cryptMsg)
-        {            
+        {
             myServerKey = string.Empty;
             _decrypted = string.Empty;
             responseMsg = string.Empty;
@@ -47,18 +139,20 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             FullSrvMsg<string> fullSrvMsg;
             List<CqrContact> _invited = new List<CqrContact>();
             SrvMsg responseSrvMsg = new SrvMsg(myServerKey);
-            
+
             responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
+                    _contact = fullSrvMsg.Sender;
                     _contact = AddContact(fullSrvMsg.Sender);
-                    _invited = fullSrvMsg.Recipients;                    
+                    _invited = fullSrvMsg.Recipients;
                     fullSrvMsg.Recipients.Add(_contact);
                     _invited.Add(_contact);
 
+                    ;
                     if (string.IsNullOrEmpty(fullSrvMsg.TContent))
                         fullSrvMsg.TContent = DateTime.Now.Ticks.ToString() + _contact.Email.Replace("@", ".") + "_.json";
 
@@ -75,9 +169,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 CqrException.SetLastException(ex);
                 Area23Log.LogStatic(ex);
             }
-           
+
+
             return responseMsg;
-        
+
         }
 
         [WebMethod]
@@ -100,8 +195,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
+                    _contact = fullSrvMsg.Sender;
                     _contact = AddContact(fullSrvMsg.Sender);
                     _invited = fullSrvMsg.Recipients;
+                    fullSrvMsg.Recipients.Add(_contact);
                     _invited.Add(_contact);
 
                     ;
@@ -109,7 +206,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         throw new Exception();
 
                     FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(fullSrvMsg.TContent)).LoadJsonChatRoom(fullSrvMsg.TContent);
-                    if (fullSrvMsg.TContent.Equals(chatRoomMsg.TContent)) 
+                    if (fullSrvMsg.TContent.Equals(chatRoomMsg.TContent))
                     {
                         foreach (CqrContact c in chatRoomMsg.Recipients)
                         {
@@ -127,7 +224,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                             ConcurrentBag<string> bag = (ConcurrentBag<string>)HttpContext.Current.Application[fullSrvMsg.TContent];
                             chatRoomMsg.TContent = bag.ToArray().ToString();
                         }
-                        
+
                     }
                     responseMsg = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
@@ -143,8 +240,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             return responseMsg;
 
         }
-
-
 
         [WebMethod]
         public string ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted)
@@ -166,8 +261,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
+                    _contact = fullSrvMsg.Sender;
                     _contact = AddContact(fullSrvMsg.Sender);
                     _invited = fullSrvMsg.Recipients;
+                    fullSrvMsg.Recipients.Add(_contact);
                     _invited.Add(_contact);
 
                     ;
@@ -232,6 +329,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
                     _contact = AddContact(fullSrvMsg.Sender);
                     _invited = fullSrvMsg.Recipients;
+                    fullSrvMsg.Recipients.Add(_contact);
                     _invited.Add(_contact);
 
                     ;
@@ -240,7 +338,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
                     FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(fullSrvMsg.TContent)).LoadJsonChatRoom(fullSrvMsg.TContent);
                     if (fullSrvMsg.TContent.Equals(chatRoomMsg.TContent))
-                    {                        
+                    {
                         if (fullSrvMsg.Sender == chatRoomMsg.Sender)
                             isValid = true;
                     }
@@ -271,81 +369,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
 
-        [WebMethod] 
+        [WebMethod]
         public string UpdateContacts(string cryptMsg)
         {
             return cryptMsg;
-        }
-
-
-        [WebMethod]
-        public string TestService()
-        {
-
-            string ret = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().GetName().FullName) +
-                Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-            object[] sattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-            if (sattributes.Length > 0)
-            {
-                AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)sattributes[0];
-                if (titleAttribute.Title != "")
-                    ret = titleAttribute.Title;
-            }
-            ret += "\n" +Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-            object[] oattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
-            if (oattributes.Length > 0)            
-                ret += "\n" +((AssemblyDescriptionAttribute)oattributes[0]).Description;
-
-            object[] pattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
-            if (pattributes.Length > 0)
-                ret += "\n" + ((AssemblyProductAttribute)pattributes[0]).Product;
-
-            object[] crattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-            if (crattributes.Length > 0)
-                ret += "\n" + ((AssemblyCopyrightAttribute)crattributes[0]).Copyright;
-
-            object[] cpattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-            if (cpattributes.Length > 0)
-                ret += "\n"  + ((AssemblyCompanyAttribute)cpattributes[0]).Company;
-
-
-            return ret;
-
-        }
-
-
-
-
-        internal CqrContact AddContact(CqrContact cqrContact)
-        {
-            CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, cqrContact);
-            if (foundCt != null)
-            {
-                foundCt.ContactId = cqrContact.ContactId;
-                if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
-                    foundCt.Cuid = new Guid();
-                if (!string.IsNullOrEmpty(cqrContact.Address))
-                    foundCt.Address = cqrContact.Address;
-                if (!string.IsNullOrEmpty(_contact.Mobile))
-                    foundCt.Mobile = cqrContact.Mobile;
-
-                if (_contact.ContactImage != null && !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
-                    !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
-                    foundCt.ContactImage = cqrContact.ContactImage;
-            }
-            else
-            {
-                if (cqrContact.Cuid == null || cqrContact.Cuid == Guid.Empty)
-                    cqrContact.Cuid = new Guid();
-                _contacts.Add(cqrContact);
-                foundCt = cqrContact;
-            }
-
-            JsonContacts.SaveJsonContacts(_contacts);
-
-            return foundCt;
         }
 
 

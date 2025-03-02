@@ -23,6 +23,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         protected internal string _literalServerIPv4, _literalServerIPv6, _literalClientIp;
         protected internal string myServerKey = string.Empty;
         protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
+        protected internal string responseMsg = string.Empty;
 
         public BaseWebService()
         {
@@ -45,38 +46,42 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 myServerKey = HttpContext.Current.Request.UserHostAddress;
             myServerKey += Constants.APP_NAME;
 
-
         }
 
         public CqrContact HandleContact(CqrContact contact)
         {
-            CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, contact);
+            return AddContact(contact);
+        }
+
+
+        internal CqrContact AddContact(CqrContact cqrContact)
+        {
+            CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, cqrContact);
             if (foundCt != null)
             {
-                foundCt.ContactId = contact.ContactId;
+                foundCt.ContactId = cqrContact.ContactId;
                 if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
-                    foundCt.Cuid = new Guid();
-                if (!string.IsNullOrEmpty(contact.Address))
-                    foundCt.Address = contact.Address;
+                    foundCt.Cuid = Guid.NewGuid();
+                if (!string.IsNullOrEmpty(cqrContact.Address))
+                    foundCt.Address = cqrContact.Address;
                 if (!string.IsNullOrEmpty(_contact.Mobile))
-                    foundCt.Mobile = contact.Mobile;
+                    foundCt.Mobile = cqrContact.Mobile;
 
-                if (contact.ContactImage != null && !string.IsNullOrEmpty(contact.ContactImage.ImageFileName) &&
-                    !string.IsNullOrEmpty(contact.ContactImage.ImageBase64))
-                    foundCt.ContactImage = contact.ContactImage;
-
-
-                return foundCt;
+                if (_contact.ContactImage != null && !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
+                    !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
+                    foundCt.ContactImage = cqrContact.ContactImage;
             }
             else
             {
-                if (contact.Cuid == null || contact.Cuid == Guid.Empty)
-                    contact.Cuid = new Guid();
-                _contacts.Add(contact);
-                JsonContacts.SaveJsonContacts(_contacts);
-
-                return _contact;
+                if (cqrContact.Cuid == null || cqrContact.Cuid == Guid.Empty)
+                    cqrContact.Cuid = Guid.NewGuid();
+                _contacts.Add(cqrContact);
+                foundCt = cqrContact;
             }
+
+            JsonContacts.SaveJsonContacts(_contacts);
+
+            return foundCt;
         }
 
 

@@ -24,15 +24,7 @@ using System.Windows.Media.Imaging;
 using System.Windows;
 using System.Collections.ObjectModel;
 using System.Text;
-using System.Windows.Shapes;
 using System.Xml.Linq;
-using System.Data.SqlTypes;
-using Area23.At.Framework.Library.Util;
-using Area23.At.Framework.Library.CqrXs.CqrSrv;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
-using System.Net;
-using System.Configuration;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using System.Net;
 
 
