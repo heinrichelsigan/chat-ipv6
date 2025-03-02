@@ -1,5 +1,5 @@
-﻿using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Util;
+﻿using Area23.At.Framework.Library;
+using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
