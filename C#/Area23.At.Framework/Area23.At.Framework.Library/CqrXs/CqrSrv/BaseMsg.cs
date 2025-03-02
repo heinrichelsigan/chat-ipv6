@@ -100,7 +100,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                 bool shouldSerialize = true;
                 if (msc.RawMessage.IsValidJson())
                 {
-                    MsgContent? c = JsonConvert.DeserializeObject<MsgContent>(msc.RawMessage);
+                    MsgContent c = JsonConvert.DeserializeObject<MsgContent>(msc.RawMessage);
                     if (c != null && string.IsNullOrEmpty(c._hash) && c._hash.Equals(PipeString) && !string.IsNullOrEmpty(c._message))
                         shouldSerialize = false;
                 }                
@@ -164,9 +164,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             hash = !string.IsNullOrEmpty(msgContent._hash) ? msgContent._hash : hash;
             if (msgContent.IsCqrFile())
             {
-                CqrFile? cqFile = msgContent.ToCqrFile();
+                CqrFile cqFile = msgContent.ToCqrFile();
                 hash = cqFile._hash;
-                CqrFile? cfile = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
                 // hash = cfile._hash;
             }
 

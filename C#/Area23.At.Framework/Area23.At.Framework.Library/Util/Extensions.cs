@@ -11,6 +11,8 @@ using System.Xml.Linq;
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Area23.At.Framework.Library.Util
 {
@@ -937,8 +939,16 @@ namespace Area23.At.Framework.Library.Util
 
     public static class Ext
     {
+
+        /// <summary>
+        /// SwapT a generic swapper
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t0">refernce in t0, reference out t1</param>
+        /// <param name="t1">efernce in t1, reference out t0</param>
+        /// <returns>an array with 2 elements with original positions</returns>
         public static T[] SwapT<T>(ref T t0, ref T t1)
-        {            
+        {
             T[] tt = new T[2];
             tt[0] = t0;
             tt[1] = t1;
@@ -949,6 +959,11 @@ namespace Area23.At.Framework.Library.Util
         }
 
 
+        /// <summary>
+        /// Generic null setter for an array of objects
+        /// </summary>
+        /// <param name="os"></param>
+        /// <returns></returns>
         public static bool SetNull(params object[] os)
         {
             if (os == null || os.Length == 0)
@@ -966,14 +981,20 @@ namespace Area23.At.Framework.Library.Util
                 catch (Exception exNull)
                 {
                     error = true;
-                    Area23Log.LogStatic($"Error in Ext SetNull(params object[] os): {o} {exNull.Message} ...");
+                    SLog.Log($"Error in Ext SetNull(params object[] os): {o} {exNull.Message} ...");
                 }
             }
 
             return !error;
         }
 
-        public static bool SetNullT<T>(params T[]ts) where T : class
+        /// <summary>
+        /// generic null setter for an array of T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ts"></param>
+        /// <returns></returns>
+        public static bool SetNullT<T>(params T[] ts) where T : class
         {
             bool error = false;
             if (ts == null || ts.Length == 0)
@@ -990,13 +1011,129 @@ namespace Area23.At.Framework.Library.Util
                 catch (Exception exNull)
                 {
                     error = true;
-                    Area23Log.LogStatic($"Error in Ext SetNullT<T>(params T[] ts) {t.ToString()} {exNull.Message} ....");
+                    SLog.Log($"Error in Ext SetNullT<T>(params T[] ts) {t.ToString()} {exNull.Message} ....");
                 }
             }
 
             return !error;
 
         }
+
+
+        /// <summary>
+        /// SerializeToXml gemeric to xml serialize
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t">object to serialize</param>
+        /// <returns>xml serialized string</returns>
+        public static string SerializeToXml<T>(T obj)
+        {
+            string xml = string.Empty;
+            try
+            {
+                StringWriter writer = new StringWriter();
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                serializer.Serialize(writer, obj);
+                xml = writer.ToString();
+            }
+            catch (Exception exSerialize)
+            {
+                SLog.Log($"Exception {exSerialize.GetType()} in static byte[]? SerializeToXml<T = {obj.GetType()}>(T obj, out serialized)  {exSerialize.Message}\n");
+                SLog.Log(exSerialize);
+            }
+
+            return xml;
+
+        }
+
+
+        /// <summary>
+        /// DeserializeFromXml generic T from xml deserializer
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="xml">sml serialized string</param>
+        /// <returns>generic T</returns>
+        public static T DeserializeFromXml<T>(string xml)
+        {
+            T result = default;
+            try
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(T));
+                using (var tr = new StringReader(xml))
+                {
+                    result = (T)ser.Deserialize(tr);
+                }
+            }
+            catch (Exception exDeserialize)
+            {
+                SLog.Log($"Exception {exDeserialize.GetType()} in static T? ({result.GetType()}) DeserializeFromXml<T = {result.GetType()}>(string xml) {exDeserialize.Message}\n");
+                SLog.Log(exDeserialize);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// SerializeToJsonl gemeric to json serialize
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t">object to serialize</param>
+        /// <returns>json serialized string</returns>
+        public static string SerializeToJsonl<T>(T t) => Newtonsoft.Json.JsonConvert.SerializeObject(t);
+
+        /// <summary>
+        /// DeserializeFromJson generic deserialize a json serialized string
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="json">json serialized string</param>
+        /// <returns>generic object T</returns>
+        public static T DeserializeFromJson<T>(string json) => Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+
+
+
+        /// <summary>
+        /// Get all the fields of a class
+        /// </summary>
+        /// <param name="type">Type object of that class</param>
+        /// <returns></returns>
+        public static IEnumerable<FieldInfo> GetAllFields(this Type type)
+        {
+            if (type == null)
+            {
+                return Enumerable.Empty<FieldInfo>();
+            }
+
+            BindingFlags flags = BindingFlags.Public |
+                                 // BindingFlags.NonPublic |
+                                 BindingFlags.Static |
+                                 BindingFlags.Instance |
+                                 BindingFlags.DeclaredOnly;
+
+            return type.GetFields(flags).Union(type.BaseType.GetAllFields());
+        }
+
+        /// <summary>
+        /// Get all properties of a class
+        /// </summary>
+        /// <param name="type">Type object of that class</param>
+        /// <returns></returns>
+        public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
+        {
+            if (type == null)
+            {
+                return Enumerable.Empty<PropertyInfo>();
+            }
+
+            BindingFlags flags = BindingFlags.Public |
+                                 // BindingFlags.NonPublic |
+                                 BindingFlags.Static |
+                                 BindingFlags.Instance |
+                                 BindingFlags.DeclaredOnly;
+
+            return type.GetProperties(flags).Union(type.BaseType.GetAllProperties());
+        }
+
+
     }
 
 

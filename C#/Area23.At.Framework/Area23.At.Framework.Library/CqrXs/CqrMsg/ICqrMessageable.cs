@@ -1,22 +1,23 @@
-﻿using System;
+﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Area23.At.Framework.Core.CqrXs.CqrMsg
+namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 {
     public interface ICqrMessagable
     {
-        public MsgEnum MsgType { get; }
-        public string Hash { get; }
-        public string Message { get; }
-        public string RawMessage { get; }
+        MsgEnum MsgType { get; }
+        string Hash { get; }
+        string Message { get; }
+        string RawMessage { get; }
 
-        public string ToJson();
-        public T? FromJson<T>(string jsonText);
-        public string ToXml();
-        public T? FromXml<T>(string xmlText);
+        string ToJson();
+        T FromJson<T>(string jsonText);
+        string ToXml();
+        T FromXml<T>(string xmlText);
       
     }
 }

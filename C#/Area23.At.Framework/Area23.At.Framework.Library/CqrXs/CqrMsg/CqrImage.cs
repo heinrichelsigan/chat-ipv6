@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Area23.At.Framework.Library;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.Util;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System;
 using System.Drawing;
@@ -7,11 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Area23.At.Framework.Libraty.Util;
 using System.Drawing.Imaging;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using Area23.At.Framework.Library;
 
 namespace Area23.At.Framework.Library.CqrMsg
 {
@@ -95,9 +96,9 @@ namespace Area23.At.Framework.Library.CqrMsg
         /// <param name="fileName">fileName for the image,
         /// if fileName is null or empty
         /// then a name <see cref="Extensions.Area23DateTimeWithMillis(DateTime)"/></param> + "_image." + extension based mime type will be given
-        public CqrImage(Image image, string? fileName = "")
+        public CqrImage(Image image, string fileName = "")
         {
-            CqrImage? cqrImage = FromDrawingImage(image, fileName);
+            CqrImage cqrImage = FromDrawingImage(image, fileName);
             if (cqrImage != null)
             {
                 ImageFileName = cqrImage.ImageFileName;
@@ -119,9 +120,9 @@ namespace Area23.At.Framework.Library.CqrMsg
             return jsonString;
         }
 
-        public virtual CqrImage? FromJson(string jsonText)
+        public virtual CqrImage FromJson(string jsonText)
         {
-            CqrImage? cqrJsonImage;
+            CqrImage cqrJsonImage;
             try
             {
                 cqrJsonImage = Newtonsoft.Json.JsonConvert.DeserializeObject<CqrImage>(jsonText);
@@ -142,9 +143,9 @@ namespace Area23.At.Framework.Library.CqrMsg
             return null;
         }
 
-        public virtual Bitmap? ToDrawingBitmap()
+        public virtual Bitmap ToDrawingBitmap()
         {
-            Bitmap? bmpImage;
+            Bitmap bmpImage;
             if (ImageData == null || ImageData.Length == 0)
             {
                 byte[] data = Convert.FromBase64String(ImageBase64);
@@ -193,9 +194,9 @@ namespace Area23.At.Framework.Library.CqrMsg
 
         }
 
-        public static Image? ToDrawingImage(CqrImage cqrImage)
+        public static Image ToDrawingImage(CqrImage cqrImage)
         {
-            Bitmap? bmpImage;
+            Bitmap bmpImage;
             if (cqrImage.ImageData == null || cqrImage.ImageData.Length == 0)
             {
                 byte[] data = Convert.FromBase64String(cqrImage.ImageBase64);
@@ -213,15 +214,15 @@ namespace Area23.At.Framework.Library.CqrMsg
             }
             
 
-            return (Image?)bmpImage;
+            return (Image)bmpImage;
         }
 
-        public static CqrImage? FromDrawingImage(Image? image, string? imgName = "")
+        public static CqrImage FromDrawingImage(Image image, string imgName = "")
         {
             if (image == null)
                 return null;
 
-            CqrImage? cqrImage = null;
+            CqrImage cqrImage = null;
             // ImageFormat format = image.RawFormat;
             byte[] imageData;
             string fileName = string.IsNullOrEmpty(imgName) ? string.Empty : imgName;
@@ -276,16 +277,16 @@ namespace Area23.At.Framework.Library.CqrMsg
                         fileName += "ico";
                         image.Save(ms, ImageFormat.Icon);
                     }
-                    else if (image.RawFormat == ImageFormat.Heif)
-                    {
-                        fileName += "heif";
-                        image.Save(ms, ImageFormat.Heif);
-                    }
-                    else if (image.RawFormat == ImageFormat.Webp)
-                    {
-                        fileName += "webp";
-                        image.Save(ms, ImageFormat.Webp);
-                    }
+                    //else if (image.RawFormat == ImageFormat.Heif)
+                    //{
+                    //    fileName += "heif";
+                    //    image.Save(ms, ImageFormat.Heif);
+                    //}
+                    //else if (image.RawFormat == ImageFormat.Webp)
+                    //{
+                    //    fileName += "webp";
+                    //    image.Save(ms, ImageFormat.Webp);
+                    //}
                     else
                     {
                         try

@@ -64,6 +64,7 @@
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
       <Private>True</Private>
@@ -80,10 +81,15 @@
       <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.6.1.0\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.6.0\lib\net462\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Web.Services.Description, Version=8.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Web.Services.Description.8.1.1\lib\net462\System.Web.Services.Description.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -95,8 +101,11 @@
   <ItemGroup>
     <Compile Include="Area23Log.cs" />
     <Compile Include="CqrXs\CqrException.cs" />
+    <Compile Include="CqrXs\CqrJd\CqrService.cs" />
     <Compile Include="CqrXs\CqrMsg\ClientSrvMsg.cs" />
+    <Compile Include="CqrXs\CqrMsg\CqrFile.cs" />
     <Compile Include="CqrXs\CqrMsg\FullSrvMsg.cs" />
+    <Compile Include="CqrXs\CqrMsg\ICqrMessageable.cs" />
     <Compile Include="CqrXs\CqrMsg\MsgEnum.cs" />
     <Compile Include="CqrXs\CqrSettings.cs" />
     <Compile Include="CqrXs\CqrSrv\SrvMsg1.cs" />
@@ -168,6 +177,7 @@
     <Compile Include="Util\GifMetadataAdapter.cs" />
     <Compile Include="Util\JsonHelper.cs" />
     <Compile Include="Util\QRGenericString.cs" />
+    <Compile Include="Util\SLog.cs" />
     <Compile Include="Util\UIPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

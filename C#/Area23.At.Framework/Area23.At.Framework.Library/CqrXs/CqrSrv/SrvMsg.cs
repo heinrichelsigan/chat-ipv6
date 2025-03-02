@@ -18,7 +18,6 @@ using static QRCoder.PayloadGenerator.SwissQrCode;
 namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 {
 
-
     /// <summary>
     /// Provides a secure encrypted message to send to the server or receive from server
     /// </summary>
@@ -237,11 +236,11 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 
             byte[] cipherBytes = EnDeCodeHelper.DecodeText(CqrMessage, encType);
             byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, cKey, cHash) : cipherBytes;
-            string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //EnDeCodeHelper.GetStringFromBytesTrimNulls(unroundedMerryBytes);
+            string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
             while (decrypted[decrypted.Length - 1] == '\0')
                 decrypted = decrypted.Substring(0, decrypted.Length - 1);
 
-            MsgEnum msgEnum = (decrypted.IsValidJson()) ? MsgEnum.JsonSerialized : MsgEnum.RawWithHashAtEnd;
+            MsgEnum msgEnum = (decrypted.IsValidJson()) ? MsgEnum.Json : MsgEnum.RawWithHashAtEnd;
             MsgContent msgContent = new MsgContent(decrypted, msgEnum);
             string hashVerification = msgContent.Hash;
             if (!VerifyHash(hashVerification, clientSymmPipe.PipeString))
@@ -268,11 +267,11 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         /// <param name="cqrMessage">secure encrypted msg </param>
         /// <param name="encType"><see cref="EncodingType"/></param>
         /// <returns><see cref="FullSrvMsg{TC}"/></returns>
-        public FullSrvMsg<TSC> NCqrSrvMsgSC<TSC>(string cqrMessage, MsgKind msgKind = MsgKind.Server, EncodingType encType = EncodingType.Base64)
-            where TSC : class
+        public FullSrvMsg<TC> NCqrSrvMsgSC<TC>(string cqrMessage, MsgKind msgKind = MsgKind.Server, EncodingType encType = EncodingType.Base64)
+            where TC : class
         {
-            FullSrvMsg<TSC> fullMsg = new FullSrvMsg<TSC>();
-            fullMsg = (msgKind == MsgKind.Server) ? NCqrSrvMsg<TSC>(cqrMessage, encType) : NCqrClientMsgTC<TSC>(cqrMessage, encType);
+            FullSrvMsg<TC> fullMsg = new FullSrvMsg<TC>();
+            fullMsg = (msgKind == MsgKind.Server) ? NCqrSrvMsg<TC>(cqrMessage, encType) : NCqrClientMsgTC<TC>(cqrMessage, encType);
 
             return fullMsg;
         }
@@ -364,7 +363,24 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         }
 
 
-    }
+        //public string Send_CqrSrvMsg_Soap<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64) 
+        //    where T : class
+        //    where TC : class
+        //{
+        //    string cryptSrv = CqrSrvMsg<T>(fullServerMsg);
+        //    string cryptPatner = CqrSrvMsg<TC>(fullClientMsg);
+        //    string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+        //    string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
 
+
+        //    Area23.At.Framework.Core.CqrXs.SrvStub.CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+        //    SendSrvMsgRequest req = new SendSrvMsgRequest(cryptSrv, cryptPatner);
+        //    SendSrvMsgResponse resp = client.SendSrvMsg(req);
+
+        //    return resp.SendSrvMsgResult;                        
+
+        //}
+
+    }
 
 }

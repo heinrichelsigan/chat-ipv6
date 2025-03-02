@@ -1,22 +1,20 @@
-﻿using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
+﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Crypt.Cipher;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Net.WebHttp;
+using Area23.At.Framework.Library.Net.IpSocket;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Area23.At.Framework.Library.Net.IpSocket;
 using System.Net;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using System.Windows.Interop;
-using Newtonsoft.Json;
-using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.Util;
-using System.Runtime.InteropServices.JavaScript;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 {
@@ -116,7 +114,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             }            
             else if (msgType == MsgEnum.Xml)
             {
-                cqrFile._rawMessage = Utils.SerializeToXml(cqrFile);
+                cqrFile._rawMessage = Ext.SerializeToXml(cqrFile);
             }
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cqrFile._rawMessage);
 

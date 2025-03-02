@@ -103,7 +103,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     if (!string.IsNullOrEmpty(rq) && rq.Length >= 8)
                     {
                         AppDomain.CurrentDomain.SetData(Constants.FISH_ON_AES_ENGINE, true);
-                        myContact = srv1stMsg.NCqrSrvMsg1(rq, Area23.At.Framework.Library.Crypt.EnDeCoding.EncodingType.Base64, true);
+                        myContact = srv1stMsg.NCqrSrvMsg1(rq, Area23.At.Framework.Library.Crypt.EnDeCoding.EncodingType.Base64);
                         decrypted = $"<textarea name=TextBoxDecrypted>\r\nThank you Mr./Mrs. for registration {myContact.Name} [{myContact.Email}],\r\n";
 
                         Area23Log.LogStatic("Contact.ToJson(): " + decrypted);

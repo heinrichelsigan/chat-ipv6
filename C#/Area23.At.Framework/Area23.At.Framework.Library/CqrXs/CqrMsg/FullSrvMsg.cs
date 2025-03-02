@@ -5,9 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using System.Xml.Linq;
-using System.Text.Json.Serialization;
 using Area23.At.Framework.Library.Util;
 using Area23.At.Framework.Library;
 
@@ -24,7 +22,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
     {
         #region properties
 
-        public CqrContact? Sender { get; set; }
+        public CqrContact Sender { get; set; }
 
         public List<CqrContact> Recipients { get; set; }
 
@@ -43,7 +41,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             }
         }
 
-        public TC? TContent { get; set; }
+        public TC TContent { get; set; }
 
         #endregion properties
 
@@ -98,9 +96,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             return jsonText;
         }
 
-        public new FullSrvMsg<TC>? FromJson(string jsonText) 
+        public new FullSrvMsg<TC> FromJson(string jsonText) 
         {
-            FullSrvMsg<TC>? tc = JsonConvert.DeserializeObject<FullSrvMsg<TC>>(jsonText);
+            FullSrvMsg<TC> tc = JsonConvert.DeserializeObject<FullSrvMsg<TC>>(jsonText);
             try
             {
                 if (tc != null && tc is FullSrvMsg<TC> fullSrvMsg)

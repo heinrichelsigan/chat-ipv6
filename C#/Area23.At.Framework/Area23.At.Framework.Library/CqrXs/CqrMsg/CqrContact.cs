@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Net;
-using Area23.At.Framework.Library.Core;
+using Area23.At.Framework.Library.Util;
 using Area23.At.Framework.Library;
+using System.Drawing;
+using Area23.At.Framework.Library.CqrMsg;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 {
@@ -32,13 +34,13 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         public string Email { get; set; }
 
-        public string? Mobile { get; set; }
+        public string Mobile { get; set; }
 
-        public string? Address{ get; set; }
+        public string Address{ get; set; }
 
-        public string? SecretKey { get; set; }
+        public string SecretKey { get; set; }
 
-        public CqrImage? ContactImage { get; set; }
+        public CqrImage ContactImage { get; set; }
 
         public string NameEmail { get => string.IsNullOrEmpty(Email) ? Name : $"{Name} <{Email}>"; }
 
@@ -149,9 +151,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             return jsonString;
         }
 
-        public override T? FromJson<T>(string jsonText) where T : default
+        public override T FromJson<T>(string jsonText) 
         {
-            T? tt = default(T);
+            T tt = default(T);
             try
             {
                 tt = JsonConvert.DeserializeObject<T>(jsonText);
@@ -169,7 +171,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                         _message = cqrContactJson._message;
                         _hash = cqrContactJson._hash;
                         _rawMessage = cqrContactJson._rawMessage;
-                        return (T?)tt;
+                        return (T)tt;
                     }
                 }
             }
@@ -178,7 +180,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                 SLog.Log(exJson);
             }
 
-            return (T?)tt;
+            return (T)tt;
 
         }
 

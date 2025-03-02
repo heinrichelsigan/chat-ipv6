@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Library;
+using Area23.At.Framework.Library.CqrMsg;
 using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using System;
@@ -7,10 +8,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 {
@@ -76,7 +75,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             {
                 case MsgEnum.Json:                  
                     MsgType = MsgEnum.Json;
-                    MsgContent? c = GetMsgContentType(serializedString, out Type cqrType, MsgEnum.Json);
+                    MsgContent c = GetMsgContentType(serializedString, out Type cqrType, MsgEnum.Json);
                     if (c != null)
                     {
                         _rawMessage = c._rawMessage;
@@ -86,7 +85,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                     break;
                 case MsgEnum.Xml:
                     MsgType = MsgEnum.Xml;
-                    MsgContent? cXml = GetMsgContentType(serializedString, out Type cqType, msgArt);
+                    MsgContent cXml = GetMsgContentType(serializedString, out Type cqType, msgArt);
                     if (cXml != null)
                     {
                         _rawMessage = cXml._rawMessage;
@@ -127,7 +126,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             {
                 _message = plainTextMsg;
                 _hash = hash;
-                _rawMessage = Utils.SerializeToXml<MsgContent>(this);
+                _rawMessage = Ext.SerializeToXml<MsgContent>(this);
 
             }
             if (msgArt == MsgEnum.RawWithHashAtEnd)
@@ -166,9 +165,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         public virtual string ToJson() => Newtonsoft.Json.JsonConvert.SerializeObject(this);
 
-        public virtual T? FromJson<T>(string jsonText)
+        public virtual T FromJson<T>(string jsonText)
         {
-            T? t = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonText);
+            T t = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonText);
             if (t != null && t is MsgContent mc)
             {
                 this._hash = mc.Hash;
@@ -178,11 +177,11 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             return t;
         }
 
-        public virtual string ToXml() => Utils.SerializeToXml<MsgContent>(this);
+        public virtual string ToXml() => Ext.SerializeToXml<MsgContent>(this);
        
-        public virtual T? FromXml<T>(string xmlText)
+        public virtual T FromXml<T>(string xmlText)
         {
-            T? cqrT = Utils.DeserializeFromXml<T>(xmlText);
+            T cqrT = Ext.DeserializeFromXml<T>(xmlText);
             if (cqrT is MsgContent mc)
             {
                 this._hash = mc._hash;
@@ -203,7 +202,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
             if (IsCqrFile())
             {
-                CqrFile? cqFile = ToCqrFile();
+                CqrFile cqFile = ToCqrFile();
                 // CqrFile? cfile = IsTo<CqrFile>(out CqrFile? t);
                 if (cqFile != null && !string.IsNullOrEmpty(cqFile.Hash))
                 {
@@ -242,10 +241,10 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         public override string ToString()
         {
             string s = this.GetType().ToString() + "\n";
-            var fields = Static.Utils.GetAllFields(this.GetType());
+            var fields = Ext.GetAllFields(this.GetType());
             foreach (var field in fields)           
                 s += field.Name + " \t\"" + field.GetRawConstantValue()?.ToString() + "\"\n";            
-            var props = Static.Utils.GetAllProperties(this.GetType());
+            var props = Ext.GetAllProperties(this.GetType());
             foreach (var prp in props)
                 s += prp.Name + " \t\"" + prp.GetRawConstantValue()?.ToString() + "\"\n";
 
@@ -258,7 +257,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             if (this is CqrFile cf && string.IsNullOrEmpty(cf.CqrFileName) && cf.Data != null)
                 return true;
 
-            CqrFile? cq = null;
+            CqrFile cq = null;
             try
             {
                 cq = JsonConvert.DeserializeObject<CqrFile>(_rawMessage);
@@ -273,7 +272,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             return false;
         }
 
-        public virtual CqrFile? ToCqrFile()
+        public virtual CqrFile ToCqrFile()
         {
             if (this is CqrFile cf && string.IsNullOrEmpty(cf.CqrFileName) && cf.Data != null)
                 return cf;
@@ -343,26 +342,26 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                         if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
                         {
                             outType = typeof(FullSrvMsg<string>);
-                            return (FullSrvMsg<string>)Utils.DeserializeFromXml<FullSrvMsg<string>>(serString);
+                            return (FullSrvMsg<string>)Ext.DeserializeFromXml<FullSrvMsg<string>>(serString);
                         }
                         if (serString.Contains("CqrFileName") && serString.Contains("Base64Type"))
                         {
                             outType = typeof(CqrFile);
-                            return (CqrFile)Utils.DeserializeFromXml<CqrFile>(serString);
+                            return (CqrFile)Ext.DeserializeFromXml<CqrFile>(serString);
                         }
                         if (serString.Contains("ImageFileName") && serString.Contains("ImageMimeType"))
                         {
                             outType = typeof(CqrImage);
-                            return (CqrImage)Utils.DeserializeFromXml<CqrImage>(serString);
+                            return (CqrImage)Ext.DeserializeFromXml<CqrImage>(serString);
                         }
                         if (serString.Contains("ContactId") && serString.Contains("Cuid") && serString.Contains("Email"))
                         {
                             outType = typeof(CqrContact);
-                            return (CqrContact)Utils.DeserializeFromXml<CqrContact>(serString);
+                            return (CqrContact)Ext.DeserializeFromXml<CqrContact>(serString);
                         }
 
                         outType = typeof(MsgContent);
-                        return (MsgContent)Utils.DeserializeFromXml<MsgContent>(serString);
+                        return (MsgContent)Ext.DeserializeFromXml<MsgContent>(serString);
                     }
                     break;
                 case MsgEnum.RawWithHashAtEnd:

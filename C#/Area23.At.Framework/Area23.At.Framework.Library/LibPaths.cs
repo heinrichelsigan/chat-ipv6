@@ -21,7 +21,10 @@ namespace Area23.At.Framework.Library
         private static string systemDirResPath = "";
         private static string logDirPath = "";
         private static string logFilePath = "";
+        private static string cqrServiceSoap = "";
+        private static string cqrServiceSoap12 = "";
         private static int daysave = -1;
+
 
         public static char SepCh { get => Path.DirectorySeparatorChar; }
 
@@ -109,6 +112,40 @@ namespace Area23.At.Framework.Library
         public static string TextAppPath { get => ResAppPath + Constants.TEXT_DIR + "/"; }
 
         #endregion Web App Paths
+
+        #region WebServices
+
+        public static string CqrServiceSoap
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(cqrServiceSoap))
+                {
+                    if (ConfigurationManager.AppSettings["CqrServiceSoap"] != null)
+                        cqrServiceSoap = ConfigurationManager.AppSettings["CqrServiceSoap"].ToString();
+                    else
+                        cqrServiceSoap = "https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx";
+                }
+                return cqrServiceSoap;
+            }
+        }
+
+        public static string CqrServiceSoap12
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(cqrServiceSoap12))
+                {
+                    if (ConfigurationManager.AppSettings["CqrServiceSoap12"] != null)
+                        cqrServiceSoap12 = ConfigurationManager.AppSettings["CqrServiceSoap12"].ToString();
+                    else
+                        cqrServiceSoap12 = "https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx";
+                }
+                return cqrServiceSoap12;
+            }
+        }
+
+        #endregion WebServices
 
         #region directory & file paths
 

@@ -1,6 +1,8 @@
-﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Library.CqrXs.CqrJd;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Net.WebHttp;
+using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -52,10 +54,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 
             byte[] allBytes = EnDeCodeHelper.GetBytesFromString(allMsg);
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(MsgContact._message);
-
             byte[] cqrMsgBytes = (LibPaths.CqrEncrypt) ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
-                
-            
             CqrMessage = EnDeCodeHelper.EncodeBytes(cqrMsgBytes, encType);
 
             return CqrBaseMsg(MsgContact, encType);
@@ -71,11 +70,10 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         /// <returns><see cref="CqrContact"/>CqrContact decrypted string</returns>
         /// <exception cref="InvalidOperationException">will be thrown, 
         /// if server and client or both side use a different secret key 4 encryption</exception>
-        public CqrContact NCqrSrvMsg1(string cqrMessage, EncodingType encType = EncodingType.Base64, bool fishOnAes = false)
+        public CqrContact NCqrSrvMsg1(string cqrMessage, EncodingType encType = EncodingType.Base64)
         {
-            if (fishOnAes) fishOnAesEngine = true;
             CqrContact myContact = null;
-            MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType, fishOnAesEngine);
+            MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType);
             if (msgContent != null && !string.IsNullOrEmpty(msgContent.Message))
                 myContact = JsonConvert.DeserializeObject<CqrContact>(msgContent.Message);
 
@@ -92,6 +90,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         /// <param name="encodingType"><+
         /// see cref="EncodingType"/></param>
         /// <returns></returns>
+        [Obsolete("Please use Send1st_CqrSrvMsg1_Soap(..)", true)]
         public string Send1st_CqrSrvMsg1(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
             MsgContact = myContact;
@@ -103,37 +102,82 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
             string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
 
-            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+            string response = string.Empty;
+            try
+            {
+                response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+            }
+            catch (Exception ex)
+            {
+                response = "Exception: " + ex.Message + "\n" + ex.ToString();
+            }
 
-            return response;
+            string reducedResponse = string.Empty;
+            if (response.Contains(Constants.DECRYPTED_TEXT_AREA))
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_AREA, true, "",
+                    Constants.DECRYPTED_TEXT_AREA_END, false);
+            else if (response.Contains(Constants.DECRYPTED_TEXT_BOX))
+                reducedResponse = response.GetSubStringByPattern(Constants.DECRYPTED_TEXT_BOX, true, ">",
+                    Constants.DECRYPTED_TEXT_AREA_END, false);
+            return reducedResponse;
         }
 
 
+        public string Send1st_CqrSrvMsg1_Soap(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        {
 
-        //public string Send1st_CqrSrvMsg1_Soap(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
-        //{
+            myContact._hash = PipeString;
+            CqrContact sendContact = new CqrContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
+            sendContact._hash = PipeString;
 
-        //    myContact._hash = PipeString;
-        //    string msg = Newtonsoft.Json.JsonConvert.SerializeObject(myContact);
-        //    // string encMsg = CqrBaseMsg(msg, encodingType);
-        //    string encMsg = CqrSrvMsg1(myContact, encodingType);
-        //    // string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
-        //    //     encMsg);
+            string msg = Newtonsoft.Json.JsonConvert.SerializeObject(sendContact);
+            // string encMsg = CqrBaseMsg(msg, encodingType);
+            string encMsg = CqrSrvMsg1(sendContact, encodingType);
+            // string encrypted = String.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
+            //     encMsg);
 
-        //    string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
-        //    string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
+            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
 
-        //    CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+            CqrService client = new CqrService();
 
-        //    string response = client.Send1StSrvMsg(encMsg);
-
+            string response = client.Send1StSrvMsg(encMsg);
 
 
-        //    //    string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+            //    string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
 
-        //    return response;
+            return response;
 
-        //}
+        }
+
+
+        public CqrContact SendFirstSrvMsg(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        {
+
+            myContact._hash = PipeString;
+            CqrContact sendContact = new CqrContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
+            sendContact._hash = PipeString;
+
+            string msg = Newtonsoft.Json.JsonConvert.SerializeObject(sendContact);
+            string encMsg = CqrSrvMsg1(sendContact, encodingType);
+
+            CqrService client = new CqrService();
+            string response = client.Send1StSrvMsg(encMsg);
+
+            CqrContact returnedContact = null;
+            returnedContact = NCqrSrvMsg1(response, EncodingType.Base64);
+
+            if (returnedContact != null)
+                return returnedContact;
+
+            var content = NCqrBaseMsg(response, EncodingType.Base64);
+
+            returnedContact = JsonConvert.DeserializeObject<CqrContact>(content.Message);
+
+
+            return returnedContact;
+
+        }
 
 
     }
