@@ -1,10 +1,18 @@
-# <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/C%23">**C#**</a>
+# <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/C%23">**c#**</a>
 
 # <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/c">**c**</a>
 
 # <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/java">**java**</a>
 
 # <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/doc">Documentation</a>
+
+<hr />
+<pre>next release (pre-alpha) launches on 2025-03-05
+Features:
+- C# full client as fat .exe requires no framework & server part
+- java only skeleton, you need to wait until July
+- c you need to wait until automn
+</pre>
 
 <hr />
 
