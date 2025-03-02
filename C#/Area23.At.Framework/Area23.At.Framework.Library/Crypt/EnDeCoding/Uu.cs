@@ -1,15 +1,11 @@
-﻿using Area23.At.Framework.Library;
+﻿using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using DBTek.Crypto;
-using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Encoders;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Area23.At.Framework.Library.Crypt.EnDeCoding

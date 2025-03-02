@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Web;
 
-namespace Area23.At.Framework.Library
+namespace Area23.At.Framework.Library.Static
 {
 
     /// <summary>

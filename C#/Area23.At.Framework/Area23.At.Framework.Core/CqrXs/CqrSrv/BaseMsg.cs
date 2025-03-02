@@ -92,7 +92,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     !msc.RawMessage.EndsWith("\n" + PipeString) &&
                     (msc.RawMessage.LastIndexOf("\n" + PipeString) < msc.RawMessage.Length - 10))
                 {
-                    msc._rawMessage = msc.Message + "\n" + PipeString + "\0";
+                    msc.RawMessage = msc.Message + "\n" + PipeString + "\0";
                 }                
             }
             else if (msc.MsgType == MsgEnum.Json)
@@ -105,7 +105,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         shouldSerialize = false;
                 }                
                 if (shouldSerialize) 
-                    msc._rawMessage = JsonConvert.SerializeObject(msc);
+                    msc.RawMessage = JsonConvert.SerializeObject(msc);
             }
 
             msgBytes = EnDeCodeHelper.GetBytesFromString(msc.RawMessage);

@@ -1,13 +1,8 @@
-﻿using Area23.At.Framework.Library;
-using EU.CqrXs.CqrSrv.CqrJd.Util;
+﻿using Area23.At.Framework.Library.Static;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Web;
-using static System.Net.Mime.MediaTypeNames;
-using System.Web.UI.WebControls;
 using System.Globalization;
+using System.Linq;
+using System.Web;
 using System.Web.SessionState;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util

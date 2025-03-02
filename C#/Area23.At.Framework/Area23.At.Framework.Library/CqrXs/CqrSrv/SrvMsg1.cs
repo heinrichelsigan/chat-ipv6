@@ -2,6 +2,7 @@
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Net.WebHttp;
+using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using System;
@@ -50,7 +51,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             MsgContact = new CqrContact(myContact, PipeString);
             string allMsg = MsgContact.ToJson();
             MsgContact._message = allMsg;
-            MsgContact._rawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
+            MsgContact.RawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
 
             byte[] allBytes = EnDeCodeHelper.GetBytesFromString(allMsg);
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(MsgContact._message);

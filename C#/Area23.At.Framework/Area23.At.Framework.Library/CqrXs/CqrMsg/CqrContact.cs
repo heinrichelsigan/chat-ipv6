@@ -12,6 +12,7 @@ using Area23.At.Framework.Library.Util;
 using Area23.At.Framework.Library;
 using System.Drawing;
 using Area23.At.Framework.Library.CqrMsg;
+using Area23.At.Framework.Library.Static;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 {
@@ -147,7 +148,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         {
             // CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
             string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
-            this._rawMessage = jsonString;
+            this.RawMessage = jsonString;
             return jsonString;
         }
 
@@ -170,7 +171,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                         ContactImage = cqrContactJson.ContactImage;
                         _message = cqrContactJson._message;
                         _hash = cqrContactJson._hash;
-                        _rawMessage = cqrContactJson._rawMessage;
+                        RawMessage = cqrContactJson.RawMessage;
                         return (T)tt;
                     }
                 }

@@ -9,6 +9,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using EU.CqrXs.CqrSrv.CqrJd.Util;
+using Area23.At.Framework.Library.Util;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {

@@ -10,8 +10,9 @@ using System.Web.Services;
 using System.Configuration;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using System.IO;
+using Area23.At.Framework.Library.Static;
 
-namespace EU.CqrXs.CqrSrv.CqrJd
+namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
 
     [WebService(Namespace = "https://cqrjd.eu/cqrsrv/cqrjd/")]

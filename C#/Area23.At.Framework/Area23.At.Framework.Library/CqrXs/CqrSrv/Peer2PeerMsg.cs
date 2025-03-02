@@ -1,20 +1,12 @@
 ﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
-using Area23.At.Framework.Library.Crypt.Cipher;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
-using Area23.At.Framework.Library.Net.WebHttp;
 using Area23.At.Framework.Library.Net.IpSocket;
+using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
-using System.Windows.Interop;
-using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Util;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 {
@@ -106,17 +98,17 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         {            
             if (msgType == MsgEnum.None || msgType == MsgEnum.RawWithHashAtEnd)
             {
-                cqrFile._rawMessage += "\n" + symmPipe.PipeString + "\0";
+                cqrFile.RawMessage += "\n" + symmPipe.PipeString + "\0";
             }
             else if (msgType == MsgEnum.Json)
             {
-                cqrFile._rawMessage = JsonConvert.SerializeObject(cqrFile);
+                cqrFile.RawMessage = JsonConvert.SerializeObject(cqrFile);
             }            
             else if (msgType == MsgEnum.Xml)
             {
-                cqrFile._rawMessage = Ext.SerializeToXml(cqrFile);
+                cqrFile.RawMessage = Utils.SerializeToXml(cqrFile);
             }
-            byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cqrFile._rawMessage);
+            byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cqrFile.RawMessage);
 
             // Crypt cipherbytes from message
             byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;

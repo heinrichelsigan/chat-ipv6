@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using System;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {

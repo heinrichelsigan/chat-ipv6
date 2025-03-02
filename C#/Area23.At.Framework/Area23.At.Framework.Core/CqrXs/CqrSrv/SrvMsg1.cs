@@ -52,7 +52,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             MsgContact = new CqrContact(myContact, PipeString);
             string allMsg = MsgContact.ToJson();
             MsgContact._message = allMsg;
-            MsgContact._rawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
+            MsgContact.RawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
 
             byte[] allBytes = EnDeCodeHelper.GetBytesFromString(allMsg);
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(MsgContact._message);

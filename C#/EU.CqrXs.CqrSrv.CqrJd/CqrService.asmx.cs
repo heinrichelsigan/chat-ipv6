@@ -1,23 +1,19 @@
 ﻿using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Crypt;
-using Area23.At.Framework.Library.Crypt.EnDeCoding;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
-using System.Web.Services;
-using Area23.At;
 using Area23.At.Framework.Library.CqrXs;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.CqrXs.CqrSrv;
-using EU.CqrXs.CqrSrv.CqrJd.Util;
-using Newtonsoft.Json;
-using System.IO;
+using Area23.At.Framework.Library.Crypt.EnDeCoding;
+using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
-using System.Reflection;
+using EU.CqrXs.CqrSrv.CqrJd.Util;
+using System;
 using System.Collections.Concurrent;
-using System.Web.Http.Controllers;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Reflection;
+using System.Web;
+using System.Web.Services;
 
 
 namespace EU.CqrXs.CqrSrv.CqrJd

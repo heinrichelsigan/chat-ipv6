@@ -146,7 +146,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         {
             // CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
             string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
-            this._rawMessage = jsonString;
+            this.RawMessage = jsonString;
             return jsonString;
         }
 
@@ -169,7 +169,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         ContactImage = cqrContactJson.ContactImage;
                         _message = cqrContactJson._message;
                         _hash = cqrContactJson._hash;
-                        _rawMessage = cqrContactJson._rawMessage;
+                        RawMessage = cqrContactJson.RawMessage;
                         return (T?)tt;
                     }
                 }

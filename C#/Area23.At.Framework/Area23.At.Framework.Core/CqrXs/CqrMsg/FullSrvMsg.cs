@@ -53,7 +53,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public FullSrvMsg() : base()
         {
             _message = string.Empty;
-            _rawMessage = string.Empty;
+            RawMessage = string.Empty;
             _hash = string.Empty;
             Sender = null;
             Recipients = new List<CqrContact>();
@@ -95,7 +95,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public override string ToJson()
         {
             string jsonText = JsonConvert.SerializeObject(this);
-            this._rawMessage = jsonText;
+            this.RawMessage = jsonText;
             return jsonText;
         }
 

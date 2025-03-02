@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Area23.At.Framework.Library.Util;
 using Area23.At.Framework.Library;
+using Area23.At.Framework.Library.Static;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 {
@@ -50,7 +51,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         public FullSrvMsg() : base()
         {
             _message = string.Empty;
-            _rawMessage = string.Empty;
+            RawMessage = string.Empty;
             _hash = string.Empty;
             Sender = null;
             Recipients = new List<CqrContact>();
@@ -92,7 +93,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         public override string ToJson()
         {
             string jsonText = JsonConvert.SerializeObject(this);
-            this._rawMessage = jsonText;
+            this.RawMessage = jsonText;
             return jsonText;
         }
 

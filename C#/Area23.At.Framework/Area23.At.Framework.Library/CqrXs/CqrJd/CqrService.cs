@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.Xml.Serialization;
+using Area23.At.Framework.Library.Static;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrJd
 {

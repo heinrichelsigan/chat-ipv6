@@ -28,7 +28,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     {
         public string _hash;
         public string _message;
-        public string _rawMessage;
+        // public string _rawMessage;
 
         public MsgEnum MsgType { get; protected internal set; }
 
@@ -55,7 +55,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
 
 
-        public string RawMessage { get => _rawMessage; }
+        public string RawMessage { get; set; }
 
 
         #region ctor
@@ -64,7 +64,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         {
             MsgType = MsgEnum.None;
             _message = string.Empty;
-            _rawMessage = string.Empty;
+            RawMessage = string.Empty;
             _hash = string.Empty;
         }
 
@@ -83,7 +83,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     MsgContent? c = GetMsgContentType(serializedString, out Type cqrType, MsgEnum.Json);
                     if (c != null)
                     {
-                        _rawMessage = c._rawMessage;
+                        RawMessage = c.RawMessage;
                         _hash = c._hash;
                         _message = c._message;
                     }
@@ -93,7 +93,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     MsgContent? cXml = GetMsgContentType(serializedString, out Type cqType, msgArt);
                     if (cXml != null)
                     {
-                        _rawMessage = cXml._rawMessage;
+                        RawMessage = cXml.RawMessage;
                         _hash = cXml._hash;
                         _message = cXml._message;
                     }
@@ -105,7 +105,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 default:
                     MsgType = MsgEnum.RawWithHashAtEnd;
                     _message = serializedString;
-                    _rawMessage = serializedString;
+                    RawMessage = serializedString;
                     _hash = VerificationHash(out _message);
                     break;                
             }
@@ -125,13 +125,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             {
                 _message = plainTextMsg;
                 _hash = hash;
-                _rawMessage = this.ToJson();
+                RawMessage = this.ToJson();
             }
             if (msgArt == MsgEnum.Xml)
             {
                 _message = plainTextMsg;
                 _hash = hash;
-                _rawMessage = Utils.SerializeToXml<MsgContent>(this);
+                RawMessage = Utils.SerializeToXml<MsgContent>(this);
 
             }
             if (msgArt == MsgEnum.RawWithHashAtEnd)
@@ -139,20 +139,20 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 _hash = hash;
                 if (plainTextMsg.Contains(hash) && plainTextMsg.IndexOf(hash) > (plainTextMsg.Length - 10))
                 {
-                    _rawMessage = plainTextMsg;
-                    _message = _rawMessage.Substring(0, _rawMessage.Length - _hash.Length);
+                    RawMessage = plainTextMsg;
+                    _message = RawMessage.Substring(0, RawMessage.Length - _hash.Length);
                 }
                 else
                 {
                     _message = plainTextMsg;
-                    _rawMessage = _message + "\n" + hash + "\0";
+                    RawMessage = _message + "\n" + hash + "\0";
                 }
             }
             if (msgArt == MsgEnum.None)
             {
                 _hash = hash;
                 _message = plainTextMsg;
-                _rawMessage = this.ToString();
+                RawMessage = this.ToString();
             }
         }
 
@@ -162,7 +162,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         {
             MsgContent msgContent = new MsgContent(plainMsg);
             _message = msgContent.Message;
-            _rawMessage = msgContent.RawMessage;
+            RawMessage = msgContent.RawMessage;
             _hash = msgContent._hash;
 
             return (MsgContent)this;
@@ -177,7 +177,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             {
                 this._hash = mc.Hash;
                 this._message = mc._message;
-                this._rawMessage = mc.RawMessage;
+                this.RawMessage = mc.RawMessage;
             }
             return t;
         }
@@ -190,7 +190,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             if (cqrT is MsgContent mc)
             {
                 this._hash = mc._hash;
-                this._rawMessage = mc._rawMessage;
+                this.RawMessage = mc.RawMessage;
                 this._message = mc._message;
             }
             
@@ -220,10 +220,10 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
             }
 
-            if (_rawMessage.Length > 9) 
+            if (RawMessage.Length > 9) 
             {
                 // if (_message.Contains('\n') && _message.LastIndexOf('\n') < _message.Length)
-                string tmp = _rawMessage.Substring(_rawMessage.Length - 10);
+                string tmp = RawMessage.Substring(RawMessage.Length - 10);
                 if (tmp.Contains('\n') && tmp.IndexOf('\n') < 9)
                 {
                     _hash = tmp.Substring(tmp.LastIndexOf('\n') + 1);
@@ -233,12 +233,12 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             }
             else
             {
-                _hash = _rawMessage;
+                _hash = RawMessage;
             }        
 
 
-            if (_hash.Length > 4 && _rawMessage.Substring(_rawMessage.Length - _hash.Length).Equals(_hash, StringComparison.InvariantCulture))
-                msg = _rawMessage.Substring(0, _rawMessage.Length - _hash.Length);
+            if (_hash.Length > 4 && RawMessage.Substring(RawMessage.Length - _hash.Length).Equals(_hash, StringComparison.InvariantCulture))
+                msg = RawMessage.Substring(0, RawMessage.Length - _hash.Length);
 
             return _hash ?? string.Empty;
         }
@@ -265,7 +265,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             CqrFile? cq = null;
             try
             {
-                cq = JsonConvert.DeserializeObject<CqrFile>(_rawMessage);
+                cq = JsonConvert.DeserializeObject<CqrFile>(RawMessage);
                 if (cq != null && !string.IsNullOrEmpty(cq.CqrFileName) && cq.Data != null)
                     return true;
             }
@@ -282,9 +282,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             if (this is CqrFile cf && string.IsNullOrEmpty(cf.CqrFileName) && cf.Data != null)
                 return cf;
             
-            if (_rawMessage.IsValidJson() && _rawMessage.Contains("CqrFileName") && _rawMessage.Contains("Base64Type"))
+            if (RawMessage.IsValidJson() && RawMessage.Contains("CqrFileName") && RawMessage.Contains("Base64Type"))
             {
-                return (CqrFile)JsonConvert.DeserializeObject<CqrFile>(_rawMessage);
+                return (CqrFile)JsonConvert.DeserializeObject<CqrFile>(RawMessage);
             }
 
             return null;
@@ -317,7 +317,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         {
                             outType = typeof(CqrFile);
                             CqrFile cqrFile = (CqrFile)JsonConvert.DeserializeObject<CqrFile>(serString);
-                            cqrFile._rawMessage = serString;
+                            cqrFile.RawMessage = serString;
                             return cqrFile;
                         }
                         if (serString.Contains("ImageFileName") && serString.Contains("ImageMimeType"))

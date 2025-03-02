@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
+using Area23.At.Framework.Library.Static;
 using Org.BouncyCastle.Crypto;
 using Symm = Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 

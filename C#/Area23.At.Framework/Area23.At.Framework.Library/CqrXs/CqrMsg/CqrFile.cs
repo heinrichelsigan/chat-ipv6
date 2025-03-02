@@ -1,17 +1,8 @@
 ﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
-using Area23.At.Framework.Library;
+using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Interop;
 using System.IO;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrMsg
@@ -114,7 +105,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             Sha256Hash = cf.Sha256Hash;            
             _hash = cf._hash;
             _message = cf._message;
-            _rawMessage = cf._rawMessage;            
+            RawMessage = cf.RawMessage;            
             EnCodingType = cf.EnCodingType;
             MsgType = cf.MsgType;
         }
@@ -147,7 +138,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                 {
                     this._hash = mc.Hash;
                     this._message = mc.Message;
-                    this._rawMessage = mc.RawMessage;
+                    this.RawMessage = mc.RawMessage;
                     this.MsgType = mc.MsgType;
                 }
                 if (t is CqrFile cf)
@@ -160,7 +151,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                     EnCodingType = cf.EnCodingType;
                     MsgType = MsgEnum.Json;
                     _message = cf._message;
-                    _rawMessage = cf._rawMessage;
+                    RawMessage = cf.RawMessage;
                     _hash = cf._hash ?? string.Empty;
                 }
 
@@ -186,7 +177,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                 this.Md5Hash = cf.Md5Hash;
                 this._message = cf._message;
                 this.MsgType = cf.MsgType;
-                this._rawMessage = cf._rawMessage;
+                this.RawMessage = cf.RawMessage;
                 this.Sha256Hash = cf.Sha256Hash;
             }
 

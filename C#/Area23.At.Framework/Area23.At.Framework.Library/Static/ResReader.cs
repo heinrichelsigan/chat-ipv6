@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Area23.At.Framework.Library.Util
+namespace Area23.At.Framework.Library.Static
 {
 
     /// <summary>

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
+using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
 
-namespace Area23.At.Framework.Library.Util
+namespace Area23.At.Framework.Library.Static
 {
 
     /// <summary>

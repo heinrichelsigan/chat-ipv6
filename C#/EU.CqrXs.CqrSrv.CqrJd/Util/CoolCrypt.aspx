@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CoolCrypt.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.CoolCrypt" validateRequest="false" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CoolCrypt.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.Util.CoolCrypt" validateRequest="false" %>
 
 <!DOCTYPE html>
 

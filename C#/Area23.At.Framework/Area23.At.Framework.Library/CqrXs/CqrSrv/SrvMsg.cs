@@ -1,19 +1,15 @@
 ﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.Crypt.Cipher;
 using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
-using Area23.At.Framework.Library.CqrXs.CqrSrv;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Net.WebHttp;
+using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using System;
-using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
-using System.Security.Policy;
-using Newtonsoft.Json;
-using static QRCoder.PayloadGenerator.SwissQrCode;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 {
@@ -93,7 +89,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             FullSrvMsg<string> fullMsg = new FullSrvMsg<string>(sender, receipient, msg, PipeString);
             string allMsg = fullMsg.ToJson();
             fullMsg._message = allMsg;
-            fullMsg._rawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
+            fullMsg.RawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
 
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(allMsg);
             byte[] cqrMsgBytes = (LibPaths.CqrEncrypt) ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
@@ -124,7 +120,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             FullSrvMsg<T> fullMsg = new FullSrvMsg<T>(sender, receipient, tcontent, PipeString);
             string allMsg = fullMsg.ToJson();
             fullMsg._message = allMsg;
-            fullMsg._rawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
+            fullMsg.RawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
 
             byte[] allBytes = EnDeCodeHelper.GetBytesFromString(allMsg);
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(fullMsg._message);
@@ -146,9 +142,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 
             string allMsg = fullServMsg.ToJson();
             fullServMsg._message = allMsg;
-            fullServMsg._rawMessage = allMsg + "\n" + fullServMsg._hash + "\0";
+            fullServMsg.RawMessage = allMsg + "\n" + fullServMsg._hash + "\0";
 
-            byte[] allBytes = EnDeCodeHelper.GetBytesFromString(fullServMsg._rawMessage);
+            byte[] allBytes = EnDeCodeHelper.GetBytesFromString(fullServMsg.RawMessage);
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(fullServMsg._message);
             byte[] cqrMsgBytes = msgBytes;
             if (LibPaths.CqrEncrypt)
@@ -175,7 +171,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             fullServMsg._hash = PipeString;
             string allSrvMsg = fullServMsg.ToJson();
             fullServMsg._message = allSrvMsg;
-            fullServMsg._rawMessage = allSrvMsg + "\n" + fullServMsg._hash + "\0";
+            fullServMsg.RawMessage = allSrvMsg + "\n" + fullServMsg._hash + "\0";
 
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(fullServMsg._message);
             byte[] srvMsgBytes = msgBytes;
@@ -187,7 +183,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
             clientMsg._hash = ClientPipeString;
             string allClientMsg = clientMsg.ToJson();
             clientMsg._message = allClientMsg;
-            clientMsg._rawMessage = allClientMsg + "\n" + clientMsg._hash + "\0";
+            clientMsg.RawMessage = allClientMsg + "\n" + clientMsg._hash + "\0";
 
             byte[] cMsgBytes = EnDeCodeHelper.GetBytesFromString(clientMsg._message);
             byte[] clientMsgBytes = cMsgBytes;

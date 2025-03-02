@@ -99,7 +99,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Area23Log.cs" />
+    <Compile Include="Util\Area23Log.cs" />
     <Compile Include="CqrXs\CqrException.cs" />
     <Compile Include="CqrXs\CqrJd\CqrService.cs" />
     <Compile Include="CqrXs\CqrMsg\ClientSrvMsg.cs" />
@@ -130,7 +130,7 @@
     <Compile Include="Crypt\Cipher\Symmetric\Rijndael.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\SymmCipherPipe.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\SymmCrypt.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="Static\Constants.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\ZenMatrix2.cs" />
     <Compile Include="Crypt\EnDeCoding\EnDeCodeHelper.cs" />
     <Compile Include="Crypt\EnDeCoding\Hex32.cs" />
@@ -151,21 +151,22 @@
     <Compile Include="Net\NameService\DnsHelper.cs" />
     <Compile Include="Net\WebHttp\HttpClientRequest.cs" />
     <Compile Include="Net\WebHttp\TcpClientWebRequest.cs" />
+    <Compile Include="Static\Utils.cs" />
     <Compile Include="Util\Area23EventArgs.cs" />
-    <Compile Include="Util\Extensions.cs" />
+    <Compile Include="Static\Extensions.cs" />
     <Compile Include="Util\GifEncoder.cs" />
     <Compile Include="Util\JpegMetadataAdapter.cs" />
-    <Compile Include="Util\MimeType.cs" />
-    <Compile Include="LibPaths.cs" />
+    <Compile Include="Static\MimeType.cs" />
+    <Compile Include="Static\LibPaths.cs" />
     <Compile Include="Net\NetworkAddresses.cs" />
     <Compile Include="Net\WebHttp\WebClientRequest.cs" />
-    <Compile Include="Util\ProcessCmd.cs" />
+    <Compile Include="Static\ProcessCmd.cs" />
     <Compile Include="Properties\Resource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Include="Util\ResReader.cs" />
+    <Compile Include="Static\ResReader.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\CryptBounceCastle.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\CryptParamsPrefered.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\Serpent.cs" />
@@ -175,9 +176,9 @@
     <Compile Include="Crypt\Cipher\Symmetric\Des3.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\Aes.cs" />
     <Compile Include="Util\GifMetadataAdapter.cs" />
-    <Compile Include="Util\JsonHelper.cs" />
+    <Compile Include="Static\JsonHelper.cs" />
     <Compile Include="Util\QRGenericString.cs" />
-    <Compile Include="Util\SLog.cs" />
+    <Compile Include="Static\SLog.cs" />
     <Compile Include="Util\UIPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

@@ -177,8 +177,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CoolCrypt.aspx" />
-    <Content Include="ChatRoomService.asmx" />
+    <Content Include="Util\CoolCrypt.aspx" />
+    <Content Include="Util\ChatRoomService.asmx" />
     <Content Include="CqrService.asmx" />
     <Content Include="Default.aspx" />
     <Content Include="Error.aspx" />
@@ -243,21 +243,21 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseWebService.cs">
+    <Compile Include="Util\BaseWebService.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CoolCrypt.aspx.cs">
+    <Compile Include="Util\CoolCrypt.aspx.cs">
       <DependentUpon>CoolCrypt.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CoolCrypt.aspx.designer.cs">
+    <Compile Include="Util\CoolCrypt.aspx.designer.cs">
       <DependentUpon>CoolCrypt.aspx</DependentUpon>
     </Compile>
-    <Compile Include="CqrJdBasePage.cs">
+    <Compile Include="Util\CqrJdBasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="CqrController.cs" />
-    <Compile Include="ChatRoomService.asmx.cs">
+    <Compile Include="Util\ChatRoomService.asmx.cs">
       <DependentUpon>ChatRoomService.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>

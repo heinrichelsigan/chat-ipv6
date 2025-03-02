@@ -1,34 +1,18 @@
 ﻿using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Win32Api;
-using Area23.At.Framework.Library.Util;
-using Area23.At.Framework.Library.CqrXs;
-using Area23.At.Framework.Library.CqrXs.CqrSrv;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
-using EU.CqrXs.CqrSrv.CqrJd.Util;
+using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Drawing;
 using System.Drawing.Imaging;
-using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Threading;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Windows.Media.Imaging;
-using System.Windows;
-using System.Collections.ObjectModel;
-using System.Text;
-using System.Xml.Linq;
 using System.Net;
+using System.Text;
 
 
-namespace EU.CqrXs.CqrSrv.CqrJd
+namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
 
     /// <summary>

@@ -116,7 +116,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Sha256Hash = cf.Sha256Hash;            
             _hash = cf._hash;
             _message = cf._message;
-            _rawMessage = cf._rawMessage;            
+            RawMessage = cf.RawMessage;            
             EnCodingType = cf.EnCodingType;
             MsgType = cf.MsgType;
         }
@@ -149,7 +149,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 {
                     this._hash = mc.Hash;
                     this._message = mc.Message;
-                    this._rawMessage = mc.RawMessage;
+                    this.RawMessage = mc.RawMessage;
                     this.MsgType = mc.MsgType;
                 }
                 if (t is CqrFile cf)
@@ -162,7 +162,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     EnCodingType = cf.EnCodingType;
                     MsgType = MsgEnum.Json;
                     _message = cf.Message;
-                    _rawMessage = cf.RawMessage;
+                    RawMessage = cf.RawMessage;
                     _hash = cf._hash ?? string.Empty;
                 }
 
@@ -188,7 +188,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 this.Md5Hash = cf.Md5Hash;
                 this._message = cf._message;
                 this.MsgType = cf.MsgType;
-                this._rawMessage = cf._rawMessage;
+                this.RawMessage = cf.RawMessage;
                 this.Sha256Hash = cf.Sha256Hash;
             }
 

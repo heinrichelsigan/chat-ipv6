@@ -1,13 +1,11 @@
 ﻿using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
-using Area23.At.Framework.Library.CqrXs;
-using Area23.At.Framework.Library.CqrXs.CqrSrv;
+using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using Newtonsoft.Json;
-using System.Threading;
 
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
@@ -19,7 +17,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         public string JsonChatRoomNumber { get; set; } = System.DateTime.Now.ToString();
 
-        internal string JsonChatRoomFileName { get => Area23.At.Framework.Library.LibPaths.SystemDirJsonPath + JsonChatRoomNumber; }
+        internal string JsonChatRoomFileName { get => LibPaths.SystemDirJsonPath + JsonChatRoomNumber; }
 
         public JsonChatRoom(string jsonChatRoomNumber)
         {

@@ -1,28 +1,14 @@
 ﻿using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Util;
-using EU.CqrXs.CqrSrv.CqrJd.Util;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.DynamicData;
-using System.Windows.Shapes;
-using System.Runtime.Serialization.Formatters;
-using System.Security.Policy;
+using Area23.At.Framework.Library.CqrXs;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.CqrXs.CqrSrv;
-using Area23.At.Framework.Library.Net;
-using Newtonsoft.Json.Serialization;
+using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
+using EU.CqrXs.CqrSrv.CqrJd.Util;
+using System;
 using System.Configuration;
 using System.Text;
-using Area23.At.Framework.Library.CqrXs;
+using System.Web.UI;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {

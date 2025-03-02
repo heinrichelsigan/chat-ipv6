@@ -4,6 +4,7 @@ using Area23.At.Framework.Library.Crypt.Cipher;
 using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Crypt.Hash;
+using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using Area23.At.Framework.Library.Zfx;
 using System;
@@ -26,7 +27,7 @@ using System.Windows.Shapes;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Net.WebRequestMethods;
 
-namespace EU.CqrXs.CqrSrv.CqrJd
+namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
 
     /// <summary>

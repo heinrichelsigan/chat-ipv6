@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
+using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
+using System;
 using System.Linq;
-using System.Net.Sockets;
 using System.Net;
-using System.Text;
+using System.Net.Sockets;
 using System.Threading.Tasks;
-using Area23.At.Framework.Library.Crypt.EnDeCoding;
 
 namespace Area23.At.Framework.Library.Net.IpSocket
 {
@@ -63,7 +62,7 @@ namespace Area23.At.Framework.Library.Net.IpSocket
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.Log(ex);
+                Area23Log.LogStatic(ex);
                 throw;
             }
 

@@ -108,17 +108,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         {            
             if (msgType == MsgEnum.None || msgType == MsgEnum.RawWithHashAtEnd)
             {
-                cqrFile._rawMessage += "\n" + symmPipe.PipeString + "\0";
+                cqrFile.RawMessage += "\n" + symmPipe.PipeString + "\0";
             }
             else if (msgType == MsgEnum.Json)
             {
-                cqrFile._rawMessage = JsonConvert.SerializeObject(cqrFile);
+                cqrFile.RawMessage = JsonConvert.SerializeObject(cqrFile);
             }            
             else if (msgType == MsgEnum.Xml)
             {
-                cqrFile._rawMessage = Utils.SerializeToXml(cqrFile);
+                cqrFile.RawMessage = Utils.SerializeToXml(cqrFile);
             }
-            byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cqrFile._rawMessage);
+            byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cqrFile.RawMessage);
 
             // Crypt cipherbytes from message
             byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;

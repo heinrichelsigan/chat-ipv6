@@ -1,9 +1,8 @@
 ﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
-using Org.BouncyCastle.Utilities;
+using Area23.At.Framework.Library.Static;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 {

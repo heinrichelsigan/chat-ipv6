@@ -1,13 +1,7 @@
-﻿using Area23.At.Framework.Library.Util;
+﻿using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 {
@@ -112,7 +106,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                 {
                     this._hash = mc.Hash;
                     this._message = mc._message;
-                    this._rawMessage = mc._rawMessage;
+                    this.RawMessage = mc.RawMessage;
             
                 }
                 if (t is MimeAttachment ma)
@@ -232,8 +226,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         public virtual bool IsMimeAttachment()
         {
-            if ((_rawMessage.StartsWith("Content-Type:") || _message.StartsWith("Content-Type:")) &&
-                (_rawMessage.Contains("Content-Length") || _message.Contains("Content-Length")))
+            if ((RawMessage.StartsWith("Content-Type:") || _message.StartsWith("Content-Type:")) &&
+                (RawMessage.Contains("Content-Length") || _message.Contains("Content-Length")))
                 return true;
             return false;
         }

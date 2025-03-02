@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Area23.At.Framework.Library.Static;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 {
@@ -92,7 +93,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                     !msc.RawMessage.EndsWith("\n" + PipeString) &&
                     (msc.RawMessage.LastIndexOf("\n" + PipeString) < msc.RawMessage.Length - 10))
                 {
-                    msc._rawMessage = msc.Message + "\n" + PipeString + "\0";
+                    msc.RawMessage = msc.Message + "\n" + PipeString + "\0";
                 }                
             }
             else if (msc.MsgType == MsgEnum.Json)
@@ -105,7 +106,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                         shouldSerialize = false;
                 }                
                 if (shouldSerialize) 
-                    msc._rawMessage = JsonConvert.SerializeObject(msc);
+                    msc.RawMessage = JsonConvert.SerializeObject(msc);
             }
 
             msgBytes = EnDeCodeHelper.GetBytesFromString(msc.RawMessage);

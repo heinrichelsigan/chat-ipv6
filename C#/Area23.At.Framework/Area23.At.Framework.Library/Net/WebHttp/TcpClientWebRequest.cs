@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Area23.At.Framework.Library.Util;
+using Area23.At.Framework.Library.Static;
 
 namespace Area23.At.Framework.Library.Net.WebHttp
 {
