@@ -388,28 +388,29 @@ namespace Area23.At.Framework.Core.Win32Api
 
         }
 
+
         /// <summary>
         /// Helper class containing User32 API functions
         /// </summary>
-        internal class User32
+        public class User32
         {
 
-            internal const int HT_CAPTION = 0x2;
+            public const int HT_CAPTION = 0x2;
 
-            internal const uint GW_HWNDFIRST = 0x000;
-            internal const uint GW_HWNDLAST = 0x001;
-            internal const uint GW_HWNDNEXT = 0x002;
-            internal const uint GW_HWNDPREV = 0x003;
-            internal const uint GW_OWNER = 0x004;
-            internal const uint GW_CHILD = 0x005;
-            internal const uint GW_ENABLEDPOPUP = 0x006;
+            public const uint GW_HWNDFIRST = 0x000;
+            public const uint GW_HWNDLAST = 0x001;
+            public const uint GW_HWNDNEXT = 0x002;
+            public const uint GW_HWNDPREV = 0x003;
+            public const uint GW_OWNER = 0x004;
+            public const uint GW_CHILD = 0x005;
+            public const uint GW_ENABLEDPOPUP = 0x006;
 
-            internal const uint WM_PRINT = 0x317;
-            internal const int WM_NCLBUTTONDOWN = 0xA1;
-            internal const int WM_APPCOMMAND = 0x319;
+            public const uint WM_PRINT = 0x317;
+            public const int WM_NCLBUTTONDOWN = 0xA1;
+            public const int WM_APPCOMMAND = 0x319;
 
             [StructLayout(LayoutKind.Sequential)]
-            internal struct RECT
+            public struct RECT
             {
                 internal int left;
                 internal int top;
@@ -418,7 +419,7 @@ namespace Area23.At.Framework.Core.Win32Api
             }
 
             [Flags]
-            internal enum PRF_FLAGS : uint
+            public enum PRF_FLAGS : uint
             {
                 CHECKVISIBLE = 0x01,
                 CHILDREN = 0x02,
@@ -430,42 +431,43 @@ namespace Area23.At.Framework.Core.Win32Api
 
 
             [DllImport("user32.dll")]
-            internal static extern IntPtr GetDesktopWindow();
+            public static extern IntPtr GetDesktopWindow();
 
 
             [DllImport("user32.dll")]
-            internal static extern IntPtr GetWindowDC(IntPtr hWnd);
+            public static extern IntPtr GetWindowDC(IntPtr hWnd);
 
             [DllImport("user32.dll")]
-            internal static extern IntPtr GetWindowRect(IntPtr hWnd, ref RECT rect);
+            public static extern IntPtr GetWindowRect(IntPtr hWnd, ref RECT rect);
 
             [DllImport("user32.dll")]
-            internal static extern IntPtr GetTopWindow(IntPtr hWnd);
+            public static extern IntPtr GetTopWindow(IntPtr hWnd);
 
             [DllImport("user32.dll")]
-            internal static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+            public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
             [DllImport("User32.dll")]
-            internal static extern int GetWindowDC(int hWnd);
+            public static extern int GetWindowDC(int hWnd);
 
             [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
-            internal static extern bool ReleaseCapture();
+            public static extern bool ReleaseCapture();
 
             [DllImport("user32.dll")]
-            internal static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
+            public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
             [DllImport("User32.dll")]
-            internal static extern int ReleaseDC(int hWnd, int hDC);
+            public static extern int ReleaseDC(int hWnd, int hDC);
 
 
             [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
-            internal static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+            public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
             [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
-            internal static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+            public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
             [DllImport("user32.dll")]
-            internal static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr hdc, PRF_FLAGS drawingOptions);
+            public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr hdc, PRF_FLAGS drawingOptions);
 
         }
+
 
 
         /// <summary>

@@ -20,6 +20,7 @@ using System.Drawing.Imaging;
 using Area23.At.Framework.Core.Static;
 using Org.BouncyCastle.Asn1.Pkcs;
 using System.Net.Sockets;
+using EU.CqrXs.WinForm.SecureChat.Util;
 // using static System.Net.Mime.MediaTypeNames;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
@@ -1323,7 +1324,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         protected string? GetComboBoxMustHaveText(ref System.Windows.Forms.ComboBox comboBox)
         {
-            string? cbName;
+            string? cbName, cbValue;
+            
             if (comboBox == null || ((cbName = GetComboBoxName(comboBox)) == null))
                 return null;
             string cbText = GetComboBoxText(comboBox);
@@ -1340,21 +1342,58 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 {                    
                     case "comboboxsecretkey":
                         SetComboBoxBackColor(comboBox, Color.LightCyan);
-                        MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        InputDialog dialog = new InputDialog("secure key required", "enter secure symmetric key for en-/de-cryption", MessageBoxIcon.Warning);
+                        dialog.ShowDialog();
+                        cbValue = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                        if (!string.IsNullOrEmpty(cbValue))                       
+                            SetComboBoxText(comboBox, cbValue);
+                        
                         break;
+
                     case "comboboxip":
                         SetComboBoxBackColor(comboBox, Color.LightSkyBlue);
-                        MessageBox.Show("You haven't entered a valid ip address!", "Please enter a valid ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        InputDialog dialogIp = new InputDialog("valid ip address required", "enter partner ip address for peer-2-peer chat", MessageBoxIcon.Warning);
+                        dialogIp.ShowDialog();
+                        cbValue = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                        if ((cbValue != null) && (IPAddress.TryParse(cbValue, out IPAddress ipParsed)))
+                            SetComboBoxText(comboBox, ipParsed.ToString());
+                        
                         break;
+
                     case "comboboxcontacts":
                         SetComboBoxBackColor(comboBox, Color.LightGreen);
-                        MessageBox.Show("You haven't entered any contact address!", "Please enter a contact address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        break;
-                    default: break;
-                }
-                                                
-                FocusComboBox(comboBox);
+                        InputDialog dialogContact = new InputDialog("contact / email required", "enter contact or email address for server chat", MessageBoxIcon.Warning);
+                        dialogContact.ShowDialog();
+                        cbValue = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                        if (cbValue != null)
+                        {
+                            foreach (CqrContact c in Settings.Instance.Contacts)
+                            {
+                                if (c.Name.Contains(cbValue) || c.NameEmail.Contains(cbValue, StringComparison.CurrentCultureIgnoreCase) || c.Email.Contains(cbValue, StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    cbValue = c.NameEmail;
+                                    SetComboBoxText(comboBox, cbValue.ToString());
 
+                                    break;
+                                }
+                            }
+                            if (cbValue.IsEmail())
+                                SetComboBoxText(comboBox, cbValue.ToString());
+                        }
+                        
+                        break;
+                    
+                    default: 
+                        break;
+                }
+
+                if (((cbText = GetComboBoxText(comboBox)) != null) && (cbText.Length > 0))
+                {
+                    SetComboBoxBackColor(comboBox, Color.White);
+                    return cbText;
+                }
+                
+                FocusComboBox(comboBox);
                 return null;
             }
 

@@ -266,6 +266,9 @@
     <Compile Update="Controls\Forms\ToolWinDialogs\TestForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Controls\Forms\ToolWinDialogs\InputDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Controls\Forms\ToolWinDialogs\TransparentBadge.cs">
       <SubType>Form</SubType>
     </Compile>
