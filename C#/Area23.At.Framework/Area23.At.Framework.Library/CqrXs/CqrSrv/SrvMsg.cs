@@ -2,14 +2,19 @@
 using Area23.At.Framework.Library.Crypt.Cipher;
 using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
+using Area23.At.Framework.Library.Net.IpSocket;
 using Area23.At.Framework.Library.Net.WebHttp;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
+using Newtonsoft.Json;
+using Org.BouncyCastle.Cms;
 using System;
 using System.Configuration;
 using System.IO;
 using System.Net;
+using System.Runtime.Remoting.Contexts;
 using System.Runtime.Serialization;
+using System.Security.Policy;
 
 namespace Area23.At.Framework.Library.CqrXs.CqrSrv
 {
@@ -212,11 +217,32 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
         public FullSrvMsg<TS> NCqrSrvMsg<TS>(string cqrMessage, EncodingType encType = EncodingType.Base64)
             where TS : class
         {
-            FullSrvMsg<TS> fullMsg = new FullSrvMsg<TS>();
+            FullSrvMsg<TS>  fullMsg = null;
             MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType);
 
             if (msgContent != null && !string.IsNullOrEmpty(msgContent.Message))
-                fullMsg.FromJson(msgContent.Message);
+            {
+
+                fullMsg = JsonConvert.DeserializeObject<FullSrvMsg<TS>>(msgContent.Message);
+                try
+                {
+                    if (fullMsg != null && fullMsg is FullSrvMsg<TS> fullSrvMsg)
+                    {
+                        if (fullSrvMsg != null && !string.IsNullOrEmpty(fullSrvMsg.Message))
+                        {
+                            fullMsg.Sender = fullSrvMsg.Sender;
+                            fullMsg._hash = fullSrvMsg._hash;
+                            fullMsg.Recipients = fullSrvMsg.Recipients;
+                            fullMsg.TContent = fullSrvMsg.TContent;
+                        }
+                        return fullMsg;
+                    }
+                }
+                catch (Exception exJson)
+                {
+                    SLog.Log(exJson);
+                }
+            }
 
             return fullMsg;
         }

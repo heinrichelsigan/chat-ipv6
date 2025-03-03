@@ -487,12 +487,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            myServerKey = ExternalIpAddress?.ToString();
 
-            if (ExternalIpAddressV6 != null && ExternalIpAddressV6?.AddressFamily == AddressFamily.InterNetworkV6)
-                myServerKey = ExternalIpAddressV6.ToString();
-
-            myServerKey += Constants.APP_NAME;
+            myServerKey = CqrXsEuSrvKey;
+                
             if (!string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) &&
                 !this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -501,7 +498,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             else
                 this.ComboBoxSecretKey.Text = myServerKey;
 
-            SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
+            SrvMsg1 srv1stMsg = new SrvMsg1(CqrXsEuSrvKey);
             this.TextBoxPipe.Text = srv1stMsg.PipeString;
             Thread.Sleep(100);
 
@@ -542,17 +539,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         internal void OnClientReceive(object sender, Area23EventArgs<ReceiveData> eventReceived)
         {
-            if (string.IsNullOrEmpty(myServerKey))
-            {
-                myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
 
-                string comboBoxSecKeyText = this.GetComboBoxText(ComboBoxSecretKey);
-                if (!string.IsNullOrEmpty(comboBoxSecKeyText) &&
-                    !comboBoxSecKeyText.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    myServerKey = this.GetComboBoxText(ComboBoxSecretKey);
-                }
-            }
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+                ; // todo launch blocking entering window with input secret key
+        
 
             if (sender != null)
             {
@@ -696,7 +686,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 chat = new Chat(0);
 
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
-                return false;
+               return false;
+           
 
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
@@ -715,18 +706,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
 
 
-            SrvMsg serverMessage = new SrvMsg(myContact, friendContact, myServerKey, myServerKey);
+            SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
 
 
-            FullSrvMsg<CqrContact> fmsg = new FullSrvMsg<CqrContact>(myContact, friendContact, myContact, serverMessage.PipeString);
+            FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, myContact.Email, serverMessage.PipeString);
 
-            string encrypted = serverMessage.CqrSrvMsg<CqrContact>(fmsg, MsgKind.Server, EncodingType.Base64);
+            string encrypted = serverMessage.CqrSrvMsg<string>(fmsg, MsgKind.Server, EncodingType.Base64);
             string response = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
 
 
             this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            FullSrvMsg<CqrContact> rfmsg = serverMessage.NCqrSrvMsg<CqrContact>(encrypted, EncodingType.Base64);
+            FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(encrypted, EncodingType.Base64);
             this.TextBoxDestionation.Text = rfmsg.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
             chat.AddMyMessage(fmsg.Message);

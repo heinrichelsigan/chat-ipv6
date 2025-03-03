@@ -21,7 +21,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         public JsonChatRoom(string jsonChatRoomNumber)
         {
-            JsonChatRoomNumber = jsonChatRoomNumber;
+            if (string.IsNullOrEmpty(jsonChatRoomNumber))
+                jsonChatRoomNumber = "unknown_" + System.DateTime.Now.Area23DateTimeWithMillis() + ".json";
+
+            JsonChatRoomNumber = (jsonChatRoomNumber.Equals(".json")) ? jsonChatRoomNumber : jsonChatRoomNumber + ".json";
         }
 
 
@@ -39,22 +42,24 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 FullSrvMsg<string> srvMsg1 = new FullSrvMsg<string>();
                 srvMsg1.FromJson(jsonText);
                 fullSrvMsg = JsonConvert.DeserializeObject<FullSrvMsg<string>>(jsonText);
-                if (!string.IsNullOrEmpty(fullSrvMsg.Message) && fullSrvMsg.Message.Equals(JsonChatRoomNumber))
+                if (!string.IsNullOrEmpty(fullSrvMsg.Message) && fullSrvMsg.TContent.Equals(JsonChatRoomNumber))
                     HttpContext.Current.Application["ChatRoom"] = fullSrvMsg;
             }
             return fullSrvMsg;
         }
 
-        public void SaveJsonChatRoom(FullSrvMsg<string> fullSrvMsg)
+        public void SaveJsonChatRoom(FullSrvMsg<string> fullSrvMsg, string chatRoomId)
         {
+            if (!chatRoomId.Equals(this.JsonChatRoomNumber))
+                JsonChatRoomNumber = chatRoomId;
             JsonSerializerSettings jsets = new JsonSerializerSettings();
             jsets.Formatting = Formatting.Indented;
             string jsonString = JsonConvert.SerializeObject(fullSrvMsg, Formatting.Indented);
-            if (string.IsNullOrEmpty(fullSrvMsg.TContent))
-                fullSrvMsg.TContent = System.DateTime.Now.ToString();
-            if (!fullSrvMsg.TContent.EndsWith(".json"))
-                fullSrvMsg.TContent += ".json";
-           
+            
+            if (!JsonChatRoomNumber.EndsWith(".json"))
+                JsonChatRoomNumber += ".json";
+
+            fullSrvMsg.ChatRoomNr = JsonChatRoomNumber;
 
             System.IO.File.WriteAllText(JsonChatRoomFileName, jsonString);
             HttpContext.Current.Application["ChatRoom"] = fullSrvMsg;

@@ -3,6 +3,7 @@ using Area23.At.Framework.Library.CqrXs;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.CqrXs.CqrSrv;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
+using Area23.At.Framework.Library.Net.IpSocket;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using EU.CqrXs.CqrSrv.CqrJd.Util;
@@ -11,7 +12,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Services;
 
@@ -147,7 +150,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             myServerKey += Constants.APP_NAME;
 
             SrvMsg srvMsg = new SrvMsg(myServerKey, myServerKey);
-            FullSrvMsg<CqrContact> fullSrvMsg;
+            FullSrvMsg<string> fullSrvMsg;
             FullSrvMsg<string> chatRSrvMsg = new FullSrvMsg<string>();
             List<CqrContact> _invited = new List<CqrContact>();
             SrvMsg responseSrvMsg = new SrvMsg(myServerKey, myServerKey);
@@ -157,18 +160,36 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    fullSrvMsg = srvMsg.NCqrSrvMsg<CqrContact>(cryptMsg);
+                    fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
                     _contact = fullSrvMsg.Sender;
-                    _contact = AddContact(fullSrvMsg.Sender);                    
-                    _invited = fullSrvMsg.Recipients;
-                    fullSrvMsg.Recipients.Add(_contact);
-                    _invited.Add(_contact);
+                    _contact = AddContact(fullSrvMsg.Sender);
+                    _invited = new List<CqrContact>();
+                    // fullSrvMsg.Recipients.Add(_contact);
+                    bool addSender = true;
+                    foreach (CqrContact c in fullSrvMsg.Recipients)
+                    {                       
+                        if (!_invited.Contains(c))
+                            _invited.Add(c);
+                        if (c.Email == fullSrvMsg.Sender.Email)
+                            addSender = false;
+                    } 
+                    if (addSender)
+                        _invited.Add(fullSrvMsg.Sender);
 
-                    string chatRoomId = string.Empty;
-                    if (string.IsNullOrEmpty(fullSrvMsg.TContent.RawMessage))
-                        chatRoomId = DateTime.Now.Ticks.ToString() + _contact.Email.Replace("@", ".") + "_.json";
 
-                    (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg);
+                        string chatRoomId = string.Empty;
+                    if (string.IsNullOrEmpty(fullSrvMsg.TContent))
+                        chatRoomId = DateTime.Now.Area23DateTimeWithMillis() + "_" +  
+                            fullSrvMsg.TContent.Replace("@", "_").Replace(".", "_") + "_.json";
+
+                    if (string.IsNullOrEmpty(chatRoomId))
+                        chatRoomId = DateTime.Now.Area23DateTimeWithMillis() + "_" +
+                            fullSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_") + "_.json";
+
+                    if (string.IsNullOrEmpty(chatRoomId))
+                        chatRoomId = DateTime.Now.Area23DateTimeWithMillis() + "_.json";
+
+                    (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg, chatRoomId);
 
                     ConcurrentBag<string> bag = new ConcurrentBag<string>();
                     bag.Add(chatRoomId.ToString());
@@ -209,7 +230,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
                     _contact = fullSrvMsg.Sender;
                     _contact = AddContact(fullSrvMsg.Sender);
-                    _invited = fullSrvMsg.Recipients;
+                    _invited = fullSrvMsg.Recipients.ToList();
                     fullSrvMsg.Recipients.Add(_contact);
                     _invited.Add(_contact);
 
@@ -275,7 +296,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
                     _contact = fullSrvMsg.Sender;
                     _contact = AddContact(fullSrvMsg.Sender);
-                    _invited = fullSrvMsg.Recipients;
+                    _invited = fullSrvMsg.Recipients.ToList();
                     fullSrvMsg.Recipients.Add(_contact);
                     _invited.Add(_contact);
 
@@ -340,7 +361,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 {
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
                     _contact = AddContact(fullSrvMsg.Sender);
-                    _invited = fullSrvMsg.Recipients;
+                    _invited = fullSrvMsg.Recipients.ToList();
                     fullSrvMsg.Recipients.Add(_contact);
                     _invited.Add(_contact);
 
@@ -431,6 +452,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
         internal CqrContact AddContact(CqrContact cqrContact)
         {
+            if (_contacts == null || _contacts.Count < 1)
+            {
+                _contacts = (Application[Constants.JSON_CONTACTS] != null) 
+                    ? (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]) 
+                    : JsonContacts.LoadJsonContacts();
+            }
             CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, cqrContact);
             if (foundCt != null)
             {

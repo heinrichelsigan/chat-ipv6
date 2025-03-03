@@ -114,7 +114,7 @@ namespace Area23.At.Framework.Core.Static
                     if (ConfigurationManager.AppSettings["CqrServiceSoap"] != null)
                         cqrServiceSoap = ConfigurationManager.AppSettings["CqrServiceSoap"].ToString();
                     else
-                        cqrServiceSoap = "https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx";
+                        cqrServiceSoap = "https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx ";
                 }
                 return cqrServiceSoap;
             }

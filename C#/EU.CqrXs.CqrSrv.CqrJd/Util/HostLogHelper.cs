@@ -9,7 +9,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
     /// <summary>
     /// HostLogHelper
     /// </summary>
-    internal static class HostLogHelper
+    internal static class HostLogHelper 
     {
         internal static string UserHost
         {

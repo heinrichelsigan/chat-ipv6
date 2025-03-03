@@ -19,6 +19,7 @@ using Org.BouncyCastle.Utilities;
 using System.Drawing.Imaging;
 using Area23.At.Framework.Core.Static;
 using Org.BouncyCastle.Asn1.Pkcs;
+using System.Net.Sockets;
 // using static System.Net.Mime.MediaTypeNames;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
@@ -38,6 +39,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         #region fields
 
+        protected internal string _CqrXsServerKey = string.Empty;
         protected string savedFile = string.Empty;
         protected string loadDir = string.Empty;
         private System.ComponentModel.IContainer components = null;
@@ -66,6 +68,27 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 Settings.Singleton.FriendIPs.Count > 0;
         }
 
+
+        public string? CqrXsEuSrvKey
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    if (string.IsNullOrEmpty(_CqrXsServerKey) ||  DateTime.Now.Subtract(LastExternalTime).TotalSeconds >= 1800)
+                    {
+                        if (ExternalIpAddressV6 != null && ExternalIpAddressV6?.AddressFamily == AddressFamily.InterNetworkV6)
+                            _CqrXsServerKey += ExternalIpAddressV6.ToString();
+                        else if (ExternalIpAddress != null && ExternalIpAddress.AddressFamily == AddressFamily.InterNetwork)
+                            _CqrXsServerKey += ExternalIpAddress.ToString();
+                        else // we cannot reach the server, because no network
+                            return null;
+                        _CqrXsServerKey += Constants.APP_NAME;
+                    }
+                }
+                return _CqrXsServerKey;
+            }
+        }
 
         public static IPAddress? ExternalIpAddress
         {
