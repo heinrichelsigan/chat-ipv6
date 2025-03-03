@@ -718,10 +718,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
             FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
-            this.TextBoxDestionation.Text = rfmsg.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            this.textBoxChatSession.Text = rfmsg.ChatRoomNr;
+            // TODO: Email zur Einladung
 
-            chat.AddMyMessage(fmsg.Message);
-            chat.AddFriendMessage(rfmsg.Message);
+            string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            this.TextBoxDestionation.Text = msgChatRoom;
+
+            chat.AddMyMessage(String.Join(", ", fmsg.Emails.ToArray()));
+            chat.AddFriendMessage(msgChatRoom);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();

@@ -26,7 +26,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         public CqrContact Sender { get; set; }
 
-        protected internal List<string> Emails
+        public  List<string> Emails
         {
             get
             {
@@ -40,7 +40,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             }
         }
 
-        protected internal List<Guid> Cuids
+        internal List<Guid> Cuids
         {
             get
             {

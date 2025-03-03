@@ -74,7 +74,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuHelp = new ToolStripMenuItem();
             MenuHelpItemViewHelp = new ToolStripMenuItem();
             MenuHelpItemInfo = new ToolStripMenuItem();
-            MenuHelpItemAbout = new ToolStripMenuItem();            
+            MenuHelpItemAbout = new ToolStripMenuItem();
             StripStatus = new StatusStrip();
             StripStatusLabel = new ToolStripStatusLabel();
             StripProgressBar = new ToolStripProgressBar();
@@ -512,7 +512,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuHelpItemAbout.Text = "about";
             MenuHelpItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuHelpItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
-            MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;            
+            MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;
             // 
             // StripStatus
             // 
@@ -660,7 +660,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             textBoxChatSession.Name = "textBoxChatSession";
             textBoxChatSession.Size = new Size(72, 24);
             textBoxChatSession.TabIndex = 19;
-            textBoxChatSession.WordWrap = false;
             // 
             // ComboBoxContacts
             // 

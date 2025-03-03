@@ -41,6 +41,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #region fields        
 
         private string myServerKey = string.Empty;
+        private string? contactNameEmail = null;
         internal static int attachCnt = 0;
         internal static int chatCnt = 0;
         internal static Chat? chat;
@@ -708,9 +709,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             return true;
         }
 
-        /// <summary>
-        /// Sends a init secure message to contact over server proxy
-        /// </summary>
         private bool SendInit_Contact()
         {
             // TODO: implement it via socket directly or to registered user
@@ -719,25 +717,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return false;
-            }
 
-            myServerKey = this.ComboBoxSecretKey.Text;
-            if (string.IsNullOrEmpty(this.ComboBoxContacts.Text) || this.ComboBoxContacts.Text.Equals(Constants.ENTER_CONTACT, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't choosen a valid contact", "Please select a valid contact", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxContacts.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
+
+            if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
-            }
-            ComboBoxContacts.BackColor = Color.White;
-
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
@@ -745,7 +730,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             CqrContact? friendContact = null;
             foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
             {
-                if (c.NameEmail.Equals(this.ComboBoxContacts.Text, StringComparison.InvariantCultureIgnoreCase))
+                if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                 {
                     friendContact = c;
                     break;
@@ -753,17 +738,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
 
 
-            SrvMsg serverMessage = new SrvMsg(myContact, friendContact, myServerKey, myServerKey);
+            SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
 
 
-            FullSrvMsg<CqrContact> fmsg = new FullSrvMsg<CqrContact>(myContact, friendContact, myContact, serverMessage.PipeString);
+            FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, myContact.Email, serverMessage.PipeString);
 
-            string encrypted = serverMessage.CqrSrvMsg<CqrContact>(fmsg, MsgKind.Server, EncodingType.Base64);
-            string response = serverMessage.Send_CqrSrvMsgT<CqrContact>(fmsg, ServerIpAddress, EncodingType.Base64);
+            string encrypted = serverMessage.CqrSrvMsg<string>(fmsg, MsgKind.Server, EncodingType.Base64);
+            string response = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
+
 
             this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            FullSrvMsg<CqrContact> rfmsg = serverMessage.NCqrSrvMsg<CqrContact>(encrypted, EncodingType.Base64);
+            FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
+            this.textBoxChatSession.Text = rfmsg.ChatRoomNr;
+            // TODO: Email zur Einladung
             this.TextBoxDestionation.Text = rfmsg.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
             chat.AddMyMessage(fmsg.Message);
@@ -772,11 +760,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
 
-            StripStatusLabel.Text = "Finished 1st registration";
+            SetStatusText(StripStatusLabel, "Finished 1st registration");
 
             return true;
 
         }
+
+
 
 
 
