@@ -336,6 +336,7 @@
     <None Include="Properties\PublishProfiles\cqrxs.eu publish.pubxml" />
     <Content Include="res\json\urlshort.json" />
     <Content Include="res\json\contacts.json" />
+    <None Include="Properties\PublishProfiles\CqrXs_Publish.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

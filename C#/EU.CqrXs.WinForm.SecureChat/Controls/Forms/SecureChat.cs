@@ -111,16 +111,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxIp.Text = Constants.ENTER_IP;
             ComboBoxContacts.Text = Constants.ENTER_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
-            try
-            {
-                if (!Directory.Exists(LibPaths.AttachmentFilesDir))
-                    Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
-            }
-            catch (Exception exBase64)
-            {
-                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
-                StripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
-            }
+            MiniToolBox.CreateAttachDirectory();
             this.DragNDropGroupBox.OnDragNDrop += OnDragNDrop;
             this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
             this.PeerServerSwitch.FireUpChanged += TooglePeerServer;
@@ -157,7 +148,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.StripProgressBar.Value = 30;
 
             StripStatusLabel.Text = "Setup Network";
-            await PlaySoundFromResourcesAsync("sound_train");
+            await PlaySoundFromResourcesAsync("sound_volatage");
             await SetupNetwork();
 
             this.StripProgressBar.Value = 50;
@@ -181,6 +172,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.StripProgressBar.Value = 100;
             StripStatusLabel.Text = "Secure Chat init done.";
 
+            System.Timers.Timer timerResetProgress = new System.Timers.Timer { Interval = 1000 };
+            timerResetProgress.Elapsed += (s, en) =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    ResetProgressBar(StripProgressBar);                    
+                }));
+                timerResetProgress.Stop(); // Stop the timer(otherwise keeps on calling)
+            };
+            timerResetProgress.Start();
         }
 
         #region thread save text and richtext box access       
@@ -665,8 +666,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
                 pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
 
-                // chat.AddMyMessage(unencrypted);
-                // AppendText(TextBoxSource, unencrypted);
+                string userMsg = chat.AddMyMessage(unencrypted);
+                AppendText(TextBoxSource, userMsg);
                 // Format_Lines_RichTextBox();
                 this.RichTextBoxChat.Text = string.Empty;
                 SetStatusText(StripStatusLabel, $"Send init to {partnerIpAddress} successfully");
@@ -1628,7 +1629,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                 if (clientIpAddress.ToString().Contains("::1"))
                                     SetComboBoxText(this.ComboBoxIp, "::1");
 
-                            ComboBoxIp_FocusLeave(sender, e);
+                            //ComboBoxIp_FocusLeave(sender, e);
                         }
                     }
                 }

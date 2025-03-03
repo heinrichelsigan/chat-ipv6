@@ -31,20 +31,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TransparentBadge));
-            labelBadge = new Label();
+            labelTitle = new Label();
             notifyIcon = new NotifyIcon(components);
             SuspendLayout();
             // 
-            // labelBadge
+            // labelTitle
             // 
-            labelBadge.Font = new Font("Trebuchet MS", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            labelBadge.Location = new Point(0, 0);
-            labelBadge.Margin = new Padding(0);
-            labelBadge.Name = "labelBadge";
-            labelBadge.Size = new Size(360, 122);
-            labelBadge.TabIndex = 0;
-            labelBadge.Text = "enter badge text here";
-            labelBadge.TextAlign = ContentAlignment.MiddleCenter;
+            labelTitle.BackColor = Color.Transparent;
+            labelTitle.Font = new Font("Trebuchet MS", 11F);
+            labelTitle.ForeColor = SystemColors.ButtonHighlight;
+            labelTitle.Location = new Point(8, 0);
+            labelTitle.Margin = new Padding(1);
+            labelTitle.Name = "labelTitle";
+            labelTitle.Padding = new Padding(1);
+            labelTitle.Size = new Size(532, 32);
+            labelTitle.TabIndex = 0;
+            labelTitle.Text = "enter badge text here";
             // 
             // notifyIcon
             // 
@@ -60,23 +62,25 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             AutoScaleMode = AutoScaleMode.None;
             BackColor = SystemColors.Control;
             BackgroundImageLayout = ImageLayout.None;
-            ClientSize = new Size(360, 120);
-            Controls.Add(labelBadge);
+            ClientSize = new Size(550, 240);
+            Controls.Add(labelTitle);
             Font = new Font("Lucida Sans Unicode", 10F);
             FormBorderStyle = FormBorderStyle.None;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "TransparentBadge";
+            ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "TransparentBadge";
             TopMost = true;
             TransparencyKey = SystemColors.Control;
             Load += TransparentBadge_Load;
-            Shown += TransparentBadge_Shown;
             ResumeLayout(false);
         }
         #endregion
 
-        private Label labelBadge;
         private NotifyIcon notifyIcon;
+        private Label labelTitle;
     }
 }

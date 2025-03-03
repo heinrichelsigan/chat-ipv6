@@ -121,7 +121,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 if (!message.EndsWith("\n") && !message.EndsWith("\n\0") && !message.EndsWith(Environment.NewLine))
                     message += Environment.NewLine;
                 CqrMsgs.Add(myMsgTime, message);
-                returnMes = myMsgTime.ToString("[yyMMdd HH:mm:ss]") + " \n" + message;                                
+                returnMes = myMsgTime.ToString("[HH:mm:ss]") + " \n" + message;                                
             }
 
             return returnMes;
@@ -138,7 +138,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 if (!message.EndsWith("\n") && !message.EndsWith("\n\0") && !message.EndsWith(Environment.NewLine))
                     message += Environment.NewLine;
                 CqrMsgs.Add(myMsgTime, message);
-                returnMes = myMsgTime.ToString("[yyMMdd HH:mm:ss]") + " \n" + message;                
+                returnMes = myMsgTime.ToString("[HH:mm:ss]") + " \n" + message;                
             }
 
             return returnMes;

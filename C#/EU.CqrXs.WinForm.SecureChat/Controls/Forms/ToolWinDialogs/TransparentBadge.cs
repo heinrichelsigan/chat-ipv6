@@ -16,6 +16,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
     public partial class TransparentBadge : System.Windows.Forms.Form
     {
+        static int i = 0;
 
         public string TFormType
         {
@@ -25,17 +26,25 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         public TransparentBadge()
         {
             InitializeComponent();
+            if (AppDomain.CurrentDomain.GetData("TransparentBadge") == null)
+                AppDomain.CurrentDomain.SetData("TransparentBadge", i);
+            else
+                i = (int) AppDomain.CurrentDomain.GetData("TransparentBadge");
         }
 
-        public TransparentBadge(string labelName) : this()
+        public TransparentBadge(string text) : this()
         {            
             string name = DateTime.Now.Area23DateTimeWithMillis();
             this.Name = name;
-            this.labelBadge.Text = labelName;
+            this.labelTitle.Text = text;
+            // notifyIcon.BalloonTipText = text;
+            // notifyIcon.BalloonTipTitle = text;
+            notifyIcon.Text = text;
             notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+            
         }
 
-        public TransparentBadge(string labelName, MessageBoxIcon icon) : this (labelName)
+        public TransparentBadge(string title, string text, MessageBoxIcon icon) : this (text)
         {
             switch (icon)
             {
@@ -44,26 +53,38 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     break;                
                 // case MessageBoxIcon.Exclamation:
                 case MessageBoxIcon.Warning:
-                    notifyIcon.BalloonTipIcon = ToolTipIcon.Warning; 
+                    notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
                     break;
                 // case MessageBoxIcon.Hand:
                 // case MessageBoxIcon.Stop:
                 case MessageBoxIcon.Error:
-                    notifyIcon.BalloonTipIcon = ToolTipIcon.Error; 
+                    notifyIcon.BalloonTipIcon = ToolTipIcon.Error;
                     break;
                 // case MessageBoxIcon.Asterisk:
                 case MessageBoxIcon.Question:
                 case MessageBoxIcon.Information:
                 default:
-                    notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                    notifyIcon.BalloonTipIcon = ToolTipIcon.Info;                    
                     break;
-            }  
+            }
+
+            notifyIcon.BalloonTipTitle = title;
+            notifyIcon.BalloonTipText = text;          
+            notifyIcon.Text = text;
+            labelTitle.Text = text;            
         }
 
 
-        public TransparentBadge(string labelName, Image image) : this(labelName)
+        public TransparentBadge(string text, Image image) : this(text)
         {
-            this.BackgroundImage = image;            
+            this.BackgroundImage = image;    
+            this.BackgroundImageLayout = ImageLayout.Stretch;
+        }
+
+        public TransparentBadge(string title, string text, MessageBoxIcon icon, Image image) : this(text, title, icon)
+        {
+            this.BackgroundImage = image;
+            this.BackgroundImageLayout = ImageLayout.Stretch;
         }
 
 
@@ -71,31 +92,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             notifyIcon.Visible = true;
             notifyIcon.ShowBalloonTip(4000);
-            Point pt = this.DesktopLocation;
+            int x = this.DesktopLocation.X;
+            int y = this.DesktopLocation.Y;
             Font badgeFont = new Font("Lucida Sans Unicode", 10F, FontStyle.Regular);
 
-            System.Timers.Timer timer = new System.Timers.Timer { Interval = 1000 };
-            System.Timers.Timer timerDispose = new System.Timers.Timer { Interval = 3000 };
-            timer.Elapsed += (s, en) =>
-            {
-                this.Invoke(new Action(() =>
-                {
-                    for (int i = 0; i < 10; i++)
-                    {
-                        if (i % 3 == 0)
-                            badgeFont = new Font("Lucida Sans Unicode", 10F, FontStyle.Regular);
-                        if (i % 3 == 1)
-                            badgeFont = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
-                        if (i % 3 == 2)
-                            badgeFont = new Font("Lucida Sans Unicode", 10F, FontStyle.Italic);
-                        this.labelBadge.Font = badgeFont;
-
-                        this.SetDesktopLocation(pt.X, pt.Y - (i * 2));
-                        Thread.Sleep(200);
-                    }
-                }));
-                timer.Stop(); // Stop the timer(otherwise keeps on calling)
-            };
+            System.Timers.Timer timer0 = new System.Timers.Timer { Interval = 800 };
+            System.Timers.Timer timerDispose = new System.Timers.Timer { Interval = 4200 };
 
             timerDispose.Elapsed += (s, en) =>
             {
@@ -103,15 +105,73 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     if (this != null)
                     {
-                        Close();
-                        // Dispose();
+                        try
+                        {
+                            Close();
+                        }
+                        catch { }
+                        try
+                        {
+                            this.DestroyHandle();
+                        }
+                        catch
+                        {
+                        }
                     }
                 }));
                 timerDispose.Stop(); // Stop the timer(otherwise keeps on calling)
             };
 
-            timer.Start(); // Starts the show autosave timer after 2,5 sec
+
+            timer0.Elapsed += (s, en) =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    y = this.DesktopLocation.Y;
+                    for (int j = i; j < 17; j++)
+                    {
+                        if (i >= 16)
+                        {
+                            try
+                            {
+                                Close();
+                            }
+                            catch { }
+                            try
+                            {
+                                this.DestroyHandle();
+                            }
+                            catch
+                            {
+                            }
+                            break;
+                        }
+
+                         if (i % 4 == 0)
+                            badgeFont = new Font("Lucida Sans Unicode", 11F, FontStyle.Regular);
+                        if (i % 4 == 1)
+                            badgeFont = new Font("Lucida Sans Unicode", 11F, FontStyle.Bold);
+                        if (i % 4 == 2)
+                            badgeFont = new Font("Lucida Sans Unicode", 11F, FontStyle.Italic);
+                        if (i % 4 == 3)
+                            badgeFont = new Font("Lucida Sans Unicode", 11F, FontStyle.Underline);
+
+                        this.labelTitle.Font = badgeFont;
+
+                        AppDomain.CurrentDomain.SetData("TransparentBadge", j);
+                        y -= (j - i);
+                        this.SetDesktopLocation(x, y);
+                        Thread.Sleep(200);
+                    }
+                }));
+                timer0.Stop(); // Stop the timer(otherwise keeps on calling)
+            };
+
+
             timerDispose.Start(); // Starts the DisposePictureMessage timer after 4sec
+            timer0.Start(); // Starts the show autosave timer after 2,5 sec
+            
+
         }
 
         private void TransparentBadge_Shown(object sender, EventArgs e)

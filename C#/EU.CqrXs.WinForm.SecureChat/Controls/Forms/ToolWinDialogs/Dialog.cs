@@ -22,7 +22,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #region Assembly Attribute Accessors
 
-        public string AssemblyTitle
+        public static string AssemblyTitle
         {
             get
             {
@@ -39,7 +39,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
-        public string AssemblyVersion
+        public static string AssemblyVersion
         {
             get
             {
@@ -47,7 +47,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
-        public string AssemblyDescription
+        public static string AssemblyDescription
         {
             get
             {
@@ -60,7 +60,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
-        public string AssemblyProduct
+        public static string AssemblyProduct
         {
             get
             {

@@ -73,6 +73,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.fr {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CqrXsEuBadge {
+            get {
+                object obj = ResourceManager.GetObject("CqrXsEuBadge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DefaultF {
             get {
                 object obj = ResourceManager.GetObject("DefaultF", resourceCulture);

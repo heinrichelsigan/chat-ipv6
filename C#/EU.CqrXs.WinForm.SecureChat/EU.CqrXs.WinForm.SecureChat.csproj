@@ -39,6 +39,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Entities\Contact.cs" />
   </ItemGroup>
 
@@ -82,7 +88,6 @@
     <None Remove="Properties\Image\SatLink.png" />
     <None Remove="Properties\Image\TransparentFormsIcon.ico" />
     <None Remove="Properties\Image\WinFormAboutDialog.png" />
-    <None Remove="Resources\sound_arrow.wav" />
   </ItemGroup>
 
   <ItemGroup>
@@ -213,15 +218,11 @@
     <EmbeddedResource Include="Properties\Image\WinFormAboutDialog.png">
       <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\sound_arrow.wav">
-      <CustomToolNamespace>EU.CqrXs.WinForm.Resources</CustomToolNamespace>
-    </EmbeddedResource>
   </ItemGroup>
 
 
   <ItemGroup>
     <Folder Include="AttachFiles\" />
-    <Folder Include="Properties\text\" />
     <Folder Include="Properties\en\" />
     <Folder Include="Properties\it\" />
     <Folder Include="Properties\pl\" />

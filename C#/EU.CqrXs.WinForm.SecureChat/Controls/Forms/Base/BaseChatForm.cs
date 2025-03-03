@@ -634,8 +634,39 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         #region ToolStripItemCollection
 
+        internal delegate void ResetProgressBarCallback(ToolStripProgressBar progressBar);
         internal delegate string GetMenuItemTextCallback(ToolStripMenuItem menuItem);
         internal delegate void SetMenuItemTextCallback(ToolStripMenuItem menuItem, string text);
+
+        internal void ResetProgressBar(ToolStripProgressBar progressBar)
+        {
+            int progress = 0;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (progressBar != null && progressBar.GetCurrentParent() != null && progressBar.GetCurrentParent().InvokeRequired)
+            {
+                ResetProgressBarCallback resetProgressBarCallback = delegate (ToolStripProgressBar pbar)
+                {
+                    if (pbar != null)
+                        pbar.Value = 0;
+                };
+                try
+                {
+                    progressBar.GetCurrentParent().Invoke(resetProgressBarCallback, new object[] { progressBar });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate ResetProgressBar.\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (progressBar != null)
+                    progressBar.Value = 0;
+            }
+
+            return;
+        }
 
         internal string GetMenuItemText(ToolStripMenuItem mItem)
         {
@@ -1503,9 +1534,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         protected internal void MenuHelpItemInfo_Click(object sender, EventArgs e)
         {
-            TransparentBadge badge = new TransparentBadge($"{Text} type {GetType()} Information MessageBox.", MessageBoxIcon.Information);
+            AppDomain.CurrentDomain.SetData("TransparentBadge", 0);
+            string infoText = $"{Dialog.AssemblyProduct} v{Dialog.AssemblyVersion}\n{Dialog.AssemblyCopyright} {Dialog.AssemblyCompany}";
+            string titleText = $"{Dialog.AssemblyTitle} v{Dialog.AssemblyVersion}";
+            TransparentBadge badge = new TransparentBadge(titleText, infoText, MessageBoxIcon.Information, Properties.fr.Resources.CqrXsEuBadge);
             badge.ShowDialog();
-            MessageBox.Show($"{Text} type {GetType()} Information MessageBox.", $"{Text} type {GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // MessageBox.Show(infoText, $"{titleText}", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         #endregion Help About Info
@@ -1632,7 +1666,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
             if (!string.IsNullOrEmpty(settingsNotSavedReason))
             {
-                TransparentBadge badge = new TransparentBadge("Couldn't save chat settings", MessageBoxIcon.Warning);
+                TransparentBadge badge = new TransparentBadge("Error saving settings!", $"Couldn't save chat settings to {Constants.JSON_SETTINGS_FILE}", MessageBoxIcon.Warning);
                 badge.ShowDialog();
                 MessageBox.Show(settingsNotSavedReason, "Couldn't save chat settings", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }

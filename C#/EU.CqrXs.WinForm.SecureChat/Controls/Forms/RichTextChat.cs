@@ -108,17 +108,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxIp.Text = Constants.ENTER_IP;
             ComboBoxContacts.Text = Constants.ENTER_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
-            try
-            {
-                if (!Directory.Exists(LibPaths.AttachmentFilesDir))
-                    Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
-            }
-            catch (Exception exBase64)
-            {
-                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
-                StripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
-            }
             
+            MiniToolBox.CreateAttachDirectory();
+
             this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
             this.PeerServerSwitch.FireUpChanged += TooglePeerServer;
             this.StripProgressBar.Value = 0;
@@ -154,7 +146,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.StripProgressBar.Value = 30;
 
             StripStatusLabel.Text = "Setup Network";
-            await PlaySoundFromResourcesAsync("sound_train");
+            await PlaySoundFromResourcesAsync("sound_volatage");
             await SetupNetwork();
 
             this.StripProgressBar.Value = 50;
@@ -178,6 +170,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.StripProgressBar.Value = 100;
             StripStatusLabel.Text = "Secure Chat init done.";
 
+            System.Timers.Timer timerResetProgress = new System.Timers.Timer { Interval = 1000 };
+            timerResetProgress.Elapsed += (s, en) =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    ResetProgressBar(StripProgressBar);
+                }));
+                timerResetProgress.Stop(); // Stop the timer(otherwise keeps on calling)
+            };
+            timerResetProgress.Start();
         }
 
         #region thread save text and richtext box access       
@@ -1538,14 +1540,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     proxyList.Add(addrProxy.ToString());
 
-
                     ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily.ShortInfo() + addrProxy.ToString(), null, ServerProxyAddressSelected, addrProxy.ToString());
                     if ((addrProxy.AddressFamily == ServerIpAddress?.AddressFamily) &&
                         (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {
 
                         if (!GetMenuItemChecked(MenuNetworkItemIPv6Secure) && addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                        {; }
+                        { ; }
                         else
                             SetMenuItemChecked(item, true);
                         // item.Checked = true;
@@ -1650,7 +1651,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                 if (clientIpAddress.ToString().Contains("::1"))
                                     SetComboBoxText(this.ComboBoxIp, "::1");
 
-                            ComboBoxIp_FocusLeave(sender, e);
+                            // ComboBoxIp_FocusLeave(sender, e);
                         }
                     }
                 }

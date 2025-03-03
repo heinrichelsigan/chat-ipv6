@@ -19,10 +19,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             InitializeComponent();
             this.Text = String.Format("About {0}", AssemblyTitle);
-            this.labelProductName.Text = AssemblyProduct;
-            this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
-            this.labelCopyright.Text = AssemblyCopyright;
+            this.labelProductName.Text = String.Format("{0} v{1}", AssemblyProduct, AssemblyVersion);
             this.labelCompanyName.Text = AssemblyCompany;
+            this.labelCopyright.Text = AssemblyCopyright;
+            this.linkLabelGitUrl.Text = Constants.GIT_CQR_URL;
+            this.linkLabelCqrXsEu.Text = Constants.CQRXS_HELP_URL;
             this.textBoxDescription.Text = AssemblyDescription;
             using (MemoryStream ms = new MemoryStream(Resources.WinFormAboutDialog))
             {
@@ -30,6 +31,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
 
         }
+
 
         private void ShowCqrXsUrl(object sender, LinkLabelLinkClickedEventArgs e)
         {

@@ -122,22 +122,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             send1stReg = false;
             this.StripProgressBar.Value = 10;
-            try
-            {
-                if (!Directory.Exists(LibPaths.AttachmentFilesDir))
-                    Directory.CreateDirectory(LibPaths.AttachmentFilesDir);
-            }
-            catch (Exception exBase64)
-            {
-                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {exBase64.Message}.\n", exBase64);
-                StripStatusLabel.Text = "Attach FAILED: " + exBase64.Message;
-            }
+            MiniToolBox.CreateAttachDirectory();
 
             this.StripProgressBar.Value = 20;
             await base.BaseMenuForm_Load(sender, e);
 
             this.StripProgressBar.Value = 30;
-            await PlaySoundFromResourcesAsync("sound_train");
+            await PlaySoundFromResourcesAsync("sound_volatage");
 
             this.StripProgressBar.Value = 40;
             StripStatusLabel.Text = "Setup Network";
@@ -165,6 +156,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.StripProgressBar.Value = 100;
             StripStatusLabel.Text = "Secure Chat init done.";
 
+            System.Timers.Timer timerResetProgress = new System.Timers.Timer { Interval = 1000 };
+            timerResetProgress.Elapsed += (s, en) =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    ResetProgressBar(StripProgressBar);
+                }));
+                timerResetProgress.Stop(); // Stop the timer(otherwise keeps on calling)
+            };
+            timerResetProgress.Start();
         }
 
         #region thread save text and richtext box access       
