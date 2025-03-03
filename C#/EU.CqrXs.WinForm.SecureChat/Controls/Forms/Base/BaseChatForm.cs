@@ -52,6 +52,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         protected internal Lock _lock = new Lock();
         protected internal OpenFileDialog FileOpenDialog;
         protected internal SaveFileDialog FileSaveDialog;
+        protected internal PeerSession3State PeerSessionTriState = PeerSession3State.Both;
 
         #endregion fields
 

@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core.Util;
+using EU.CqrXs.WinForm.SecureChat.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,6 +33,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
             InitializeComponent();
         }
 
+        public void SetPeerServerSessionTriState(PeerSession3State peerSession3State = PeerSession3State.Both)
+        {
+            switch (peerSession3State)
+            {
+                case PeerSession3State.Peer2Peer:
+                    TrackBarPeerServer.Value = 0;
+                    break;
+                case PeerSession3State.ChatServer:
+                    TrackBarPeerServer.Value = 2;
+                    break;
+                case PeerSession3State.Both:
+                default:
+                    TrackBarPeerServer.Value = 1;
+                    break;
+            }
+            TrackBarPeerServer_ValueChanged("SetPeerServerSessionTriState", new EventArgs());
+        }
 
         private void TrackBarPeerServer_ValueChanged(object sender, EventArgs e)
         {
@@ -40,12 +58,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
                 SuspendResumeLayout(false);
                 switch (TrackBarPeerServer.Value)
                 {
-                    case 1:
-                        LabelServer.Location = new Point(72, 1);
-                        LabelServer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Regular, GraphicsUnit.Point, 0);
-                        LabelServer.ForeColor = SystemColors.ControlText;
-                        LabelServer.BackColor = SystemColors.ActiveCaption;
-                        LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Regular);
+                    case 0:
+                        LabelServer.Location = new Point(78, 1);
+                        LabelServer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Italic, GraphicsUnit.Point, 0);
+                        LabelServer.ForeColor = SystemColors.GrayText;
+                        LabelPeer.BackColor = SystemColors.InactiveCaption;
+                        LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Bold);
                         LabelPeer.ForeColor = SystemColors.ControlText;
                         LabelPeer.BackColor = SystemColors.ActiveCaption;
                         break;
@@ -57,23 +75,29 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
                         LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Italic, GraphicsUnit.Point, 0);
                         LabelPeer.ForeColor = SystemColors.GrayText;
                         LabelPeer.BackColor = SystemColors.InactiveCaption;
-                        break;
-                    case 0:
+                        break;                    
+                    case 1:
                     default:
-                        LabelServer.Location = new Point(78, 1);
-                        LabelServer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Italic, GraphicsUnit.Point, 0);
-                        LabelServer.ForeColor = SystemColors.GrayText;
-                        LabelPeer.BackColor = SystemColors.InactiveCaption;
-                        LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Bold);
+                        LabelServer.Location = new Point(72, 1);
+                        LabelServer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Regular, GraphicsUnit.Point, 0);
+                        LabelServer.ForeColor = SystemColors.ControlText;
+                        LabelServer.BackColor = SystemColors.ActiveCaption;
+                        LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Regular);
                         LabelPeer.ForeColor = SystemColors.ControlText;
                         LabelPeer.BackColor = SystemColors.ActiveCaption;
                         break;
+                    
+                    
                 }
                 SuspendResumeLayout(true);
 
-                EventHandler<Area23EventArgs<int>> handler = FireUpChanged;
-                Area23EventArgs<int> area23EventArgs = new Area23EventArgs<int>(TrackBarPeerServer.Value);
-                handler?.Invoke(this, area23EventArgs);
+                if ((sender != null && !sender.ToString().Equals("SetPeerServerSessionTriState")) || sender == null)
+                {
+
+                    EventHandler<Area23EventArgs<int>> handler = FireUpChanged;
+                    Area23EventArgs<int> area23EventArgs = new Area23EventArgs<int>(TrackBarPeerServer.Value);
+                    handler?.Invoke(this, area23EventArgs);
+                }
 
 
                 #region old code switch always back to peer 2 peer

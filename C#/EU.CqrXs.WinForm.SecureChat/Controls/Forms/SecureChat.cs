@@ -47,7 +47,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected internal static IPAddress? clientIpAddress;
         protected internal static IPAddress? partnerIpAddress;
-        protected internal static Listener? ipSockListener;        
+        protected internal static Listener? ipSockListener;
         internal delegate void ClientSocket_DataReceived(object sender, Area23EventArgs<ReceiveData> eventReceived);
         internal ClientSocket_DataReceived clientSocket_DataReceived;
         internal EventHandler<Area23EventArgs<ReceiveData>> receivedDataEventHandler;
@@ -159,7 +159,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
                 if (bmp == null)
-                    bmp = Properties.fr.Resources.DefaultF45;                
+                    bmp = Properties.fr.Resources.DefaultF45;
             }
             this.PictureBoxYou.Image = bmp;
 
@@ -177,7 +177,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 this.Invoke(new Action(() =>
                 {
-                    ResetProgressBar(StripProgressBar);                    
+                    ResetProgressBar(StripProgressBar);
                 }));
                 timerResetProgress.Stop(); // Stop the timer(otherwise keeps on calling)
             };
@@ -242,7 +242,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return;
-           
+
             SrvMsg serverMessage = new SrvMsg(myServerKey, myServerKey);
             // TODO: SetText delegate AppendText()
             this.TextBoxPipe.Text = serverMessage.PipeString;
@@ -295,7 +295,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private void ComboBoxSecretKey_SelectedIndexChanged(object sender, EventArgs e)
         {
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
-                return;            
+                return;
             ButtonKey_Click(sender, e);
             if (Entities.Settings.Singleton != null)
             {
@@ -315,7 +315,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
 
             if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
-                return ;
+                return;
             try
             {
                 if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
@@ -489,7 +489,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
             myServerKey = CqrXsEuSrvKey;
-                
+
             if (!string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) &&
                 !this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -522,113 +522,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
 
             chat.AddMyMessage(myContact.ToJson());
-            
+
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
 
             StripStatusLabel.Text = "Finished 1st registration";
-        }
-
-        /// <summary>
-        /// OnClientReceive event is fired, 
-        /// when another secure chat client connects directly peer 2 peer 
-        /// to server socket of our local chat app,
-        /// </summary>
-        /// <param name="sender">object sender</param>
-        /// <param name="e">EventArgs e</param>
-        internal void OnClientReceive(object sender, Area23EventArgs<ReceiveData> eventReceived)
-        {
-
-            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
-                ; // todo launch blocking entering window with input secret key
-        
-
-            if (sender != null)
-            {
-                if (ipSockListener?.BufferedData != null && ipSockListener.BufferedData.Length > 0)
-                {
-                    if (chat == null)
-                        chat = new Chat(0);
-                    string encrypted = EnDeCodeHelper.GetString(ipSockListener.BufferedData);
-
-                    Area23EventArgs<ReceiveData>? area23EvArgs = null;
-                    if (eventReceived != null && eventReceived is Area23EventArgs<ReceiveData>)
-                    {
-                        area23EvArgs = ((Area23EventArgs<ReceiveData>)eventReceived);
-                        //TODO: Enable cross thread via delegate
-                        SetStatusText(StripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
-
-                        string comboText = GetComboBoxText(ComboBoxIp);
-                        if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.CurrentCulture))
-                        {
-                            PlaySoundFromResource("sound_breakpoint");
-                            if (IPAddress.TryParse(area23EvArgs.GenericTData.ClientIPAddr, out partnerIpAddress))
-                            {
-                                SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
-                                AddIpToFriendList(sender, new EventArgs());
-                            }
-
-                        }
-                        encrypted = EnDeCodeHelper.GetString(area23EvArgs.GenericTData.BufferedData);
-                    }
-
-
-                    Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                    MsgContent msgContent;
-                    try
-                    {
-                        msgContent = pmsg.NCqrPeerMsg(encrypted);
-                    }
-                    catch (Exception exCrypt)
-                    {
-                        PlaySoundFromResource("sound_hammer");
-                        if (exCrypt is InvalidOperationException)
-                        {
-                            MessageBox.Show(((InvalidOperationException)exCrypt).Message, "Invalid or non matching secret key for decrypt.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            SetComboBoxBackColor(ComboBoxSecretKey, Color.OrangeRed);
-                        }
-                        else
-                        {
-                            MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIp)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                        return;
-                    }
-                    string friendMsg = string.Empty;
-                    try
-                    {
-                        CqrFile cqf = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
-                        SLog.Log("CqrFile is true " + cqf.CqrFileName + "\n");
-                    }
-                    catch (Exception exif)
-                    {
-                        SLog.Log("CqrFile failed " + exif.Message + "\n" + exif + "\n");
-                    }
-                    ;
-                    
-                    if (msgContent.IsCqrFile())
-                    {
-                        CqrFile? cqrFile = msgContent.ToCqrFile();
-                        if (cqrFile != null)
-                        {
-                            SetAttachmentTextLink(cqrFile);
-                            friendMsg = cqrFile.GetFileNameContentLength() + Environment.NewLine;
-                            PlaySoundFromResource("sound_wind");
-                        }
-                    }
-                    else
-                    {
-                        friendMsg = msgContent.Message + Environment.NewLine;
-                        PlaySoundFromResource("sound_push");
-                    }
-
-                    string appendDestMsg = chat.AddFriendMessage(friendMsg);
-                    AppendText(TextBoxDestionation, appendDestMsg);
-                    // AppendText(TextBoxDestionation, friendMsg);
-                    // this.RichTextBoxOneView.Text = unencrypted;
-                    Format_Lines_RichTextBox();
-                }
-            }
         }
 
         /// <summary>
@@ -648,7 +547,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return false;
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
-            try 
+            try
             {
                 if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
                     throw new InvalidDataException("Cannot parse " + ipAddrString + " to IPAddress!");
@@ -686,8 +585,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 chat = new Chat(0);
 
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
-               return false;
-           
+                return false;
+
 
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
@@ -735,8 +634,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             return true;
 
         }
-
-
 
         /// <summary>
         /// Sends a secure message
@@ -788,7 +685,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // otherwise send message to registered user via server
             // Always encrypt via key
         }
-
 
         /// <summary>
         /// Attaches a file to send
@@ -852,88 +748,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         }
 
-        public void TooglePeerServer(object sender, EventArgs e)
-        {
-            if (e is Area23EventArgs<int> ev)
-            {
-                if (ev.GenericTData < 1)
-                {
-
-                    SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
-                    try
-                    {
-                        this.ComboBoxContacts.Enabled = false;
-                        this.ComboBoxIp.Enabled = true;
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-
-                }
-                else if (ev.GenericTData > 1)
-                {
-                    SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
-                    try
-                    {
-                        this.ComboBoxContacts.Enabled = true;
-                        this.ComboBoxIp.Enabled = false;
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-
-                }
-                else
-                {
-                    try
-                    {
-                        this.ComboBoxContacts.Enabled = true;
-                        this.ComboBoxIp.Enabled = true;
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// OnDragDrop is fired up, when files are dragged into <see cref="GroupBoxes.LinkLabelsBox"/> or <see cref="GroupBoxes.DragNDropBox"/>
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void OnDragNDrop(object sender, EventArgs e)
-        {
-            if (e is Area23EventArgs<string> ea)
-            {
-                if (chat == null)
-                    chat = new Chat(0);
-                if (ea.GenericTData != null && File.Exists(ea.GenericTData))
-                {
-                    FileInfo fi = new FileInfo(ea.GenericTData);
-                    if (fi.Length > Constants.MAX_FILE_BYTE_BUFFEER)
-                    {
-                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds {Constants.MAX_FILE_BYTE_BUFFEER} bytes.", "FileSize larger > 6MB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
-                    string t = GetComboBoxText(this.ComboBoxIp);
-                    if (!string.IsNullOrEmpty(t) && IPAddress.TryParse(t, out IPAddress pi))
-                    {
-                        CqrFile? cf = SendCqrFile(ea.GenericTData, myServerKey, pi);
-                        if (cf != null && cf.Data != null && !string.IsNullOrEmpty(cf.CqrFileName))
-                        {
-                            string userMsg = chat.AddMyMessage(cf.GetFileNameContentLength());
-                            AppendText(TextBoxSource, userMsg);
-                            Format_Lines_RichTextBox();
-                            this.RichTextBoxChat.Text = string.Empty;
-                            SetStatusText(StripStatusLabel, $"File {cf.CqrFileName} send successfully!");
-                        }
-                    }
-                }
-            }
-        }
-
         private void MenuItemRefresh_Click(object sender, EventArgs e)
         {
             byte[] b0 = ExternalIpAddress.ToExternalBytes();
@@ -985,6 +799,247 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.RichTextBoxChat.Clear();
         }
 
+        #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
+
+
+        #region delegate jump back invocation target members
+
+        /// <summary>
+        /// OnClientReceive event is fired, 
+        /// when another secure chat client connects directly peer 2 peer 
+        /// to server socket of our local chat app,
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
+        internal void OnClientReceive(object sender, Area23EventArgs<ReceiveData> eventReceived)
+        {
+
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+                ; // todo launch blocking entering window with input secret key
+
+
+            if (sender != null)
+            {
+                if (ipSockListener?.BufferedData != null && ipSockListener.BufferedData.Length > 0)
+                {
+                    if (chat == null)
+                        chat = new Chat(0);
+                    string encrypted = EnDeCodeHelper.GetString(ipSockListener.BufferedData);
+
+                    Area23EventArgs<ReceiveData>? area23EvArgs = null;
+                    if (eventReceived != null && eventReceived is Area23EventArgs<ReceiveData>)
+                    {
+                        area23EvArgs = ((Area23EventArgs<ReceiveData>)eventReceived);
+                        //TODO: Enable cross thread via delegate
+                        SetStatusText(StripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
+
+                        string comboText = GetComboBoxText(ComboBoxIp);
+                        if (!comboText.Equals(area23EvArgs.GenericTData.ClientIPAddr, StringComparison.CurrentCulture))
+                        {
+                            PlaySoundFromResource("sound_breakpoint");
+                            if (IPAddress.TryParse(area23EvArgs.GenericTData.ClientIPAddr, out partnerIpAddress))
+                            {
+                                SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
+                                AddIpToFriendList(sender, new EventArgs());
+                            }
+
+                        }
+                        encrypted = EnDeCodeHelper.GetString(area23EvArgs.GenericTData.BufferedData);
+                    }
+
+
+                    Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                    MsgContent msgContent;
+                    try
+                    {
+                        msgContent = pmsg.NCqrPeerMsg(encrypted);
+                    }
+                    catch (Exception exCrypt)
+                    {
+                        PlaySoundFromResource("sound_hammer");
+                        if (exCrypt is InvalidOperationException)
+                        {
+                            MessageBox.Show(((InvalidOperationException)exCrypt).Message, "Invalid or non matching secret key for decrypt.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            SetComboBoxBackColor(ComboBoxSecretKey, Color.OrangeRed);
+                        }
+                        else
+                        {
+                            MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIp)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        return;
+                    }
+                    string friendMsg = string.Empty;
+                    try
+                    {
+                        CqrFile cqf = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
+                        SLog.Log("CqrFile is true " + cqf.CqrFileName + "\n");
+                    }
+                    catch (Exception exif)
+                    {
+                        SLog.Log("CqrFile failed " + exif.Message + "\n" + exif + "\n");
+                    }
+                    ;
+
+                    if (msgContent.IsCqrFile())
+                    {
+                        CqrFile? cqrFile = msgContent.ToCqrFile();
+                        if (cqrFile != null)
+                        {
+                            SetAttachmentTextLink(cqrFile);
+                            friendMsg = cqrFile.GetFileNameContentLength() + Environment.NewLine;
+                            PlaySoundFromResource("sound_wind");
+                        }
+                    }
+                    else
+                    {
+                        friendMsg = msgContent.Message + Environment.NewLine;
+                        PlaySoundFromResource("sound_push");
+                    }
+
+                    string appendDestMsg = chat.AddFriendMessage(friendMsg);
+                    AppendText(TextBoxDestionation, appendDestMsg);
+                    // AppendText(TextBoxDestionation, friendMsg);
+                    // this.RichTextBoxOneView.Text = unencrypted;
+                    Format_Lines_RichTextBox();
+                }
+            }
+        }
+
+
+        public void TooglePeerSessionServerTriState(short svalue)
+        {
+            switch (svalue)
+            {
+                case 0:
+                    PeerSessionTriState = PeerSession3State.Peer2Peer;
+                    SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
+                    try
+                    {
+                        this.ComboBoxContacts.Enabled = false;
+                        this.ComboBoxIp.Enabled = true;
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    this.MenuOptionsItemServerSession.Checked = false;
+                    this.MenuOptionsPeer2Peer.Checked = true;
+                    break;
+                case 2:
+                    this.PeerSessionTriState = PeerSession3State.ChatServer;
+                    SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
+                    try
+                    {
+                        this.ComboBoxContacts.Enabled = true;
+                        this.ComboBoxIp.Enabled = false;
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    this.MenuOptionsItemServerSession.Checked = true;
+                    this.MenuOptionsPeer2Peer.Checked = false;
+                    break;
+                case 1:
+                default:
+                    this.PeerSessionTriState = PeerSession3State.Both;
+                    try
+                    {
+                        this.ComboBoxContacts.Enabled = true;
+                        this.ComboBoxIp.Enabled = true;
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    this.MenuOptionsItemServerSession.Checked = true;
+                    this.MenuOptionsPeer2Peer.Checked = true;
+                    break;
+            }
+            this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState);
+        }
+
+        public void TooglePeerServer(object sender, EventArgs e)
+        {
+            if (e is Area23EventArgs<int> ev)
+            {
+                TooglePeerSessionServerTriState((short)ev.GenericTData);
+                //if (ev.GenericTData < 1)
+                //{
+
+                //    SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
+                //    try
+                //    {
+                //        this.ComboBoxContacts.Enabled = false;
+                //        this.ComboBoxIp.Enabled = true;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //    }
+
+                //}
+                //else if (ev.GenericTData > 1)
+                //{
+                //    SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
+                //    try
+                //    {
+                //        this.ComboBoxContacts.Enabled = true;
+                //        this.ComboBoxIp.Enabled = false;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //    }
+
+                //}
+                //else
+                //{
+                //    try
+                //    {
+                //        this.ComboBoxContacts.Enabled = true;
+                //        this.ComboBoxIp.Enabled = true;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //    }
+                //}
+            }
+        }
+
+        /// <summary>
+        /// OnDragDrop is fired up, when files are dragged into <see cref="GroupBoxes.LinkLabelsBox"/> or <see cref="GroupBoxes.DragNDropBox"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void OnDragNDrop(object sender, EventArgs e)
+        {
+            if (e is Area23EventArgs<string> ea)
+            {
+                if (chat == null)
+                    chat = new Chat(0);
+                if (ea.GenericTData != null && File.Exists(ea.GenericTData))
+                {
+                    FileInfo fi = new FileInfo(ea.GenericTData);
+                    if (fi.Length > Constants.MAX_FILE_BYTE_BUFFEER)
+                    {
+                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds {Constants.MAX_FILE_BYTE_BUFFEER} bytes.", "FileSize larger > 6MB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    string t = GetComboBoxText(this.ComboBoxIp);
+                    if (!string.IsNullOrEmpty(t) && IPAddress.TryParse(t, out IPAddress pi))
+                    {
+                        CqrFile? cf = SendCqrFile(ea.GenericTData, myServerKey, pi);
+                        if (cf != null && cf.Data != null && !string.IsNullOrEmpty(cf.CqrFileName))
+                        {
+                            string userMsg = chat.AddMyMessage(cf.GetFileNameContentLength());
+                            AppendText(TextBoxSource, userMsg);
+                            Format_Lines_RichTextBox();
+                            this.RichTextBoxChat.Text = string.Empty;
+                            SetStatusText(StripStatusLabel, $"File {cf.CqrFileName} send successfully!");
+                        }
+                    }
+                }
+            }
+        }
+
+
         /// <summary>
         /// SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="AttachmentListControl"/>
         /// </summary>
@@ -1008,7 +1063,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
 
-        #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
+
+
+        #endregion delegate jump back invocation target members
 
 
         #region Contacts
@@ -1286,7 +1343,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         importedMsg += $"\n Last: {lastImport}";
                     MessageBox.Show(importedMsg, $"Contacts import finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    
+
                 }
             }
         }
@@ -1679,7 +1736,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         public void MenuOptionsItemClearAllOnClose_Click(object sender, EventArgs e)
         {
             // TODO add to settings
-            this.MenuOptionsItemClearAllOnClose.Checked = (!this.MenuOptionsItemClearAllOnClose.Checked);            
+            this.MenuOptionsItemClearAllOnClose.Checked = (!this.MenuOptionsItemClearAllOnClose.Checked);
             AppDomain.CurrentDomain.SetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE, MenuOptionsItemClearAllOnClose.Checked);
         }
 
@@ -1780,7 +1837,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.MenuItemClear_Click(sender, e);
         }
 
+        private void MenuOptionsPeer2Peer_Click(object sender, EventArgs e)
+        {
+            if (this.MenuOptionsPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(0);
+            else if (!this.MenuOptionsPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(2);
+            else
+                TooglePeerSessionServerTriState(1);
 
+        }
+
+        private void MenuOptionsItemServerSession_Click(object sender, EventArgs e)
+        {
+            if (this.MenuOptionsPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(0);
+            else if (!this.MenuOptionsPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(2);
+            else
+                TooglePeerSessionServerTriState(1);
+        }
     }
 
 }
