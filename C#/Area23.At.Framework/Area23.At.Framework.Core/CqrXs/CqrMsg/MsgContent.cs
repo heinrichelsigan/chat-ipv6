@@ -30,7 +30,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public string _message;
         // public string _rawMessage;
 
-        public MsgEnum MsgType { get; protected internal set; }
+        public MsgEnum MsgType { get;  set; }
 
         // public bool IsMime { get => IsMimeAttachment(); }
 

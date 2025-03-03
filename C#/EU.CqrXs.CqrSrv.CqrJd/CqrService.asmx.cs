@@ -177,7 +177,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         _invited.Add(fullSrvMsg.Sender);
 
 
-                        string chatRoomId = string.Empty;
+                    string chatRoomId = string.Empty;
                     if (string.IsNullOrEmpty(fullSrvMsg.TContent))
                         chatRoomId = DateTime.Now.Area23DateTimeWithMillis() + "_" +  
                             fullSrvMsg.TContent.Replace("@", "_").Replace(".", "_") + "_.json";
@@ -189,6 +189,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     if (string.IsNullOrEmpty(chatRoomId))
                         chatRoomId = DateTime.Now.Area23DateTimeWithMillis() + "_.json";
 
+                    chatRSrvMsg.Sender = fullSrvMsg.Sender;
+                    chatRSrvMsg.Recipients = new HashSet<CqrContact>(_invited);
+                    chatRSrvMsg._hash = fullSrvMsg._hash;
+                    chatRSrvMsg.ChatRoomNr = chatRoomId;
+                    chatRSrvMsg.RawMessage = chatRSrvMsg.ToJson();
+                    chatRSrvMsg._message = chatRSrvMsg.ToJson();
+                    chatRSrvMsg.MsgType = MsgEnum.Json;
                     (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg, chatRoomId);
 
                     ConcurrentBag<string> bag = new ConcurrentBag<string>();

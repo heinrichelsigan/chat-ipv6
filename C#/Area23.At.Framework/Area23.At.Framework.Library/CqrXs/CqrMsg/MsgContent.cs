@@ -21,7 +21,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         public string _hash;
         public string _message;
 
-        public MsgEnum MsgType { get; protected internal set; }
+        public MsgEnum MsgType { get; set; }
 
         // public bool IsMime { get => IsMimeAttachment(); }
 

@@ -717,7 +717,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
             this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(encrypted, EncodingType.Base64);
+            FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
             this.TextBoxDestionation.Text = rfmsg.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
 
             chat.AddMyMessage(fmsg.Message);
