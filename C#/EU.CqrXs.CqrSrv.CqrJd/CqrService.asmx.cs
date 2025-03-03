@@ -177,17 +177,18 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         _invited.Add(fullSrvMsg.Sender);
 
 
+                    
                     string chatRoomId = string.Empty;
                     if (string.IsNullOrEmpty(fullSrvMsg.TContent))
-                        chatRoomId = DateTime.Now.Area23DateTimeWithMillis() + "_" +  
-                            fullSrvMsg.TContent.Replace("@", "_").Replace(".", "_") + "_.json";
+                        chatRoomId = String.Format("{0:yyMMdd_HHmm}_{1}.json", DateTime.Now,
+                            fullSrvMsg.TContent.Replace("@", "_").Replace(".", "_"));
 
                     if (string.IsNullOrEmpty(chatRoomId))
-                        chatRoomId = DateTime.Now.Area23DateTimeWithMillis() + "_" +
-                            fullSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_") + "_.json";
+                        chatRoomId = String.Format("{0:yyMMdd_HHmm}_{1}.json", DateTime.Now,
+                            fullSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_"));
 
                     if (string.IsNullOrEmpty(chatRoomId))
-                        chatRoomId = DateTime.Now.Area23DateTimeWithMillis() + "_.json";
+                        chatRoomId = String.Format("{0:yyMMdd_HHmm}_0.json", DateTime.Now);
 
                     chatRSrvMsg.Sender = fullSrvMsg.Sender;
                     chatRSrvMsg.Recipients = new HashSet<CqrContact>(_invited);
