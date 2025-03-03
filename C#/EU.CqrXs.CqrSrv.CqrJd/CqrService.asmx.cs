@@ -140,34 +140,40 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             _decrypted = string.Empty;
             responseMsg = string.Empty;
             _contact = null;
+            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
+                myServerKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
+            else
+                myServerKey = HttpContext.Current.Request.UserHostAddress;
+            myServerKey += Constants.APP_NAME;
 
             SrvMsg srvMsg = new SrvMsg(myServerKey, myServerKey);
-            FullSrvMsg<string> fullSrvMsg;
+            FullSrvMsg<CqrContact> fullSrvMsg;
+            FullSrvMsg<string> chatRSrvMsg = new FullSrvMsg<string>();
             List<CqrContact> _invited = new List<CqrContact>();
-            SrvMsg responseSrvMsg = new SrvMsg(myServerKey);
+            SrvMsg responseSrvMsg = new SrvMsg(myServerKey, myServerKey);
 
             responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
+                    fullSrvMsg = srvMsg.NCqrSrvMsg<CqrContact>(cryptMsg);
                     _contact = fullSrvMsg.Sender;
-                    _contact = AddContact(fullSrvMsg.Sender);
+                    _contact = AddContact(fullSrvMsg.Sender);                    
                     _invited = fullSrvMsg.Recipients;
                     fullSrvMsg.Recipients.Add(_contact);
                     _invited.Add(_contact);
 
-                    ;
-                    if (string.IsNullOrEmpty(fullSrvMsg.TContent))
-                        fullSrvMsg.TContent = DateTime.Now.Ticks.ToString() + _contact.Email.Replace("@", ".") + "_.json";
+                    string chatRoomId = string.Empty;
+                    if (string.IsNullOrEmpty(fullSrvMsg.TContent.RawMessage))
+                        chatRoomId = DateTime.Now.Ticks.ToString() + _contact.Email.Replace("@", ".") + "_.json";
 
-                    (new JsonChatRoom(fullSrvMsg.TContent)).SaveJsonChatRoom(fullSrvMsg);
+                    (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg);
 
                     ConcurrentBag<string> bag = new ConcurrentBag<string>();
-                    bag.Add(fullSrvMsg.TContent.ToString());
-                    HttpContext.Current.Application[fullSrvMsg.TContent] = bag;
-                    responseMsg = responseSrvMsg.CqrSrvMsg<string>(fullSrvMsg);
+                    bag.Add(chatRoomId.ToString());
+                    HttpContext.Current.Application[chatRoomId] = bag;
+                    responseMsg = responseSrvMsg.CqrSrvMsg<string>(chatRSrvMsg);
                 }
             }
             catch (Exception ex)

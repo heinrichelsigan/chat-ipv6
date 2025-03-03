@@ -722,7 +722,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             FullSrvMsg<CqrContact> fmsg = new FullSrvMsg<CqrContact>(myContact, friendContact, myContact, serverMessage.PipeString);
 
             string encrypted = serverMessage.CqrSrvMsg<CqrContact>(fmsg, MsgKind.Server, EncodingType.Base64);
-            string response = serverMessage.Send_CqrSrvMsgT<CqrContact>(fmsg, ServerIpAddress, EncodingType.Base64);
+            string response = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
+
 
             this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
             FullSrvMsg<CqrContact> rfmsg = serverMessage.NCqrSrvMsg<CqrContact>(encrypted, EncodingType.Base64);

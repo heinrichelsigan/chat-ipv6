@@ -349,6 +349,22 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
+        public string Send_InitChatRoom_Soap<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+            where T : class
+        {
+            string cryptSrv = CqrSrvMsg<T>(fullServerMsg);
+            // string cryptPatner = CqrSrvMsg<TC>(fullClientMsg);
+            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
+
+
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+            string resp = client.ChatRoomInvite(cryptSrv);
+
+            return resp;
+        }
+
+
         public string Send_CqrSrvMsg_Soap<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
             where T : class
             where TC : class
@@ -364,6 +380,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
             return resp;
         }
+
+
 
     }
 
