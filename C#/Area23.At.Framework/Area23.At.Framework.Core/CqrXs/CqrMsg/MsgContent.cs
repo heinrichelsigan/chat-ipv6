@@ -34,7 +34,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         // public bool IsMime { get => IsMimeAttachment(); }
 
-        public string Hash { get => _hash; }
 
         //TODO:
         [Obsolete("TODO: remove it with hash at end", false)]
@@ -57,6 +56,10 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         public string RawMessage { get; set; }
 
+        public string Hash { get => _hash; }
+
+        public string Md5Hash { get; set; }
+        
 
         #region ctor
 
@@ -66,6 +69,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             _message = string.Empty;
             RawMessage = string.Empty;
             _hash = string.Empty;
+            Md5Hash = string.Empty;
         }
 
 
@@ -86,6 +90,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         RawMessage = c.RawMessage;
                         _hash = c._hash;
                         _message = c._message;
+                        Md5Hash = Crypt.Hash.MD5Sum.HashString(_message);
                     }
                     break;
                 case MsgEnum.Xml:
@@ -96,6 +101,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         RawMessage = cXml.RawMessage;
                         _hash = cXml._hash;
                         _message = cXml._message;
+                        Md5Hash = Crypt.Hash.MD5Sum.HashString(_message);
                     }
                     break;
                 case MsgEnum.None: //TODO
@@ -107,6 +113,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     _message = serializedString;
                     RawMessage = serializedString;
                     _hash = VerificationHash(out _message);
+                    Md5Hash = Crypt.Hash.MD5Sum.HashString(RawMessage);
                     break;                
             }
             

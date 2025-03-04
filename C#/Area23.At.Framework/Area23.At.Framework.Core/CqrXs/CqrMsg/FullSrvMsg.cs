@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using System.Text.Json.Serialization;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Static;
+using System.Configuration;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -91,7 +92,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         public TC? TContent { get; set; }
 
-        public string ChatRoomNr { get; set; } = String.Empty;
+        public string ChatRoomNr { get; set; } 
 
         #endregion properties
 
@@ -138,6 +139,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             TContent = tc;
             _hash = hash;
             ChatRoomNr = chatRoomNr;
+            string allMsg = this.ToJson();
+            _message = allMsg;
+            RawMessage = allMsg;
         }
 
 
@@ -155,6 +159,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             TContent = tc;
             _hash = hash;
             ChatRoomNr = chatRoomNr;
+            string allMsg = this.ToJson();
+            _message = allMsg;
+            RawMessage = allMsg;
         }
 
 

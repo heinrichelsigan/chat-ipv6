@@ -690,8 +690,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
-                // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
-                //     return false;
+
+                if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                    return ;
 
                 string chatRoomNr = textBoxChatSession.Text ?? string.Empty;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
@@ -702,24 +703,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     textBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : textBoxChatSession.Text;
                 }
 
-               
-                CqrContact myContact = Entities.Settings.Singleton.MyContact;
-                myContact.CharRoomId = this.textBoxChatSession.Text;
+                CqrContact? friendContact = null;
+                foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
+                {
+                    if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        friendContact = c;
+                        break;
+                    }
+                }
 
-                SrvMsg serverMessage = new SrvMsg(myContact, myContact, CqrXsEuSrvKey, myServerKey);                
+                CqrContact myContact = Entities.Settings.Singleton.MyContact;
+                myContact.CharRoomId = chatRoomNr;
+                friendContact.CharRoomId = chatRoomNr;
+
+                SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);                
                 // this.TextBoxPipe.Text = serverMessage.PipeString;
 
 
-                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, myContact, chatRoomNr, serverMessage.PipeString);
-                fmsg.ChatRoomNr = chatRoomNr;
-                FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, myContact, unencrypted, serverMessage.ClientPipeString);
-                cmsg.ChatRoomNr = chatRoomNr;
-                
-                
-                ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+
+
+                FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+                // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
                 // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
 
-                string response = serverMessage.Send_CqrSrvMsg_Soap<string, string>(fmsg, cmsg, ServerIpAddress, EncodingType.Base64);
+                string response = serverMessage.SendChatMsg_Soap<string, string>(fmsg, cmsg, ServerIpAddress, EncodingType.Base64);
                
                 FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
                 

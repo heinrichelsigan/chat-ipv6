@@ -92,7 +92,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         public TC TContent { get; set; }
 
-        public string ChatRoomNr { get; set; } = String.Empty;
+        public string ChatRoomNr { get; set; } 
 
         #endregion properties
 

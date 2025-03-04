@@ -53,7 +53,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             SrvMsg1 srv1stMsg = new SrvMsg1(_serverKey);
             SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(_serverKey);
             SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
-            Area23Log.LogStatic("_serverKey = " + _serverKey);
             HttpContext.Current.Application["lastmsg"] = cryptMsg;
 
             try
@@ -139,8 +138,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             FullSrvMsg<string> chatRSrvMsg = new FullSrvMsg<string>();
             List<CqrContact> _invited = new List<CqrContact>();
             SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
-
             responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
+
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
@@ -213,7 +212,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
-            List<CqrContact> _invited = new List<CqrContact>();
+            FullSrvMsg<string> chatRSrvMsg = new FullSrvMsg<string>();
             SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
 
             responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
@@ -274,7 +273,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             bool isValid = false;
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
-            List<CqrContact> _invited = new List<CqrContact>();
             SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
 
             responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);

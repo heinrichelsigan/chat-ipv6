@@ -42,7 +42,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 FullSrvMsg<string> srvMsg1 = new FullSrvMsg<string>();
                 srvMsg1.FromJson(jsonText);
                 fullSrvMsg = JsonConvert.DeserializeObject<FullSrvMsg<string>>(jsonText);
-                if (!string.IsNullOrEmpty(fullSrvMsg.Message) && fullSrvMsg.TContent.Equals(JsonChatRoomNumber))
+                if (!string.IsNullOrEmpty(fullSrvMsg.Message) && fullSrvMsg.ChatRoomNr.Equals(JsonChatRoomNumber))
                     HttpContext.Current.Application["ChatRoom"] = fullSrvMsg;
             }
             return fullSrvMsg;

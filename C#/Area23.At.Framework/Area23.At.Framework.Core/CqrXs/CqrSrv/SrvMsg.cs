@@ -69,6 +69,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
+        #region CqrSrvMsg securing server message
+
         /// <summary>
         /// CqrSrvMsg
         /// </summary>
@@ -87,8 +89,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             CqrRecipient = receipient;
 
             FullSrvMsg<string> fullMsg = new FullSrvMsg<string>(sender, receipient, msg, PipeString);
+            fullMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString(msg);
             string allMsg = fullMsg.ToJson();
-            fullMsg._message = allMsg;
+            fullMsg._message = allMsg;            
             fullMsg.RawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
 
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(allMsg);
@@ -117,6 +120,18 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             CqrRecipient = receipient;
 
             FullSrvMsg<T> fullMsg = new FullSrvMsg<T>(sender, receipient, tcontent, PipeString);
+            if (fullMsg.TContent != null)
+            {
+                try
+                {
+                    fullMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString((string)fullMsg.TContent.ToString());
+                }
+                catch
+                (Exception ex)
+                {
+                    Area23Log.LogStatic(ex);
+                }
+            }
             string allMsg = fullMsg.ToJson();
             fullMsg._message = allMsg;
             fullMsg.RawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
@@ -137,10 +152,24 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             CqrSender = fullServMsg.Sender;
             CqrRecipient = fullServMsg.Recipient;
             fullServMsg._hash = (msgKind == MsgKind.Server) ? PipeString : ClientPipeString;
+            if (fullServMsg.TContent != null)
+            {
+                try
+                {
+                    fullServMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString((string)fullServMsg.TContent.ToString());
+                }
+                catch
+                (Exception ex)
+                {
+                    Area23Log.LogStatic(ex);
+                }
+            }
+            if (string.IsNullOrEmpty(fullServMsg.ChatRoomNr))
+                fullServMsg.ChatRoomNr = (!string.IsNullOrEmpty(fullServMsg.Sender.CharRoomId)) ? fullServMsg.Sender.CharRoomId : fullServMsg.ChatRoomNr;
 
             string allMsg = fullServMsg.ToJson();
-            fullServMsg._message = allMsg;
-            fullServMsg.RawMessage = allMsg + "\n" + fullServMsg._hash + "\0";
+            fullServMsg._message = allMsg;            
+            fullServMsg.RawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
 
             byte[] allBytes = EnDeCodeHelper.GetBytesFromString(fullServMsg.RawMessage);
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(fullServMsg._message);
@@ -166,8 +195,20 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             CqrSender = fullServMsg.Sender;
             CqrRecipient = fullServMsg.Recipient;
             fullServMsg._hash = PipeString;
+            if (fullServMsg.TContent != null)
+            {
+                try
+                {
+                    fullServMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString((string)fullServMsg.TContent.ToString());
+                }
+                catch
+                (Exception ex)
+                {
+                    Area23Log.LogStatic(ex);
+                }
+            }            
             string allSrvMsg = fullServMsg.ToJson();
-            fullServMsg._message = allSrvMsg;
+            fullServMsg._message = allSrvMsg;            
             fullServMsg.RawMessage = allSrvMsg + "\n" + fullServMsg._hash + "\0";
 
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(fullServMsg._message);
@@ -178,8 +219,20 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             CqrMessage = EnDeCodeHelper.EncodeBytes(srvMsgBytes, encType);
 
             clientMsg._hash = ClientPipeString;
+            if (clientMsg.TContent != null)
+            {
+                try
+                {
+                    clientMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString((string)clientMsg.TContent.ToString());
+                }
+                catch
+                (Exception ex)
+                {
+                    Area23Log.LogStatic(ex);
+                }
+            }
             string allClientMsg = clientMsg.ToJson();
-            clientMsg._message = allClientMsg;
+            clientMsg._message = allClientMsg;            
             clientMsg.RawMessage = allClientMsg + "\n" + clientMsg._hash + "\0";
 
             byte[] cMsgBytes = EnDeCodeHelper.GetBytesFromString(clientMsg._message);
@@ -195,7 +248,10 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             return rets;
         }
 
+        #endregion CqrSrvMsg securing server message
 
+
+        #region NCqrSrvMsg decrypting server message
 
         /// <summary>
         /// NCqrSrvMsg decryptes an secure encrypted msg 
@@ -223,6 +279,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                         fullMsg.Recipients = fullSrvMsg.Recipients;
                         fullMsg.TContent = fullSrvMsg.TContent;
                         fullMsg.ChatRoomNr = fullSrvMsg.ChatRoomNr;
+                        fullMsg.Md5Hash = fullSrvMsg.Md5Hash;
                     }
                     return fullMsg;
 
@@ -237,11 +294,12 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
+
         public FullSrvMsg<TC> NCqrClientMsgTC<TC>(string clientMessage, EncodingType encType = EncodingType.Base64)
             where TC : class
         {
             FullSrvMsg<TC> clientMsg = new FullSrvMsg<TC>();
-            FullSrvMsg<TC>? clientOutMsg = new FullSrvMsg<TC>();
+            FullSrvMsg<TC> clientOutMsg = new FullSrvMsg<TC>();
             CqrMessage = clientMessage.TrimEnd("\0".ToCharArray());
 
             byte[] cipherBytes = EnDeCodeHelper.DecodeText(CqrMessage, encType);
@@ -261,11 +319,38 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                         hashSymShow.Substring(0, 2) + "...." + hashSymShow.Substring(6), keyBytes.Length));
             }
 
-            if (msgContent != null && !string.IsNullOrEmpty(msgContent.Message))
-                clientOutMsg = clientMsg.FromJson(msgContent.Message);
+            if (msgContent != null && !string.IsNullOrEmpty(msgContent._message) && msgContent._message.IsValidJson())
+            {
+                try
+                {
+                    clientOutMsg = JsonConvert.DeserializeObject<FullSrvMsg<TC>>(msgContent._message);
+
+                    if (clientOutMsg != null && clientOutMsg is FullSrvMsg<TC> fullSrvMsg && fullSrvMsg != null && !string.IsNullOrEmpty(clientOutMsg._message))
+                    {
+                        clientOutMsg.Sender = fullSrvMsg.Sender;
+                        clientOutMsg._hash = fullSrvMsg._hash;
+                        clientOutMsg.Recipients = fullSrvMsg.Recipients;
+                        clientOutMsg.Md5Hash = fullSrvMsg.Md5Hash;
+                        clientOutMsg.ChatRoomNr = fullSrvMsg.ChatRoomNr;
+                        clientOutMsg.TContent = fullSrvMsg.TContent;
+
+                        return clientOutMsg;
+                    }
+                }
+                catch (Exception exJson)
+                {
+                    SLog.Log(exJson);
+                }
+            }
+
+            clientOutMsg.RawMessage = msgContent.RawMessage;
+            clientOutMsg._hash = msgContent._hash;
+            clientOutMsg._message = msgContent._message;
+            clientOutMsg.Md5Hash = msgContent.Md5Hash;
 
             return clientMsg;
         }
+
 
 
         /// <summary>
@@ -295,8 +380,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             ClientSrvMsg<TS, TC> retMes = new ClientSrvMsg<TS, TC>(fullServer, fullClient, serverEncrypted, clientEncrypted);
             return retMes;
         }
-        
-        
+
+        #endregion NCqrSrvMsg decrypting server message
 
 
         /// <summary>
@@ -387,7 +472,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        public string Send_CqrSrvMsg_Soap<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        public string SendChatMsg_Soap<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
             where T : class
             where TC : class
         {
