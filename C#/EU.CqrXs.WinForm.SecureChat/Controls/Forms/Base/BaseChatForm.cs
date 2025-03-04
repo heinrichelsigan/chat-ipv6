@@ -21,6 +21,7 @@ using Area23.At.Framework.Core.Static;
 using Org.BouncyCastle.Asn1.Pkcs;
 using System.Net.Sockets;
 using EU.CqrXs.WinForm.SecureChat.Util;
+using System.ComponentModel;
 // using static System.Net.Mime.MediaTypeNames;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
@@ -39,7 +40,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
     {
 
         #region fields
-
+        static protected internal bool loaded = false;
         protected internal string _CqrXsServerKey = string.Empty;
         protected string savedFile = string.Empty;
         protected string loadDir = string.Empty;
@@ -53,6 +54,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         protected internal OpenFileDialog FileOpenDialog;
         protected internal SaveFileDialog FileSaveDialog;
         protected internal PeerSession3State PeerSessionTriState = PeerSession3State.Both;
+        protected internal BgWorkerMonitor bgWorkerMonitor;
 
         #endregion fields
 
@@ -133,6 +135,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
 
         public static List<IPAddress> Proxies { get => GetProxiesFromSettingsResources(); }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        protected internal List<IPAddress> InterfaceIpAddresses { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        protected internal List<IPAddress> ConnectedIpAddresses { get; set; }
 
 
         protected OpenFileDialog DialogFileOpen
@@ -1322,6 +1330,53 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         #endregion ComboBox
 
         #endregion thread save WinForm delegate callbacks
+
+
+        protected async Task BaseChatForm_Load(object sender, EventArgs e)
+        {
+
+            lock (_lock)
+            {
+                if (!loaded)
+                {
+                    loaded = true;
+                    InterfaceIpAddresses = new List<IPAddress>();
+                    ConnectedIpAddresses = new List<IPAddress>();
+                }
+            }
+
+            bgWorkerMonitor = new BgWorkerMonitor();
+            bgWorkerMonitor.Work_Monitor += new System.EventHandler(async (sender, e) => await BgWorkerMonitor_WorkMonitorAsync(sender, e));
+            bgWorkerMonitor.RunWorkerCompleted += new RunWorkerCompletedEventHandler(BgWorkerMonitor_RunWorkerCompleted);
+            bgWorkerMonitor.WorkerReportsProgress = true;
+            bgWorkerMonitor.WorkerSupportsCancellation = true;                            
+        }
+
+
+        public virtual async Task BgWorkerMonitor_WorkMonitorAsync(object? sender, EventArgs e)
+        { 
+
+        }
+
+
+        public virtual void BgWorkerMonitor_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                SLog.Log($"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Canceled]");
+            }
+            else if (e.Error != null)
+            {
+                
+                string msg = (String.IsNullOrEmpty(e.Error.Message)) ? "[Error]" : "[Error: (msg = " + e.Error.Message + ")]";
+                SLog.Log($"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [msg]");
+            }
+            else
+            {
+                SLog.Log($"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Completed]");
+            }
+        }
+
 
         protected string? GetComboBoxMustHaveText(ref System.Windows.Forms.ComboBox comboBox)
         {

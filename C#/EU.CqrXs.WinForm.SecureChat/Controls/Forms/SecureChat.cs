@@ -28,6 +28,7 @@ using System.Net.Sockets;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using Org.BouncyCastle.Utilities;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -147,6 +148,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 send1stReg = true;
             }
             this.StripProgressBar.Value = 30;
+
+            await BaseChatForm_Load(sender, e);            
+            bgWorkerMonitor.RunWorkerAsync();
 
             StripStatusLabel.Text = "Setup Network";
             await PlaySoundFromResourcesAsync("sound_volatage");
@@ -476,7 +480,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #endregion ComboBoxContacts FocusLeave SelectedIndexChanged
 
-        #region OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
+        #region MenuSend MenuAttach MenuRefresh MenuClear
 
         /// <summary>
         /// Send_1st_Server_Registration sends contact registration to cqrxs.eu server
@@ -867,7 +871,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
 
 
-        #region delegate jump back invocation target members
+        #region OnClientReceive OnDragNDrop TooglePeerServer OnDragNDrop delegate jump back invocation target members
 
         /// <summary>
         /// OnClientReceive event is fired, 
@@ -1104,7 +1108,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
-
         /// <summary>
         /// SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="AttachmentListControl"/>
         /// </summary>
@@ -1128,12 +1131,55 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
 
+        public override async Task BgWorkerMonitor_WorkMonitorAsync(object? sender, EventArgs e)
+        {
+            await base.BgWorkerMonitor_WorkMonitorAsync(sender, e);
+            
+            List<IPAddress> addresses = GetProxiesFromSettingsResources();
+            InterfaceIpAddresses = await NetworkAddresses.GetIpAddressesAsync();            
+            ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);            
+
+            if (PeerSessionTriState == PeerSession3State.Peer2Peer || PeerSessionTriState == PeerSession3State.Both)
+            {
+                if (ipSockListener != null && ipSockListener.ServerSocket != null &&
+                   (ipSockListener.ServerSocket.Connected || ipSockListener.ServerSocket.IsBound) &&
+                   !ipSockListener.ServerSocket.Blocking)
+                {
+                    if (ipSockListener.ServerEndPoint != null)
+                        Area23Log.LogStatic($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
+                }
+                else // Rebind Server Socket
+                {
+                    foreach (ToolStripMenuItem tsmItem in MenuNetworkItemMyIps.DropDown.Items)
+                    {
+                        if (tsmItem.Checked)
+                        {
+                            foreach (IPAddress addr in InterfaceIpAddresses)
+                            {
+                                if (tsmItem.Text == addr.AddressFamily.ShortInfo() + addr.ToString())
+                                {
+                                    tsmItem.Select();
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            
+        }
 
 
-        #endregion delegate jump back invocation target members
+        public override void BgWorkerMonitor_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            base.BgWorkerMonitor_RunWorkerCompleted(sender, e);
+        }
+
+        #endregion OnClientReceive OnDragNDrop TooglePeerServer OnDragNDrop delegate jump back invocation target members
 
 
-        #region Contacts
+            #region Contacts
 
         private void AddContactsToIpContact()
         {
@@ -1517,83 +1563,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
             SetStatusText(StripStatusLabel, $"Setup Network: Several proxy addresses fetched.");
-            List<IPAddress> interfaceIPAddrs = await NetworkAddresses.GetIpAddressesAsync();
-            SetStatusText(StripStatusLabel, $"Setup Network: All network interfaces addresses fetched.");
-            List<IPAddress> connectedIPs = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
-            SetStatusText(StripStatusLabel, $"Setup Network: All active connected ip addresses fetched.");
 
-
-            List<string> myIpStrList = new List<string>();
-            int mchecked = 0;
-            this.MenuNetworkItemIPv6Secure.Checked = false;
-            foreach (IPAddress addr in interfaceIPAddrs)
-            {
-                if (addr != null)
-                {
-                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily.ShortInfo() + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
-                    item.Checked = false;
-
-                    if (IPAddress.IsLoopback(addr))
-                    {
-                        item.BackColor = SystemColors.ActiveCaption;
-                        item.ForeColor = SystemColors.ActiveCaptionText;
-                        SetMenuItemForeColor(item, SystemColors.ActiveCaptionText);
-                        SetMenuItemBackColor(item, SystemColors.ActiveCaption);
-                    }
-                    else
-                    {
-                        item.BackColor = SystemColors.MenuBar;
-                        item.ForeColor = SystemColors.GrayText;
-                        SetMenuItemForeColor(item, SystemColors.GrayText);
-                        SetMenuItemBackColor(item, SystemColors.MenuBar);
-                    }
-
-                    if (connectedIPs != null && connectedIPs.Count > 0)
-                    {
-                        foreach (IPAddress connectedIp in connectedIPs)
-                        {
-                            if (addr.IsSameIp(connectedIp))
-                            {
-                                item.BackColor = SystemColors.MenuBar;
-                                item.ForeColor = SystemColors.MenuText;
-                                SetMenuItemForeColor(item, SystemColors.MenuText);
-                                SetMenuItemBackColor(item, SystemColors.MenuBar);
-
-
-                                if (mchecked++ == 0)
-                                {
-                                    item.BackColor = SystemColors.MenuHighlight;
-                                    item.ForeColor = SystemColors.MenuText;
-                                    SetMenuItemForeColor(item, SystemColors.MenuText);
-                                    SetMenuItemBackColor(item, SystemColors.MenuHighlight);
-
-                                    clientIpAddress = addr;
-                                    item.Checked = true;
-                                    if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                                        SetMenuItemChecked(this.MenuNetworkItemIPv6Secure, true);
-                                    // this.MenuNetworkItemIPv6Secure.Checked = true;
-                                    clientSocket_DataReceived =
-                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
-                                        {
-                                            OnClientReceive(sender, eventReceived);
-                                        };
-                                    receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
-                                    ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
-                                }
-
-                                break;
-                            }
-                        }
-
-                    }
-
-                    myIpStrList.Add(addr.ToString());
-                    AddMenuItemToItems(MenuNetworkItemMyIps, (ToolStripDropDownItem)item);
-                    // this.MenuNetworkItemMyIps.DropDownItems.Add(item);
-                }
-            }
-
-            SetStatusText(StripStatusLabel, $"Setup Network: All interface addresses added to menu. Not connected if addrs grayed.");
+            List<IPAddress> myIpList = await SetupAllNetworkInterfacesAndConnectedIpAddresses(addresses);
 
             ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily.ShortInfo() + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
             extIpItem.Checked = true;
@@ -1619,7 +1590,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetStatusText(StripStatusLabel, $"Setup Network: External client ip address added to menu.");
 
 
-            mchecked = 0;
+            int mchecked = 0;
             List<string> proxyList = new List<string>();
             foreach (IPAddress addrProxy in addresses)
             {
@@ -1677,13 +1648,111 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (Entities.Settings.Singleton != null)
             {
                 Entities.Settings.Singleton.Proxies = proxyList;
-                Entities.Settings.Singleton.MyIPs = myIpStrList;
+                Entities.Settings.Singleton.MyIPs = myIpList.ConvertAll(x => x.ToString()).ToList();
                 Entities.Settings.SaveSettings(Entities.Settings.Singleton);
             }
 
             SetStatusText(StripStatusLabel, $"Setup Network complete!");
         }
 
+
+
+        internal async Task<List<IPAddress>> SetupAllNetworkInterfacesAndConnectedIpAddresses(List<IPAddress> addresses)
+        {
+            InterfaceIpAddresses = await NetworkAddresses.GetIpAddressesAsync();
+            SetStatusText(StripStatusLabel, $"Setup Network: All network interfaces addresses fetched.");
+            ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
+            SetStatusText(StripStatusLabel, $"Setup Network: All active connected ip addresses fetched.");
+
+            MenuNetworkItemMyIps.DropDown.Items.Clear();
+            MenuItemExternalIp = new ToolStripMenuItem();
+            MenuItemExternalIp.BackColor = SystemColors.MenuBar;
+            MenuItemExternalIp.Name = "MenuItemExternalIp";
+            MenuItemExternalIp.Size = new Size(160, 22);
+            MenuItemExternalIp.Text = "External Ip's";
+            MenuItemExternalIp.Visible = true;            
+            MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
+            MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { MenuItemExternalIp });
+            MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
+            MenuNetworkItemMyIps.Size = new Size(177, 22);
+            MenuNetworkItemMyIps.Text = "my ip's";
+            
+
+            List<IPAddress> myIpList = new List<IPAddress>();
+            int mchecked = 0;
+            this.MenuNetworkItemIPv6Secure.Checked = false;
+            foreach (IPAddress addr in InterfaceIpAddresses)
+            {
+                if (addr != null)
+                {
+                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily.ShortInfo() + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
+                    item.Checked = false;
+
+                    if (IPAddress.IsLoopback(addr))
+                    {
+                        item.BackColor = SystemColors.ActiveCaption;
+                        item.ForeColor = SystemColors.ActiveCaptionText;
+                        SetMenuItemForeColor(item, SystemColors.ActiveCaptionText);
+                        SetMenuItemBackColor(item, SystemColors.ActiveCaption);
+                    }
+                    else
+                    {
+                        item.BackColor = SystemColors.MenuBar;
+                        item.ForeColor = SystemColors.GrayText;
+                        SetMenuItemForeColor(item, SystemColors.GrayText);
+                        SetMenuItemBackColor(item, SystemColors.MenuBar);
+                    }
+
+                    if (ConnectedIpAddresses != null && ConnectedIpAddresses.Count > 0)
+                    {
+                        foreach (IPAddress connectedIp in ConnectedIpAddresses)
+                        {
+                            if (addr.IsSameIp(connectedIp))
+                            {
+                                item.BackColor = SystemColors.MenuBar;
+                                item.ForeColor = SystemColors.MenuText;
+                                SetMenuItemForeColor(item, SystemColors.MenuText);
+                                SetMenuItemBackColor(item, SystemColors.MenuBar);
+
+
+                                if (mchecked++ == 0)
+                                {
+                                    item.BackColor = SystemColors.MenuHighlight;
+                                    item.ForeColor = SystemColors.MenuText;
+                                    SetMenuItemForeColor(item, SystemColors.MenuText);
+                                    SetMenuItemBackColor(item, SystemColors.MenuHighlight);
+
+                                    clientIpAddress = addr;
+                                    item.Checked = true;
+                                    if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                                        SetMenuItemChecked(this.MenuNetworkItemIPv6Secure, true);
+                                    // this.MenuNetworkItemIPv6Secure.Checked = true;
+                                    clientSocket_DataReceived =
+                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                        {
+                                            OnClientReceive(sender, eventReceived);
+                                        };
+                                    receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
+                                    ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
+                                }
+
+                                break;
+                            }
+                        }
+
+                    }
+
+                    myIpList.Add(addr);
+                    AddMenuItemToItems(MenuNetworkItemMyIps, (ToolStripDropDownItem)item);
+                    // this.MenuNetworkItemMyIps.DropDownItems.Add(item);
+                }
+            }
+
+            SetStatusText(StripStatusLabel, $"Setup Network: All interface addresses added to menu. Not connected if addrs grayed.");
+
+            return myIpList;
+
+        }
 
         /// <summary>
         /// IPAdressSelected Delegate is invoked, 
