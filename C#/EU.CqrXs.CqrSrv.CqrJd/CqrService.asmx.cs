@@ -214,7 +214,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
             List<CqrContact> _invited = new List<CqrContact>();
-            SrvMsg responseSrvMsg = new SrvMsg(_serverKey);
+            SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
 
             responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
 
@@ -275,7 +275,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
             List<CqrContact> _invited = new List<CqrContact>();
-            SrvMsg responseSrvMsg = new SrvMsg(_serverKey);
+            SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
 
             responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
 
