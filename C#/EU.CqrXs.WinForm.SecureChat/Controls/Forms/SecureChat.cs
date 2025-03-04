@@ -27,6 +27,7 @@ using EU.CqrXs.WinForm.SecureChat.Controls.UserControls;
 using System.Net.Sockets;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using Org.BouncyCastle.Utilities;
+using Newtonsoft.Json;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -653,34 +654,87 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 StripStatusLabel.Text = "Nothing to send!";
                 return;
             }
-            if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
-            {
-                StripStatusLabel.Text = "Nothing to send (no ip addr).";
-                return;
-            }
 
             string unencrypted = this.RichTextBoxChat.Text; //.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
 
-            try
+            if (this.PeerSessionTriState == PeerSession3State.Peer2Peer)
             {
-                if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
-                    throw new InvalidDataException("Cannot parse IPAddress " + ipAddrString);
 
-                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+                if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
+                {
+                    StripStatusLabel.Text = "Nothing to send (no ip addr).";
+                    return;
+                }
 
-                string userMsg = chat.AddMyMessage(unencrypted);
-                AppendText(TextBoxSource, userMsg);
-                Format_Lines_RichTextBox();
-                this.RichTextBoxChat.Text = string.Empty;
-                StripStatusLabel.Text = $"Send to {partnerIpAddress} successfully.";
-                PlaySoundFromResource("sound_arrow");
+                try
+                {
+                    if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
+                        throw new InvalidDataException("Cannot parse IPAddress " + ipAddrString);
+
+                    Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                    pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+
+                    string userMsg = chat.AddMyMessage(unencrypted);
+                    AppendText(TextBoxSource, userMsg);
+                    Format_Lines_RichTextBox();
+                    this.RichTextBoxChat.Text = string.Empty;
+                    StripStatusLabel.Text = $"Send to {partnerIpAddress} successfully.";
+                    PlaySoundFromResource("sound_arrow");
+                }
+                catch (Exception ex)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
+                    SetStatusText(StripStatusLabel, $"Sending to {ipAddrString} failed: {ex.Message}");
+                    PlaySoundFromResource("sound_warning");
+                }
             }
-            catch (Exception ex)
+            else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
-                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
-                SetStatusText(StripStatusLabel, $"Sending to {ipAddrString} failed: {ex.Message}");
-                PlaySoundFromResource("sound_warning");
+                // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                //     return false;
+
+                string chatRoomNr = textBoxChatSession.Text ?? string.Empty;
+                if (string.IsNullOrEmpty(textBoxChatSession.Text))
+                {
+                    InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
+                    dialog.ShowDialog();
+                    chatRoomNr = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                    textBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : textBoxChatSession.Text;
+                }
+
+               
+                CqrContact myContact = Entities.Settings.Singleton.MyContact;
+                myContact.CharRoomId = this.textBoxChatSession.Text;
+
+                SrvMsg serverMessage = new SrvMsg(myContact, myContact, CqrXsEuSrvKey, myServerKey);                
+                // this.TextBoxPipe.Text = serverMessage.PipeString;
+
+
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, myContact, chatRoomNr, serverMessage.PipeString);
+                fmsg.ChatRoomNr = chatRoomNr;
+                FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, myContact, unencrypted, serverMessage.ClientPipeString);
+                cmsg.ChatRoomNr = chatRoomNr;
+                
+                
+                ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
+                // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
+
+                string response = serverMessage.Send_CqrSrvMsg_Soap<string, string>(fmsg, cmsg, ServerIpAddress, EncodingType.Base64);
+               
+                FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
+                
+                // TODO: Email zur Einladung
+
+                string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+                this.TextBoxDestionation.Text = msgChatRoom;
+
+                chat.AddMyMessage(String.Join(", ", fmsg.Emails.ToArray()));
+                chat.AddFriendMessage(msgChatRoom);
+
+                // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
+                Format_Lines_RichTextBox();
+
+                SetStatusText(StripStatusLabel, "Finished 1st registration");
             }
             // otherwise send message to registered user via server
             // Always encrypt via key

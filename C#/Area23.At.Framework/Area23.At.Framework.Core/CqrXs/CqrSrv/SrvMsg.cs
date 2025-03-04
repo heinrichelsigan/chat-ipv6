@@ -391,14 +391,15 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             where T : class
             where TC : class
         {
-            string cryptSrv = CqrSrvMsg<T>(fullServerMsg);
-            string cryptPatner = CqrSrvMsg<TC>(fullClientMsg);
+            string cryptSrv = CqrSrvMsg<T>(fullServerMsg, MsgKind.Server);
+            string cryptPatner = CqrSrvMsg<TC>(fullClientMsg, MsgKind.Client);
+            
             string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
             string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
 
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
-            string resp = client.SendSrvMsg(cryptSrv, cryptPatner);
+            string resp = client.ChatRoomPushMessage(cryptSrv, cryptPatner);
 
             return resp;
         }
