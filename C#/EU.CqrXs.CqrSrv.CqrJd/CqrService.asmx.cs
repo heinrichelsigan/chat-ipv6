@@ -11,6 +11,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -160,8 +161,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     if (addSender)
                         _invited.Add(fullSrvMsg.Sender);
 
-
-
                     string chatRoomId = string.Empty;
                     if (string.IsNullOrEmpty(fullSrvMsg.TContent))
                         chatRoomId = String.Format("{0:yyMMdd_HHmm}_{1}.json", DateTime.Now,
@@ -183,9 +182,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     chatRSrvMsg.MsgType = MsgEnum.Json;
                     (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg, chatRoomId);
 
-                    ConcurrentBag<string> bag = new ConcurrentBag<string>();
-                    bag.Add(chatRoomId.ToString());
-                    HttpContext.Current.Application[chatRoomId] = bag;
+                    DateTime now = DateTime.Now;
+                    Dictionary<DateTime, string> dict = new Dictionary<DateTime, string>();
+                    dict.Add(now, "");
+                    HttpContext.Current.Application[chatRoomId] = dict;
+                    chatRSrvMsg.Sender.LastPolled = now;
+                    chatRSrvMsg.Sender.PolledMsgDates.Add(now);
+                    _contact.LastPolled = now;
+                    _contact.PolledMsgDates.Add(now);
+                    UpdateContacts(_contact, chatRSrvMsg, chatRoomId);
+
                     responseMsg = responseSrvMsg.CqrSrvMsg<string>(chatRSrvMsg);
                 }
             }
@@ -206,13 +212,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             _decrypted = string.Empty;
             responseMsg = string.Empty;
             _contact = null;
-            bool isValid = false;
             GetContacts();
             _serverKey = GetServerKey();
 
+            bool isValid = false;
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
-            FullSrvMsg<string> chatRSrvMsg = new FullSrvMsg<string>();
             SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
 
             responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
@@ -222,30 +227,61 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
-                    _contact = fullSrvMsg.Sender;
-                    _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.CharRoomId;
+                    _contact = null;
+                    _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.ChatRoomId;
 
                     FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).LoadJsonChatRoom(_chatRoomNumber);
-                    if (fullSrvMsg.ChatRoomNr.Equals(_chatRoomNumber))
+                    if (_chatRoomNumber.Equals(chatRoomMsg.ChatRoomNr))
                     {
                         foreach (CqrContact c in chatRoomMsg.Recipients)
                         {
                             if (fullSrvMsg.Sender.NameEmail == c.NameEmail ||
                                 fullSrvMsg.Sender.Email == c.Email)
+                            {
+                                _contact = c;
                                 isValid = true;
+                            }
                         }
                         if (fullSrvMsg.Sender == chatRoomMsg.Sender)
+                        {
+                            _contact = chatRoomMsg.Sender;
                             isValid = true;
+                        }
                     }
                     if (isValid)
                     {
+                        
+
                         if (HttpContext.Current.Application[_chatRoomNumber] != null)
                         {
-                            ConcurrentBag<string> bag = (ConcurrentBag<string>)HttpContext.Current.Application[_chatRoomNumber];
-                            chatRoomMsg.TContent = bag.ToArray().ToString();
-                        }
+                            Dictionary<DateTime, string> dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber];
+                            List<DateTime> pollKeys = dict.Keys.Where(k => k.Ticks > fullSrvMsg.Sender.LastPolled.Ticks).ToList();
+                            DateTime polledMsgDate = DateTime.MinValue;
+                            if (pollKeys.Count > 0)
+                            {
+                                polledMsgDate = pollKeys[0];
+                                string firstPollClientMsg = dict[pollKeys[0]];
+                                if (string.IsNullOrEmpty(firstPollClientMsg))
+                                {
+                                    if (pollKeys.Count > 1)
+                                    {
+                                        polledMsgDate = pollKeys[1];
+                                        firstPollClientMsg = dict[pollKeys[1]];
+                                    }
+                                }
 
+                                chatRoomMsg.TContent = firstPollClientMsg;
+
+                                _contact.LastPolled = polledMsgDate;
+                                _contact.PolledMsgDates.Add(polledMsgDate);
+                                chatRoomMsg.Sender.LastPolled = polledMsgDate;
+                                chatRoomMsg.Sender.PolledMsgDates.Add(polledMsgDate);
+                                UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
+                            }
+
+                        }
                     }
+
                     responseMsg = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
                 }
@@ -282,8 +318,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
-                    _contact = fullSrvMsg.Sender;
-                    _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.CharRoomId;
+                    _contact = null;
+                    _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.ChatRoomId;
 
                     FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).LoadJsonChatRoom(_chatRoomNumber);
                     if (_chatRoomNumber.Equals(chatRoomMsg.ChatRoomNr))
@@ -292,18 +328,33 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         {
                             if (fullSrvMsg.Sender.NameEmail == c.NameEmail ||
                                 fullSrvMsg.Sender.Email == c.Email)
+                            {
+                                _contact = c;
                                 isValid = true;
+                            }
                         }
                         if (fullSrvMsg.Sender == chatRoomMsg.Sender)
+                        {
+                            _contact = fullSrvMsg.Sender;
                             isValid = true;
+                        }
                     }
                     if (isValid)
                     {
-                        ConcurrentBag<string> bag = new ConcurrentBag<string>();
+                        DateTime now = DateTime.Now;
+
+                        Dictionary<DateTime, string> dict = new Dictionary<DateTime, string>();                      
                         if (HttpContext.Current.Application[_chatRoomNumber] != null)
-                            bag = (ConcurrentBag<string>)HttpContext.Current.Application[_chatRoomNumber];
-                        bag.Add(chatRoomMembersCrypted);
-                        HttpContext.Current.Application[_chatRoomNumber] = bag;
+                            dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber];                        
+                        dict.Add(now, chatRoomMembersCrypted);
+                        HttpContext.Current.Application[_chatRoomNumber] = dict;
+                        
+                        _contact.LastPolled = now;
+                        _contact.PolledMsgDates.Add(now);
+                        chatRoomMsg.Sender.LastPolled = now;
+                        chatRoomMsg.Sender.PolledMsgDates.Add(now);
+                        
+                        UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
                     }
                     responseMsg = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
@@ -456,8 +507,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             return _contacts.ToArray();
         }
 
-
-
         internal CqrContact AddContact(CqrContact cqrContact)
         {
             GetContacts();
@@ -489,6 +538,37 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             return foundCt;
         }
 
+
+        internal void UpdateContacts(CqrContact contact, FullSrvMsg<string> chatRoomMsg, string chatRoomNr) 
+        {
+            for (int i =  0; i < chatRoomMsg.Recipients.Count; i++)
+            {             
+                if ((chatRoomMsg.Recipients.ElementAt(i).Cuid == contact.Cuid) &&
+                    (chatRoomMsg.Recipients.ElementAt(i).Name.Equals(contact.Name) ||
+                    chatRoomMsg.Recipients.ElementAt(i).NameEmail.Equals(contact.NameEmail)))
+                {
+                    chatRoomMsg.Recipients.Remove(chatRoomMsg.Recipients.ElementAt(i));
+                    chatRoomMsg.Recipients.Add(contact);
+                    break;
+                }
+            }
+            (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
+
+            GetContacts();
+            for (int j = 0; j < _contacts.Count; j++)
+            {
+                if ((_contacts.ElementAt(j).Cuid == contact.Cuid) &&
+                    (_contacts.ElementAt(j).Name.Equals(contact.Name) ||
+                        _contacts.ElementAt(j).NameEmail.Equals(contact.NameEmail)))
+                {
+                    _contacts.Remove(chatRoomMsg.Recipients.ElementAt(j));
+                    _contacts.Add(contact);
+                    break;
+                }
+            }
+            JsonContacts.SaveJsonContacts(_contacts);
+
+        }
 
     }
 

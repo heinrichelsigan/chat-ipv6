@@ -10,9 +10,11 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using EU.CqrXs.CqrSrv.CqrJd.Util;
+using EU.CqrXs.CqrSrv.CqrJd.Settings;
+using EU.CqrXs.CqrSrv.CqrJd;
 using Area23.At.Framework.Library.Util;
 
-namespace EU.CqrXs.CqrSrv.CqrJd
+namespace EU.CqrXs.CqrSrv.CqrJd.Settings
 {
     public partial class TestForm : CqrJdBasePage
     {

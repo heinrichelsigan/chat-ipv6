@@ -48,10 +48,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public IPAddress ClientIp { get; set; }
 
 
-        public string CharRoomId { get; set; }
+        public string ChatRoomId { get; set; }
 
+        public List<DateTime> PolledMsgDates { get; set; }
 
-        public DateTime ValidFrom { get; set; }
+        public DateTime LastPolled { get; set; }
 
         #endregion from server given properties
 
@@ -69,6 +70,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Address = string.Empty;
             SecretKey = string.Empty;
             ContactImage = null;
+            LastPolled = DateTime.MinValue;
+            PolledMsgDates = new List<DateTime>();
         }
 
         public CqrContact(string cs, MsgEnum msgArt = MsgEnum.Json)
@@ -83,6 +86,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Email = email;
             Mobile = mobile;
             Address = address;
+            LastPolled = DateTime.MinValue;
+            PolledMsgDates = new List<DateTime>();
         }
 
         public CqrContact(Guid guid, string name, string email, string mobile, string address) : base()
@@ -92,6 +97,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Email = email;
             Mobile = mobile;
             Address = address;
+            LastPolled = DateTime.MinValue;
+            PolledMsgDates = new List<DateTime>(); 
         }
 
         public CqrContact(int cid, string name, string email, string mobile, string address, CqrImage cqrImage)

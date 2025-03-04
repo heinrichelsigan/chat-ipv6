@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TestForm.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.TestForm" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TestForm.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.Settings.TestForm" %>
 
 <!DOCTYPE html>
 

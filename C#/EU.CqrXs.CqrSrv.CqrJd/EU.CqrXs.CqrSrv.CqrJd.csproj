@@ -238,7 +238,7 @@
     <Content Include="res\js\rpn.js" />
     <Content Include="Settings\Default.aspx" />
     <Content Include="Settings\.htaccess" />
-    <Content Include="TestForm.aspx" />
+    <Content Include="Settings\TestForm.aspx" />
     <Content Include="W.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -309,11 +309,11 @@
     <Compile Include="Settings\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="TestForm.aspx.cs">
+    <Compile Include="Settings\TestForm.aspx.cs">
       <DependentUpon>TestForm.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="TestForm.aspx.designer.cs">
+    <Compile Include="Settings\TestForm.aspx.designer.cs">
       <DependentUpon>TestForm.aspx</DependentUpon>
     </Compile>
     <Compile Include="Util\GlobalAppSettings.cs" />

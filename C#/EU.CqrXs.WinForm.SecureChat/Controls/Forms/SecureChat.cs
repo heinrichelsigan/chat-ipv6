@@ -714,8 +714,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
 
                 CqrContact myContact = Entities.Settings.Singleton.MyContact;
-                myContact.CharRoomId = chatRoomNr;
-                friendContact.CharRoomId = chatRoomNr;
+                myContact.ChatRoomId = chatRoomNr;
+                friendContact.ChatRoomId = chatRoomNr;
 
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);                
                 // this.TextBoxPipe.Text = serverMessage.PipeString;

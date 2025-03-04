@@ -165,7 +165,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                 }
             }
             if (string.IsNullOrEmpty(fullServMsg.ChatRoomNr))
-                fullServMsg.ChatRoomNr = (!string.IsNullOrEmpty(fullServMsg.Sender.CharRoomId)) ? fullServMsg.Sender.CharRoomId : fullServMsg.ChatRoomNr;
+                fullServMsg.ChatRoomNr = (!string.IsNullOrEmpty(fullServMsg.Sender.ChatRoomId)) ? fullServMsg.Sender.ChatRoomId : fullServMsg.ChatRoomNr;
 
             string allMsg = fullServMsg.ToJson();
             fullServMsg._message = allMsg;            
