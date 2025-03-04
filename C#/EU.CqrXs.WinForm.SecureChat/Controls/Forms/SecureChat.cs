@@ -742,7 +742,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
                 Format_Lines_RichTextBox();
-
+                this.RichTextBoxChat.Text = string.Empty;
+                StripStatusLabel.Text = $"Send to {chatRoomNr} via server {ServerIpAddress} successfully.";
+                PlaySoundFromResource("sound_arrow");
                 SetStatusText(StripStatusLabel, "Finished 1st registration");
             }
             // otherwise send message to registered user via server
