@@ -30,6 +30,7 @@ using Org.BouncyCastle.Utilities;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Windows.Interop;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -1280,7 +1281,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         public override async Task BgWorkerMonitor_WorkMonitorAsync(object? sender, EventArgs e)
         {
             await base.BgWorkerMonitor_WorkMonitorAsync(sender, e);
-            
+
+            IPAddress? newAddr = null;
+            ToolStripMenuItem? newIpIem = null;
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
             InterfaceIpAddresses = await NetworkAddresses.GetIpAddressesAsync();            
             ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);            
@@ -1296,6 +1299,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 else // Rebind Server Socket
                 {
+
                     foreach (ToolStripMenuItem tsmItem in MenuNetworkItemMyIps.DropDown.Items)
                     {
                         if (tsmItem.Checked)
@@ -1304,13 +1308,79 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             {
                                 if (tsmItem.Text == addr.AddressFamily.ShortInfo() + addr.ToString())
                                 {
-                                    tsmItem.Select();
+                                    newIpIem = tsmItem;
+                                    newAddr = addr;
                                     break;
                                 }
                             }
 
                         }
                     }
+
+                    if (newIpIem != null && newAddr != null)
+                    {
+                        ToolStripMenuItem? oldAddrIf = null;
+
+                        foreach (ToolStripMenuItem dditem in this.MenuNetworkItemMyIps.DropDownItems)
+                            if (dditem.Checked)
+                                oldAddrIf = dditem;
+
+                        IPAddress? clIp = clientIpAddress;
+                        try
+                        {
+                            if (IPAddress.TryParse(newAddr.ToString(), out clIp))
+                            {
+                                newIpIem.Checked = true;
+                                if (oldAddrIf != null)
+                                    oldAddrIf.Checked = false;
+                                clientIpAddress = clIp;
+
+                                try
+                                {
+                                    if (ipSockListener != null)
+                                        ipSockListener.Dispose();
+                                }
+                                catch (Exception exi)
+                                {
+                                    SLog.Log(exi);
+                                }
+                                try
+                                {
+                                    ipSockListener = null;
+                                }
+                                catch (Exception exi)
+                                {
+                                    SLog.Log(exi);
+                                }
+
+                                Thread.Sleep(Constants.CLOSING_TIMEOUT);
+                                clientSocket_DataReceived =
+                                            delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                            {
+                                                OnClientReceive(sender, eventReceived);
+                                            };
+                                receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
+                                ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
+                                SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
+
+                                if (IPAddress.IsLoopback(clientIpAddress))
+                                {
+                                    if (clientIpAddress.AddressFamily == AddressFamily.InterNetwork)
+                                        SetComboBoxText(this.ComboBoxIp, "127.0.0.1");
+                                    else if (clientIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
+                                        if (clientIpAddress.ToString().Contains("::1"))
+                                            SetComboBoxText(this.ComboBoxIp, "::1");
+
+                                    //ComboBoxIp_FocusLeave(sender, e);
+                                }
+                            }
+                        }
+                        catch (Exception exc)
+                        {
+                            SLog.Log(exc);
+                        }
+                    }
+
                 }
             }
             

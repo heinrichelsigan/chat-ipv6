@@ -29,14 +29,14 @@
                     🔑 <asp:CheckBox ID="CheckBoxDecrypt" runat="server" ToolTip="check to decrypt" Text="Decrypt" Checked="false" />
                 </span>
                 <span style="display: block; border-style: outset; border-width: 1px; border-color: blanchedalmond; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;font-size: larger">
-                    <asp:TextBox ID="TextBoxSource" runat="server" TextMode="MultiLine" MaxLength="65536" Rows="10" Columns="48" ValidateRequestMode="Disabled" ToolTip="TextBox source" Text="" Width="480px" />
+                    <asp:TextBox ID="TextBoxSource" runat="server" TextMode="MultiLine" MaxLength="65536" Rows="10" Columns="48" ValidateRequestMode="Enabled" ToolTip="TextBox source" Text="" Width="480px" />
                 </span>                
             </div>
             <hr />
             <div>
                 pipe #hash: <asp:TextBox ID="TextBoxPipeHash" runat="server" ToolTip="encrypt pipe hash" ReadOnly="true" Text="" />
                 <br />
-                <asp:TextBox ID="TextBoxEnDeCrypted" runat="server"  ReadOnly="true" TextMode="MultiLine" MaxLength="65536" Rows="10" Columns="48" ValidateRequestMode="Disabled" ToolTip="TextBox destination" Text="" Width="480px"></asp:TextBox>
+                <asp:TextBox ID="TextBoxEnDeCrypted" runat="server"  ReadOnly="true" TextMode="MultiLine" MaxLength="65536" Rows="10" Columns="48" ValidateRequestMode="Enabled" ToolTip="TextBox destination" Text="" Width="480px"></asp:TextBox>
                 <br />                               
                 <br />
                 <asp:Button ID="Buttonclear" runat="server" Text="Clear" ToolTip="Clear" OnClick="Buttonclear_Click" />

@@ -334,6 +334,46 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             return base.TestService();
         }
 
+
+        [WebMethod]
+        public virtual string TestCache()
+        {
+            string testReport = $"TestCache() started {DateTime.Now.Area23DateTimeWithMillis()}\n";
+            try
+            {
+                InitMethod(); 
+            }
+            catch (Exception ex1)
+            {
+                testReport += $"Exception {ex1.GetType()}: {ex1.Message}\n\t{ex1}\n";
+            }
+            
+            testReport += "InitMethod() completed.\n";
+
+            Dictionary<Guid, CqrContact> dictCacheTest = new Dictionary<Guid, CqrContact>();
+            foreach (CqrContact c in _contacts)
+            {
+                if (c != null && c.Cuid != null && c.Cuid != Guid.Empty && 
+                    !dictCacheTest.Keys.Contains(c.Cuid))
+                    dictCacheTest.Add(c.Cuid, c);
+            }
+            testReport += $"Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
+            if (UseAmazonElasticCache)
+            {
+                try
+                {
+                    memClient.Store(StoreMode.Add, "TestCache", dictCacheTest, new TimeSpan(23, 23, 23, 23));
+                }
+                catch (Exception ex2)
+                {
+                    testReport += $"Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+                }
+            }
+
+            return testReport;
+        }
+
+
     }
 
 

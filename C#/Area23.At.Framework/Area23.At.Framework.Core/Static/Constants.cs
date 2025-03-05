@@ -78,7 +78,7 @@ namespace Area23.At.Framework.Core.Static
 
         public const string CQRXS_URL = "https://cqrxs.eu/";
         public const string CQRXS_HELP_URL = "https://cqrxs.eu/help/";
-        public const string DECRYPTED_TEXT_AREA = "<textarea cols = \"48\" rows=\"10\" name=\"TextBoxDecrypted\" id=\"TextBoxDecrypted\" title=\"TextBox Current Message\" ValidateRequestMode=\"Disabled\" style=\"width:480px;\" >";
+        public const string DECRYPTED_TEXT_AREA = "<textarea cols = \"48\" rows=\"10\" name=\"TextBoxDecrypted\" id=\"TextBoxDecrypted\" title=\"TextBox Current Message\" ValidateRequestMode=\"Enabled\" style=\"width:480px;\" >";
         public const string DECRYPTED_TEXT_BOX = "TextBoxDecrypted";
         public const string DECRYPTED_TEXT_AREA_END = "</textarea>";
         public const string CQRXS_TEST_FORM = "CqrXsTestForm";

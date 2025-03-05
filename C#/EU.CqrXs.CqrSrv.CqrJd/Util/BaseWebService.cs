@@ -15,8 +15,6 @@ using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using System.IO;
 using Area23.At.Framework.Library.Static;
 using System.Diagnostics.Contracts;
-using Amazon.ElastiCacheCluster;
-using Enyim.Caching;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
@@ -32,23 +30,42 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
         protected internal string _responseString = string.Empty;
         protected internal string _chatRoomNumber = string.Empty;
-        protected internal ElastiCacheClusterConfig config;
-        protected internal MemcachedClient memClient;
-        protected internal bool useAWSCache = true;
+        internal ElastiCacheClusterConfig config;
+        internal MemcachedClient memClient;
+        protected internal bool useAWSCache = false, useAppState = true;
 
         public bool UseApplicationState
-        {
-            get => ((ConfigurationManager.AppSettings["UseHttpApplicationState"] != null)
-                ? Convert.ToBoolean(ConfigurationManager.AppSettings["UseHttpApplicationState"])
-                : true);
+        {            
+            get
+            {
+                if (ConfigurationManager.AppSettings["UseHttpApplicationState"] != null)
+                {
+                    if (Boolean.TryParse((string)ConfigurationManager.AppSettings["UseHttpApplicationState"].ToString(),
+                        out useAppState))
+                    {
+                        return useAppState;
+                    }
+                    useAppState = true;
+                }
+                return useAppState;
+            }        
         }
 
-        public bool UseAmazonElasticCache
+        public virtual bool UseAmazonElasticCache
         {
-            get => ((ConfigurationManager.AppSettings["UseAmazonElasticCache"] != null &&
-                    Boolean.TryParse(ConfigurationManager.AppSettings["UseAmazonElasticCache"].ToString(),
-                        out useAWSCache)) ? useAWSCache : true);
-                
+            get
+            {
+                if (ConfigurationManager.AppSettings["UseAmazonElasticCache"] != null)
+                {
+                    if (Boolean.TryParse((string)ConfigurationManager.AppSettings["UseAmazonElasticCache"].ToString(),
+                        out useAWSCache))
+                    {
+                        return useAWSCache;
+                    }
+                    useAWSCache = false;
+                }
+                return useAWSCache;
+            }
         }
 
 
@@ -61,17 +78,22 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         public virtual void InitMethod()
         {
-            config = new ElastiCacheClusterConfig();
-            memClient = new MemcachedClient(config);
-
             GetContacts();
             GetServerKey();
             _literalClientIp = HttpContext.Current.Request.UserHostAddress;
             _decrypted = string.Empty;
             _responseString = string.Empty;
             _contact = null;
-        }
 
+
+            if (UseAmazonElasticCache)
+            {
+                config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
+                // ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
+                memClient = new MemcachedClient(config);
+            }
+        }
+            
         [WebMethod]
         public virtual string TestService()
         {
