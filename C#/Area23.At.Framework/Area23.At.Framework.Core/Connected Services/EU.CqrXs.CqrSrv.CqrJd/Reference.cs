@@ -11,8 +11,8 @@ using Area23.At.Framework.Core.Static;
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {
-
-
+    
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="https://cqrjd.eu/cqrsrv/cqrjd/", ConfigurationName="EU.CqrXs.CqrSrv.CqrJd.CqrServiceSoap")]
     public interface CqrServiceSoap
@@ -24,20 +24,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         
         [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/Send1StSrvMsg", ReplyAction="*")]
         System.Threading.Tasks.Task<string> Send1StSrvMsgAsync(string cryptMsg);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/SendValidatedSrvMsg", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        string SendValidatedSrvMsg(System.Guid from, System.Guid to, string cryptMsgSrv, string cryptMsgPartner);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/SendValidatedSrvMsg", ReplyAction="*")]
-        System.Threading.Tasks.Task<string> SendValidatedSrvMsgAsync(System.Guid from, System.Guid to, string cryptMsgSrv, string cryptMsgPartner);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/SendSrvMsg", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        string SendSrvMsg(string cryptMsgSrv, string cryptMsgPartner);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/SendSrvMsg", ReplyAction="*")]
-        System.Threading.Tasks.Task<string> SendSrvMsgAsync(string cryptMsgSrv, string cryptMsgPartner);
         
         [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomInvite", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -135,26 +121,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             return base.Channel.Send1StSrvMsgAsync(cryptMsg);
         }
         
-        public string SendValidatedSrvMsg(System.Guid from, System.Guid to, string cryptMsgSrv, string cryptMsgPartner)
-        {
-            return base.Channel.SendValidatedSrvMsg(from, to, cryptMsgSrv, cryptMsgPartner);
-        }
-        
-        public System.Threading.Tasks.Task<string> SendValidatedSrvMsgAsync(System.Guid from, System.Guid to, string cryptMsgSrv, string cryptMsgPartner)
-        {
-            return base.Channel.SendValidatedSrvMsgAsync(from, to, cryptMsgSrv, cryptMsgPartner);
-        }
-        
-        public string SendSrvMsg(string cryptMsgSrv, string cryptMsgPartner)
-        {
-            return base.Channel.SendSrvMsg(cryptMsgSrv, cryptMsgPartner);
-        }
-        
-        public System.Threading.Tasks.Task<string> SendSrvMsgAsync(string cryptMsgSrv, string cryptMsgPartner)
-        {
-            return base.Channel.SendSrvMsgAsync(cryptMsgSrv, cryptMsgPartner);
-        }
-        
         public string ChatRoomInvite(string cryptMsg)
         {
             return base.Channel.ChatRoomInvite(cryptMsg);
@@ -229,8 +195,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 result.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
                 result.MaxReceivedMessageSize = int.MaxValue;
                 result.AllowCookies = true;
+#if DEBUG
                 result.Security.Mode = System.ServiceModel.BasicHttpSecurityMode.None;
-                // result.Security.Mode = System.ServiceModel.BasicHttpSecurityMode.Transport;
+#elif
+                result.Security.Mode = System.ServiceModel.BasicHttpSecurityMode.Transport;
+#endif
                 return result;
             }
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12))
@@ -239,23 +208,25 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 System.ServiceModel.Channels.TextMessageEncodingBindingElement textBindingElement = new System.ServiceModel.Channels.TextMessageEncodingBindingElement();
                 textBindingElement.MessageVersion = System.ServiceModel.Channels.MessageVersion.CreateVersion(System.ServiceModel.EnvelopeVersion.Soap12, System.ServiceModel.Channels.AddressingVersion.None);
                 result.Elements.Add(textBindingElement);                
+#if DEBUG
                 System.ServiceModel.Channels.HttpTransportBindingElement httpBindingElement = new System.ServiceModel.Channels.HttpTransportBindingElement();
                 httpBindingElement.AllowCookies = true;
                 httpBindingElement.MaxBufferSize = int.MaxValue;
                 httpBindingElement.MaxReceivedMessageSize = int.MaxValue;
                 result.Elements.Add(httpBindingElement);
+#elif
+                System.ServiceModel.Channels.HttpsTransportBindingElement httpsBindingElement = new System.ServiceModel.Channels.HttpsTransportBindingElement();
+                httpsBindingElement.AllowCookies = true;
+                httpsBindingElement.MaxBufferSize = int.MaxValue;
+                httpsBindingElement.MaxReceivedMessageSize = int.MaxValue;
+                result.Elements.Add(httpsBindingElement);
+#endif
 
-                //System.ServiceModel.Channels.HttpsTransportBindingElement httpsBindingElement = new System.ServiceModel.Channels.HttpsTransportBindingElement();
-                //httpsBindingElement.AllowCookies = true;
-                //httpsBindingElement.MaxBufferSize = int.MaxValue;
-                //httpsBindingElement.MaxReceivedMessageSize = int.MaxValue;
-                
-                //result.Elements.Add(httpsBindingElement);                
                 return result;
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
-        
+
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap))
@@ -268,7 +239,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
-        
+
         public enum EndpointConfiguration
         {
             
