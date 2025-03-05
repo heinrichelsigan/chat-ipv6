@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Net;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Static;
+using System.Text.Json.Serialization;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -45,7 +46,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         #region from server given properties
 
-        public IPAddress ClientIp { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        internal IPAddress? ClientIp { get; set; }
 
 
         public string ChatRoomId { get; set; }
@@ -70,6 +72,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Address = string.Empty;
             SecretKey = string.Empty;
             ContactImage = null;
+            ChatRoomId = string.Empty;
             LastPolled = DateTime.MinValue;
             PolledMsgDates = new List<DateTime>();
         }
@@ -86,8 +89,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Email = email;
             Mobile = mobile;
             Address = address;
+            _hash = string.Empty;
             LastPolled = DateTime.MinValue;
             PolledMsgDates = new List<DateTime>();
+            ChatRoomId = string.Empty;
+            ClientIp = null;
         }
 
         public CqrContact(Guid guid, string name, string email, string mobile, string address) : base()
@@ -97,8 +103,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Email = email;
             Mobile = mobile;
             Address = address;
+            _hash = string.Empty;
+            ChatRoomId = string.Empty;
             LastPolled = DateTime.MinValue;
-            PolledMsgDates = new List<DateTime>(); 
+            PolledMsgDates = new List<DateTime>();
+            ClientIp = null;
         }
 
         public CqrContact(int cid, string name, string email, string mobile, string address, CqrImage cqrImage)
@@ -142,8 +151,39 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         public CqrContact(CqrContact c, string hash)
             : this(c.ContactId, c.Cuid, c.Name, c.Email, c.Mobile, c.Address, c.ContactImage, hash)
         {
-
+            this._hash = hash;
+            ChatRoomId = c.ChatRoomId;
+            LastPolled = c.LastPolled;
+            PolledMsgDates = new List<DateTime>((IEnumerable<DateTime>)c.PolledMsgDates);
+            ClientIp = c.ClientIp ?? null;
         }
+
+
+        public CqrContact(CqrContact c, string chatRoomId, string hash) : this(c, hash)
+        {
+            _hash = hash;
+            ContactImage = null;
+            Cuid = c.Cuid;
+            ChatRoomId = chatRoomId;
+            LastPolled = c.LastPolled;
+            PolledMsgDates = new List<DateTime>((IEnumerable<DateTime>)c.PolledMsgDates);
+            ClientIp = c.ClientIp ?? null;
+        }
+
+
+        public CqrContact(CqrContact c, string chatRoomId, DateTime lastPolled, string hash) : this(c, chatRoomId, hash)
+        {
+            _hash = hash;
+            ContactImage = null;
+            Cuid = c.Cuid;
+            ChatRoomId = chatRoomId;
+            LastPolled = lastPolled;
+            PolledMsgDates = new List<DateTime>((IEnumerable<DateTime>)c.PolledMsgDates);
+            if (!PolledMsgDates.Contains(LastPolled))
+                PolledMsgDates.Add(LastPolled);
+            ClientIp = c.ClientIp ?? null;
+        }
+
 
         #endregion constructors
 

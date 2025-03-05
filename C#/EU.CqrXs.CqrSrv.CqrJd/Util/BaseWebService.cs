@@ -1,4 +1,7 @@
-﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Amazon.ElastiCacheCluster;
+using Enyim.Caching;
+using Enyim.Caching.Memcached;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library;
 using EU.CqrXs.CqrSrv.CqrJd.Util;
 using System;
@@ -12,6 +15,8 @@ using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using System.IO;
 using Area23.At.Framework.Library.Static;
 using System.Diagnostics.Contracts;
+using Amazon.ElastiCacheCluster;
+using Enyim.Caching;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
@@ -27,6 +32,26 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
         protected internal string _responseString = string.Empty;
         protected internal string _chatRoomNumber = string.Empty;
+        protected internal ElastiCacheClusterConfig config;
+        protected internal MemcachedClient memClient;
+        protected internal bool useAWSCache = true;
+
+        public bool UseApplicationState
+        {
+            get => ((ConfigurationManager.AppSettings["UseHttpApplicationState"] != null)
+                ? Convert.ToBoolean(ConfigurationManager.AppSettings["UseHttpApplicationState"])
+                : true);
+        }
+
+        public bool UseAmazonElasticCache
+        {
+            get => ((ConfigurationManager.AppSettings["UseAmazonElasticCache"] != null &&
+                    Boolean.TryParse(ConfigurationManager.AppSettings["UseAmazonElasticCache"].ToString(),
+                        out useAWSCache)) ? useAWSCache : true);
+                
+        }
+
+
 
         public BaseWebService()
         {
@@ -36,6 +61,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         public virtual void InitMethod()
         {
+            config = new ElastiCacheClusterConfig();
+            memClient = new MemcachedClient(config);
+
             GetContacts();
             GetServerKey();
             _literalClientIp = HttpContext.Current.Request.UserHostAddress;
@@ -126,8 +154,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 if (cqrContact.Mobile != null && cqrContact.Mobile.Length > 1)
                     foundCt.Mobile = cqrContact.Mobile;
 
-                if (cqrContact.ContactImage != null && !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
-                    !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
+                if (cqrContact != null && cqrContact.ContactImage != null &&
+                    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
+                    cqrContact.ContactImage.ImageBase64 != null &&
+                    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageBase64))
                     foundCt.ContactImage = cqrContact.ContactImage;
             }
             else
@@ -153,7 +183,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             if ((chatRoomMsg.Sender.Cuid == contact.Cuid && chatRoomMsg.Sender.Email == contact.Email) ||
                 (chatRoomMsg.Sender.NameEmail == contact.NameEmail))
             {
-                chatRoomMsg.Sender = contact;
+                chatRoomMsg.Sender = new CqrContact(contact, chatRoomNr, contact.LastPolled, contact.Hash);
             }
             for (int i = 0; i < chatRoomMsg.Recipients.Count; i++)
             {
@@ -166,10 +196,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     break;
                 }
             }
-            if (foundCt)           
-                chatRoomMsg.Recipients.Remove(toDelContact);
-            // add modified contact
-            chatRoomMsg.Recipients.Add(contact);
+            if (foundCt)
+                if (chatRoomMsg.Recipients.Remove(toDelContact))
+                    chatRoomMsg.Recipients.Add(new CqrContact(contact, chatRoomNr, contact.LastPolled, contact._hash));
 
             (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
 
@@ -187,8 +216,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 }
             }
             if (foundCt)
-                _contacts.Remove(toDelContact);
-            _contacts.Add(contact);
+                if (_contacts.Remove(toDelContact))
+                    _contacts.Add(new CqrContact(contact, chatRoomNr, contact.LastPolled, contact.Hash));
 
             JsonContacts.SaveJsonContacts(_contacts);
 
@@ -261,6 +290,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         
             return isValid;
         }
+
+       
 
     }
 }

@@ -467,7 +467,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetComboBoxBackColor(ComboBoxContacts, Color.White);
             StripStatusLabel.Text = $"Selected Contact {contactNameEmail}.";
 
-            if (SendInit_Contact())
+            bool sendInit = false;
+            try
+            {
+                sendInit = SendInit_Contact();
+            }
+            catch (Exception exi)
+            {
+                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                sendInit = false;
+                SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
+            }
+
+            if (sendInit)
             {
                 PlaySoundFromResource("sound_laser");
             }
@@ -597,15 +609,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
 
+            this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomId) ?? string.Empty;
+
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
-            CqrContact myContact = Entities.Settings.Singleton.MyContact;
+            
+            CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
             CqrContact? friendContact = null;
             foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
             {
                 if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    friendContact = c;
+                    friendContact = new CqrContact(c, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
                     break;
                 }
             }
@@ -613,7 +628,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
-
+            myContact._hash = TextBoxPipe.Text;
+            friendContact._hash = TextBoxPipe.Text;
+            serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
             FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, myContact.Email, serverMessage.PipeString);
 
@@ -728,21 +745,25 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     textBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : textBoxChatSession.Text;
                 }
 
+                CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, TextBoxPipe.Text);
                 CqrContact? friendContact = null;
                 foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
                 {
                     if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        friendContact = c;
+                        friendContact = new CqrContact(c, chatRoomNr, TextBoxPipe.Text);                        
                         break;
                     }
                 }
-
-                CqrContact myContact = Entities.Settings.Singleton.MyContact;
+                
+                SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                this.TextBoxPipe.Text = serverMessage.PipeString;
+                myContact._hash = TextBoxPipe.Text;
                 myContact.ChatRoomId = chatRoomNr;
+                friendContact._hash = TextBoxPipe.Text;
                 friendContact.ChatRoomId = chatRoomNr;
+                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
-                SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);                                
 
                 FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
                 // FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
@@ -769,7 +790,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 
                 string userMsg = chat.AddMyMessage(unencrypted);
                 AppendText(TextBoxSource, userMsg);
-                chat.AddMyMessage(String.Join(", ", fmsg.Emails.ToArray()));
+                chat.AddMyMessage(userMsg);
                 chat.AddFriendMessage(msgChatRoom);
                 
                 // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
@@ -870,17 +891,29 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        friendContact = c;
+                        friendContact = new CqrContact(c, chatRoomNr, TextBoxPipe.Text);
                         break;
                     }
                 }
 
-                CqrContact myContact = Entities.Settings.Singleton.MyContact;
+                CqrContact myContact = new CqrContact(Entities.Settings.Singleton.MyContact, chatRoomNr, TextBoxPipe.Text);
+
+
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+
                 myContact.ChatRoomId = chatRoomNr;
                 friendContact.ChatRoomId = chatRoomNr;
 
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
-                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                this.TextBoxPipe.Text = serverMessage.PipeString;
+                myContact._hash = TextBoxPipe.Text;
+                myContact.ChatRoomId = chatRoomNr;
+                friendContact._hash = TextBoxPipe.Text;
+                friendContact.ChatRoomId = chatRoomNr;
+                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+
+                
+                
                 FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
                 
 

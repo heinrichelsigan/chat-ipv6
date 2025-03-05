@@ -1,4 +1,7 @@
-﻿using Area23.At.Framework.Library;
+﻿using Amazon.ElastiCacheCluster;
+using Enyim.Caching;
+using Enyim.Caching.Memcached;
+using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.CqrXs;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.CqrXs.CqrSrv;
@@ -18,6 +21,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Services;
+using System.Net;
 
 
 namespace EU.CqrXs.CqrSrv.CqrJd
@@ -95,7 +99,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     DateTime now = DateTime.Now;
                     Dictionary<DateTime, string> dict = new Dictionary<DateTime, string>();
                     dict.Add(now, "");
-                    HttpContext.Current.Application[chatRoomId] = dict;
+
+                    if (UseAmazonElasticCache)
+                        memClient.Store(StoreMode.Add, chatRoomId, dict, new TimeSpan(23, 23, 23, 23));
+                    
+                    if (UseApplicationState)
+                        HttpContext.Current.Application[chatRoomId] = dict;
+
                     chatRSrvMsg.Sender.LastPolled = now;
                     chatRSrvMsg.Sender.PolledMsgDates.Add(now);
                     _contact.LastPolled = now;
@@ -121,6 +131,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         {
             InitMethod();
 
+            Dictionary<DateTime, string> dict = new Dictionary<DateTime, string>();
             bool isValid = false;
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
@@ -139,37 +150,43 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).LoadJsonChatRoom(fullSrvMsg, _chatRoomNumber);
                     isValid = ValidateChatRoomNr(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
                     if (isValid)
-                    {                       
-                        if (HttpContext.Current.Application[_chatRoomNumber] != null)
+                    {
+                        if (UseApplicationState && (HttpContext.Current.Application[_chatRoomNumber] != null))
                         {
-                            Dictionary<DateTime, string> dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber];
-                            List<DateTime> pollKeys = dict.Keys.Where(k => k.Ticks > fullSrvMsg.Sender.LastPolled.Ticks).ToList();
-                            DateTime polledMsgDate = DateTime.MinValue;
-                            if (pollKeys.Count > 0)
+                            dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber];
+                        }
+                        if (UseAmazonElasticCache)
+                        {
+                            dict = (Dictionary<DateTime, string>)memClient.Get(_chatRoomNumber);
+                        }
+
+                        List<DateTime> pollKeys = dict.Keys.Where(k => k.Ticks > fullSrvMsg.Sender.LastPolled.Ticks).ToList();
+                        DateTime polledMsgDate = DateTime.MinValue;
+                        if (pollKeys.Count > 0)
+                        {
+                            polledMsgDate = pollKeys[0];
+                            string firstPollClientMsg = dict[pollKeys[0]];
+                            if (string.IsNullOrEmpty(firstPollClientMsg))
                             {
-                                polledMsgDate = pollKeys[0];
-                                string firstPollClientMsg = dict[pollKeys[0]];
-                                if (string.IsNullOrEmpty(firstPollClientMsg))
+                                if (pollKeys.Count > 1)
                                 {
-                                    if (pollKeys.Count > 1)
-                                    {
-                                        polledMsgDate = pollKeys[1];
-                                        firstPollClientMsg = dict[pollKeys[1]];
-                                    }
+                                    polledMsgDate = pollKeys[1];
+                                    firstPollClientMsg = dict[pollKeys[1]];
                                 }
-
-                                chatRoomMsg.TContent = firstPollClientMsg;
-
-                                _contact.LastPolled = polledMsgDate;
-                                _contact.PolledMsgDates.Add(polledMsgDate);
-                                chatRoomMsg.Sender.LastPolled = polledMsgDate;
-                                chatRoomMsg.Sender.PolledMsgDates.Add(polledMsgDate);
-
-                                UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
-                                chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
                             }
 
+                            chatRoomMsg.TContent = firstPollClientMsg;
+
+                            _contact.LastPolled = polledMsgDate;
+                            _contact.PolledMsgDates.Add(polledMsgDate);
+                            chatRoomMsg.Sender.LastPolled = polledMsgDate;
+                            chatRoomMsg.Sender.PolledMsgDates.Add(polledMsgDate);
+
+                            UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
+                            chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
+                            chatRoomMsg.Sender.LastPolled = polledMsgDate;
                         }
+
                     }
 
                     _responseString = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
@@ -192,6 +209,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         {
             InitMethod();
             bool isValid = false;
+            Dictionary<DateTime, string> dict;
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
             SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
@@ -212,12 +230,19 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     {
                         DateTime now = DateTime.Now;
 
-                        Dictionary<DateTime, string> dict = new Dictionary<DateTime, string>();                      
-                        if (HttpContext.Current.Application[_chatRoomNumber] != null)
-                            dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber];                        
+                        dict = new Dictionary<DateTime, string>();                      
+                        if (this.UseApplicationState && HttpContext.Current.Application[_chatRoomNumber] != null)
+                            dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber]; 
+                        if (UseAmazonElasticCache)
+                            dict = (Dictionary<DateTime, string>)memClient.Get(_chatRoomNumber);
+
                         dict.Add(now, chatRoomMembersCrypted);
-                        HttpContext.Current.Application[_chatRoomNumber] = dict;
                         
+                        if (UseApplicationState)
+                            HttpContext.Current.Application[_chatRoomNumber] = dict;
+                        if (UseAmazonElasticCache)
+                            memClient.Store(StoreMode.Replace, _chatRoomNumber, dict, new TimeSpan(23, 23, 23, 23));
+
                         _contact.LastPolled = now;
                         _contact.PolledMsgDates.Add(now);
                         chatRoomMsg.Sender.LastPolled = now;
@@ -225,6 +250,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         
                         UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
                         chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
+                            chatRoomMsg.Sender.LastPolled = now;
                     }
                     _responseString = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
 

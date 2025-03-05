@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>CqrJd Testform</title>
-    <meta http-equiv="refresh" content="4; url=/cqrsrv/cqrjd/CqrService.asmx" />
+    <meta http-equiv="refresh" content="4; url=CqrService.asmx" />
 </head>
 <body>
     <form id="form1" runat="server" method="post" enctype="text/plain" submitdisabledcontrols="true" novalidate="novalidate" enableviewstate="false" style="background-color: transparent;">

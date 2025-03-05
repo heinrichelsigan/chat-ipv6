@@ -461,8 +461,18 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         {
             string cryptSrv = CqrSrvMsg<T>(fullServerMsg);
             
-            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
-            string resp = client.ChatRoomInvite(cryptSrv);
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
+
+            string resp = string.Empty;
+            try
+            {
+                resp = client.ChatRoomInvite(cryptSrv);
+            }
+            catch (Exception exSoap)
+            {
+                Area23Log.LogStatic($"Exception {exSoap.GetType()}: {exSoap.Message}\n\t{exSoap}\n");
+                throw;
+            }
 
             return resp;
         }
