@@ -174,7 +174,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         {
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap))
             {
-#if HILLARIOUS_TRUMPED
+#if HILLARIOUSTRUMPED
                 System.ServiceModel.BasicHttpBinding result = new System.ServiceModel.BasicHttpBinding();
 #else
                 System.ServiceModel.BasicHttpsBinding result = new System.ServiceModel.BasicHttpsBinding();
@@ -183,7 +183,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 result.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
                 result.MaxReceivedMessageSize = int.MaxValue;
                 result.AllowCookies = true;
-#if HILLARIOUS_TRUMPED
+#if HILLARIOUSTRUMPED
                 result.Security.Mode = System.ServiceModel.BasicHttpSecurityMode.None;
 #else
                 result.Security.Mode = System.ServiceModel.BasicHttpsSecurityMode.Transport;
@@ -197,7 +197,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 textBindingElement.MessageVersion = System.ServiceModel.Channels.MessageVersion.CreateVersion(System.ServiceModel.EnvelopeVersion.Soap12, System.ServiceModel.Channels.AddressingVersion.None);
                 result.Elements.Add(textBindingElement);
 
-#if HILLARIOUS_TRUMPED
+#if HILLARIOUSTRUMPED
                 System.ServiceModel.Channels.HttpTransportBindingElement httpBindingElement = new System.ServiceModel.Channels.HttpTransportBindingElement();
                 httpBindingElement.AllowCookies = true;
                 httpBindingElement.MaxBufferSize = int.MaxValue;

@@ -44,15 +44,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 string jsonText = System.IO.File.ReadAllText(JsonChatRoomFileName);
                 fullSrvMsgOut = JsonConvert.DeserializeObject<FullSrvMsg<string>>(jsonText);
                 fullSrvMsgOut._message = jsonText;
-
-                HashSet<string> chatRooms = (HttpContext.Current.Application["ChatRooms"] != null)
-                    ? (HashSet<string>)HttpContext.Current.Application["ChatRooms"] 
-                    : ChatRoomNumbersFromFs();
-                if (!chatRooms.Contains(chatRoomId))
-                    chatRooms.Add(chatRoomId);                
-                HttpContext.Current.Application["ChatRooms"] = chatRooms;
-
             }
+
+            //HashSet<string> chatRooms = (HttpContext.Current.Application["ChatRooms"] != null)
+            //    ? (HashSet<string>)HttpContext.Current.Application["ChatRooms"]
+            //    : ChatRoomNumbersFromFs();
+            //if (!chatRooms.Contains(chatRoomId))
+            //    chatRooms.Add(chatRoomId);
+            //HttpContext.Current.Application["ChatRooms"] = chatRooms
 
             return fullSrvMsgOut;
         }
@@ -73,12 +72,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             string jsonString = JsonConvert.SerializeObject(fullSrvMsg, Formatting.Indented);
             System.IO.File.WriteAllText(JsonChatRoomFileName, jsonString);            
 
-            HashSet<string> chatRooms = (HttpContext.Current.Application["ChatRooms"] != null)
-                    ? (HashSet<string>)HttpContext.Current.Application["ChatRooms"] 
-                    : ChatRoomNumbersFromFs();
-            if (!chatRooms.Contains(chatRoomId))
-                chatRooms.Add(chatRoomId);
-            HttpContext.Current.Application["ChatRooms"] = chatRooms;
+            //HashSet<string> chatRooms = (HttpContext.Current.Application["ChatRooms"] != null)
+            //        ? (HashSet<string>)HttpContext.Current.Application["ChatRooms"] 
+            //        : ChatRoomNumbersFromFs();
+            //if (!chatRooms.Contains(chatRoomId))
+            //    chatRooms.Add(chatRoomId);
+            //HttpContext.Current.Application["ChatRooms"] = chatRooms;
 
             fullSrvMsg._message = jsonString;
             

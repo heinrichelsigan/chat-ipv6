@@ -89,7 +89,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Settings
 
         protected void BuildTableRuntime()
         {
-            Dictionary<string, string> rtSettings = new Dictionary<string, string>();
 
             Dictionary<string, string> rtSettings = new Dictionary<string, string>();
 

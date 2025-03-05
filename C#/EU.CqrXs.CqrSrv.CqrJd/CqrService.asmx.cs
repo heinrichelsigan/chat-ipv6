@@ -46,7 +46,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             
             SrvMsg1 srv1stMsg = new SrvMsg1(_serverKey);
             SrvMsg1 srv1stRespMsg = new SrvMsg1(_serverKey);
-            SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
             
             try
             {
@@ -84,8 +83,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg, chatRSrvMsg;
 
-            SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
-            _responseString = responseSrvMsg.CqrBaseMsg(Constants.NACK);
+            _responseString = srvMsg.CqrBaseMsg(Constants.NACK);
 
             try
             {
@@ -112,7 +110,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     _contact.PolledMsgDates.Add(now);
                     UpdateContacts(_contact, chatRSrvMsg, chatRoomId);
 
-                    _responseString = responseSrvMsg.CqrSrvMsg<string>(chatRSrvMsg);
+                    _responseString = srvMsg.CqrSrvMsg<string>(chatRSrvMsg);
                 }
             }
             catch (Exception ex)
@@ -135,9 +133,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             bool isValid = false;
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
-            SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
 
-            _responseString = responseSrvMsg.CqrBaseMsg(Constants.NACK);
+            _responseString = srvMsg.CqrBaseMsg(Constants.NACK);
 
             try
             {
@@ -189,7 +186,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
                     }
 
-                    _responseString = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
+                    _responseString = srvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
                 }
             }
@@ -212,9 +209,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             Dictionary<DateTime, string> dict;
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
-            SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
 
-            _responseString = responseSrvMsg.CqrBaseMsg(Constants.NACK);
+            _responseString = srvMsg.CqrBaseMsg(Constants.NACK);
 
             try
             {
@@ -250,9 +246,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         
                         UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
                         chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
-                            chatRoomMsg.Sender.LastPolled = now;
+                        chatRoomMsg.Sender.LastPolled = now;
+                    
                     }
-                    _responseString = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
+
+                    _responseString = srvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
                 }
             }
@@ -276,9 +274,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
             List<CqrContact> _invited = new List<CqrContact>();
-            SrvMsg responseSrvMsg = new SrvMsg(_serverKey);
 
-            _responseString = responseSrvMsg.CqrBaseMsg(Constants.NACK);
+            _responseString = srvMsg.CqrBaseMsg(Constants.NACK);
 
             try
             {
@@ -311,7 +308,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         }
 
                     }
-                    _responseString = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
+                    _responseString = srvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
                 }
             }

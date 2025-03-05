@@ -255,7 +255,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             {
                 if (!_invited.Contains(c))
                     _invited.Add(c);
-                if (c.Email == fullSrvMsg.Sender.Email)
+                if (c.NameEmail == fullSrvMsg.Sender.NameEmail)
                     addSender = false;
             }
             if (addSender)
@@ -282,7 +282,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             chatRSrvMsg.RawMessage = chatRSrvMsg.ToJson();
             chatRSrvMsg._message = chatRSrvMsg.ToJson();
             chatRSrvMsg.MsgType = MsgEnum.Json;
-            (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg, chatRoomId);
+            chatRSrvMsg = (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg, chatRoomId);
 
             return chatRSrvMsg;
         }
@@ -294,6 +294,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             bool isValid = false;
             if (chatRoomId.Equals(chatRoomMsg.ChatRoomNr))
             {
+                if ((fullSrvMsg.Sender.NameEmail == chatRoomMsg.Sender.NameEmail) ||
+                    (!string.IsNullOrEmpty(fullSrvMsg.Sender.Email) && fullSrvMsg.Sender.Email == chatRoomMsg.Sender.Email))
+                {
+                    _contact = chatRoomMsg.Sender;                    
+                    isValid = true;
+                    return isValid;
+                }
                 foreach (CqrContact c in chatRoomMsg.Recipients)
                 {
                     if (fullSrvMsg.Sender.NameEmail == c.NameEmail ||
@@ -301,13 +308,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     {
                         _contact = c;
                         isValid = true;
+                        return isValid;
                     }
                 }
-                if (fullSrvMsg.Sender == chatRoomMsg.Sender)
-                {
-                    _contact = chatRoomMsg.Sender;
-                    isValid = true;
-                }
+
             }
         
             return isValid;

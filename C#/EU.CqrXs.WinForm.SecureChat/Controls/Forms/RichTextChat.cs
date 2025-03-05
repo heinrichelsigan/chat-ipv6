@@ -26,22 +26,23 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Interop;
+using System.ComponentModel;
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
 
 
+
     /// <summary>
-    /// SecureChat main form
+    /// RichTextChat main form
     /// </summary>
     public partial class RichTextChat : BaseChatForm
     {
 
         #region fields        
 
-        private string myServerKey = string.Empty;
-        private string? contactNameEmail = null;
+        private string? myServerKey = null, ipAddrString = null, contactNameEmail = null;
         internal static int attachCnt = 0;
         internal static int chatCnt = 0;
         internal static Chat? chat;
@@ -49,6 +50,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         protected internal static IPAddress? clientIpAddress;
         protected internal static IPAddress? partnerIpAddress;
         protected internal static Listener? ipSockListener;
+        internal delegate void ClientSocket_DataReceived(object sender, Area23EventArgs<ReceiveData> eventReceived);
+        internal ClientSocket_DataReceived clientSocket_DataReceived;
+        internal EventHandler<Area23EventArgs<ReceiveData>> receivedDataEventHandler;
 
         #endregion fields
 
@@ -109,9 +113,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxIp.Text = Constants.ENTER_IP;
             ComboBoxContacts.Text = Constants.ENTER_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
-            
             MiniToolBox.CreateAttachDirectory();
-
+            this.DragNDropGroupBox.OnDragNDrop += OnDragNDrop;
             this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
             this.PeerServerSwitch.FireUpChanged += TooglePeerServer;
             this.StripProgressBar.Value = 0;
@@ -145,6 +148,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 send1stReg = true;
             }
             this.StripProgressBar.Value = 30;
+
+            await BaseChatForm_Load(sender, e);
+            bgWorkerMonitor.RunWorkerAsync();
 
             StripStatusLabel.Text = "Setup Network";
             await PlaySoundFromResourcesAsync("sound_volatage");
@@ -239,15 +245,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private void ButtonKey_Click(object sender, EventArgs e)
         {
             myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
-            if (!string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) &&
-                !this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                myServerKey = this.ComboBoxSecretKey.Text;
-            }
-
-            // TODO: test case later
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+                return;
 
             SrvMsg serverMessage = new SrvMsg(myServerKey, myServerKey);
+            // TODO: SetText delegate AppendText()
             this.TextBoxPipe.Text = serverMessage.PipeString;
         }
 
@@ -259,15 +261,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private void ComboBoxSecretKey_FocusLeave(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return;
-            }
-            this.ComboBoxSecretKey.BackColor = Color.White;
+
             ButtonKey_Click(sender, e);
             if (Entities.Settings.Singleton != null)
             {
@@ -276,7 +272,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
                     this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
             }
-            StripStatusLabel.Text = "Added new secret key => calculated new SecurePipe...";
+            SetStatusText(StripStatusLabel, "Added new secret key => calculated new SecurePipe...");
         }
 
         /// <summary>
@@ -303,15 +299,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private void ComboBoxSecretKey_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return;
-            }
-            this.ComboBoxSecretKey.BackColor = Color.White;
             ButtonKey_Click(sender, e);
             if (Entities.Settings.Singleton != null)
             {
@@ -329,24 +318,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void ComboBoxIp_FocusLeave(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxIp.Text) ||
-                this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a new ip address!", "Please enter a valid connectable ip address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxIp.BackColor = Color.PeachPuff;
-                PlaySoundFromResource("sound_warning");
-                return;
-            }
 
+            if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
+                return;
             try
             {
-                if (!IPAddress.TryParse(this.ComboBoxIp.Text, out partnerIpAddress))
+                if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
                     throw new InvalidOperationException($"IPAddress {this.ComboBoxIp.Text ?? string.Empty} is not parsable!");
             }
             catch (Exception exIpContact)
             {
                 MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIp.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxIp.BackColor = Color.Violet;
+                SetComboBoxBackColor(ComboBoxIp, Color.Violet);
                 PlaySoundFromResource("sound_warning");
                 return;
             }
@@ -447,14 +430,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void ComboBoxContacts_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxContacts.Text) ||
-                this.ComboBoxContacts.Text.Equals(Constants.ENTER_CONTACT, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a valid contact address!", "Please enter a valid contact", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxContacts.BackColor = Color.PeachPuff;
-                PlaySoundFromResource("sound_warning");
+            if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return;
-            }
 
             bool foundContact = false;
             CqrContact? friendContact = null;
@@ -464,7 +441,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
                 {
-                    if (c.NameEmail.Equals(this.ComboBoxContacts.Text, StringComparison.InvariantCultureIgnoreCase))
+                    if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                     {
                         foundContact = true;
                         friendContact = c;
@@ -480,17 +457,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             if (!foundContact)
             {
-                this.ComboBoxContacts.BackColor = Color.Violet;
+                SetComboBoxBackColor(ComboBoxContacts, Color.Violet);
                 PlaySoundFromResource("sound_warning");
                 MessageBox.Show($"Cannot parse Contact from string \"{ComboBoxContacts.Text}\": {exContactMsg}", "Please enter a valid contact address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
+            SetComboBoxBackColor(ComboBoxContacts, Color.White);
+            StripStatusLabel.Text = $"Selected Contact {contactNameEmail}.";
 
-            this.ComboBoxContacts.BackColor = Color.White;
-            StripStatusLabel.Text = $"Selected Contact {this.ComboBoxContacts.Text}.";
+            bool sendInit = false;
+            try
+            {
+                sendInit = SendInit_Contact();
+            }
+            catch (Exception exi)
+            {
+                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                sendInit = false;
+                SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
+            }
 
-            if (SendInit_Contact())
+            if (sendInit)
             {
                 PlaySoundFromResource("sound_laser");
             }
@@ -504,7 +492,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #endregion ComboBoxContacts FocusLeave SelectedIndexChanged
 
-        #region OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
+        #region MenuSend MenuAttach MenuRefresh MenuClear
 
         /// <summary>
         /// Send_1st_Server_Registration sends contact registration to cqrxs.eu server
@@ -516,12 +504,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (chat == null)
                 chat = new Chat(0);
 
-            myServerKey = ExternalIpAddress?.ToString();
 
-            if (ExternalIpAddressV6 != null && ExternalIpAddressV6?.AddressFamily == AddressFamily.InterNetworkV6)
-                myServerKey = ExternalIpAddressV6.ToString();
+            myServerKey = CqrXsEuSrvKey;
 
-            myServerKey += Constants.APP_NAME;
             if (!string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) &&
                 !this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -530,7 +515,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             else
                 this.ComboBoxSecretKey.Text = myServerKey;
 
-            SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
+            SrvMsg1 srv1stMsg = new SrvMsg1(CqrXsEuSrvKey);
             this.TextBoxPipe.Text = srv1stMsg.PipeString;
             Thread.Sleep(100);
 
@@ -563,25 +548,489 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
         /// <summary>
+        /// Sends a init secure message to peer ip address
+        /// </summary>
+        private bool SendInit_Click()
+        {
+            // TODO: implement it via socket directly or to registered user
+            // if Ip is pingable and reachable and connectable
+            // send HELLO to IP
+            if (chat == null)
+                chat = new Chat(0);
+
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+                return false;
+            if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
+                return false;
+
+            string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
+            try
+            {
+                if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
+                    throw new InvalidDataException("Cannot parse " + ipAddrString + " to IPAddress!");
+
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+
+                string userMsg = chat.AddMyMessage(unencrypted);
+                AppendText(TextBoxSource, userMsg);
+                // Format_Lines_RichTextBox();
+                this.RichTextBoxChat.Text = string.Empty;
+                SetStatusText(StripStatusLabel, $"Send init to {partnerIpAddress} successfully");
+                ButtonCheck.Image = Properties.de.Resources.RemoteConnect;
+            }
+            catch (Exception ex)
+            {
+                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in SendInit_Click: {ex.Message}.\n", ex);
+                SetStatusText(StripStatusLabel, $"Sending to {ipAddrString} failed: {ex.Message}");
+                PlaySoundFromResource("sound_hammer");
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Sends a init secure message to contact over server proxy
+        /// </summary>
+        private bool SendInit_Contact()
+        {
+            // TODO: implement it via socket directly or to registered user
+            // if Ip is pingable and reachable and connectable
+            // send HELLO to IP
+            if (chat == null)
+                chat = new Chat(0);
+
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+                return false;
+
+
+            if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                return false;
+
+            this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomId) ?? string.Empty;
+
+            string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
+
+
+            CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
+            CqrContact? friendContact = null;
+            foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
+            {
+                if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    friendContact = new CqrContact(c, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
+                    break;
+                }
+            }
+
+
+            SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+            this.TextBoxPipe.Text = serverMessage.PipeString;
+            myContact._hash = TextBoxPipe.Text;
+            friendContact._hash = TextBoxPipe.Text;
+            serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+
+            FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, myContact.Email, serverMessage.PipeString);
+
+            string encrypted = serverMessage.CqrSrvMsg<string>(fmsg, MsgKind.Server, EncodingType.Base64);
+            string response = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
+
+
+            this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
+            FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
+
+            if (rfmsg == null || string.IsNullOrEmpty(rfmsg.ChatRoomNr))
+            {
+                MessageBox.Show($"Response message form server {ServerIpAddress} is null. Please call helpdesk +436507527928", "Invite Chatroom failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            this.textBoxChatSession.Text = rfmsg.ChatRoomNr;
+            if (rfmsg != null && rfmsg.Sender != null && rfmsg.Sender.NameEmail.Equals(myContact.NameEmail))
+            {
+                Entities.Settings.Instance.MyContact.Cuid = rfmsg.Sender.Cuid;
+                Entities.Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
+                Entities.Settings.Instance.MyContact.PolledMsgDates = rfmsg.Sender.PolledMsgDates;
+                Entities.Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+
+                Entities.Settings.Save();
+
+            }
+            // TODO: Email zur Einladung
+
+
+            string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            this.TextBoxDestionation.Text = msgChatRoom;
+
+            chat.AddMyMessage(String.Join(", ", fmsg.Emails.ToArray()));
+            chat.AddFriendMessage(msgChatRoom);
+
+            // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
+            Format_Lines_RichTextBox();
+
+            SetStatusText(StripStatusLabel, "Finished 1st registration");
+
+            return true;
+
+        }
+
+        /// <summary>
+        /// Sends a secure message
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
+        private void MenuItemSend_Click(object sender, EventArgs e)
+        {
+            // TODO: implement it via socket directly or to registered user
+            // if Ip is pingable and reachable and connectable
+            // send HELLO to IP
+            if (chat == null)
+                chat = new Chat(0);
+
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+            {
+                StripStatusLabel.Text = "Nothing to send!";
+                return;
+            }
+
+            string unencrypted = this.RichTextBoxChat.Text; //.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
+
+            if (this.PeerSessionTriState == PeerSession3State.Peer2Peer)
+            {
+
+                if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
+                {
+                    StripStatusLabel.Text = "Nothing to send (no ip addr).";
+                    return;
+                }
+
+                try
+                {
+                    if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
+                        throw new InvalidDataException("Cannot parse IPAddress " + ipAddrString);
+
+                    Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                    pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+
+                    string userMsg = chat.AddMyMessage(unencrypted);
+                    AppendText(TextBoxSource, userMsg);
+                    Format_Lines_RichTextBox();
+                    this.RichTextBoxChat.Text = string.Empty;
+                    StripStatusLabel.Text = $"Send to {partnerIpAddress} successfully.";
+                    PlaySoundFromResource("sound_arrow");
+                }
+                catch (Exception ex)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
+                    SetStatusText(StripStatusLabel, $"Sending to {ipAddrString} failed: {ex.Message}");
+                    PlaySoundFromResource("sound_warning");
+                }
+            }
+            else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
+            {
+
+                if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                    return;
+
+                string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
+                if (string.IsNullOrEmpty(textBoxChatSession.Text))
+                    textBoxChatSession.Text = chatRoomNr;
+
+                if (string.IsNullOrEmpty(textBoxChatSession.Text))
+                {
+                    InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
+                    dialog.ShowDialog();
+                    chatRoomNr = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                    textBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : textBoxChatSession.Text;
+                }
+
+                CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, TextBoxPipe.Text);
+                CqrContact? friendContact = null;
+                foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
+                {
+                    if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        friendContact = new CqrContact(c, chatRoomNr, TextBoxPipe.Text);
+                        break;
+                    }
+                }
+
+                SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                this.TextBoxPipe.Text = serverMessage.PipeString;
+                myContact._hash = TextBoxPipe.Text;
+                myContact.ChatRoomId = chatRoomNr;
+                friendContact._hash = TextBoxPipe.Text;
+                friendContact.ChatRoomId = chatRoomNr;
+                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+
+
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+                // FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
+                // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
+                // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                string encrypted = pmsg.CqrPeerMsg(unencrypted);
+
+                string response = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
+
+                FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
+
+                if (rfmsg != null && rfmsg.Sender != null)
+                {
+                    Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
+                    Settings.Instance.MyContact.PolledMsgDates = rfmsg.Sender.PolledMsgDates;
+                    Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+
+                    Settings.Save();
+                }
+
+                string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+                this.TextBoxDestionation.Text = msgChatRoom;
+
+                string userMsg = chat.AddMyMessage(unencrypted);
+                AppendText(TextBoxSource, userMsg);
+                chat.AddMyMessage(userMsg);
+                chat.AddFriendMessage(msgChatRoom);
+
+                // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
+                Format_Lines_RichTextBox();
+                this.RichTextBoxChat.Text = string.Empty;
+                StripStatusLabel.Text = $"Send to {chatRoomNr} via server {ServerIpAddress} successfully.";
+                PlaySoundFromResource("sound_arrow");
+                SetStatusText(StripStatusLabel, "Finished 1st registration");
+            }
+            // otherwise send message to registered user via server
+            // Always encrypt via key
+        }
+
+        /// <summary>
+        /// Attaches a file to send
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
+        private void MenuItemAttach_Click(object sender, EventArgs e)
+        {
+            if (chat == null)
+                chat = new Chat(0);
+
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+            {
+                SetStatusText(StripStatusLabel, "Nothing to send!");
+                return;
+            }
+            if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
+            {
+                SetStatusText(StripStatusLabel, "Nothing to send (no ip addr).");
+                return;
+            }
+
+            myServerKey = this.ComboBoxSecretKey.Text;
+
+            FileOpenDialog = DialogFileOpen;
+            DialogResult result = FileOpenDialog.ShowDialog();
+            if ((result == DialogResult.OK || result == DialogResult.Yes) && File.Exists(FileOpenDialog.FileName))
+            {
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+                CqrFile? cqrFile = GetCqrFileFromPath(FileOpenDialog.FileName, pmsg.PipeString);
+
+                if (cqrFile != null && !string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    try
+                    {
+                        partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
+
+                        // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                        pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
+
+                        string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
+                        System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
+
+                        string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
+                        AppendText(TextBoxSource, userMsg);
+                        Format_Lines_RichTextBox();
+                        this.RichTextBoxChat.Text = string.Empty;
+                        SetStatusText(StripStatusLabel, $"File {cqrFile.CqrFileName} send to {partnerIpAddress} successfully!");
+                    }
+                    catch (Exception ex)
+                    {
+                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
+                        SetStatusText(StripStatusLabel, "Attach FAILED: " + ex.Message);
+                        PlaySoundFromResource("sound_warning");
+                    }
+                }
+                // otherwise send message to registered user via server
+                // Always encrypt via key
+
+            }
+
+        }
+
+        private void MenuItemRefresh_Click(object sender, EventArgs e)
+        {
+            if (this.PeerSessionTriState == PeerSession3State.ChatServer)
+            {
+
+                if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                    return;
+
+                string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
+                if (string.IsNullOrEmpty(textBoxChatSession.Text))
+                    textBoxChatSession.Text = chatRoomNr;
+
+                if (string.IsNullOrEmpty(textBoxChatSession.Text))
+                {
+                    InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
+                    dialog.ShowDialog();
+                    chatRoomNr = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                    textBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : textBoxChatSession.Text;
+                }
+
+                CqrContact? friendContact = null;
+                foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
+                {
+                    if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        friendContact = new CqrContact(c, chatRoomNr, TextBoxPipe.Text);
+                        break;
+                    }
+                }
+
+                CqrContact myContact = new CqrContact(Entities.Settings.Singleton.MyContact, chatRoomNr, TextBoxPipe.Text);
+
+
+                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
+
+                myContact.ChatRoomId = chatRoomNr;
+                friendContact.ChatRoomId = chatRoomNr;
+
+                SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                this.TextBoxPipe.Text = serverMessage.PipeString;
+                myContact._hash = TextBoxPipe.Text;
+                myContact.ChatRoomId = chatRoomNr;
+                friendContact._hash = TextBoxPipe.Text;
+                friendContact.ChatRoomId = chatRoomNr;
+                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+
+
+
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+
+
+                string response = serverMessage.ReceiveChatMsg_Soap<string>(fmsg, ServerIpAddress, EncodingType.Base64);
+
+                FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
+
+                if (rfmsg != null && rfmsg.Sender != null)
+                {
+                    Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
+                    Settings.Instance.MyContact.PolledMsgDates = rfmsg.Sender.PolledMsgDates;
+                    Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+
+                    Settings.Save();
+                }
+
+                string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+                MsgContent msgContent;
+                try
+                {
+                    msgContent = pmsg.NCqrPeerMsg(((string)rfmsg.TContent));
+                    // serverMessage.NCqrClientMsgTC<string>((string)rfmsg.TContent);
+                }
+                catch (Exception exCrypt)
+                {
+                    PlaySoundFromResource("sound_hammer");
+                    if (exCrypt is InvalidOperationException)
+                    {
+                        MessageBox.Show(((InvalidOperationException)exCrypt).Message, "Invalid or non matching secret key for decrypt.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        SetComboBoxBackColor(ComboBoxSecretKey, Color.OrangeRed);
+                    }
+                    else
+                    {
+                        MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIp)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    return;
+                }
+                string friendMsg = string.Empty;
+                try
+                {
+                    CqrFile cqf = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
+                    SLog.Log("CqrFile is true " + cqf.CqrFileName + "\n");
+                }
+                catch (Exception exif)
+                {
+                    SLog.Log("CqrFile failed " + exif.Message + "\n" + exif + "\n");
+                }
+
+                if (msgContent.IsCqrFile())
+                {
+                    CqrFile? cqrFile = msgContent.ToCqrFile();
+                    if (cqrFile != null)
+                    {
+                        SetAttachmentTextLink(cqrFile);
+                        friendMsg = cqrFile.GetFileNameContentLength() + Environment.NewLine;
+                        PlaySoundFromResource("sound_wind");
+                    }
+                }
+                else
+                {
+                    friendMsg = msgContent.Message + Environment.NewLine;
+                    PlaySoundFromResource("sound_push");
+                }
+
+                string appendDestMsg = chat.AddFriendMessage(friendMsg);
+                AppendText(TextBoxDestionation, appendDestMsg);
+                // AppendText(TextBoxDestionation, friendMsg);
+                // this.RichTextBoxOneView.Text = unencrypted;
+                Format_Lines_RichTextBox();
+                this.RichTextBoxChat.Text = string.Empty;
+                StripStatusLabel.Text = $"Received msg from server {ServerIpAddress} chat room {chatRoomNr}.";
+            }
+        }
+
+        /// <summary>
+        /// MenuItemClear_Click clears all input & output chat windows
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItemClear_Click(object sender, EventArgs e)
+        {
+            // TODO: add warning and saving here
+            PlaySoundFromResource("sound_glasses");
+            this.TextBoxDestionation.Clear();
+            this.TextBoxSource.Clear();
+            this.RichTextBoxOneView.Clear();
+            if (chat != null)
+            {
+                List<DateTime> chatTimes = chat.CqrMsgs.Keys.ToList();
+                chatTimes.Sort();
+                DateTime max = DateTime.MinValue;
+                foreach (DateTime chatTime in chatTimes)
+                    if (chatTime > max)
+                        max = chatTime;
+                chat.TimeStamp = max.AddMicroseconds(500);
+
+            }
+            this.RichTextBoxChat.Clear();
+        }
+
+        #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
+
+
+        #region OnClientReceive OnDragNDrop TooglePeerServer OnDragNDrop delegate jump back invocation target members
+
+        /// <summary>
         /// OnClientReceive event is fired, 
         /// when another secure chat client connects directly peer 2 peer 
         /// to server socket of our local chat app,
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        internal void OnClientReceive(object sender, Area23EventArgs<ReceiveData> eventReiveData)
+        internal void OnClientReceive(object sender, Area23EventArgs<ReceiveData> eventReceived)
         {
-            if (string.IsNullOrEmpty(myServerKey))
-            {
-                myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
 
-                string comboBoxSecKeyText = this.GetComboBoxText(ComboBoxSecretKey);
-                if (!string.IsNullOrEmpty(comboBoxSecKeyText) &&
-                    !comboBoxSecKeyText.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    myServerKey = this.GetComboBoxText(ComboBoxSecretKey);
-                }
-            }
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+                ; // todo launch blocking entering window with input secret key
+
 
             if (sender != null)
             {
@@ -592,9 +1041,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     string encrypted = EnDeCodeHelper.GetString(ipSockListener.BufferedData);
 
                     Area23EventArgs<ReceiveData>? area23EvArgs = null;
-                    if (eventReiveData != null && eventReiveData is Area23EventArgs<ReceiveData>)
+                    if (eventReceived != null && eventReceived is Area23EventArgs<ReceiveData>)
                     {
-                        area23EvArgs = ((Area23EventArgs<ReceiveData>)eventReiveData);
+                        area23EvArgs = ((Area23EventArgs<ReceiveData>)eventReceived);
                         //TODO: Enable cross thread via delegate
                         SetStatusText(StripStatusLabel, "Connection from " + area23EvArgs.GenericTData.ClientIPAddr + ":" + area23EvArgs.GenericTData.ClientIPPort);
 
@@ -634,6 +1083,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         return;
                     }
                     string friendMsg = string.Empty;
+                    try
+                    {
+                        CqrFile cqf = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
+                        SLog.Log("CqrFile is true " + cqf.CqrFileName + "\n");
+                    }
+                    catch (Exception exif)
+                    {
+                        SLog.Log("CqrFile failed " + exif.Message + "\n" + exif + "\n");
+                    }
+                    ;
+
                     if (msgContent.IsCqrFile())
                     {
                         CqrFile? cqrFile = msgContent.ToCqrFile();
@@ -659,243 +1119,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
-        /// <summary>
-        /// Sends a init secure message to peer ip address
-        /// </summary>
-        private bool SendInit_Click()
+
+        public void TooglePeerSessionServerTriState(short svalue)
         {
-            // TODO: implement it via socket directly or to registered user
-            // if Ip is pingable and reachable and connectable
-            // send HELLO to IP
-            if (chat == null)
-                chat = new Chat(0);
-
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            switch (svalue)
             {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
-                return false;
-            }
-
-            myServerKey = this.ComboBoxSecretKey.Text;
-            string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
-
-            try
-            {
-                string comboIpText = GetComboBoxText(ComboBoxIp);
-                partnerIpAddress = IPAddress.Parse(comboIpText);
-                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
-
-                // chat.AddMyMessage(unencrypted);
-                // AppendText(TextBoxSource, unencrypted);
-                // Format_Lines_RichTextBox();
-                this.RichTextBoxChat.Text = string.Empty;
-                SetStatusText(StripStatusLabel, "Send init successfully");
-                // StripStatusLabel.Text = "Send init successfully";
-                ButtonCheck.Image = Properties.de.Resources.RemoteConnect;
-            }
-            catch (Exception ex)
-            {
-                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in SendInit_Click: {ex.Message}.\n", ex);
-                SetStatusText(StripStatusLabel, "Send init FAILED: " + ex.Message);
-                // StripStatusLabel.Text = "Send init FAILED: " + ex.Message;
-                PlaySoundFromResource("sound_hammer");
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool SendInit_Contact()
-        {
-            // TODO: implement it via socket directly or to registered user
-            // if Ip is pingable and reachable and connectable
-            // send HELLO to IP
-            if (chat == null)
-                chat = new Chat(0);
-
-            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
-                return false;
-
-
-            if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
-                return false;
-
-            string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
-
-            CqrContact myContact = Entities.Settings.Singleton.MyContact;
-            CqrContact? friendContact = null;
-            foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
-            {
-                if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    friendContact = c;
-                    break;
-                }
-            }
-
-
-            SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
-            this.TextBoxPipe.Text = serverMessage.PipeString;
-
-
-            FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, myContact.Email, serverMessage.PipeString);
-
-            string encrypted = serverMessage.CqrSrvMsg<string>(fmsg, MsgKind.Server, EncodingType.Base64);
-            string response = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
-
-
-            this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
-            this.textBoxChatSession.Text = rfmsg.ChatRoomNr;
-            // TODO: Email zur Einladung
-            this.TextBoxDestionation.Text = rfmsg.Message + "\n" + response + "\r\n"; // + serverMessage.symmPipe.HexStages;
-
-            chat.AddMyMessage(fmsg.Message);
-            chat.AddFriendMessage(rfmsg.Message);
-
-            // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
-            Format_Lines_RichTextBox();
-
-            SetStatusText(StripStatusLabel, "Finished 1st registration");
-
-            return true;
-
-        }
-
-
-
-
-
-        /// <summary>
-        /// Sends a secure message
-        /// </summary>
-        /// <param name="sender">object sender</param>
-        /// <param name="e">EventArgs e</param>
-        private void MenuItemSend_Click(object sender, EventArgs e)
-        {
-            // TODO: implement it via socket directly or to registered user
-            // if Ip is pingable and reachable and connectable
-            // send HELLO to IP
-            if (chat == null)
-                chat = new Chat(0);
-
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(this.RichTextBoxChat.Text) || string.IsNullOrWhiteSpace(this.RichTextBoxChat.Text))
-            {
-                StripStatusLabel.Text = "Nothing to send!";
-                PlaySoundFromResource("sound_warning");
-                return;
-            }
-
-            myServerKey = this.ComboBoxSecretKey.Text;
-            string unencrypted = this.RichTextBoxChat.Text; //.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
-
-            if (!string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
-            {
-                try
-                {
-                    partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
-                    Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                    pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
-
-                    string userMsg = chat.AddMyMessage(unencrypted);
-                    AppendText(TextBoxSource, userMsg);
-                    Format_Lines_RichTextBox();
-                    this.RichTextBoxChat.Text = string.Empty;
-                    StripStatusLabel.Text = "Send successfully";
-                    PlaySoundFromResource("sound_arrow");
-                }
-                catch (Exception ex)
-                {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
-                    StripStatusLabel.Text = "Send FAILED: " + ex.Message;
-                    PlaySoundFromResource("sound_warning");
-                }
-            }
-            // otherwise send message to registered user via server
-            // Always encrypt via key
-        }
-
-
-        /// <summary>
-        /// Attaches a file to send
-        /// </summary>
-        /// <param name="sender">object sender</param>
-        /// <param name="e">EventArgs e</param>
-        private void MenuItemAttach_Click(object sender, EventArgs e)
-        {
-            if (chat == null)
-                chat = new Chat(0);
-
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                MessageBox.Show("You haven't entered a secret key!", "Please enter a secret key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.ComboBoxSecretKey.BackColor = Color.OrangeRed;
-                PlaySoundFromResource("sound_warning");
-                return;
-            }
-
-            myServerKey = this.ComboBoxSecretKey.Text;
-
-            FileOpenDialog = DialogFileOpen;
-            DialogResult result = FileOpenDialog.ShowDialog();
-            if ((result == DialogResult.OK || result == DialogResult.Yes) && File.Exists(FileOpenDialog.FileName))
-            {
-                Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                CqrFile? cqrFile = GetCqrFileFromPath(FileOpenDialog.FileName, pmsg.PipeString);
-
-                if (cqrFile != null && !string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    try
-                    {
-                        partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
-
-                        // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                        pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
-
-                        string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
-                        System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
-
-                        string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
-                        AppendText(TextBoxSource, userMsg);
-                        Format_Lines_RichTextBox();
-                        this.RichTextBoxChat.Text = string.Empty;
-                        StripStatusLabel.Text = $"File {cqrFile.CqrFileName} send successfully!";
-                    }
-                    catch (Exception ex)
-                    {
-                        Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
-                        StripStatusLabel.Text = "Attach FAILED: " + ex.Message;
-                        PlaySoundFromResource("sound_warning");
-                    }
-                }
-                // otherwise send message to registered user via server
-                // Always encrypt via key
-
-            }
-
-        }
-
-        public void TooglePeerServer(object sender, EventArgs e)
-        {
-            if (e is Area23EventArgs<int> ev)
-            {
-                if (ev.GenericTData < 1)
-                {
-
+                case 0:
+                    PeerSessionTriState = PeerSession3State.Peer2Peer;
                     SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
                     try
                     {
@@ -905,10 +1135,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     catch (Exception ex)
                     {
                     }
-
-                }
-                else if (ev.GenericTData > 1)
-                {
+                    this.MenuOptionsItemServerSession.Checked = false;
+                    this.MenuOptionsPeer2Peer.Checked = true;
+                    break;
+                case 2:
+                    this.PeerSessionTriState = PeerSession3State.ChatServer;
                     SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
                     try
                     {
@@ -918,10 +1149,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     catch (Exception ex)
                     {
                     }
-
-                }
-                else
-                {
+                    this.MenuOptionsItemServerSession.Checked = true;
+                    this.MenuOptionsPeer2Peer.Checked = false;
+                    break;
+                case 1:
+                default:
+                    this.PeerSessionTriState = PeerSession3State.Both;
                     try
                     {
                         this.ComboBoxContacts.Enabled = true;
@@ -930,11 +1163,64 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     catch (Exception ex)
                     {
                     }
-                }
+                    this.MenuOptionsItemServerSession.Checked = true;
+                    this.MenuOptionsPeer2Peer.Checked = true;
+                    break;
+            }
+            this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState);
+        }
+
+        public void TooglePeerServer(object sender, EventArgs e)
+        {
+            if (e is Area23EventArgs<int> ev)
+            {
+                TooglePeerSessionServerTriState((short)ev.GenericTData);
+                //if (ev.GenericTData < 1)
+                //{
+
+                //    SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
+                //    try
+                //    {
+                //        this.ComboBoxContacts.Enabled = false;
+                //        this.ComboBoxIp.Enabled = true;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //    }
+
+                //}
+                //else if (ev.GenericTData > 1)
+                //{
+                //    SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
+                //    try
+                //    {
+                //        this.ComboBoxContacts.Enabled = true;
+                //        this.ComboBoxIp.Enabled = false;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //    }
+
+                //}
+                //else
+                //{
+                //    try
+                //    {
+                //        this.ComboBoxContacts.Enabled = true;
+                //        this.ComboBoxIp.Enabled = true;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //    }
+                //}
             }
         }
 
-
+        /// <summary>
+        /// OnDragDrop is fired up, when files are dragged into <see cref="GroupBoxes.LinkLabelsBox"/> or <see cref="GroupBoxes.DragNDropBox"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void OnDragNDrop(object sender, EventArgs e)
         {
             if (e is Area23EventArgs<string> ea)
@@ -946,8 +1232,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     FileInfo fi = new FileInfo(ea.GenericTData);
                     if (fi.Length > Constants.MAX_FILE_BYTE_BUFFEER)
                     {
-                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds {Constants.MAX_FILE_BYTE_BUFFEER} bytes.",
-                            "FileSize larger > 6MB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds {Constants.MAX_FILE_BYTE_BUFFEER} bytes.", "FileSize larger > 6MB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
@@ -961,64 +1246,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             AppendText(TextBoxSource, userMsg);
                             Format_Lines_RichTextBox();
                             this.RichTextBoxChat.Text = string.Empty;
-                            StripStatusLabel.Text = $"File {cf.CqrFileName} send successfully!";
+                            SetStatusText(StripStatusLabel, $"File {cf.CqrFileName} send successfully!");
                         }
                     }
                 }
             }
         }
 
-        private void MenuItemRefresh_Click(object sender, EventArgs e)
-        {
-            byte[] b0 = ExternalIpAddress.ToExternalBytes();
-            Version? assVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            byte[] b1 = (assVersion != null) ? assVersion.ToVersionBytes() : new byte[2] { 0x02, 0x18 };
-            string privKey = ExternalIpAddress?.ToString() + ServerIpAddress?.ToString();
-            string iv = Constants.BC_START_MSG;
-            byte[] keyBytes = CryptHelper.GetUserKeyBytes(privKey, iv, 16);
-
-            ZenMatrix zenM = new ZenMatrix(keyBytes, true);
-            // ZenMatrix.ZenMatrixGenWithBytes(keyBytes, true);
-            TextBoxDestionation.Text = "| 0 | => | ";
-            foreach (sbyte sb in zenM.MatrixPermutationKey)
-            {
-                TextBoxDestionation.Text += sb.ToString("x1") + " ";
-            }
-            TextBoxDestionation.Text += "| \r\n";
-            for (int zeni = 1; zeni < zenM.PermutationKeyHash.Count; zeni++)
-            {
-                sbyte sb = (sbyte)zenM.PermutationKeyHash.ElementAt(zeni);
-                TextBoxDestionation.Text += "| " + zeni.ToString("x1") + " | => | " + sb.ToString("x1") + " | " + "\r\n";
-            }
-            // this.TextBoxDestionation.Text += ZenMatrix.EncryptString(this.RichTextBoxChat.Text) + "\n";
-        }
-
         /// <summary>
-        /// MenuItemClear_Click clears all input & output chat windows
+        /// SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="AttachmentListControl"/>
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MenuItemClear_Click(object sender, EventArgs e)
-        {
-            // TODO: add warning and saving here
-            PlaySoundFromResource("sound_glasses");
-            this.TextBoxDestionation.Clear();
-            this.TextBoxSource.Clear();
-            this.RichTextBoxOneView.Clear();
-            if (chat != null)
-            {
-                List<DateTime> chatTimes = chat.CqrMsgs.Keys.ToList();
-                chatTimes.Sort();
-                DateTime max = DateTime.MinValue;
-                foreach (DateTime chatTime in chatTimes)
-                    if (chatTime > max)
-                        max = chatTime;
-                chat.TimeStamp = max.AddMicroseconds(500);
-
-            }
-            this.RichTextBoxChat.Clear();
-        }
-
+        /// <param name="cqrFile"><see cref="CqrFile"/></param>
         /// <summary>
         /// SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="AttachmentListControl"/>
         /// </summary>
@@ -1038,7 +1276,121 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
 
-        #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
+        public override async Task BgWorkerMonitor_WorkMonitorAsync(object? sender, EventArgs e)
+        {
+            await base.BgWorkerMonitor_WorkMonitorAsync(sender, e);
+
+            IPAddress? newAddr = null;
+            ToolStripMenuItem? newIpIem = null;
+            List<IPAddress> addresses = GetProxiesFromSettingsResources();
+            InterfaceIpAddresses = await NetworkAddresses.GetIpAddressesAsync();
+            ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
+
+            if (PeerSessionTriState == PeerSession3State.Peer2Peer || PeerSessionTriState == PeerSession3State.Both)
+            {
+                if (ipSockListener != null && ipSockListener.ServerSocket != null &&
+                   (ipSockListener.ServerSocket.Connected || ipSockListener.ServerSocket.IsBound) &&
+                   !ipSockListener.ServerSocket.Blocking)
+                {
+                    if (ipSockListener.ServerEndPoint != null)
+                        Area23Log.LogStatic($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
+                }
+                else // Rebind Server Socket
+                {
+
+                    foreach (ToolStripMenuItem tsmItem in MenuNetworkItemMyIps.DropDown.Items)
+                    {
+                        if (tsmItem.Checked)
+                        {
+                            foreach (IPAddress addr in InterfaceIpAddresses)
+                            {
+                                if (tsmItem.Text == addr.AddressFamily.ShortInfo() + addr.ToString())
+                                {
+                                    newIpIem = tsmItem;
+                                    newAddr = addr;
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+
+                    if (newIpIem != null && newAddr != null)
+                    {
+                        ToolStripMenuItem? oldAddrIf = null;
+
+                        foreach (ToolStripMenuItem dditem in this.MenuNetworkItemMyIps.DropDownItems)
+                            if (dditem.Checked)
+                                oldAddrIf = dditem;
+
+                        IPAddress? clIp = clientIpAddress;
+                        try
+                        {
+                            if (IPAddress.TryParse(newAddr.ToString(), out clIp))
+                            {
+                                newIpIem.Checked = true;
+                                if (oldAddrIf != null)
+                                    oldAddrIf.Checked = false;
+                                clientIpAddress = clIp;
+
+                                try
+                                {
+                                    if (ipSockListener != null)
+                                        ipSockListener.Dispose();
+                                }
+                                catch (Exception exi)
+                                {
+                                    SLog.Log(exi);
+                                }
+                                try
+                                {
+                                    ipSockListener = null;
+                                }
+                                catch (Exception exi)
+                                {
+                                    SLog.Log(exi);
+                                }
+
+                                Thread.Sleep(Constants.CLOSING_TIMEOUT);
+                                clientSocket_DataReceived =
+                                            delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                            {
+                                                OnClientReceive(sender, eventReceived);
+                                            };
+                                receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
+                                ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
+                                SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
+
+                                if (IPAddress.IsLoopback(clientIpAddress))
+                                {
+                                    if (clientIpAddress.AddressFamily == AddressFamily.InterNetwork)
+                                        SetComboBoxText(this.ComboBoxIp, "127.0.0.1");
+                                    else if (clientIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
+                                        if (clientIpAddress.ToString().Contains("::1"))
+                                            SetComboBoxText(this.ComboBoxIp, "::1");
+
+                                    //ComboBoxIp_FocusLeave(sender, e);
+                                }
+                            }
+                        }
+                        catch (Exception exc)
+                        {
+                            SLog.Log(exc);
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+
+        public override void BgWorkerMonitor_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            base.BgWorkerMonitor_RunWorkerCompleted(sender, e);
+        }
+
+        #endregion OnClientReceive OnDragNDrop TooglePeerServer OnDragNDrop delegate jump back invocation target members
 
 
         #region Contacts
@@ -1420,81 +1772,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// SetupNetwork async method to setup network
         /// </summary>
         /// <returns><see cref="Task"/></returns>
+
         internal async Task SetupNetwork()
         {
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
             SetStatusText(StripStatusLabel, $"Setup Network: Several proxy addresses fetched.");
-            List<IPAddress> interfaceIPAddrs = await NetworkAddresses.GetIpAddressesAsync();
-            SetStatusText(StripStatusLabel, $"Setup Network: All network interfaces addresses fetched.");
-            List<IPAddress> connectedIPs = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
-            SetStatusText(StripStatusLabel, $"Setup Network: All active connected ip addresses fetched.");
 
-
-            List<string> myIpStrList = new List<string>();
-            int mchecked = 0;
-            this.MenuNetworkItemIPv6Secure.Checked = false;
-            foreach (IPAddress addr in interfaceIPAddrs)
-            {
-                if (addr != null)
-                {
-                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily.ShortInfo() + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
-                    item.Checked = false;
-
-                    if (IPAddress.IsLoopback(addr))
-                    {
-                        item.BackColor = SystemColors.ActiveCaption;
-                        item.ForeColor = SystemColors.ActiveCaptionText;
-                        SetMenuItemForeColor(item, SystemColors.ActiveCaptionText);
-                        SetMenuItemBackColor(item, SystemColors.ActiveCaption);
-                    }
-                    else
-                    {
-                        item.BackColor = SystemColors.MenuBar;
-                        item.ForeColor = SystemColors.GrayText;
-                        SetMenuItemForeColor(item, SystemColors.GrayText);
-                        SetMenuItemBackColor(item, SystemColors.MenuBar);
-                    }
-
-                    if (connectedIPs != null && connectedIPs.Count > 0)
-                    {
-                        foreach (IPAddress connectedIp in connectedIPs)
-                        {
-                            if (addr.IsSameIp(connectedIp))
-                            {
-                                item.BackColor = SystemColors.MenuBar;
-                                item.ForeColor = SystemColors.MenuText;
-                                SetMenuItemForeColor(item, SystemColors.MenuText);
-                                SetMenuItemBackColor(item, SystemColors.MenuBar);
-
-
-                                if (mchecked++ == 0)
-                                {
-                                    item.BackColor = SystemColors.MenuHighlight;
-                                    item.ForeColor = SystemColors.MenuText;
-                                    SetMenuItemForeColor(item, SystemColors.MenuText);
-                                    SetMenuItemBackColor(item, SystemColors.MenuHighlight);
-
-                                    clientIpAddress = addr;
-                                    item.Checked = true;
-                                    if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                                        SetMenuItemChecked(this.MenuNetworkItemIPv6Secure, true);
-                                    // this.MenuNetworkItemIPv6Secure.Checked = true;
-                                    ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
-                                }
-
-                                break;
-                            }
-                        }
-
-                    }
-
-                    myIpStrList.Add(addr.ToString());
-                    AddMenuItemToItems(MenuNetworkItemMyIps, (ToolStripDropDownItem)item);
-                    // this.MenuNetworkItemMyIps.DropDownItems.Add(item);
-                }
-            }
-
-            SetStatusText(StripStatusLabel, $"Setup Network: All interface addresses added to menu. Not connected if addrs grayed.");
+            List<IPAddress> myIpList = await SetupAllNetworkInterfacesAndConnectedIpAddresses(addresses);
 
             ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily.ShortInfo() + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
             extIpItem.Checked = true;
@@ -1520,7 +1804,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetStatusText(StripStatusLabel, $"Setup Network: External client ip address added to menu.");
 
 
-            mchecked = 0;
+            int mchecked = 0;
             List<string> proxyList = new List<string>();
             foreach (IPAddress addrProxy in addresses)
             {
@@ -1530,13 +1814,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     proxyList.Add(addrProxy.ToString());
 
+
                     ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily.ShortInfo() + addrProxy.ToString(), null, ServerProxyAddressSelected, addrProxy.ToString());
                     if ((addrProxy.AddressFamily == ServerIpAddress?.AddressFamily) &&
                         (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {
 
                         if (!GetMenuItemChecked(MenuNetworkItemIPv6Secure) && addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                        { ; }
+                        {; }
                         else
                             SetMenuItemChecked(item, true);
                         // item.Checked = true;
@@ -1577,13 +1862,111 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (Entities.Settings.Singleton != null)
             {
                 Entities.Settings.Singleton.Proxies = proxyList;
-                Entities.Settings.Singleton.MyIPs = myIpStrList;
+                Entities.Settings.Singleton.MyIPs = myIpList.ConvertAll(x => x.ToString()).ToList();
                 Entities.Settings.SaveSettings(Entities.Settings.Singleton);
             }
 
             SetStatusText(StripStatusLabel, $"Setup Network complete!");
         }
 
+
+
+        internal async Task<List<IPAddress>> SetupAllNetworkInterfacesAndConnectedIpAddresses(List<IPAddress> addresses)
+        {
+            InterfaceIpAddresses = await NetworkAddresses.GetIpAddressesAsync();
+            SetStatusText(StripStatusLabel, $"Setup Network: All network interfaces addresses fetched.");
+            ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
+            SetStatusText(StripStatusLabel, $"Setup Network: All active connected ip addresses fetched.");
+
+            MenuNetworkItemMyIps.DropDown.Items.Clear();
+            MenuItemExternalIp = new ToolStripMenuItem();
+            MenuItemExternalIp.BackColor = SystemColors.MenuBar;
+            MenuItemExternalIp.Name = "MenuItemExternalIp";
+            MenuItemExternalIp.Size = new Size(160, 22);
+            MenuItemExternalIp.Text = "External Ip's";
+            MenuItemExternalIp.Visible = true;
+            MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
+            MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { MenuItemExternalIp });
+            MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
+            MenuNetworkItemMyIps.Size = new Size(177, 22);
+            MenuNetworkItemMyIps.Text = "my ip's";
+
+
+            List<IPAddress> myIpList = new List<IPAddress>();
+            int mchecked = 0;
+            this.MenuNetworkItemIPv6Secure.Checked = false;
+            foreach (IPAddress addr in InterfaceIpAddresses)
+            {
+                if (addr != null)
+                {
+                    ToolStripMenuItem item = new ToolStripMenuItem(addr.AddressFamily.ShortInfo() + addr.ToString(), null, IPInterfaceAddressSelected, addr.ToString());
+                    item.Checked = false;
+
+                    if (IPAddress.IsLoopback(addr))
+                    {
+                        item.BackColor = SystemColors.ActiveCaption;
+                        item.ForeColor = SystemColors.ActiveCaptionText;
+                        SetMenuItemForeColor(item, SystemColors.ActiveCaptionText);
+                        SetMenuItemBackColor(item, SystemColors.ActiveCaption);
+                    }
+                    else
+                    {
+                        item.BackColor = SystemColors.MenuBar;
+                        item.ForeColor = SystemColors.GrayText;
+                        SetMenuItemForeColor(item, SystemColors.GrayText);
+                        SetMenuItemBackColor(item, SystemColors.MenuBar);
+                    }
+
+                    if (ConnectedIpAddresses != null && ConnectedIpAddresses.Count > 0)
+                    {
+                        foreach (IPAddress connectedIp in ConnectedIpAddresses)
+                        {
+                            if (addr.IsSameIp(connectedIp))
+                            {
+                                item.BackColor = SystemColors.MenuBar;
+                                item.ForeColor = SystemColors.MenuText;
+                                SetMenuItemForeColor(item, SystemColors.MenuText);
+                                SetMenuItemBackColor(item, SystemColors.MenuBar);
+
+
+                                if (mchecked++ == 0)
+                                {
+                                    item.BackColor = SystemColors.MenuHighlight;
+                                    item.ForeColor = SystemColors.MenuText;
+                                    SetMenuItemForeColor(item, SystemColors.MenuText);
+                                    SetMenuItemBackColor(item, SystemColors.MenuHighlight);
+
+                                    clientIpAddress = addr;
+                                    item.Checked = true;
+                                    if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                                        SetMenuItemChecked(this.MenuNetworkItemIPv6Secure, true);
+                                    // this.MenuNetworkItemIPv6Secure.Checked = true;
+                                    clientSocket_DataReceived =
+                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                        {
+                                            OnClientReceive(sender, eventReceived);
+                                        };
+                                    receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
+                                    ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
+                                }
+
+                                break;
+                            }
+                        }
+
+                    }
+
+                    myIpList.Add(addr);
+                    AddMenuItemToItems(MenuNetworkItemMyIps, (ToolStripDropDownItem)item);
+                    // this.MenuNetworkItemMyIps.DropDownItems.Add(item);
+                }
+            }
+
+            SetStatusText(StripStatusLabel, $"Setup Network: All interface addresses added to menu. Not connected if addrs grayed.");
+
+            return myIpList;
+
+        }
 
         /// <summary>
         /// IPAdressSelected Delegate is invoked, 
@@ -1630,7 +2013,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
 
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
-                        ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, OnClientReceive);
+                        clientSocket_DataReceived =
+                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                        {
+                                            OnClientReceive(sender, eventReceived);
+                                        };
+                        receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
+                        ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                         SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
 
                         if (IPAddress.IsLoopback(clientIpAddress))
@@ -1641,7 +2030,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                 if (clientIpAddress.ToString().Contains("::1"))
                                     SetComboBoxText(this.ComboBoxIp, "::1");
 
-                            // ComboBoxIp_FocusLeave(sender, e);
+                            //ComboBoxIp_FocusLeave(sender, e);
                         }
                     }
                 }
@@ -1694,23 +2083,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         public void MenuOptionsItemClearAllOnClose_Click(object sender, EventArgs e)
         {
+            // TODO add to settings
             this.MenuOptionsItemClearAllOnClose.Checked = (!this.MenuOptionsItemClearAllOnClose.Checked);
             AppDomain.CurrentDomain.SetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE, MenuOptionsItemClearAllOnClose.Checked);
         }
 
         #region LoadSaveChatContent
 
-
-
         private void MenuFileItemOpen_Click(object sender, EventArgs e)
         {
             FileOpenDialog = DialogFileOpen;
-            DialogResult res = FileOpenDialog.ShowDialog();
-            if (res == DialogResult.OK)
+            FileOpenDialog.RestoreDirectory = true;
+            DialogResult result = FileOpenDialog.ShowDialog();
+            if (result == DialogResult.OK)
             {
                 MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
 
 
         protected internal virtual void toolStripMenuItemSave_Click(object sender, EventArgs e)
@@ -1720,7 +2110,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected virtual byte[] OpenCryptFileDialog(ref string loadDir)
         {
-            FileOpenDialog = DialogFileOpen;
+            if (FileOpenDialog == null)
+                FileOpenDialog = new OpenFileDialog();
             byte[] fileBytes;
             if (string.IsNullOrEmpty(loadDir))
                 loadDir = Environment.GetEnvironmentVariable("TEMP") ?? System.AppDomain.CurrentDomain.BaseDirectory;
@@ -1794,10 +2185,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.MenuItemClear_Click(sender, e);
         }
 
+        private void MenuOptionsPeer2Peer_Click(object sender, EventArgs e)
+        {
+            if (this.MenuOptionsPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(0);
+            else if (!this.MenuOptionsPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(2);
+            else
+                TooglePeerSessionServerTriState(1);
 
+        }
 
-
-
+        private void MenuOptionsItemServerSession_Click(object sender, EventArgs e)
+        {
+            if (this.MenuOptionsPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(0);
+            else if (!this.MenuOptionsPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(2);
+            else
+                TooglePeerSessionServerTriState(1);
+        }
     }
 
 }

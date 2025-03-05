@@ -111,6 +111,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ((System.ComponentModel.ISupportInitialize)PictureBoxYou).BeginInit();
             PanelEnCodeCrypt.SuspendLayout();
             PanelDestination.SuspendLayout();
+            PeerServerSwitch.SuspendLayout();
             PanelCenter.SuspendLayout();
             PanelBottom.SuspendLayout();
             SuspendLayout();
@@ -252,7 +253,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
             MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { MenuItemExternalIp });
             MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
-            MenuNetworkItemMyIps.Size = new Size(177, 22);
+            MenuNetworkItemMyIps.Size = new Size(180, 22);
             MenuNetworkItemMyIps.Text = "my ip's";
             // 
             // MenuItemExternalIp
@@ -267,7 +268,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuItemFriendIp.BackColor = SystemColors.MenuBar;
             MenuItemFriendIp.DropDownItems.AddRange(new ToolStripItem[] { MenuNetworkComboBoxFriendIp });
             MenuItemFriendIp.Name = "MenuItemFriendIp";
-            MenuItemFriendIp.Size = new Size(177, 22);
+            MenuItemFriendIp.Size = new Size(180, 22);
             MenuItemFriendIp.Text = "friend ip's";
             MenuItemFriendIp.ToolTipText = "You can enter here directly friend ip's, if your connection is free of SNAT/DNAT";
             // 
@@ -281,7 +282,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             MenuNetworkItemProxyServers.BackColor = SystemColors.MenuBar;
             MenuNetworkItemProxyServers.Name = "MenuNetworkItemProxyServers";
-            MenuNetworkItemProxyServers.Size = new Size(177, 22);
+            MenuNetworkItemProxyServers.Size = new Size(180, 22);
             MenuNetworkItemProxyServers.Text = "proxies";
             MenuNetworkItemProxyServers.ToolTipText = "proxies are needed mainly to connect to people, where no endpoint to endpoint ip connection is possible";
             // 
@@ -290,14 +291,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuNetworkSeparatorIp.BackColor = SystemColors.MenuBar;
             MenuNetworkSeparatorIp.ForeColor = SystemColors.ActiveBorder;
             MenuNetworkSeparatorIp.Name = "MenuNetworkSeparatorIp";
-            MenuNetworkSeparatorIp.Size = new Size(174, 6);
+            MenuNetworkSeparatorIp.Size = new Size(177, 6);
             // 
             // MenuNetworkItemIPv6Secure
             // 
             MenuNetworkItemIPv6Secure.BackColor = SystemColors.MenuBar;
             MenuNetworkItemIPv6Secure.Name = "MenuNetworkItemIPv6Secure";
             MenuNetworkItemIPv6Secure.ShortcutKeys = Keys.Control | Keys.D6;
-            MenuNetworkItemIPv6Secure.Size = new Size(177, 22);
+            MenuNetworkItemIPv6Secure.Size = new Size(180, 22);
             MenuNetworkItemIPv6Secure.Text = "ip6 cqr";
             MenuNetworkItemIPv6Secure.ToolTipText = "you can check it only, when you have an ipv6 address and you want to chat only to partners, where ip6 connect is possible";
             // 
@@ -315,7 +316,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemSend.BackColor = SystemColors.MenuBar;
             MenuCommandsItemSend.Name = "MenuCommandsItemSend";
             MenuCommandsItemSend.ShortcutKeys = Keys.Control | Keys.S;
-            MenuCommandsItemSend.Size = new Size(178, 22);
+            MenuCommandsItemSend.Size = new Size(180, 22);
             MenuCommandsItemSend.Text = "send";
             MenuCommandsItemSend.ToolTipText = "sends a message";
             MenuCommandsItemSend.Click += MenuItemSend_Click;
@@ -325,7 +326,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemAttach.BackColor = SystemColors.MenuBar;
             MenuCommandsItemAttach.Name = "MenuCommandsItemAttach";
             MenuCommandsItemAttach.ShortcutKeys = Keys.Control | Keys.A;
-            MenuCommandsItemAttach.Size = new Size(178, 22);
+            MenuCommandsItemAttach.Size = new Size(180, 22);
             MenuCommandsItemAttach.Text = "attach";
             MenuCommandsItemAttach.ToolTipText = "attaches file to send; in prototype only  file extension image audio and video is supported";
             MenuCommandsItemAttach.Click += MenuItemAttach_Click;
@@ -334,14 +335,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             MenuCommandsSeperator.BackColor = SystemColors.MenuBar;
             MenuCommandsSeperator.Name = "MenuCommandsSeperator";
-            MenuCommandsSeperator.Size = new Size(175, 6);
+            MenuCommandsSeperator.Size = new Size(177, 6);
             // 
             // MenuCommandsItemRefresh
             // 
             MenuCommandsItemRefresh.BackColor = SystemColors.MenuBar;
             MenuCommandsItemRefresh.Name = "MenuCommandsItemRefresh";
             MenuCommandsItemRefresh.ShortcutKeys = Keys.Control | Keys.R;
-            MenuCommandsItemRefresh.Size = new Size(178, 22);
+            MenuCommandsItemRefresh.Size = new Size(180, 22);
             MenuCommandsItemRefresh.Text = "refresh";
             MenuCommandsItemRefresh.ToolTipText = "refreshes, when the terminal is flushed";
             MenuCommandsItemRefresh.Click += MenuItemRefresh_Click;
@@ -351,7 +352,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemClear.BackColor = SystemColors.MenuBar;
             MenuCommandsItemClear.Name = "MenuCommandsItemClear";
             MenuCommandsItemClear.ShortcutKeys = Keys.Control | Keys.Delete;
-            MenuCommandsItemClear.Size = new Size(178, 22);
+            MenuCommandsItemClear.Size = new Size(180, 22);
             MenuCommandsItemClear.Text = "clear";
             MenuCommandsItemClear.ToolTipText = "clears completey all chat windows";
             MenuCommandsItemClear.Click += MenuItemClear_Click;
@@ -659,8 +660,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             PanelEnCodeCrypt.BackColor = SystemColors.ActiveCaption;
             PanelEnCodeCrypt.Controls.Add(TextBoxPipe);
-            PanelEnCodeCrypt.Controls.Add(ButtonCheck);
             PanelEnCodeCrypt.Controls.Add(textBoxChatSession);
+            PanelEnCodeCrypt.Controls.Add(ButtonCheck);
             PanelEnCodeCrypt.Controls.Add(ComboBoxContacts);
             PanelEnCodeCrypt.Controls.Add(ComboBoxIp);
             PanelEnCodeCrypt.Controls.Add(ComboBoxSecretKey);
@@ -705,7 +706,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             textBoxChatSession.Location = new Point(456, 6);
             textBoxChatSession.Margin = new Padding(1);
             textBoxChatSession.Name = "textBoxChatSession";
-            textBoxChatSession.ReadOnly = true;
             textBoxChatSession.Size = new Size(368, 24);
             textBoxChatSession.TabIndex = 19;
             // 
@@ -787,6 +787,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             PeerServerSwitch.AllowDrop = true;
             PeerServerSwitch.BackColor = SystemColors.GradientActiveCaption;
+            PeerServerSwitch.Controls.Add(PanelCenter);
             PeerServerSwitch.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             PeerServerSwitch.Location = new Point(8, 2);
             PeerServerSwitch.Margin = new Padding(1);
@@ -854,7 +855,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             PanelCenter.Controls.Add(SplitChatView);
             PanelCenter.Controls.Add(RichTextBoxOneView);
-            PanelCenter.Location = new Point(8, 102);
+            PanelCenter.Location = new Point(0, 0);
             PanelCenter.Margin = new Padding(0);
             PanelCenter.Name = "PanelCenter";
             PanelCenter.Size = new Size(800, 460);
@@ -891,7 +892,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             BackColor = SystemColors.Control;
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(998, 717);
-            Controls.Add(PanelCenter);
             Controls.Add(PanelDestination);
             Controls.Add(PanelBottom);
             Controls.Add(PanelEnCodeCrypt);
@@ -919,6 +919,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelEnCodeCrypt.ResumeLayout(false);
             PanelEnCodeCrypt.PerformLayout();
             PanelDestination.ResumeLayout(false);
+            PeerServerSwitch.ResumeLayout(false);
+            PeerServerSwitch.PerformLayout();
             PanelCenter.ResumeLayout(false);
             PanelBottom.ResumeLayout(false);
             ResumeLayout(false);
