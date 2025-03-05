@@ -301,49 +301,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
 
-        [WebMethod]
-        public string UpdateContacts(string cryptMsg)
-        {
-            return cryptMsg;
-        }
-
 
         [WebMethod]
-        public string TestService()
+        public override string TestService()
         {
-
-            string ret = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().GetName().FullName) +
-                Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-            object[] sattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-            if (sattributes.Length > 0)
-            {
-                AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)sattributes[0];
-                if (titleAttribute.Title != "")
-                    ret = titleAttribute.Title;
-            }
-            ret += "\n" + Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-            object[] oattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
-            if (oattributes.Length > 0)
-                ret += "\n" + ((AssemblyDescriptionAttribute)oattributes[0]).Description;
-
-            object[] pattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
-            if (pattributes.Length > 0)
-                ret += "\n" + ((AssemblyProductAttribute)pattributes[0]).Product;
-
-            object[] crattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-            if (crattributes.Length > 0)
-                ret += "\n" + ((AssemblyCopyrightAttribute)crattributes[0]).Copyright;
-
-            object[] cpattributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-            if (cpattributes.Length > 0)
-                ret += "\n" + ((AssemblyCompanyAttribute)cpattributes[0]).Company;
-
-            string uhaddr = HttpContext.Current.Request.UserHostAddress;
-            Area23Log.LogStatic($"Test Method called from {uhaddr}, returning {ret}");
-            return ret;
-
+            return base.TestService();
         }
 
     }

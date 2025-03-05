@@ -178,7 +178,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Util\CoolCrypt.aspx" />
-    <Content Include="Util\ChatRoomService.asmx" />
     <Content Include="CqrService.asmx" />
     <Content Include="Default.aspx" />
     <Content Include="Error.aspx" />
@@ -257,10 +256,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="CqrController.cs" />
-    <Compile Include="Util\ChatRoomService.asmx.cs">
-      <DependentUpon>ChatRoomService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="CqrService.asmx.cs">
       <DependentUpon>CqrService.asmx</DependentUpon>
       <SubType>Component</SubType>

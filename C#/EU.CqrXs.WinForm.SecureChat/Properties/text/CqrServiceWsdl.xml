@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="https://cqrjd.eu/cqrsrv/cqrjd/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="https://cqrjd.eu/cqrsrv/cqrjd/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="https://cqrjd.eu/cqrsrv/cqrjd/">
+      <s:element name="Send1StSrvMsg">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cryptMsg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Send1StSrvMsgResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Send1StSrvMsgResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChatRoomInvite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cryptMsg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChatRoomInviteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ChatRoomInviteResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChatRoomPoll">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cryptMsg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChatRoomPollResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ChatRoomPollResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChatRoomPushMessage">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cryptMsg" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="chatRoomMembersCrypted" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChatRoomPushMessageResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ChatRoomPushMessageResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChatRoomClose">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cryptMsg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChatRoomCloseResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ChatRoomCloseResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TestService">
+        <s:complexType />
+      </s:element>
+      <s:element name="TestServiceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TestServiceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="Send1StSrvMsgSoapIn">
+    <wsdl:part name="parameters" element="tns:Send1StSrvMsg" />
+  </wsdl:message>
+  <wsdl:message name="Send1StSrvMsgSoapOut">
+    <wsdl:part name="parameters" element="tns:Send1StSrvMsgResponse" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomInviteSoapIn">
+    <wsdl:part name="parameters" element="tns:ChatRoomInvite" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomInviteSoapOut">
+    <wsdl:part name="parameters" element="tns:ChatRoomInviteResponse" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPollSoapIn">
+    <wsdl:part name="parameters" element="tns:ChatRoomPoll" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPollSoapOut">
+    <wsdl:part name="parameters" element="tns:ChatRoomPollResponse" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPushMessageSoapIn">
+    <wsdl:part name="parameters" element="tns:ChatRoomPushMessage" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPushMessageSoapOut">
+    <wsdl:part name="parameters" element="tns:ChatRoomPushMessageResponse" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomCloseSoapIn">
+    <wsdl:part name="parameters" element="tns:ChatRoomClose" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomCloseSoapOut">
+    <wsdl:part name="parameters" element="tns:ChatRoomCloseResponse" />
+  </wsdl:message>
+  <wsdl:message name="TestServiceSoapIn">
+    <wsdl:part name="parameters" element="tns:TestService" />
+  </wsdl:message>
+  <wsdl:message name="TestServiceSoapOut">
+    <wsdl:part name="parameters" element="tns:TestServiceResponse" />
+  </wsdl:message>
+  <wsdl:message name="Send1StSrvMsgHttpGetIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="Send1StSrvMsgHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomInviteHttpGetIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomInviteHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPollHttpGetIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPollHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPushMessageHttpGetIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+    <wsdl:part name="chatRoomMembersCrypted" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPushMessageHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomCloseHttpGetIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomCloseHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TestServiceHttpGetIn" />
+  <wsdl:message name="TestServiceHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="Send1StSrvMsgHttpPostIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="Send1StSrvMsgHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomInviteHttpPostIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomInviteHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPollHttpPostIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPollHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPushMessageHttpPostIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+    <wsdl:part name="chatRoomMembersCrypted" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomPushMessageHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomCloseHttpPostIn">
+    <wsdl:part name="cryptMsg" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChatRoomCloseHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TestServiceHttpPostIn" />
+  <wsdl:message name="TestServiceHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:portType name="CqrServiceSoap">
+    <wsdl:operation name="Send1StSrvMsg">
+      <wsdl:input message="tns:Send1StSrvMsgSoapIn" />
+      <wsdl:output message="tns:Send1StSrvMsgSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomInvite">
+      <wsdl:input message="tns:ChatRoomInviteSoapIn" />
+      <wsdl:output message="tns:ChatRoomInviteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPoll">
+      <wsdl:input message="tns:ChatRoomPollSoapIn" />
+      <wsdl:output message="tns:ChatRoomPollSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPushMessage">
+      <wsdl:input message="tns:ChatRoomPushMessageSoapIn" />
+      <wsdl:output message="tns:ChatRoomPushMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomClose">
+      <wsdl:input message="tns:ChatRoomCloseSoapIn" />
+      <wsdl:output message="tns:ChatRoomCloseSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TestService">
+      <wsdl:input message="tns:TestServiceSoapIn" />
+      <wsdl:output message="tns:TestServiceSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="CqrServiceHttpGet">
+    <wsdl:operation name="Send1StSrvMsg">
+      <wsdl:input message="tns:Send1StSrvMsgHttpGetIn" />
+      <wsdl:output message="tns:Send1StSrvMsgHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomInvite">
+      <wsdl:input message="tns:ChatRoomInviteHttpGetIn" />
+      <wsdl:output message="tns:ChatRoomInviteHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPoll">
+      <wsdl:input message="tns:ChatRoomPollHttpGetIn" />
+      <wsdl:output message="tns:ChatRoomPollHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPushMessage">
+      <wsdl:input message="tns:ChatRoomPushMessageHttpGetIn" />
+      <wsdl:output message="tns:ChatRoomPushMessageHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomClose">
+      <wsdl:input message="tns:ChatRoomCloseHttpGetIn" />
+      <wsdl:output message="tns:ChatRoomCloseHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TestService">
+      <wsdl:input message="tns:TestServiceHttpGetIn" />
+      <wsdl:output message="tns:TestServiceHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="CqrServiceHttpPost">
+    <wsdl:operation name="Send1StSrvMsg">
+      <wsdl:input message="tns:Send1StSrvMsgHttpPostIn" />
+      <wsdl:output message="tns:Send1StSrvMsgHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomInvite">
+      <wsdl:input message="tns:ChatRoomInviteHttpPostIn" />
+      <wsdl:output message="tns:ChatRoomInviteHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPoll">
+      <wsdl:input message="tns:ChatRoomPollHttpPostIn" />
+      <wsdl:output message="tns:ChatRoomPollHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPushMessage">
+      <wsdl:input message="tns:ChatRoomPushMessageHttpPostIn" />
+      <wsdl:output message="tns:ChatRoomPushMessageHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomClose">
+      <wsdl:input message="tns:ChatRoomCloseHttpPostIn" />
+      <wsdl:output message="tns:ChatRoomCloseHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TestService">
+      <wsdl:input message="tns:TestServiceHttpPostIn" />
+      <wsdl:output message="tns:TestServiceHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CqrServiceSoap" type="tns:CqrServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Send1StSrvMsg">
+      <soap:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/Send1StSrvMsg" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomInvite">
+      <soap:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomInvite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPoll">
+      <soap:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomPoll" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPushMessage">
+      <soap:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomPushMessage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomClose">
+      <soap:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomClose" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestService">
+      <soap:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/TestService" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CqrServiceSoap12" type="tns:CqrServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Send1StSrvMsg">
+      <soap12:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/Send1StSrvMsg" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomInvite">
+      <soap12:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomInvite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPoll">
+      <soap12:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomPoll" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPushMessage">
+      <soap12:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomPushMessage" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomClose">
+      <soap12:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomClose" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestService">
+      <soap12:operation soapAction="https://cqrjd.eu/cqrsrv/cqrjd/TestService" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CqrServiceHttpGet" type="tns:CqrServiceHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="Send1StSrvMsg">
+      <http:operation location="/Send1StSrvMsg" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomInvite">
+      <http:operation location="/ChatRoomInvite" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPoll">
+      <http:operation location="/ChatRoomPoll" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPushMessage">
+      <http:operation location="/ChatRoomPushMessage" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomClose">
+      <http:operation location="/ChatRoomClose" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestService">
+      <http:operation location="/TestService" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CqrServiceHttpPost" type="tns:CqrServiceHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="Send1StSrvMsg">
+      <http:operation location="/Send1StSrvMsg" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomInvite">
+      <http:operation location="/ChatRoomInvite" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPoll">
+      <http:operation location="/ChatRoomPoll" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomPushMessage">
+      <http:operation location="/ChatRoomPushMessage" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChatRoomClose">
+      <http:operation location="/ChatRoomClose" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestService">
+      <http:operation location="/TestService" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CqrService">
+    <wsdl:port name="CqrServiceSoap" binding="tns:CqrServiceSoap">
+      <soap:address location="https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="CqrServiceSoap12" binding="tns:CqrServiceSoap12">
+      <soap12:address location="https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="CqrServiceHttpGet" binding="tns:CqrServiceHttpGet">
+      <http:address location="https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="CqrServiceHttpPost" binding="tns:CqrServiceHttpPost">
+      <http:address location="https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

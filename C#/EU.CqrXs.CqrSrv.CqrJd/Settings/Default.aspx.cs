@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Web;
 using System.Web.UI.WebControls;
+using System.Windows.Input;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Settings
 {
@@ -98,12 +99,17 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Settings
                 rtSettings.Add(skey, sv);
             }
 
+            long lenApp = 0;
+
             rtSettings.Add("ApplicationID", "");
             foreach (string akey in HttpContext.Current.Application.AllKeys)
             {
                 string av = HttpContext.Current.Application[akey].ToString();
+                lenApp += av.Length;
                 rtSettings.Add(akey, av);
             }
+            rtSettings.Add("Application State all items sizeh", lenApp.ToString());
+
 
             foreach (string ck in ConfigurationManager.AppSettings.AllKeys)
             {
