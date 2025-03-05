@@ -669,7 +669,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             textBoxChatSession.Location = new Point(614, 6);
             textBoxChatSession.Margin = new Padding(1);
             textBoxChatSession.Name = "textBoxChatSession";
-            textBoxChatSession.ReadOnly = true;
             textBoxChatSession.Size = new Size(211, 24);
             textBoxChatSession.TabIndex = 19;
             // 

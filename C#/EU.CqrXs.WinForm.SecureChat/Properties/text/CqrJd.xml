@@ -405,7 +405,7 @@
         </member>
         <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat">
             <summary>
-            SecureChat main form
+            RichTextChat main form
             </summary>
         </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.#ctor">
@@ -454,18 +454,14 @@
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.OnClientReceive(System.Object,Area23.At.Framework.Core.Util.Area23EventArgs{Area23.At.Framework.Core.Net.IpSocket.ReceiveData})">
-            <summary>
-            OnClientReceive event is fired, 
-            when another secure chat client connects directly peer 2 peer 
-            to server socket of our local chat app,
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SendInit_Click">
             <summary>
             Sends a init secure message to peer ip address
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SendInit_Contact">
+            <summary>
+            Sends a init secure message to contact over server proxy
             </summary>
         </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuItemSend_Click(System.Object,System.EventArgs)">
@@ -483,7 +479,27 @@
             <param name="e">EventArgs e</param>
         </member>
         <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuItemClear_Click(System.Object,System.EventArgs)" -->
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.OnClientReceive(System.Object,Area23.At.Framework.Core.Util.Area23EventArgs{Area23.At.Framework.Core.Net.IpSocket.ReceiveData})">
+            <summary>
+            OnClientReceive event is fired, 
+            when another secure chat client connects directly peer 2 peer 
+            to server socket of our local chat app,
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.OnDragNDrop(System.Object,System.EventArgs)">
+            <summary>
+            OnDragDrop is fired up, when files are dragged into <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox"/> or <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox"/>
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SetAttachmentTextLink(Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile)">
+            <summary>
+            SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl"/>
+            </summary>
+            <param name="cqrFile"><see cref="T:Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile"/></param>
             <summary>
             SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl"/>
             </summary>
