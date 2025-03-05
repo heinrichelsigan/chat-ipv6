@@ -5,6 +5,7 @@ using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Web;
 
 
@@ -28,41 +29,60 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
-        public FullSrvMsg<string> LoadJsonChatRoom(string chatRoomNumber)
+        public FullSrvMsg<string> LoadJsonChatRoom(FullSrvMsg<string> fullSrvMsgIn, string chatRoomId)
         {
-            FullSrvMsg<string> fullSrvMsg;
+            FullSrvMsg<string> fullSrvMsgOut;
 
-            JsonChatRoomNumber = chatRoomNumber;
-            if (!System.IO.File.Exists(JsonChatRoomFileName))
-                return null;
+            JsonChatRoomNumber = chatRoomId;
+            if (!System.IO.File.Exists(JsonChatRoomFileName)) // we need to create chatroom
+            {
+                SaveJsonChatRoom(fullSrvMsgIn, chatRoomId);
+            }
 
             lock (_lock)
             {
                 string jsonText = System.IO.File.ReadAllText(JsonChatRoomFileName);
-                FullSrvMsg<string> srvMsg1 = new FullSrvMsg<string>();
-                srvMsg1.FromJson(jsonText);
-                fullSrvMsg = JsonConvert.DeserializeObject<FullSrvMsg<string>>(jsonText);
-                if (!string.IsNullOrEmpty(fullSrvMsg.Message) && fullSrvMsg.ChatRoomNr.Equals(JsonChatRoomNumber))
-                    HttpContext.Current.Application["ChatRoom"] = fullSrvMsg;
+                fullSrvMsgOut = JsonConvert.DeserializeObject<FullSrvMsg<string>>(jsonText);
+                fullSrvMsgOut._message = jsonText;
+
+                HashSet<string> chatRooms = (HttpContext.Current.Application["ChatRooms"] != null)
+                    ? (HashSet<string>)HttpContext.Current.Application["ChatRooms"] 
+                    : ChatRoomNumbersFromFs();
+                if (!chatRooms.Contains(chatRoomId))
+                    chatRooms.Add(chatRoomId);                
+                HttpContext.Current.Application["ChatRooms"] = chatRooms;
+
             }
-            return fullSrvMsg;
+
+            return fullSrvMsgOut;
         }
 
-        public void SaveJsonChatRoom(FullSrvMsg<string> fullSrvMsg, string chatRoomId)
+        public FullSrvMsg<string> SaveJsonChatRoom(FullSrvMsg<string> fullSrvMsg, string chatRoomId)
         {
             if (!chatRoomId.Equals(this.JsonChatRoomNumber))
                 JsonChatRoomNumber = chatRoomId;
-            JsonSerializerSettings jsets = new JsonSerializerSettings();
-            jsets.Formatting = Formatting.Indented;
-            string jsonString = JsonConvert.SerializeObject(fullSrvMsg, Formatting.Indented);
             
             if (!JsonChatRoomNumber.EndsWith(".json"))
                 JsonChatRoomNumber += ".json";
 
             fullSrvMsg.ChatRoomNr = JsonChatRoomNumber;
+            fullSrvMsg.Sender.ChatRoomId = JsonChatRoomNumber;
 
-            System.IO.File.WriteAllText(JsonChatRoomFileName, jsonString);
-            HttpContext.Current.Application["ChatRoom"] = fullSrvMsg;
+            JsonSerializerSettings jsets = new JsonSerializerSettings();
+            jsets.Formatting = Formatting.Indented;
+            string jsonString = JsonConvert.SerializeObject(fullSrvMsg, Formatting.Indented);
+            System.IO.File.WriteAllText(JsonChatRoomFileName, jsonString);            
+
+            HashSet<string> chatRooms = (HttpContext.Current.Application["ChatRooms"] != null)
+                    ? (HashSet<string>)HttpContext.Current.Application["ChatRooms"] 
+                    : ChatRoomNumbersFromFs();
+            if (!chatRooms.Contains(chatRoomId))
+                chatRooms.Add(chatRoomId);
+            HttpContext.Current.Application["ChatRooms"] = chatRooms;
+
+            fullSrvMsg._message = jsonString;
+            
+            return fullSrvMsg;
         }
 
         public bool DeleteJsonChatRoom(string chatRoomNumber)
@@ -87,6 +107,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }
 
             return true;
+        }
+
+
+        public HashSet<string> ChatRoomNumbersFromFs()
+        {
+            string[] csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
+            HashSet<string> chatRooms = new HashSet<string>(csr);
+            HttpContext.Current.Application["ChatRooms"] = chatRooms;
+            return chatRooms;
         }
 
     }

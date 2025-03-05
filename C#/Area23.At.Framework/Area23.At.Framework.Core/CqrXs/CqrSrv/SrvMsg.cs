@@ -460,11 +460,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             where T : class
         {
             string cryptSrv = CqrSrvMsg<T>(fullServerMsg);
-            // string cryptPatner = CqrSrvMsg<TC>(fullClientMsg);
-            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
-            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
-
-
+            
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
             string resp = client.ChatRoomInvite(cryptSrv);
 
@@ -479,16 +475,36 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             string cryptSrv = CqrSrvMsg<T>(fullServerMsg, MsgKind.Server);
             string cryptPatner = CqrSrvMsg<TC>(fullClientMsg, MsgKind.Client);
             
-            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
-            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
-
-
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
             string resp = client.ChatRoomPushMessage(cryptSrv, cryptPatner);
 
             return resp;
         }
 
+
+        public string SendChatMsg_Soap_Simple<TS>(FullSrvMsg<TS> fullServerMsg, string encryptedClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+           where TS : class
+        {
+            string cryptSrv = CqrSrvMsg<TS>(fullServerMsg, MsgKind.Server);
+
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+            string resp = client.ChatRoomPushMessage(cryptSrv, encryptedClientMsg);
+
+            return resp;
+        }
+
+
+
+        public string ReceiveChatMsg_Soap<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        where T : class
+        {
+            string cryptSrv = CqrSrvMsg<T>(fullServerMsg, MsgKind.Server);
+
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+            string resp = client.ChatRoomPoll(cryptSrv);
+
+            return resp;
+        }
 
 
     }

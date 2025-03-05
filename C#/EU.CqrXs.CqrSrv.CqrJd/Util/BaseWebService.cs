@@ -11,6 +11,7 @@ using System.Configuration;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using System.IO;
 using Area23.At.Framework.Library.Static;
+using System.Diagnostics.Contracts;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
@@ -22,9 +23,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         protected internal static HashSet<CqrContact> _contacts;
         protected internal CqrContact _contact;
         protected internal string _literalServerIPv4, _literalServerIPv6, _literalClientIp;
-        protected internal string myServerKey = string.Empty;
+        protected internal string _serverKey = string.Empty;
         protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
-        protected internal string responseMsg = string.Empty;
+        protected internal string _responseString = string.Empty;
+        protected internal string _chatRoomNumber = string.Empty;
 
         public BaseWebService()
         {
@@ -32,59 +34,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
-        public void InitMethod()
+        public virtual void InitMethod()
         {
-
-            if (Application[Constants.JSON_CONTACTS] != null)
-                _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
-            else
-                _contacts = JsonContacts.LoadJsonContacts();
+            GetContacts();
+            GetServerKey();
             _literalClientIp = HttpContext.Current.Request.UserHostAddress;
-
-            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
-                myServerKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
-            else
-                myServerKey = HttpContext.Current.Request.UserHostAddress;
-            myServerKey += Constants.APP_NAME;
-
+            _decrypted = string.Empty;
+            _responseString = string.Empty;
+            _contact = null;
         }
-
-        public CqrContact HandleContact(CqrContact contact)
-        {
-            return AddContact(contact);
-        }
-
-
-        internal CqrContact AddContact(CqrContact cqrContact)
-        {
-            CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, cqrContact);
-            if (foundCt != null)
-            {
-                foundCt.ContactId = cqrContact.ContactId;
-                if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
-                    foundCt.Cuid = Guid.NewGuid();
-                if (!string.IsNullOrEmpty(cqrContact.Address))
-                    foundCt.Address = cqrContact.Address;
-                if (!string.IsNullOrEmpty(_contact.Mobile))
-                    foundCt.Mobile = cqrContact.Mobile;
-
-                if (_contact.ContactImage != null && !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
-                    !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
-                    foundCt.ContactImage = cqrContact.ContactImage;
-            }
-            else
-            {
-                if (cqrContact.Cuid == null || cqrContact.Cuid == Guid.Empty)
-                    cqrContact.Cuid = Guid.NewGuid();
-                _contacts.Add(cqrContact);
-                foundCt = cqrContact;
-            }
-
-            JsonContacts.SaveJsonContacts(_contacts);
-
-            return foundCt;
-        }
-
 
         [WebMethod]
         public virtual string TestService()
@@ -121,6 +79,187 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             return ret;
 
+        }
+
+
+
+        public CqrContact HandleContact(CqrContact contact)
+        {
+            return AddContact(contact);
+        }
+
+        protected string GetServerKey()
+        {
+            _literalClientIp = HttpContext.Current.Request.UserHostAddress;
+
+            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
+                _serverKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
+            else
+                _serverKey = HttpContext.Current.Request.UserHostAddress;
+            _serverKey += Constants.APP_NAME;
+
+            return _serverKey;
+        }
+
+        internal CqrContact[] GetContacts()
+        {
+            if (_contacts == null || _contacts.Count < 1)
+            {
+                _contacts = (Application[Constants.JSON_CONTACTS] != null)
+                    ? (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS])
+                    : JsonContacts.LoadJsonContacts();
+            }
+            return _contacts.ToArray();
+        }
+
+        internal CqrContact AddContact(CqrContact cqrContact)
+        {
+            GetContacts();
+            CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, cqrContact);
+            if (foundCt != null)
+            {
+                foundCt.ContactId = cqrContact.ContactId;
+                if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
+                    foundCt.Cuid = Guid.NewGuid();
+                if (!string.IsNullOrEmpty(cqrContact.Address))
+                    foundCt.Address = cqrContact.Address;
+                if (cqrContact.Mobile != null && cqrContact.Mobile.Length > 1)
+                    foundCt.Mobile = cqrContact.Mobile;
+
+                if (cqrContact.ContactImage != null && !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
+                    !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
+                    foundCt.ContactImage = cqrContact.ContactImage;
+            }
+            else
+            {
+                if (cqrContact.Cuid == null || cqrContact.Cuid == Guid.Empty)
+                    cqrContact.Cuid = Guid.NewGuid();
+                _contacts.Add(cqrContact);
+                foundCt = cqrContact;
+            }
+
+            JsonContacts.SaveJsonContacts(_contacts);
+
+            return foundCt;
+        }
+
+        internal void UpdateContacts(CqrContact contact, FullSrvMsg<string> chatRoomMsg, string chatRoomNr)
+        {
+            bool foundCt = false;
+            CqrContact toDelContact = null;
+            if (contact == null || string.IsNullOrEmpty(contact.Email) || contact.Cuid == Guid.Empty)
+                return;
+
+            if ((chatRoomMsg.Sender.Cuid == contact.Cuid && chatRoomMsg.Sender.Email == contact.Email) ||
+                (chatRoomMsg.Sender.NameEmail == contact.NameEmail))
+            {
+                chatRoomMsg.Sender = contact;
+            }
+            for (int i = 0; i < chatRoomMsg.Recipients.Count; i++)
+            {
+                if ((chatRoomMsg.Recipients.ElementAt(i).Cuid == contact.Cuid) &&
+                    (chatRoomMsg.Recipients.ElementAt(i).Name.Equals(contact.Name) ||
+                    chatRoomMsg.Recipients.ElementAt(i).NameEmail.Equals(contact.NameEmail)))
+                {
+                    toDelContact = chatRoomMsg.Recipients.ElementAt(i);
+                    foundCt = true;
+                    break;
+                }
+            }
+            if (foundCt)           
+                chatRoomMsg.Recipients.Remove(toDelContact);
+            // add modified contact
+            chatRoomMsg.Recipients.Add(contact);
+
+            (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
+
+            foundCt = false;
+            GetContacts();
+            for (int j = 0; j < _contacts.Count; j++)
+            {
+                if ((_contacts.ElementAt(j).Cuid == contact.Cuid) &&
+                    (_contacts.ElementAt(j).Name.Equals(contact.Name) ||
+                        _contacts.ElementAt(j).NameEmail.Equals(contact.NameEmail)))
+                {
+                    toDelContact = _contacts.ElementAt(j);
+                    foundCt = true;
+                    break;
+                }
+            }
+            if (foundCt)
+                _contacts.Remove(toDelContact);
+            _contacts.Add(contact);
+
+            JsonContacts.SaveJsonContacts(_contacts);
+
+        }
+
+
+        internal FullSrvMsg<string> InviteToChatRoom(FullSrvMsg<string> fullSrvMsg)
+        {
+            List<CqrContact> _invited = new List<CqrContact>();
+            // fullSrvMsg.Recipients.Add(_contact);
+            bool addSender = true;
+            foreach (CqrContact c in fullSrvMsg.Recipients)
+            {
+                if (!_invited.Contains(c))
+                    _invited.Add(c);
+                if (c.Email == fullSrvMsg.Sender.Email)
+                    addSender = false;
+            }
+            if (addSender)
+                _invited.Add(fullSrvMsg.Sender);
+
+            string chatRoomId = string.Empty;
+            //if (string.IsNullOrEmpty(fullSrvMsg.TContent))
+            //    chatRoomId = String.Format("{0:yyMMdd_HHmm}_{1}.json", DateTime.Now,
+            //        fullSrvMsg.TContent.Replace("@", "_").Replace(".", "_"));
+
+            if (string.IsNullOrEmpty(chatRoomId))
+                chatRoomId = String.Format("room_{0:yyMMddHH}_{1}.json", DateTime.Now,
+                    fullSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_"));
+
+            if (string.IsNullOrEmpty(chatRoomId))
+                chatRoomId = $"room_{DateTime.Now:yyMMddHHmm}_0.json";
+
+            FullSrvMsg<string> chatRSrvMsg = new FullSrvMsg<string>();
+            chatRSrvMsg.Sender = fullSrvMsg.Sender;
+            chatRSrvMsg.Sender.ChatRoomId = chatRoomId;
+            chatRSrvMsg.Recipients = new HashSet<CqrContact>(_invited);
+            chatRSrvMsg._hash = fullSrvMsg._hash;
+            chatRSrvMsg.ChatRoomNr = chatRoomId;
+            chatRSrvMsg.RawMessage = chatRSrvMsg.ToJson();
+            chatRSrvMsg._message = chatRSrvMsg.ToJson();
+            chatRSrvMsg.MsgType = MsgEnum.Json;
+            (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg, chatRoomId);
+
+            return chatRSrvMsg;
+        }
+
+
+        public bool ValidateChatRoomNr(FullSrvMsg<string> fullSrvMsg, FullSrvMsg<string> chatRoomMsg, string chatRoomId)
+        {
+
+            bool isValid = false;
+            if (chatRoomId.Equals(chatRoomMsg.ChatRoomNr))
+            {
+                foreach (CqrContact c in chatRoomMsg.Recipients)
+                {
+                    if (fullSrvMsg.Sender.NameEmail == c.NameEmail ||
+                        fullSrvMsg.Sender.Email == c.Email)
+                    {
+                        _contact = c;
+                        isValid = true;
+                    }
+                }
+                if (fullSrvMsg.Sender == chatRoomMsg.Sender)
+                {
+                    _contact = chatRoomMsg.Sender;
+                    isValid = true;
+                }
+            }
+        
+            return isValid;
         }
 
     }

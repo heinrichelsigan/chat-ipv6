@@ -38,26 +38,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         [WebMethod]
         public string Send1StSrvMsg(string cryptMsg)
         {
-            myServerKey = string.Empty;
-            _decrypted = string.Empty;
-            responseMsg = string.Empty;
-            _contact = null;
-
-            if (Application[Constants.JSON_CONTACTS] != null)
-                _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
-            else
-                _contacts = JsonContacts.LoadJsonContacts();
-
-            _literalClientIp = HttpContext.Current.Request.UserHostAddress;
-
-            myServerKey = HttpContext.Current.Request.UserHostAddress;
-            myServerKey += Constants.APP_NAME;
-
-            SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
-            SrvMsg1 cqrSrvResponseMsg = new SrvMsg1(myServerKey);
-            SrvMsg responseSrvMsg = new SrvMsg(myServerKey, myServerKey);
-            Area23Log.LogStatic("myServerKey = " + myServerKey);
+            InitMethod();
             HttpContext.Current.Application["lastmsg"] = cryptMsg;
+
+            SrvMsg1 srv1stMsg = new SrvMsg1(_serverKey);
+            SrvMsg1 srv1RespMsg = new SrvMsg1(_serverKey);
+            SrvMsg responseSrvMsg = new SrvMsg(_serverKey, _serverKey);
+            Area23Log.LogStatic("_serverKey = " + _serverKey);
+            
 
             try
             {
@@ -74,56 +62,17 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 Area23Log.LogStatic($"Exception {ex.GetType()} when decrypting contact: {ex.Message}\n\t{ex.ToString()}\n");
             }
 
-            responseMsg = responseSrvMsg.CqrBaseMsg("", EncodingType.Base64);
+            _responseString = responseSrvMsg.CqrBaseMsg("", EncodingType.Base64);
 
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
                 Application["lastdecrypted"] = _decrypted;
+                CqrContact foundCt = AddContact(_contact);
 
-                CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, _contact);
-                if (foundCt != null)
-                {
-                    foundCt.ContactId = _contact.ContactId;
-                    if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
-                        foundCt.Cuid = Guid.NewGuid();
-                    if (!string.IsNullOrEmpty(_contact.Address))
-                        foundCt.Address = _contact.Address;
-                    if (!string.IsNullOrEmpty(_contact.Mobile))
-                        foundCt.Mobile = _contact.Mobile;
+                _responseString = srv1RespMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
+            }            
 
-                    if (_contact.ContactImage != null && !string.IsNullOrEmpty(_contact.ContactImage.ImageFileName) &&
-                        !string.IsNullOrEmpty(_contact.ContactImage.ImageBase64))
-                        foundCt.ContactImage = _contact.ContactImage;
-
-                    Area23Log.LogStatic($"Contact found, updating it and returning it. {foundCt.Cuid} {foundCt.NameEmail}\n");
-                    responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
-                }
-                else
-                {
-                    _contact.Cuid = Guid.NewGuid();
-                    _contacts.Add(_contact);
-
-                    //try
-                    //{
-                    //    string processed = Area23.At.Framework.Library.Util.ProcessCmd.Execute(
-                    //        "/usr/local/bin/createContact.sh",
-                    //        _contact.Name + " " + _contact.Email + " " +
-                    //        _contact.Mobile.Replace(" ", "") + " " + _contact.NameEmail + " ", false);
-                    //} catch (Exception exCmdFail)
-                    //{
-                    //    Area23Log.LogStatic(exCmdFail);
-                    //}
-                    Area23Log.LogStatic($"Contact not found in json, adding contact, giving a new Guid {_contact.Cuid} and returning it.\n");
-                    foundCt = _contact;
-
-                    responseMsg = cqrSrvResponseMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
-                }
-
-                JsonContacts.SaveJsonContacts(_contacts);
-            }
-
-
-            return responseMsg;
+            return _responseString;
 
         }
 
@@ -131,17 +80,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         [WebMethod]
         public string ChatRoomInvite(string cryptMsg)
         {
-            myServerKey = string.Empty;
-            _decrypted = string.Empty;
-            responseMsg = string.Empty;
-            _contact = null;
+            InitMethod();
 
-            SrvMsg srvMsg = new SrvMsg(myServerKey, myServerKey);
+            SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
             List<CqrContact> _invited = new List<CqrContact>();
-            SrvMsg responseSrvMsg = new SrvMsg(myServerKey);
+            SrvMsg responseSrvMsg = new SrvMsg(_serverKey);
 
-            responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
+            _responseString = responseSrvMsg.CqrBaseMsg(Constants.NACK);
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
@@ -172,7 +118,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     ConcurrentBag<string> bag = new ConcurrentBag<string>();
                     bag.Add(fullSrvMsg.TContent.ToString());
                     HttpContext.Current.Application[fullSrvMsg.TContent] = bag;
-                    responseMsg = responseSrvMsg.CqrSrvMsg<string>(fullSrvMsg);
+                    _responseString = responseSrvMsg.CqrSrvMsg<string>(fullSrvMsg);
                 }
             }
             catch (Exception ex)
@@ -182,24 +128,22 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }
 
 
-            return responseMsg;
+            return _responseString;
 
         }
 
         [WebMethod]
         public string ChatRoomPoll(string cryptMsg)
         {
-            myServerKey = string.Empty;
-            _decrypted = string.Empty;
-            responseMsg = string.Empty;
-            _contact = null;
+            InitMethod();
+
             bool isValid = false;
-            SrvMsg srvMsg = new SrvMsg(myServerKey, myServerKey);
+            SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
             List<CqrContact> _invited = new List<CqrContact>();
-            SrvMsg responseSrvMsg = new SrvMsg(myServerKey);
+            SrvMsg responseSrvMsg = new SrvMsg(_serverKey);
 
-            responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
+            _responseString = responseSrvMsg.CqrBaseMsg(Constants.NACK);
 
             try
             {
@@ -216,7 +160,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     if (string.IsNullOrEmpty(fullSrvMsg.TContent))
                         throw new Exception();
 
-                    FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(fullSrvMsg.TContent)).LoadJsonChatRoom(fullSrvMsg.TContent);
+                    FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(fullSrvMsg.TContent)).LoadJsonChatRoom(fullSrvMsg, fullSrvMsg.TContent);
                     if (fullSrvMsg.TContent.Equals(chatRoomMsg.TContent))
                     {
                         foreach (CqrContact c in chatRoomMsg.Recipients)
@@ -237,7 +181,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                         }
 
                     }
-                    responseMsg = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
+                    _responseString = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
                 }
             }
@@ -248,24 +192,22 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }
 
 
-            return responseMsg;
+            return _responseString;
 
         }
 
         [WebMethod]
         public string ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted)
         {
-            myServerKey = string.Empty;
-            _decrypted = string.Empty;
-            responseMsg = string.Empty;
-            _contact = null;
+            InitMethod();
+
             bool isValid = false;
-            SrvMsg srvMsg = new SrvMsg(myServerKey, myServerKey);
+            SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
             List<CqrContact> _invited = new List<CqrContact>();
-            SrvMsg responseSrvMsg = new SrvMsg(myServerKey);
+            SrvMsg responseSrvMsg = new SrvMsg(_serverKey);
 
-            responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
+            _responseString = responseSrvMsg.CqrBaseMsg(Constants.NACK);
 
             try
             {
@@ -282,7 +224,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     if (string.IsNullOrEmpty(fullSrvMsg.TContent))
                         throw new Exception();
 
-                    FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(fullSrvMsg.TContent)).LoadJsonChatRoom(fullSrvMsg.TContent);
+                    FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(fullSrvMsg.TContent)).LoadJsonChatRoom(fullSrvMsg, fullSrvMsg.TContent);
                     if (fullSrvMsg.TContent.Equals(chatRoomMsg.TContent))
                     {
                         foreach (CqrContact c in chatRoomMsg.Recipients)
@@ -302,7 +244,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                         bag.Add(chatRoomMembersCrypted);
                         HttpContext.Current.Application[fullSrvMsg.TContent] = bag;
                     }
-                    responseMsg = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
+                    _responseString = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
                 }
             }
@@ -313,7 +255,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }
 
 
-            return responseMsg;
+            return _responseString;
 
 
         }
@@ -321,17 +263,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         [WebMethod]
         public string ChatRoomClose(string cryptMsg)
         {
-            myServerKey = string.Empty;
-            _decrypted = string.Empty;
-            responseMsg = string.Empty;
-            _contact = null;
+            InitMethod();
+
             bool isValid = false;
-            SrvMsg srvMsg = new SrvMsg(myServerKey, myServerKey);
+            SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
             List<CqrContact> _invited = new List<CqrContact>();
-            SrvMsg responseSrvMsg = new SrvMsg(myServerKey);
+            SrvMsg responseSrvMsg = new SrvMsg(_serverKey);
 
-            responseMsg = responseSrvMsg.CqrBaseMsg(Constants.NACK);
+            _responseString = responseSrvMsg.CqrBaseMsg(Constants.NACK);
 
             try
             {
@@ -347,7 +287,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     if (string.IsNullOrEmpty(fullSrvMsg.TContent))
                         throw new Exception();
 
-                    FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(fullSrvMsg.TContent)).LoadJsonChatRoom(fullSrvMsg.TContent);
+                    FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(fullSrvMsg.TContent)).LoadJsonChatRoom(fullSrvMsg, fullSrvMsg.TContent);
                     if (fullSrvMsg.TContent.Equals(chatRoomMsg.TContent))
                     {
                         if (fullSrvMsg.Sender == chatRoomMsg.Sender)
@@ -364,7 +304,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                         }
 
                     }
-                    responseMsg = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
+                    _responseString = responseSrvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
                 }
             }
@@ -375,7 +315,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }
 
 
-            return responseMsg;
+            return _responseString;
 
         }
 
