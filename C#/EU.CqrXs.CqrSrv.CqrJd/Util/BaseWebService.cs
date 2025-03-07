@@ -31,9 +31,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
         protected internal string _responseString = string.Empty;
         protected internal string _chatRoomNumber = string.Empty;
-        protected internal ConnectionMultiplexer redis;
-        protected internal ConfigurationOptions options;
+        // protected internal ConnectionMultiplexer redis;
+        // protected internal ConfigurationOptions options;
         protected internal bool useAWSCache = false, useAppState = true;
+        // protected internal string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
+        // protected internal StackExchange.Redis.IDatabase db;
 
         public bool UseApplicationState
         {            
@@ -89,15 +91,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             if (UseAmazonElasticCache)
             {
-                string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
-                if (ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT] != null)
-                    endpoint = ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT].ToString();
-                
-                options = new ConfigurationOptions
-                {
-                    EndPoints = { endpoint },
-                    Ssl = true
-                };
+                string status = RedIs.ConnMux.GetStatus();
 
                 //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
                 //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);

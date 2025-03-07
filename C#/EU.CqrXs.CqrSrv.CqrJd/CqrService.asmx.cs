@@ -115,10 +115,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
                     if (UseAmazonElasticCache)
                     {
-                        redis = ConnectionMultiplexer.Connect(options);
-                        var db = redis.GetDatabase();
                         string dictJson = JsonConvert.SerializeObject(dict);
-                        db.StringSet(chatRoomId, dictJson);
+                        RedIs.Db.StringSet(chatRoomId, dictJson);
                     }
                         
                     
@@ -185,9 +183,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         }
                         if (UseAmazonElasticCache)
                         {
-                            redis = ConnectionMultiplexer.Connect(options);
-                            var db = redis.GetDatabase();
-                            string dictJson = db.StringGet(_chatRoomNumber);
+                            string dictJson = RedIs.Db.StringGet(_chatRoomNumber);
                             dict = (Dictionary<DateTime, string>)JsonConvert.DeserializeObject<Dictionary<DateTime, string>>(dictJson);                            
                         }
 
@@ -271,9 +267,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                             dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber]; 
                         if (UseAmazonElasticCache)
                         {
-                            redis = ConnectionMultiplexer.Connect(options);
-                            var db = redis.GetDatabase();                            
-                            string dictJson = db.StringGet(_chatRoomNumber);
+                            string dictJson = RedIs.Db.StringGet(_chatRoomNumber);
                             dict = (Dictionary<DateTime, string>)JsonConvert.DeserializeObject<Dictionary<DateTime, string>>(dictJson);
                         }                       
 
@@ -283,10 +277,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                             HttpContext.Current.Application[_chatRoomNumber] = dict;
                         if (UseAmazonElasticCache)
                         {
-                            redis = ConnectionMultiplexer.Connect(options);
-                            var db = redis.GetDatabase();
                             string dictJson = JsonConvert.SerializeObject(dict);
-                            db.StringSet(_chatRoomNumber, dictJson);
+                            RedIs.Db.StringSet(_chatRoomNumber, dictJson);
                         }
 
                         _contact.LastPolled = now;
@@ -380,17 +372,17 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         [WebMethod]
         public virtual string TestCache()
         {
-            string testReport = $"{DateTime.Now.Area23DateTimeWithMillis()}:TestCache() started {DateTime.Now.Area23DateTimeWithMillis()}\n";
+            string testReport = $"{DateTime.Now.Area23DateTimeMilliseconds()}:TestCache() started.\n";
             try
             {
                 InitMethod(); 
             }
             catch (Exception ex1)
             {
-                testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Exception {ex1.GetType()}: {ex1.Message}\n\t{ex1}\n";
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex1.GetType()}: {ex1.Message}\n\t{ex1}\n";
             }
             
-            testReport += "InitMethod() completed.\n";
+            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: InitMethod() completed.\n";
 
             Dictionary<Guid, CqrContact> dictCacheTest = new Dictionary<Guid, CqrContact>();
             foreach (CqrContact c in _contacts)
@@ -399,7 +391,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     !dictCacheTest.Keys.Contains(c.Cuid))
                     dictCacheTest.Add(c.Cuid, c);
             }
-            testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
+            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
             if (UseAmazonElasticCache)
             {
                 
@@ -407,22 +399,24 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 {
                     if (UseAmazonElasticCache)
                     {
-                        testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT]}\n";
-                        redis = ConnectionMultiplexer.Connect(options);
-                        var db = redis.GetDatabase();
-                        string dictJson = JsonConvert.SerializeObject(dictCacheTest);
-                        db.StringSet("TestCache", dictJson);
-                        testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Added serialized json to cache!\n";
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT]}\n";
+                        string status = RedIs.ConnMux.GetStatus();
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}\n";
 
-                        string jsonOut = db.StringGet("TestCache");
-                        testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Got from cache: {jsonOut}.\n";
-                        var outdict = (Dictionary<Guid, CqrContact>)JsonConvert.DeserializeObject<Dictionary<Guid, CqrContact>>(jsonOut);
-                        testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Deserialized json, got dict with {outdict.Keys.Count} keys."; 
+                        string dictJson = JsonConvert.SerializeObject(dictCacheTest);
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Serialized Dictionary<Guid, CqrContact> to json string.\n";
+                        RedIs.Db.StringSet("TestCache", dictJson);
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache.\n";
+
+                        string jsonOut = RedIs.Db.StringGet("TestCache");
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got json serialized string from cache: {jsonOut}.\n";
+                        Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)JsonConvert.DeserializeObject<Dictionary<Guid, CqrContact>>(jsonOut);
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deserialized json sring to (Dictionary<Guid, CqrContact> with {outdict.Keys.Count} keys."; 
                     }                    
                 }
                 catch (Exception ex2)
                 {
-                    testReport += $"Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
                 }
             }
 

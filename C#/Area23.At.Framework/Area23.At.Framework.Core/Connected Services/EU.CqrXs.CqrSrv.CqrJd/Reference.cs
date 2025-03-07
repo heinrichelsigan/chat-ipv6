@@ -59,6 +59,20 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         
         [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/TestService", ReplyAction="*")]
         System.Threading.Tasks.Task<string> TestServiceAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/GetIPAddress", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        string GetIPAddress();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/GetIPAddress", ReplyAction="*")]
+        System.Threading.Tasks.Task<string> GetIPAddressAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/TestCache", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        string TestCache();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="https://cqrjd.eu/cqrsrv/cqrjd/TestCache", ReplyAction="*")]
+        System.Threading.Tasks.Task<string> TestCacheAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
@@ -164,6 +178,26 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             return base.Channel.TestServiceAsync();
         }
         
+        public string GetIPAddress()
+        {
+            return base.Channel.GetIPAddress();
+        }
+        
+        public System.Threading.Tasks.Task<string> GetIPAddressAsync()
+        {
+            return base.Channel.GetIPAddressAsync();
+        }
+        
+        public string TestCache()
+        {
+            return base.Channel.TestCache();
+        }
+        
+        public System.Threading.Tasks.Task<string> TestCacheAsync()
+        {
+            return base.Channel.TestCacheAsync();
+        }
+        
         public virtual System.Threading.Tasks.Task OpenAsync()
         {
             return System.Threading.Tasks.Task.Factory.FromAsync(((System.ServiceModel.ICommunicationObject)(this)).BeginOpen(null, null), new System.Action<System.IAsyncResult>(((System.ServiceModel.ICommunicationObject)(this)).EndOpen));
@@ -190,7 +224,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 #endif
                 return result;
             }
-            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12))
+            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12) || endpointConfiguration == EndpointConfiguration.CqrServiceSoapv4  ||
+                endpointConfiguration == EndpointConfiguration.CqrServiceSoapv6)
             {
                 System.ServiceModel.Channels.CustomBinding result = new System.ServiceModel.Channels.CustomBinding();
                 System.ServiceModel.Channels.TextMessageEncodingBindingElement textBindingElement = new System.ServiceModel.Channels.TextMessageEncodingBindingElement();
@@ -225,6 +260,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             {
                 return new System.ServiceModel.EndpointAddress(LibPaths.CqrServiceSoap12);
             }
+            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoapv4))
+            {
+                return new System.ServiceModel.EndpointAddress(LibPaths.CqrServiceSoapv4);
+            }
+            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12))
+            {
+                return new System.ServiceModel.EndpointAddress(LibPaths.CqrServiceSoap12);
+            }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
 
@@ -234,6 +277,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             CqrServiceSoap,
 
             CqrServiceSoap12,
+
+            CqrServiceSoapv4,
+
+            CqrServiceSoapv6,
+
         }
+
     }
+
 }

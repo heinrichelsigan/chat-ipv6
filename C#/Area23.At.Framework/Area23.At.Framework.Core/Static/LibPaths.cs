@@ -135,6 +135,36 @@ namespace Area23.At.Framework.Core.Static
             }
         }
 
+        public static string CqrServiceSoapv4
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(cqrServiceSoap12))
+                {
+                    if (ConfigurationManager.AppSettings["CqrServiceSoapv4"] != null)
+                        cqrServiceSoap12 = ConfigurationManager.AppSettings["CqrServiceSoapv4"].ToString();
+                    else
+                        cqrServiceSoap12 = "https://ipv4.cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx";
+                }
+                return cqrServiceSoap12;
+            }
+        }
+
+        public static string CqrServiceSoapv6
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(cqrServiceSoap12))
+                {
+                    if (ConfigurationManager.AppSettings["CqrServiceSoapv6"] != null)
+                        cqrServiceSoap12 = ConfigurationManager.AppSettings["CqrServiceSoapv6"].ToString();
+                    else
+                        cqrServiceSoap12 = "https://ipv6.cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx";
+                }
+                return cqrServiceSoap12;
+            }
+        }
+
         #endregion WebServices
 
         #region directory & file paths
