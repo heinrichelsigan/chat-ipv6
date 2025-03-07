@@ -772,7 +772,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelDestination.BackColor = SystemColors.ActiveCaption;
             PanelDestination.Controls.Add(PeerServerSwitch);
             PanelDestination.Controls.Add(ButtonSend);
-            PanelDestination.Controls.Add(ButtonAttach);
+            PanelDestination.Controls.Add(ButtonAttach);            
             PanelDestination.Controls.Add(DragNDropGroupBox);
             PanelDestination.Controls.Add(LinkedLabelsBox);
             PanelDestination.Controls.Add(PictureBoxYou);
@@ -786,8 +786,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // PeerServerSwitch
             // 
             PeerServerSwitch.AllowDrop = true;
-            PeerServerSwitch.BackColor = SystemColors.GradientActiveCaption;
-            PeerServerSwitch.Controls.Add(PanelCenter);
+            PeerServerSwitch.BackColor = SystemColors.GradientActiveCaption;            
             PeerServerSwitch.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             PeerServerSwitch.Location = new Point(8, 2);
             PeerServerSwitch.Margin = new Padding(1);
@@ -855,7 +854,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             PanelCenter.Controls.Add(SplitChatView);
             PanelCenter.Controls.Add(RichTextBoxOneView);
-            PanelCenter.Location = new Point(0, 0);
+            PanelCenter.Location = new Point(8, 102);
             PanelCenter.Margin = new Padding(0);
             PanelCenter.Name = "PanelCenter";
             PanelCenter.Size = new Size(800, 460);
@@ -897,6 +896,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             Controls.Add(PanelEnCodeCrypt);
             Controls.Add(StripStatus);
             Controls.Add(StripMenu);
+            Controls.Add(PanelCenter);
             Font = new Font("Lucida Sans Unicode", 10F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenuStrip = StripMenu;
