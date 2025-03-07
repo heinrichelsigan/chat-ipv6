@@ -15,6 +15,7 @@ using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using System.IO;
 using Area23.At.Framework.Library.Static;
 using System.Diagnostics.Contracts;
+using StackExchange.Redis;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
@@ -30,8 +31,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
         protected internal string _responseString = string.Empty;
         protected internal string _chatRoomNumber = string.Empty;
-        internal ElastiCacheClusterConfig config;
-        internal MemcachedClient memClient;
+        protected internal ConnectionMultiplexer redis;
+        protected internal ConfigurationOptions options;
         protected internal bool useAWSCache = false, useAppState = true;
 
         public bool UseApplicationState
@@ -78,7 +79,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         public virtual void InitMethod()
         {
-            GetContacts();
+            _contacts = GetContacts();
             GetServerKey();
             _literalClientIp = HttpContext.Current.Request.UserHostAddress;
             _decrypted = string.Empty;
@@ -88,9 +89,19 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             if (UseAmazonElasticCache)
             {
-                config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
-                // ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
-                memClient = new MemcachedClient(config);
+                string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
+                if (ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT] != null)
+                    endpoint = ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT].ToString();
+                
+                options = new ConfigurationOptions
+                {
+                    EndPoints = { endpoint },
+                    Ssl = true
+                };
+
+                //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
+                //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
+                //memClient = new MemcachedClient(config);
             }
         }
             
@@ -131,12 +142,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         }
 
-
-
-        public CqrContact HandleContact(CqrContact contact)
+        [WebMethod]
+        public virtual string GetIPAddress()
         {
-            return AddContact(contact);
+            string userHostAddr = HttpContext.Current.Request.UserHostAddress;
+            return userHostAddr;            
         }
+
 
         protected string GetServerKey()
         {
@@ -151,20 +163,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             return _serverKey;
         }
 
-        internal CqrContact[] GetContacts()
+        internal HashSet<CqrContact> GetContacts()
         {
-            if (_contacts == null || _contacts.Count < 1)
-            {
-                _contacts = (Application[Constants.JSON_CONTACTS] != null)
-                    ? (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS])
-                    : JsonContacts.LoadJsonContacts();
-            }
-            return _contacts.ToArray();
+            _contacts = JsonContacts.GetContacts();
+            return _contacts;
         }
 
         internal CqrContact AddContact(CqrContact cqrContact)
         {
-            GetContacts();
+            _contacts = JsonContacts.GetContacts();
             CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, cqrContact);
             if (foundCt != null)
             {
@@ -175,12 +182,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     foundCt.Address = cqrContact.Address;
                 if (cqrContact.Mobile != null && cqrContact.Mobile.Length > 1)
                     foundCt.Mobile = cqrContact.Mobile;
+                if (!string.IsNullOrEmpty(cqrContact.ChatRoomId))
+                    foundCt.ChatRoomId = cqrContact.ChatRoomId;
+                if (cqrContact.LastPolled != null && cqrContact.LastPolled > DateTime.MinValue)
+                    foundCt.LastPolled = cqrContact.LastPolled;
 
-                if (cqrContact != null && cqrContact.ContactImage != null &&
-                    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
-                    cqrContact.ContactImage.ImageBase64 != null &&
-                    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageBase64))
-                    foundCt.ContactImage = cqrContact.ContactImage;
+                //if (cqrContact != null && cqrContact.ContactImage != null &&
+                //    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
+                //    cqrContact.ContactImage.ImageBase64 != null &&
+                //    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageBase64))
+                foundCt.ContactImage = null;               
             }
             else
             {
@@ -188,18 +199,46 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     cqrContact.Cuid = Guid.NewGuid();
                 _contacts.Add(cqrContact);
                 foundCt = cqrContact;
+                foundCt.ContactImage = null;
+                
             }
 
-            JsonContacts.SaveJsonContacts(_contacts);
+            UpdateContact(foundCt);
 
             return foundCt;
+        }
+
+
+        internal void UpdateContact(CqrContact cqrContact)
+        {
+            CqrContact toAddContact = null;
+            if (cqrContact == null || string.IsNullOrEmpty(cqrContact.Email))
+                return;
+            HashSet<CqrContact> contacts = new HashSet<CqrContact>();
+
+            foreach (CqrContact ct in _contacts)
+            {
+                if ((ct.Cuid == cqrContact.Cuid && ct.Email == cqrContact.Email) ||
+                    (ct.NameEmail == cqrContact.NameEmail))
+                {
+                    toAddContact = new CqrContact(cqrContact, cqrContact.ChatRoomId, cqrContact.LastPolled, cqrContact.Hash);
+                    toAddContact.Mobile = cqrContact.Mobile;
+                    toAddContact.ContactImage = null;
+                    toAddContact.Cuid = (cqrContact.Cuid != null && cqrContact.Cuid != Guid.Empty) ? cqrContact.Cuid : Guid.NewGuid();
+                    contacts.Add(toAddContact);
+                }
+                else
+                    contacts.Add(ct);
+            }
+            _contacts = contacts;
+            JsonContacts.SaveJsonContacts(_contacts);
         }
 
         internal void UpdateContacts(CqrContact contact, FullSrvMsg<string> chatRoomMsg, string chatRoomNr)
         {
             bool foundCt = false;
             CqrContact toDelContact = null;
-            if (contact == null || string.IsNullOrEmpty(contact.Email) || contact.Cuid == Guid.Empty)
+            if (contact == null || string.IsNullOrEmpty(contact.Email))
                 return;
 
             if ((chatRoomMsg.Sender.Cuid == contact.Cuid && chatRoomMsg.Sender.Email == contact.Email) ||

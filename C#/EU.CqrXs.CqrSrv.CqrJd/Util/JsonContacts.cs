@@ -3,6 +3,7 @@ using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Web;
 
@@ -26,7 +27,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 if (!System.IO.File.Exists(JsonContactsFileName))
                     System.IO.File.Create(JsonContactsFileName);
             }
-            Thread.Sleep(100);
+            Thread.Sleep(8);
             lock (_lock)
             {
                 string jsonText = System.IO.File.ReadAllText(JsonContactsFileName);
@@ -40,13 +41,39 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         internal static void SaveJsonContacts(HashSet<CqrContact> contacts)
         {
-            JsonSerializerSettings jsets = new JsonSerializerSettings();
-            jsets.Formatting = Formatting.Indented;
-            string jsonString = JsonConvert.SerializeObject(contacts, Formatting.Indented);
-            System.IO.File.WriteAllText(JsonContactsFileName, jsonString);
-            HttpContext.Current.Application[Constants.JSON_CONTACTS] = contacts;
+            lock (_lock)
+            {
+                if (contacts != null && contacts.Count > 0 && contacts.Count > _contacts.Count)
+                    _contacts = contacts;
+                JsonSerializerSettings jsets = new JsonSerializerSettings();
+                jsets.Formatting = Formatting.Indented;
+                string jsonString = JsonConvert.SerializeObject(contacts, Formatting.Indented);
+                System.IO.File.WriteAllText(JsonContactsFileName, jsonString);
+                HttpContext.Current.Application[Constants.JSON_CONTACTS] = contacts;
+            }
         }
 
+
+        internal static HashSet<CqrContact> GetContacts()
+        {
+            bool loadJson = false;
+
+            if (_contacts == null || _contacts.Count < 1)
+            {
+                if (HttpContext.Current.Application[Constants.JSON_CONTACTS] != null)
+                {
+                    _contacts = (HashSet<CqrContact>)(HttpContext.Current.Application[Constants.JSON_CONTACTS]);
+                    if (_contacts == null || _contacts.Count < 2)
+                        loadJson = true;
+                }
+            }
+            else 
+                loadJson = true;
+            if (loadJson)
+                _contacts = JsonContacts.LoadJsonContacts();
+            
+            return _contacts;
+        }
 
         public static CqrContact FindContactByNameEmail(HashSet<CqrContact> contacts, CqrContact searchContact)
         {
@@ -81,6 +108,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             return null;
         }
+
+
+
 
     }
 }

@@ -155,6 +155,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ChatRoomId = c.ChatRoomId;
             LastPolled = c.LastPolled;
             PolledMsgDates = new List<DateTime>((IEnumerable<DateTime>)c.PolledMsgDates);
+            if (c.PolledMsgDates != null && c.PolledMsgDates.Count > 0)
+            {
+                foreach (var date in c.PolledMsgDates)
+                {
+                    if (DateTime.UtcNow.Subtract(date).TotalDays >= 1) ;
+                    else
+                        PolledMsgDates.Add(date);
+                }
+            }
+            if (!PolledMsgDates.Contains(LastPolled))
+                PolledMsgDates.Add(LastPolled);
             ClientIp = c.ClientIp ?? null;
         }
 
@@ -167,6 +178,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ChatRoomId = chatRoomId;
             LastPolled = c.LastPolled;
             PolledMsgDates = new List<DateTime>((IEnumerable<DateTime>)c.PolledMsgDates);
+            if (c.PolledMsgDates != null && c.PolledMsgDates.Count > 0)
+            {
+                foreach (var date in c.PolledMsgDates)
+                {
+                    if (DateTime.UtcNow.Subtract(date).TotalDays >= 1) ;
+                    else
+                        PolledMsgDates.Add(date);
+                }
+            }
+            if (!PolledMsgDates.Contains(LastPolled))
+                PolledMsgDates.Add(LastPolled);
             ClientIp = c.ClientIp ?? null;
         }
 
@@ -177,8 +199,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ContactImage = null;
             Cuid = c.Cuid;
             ChatRoomId = chatRoomId;
-            LastPolled = lastPolled;
+            LastPolled = c.LastPolled;
             PolledMsgDates = new List<DateTime>((IEnumerable<DateTime>)c.PolledMsgDates);
+            if (c.PolledMsgDates != null && c.PolledMsgDates.Count > 0)
+            {
+                foreach (var date in c.PolledMsgDates)
+                {
+                    if (DateTime.UtcNow.Subtract(date).TotalDays >= 1) ;
+                    else
+                        PolledMsgDates.Add(date);
+                }
+            }
             if (!PolledMsgDates.Contains(LastPolled))
                 PolledMsgDates.Add(LastPolled);
             ClientIp = c.ClientIp ?? null;

@@ -122,7 +122,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.StripProgressBar.Value = 0;
         }
 
-
         private async void SecureChat_Load(object sender, EventArgs e)
         {
             bool send1stReg = false;

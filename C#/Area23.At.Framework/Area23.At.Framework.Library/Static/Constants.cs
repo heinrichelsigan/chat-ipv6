@@ -35,6 +35,8 @@ namespace Area23.At.Framework.Library.Static
         public const string APP_NAME = "Area23.At";
         public const string APP_DIR = "net";
         public const string VERSION = "v2.25.221";
+        public const string VALKEY_CACHE_HOST_PORT = "ValkeyCacheHostPort";
+
 
         public const string AREA23_URL = "https://area23.at";
         public const string APP_PATH = "https://area23.at/net/";

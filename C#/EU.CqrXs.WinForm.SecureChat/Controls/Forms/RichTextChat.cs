@@ -72,12 +72,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     if (Proxies.Contains(ip))
                     {
-                        if (ip.AddressFamily == AddressFamily.InterNetworkV6 && MenuNetworkItemIPv6Secure.Checked)
+                        if (ip.AddressFamily == AddressFamily.InterNetworkV6 && StripMenu.MenuNetworkItemIPv6Secure.Checked)
                         {
                             _serverIpAddress = ip;
                             return _serverIpAddress;
                         }
-                        if (ip.AddressFamily == AddressFamily.InterNetwork && !MenuNetworkItemIPv6Secure.Checked)
+                        if (ip.AddressFamily == AddressFamily.InterNetwork && !StripMenu.MenuNetworkItemIPv6Secure.Checked)
                         {
                             _serverIpAddress = ip;
                             return _serverIpAddress;
@@ -362,13 +362,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     if (!Entities.Settings.Singleton.FriendIPs.Contains(comboIpText))
                         Entities.Settings.Singleton.FriendIPs.Add(comboIpText);
-                    var comboMenuItems = GetMenuDropDownItems(MenuNetworkComboBoxFriendIp);
+                    var comboMenuItems = GetMenuDropDownItems(StripMenu.MenuNetworkComboBoxFriendIp);
                     if (!comboMenuItems.Contains(partnerIpAddress.ToString()))
-                        AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, partnerIpAddress.ToString());
+                        AddMenuItemToMenuComboBox(StripMenu.MenuNetworkComboBoxFriendIp, partnerIpAddress.ToString());
 
                     try
                     {
-                        this.MenuNetworkComboBoxFriendIp.Text = partnerIpAddress.ToString();
+                        this.StripMenu.MenuNetworkComboBoxFriendIp.Text = partnerIpAddress.ToString();
                     }
                     catch { }
 
@@ -1135,8 +1135,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     catch (Exception ex)
                     {
                     }
-                    this.MenuOptionsItemServerSession.Checked = false;
-                    this.MenuOptionsPeer2Peer.Checked = true;
+                    StripMenu.MenuOptionsItemServerSession.Checked = false;
+                    StripMenu.MenuOptionsPeer2Peer.Checked = true;
                     break;
                 case 2:
                     this.PeerSessionTriState = PeerSession3State.ChatServer;
@@ -1149,8 +1149,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     catch (Exception ex)
                     {
                     }
-                    this.MenuOptionsItemServerSession.Checked = true;
-                    this.MenuOptionsPeer2Peer.Checked = false;
+                    StripMenu.MenuOptionsItemServerSession.Checked = true;
+                    StripMenu.MenuOptionsPeer2Peer.Checked = false;
                     break;
                 case 1:
                 default:
@@ -1163,8 +1163,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     catch (Exception ex)
                     {
                     }
-                    this.MenuOptionsItemServerSession.Checked = true;
-                    this.MenuOptionsPeer2Peer.Checked = true;
+                    StripMenu.MenuOptionsItemServerSession.Checked = true;
+                    StripMenu.MenuOptionsPeer2Peer.Checked = true;
                     break;
             }
             this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState);
@@ -1298,7 +1298,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 else // Rebind Server Socket
                 {
 
-                    foreach (ToolStripMenuItem tsmItem in MenuNetworkItemMyIps.DropDown.Items)
+                    foreach (ToolStripMenuItem tsmItem in StripMenu.MenuNetworkItemMyIps.DropDown.Items)
                     {
                         if (tsmItem.Checked)
                         {
@@ -1319,7 +1319,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         ToolStripMenuItem? oldAddrIf = null;
 
-                        foreach (ToolStripMenuItem dditem in this.MenuNetworkItemMyIps.DropDownItems)
+                        foreach (ToolStripMenuItem dditem in this.StripMenu.MenuNetworkItemMyIps.DropDownItems)
                             if (dditem.Checked)
                                 oldAddrIf = dditem;
 
@@ -1701,9 +1701,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private void MenuView_ItemTopBottom_Click(object sender, EventArgs e)
         {
-            MenuViewItemLeftRíght.Checked = false;
-            MenuViewItemTopBottom.Checked = true;
-            MenuViewItem1View.Checked = false;
+            StripMenu.MenuViewItemLeftRíght.Checked = false;
+            StripMenu.MenuViewItemTopBottom.Checked = true;
+            StripMenu.MenuViewItem1View.Checked = false;
 
             PanelCenter.Visible = true;
             RichTextBoxOneView.Visible = false;
@@ -1728,9 +1728,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private void MenuView_ItemLeftRíght_Click(object sender, EventArgs e)
         {
-            MenuViewItemLeftRíght.Checked = true;
-            MenuViewItemTopBottom.Checked = false;
-            MenuViewItem1View.Checked = false;
+            StripMenu.MenuViewItemLeftRíght.Checked = true;
+            StripMenu.MenuViewItemTopBottom.Checked = false;
+            StripMenu.MenuViewItem1View.Checked = false;
 
             PanelCenter.Visible = true;
             RichTextBoxOneView.Visible = false;
@@ -1755,9 +1755,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private void MenuView_Item1View_Click(object sender, EventArgs e)
         {
-            MenuViewItemLeftRíght.Checked = false;
-            MenuViewItemTopBottom.Checked = false;
-            MenuViewItem1View.Checked = true;
+            StripMenu.MenuViewItemLeftRíght.Checked = false;
+            StripMenu.MenuViewItemTopBottom.Checked = false;
+            StripMenu.MenuViewItem1View.Checked = true;
 
             PanelCenter.Visible = true;
             SplitChatView.Visible = false;
@@ -1783,7 +1783,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily.ShortInfo() + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
             extIpItem.Checked = true;
             extIpItem.Enabled = false;
-            AddMenuItemToItems(this.MenuItemExternalIp, (ToolStripDropDownItem)extIpItem);
+            AddMenuItemToItems(this.StripMenu.MenuItemExternalIp, (ToolStripDropDownItem)extIpItem);
             try
             {
                 if (ExternalIpAddressV6 != null)
@@ -1791,7 +1791,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     ToolStripMenuItem extIpV6Item = new ToolStripMenuItem(ExternalIpAddressV6.AddressFamily.ShortInfo() + ExternalIpAddressV6.ToString(), null, null, ExternalIpAddressV6.ToString());
                     extIpV6Item.Checked = true;
                     extIpV6Item.Enabled = false;
-                    AddMenuItemToItems(this.MenuItemExternalIp, (ToolStripDropDownItem)extIpV6Item);
+                    AddMenuItemToItems(this.StripMenu.MenuItemExternalIp, (ToolStripDropDownItem)extIpV6Item);
                 }
             }
             catch (Exception exV6)
@@ -1820,14 +1820,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {
 
-                        if (!GetMenuItemChecked(MenuNetworkItemIPv6Secure) && addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                        if (!GetMenuItemChecked(StripMenu.MenuNetworkItemIPv6Secure) && addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                         {; }
                         else
                             SetMenuItemChecked(item, true);
                         // item.Checked = true;
                     }
 
-                    AddMenuItemToItems(MenuNetworkItemProxyServers, (ToolStripDropDownItem)item);
+                    AddMenuItemToItems(StripMenu.MenuNetworkItemProxyServers, (ToolStripDropDownItem)item);
                     // this.MenuNetworkItemProxyServers.DropDownItems.Add(item);
                 }
 
@@ -1843,9 +1843,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         if (IPAddress.TryParse(friendIp, out IPAddress ipFriendAddr))
                         {
-                            var comboMenuItems = GetMenuDropDownItems(MenuNetworkComboBoxFriendIp);
+                            var comboMenuItems = GetMenuDropDownItems(StripMenu.MenuNetworkComboBoxFriendIp);
                             if (!comboMenuItems.Contains(ipFriendAddr.ToString()))
-                                AddMenuItemToMenuComboBox(MenuNetworkComboBoxFriendIp, ipFriendAddr.ToString());
+                                AddMenuItemToMenuComboBox(StripMenu.MenuNetworkComboBoxFriendIp, ipFriendAddr.ToString());
                             var comboItems = GetComboBoxItems(this.ComboBoxIp);
 
                             if (!comboItems.Contains(ipFriendAddr.ToString()))
@@ -1878,23 +1878,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
             SetStatusText(StripStatusLabel, $"Setup Network: All active connected ip addresses fetched.");
 
-            MenuNetworkItemMyIps.DropDown.Items.Clear();
-            MenuItemExternalIp = new ToolStripMenuItem();
-            MenuItemExternalIp.BackColor = SystemColors.MenuBar;
-            MenuItemExternalIp.Name = "MenuItemExternalIp";
-            MenuItemExternalIp.Size = new Size(160, 22);
-            MenuItemExternalIp.Text = "External Ip's";
-            MenuItemExternalIp.Visible = true;
-            MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
-            MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { MenuItemExternalIp });
-            MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
-            MenuNetworkItemMyIps.Size = new Size(177, 22);
-            MenuNetworkItemMyIps.Text = "my ip's";
+            StripMenu.MenuNetworkItemMyIps.DropDown.Items.Clear();
+            StripMenu.MenuItemExternalIp = new ToolStripMenuItem();
+            StripMenu.MenuItemExternalIp.BackColor = SystemColors.MenuBar;
+            StripMenu.MenuItemExternalIp.Name = "MenuItemExternalIp";
+            StripMenu.MenuItemExternalIp.Size = new Size(160, 22);
+            StripMenu.MenuItemExternalIp.Text = "External Ip's";
+            StripMenu.MenuItemExternalIp.Visible = true;
+            StripMenu.MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
+            StripMenu.MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { StripMenu.MenuItemExternalIp });
+            StripMenu.MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
+            StripMenu.MenuNetworkItemMyIps.Size = new Size(177, 22);
+            StripMenu.MenuNetworkItemMyIps.Text = "my ip's";
 
 
             List<IPAddress> myIpList = new List<IPAddress>();
             int mchecked = 0;
-            this.MenuNetworkItemIPv6Secure.Checked = false;
+            this.StripMenu.MenuNetworkItemIPv6Secure.Checked = false;
             foreach (IPAddress addr in InterfaceIpAddresses)
             {
                 if (addr != null)
@@ -1939,7 +1939,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     clientIpAddress = addr;
                                     item.Checked = true;
                                     if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                                        SetMenuItemChecked(this.MenuNetworkItemIPv6Secure, true);
+                                        SetMenuItemChecked(this.StripMenu.MenuNetworkItemIPv6Secure, true);
                                     // this.MenuNetworkItemIPv6Secure.Checked = true;
                                     clientSocket_DataReceived =
                                         delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
@@ -1957,7 +1957,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
 
                     myIpList.Add(addr);
-                    AddMenuItemToItems(MenuNetworkItemMyIps, (ToolStripDropDownItem)item);
+                    AddMenuItemToItems(StripMenu.MenuNetworkItemMyIps, (ToolStripDropDownItem)item);
                     // this.MenuNetworkItemMyIps.DropDownItems.Add(item);
                 }
             }
@@ -1980,7 +1980,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 ToolStripMenuItem? oldAddrIf = null;
 
-                foreach (ToolStripMenuItem dditem in this.MenuNetworkItemMyIps.DropDownItems)
+                foreach (ToolStripMenuItem dditem in this.StripMenu.MenuNetworkItemMyIps.DropDownItems)
                     if (dditem.Checked)
                         oldAddrIf = dditem;
 
@@ -2048,7 +2048,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 List<IPAddress> ips = new List<IPAddress>();
                 ToolStripMenuItem? oldProxyItem = null;
-                foreach (ToolStripMenuItem dditem in this.MenuNetworkItemProxyServers.DropDownItems)
+                foreach (ToolStripMenuItem dditem in this.StripMenu.MenuNetworkItemProxyServers.DropDownItems)
                     if (dditem.Checked == true)
                         oldProxyItem = dditem;
 
@@ -2084,8 +2084,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         public void MenuOptionsItemClearAllOnClose_Click(object sender, EventArgs e)
         {
             // TODO add to settings
-            this.MenuOptionsItemClearAllOnClose.Checked = (!this.MenuOptionsItemClearAllOnClose.Checked);
-            AppDomain.CurrentDomain.SetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE, MenuOptionsItemClearAllOnClose.Checked);
+            this.StripMenu.MenuOptionsItemClearAllOnClose.Checked = (!this.StripMenu.MenuOptionsItemClearAllOnClose.Checked);
+            AppDomain.CurrentDomain.SetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE, StripMenu.MenuOptionsItemClearAllOnClose.Checked);
         }
 
         #region LoadSaveChatContent
@@ -2187,9 +2187,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void MenuOptionsPeer2Peer_Click(object sender, EventArgs e)
         {
-            if (this.MenuOptionsPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
+            if (StripMenu.MenuOptionsPeer2Peer.Checked && !StripMenu.MenuOptionsItemServerSession.Checked)
                 TooglePeerSessionServerTriState(0);
-            else if (!this.MenuOptionsPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
+            else if (!this.StripMenu.MenuOptionsPeer2Peer.Checked && this.StripMenu.MenuOptionsItemServerSession.Checked)
                 TooglePeerSessionServerTriState(2);
             else
                 TooglePeerSessionServerTriState(1);
@@ -2198,9 +2198,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void MenuOptionsItemServerSession_Click(object sender, EventArgs e)
         {
-            if (this.MenuOptionsPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
+            if (this.StripMenu.MenuOptionsPeer2Peer.Checked && !this.StripMenu.MenuOptionsItemServerSession.Checked)
                 TooglePeerSessionServerTriState(0);
-            else if (!this.MenuOptionsPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
+            else if (!this.StripMenu.MenuOptionsPeer2Peer.Checked && this.StripMenu.MenuOptionsItemServerSession.Checked)
                 TooglePeerSessionServerTriState(2);
             else
                 TooglePeerSessionServerTriState(1);

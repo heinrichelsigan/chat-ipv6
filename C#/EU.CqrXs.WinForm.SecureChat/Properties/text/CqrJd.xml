@@ -177,69 +177,6 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm">
-            <summary>
-            MenuChat inherited from <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm"/> is abstraction for all menu items provided by derived classed,
-            e.g. <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat"/>, <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat"/>, <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat"/>
-            </summary>
-        </member>
-        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm.#ctor">
-            <summary>
-            Ctor
-            </summary>
-        </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm.MenuChatForm_Load(System.Object,System.EventArgs)">
-            <summary>
-            MenuChatForm_Load first load event to add own contact
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm.MenuContactsItemMyContact_Click(System.Object,System.EventArgs)">
-            <summary>
-            MenuContactsItemMyContact_Click edits or adds at 1st time starting own contact
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm.MenuItemAddContact_Click(System.Object,System.EventArgs)">
-            <summary>
-            MenuItemAddContact_Click launches <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings"/> to add or edit a contact
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm.MenuContactsItemView_Click(System.Object,System.EventArgs)">
-            <summary> 
-            MenuContactsItemView_Click launches <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactsView"/> to view contacts
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm.MenuContactstemImport_Click(System.Object,System.EventArgs)">
-            <summary>
-            MenuContactstemImport_Click performs an import of existing contacts from csv or vcard
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ChatMenuForm.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
         <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat">
             <summary>
             Peer2PeerChat main form
@@ -1019,6 +956,23 @@
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.InitializeComponent">
             <summary>
             Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Menu.CqrMenu.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Menu.CqrMenu.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Menu.CqrMenu.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
         </member>

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web;
 
 
@@ -46,62 +47,53 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 fullSrvMsgOut._message = jsonText;
             }
 
-            //HashSet<string> chatRooms = (HttpContext.Current.Application["ChatRooms"] != null)
-            //    ? (HashSet<string>)HttpContext.Current.Application["ChatRooms"]
-            //    : ChatRoomNumbersFromFs();
-            //if (!chatRooms.Contains(chatRoomId))
-            //    chatRooms.Add(chatRoomId);
-            //HttpContext.Current.Application["ChatRooms"] = chatRooms
-
             return fullSrvMsgOut;
         }
 
+      
         public FullSrvMsg<string> SaveJsonChatRoom(FullSrvMsg<string> fullSrvMsg, string chatRoomId)
         {
-            if (!chatRoomId.Equals(this.JsonChatRoomNumber))
-                JsonChatRoomNumber = chatRoomId;
-            
-            if (!JsonChatRoomNumber.EndsWith(".json"))
-                JsonChatRoomNumber += ".json";
+            lock (_lock)
+            {
+                if (!chatRoomId.Equals(this.JsonChatRoomNumber))
+                    JsonChatRoomNumber = chatRoomId;
 
-            fullSrvMsg.ChatRoomNr = JsonChatRoomNumber;
-            fullSrvMsg.Sender.ChatRoomId = JsonChatRoomNumber;
+                if (!JsonChatRoomNumber.EndsWith(".json"))
+                    JsonChatRoomNumber += ".json";
 
-            JsonSerializerSettings jsets = new JsonSerializerSettings();
-            jsets.Formatting = Formatting.Indented;
-            string jsonString = JsonConvert.SerializeObject(fullSrvMsg, Formatting.Indented);
-            System.IO.File.WriteAllText(JsonChatRoomFileName, jsonString);            
+                fullSrvMsg.ChatRoomNr = JsonChatRoomNumber;
+                fullSrvMsg.Sender.ChatRoomId = JsonChatRoomNumber;
 
-            //HashSet<string> chatRooms = (HttpContext.Current.Application["ChatRooms"] != null)
-            //        ? (HashSet<string>)HttpContext.Current.Application["ChatRooms"] 
-            //        : ChatRoomNumbersFromFs();
-            //if (!chatRooms.Contains(chatRoomId))
-            //    chatRooms.Add(chatRoomId);
-            //HttpContext.Current.Application["ChatRooms"] = chatRooms;
+                JsonSerializerSettings jsets = new JsonSerializerSettings();
+                jsets.Formatting = Formatting.Indented;
+                string jsonString = JsonConvert.SerializeObject(fullSrvMsg, Formatting.Indented);
+                System.IO.File.WriteAllText(JsonChatRoomFileName, jsonString);
 
-            fullSrvMsg._message = jsonString;
+                fullSrvMsg._message = jsonString;
+            }
             
             return fullSrvMsg;
         }
 
-        public bool DeleteJsonChatRoom(string chatRoomNumber)
+        public bool DeleteJsonChatRoom(string chatRoomId)
         {
-            FullSrvMsg<string> fullSrvMsg;
-
-            JsonChatRoomNumber = chatRoomNumber;
-            if (!System.IO.File.Exists(JsonChatRoomFileName))
-                return true;
-
+            JsonChatRoomNumber = chatRoomId;
             lock (_lock)
             {
-                try
+                if (HttpContext.Current.Application.AllKeys.Contains(JsonChatRoomNumber))
+                    HttpContext.Current.Application.Remove(JsonChatRoomNumber);
+
+                if (System.IO.File.Exists(JsonChatRoomFileName)) // we need to create chatroom
                 {
-                    System.IO.File.Delete(JsonChatRoomFileName);
-                }
-                catch (Exception e)
-                {
-                    Area23Log.LogStatic($"Error deleting chat room {e.Message}");
-                    return false;
+                    try
+                    {
+                        System.IO.File.Delete(JsonChatRoomFileName);
+                    }
+                    catch (Exception e)
+                    {
+                        Area23Log.LogStatic($"Error deleting chat room {e.Message}");
+                        return false;
+                    }
                 }
             }
 

@@ -1,6 +1,7 @@
 ﻿using Amazon.ElastiCacheCluster;
 using Enyim.Caching;
 using Enyim.Caching.Memcached;
+using StackExchange.Redis;
 using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.CqrXs;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
@@ -22,13 +23,15 @@ using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Services;
 using System.Net;
+using Newtonsoft.Json;
+using System.Net.NetworkInformation;
 
 
 namespace EU.CqrXs.CqrSrv.CqrJd
 {
 
     /// <summary>
-    /// Summary description for CqrService
+    /// CqrService offers a simple chat room service with strong encryption
     /// </summary>
     [WebService(Namespace = "https://cqrjd.eu/cqrsrv/cqrjd/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
@@ -36,8 +39,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
     [System.Web.Script.Services.ScriptService]
     public class CqrService : Util.BaseWebService
-    {        
-        
+    {
+
+        /// <summary>
+        /// Send1StSrvMsg sends first registration message of contact
+        /// </summary>
+        /// <param name="cryptMsg">with sercerkey encrypted message</param>
+        /// <returns>with serverkey encrypted responnse of own contact</returns>
         [WebMethod]
         public string Send1StSrvMsg(string cryptMsg)
         {            
@@ -75,7 +83,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
 
-        [WebMethod]
+        /// <summary>
+        /// Invites to a chat romm 
+        /// with an encrypted <see cref="FullSrvMsg<string>"/>
+        /// </summary>
+        /// <param name="cryptMsg">encrypted <see cref="FullSrvMsg<string>"/></param>
+        /// <returns>encrypted <see cref="FullSrvMsg<string>"/> including chatroom number</returns>
+        [WebMethod]        
+            
         public string ChatRoomInvite(string cryptMsg)
         {
             InitMethod();
@@ -99,7 +114,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     dict.Add(now, "");
 
                     if (UseAmazonElasticCache)
-                        memClient.Store(StoreMode.Add, chatRoomId, dict, new TimeSpan(23, 23, 23, 23));
+                    {
+                        redis = ConnectionMultiplexer.Connect(options);
+                        var db = redis.GetDatabase();
+                        string dictJson = JsonConvert.SerializeObject(dict);
+                        db.StringSet(chatRoomId, dictJson);
+                    }
+                        
                     
                     if (UseApplicationState)
                         HttpContext.Current.Application[chatRoomId] = dict;
@@ -124,6 +145,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
         }
 
+        /// <summary>
+        /// Polls a chat room for new messages
+        /// </summary>
+        /// <param name="cryptMsg">encrypted <see cref="FullSrvMsg<string>"/> with chat room number and last polled dates</param>
+        /// <returns>
+        /// encrypted <see cref="FullSrvMsg<string>"/> including chatroom number 
+        /// with encrypted clientmsg with clientkey.
+        /// Server doesn't know client key and always delivers encrypted encrypted messages
+        /// Server can only read and decrypt outer envelope message encrypted with server key
+        /// </returns>
         [WebMethod]
         public string ChatRoomPoll(string cryptMsg)
         {
@@ -154,7 +185,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         }
                         if (UseAmazonElasticCache)
                         {
-                            dict = (Dictionary<DateTime, string>)memClient.Get(_chatRoomNumber);
+                            redis = ConnectionMultiplexer.Connect(options);
+                            var db = redis.GetDatabase();
+                            string dictJson = db.StringGet(_chatRoomNumber);
+                            dict = (Dictionary<DateTime, string>)JsonConvert.DeserializeObject<Dictionary<DateTime, string>>(dictJson);                            
                         }
 
                         List<DateTime> pollKeys = dict.Keys.Where(k => k.Ticks > fullSrvMsg.Sender.LastPolled.Ticks).ToList();
@@ -201,6 +235,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
         }
 
+        /// <summary>
+        /// Pushes a new message for chatroom to the server
+        /// </summary>
+        /// <param name="cryptMsg">encrypted <see cref="FullSrvMsg<string>"/> with chat room number and last polled dates</param>
+        /// <param name="chatRoomMembersCrypted">with client key encrypted message, that is stored in proc of server, but server can't decrypt</param>
+        /// <returns>encrypted <see cref="FullSrvMsg<string>"/> with chat room number and last polled date changed to now</returns>
         [WebMethod]
         public string ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted)
         {
@@ -230,14 +270,24 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         if (this.UseApplicationState && HttpContext.Current.Application[_chatRoomNumber] != null)
                             dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber]; 
                         if (UseAmazonElasticCache)
-                            dict = (Dictionary<DateTime, string>)memClient.Get(_chatRoomNumber);
+                        {
+                            redis = ConnectionMultiplexer.Connect(options);
+                            var db = redis.GetDatabase();                            
+                            string dictJson = db.StringGet(_chatRoomNumber);
+                            dict = (Dictionary<DateTime, string>)JsonConvert.DeserializeObject<Dictionary<DateTime, string>>(dictJson);
+                        }                       
 
                         dict.Add(now, chatRoomMembersCrypted);
                         
                         if (UseApplicationState)
                             HttpContext.Current.Application[_chatRoomNumber] = dict;
                         if (UseAmazonElasticCache)
-                            memClient.Store(StoreMode.Replace, _chatRoomNumber, dict, new TimeSpan(23, 23, 23, 23));
+                        {
+                            redis = ConnectionMultiplexer.Connect(options);
+                            var db = redis.GetDatabase();
+                            string dictJson = JsonConvert.SerializeObject(dict);
+                            db.StringSet(_chatRoomNumber, dictJson);
+                        }
 
                         _contact.LastPolled = now;
                         _contact.PolledMsgDates.Add(now);
@@ -265,7 +315,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cryptMsg"></param>
+        /// <returns></returns>
         [WebMethod]
         public string ChatRoomClose(string cryptMsg)
         {
@@ -283,31 +337,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 {
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
                     _contact = AddContact(fullSrvMsg.Sender);
-                    _invited = fullSrvMsg.Recipients.ToList();
-                    fullSrvMsg.Recipients.Add(_contact);
-                    _invited.Add(_contact);
-
-                    ;
-                    if (string.IsNullOrEmpty(fullSrvMsg.TContent))
-                        throw new Exception();
-
-                    FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(fullSrvMsg.TContent)).LoadJsonChatRoom(fullSrvMsg, fullSrvMsg.TContent);
-                    if (fullSrvMsg.TContent.Equals(chatRoomMsg.TContent))
-                    {
-                        if (fullSrvMsg.Sender == chatRoomMsg.Sender)
-                            isValid = true;
-                    }
+                    _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.ChatRoomId;
+                    JsonChatRoom jschatRoom = new JsonChatRoom(_chatRoomNumber);
+                    FullSrvMsg<string> chatRoomMsg = jschatRoom.LoadJsonChatRoom(fullSrvMsg, _chatRoomNumber);
+                    isValid = ValidateChatRoomNr(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
                     if (isValid)
                     {
-                        if (HttpContext.Current.Application[fullSrvMsg.TContent] != null)
-                        {
-                            ConcurrentBag<string> bag = (ConcurrentBag<string>)HttpContext.Current.Application[fullSrvMsg.TContent];
-                            chatRoomMsg.TContent =
-                                $"Closing chat room {fullSrvMsg.TContent} number of msg remaining {bag.ToArray().Length}.";
-                            HttpContext.Current.Application.Remove(fullSrvMsg.TContent);
-                        }
-
+                        jschatRoom.DeleteJsonChatRoom(_chatRoomNumber);
                     }
+
                     _responseString = srvMsg.CqrSrvMsg<string>(chatRoomMsg);
 
                 }
@@ -331,18 +369,25 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             return base.TestService();
         }
 
+        [WebMethod]
+        public override string GetIPAddress()
+        {
+            return base.GetIPAddress();
+        }
+
+
 
         [WebMethod]
         public virtual string TestCache()
         {
-            string testReport = $"TestCache() started {DateTime.Now.Area23DateTimeWithMillis()}\n";
+            string testReport = $"{DateTime.Now.Area23DateTimeWithMillis()}:TestCache() started {DateTime.Now.Area23DateTimeWithMillis()}\n";
             try
             {
                 InitMethod(); 
             }
             catch (Exception ex1)
             {
-                testReport += $"Exception {ex1.GetType()}: {ex1.Message}\n\t{ex1}\n";
+                testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Exception {ex1.GetType()}: {ex1.Message}\n\t{ex1}\n";
             }
             
             testReport += "InitMethod() completed.\n";
@@ -354,12 +399,26 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     !dictCacheTest.Keys.Contains(c.Cuid))
                     dictCacheTest.Add(c.Cuid, c);
             }
-            testReport += $"Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
+            testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
             if (UseAmazonElasticCache)
             {
+                
                 try
                 {
-                    memClient.Store(StoreMode.Add, "TestCache", dictCacheTest, new TimeSpan(23, 23, 23, 23));
+                    if (UseAmazonElasticCache)
+                    {
+                        testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT]}\n";
+                        redis = ConnectionMultiplexer.Connect(options);
+                        var db = redis.GetDatabase();
+                        string dictJson = JsonConvert.SerializeObject(dictCacheTest);
+                        db.StringSet("TestCache", dictJson);
+                        testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Added serialized json to cache!\n";
+
+                        string jsonOut = db.StringGet("TestCache");
+                        testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Got from cache: {jsonOut}.\n";
+                        var outdict = (Dictionary<Guid, CqrContact>)JsonConvert.DeserializeObject<Dictionary<Guid, CqrContact>>(jsonOut);
+                        testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Deserialized json, got dict with {outdict.Keys.Count} keys."; 
+                    }                    
                 }
                 catch (Exception ex2)
                 {

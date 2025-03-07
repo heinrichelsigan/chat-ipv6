@@ -991,7 +991,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private ToolStripMenuItem MenuOptionsItemFileSecure;
         private ToolStripMenuItem MenuOptionsItemClearAllOnClose;
         private ToolStripMenuItem MenuOptionsItemDontSendProfilePictures;
-
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem MenuOptionsPeer2Peer;
+        private ToolStripMenuItem MenuOptionsItemServerSession;
 
         private ToolStripMenuItem MenuHelp;
         private ToolStripMenuItem MenuHelpItemViewHelp;
@@ -1005,9 +1007,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private Controls.Panels.PeerServerSwitchPanel PeerServerSwitch;
         private Button ButtonSend;
         private TextBox textBoxChatSession;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem MenuOptionsPeer2Peer;
-        private ToolStripMenuItem MenuOptionsItemServerSession;
+
     }
 
 }

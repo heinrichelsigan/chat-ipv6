@@ -109,7 +109,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             }
         }
 
-
         public static IPAddress? ExternalIpAddressV6
         {
             get
