@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Web;
 
@@ -34,8 +35,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 _contacts = JsonConvert.DeserializeObject<HashSet<CqrContact>>(jsonText);
                 if (_contacts == null || _contacts.Count == 0)
                     _contacts = new HashSet<CqrContact>();
-                HttpContext.Current.Application[Constants.JSON_CONTACTS] = _contacts;
             }
+
+            if (BaseWebService.UseApplicationState)
+                    HttpContext.Current.Application[Constants.JSON_CONTACTS] = _contacts;
+            if (BaseWebService.UseAmazonElasticCache)
+            {
+                string dictContactsJson = JsonConvert.SerializeObject(_contacts);
+                RedIs.Db.StringSet(Constants.JSON_CONTACTS, dictContactsJson);                   
+            }
+  
             return _contacts;
         }
 
@@ -49,8 +58,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 jsets.Formatting = Formatting.Indented;
                 string jsonString = JsonConvert.SerializeObject(contacts, Formatting.Indented);
                 System.IO.File.WriteAllText(JsonContactsFileName, jsonString);
-                HttpContext.Current.Application[Constants.JSON_CONTACTS] = contacts;
             }
+
+            if (BaseWebService.UseApplicationState)
+                HttpContext.Current.Application[Constants.JSON_CONTACTS] = contacts;
+            if (BaseWebService.UseAmazonElasticCache)
+            {
+                string dictContactsJson = JsonConvert.SerializeObject(_contacts);
+                RedIs.Db.StringSet(Constants.JSON_CONTACTS, dictContactsJson);
+            }
+
         }
 
 
@@ -60,12 +77,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             if (_contacts == null || _contacts.Count < 1)
             {
-                if (HttpContext.Current.Application[Constants.JSON_CONTACTS] != null)
+                if (BaseWebService.UseApplicationState && HttpContext.Current.Application[Constants.JSON_CONTACTS] != null)
+                    _contacts = (HashSet<CqrContact>)(HttpContext.Current.Application[Constants.JSON_CONTACTS]);                    
+                if (BaseWebService.UseAmazonElasticCache)
                 {
-                    _contacts = (HashSet<CqrContact>)(HttpContext.Current.Application[Constants.JSON_CONTACTS]);
-                    if (_contacts == null || _contacts.Count < 2)
-                        loadJson = true;
+                    string dictContactsJson = RedIs.Db.StringGet(Constants.JSON_CONTACTS);
+                    _contacts = (HashSet<CqrContact>)JsonConvert.DeserializeObject<HashSet<CqrContact>>(dictContactsJson);
                 }
+                if (_contacts == null || _contacts.Count < 2)
+                    loadJson = true;
             }
             else 
                 loadJson = true;

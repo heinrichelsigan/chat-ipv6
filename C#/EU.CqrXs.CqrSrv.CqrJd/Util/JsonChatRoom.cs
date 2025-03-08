@@ -80,8 +80,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             JsonChatRoomNumber = chatRoomId;
             lock (_lock)
             {
-                if (HttpContext.Current.Application.AllKeys.Contains(JsonChatRoomNumber))
-                    HttpContext.Current.Application.Remove(JsonChatRoomNumber);
+                if (BaseWebService.UseApplicationState)
+                {
+                    if (HttpContext.Current.Application.AllKeys.Contains(JsonChatRoomNumber))
+                        HttpContext.Current.Application.Remove(JsonChatRoomNumber);
+                }
+                if (BaseWebService.UseAmazonElasticCache)
+                {
+                    RedIs.Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
+                }
+                
 
                 if (System.IO.File.Exists(JsonChatRoomFileName)) // we need to create chatroom
                 {
@@ -105,7 +113,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         {
             string[] csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
             HashSet<string> chatRooms = new HashSet<string>(csr);
-            HttpContext.Current.Application["ChatRooms"] = chatRooms;
+            if (BaseWebService.UseApplicationState)
+                HttpContext.Current.Application["ChatRooms"] = chatRooms;
+            if (BaseWebService.UseAmazonElasticCache)
+            {
+                string hashChatRoomsJson = JsonConvert.SerializeObject(chatRooms);
+                RedIs.Db.StringSet("ChatRooms", hashChatRoomsJson);
+            }
+
             return chatRooms;
         }
 

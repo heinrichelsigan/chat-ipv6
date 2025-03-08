@@ -30,11 +30,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         protected internal string _chatRoomNumber = string.Empty;
         // protected internal ConnectionMultiplexer redis;
         // protected internal ConfigurationOptions options;
-        protected internal bool useAWSCache = false, useAppState = true;
+        protected internal static bool useAWSCache = false, useAppState = true;
         // protected internal string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         // protected internal StackExchange.Redis.IDatabase db;
 
-        public bool UseApplicationState
+        public static bool UseApplicationState
         {            
             get
             {
@@ -51,7 +51,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }        
         }
 
-        public virtual bool UseAmazonElasticCache
+        public static  bool UseAmazonElasticCache
         {
             get
             {
