@@ -22,7 +22,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// <summary>
     /// Represtents a MsgContent
     /// </summary>
-    [JsonObject]
     [Serializable]
     public class MsgContent : ICqrMessagable
     {
@@ -175,6 +174,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return (MsgContent)this;
         }
 
+        #region serialization / deserialization
+
         public virtual string ToJson() => Newtonsoft.Json.JsonConvert.SerializeObject(this);
 
         public virtual T? FromJson<T>(string jsonText)
@@ -204,11 +205,27 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return cqrT;
         }
 
+        public override string ToString()
+        {
+            string s = this.GetType().ToString() + "\n";
+            var fields = Static.Utils.GetAllFields(this.GetType());
+            foreach (var field in fields)           
+                s += field.Name + " \t\"" + field.GetRawConstantValue()?.ToString() + "\"\n";            
+            var props = Static.Utils.GetAllProperties(this.GetType());
+            foreach (var prp in props)
+                s += prp.Name + " \t\"" + prp.GetRawConstantValue()?.ToString() + "\"\n";
+
+            return s;
+        }
+
+        #endregion serialization / deserialization
+
+
         public virtual string VerificationHash(out string msg)
         {
             msg = _message;
             if (!string.IsNullOrEmpty(_hash))
-            {                
+            {
                 return _hash;
             }
 
@@ -227,7 +244,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
             }
 
-            if (RawMessage.Length > 9) 
+            if (RawMessage.Length > 9)
             {
                 // if (_message.Contains('\n') && _message.LastIndexOf('\n') < _message.Length)
                 string tmp = RawMessage.Substring(RawMessage.Length - 10);
@@ -241,26 +258,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             else
             {
                 _hash = RawMessage;
-            }        
+            }
 
 
             if (_hash.Length > 4 && RawMessage.Substring(RawMessage.Length - _hash.Length).Equals(_hash, StringComparison.InvariantCulture))
                 msg = RawMessage.Substring(0, RawMessage.Length - _hash.Length);
 
             return _hash ?? string.Empty;
-        }
-
-        public override string ToString()
-        {
-            string s = this.GetType().ToString() + "\n";
-            var fields = Static.Utils.GetAllFields(this.GetType());
-            foreach (var field in fields)           
-                s += field.Name + " \t\"" + field.GetRawConstantValue()?.ToString() + "\"\n";            
-            var props = Static.Utils.GetAllProperties(this.GetType());
-            foreach (var prp in props)
-                s += prp.Name + " \t\"" + prp.GetRawConstantValue()?.ToString() + "\"\n";
-
-            return s;
         }
 
 

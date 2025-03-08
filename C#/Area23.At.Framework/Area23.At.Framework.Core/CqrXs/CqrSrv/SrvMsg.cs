@@ -14,6 +14,7 @@ using System.Configuration;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Security.Policy;
+using System.Windows.Interop;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 {
@@ -267,9 +268,12 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             FullSrvMsg<TS>? fullMsg = null;
             MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType);
 
-            if (msgContent != null && !string.IsNullOrEmpty(msgContent.Message) && msgContent.Message.IsValidJson())
+            if (msgContent != null && !string.IsNullOrEmpty(msgContent.Message))
             {
-                fullMsg = JsonConvert.DeserializeObject<FullSrvMsg<TS>>(msgContent.Message);
+                if (msgContent.Message.IsValidJson())
+                    fullMsg = JsonConvert.DeserializeObject<FullSrvMsg<TS>>(msgContent.Message);
+                else if (msgContent.Message.IsValidXml())
+                    fullMsg = Static.Utils.DeserializeFromXml<FullSrvMsg<TS>>(msgContent.Message);
                 try
                 {
                     if (fullMsg != null && fullMsg is FullSrvMsg<TS> fullSrvMsg && fullSrvMsg != null && !string.IsNullOrEmpty(fullSrvMsg.Sender?.Email))
@@ -282,7 +286,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                         fullMsg.Md5Hash = fullSrvMsg.Md5Hash;
                     }
                     return fullMsg;
-
                 }
                 catch (Exception exJson)
                 {
@@ -292,7 +295,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
             return fullMsg;
         }
-
 
 
         public FullSrvMsg<TC> NCqrClientMsgTC<TC>(string clientMessage, EncodingType encType = EncodingType.Base64)
@@ -308,7 +310,12 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             while (decrypted[decrypted.Length - 1] == '\0')
                 decrypted = decrypted.Substring(0, decrypted.Length - 1);
 
-            MsgEnum msgEnum = (decrypted.IsValidJson()) ? MsgEnum.Json : MsgEnum.RawWithHashAtEnd;
+            MsgEnum msgEnum = MsgEnum.RawWithHashAtEnd;
+            if (decrypted.IsValidJson())
+                msgEnum = MsgEnum.Json;
+            else if (decrypted.IsValidXml())
+                msgEnum = MsgEnum.Xml;
+
             MsgContent msgContent = new MsgContent(decrypted, msgEnum);
             string hashVerification = msgContent.Hash;
             if (!VerifyHash(hashVerification, clientSymmPipe.PipeString))
@@ -319,12 +326,15 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                         hashSymShow.Substring(0, 2) + "...." + hashSymShow.Substring(6), keyBytes.Length));
             }
 
-            if (msgContent != null && !string.IsNullOrEmpty(msgContent._message) && msgContent._message.IsValidJson())
+            if (msgContent != null && !string.IsNullOrEmpty(msgContent._message))
             {
+                if (msgContent.MsgType == MsgEnum.Json || msgContent._message.IsValidJson())
+                    clientOutMsg = JsonConvert.DeserializeObject<FullSrvMsg<TC>>(msgContent._message);
+                else if (msgContent.MsgType == MsgEnum.Xml || msgContent._message.IsValidXml())
+                    clientOutMsg = Static.Utils.DeserializeFromXml<FullSrvMsg<TC>>(msgContent._message);
+
                 try
                 {
-                    clientOutMsg = JsonConvert.DeserializeObject<FullSrvMsg<TC>>(msgContent._message);
-
                     if (clientOutMsg != null && clientOutMsg is FullSrvMsg<TC> fullSrvMsg && fullSrvMsg != null && !string.IsNullOrEmpty(clientOutMsg._message))
                     {
                         clientOutMsg.Sender = fullSrvMsg.Sender;
@@ -350,7 +360,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
             return clientMsg;
         }
-
 
 
         /// <summary>
@@ -384,78 +393,16 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         #endregion NCqrSrvMsg decrypting server message
 
 
-        /// <summary>
-        /// Send_CqrSrvMsg sends registration msg to server
-        /// </summary>
-        /// <param name="msg">string message</param>
-        /// <param name="srvIp">public availible server ip address</param>
-        /// <param name="encodingType"><see cref="EncodingType"/></param>
-        /// <returns></returns>
-        public string Send_CqrSrvMsg(string msg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
-        {
-            string encrypted = string.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
-                CqrBaseMsg(msg));
-
-            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
-            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
-
-            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
-
-            return response;
-        }
-
+        #region Response<T> response = webServiceSoapClient.WebMethod_To_Invoke(Request<T> request)
 
         /// <summary>
-        /// Send_CqrSrvMsgT sends a generic msg to server
+        /// Send_InitChatRoom_Soap{<typeparamref name="T"/>} Sends an chat roomm invitation
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="fullServerMsg"></param>
-        /// <param name="srvIp">public availible server ip address</param>
-        /// <param name="encodingType"><see cref="EncodingType"/></param>
-        /// <returns></returns>
-        public string Send_CqrSrvMsgT<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
-            where T : class
-        {
-            string encrypted = string.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
-                CqrSrvMsg<T>(fullServerMsg));
-
-            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
-            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
-
-            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
-
-            return response;
-        }
-
-
-
-        /// <summary>
-        /// Send_CqrSrvMsgTTC sends a fullServerMsg and fulk
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TC"></typeparam>
-        /// <param name="fullServerMsg"></param>
-        /// <param name="fullClientMsg"></param>
-        /// <param name="srvIp">public availible server ip address</param>
-        /// <param name="encodingType"><see cref="EncodingType"/></param>
-        /// <returns></returns>
-        public string Send_CqrSrvMsgTTC<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64) 
-            where T : class
-            where TC : class
-        {
-            string encrypted = string.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg={1}\r\nButtonSubmit=Submit",
-                CqrSrvMsg<T>(fullServerMsg, MsgKind.Server, encodingType), 
-                CqrSrvMsg<TC>(fullClientMsg, MsgKind.Client, encodingType));
-
-            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
-            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
-
-            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
-
-            return response;
-        }
-
-
+        /// <param name="fullServerMsg"><see cref="FullSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="srvIp"></param>
+        /// <param name="encodingType"></param>
+        /// <returns><see cref="FullSrvMsg{string}"/>, containing char room number, last polled date, updated sender and recipients</returns>
         public FullSrvMsg<string> Send_InitChatRoom_Soap<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
             where T : class
         {
@@ -481,7 +428,15 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        public string SendChatMsg_Soap<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        /// <summary>
+        /// SendChatMsg_Soap{<typeparamref name="T"/>, <typeparamref name="TC"/>} 
+        /// </summary>
+        /// <param name="fullServerMsg"><see cref="FullSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="fullClientMsg">client encrypted messagem, that server can't decrypt, <see cref="FullSrvMsg{TC}"/></param>fullClientMsgfullClientMsg
+        /// <param name="srvIp"></param>
+        /// <param name="encodingType"></param>
+        /// <returns><see cref="FullSrvMsg{string}"/>, containing char room number, last polled date, updated sender and recipients</returns>
+        public FullSrvMsg<string> SendChatMsg_Soap<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
             where T : class
             where TC : class
         {
@@ -489,12 +444,22 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             string cryptPatner = CqrSrvMsg<TC>(fullClientMsg, MsgKind.Client);
             
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
-            string resp = client.ChatRoomPushMessage(cryptSrv, cryptPatner);
+            string response = client.ChatRoomPushMessage(cryptSrv, cryptPatner);
+            FullSrvMsg<string> rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
 
-            return resp;
+            return rfmsg;
         }
 
 
+        /// <summary>
+        /// SendChatMsg_Soap_Simple{<typeparamref name="TS"/>} send a simple push message to the server
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fullServerMsg"><see cref="FullSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="encryptedClientMsg">already encrypted client msg, that server can't read</param>
+        /// <param name="srvIp"></param>
+        /// <param name="encodingType"></param>
+        /// <returns><see cref="FullSrvMsg{string}"/>, containing char room number, last polled date, updated sender and recipients</returns>
         public FullSrvMsg<string> SendChatMsg_Soap_Simple<TS>(FullSrvMsg<TS> fullServerMsg, string encryptedClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
            where TS : class
         {
@@ -509,17 +474,85 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-
-        public string ReceiveChatMsg_Soap<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        /// <summary>
+        /// ReceiveChatMsg_Soap{<typeparamref name="T"/>} is a polling chat server request
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fullServerMsg"><see cref="FullSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="srvIp"></param>
+        /// <param name="encodingType"></param>
+        /// <returns><see cref="FullSrvMsg{string}"/>, containing char room number, last polled date, updated sender and recipients</returns>
+        public FullSrvMsg<string> ReceiveChatMsg_Soap<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         where T : class
         {
             string cryptSrv = CqrSrvMsg<T>(fullServerMsg, MsgKind.Server);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
-            string resp = client.ChatRoomPoll(cryptSrv);
+            string response = client.ChatRoomPoll(cryptSrv);
+            FullSrvMsg<string> rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
 
-            return resp;
+            return rfmsg;
+            
         }
+
+
+        #endregion Response<T> response = webServiceSoapClient.WebMethod_To_Invoke(Request<T> request)
+
+
+        #region obsolete methods
+
+        /// <summary>
+        /// Send_CqrSrvMsg obsolete, please use <see cref="SrvMsg1.SendFirstSrvMsg_Soap(CqrContact, IPAddress, EncodingType)"/> instead
+        /// </summary>
+        [Obsolete("Send_CqrSrvMsg is obsolete, please use SrvMsg1.SendFirstSrvMsg_Soap(CqrContact, IPAddress, EncodingType)", true)]
+        public string Send_CqrSrvMsg(string msg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        {
+            string encrypted = string.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
+                CqrBaseMsg(msg));
+
+            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
+
+            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+
+            return response;
+        }
+
+
+        [Obsolete("Please use SendChatMsg_Soap<T, TC> or better even endChatMsg_Soap_Simple<TS>(FullSrvMsg<TS> fullServerMsg, string encryptedClientMsg, ...)", true)]
+        public string Send_CqrSrvMsgT<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+            where T : class
+        {
+            string encrypted = string.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg=\r\nButtonSubmit=Submit",
+                CqrSrvMsg<T>(fullServerMsg));
+
+            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
+
+            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+
+            return response;
+        }
+
+
+        [Obsolete("Please use SendChatMsg_Soap<T, TC> or better even endChatMsg_Soap_Simple<TS>(FullSrvMsg<TS> fullServerMsg, string encryptedClientMsg, ...)", true)]
+        public string Send_CqrSrvMsgTTC<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+            where T : class
+            where TC : class
+        {
+            string encrypted = string.Format("TextBoxEncrypted={0}\r\nTextBoxDecrypted=\r\nTextBoxLastMsg={1}\r\nButtonSubmit=Submit",
+                CqrSrvMsg<T>(fullServerMsg, MsgKind.Server, encodingType),
+                CqrSrvMsg<TC>(fullClientMsg, MsgKind.Client, encodingType));
+
+            string posturl = ConfigurationManager.AppSettings["ServerUrlToPost"].ToString();
+            string hostheader = ConfigurationManager.AppSettings["SendHostHeader"].ToString();
+
+            string response = WebClientRequest.PostMessage(encrypted, posturl, hostheader, srvIp.ToString());
+
+            return response;
+        }
+
+        #endregion obsolete methods
 
 
     }

@@ -143,7 +143,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             return base.Channel.ChatRoomPoll(cryptMsg);
         }
         
-        public System.Threading.Tasks.Task<string> ChatRoomPollAsync(string cryptMsg)
+        public System.Threading.Tasks.Task<string> ChatRoomPollAsync(string cryptMsg) 
         {
             return base.Channel.ChatRoomPollAsync(cryptMsg);
         }

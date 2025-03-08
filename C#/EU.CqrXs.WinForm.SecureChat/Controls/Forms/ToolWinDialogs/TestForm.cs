@@ -212,7 +212,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 this.textBoxDestination.Text = encrypted;
 
-                string response = srvMsg1.Send1st_CqrSrvMsg1_Soap(myContact, _serverIp, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
+                string response = srvMsg1.Test_Send1st_CqrSrvMsg1_Soap(myContact, _serverIp, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
                 SrvMsg1 srvRetMsg1 = new SrvMsg1(this.textBoxSecKey.Text);
                 
                 this.textBoxDestination.Text = response;

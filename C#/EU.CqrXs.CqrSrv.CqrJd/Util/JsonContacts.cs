@@ -135,8 +135,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         public static List<string> ChatRoomNumbersFromFs()
         {
+
+            List<string> chatRooms = new List<string>();
             string[] csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
-            List<string> chatRooms = new List<string>(csr);
+            string file = "";
+            foreach (string filedir in csr)
+            {
+                file = Path.GetFileName(filedir);
+                chatRooms.Add(file);
+            }                        
 
             if (BaseWebService.UseApplicationState)
                 HttpContext.Current.Application["ChatRooms"] = chatRooms;

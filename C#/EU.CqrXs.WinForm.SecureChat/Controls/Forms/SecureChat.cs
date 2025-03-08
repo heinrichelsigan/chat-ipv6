@@ -996,15 +996,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 friendContact._hash = TextBoxPipe.Text;
                 friendContact.ChatRoomId = chatRoomNr;
                 serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
-
-                
-                
+                               
                 FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
-                
+                FullSrvMsg<string> rfmsg = serverMessage.ReceiveChatMsg_Soap<string>(fmsg, ServerIpAddress, EncodingType.Base64);
 
-                string response = serverMessage.ReceiveChatMsg_Soap<string>(fmsg, ServerIpAddress, EncodingType.Base64);
-
-                FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
 
                 if (rfmsg != null && rfmsg.Sender != null)
                 {

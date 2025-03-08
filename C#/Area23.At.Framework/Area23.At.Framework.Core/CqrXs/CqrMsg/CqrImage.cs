@@ -19,7 +19,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
     /// <summary>
     /// CqrImage is a image for a <see cref="CqrContact"/>
     /// </summary>
-    [JsonObject]
     [Serializable]
     public class CqrImage : MsgContent, ICqrMessagable
     {
@@ -111,7 +110,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         #endregion constructors
 
         #region members
-
         
         public virtual string ToJson()
         {
@@ -142,6 +140,29 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
             return null;
         }
+
+        public override string ToXml() => this.ToXml();
+
+        public override T? FromXml<T>(string xmlText) where T : default
+        {         
+            T? cqrT = base.FromXml<T>(xmlText);
+            if (cqrT is CqrImage cimg)
+            {
+                ImageFileName = cimg.ImageFileName;
+                ImageBase64 = cimg.ImageBase64;
+                ImageMimeType = cimg.ImageMimeType;
+                ImageData = cimg.ImageData;
+                _hash = cimg._hash ?? string.Empty;
+                Md5Hash = cimg.Md5Hash;
+                _message = cimg._message;
+                MsgType = cimg.MsgType;
+                RawMessage = cimg.RawMessage;
+            }
+
+            return cqrT;
+
+        }
+
 
         public virtual Bitmap? ToDrawingBitmap()
         {

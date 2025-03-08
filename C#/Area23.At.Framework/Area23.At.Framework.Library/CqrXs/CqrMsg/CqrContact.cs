@@ -244,9 +244,16 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                         Mobile = cqrContactJson.Mobile;
                         Address = cqrContactJson.Address;
                         ContactImage = cqrContactJson.ContactImage;
+                        LastPolled = cqrContactJson.LastPolled;
+                        PolledMsgDates = cqrContactJson.PolledMsgDates;
+                        ChatRoomId = cqrContactJson.ChatRoomId;
+
                         _message = cqrContactJson._message;
                         _hash = cqrContactJson._hash;
                         RawMessage = cqrContactJson.RawMessage;
+                        MsgType = cqrContactJson.MsgType;
+                        Md5Hash = cqrContactJson.Md5Hash;
+
                         return (T)tt;
                     }
                 }
@@ -259,6 +266,38 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             return (T)tt;
 
         }
+
+
+        public override string ToXml() => this.ToXml();
+
+        public override T FromXml<T>(string xmlText)
+        {
+            T cqrT = base.FromXml<T>(xmlText);
+            if (cqrT is CqrContact cCnt)
+            {
+                ContactId = cCnt.ContactId;
+                Cuid = cCnt.Cuid;
+                Name = cCnt.Name;
+                Email = cCnt.Email;
+                Mobile = cCnt.Mobile;
+                Address = cCnt.Address;
+                ContactImage = cCnt.ContactImage;
+                LastPolled = cCnt.LastPolled;
+                PolledMsgDates = cCnt.PolledMsgDates;
+                ChatRoomId = cCnt.ChatRoomId;
+
+                _message = cCnt._message;
+                _hash = cCnt._hash ?? string.Empty;
+                RawMessage = cCnt.RawMessage;
+                MsgType = cCnt.MsgType;
+                Md5Hash = cCnt.Md5Hash;
+
+            }
+
+            return cqrT;
+
+        }
+
 
         public override string ToString()
         {
