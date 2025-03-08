@@ -331,43 +331,69 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
+        /// <summary>
+        /// Generates a chat room with a new chatroomid, containing sender and recpients
+        /// </summary>
+        /// <param name="fullSrvMsg"><see cref="FullSrvMsg{string}"/></param>
+        /// <returns><see cref="FullSrvMsg{string}"/></returns>
         internal FullSrvMsg<string> InviteToChatRoom(FullSrvMsg<string> fullSrvMsg)
         {
-            List<CqrContact> _invited = new List<CqrContact>();
-            // fullSrvMsg.Recipients.Add(_contact);
-            bool addSender = true;
-            foreach (CqrContact c in fullSrvMsg.Recipients)
-            {
-                if (!_invited.Contains(c))
-                    _invited.Add(c);
-                if (c.NameEmail == fullSrvMsg.Sender.NameEmail)
-                    addSender = false;
-            }
-            if (addSender)
-                _invited.Add(fullSrvMsg.Sender);
-
             string chatRoomId = string.Empty;
-            //if (string.IsNullOrEmpty(fullSrvMsg.TContent))
-            //    chatRoomId = String.Format("{0:yyMMdd_HHmm}_{1}.json", DateTime.Now,
-            //        fullSrvMsg.TContent.Replace("@", "_").Replace(".", "_"));
-
+            List<CqrContact> _invited = new List<CqrContact>();
+                       
             if (string.IsNullOrEmpty(chatRoomId))
                 chatRoomId = String.Format("room_{0:yyMMddHH}_{1}.json", DateTime.Now,
                     fullSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_"));
 
             if (string.IsNullOrEmpty(chatRoomId))
-                chatRoomId = $"room_{DateTime.Now:yyMMddHHmm}_0.json";
+                chatRoomId = $"room_{DateTime.Now:yyMMddHHmmss}_0.json";
 
+            fullSrvMsg.ChatRoomNr = chatRoomId;
+            fullSrvMsg.Sender.ChatRoomId = chatRoomId;
+
+            DateTime now = DateTime.Now;
+            Dictionary<long, string> dict = new Dictionary<long, string>();
+            dict.Add(now.Ticks, "");
+
+            if (UseApplicationState)
+                HttpContext.Current.Application[chatRoomId] = dict;
+            if (UseAmazonElasticCache)
+            {
+                string dictJson = JsonConvert.SerializeObject(dict);
+                RedIs.Db.StringSet(chatRoomId, dictJson);
+            }
+                      
+            fullSrvMsg.Sender.LastPolled = now;
+            fullSrvMsg.Sender.LastPushed = now;            
+
+            bool addSender = true;
+            foreach (CqrContact c in fullSrvMsg.Recipients)
+            {
+                c.ChatRoomId = chatRoomId;
+               
+                _invited.Add(c);
+                if ((!string.IsNullOrEmpty(c.NameEmail) && c.NameEmail == fullSrvMsg.Sender.NameEmail) ||
+                    (c.Cuid != null && c.Cuid != Guid.Empty && c.Cuid == fullSrvMsg.Sender.Cuid))
+                    addSender = false;
+            }
+            if (addSender)
+                _invited.Add(fullSrvMsg.Sender);
+
+ 
             FullSrvMsg<string> chatRSrvMsg = new FullSrvMsg<string>();
             chatRSrvMsg.Sender = fullSrvMsg.Sender;
             chatRSrvMsg.Sender.ChatRoomId = chatRoomId;
+            chatRSrvMsg.Sender.LastPolled = DateTime.Now;
+            chatRSrvMsg.Sender.LastPushed = DateTime.Now;
             chatRSrvMsg.Recipients = new HashSet<CqrContact>(_invited);
             chatRSrvMsg._hash = fullSrvMsg._hash;
             chatRSrvMsg.ChatRoomNr = chatRoomId;
-            chatRSrvMsg.RawMessage = chatRSrvMsg.ToJson();
-            chatRSrvMsg._message = chatRSrvMsg.ToJson();
             chatRSrvMsg.MsgType = MsgEnum.Json;
             chatRSrvMsg = (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg, chatRoomId);
+            
+            // serialize chat room in msg later then saving
+            chatRSrvMsg.RawMessage = chatRSrvMsg.ToJson();
+            chatRSrvMsg._message = chatRSrvMsg.ToJson();
 
             return chatRSrvMsg;
         }
@@ -411,26 +437,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         /// <param name="contact"><see cref="CqrContact"/> to modify</param>
         /// <param name="date"></param>
         /// <returns>modified <see cref="CqrContact"/></returns>
-        public CqrContact AddPollDate(CqrContact contact, DateTime date)
+        public CqrContact AddPollDate(CqrContact contact, DateTime date, bool pushed = false)
         {
-            DateTime maxDate = DateTime.MinValue;            
-            if (contact.PolledMsgDates.Count > 8)
-            {
-                for (int i = (contact.PolledMsgDates.Count - 8); i >= 0; i--)
-                {
-                    if (contact.PolledMsgDates[i] > maxDate)
-                        maxDate = contact.PolledMsgDates[i];
-                    else if ((date.Subtract(contact.PolledMsgDates[i]).TotalDays >= 2) || contact.PolledMsgDates.Count > 8)
-                        contact.PolledMsgDates.RemoveAt(i);
-                }
-            }
-
-            contact.LastPolled = date;
-            if (!contact.PolledMsgDates.Contains(date))                
-                contact.PolledMsgDates.Add(date);
-
-            return contact;
-                
+            if (pushed)
+                contact.LastPushed = date;
+            else
+                contact.LastPolled = date.AddMilliseconds(100);
+            
+            return contact;       
         }
             
 

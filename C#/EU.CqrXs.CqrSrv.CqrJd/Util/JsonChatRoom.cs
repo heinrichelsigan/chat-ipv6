@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Web;
 
 
@@ -16,6 +17,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
     {        
         static object _lock = new object();
         static HashSet<CqrContact> _contacts;
+
 
         public string JsonChatRoomNumber { get; set; } = System.DateTime.Now.ToString();
 
@@ -32,9 +34,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         public FullSrvMsg<string> LoadJsonChatRoom(FullSrvMsg<string> fullSrvMsgIn, string chatRoomId)
         {
-            FullSrvMsg<string> fullSrvMsgOut;
-
             JsonChatRoomNumber = chatRoomId;
+            FullSrvMsg<string> fullServerMessage = null;
+            string jsonText = null;
             if (!System.IO.File.Exists(JsonChatRoomFileName)) // we need to create chatroom
             {
                 SaveJsonChatRoom(fullSrvMsgIn, chatRoomId);
@@ -42,17 +44,19 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             lock (_lock)
             {
-                string jsonText = System.IO.File.ReadAllText(JsonChatRoomFileName);
-                fullSrvMsgOut = JsonConvert.DeserializeObject<FullSrvMsg<string>>(jsonText);
-                fullSrvMsgOut._message = jsonText;
+                jsonText = System.IO.File.ReadAllText(JsonChatRoomFileName);
+                fullServerMessage = JsonConvert.DeserializeObject<FullSrvMsg<string>>(jsonText);
             }
+            fullServerMessage._message = jsonText;
+            // fullSrvMsgOut.RawMessage = jsonText;
 
-            return fullSrvMsgOut;
+            return fullServerMessage;
         }
 
       
         public FullSrvMsg<string> SaveJsonChatRoom(FullSrvMsg<string> fullSrvMsg, string chatRoomId)
         {
+            string jsonString = "";
             lock (_lock)
             {
                 if (!chatRoomId.Equals(this.JsonChatRoomNumber))
@@ -63,14 +67,18 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
                 fullSrvMsg.ChatRoomNr = JsonChatRoomNumber;
                 fullSrvMsg.Sender.ChatRoomId = JsonChatRoomNumber;
+                fullSrvMsg.RawMessage = "";
+                fullSrvMsg._message = "";
 
                 JsonSerializerSettings jsets = new JsonSerializerSettings();
                 jsets.Formatting = Formatting.Indented;
-                string jsonString = JsonConvert.SerializeObject(fullSrvMsg, Formatting.Indented);
+                jsonString = JsonConvert.SerializeObject(fullSrvMsg, Formatting.Indented);
                 System.IO.File.WriteAllText(JsonChatRoomFileName, jsonString);
-
-                fullSrvMsg._message = jsonString;
             }
+             
+            fullSrvMsg._message = jsonString;           
+            // fullSrvMsg.RawMessage = jsonString; 
+            
             
             return fullSrvMsg;
         }

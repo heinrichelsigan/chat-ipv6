@@ -45,7 +45,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         /// <returns>with serverkey encrypted responnse of own contact</returns>
         [WebMethod]
         public string Send1StSrvMsg(string cryptMsg)
-        {            
+        {
+            Area23Log.LogStatic($"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
 
             if (UseApplicationState)
@@ -84,6 +85,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 _responseString = srv1stRespMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
             }
 
+            Area23Log.LogStatic($"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
             return _responseString;
         }
 
@@ -98,8 +100,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             
         public string ChatRoomInvite(string cryptMsg)
         {
+            Area23Log.LogStatic($"ChatRoomInvite(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
 
+            _chatRoomNumber = "";
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg, chatRSrvMsg;
 
@@ -112,26 +116,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);                  
                     _contact = AddContact(fullSrvMsg.Sender);
                     chatRSrvMsg = InviteToChatRoom(fullSrvMsg);
-
-                    string chatRoomId = chatRSrvMsg.ChatRoomNr;
-                    DateTime now = DateTime.Now;
-                    Dictionary<DateTime, string> dict = new Dictionary<DateTime, string>();
-                    dict.Add(now, "");
-
-                        
-                    
-                    if (UseApplicationState)
-                        HttpContext.Current.Application[chatRoomId] = dict;
-                    if (UseAmazonElasticCache)
-                    {
-                        string dictJson = JsonConvert.SerializeObject(dict);
-                        RedIs.Db.StringSet(chatRoomId, dictJson);
-                    }
-
-                    _contact = AddPollDate(_contact, now);
-                    chatRSrvMsg.Sender = AddPollDate(chatRSrvMsg.Sender, now);                   
-
-                    UpdateContacts(_contact, chatRSrvMsg, chatRoomId);
+                    _chatRoomNumber = chatRSrvMsg.ChatRoomNr;
 
                     _responseString = srvMsg.CqrSrvMsg<string>(chatRSrvMsg);
                 }
@@ -142,7 +127,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
-
+            Area23Log.LogStatic($"ChatRoomInvite(string cryptMsg) finished. chatroomId = {_chatRoomNumber}.\n");
             return _responseString;
 
         }
@@ -160,9 +145,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         [WebMethod]
         public string ChatRoomPoll(string cryptMsg)
         {
+            Area23Log.LogStatic($"ChatRoomPoll(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
 
-            Dictionary<DateTime, string> dict = new Dictionary<DateTime, string>();
+            Dictionary<long, string> dict = new Dictionary<long, string>();
             bool isValid = false;
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
@@ -182,35 +168,41 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     if (isValid)
                     {
                         if (UseApplicationState && (HttpContext.Current.Application[_chatRoomNumber] != null))
-                            dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber];
+                            dict = (Dictionary<long, string>)HttpContext.Current.Application[_chatRoomNumber];
                         
                         if (UseAmazonElasticCache)
                         {
                             string dictJson = RedIs.Db.StringGet(_chatRoomNumber);
-                            dict = (Dictionary<DateTime, string>)JsonConvert.DeserializeObject<Dictionary<DateTime, string>>(dictJson);                            
+                            dict = (Dictionary<long, string>)JsonConvert.DeserializeObject<Dictionary<long, string>>(dictJson);                            
                         }
 
-                        List<DateTime> pollKeys = dict.Keys.Where(k => k > fullSrvMsg.Sender.LastPolled).ToList();
-                        DateTime polledMsgDate = DateTime.MinValue;
+                        List<long> pollKeys = new List<long>();
+                        foreach (long ticksLong in dict.Keys)
+                        {
+                            if (ticksLong > fullSrvMsg.Sender.LastPolled.Ticks)
+                                pollKeys.Add(ticksLong);
+                        }
+                        long polledPtr = -1;
                         if (pollKeys.Count > 0)
                         {
-                            polledMsgDate = pollKeys[0];
-                            string firstPollClientMsg = dict[pollKeys[0]];
+                            polledPtr = pollKeys[0];
+                            string firstPollClientMsg = dict[polledPtr];
                             if (string.IsNullOrEmpty(firstPollClientMsg))
                             {
                                 if (pollKeys.Count > 1)
                                 {
-                                    polledMsgDate = pollKeys[1];
-                                    firstPollClientMsg = dict[pollKeys[1]];
+                                    polledPtr = pollKeys[1];
+                                    firstPollClientMsg = dict[polledPtr];
                                 }
                             }
 
                             chatRoomMsg.TContent = firstPollClientMsg;
 
-                            _contact = AddPollDate(_contact, polledMsgDate);
-                            chatRoomMsg.Sender = AddPollDate(chatRoomMsg.Sender, polledMsgDate);                            
+                            DateTime polledMsgDate = new DateTime(polledPtr);
+                            _contact = AddPollDate(_contact, polledMsgDate, false);
+                            chatRoomMsg.Sender = AddPollDate(chatRoomMsg.Sender, polledMsgDate, false);                         
 
-                            UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
+                            UpdateContact(chatRoomMsg.Sender);
                             chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
                             chatRoomMsg.Sender.LastPolled = polledMsgDate;
                         }
@@ -227,10 +219,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
-
+            Area23Log.LogStatic($"ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finihed. chatroomId =  {_chatRoomNumber}.\n");
             return _responseString;
 
         }
+
 
         /// <summary>
         /// Pushes a new message for chatroom to the server
@@ -241,9 +234,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         [WebMethod]
         public string ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted)
         {
+            Area23Log.LogStatic($"ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) called. len = {chatRoomMembersCrypted.Length}.\n");
             InitMethod();
             bool isValid = false;
-            Dictionary<DateTime, string> dict;
+            Dictionary<long, string> dict;
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
             FullSrvMsg<string> fullSrvMsg;
 
@@ -263,16 +257,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     {
                         DateTime now = DateTime.Now;
 
-                        dict = new Dictionary<DateTime, string>();                      
+                        dict = new Dictionary<long, string>();                      
                         if (BaseWebService.UseApplicationState && HttpContext.Current.Application[_chatRoomNumber] != null)
-                            dict = (Dictionary<DateTime, string>)HttpContext.Current.Application[_chatRoomNumber]; 
+                            dict = (Dictionary<long, string>)HttpContext.Current.Application[_chatRoomNumber]; 
                         if (BaseWebService.UseAmazonElasticCache)
                         {
                             string dictJson = RedIs.Db.StringGet(_chatRoomNumber);
-                            dict = (Dictionary<DateTime, string>)JsonConvert.DeserializeObject<Dictionary<DateTime, string>>(dictJson);
+                            dict = (Dictionary<long, string>)JsonConvert.DeserializeObject<Dictionary<long, string>>(dictJson);
                         }                       
 
-                        dict.Add(now, chatRoomMembersCrypted);
+                        dict.Add(now.Ticks, chatRoomMembersCrypted);
                         
                         if (BaseWebService.UseApplicationState)
                             HttpContext.Current.Application[_chatRoomNumber] = dict;
@@ -282,12 +276,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                             RedIs.Db.StringSet(_chatRoomNumber, dictJson);
                         }
 
-                        _contact = AddPollDate(_contact, now);
-                        chatRoomMsg.Sender = AddPollDate(chatRoomMsg.Sender, now);
-                        
-                        UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
+                        _contact = AddPollDate(_contact, now, true);
+                        chatRoomMsg.Sender = AddPollDate(chatRoomMsg.Sender, now, true);
+
+                        UpdateContact(_contact);
                         chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
-                        chatRoomMsg.Sender.LastPolled = now;
+                        chatRoomMsg.Sender.LastPushed = now;
                     
                     }
 
@@ -301,6 +295,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
+            Area23Log.LogStatic($"ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finished. chatroomId =  {_chatRoomNumber}.\n");
             return _responseString;
         }
 
@@ -314,6 +309,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         [WebMethod]
         public string ChatRoomClose(string cryptMsg)
         {
+            Area23Log.LogStatic($"ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  {cryptMsg.Length}.\n");
             InitMethod();
             bool isValid = false;
             SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
@@ -347,6 +343,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 Area23Log.LogStatic(ex);
             }
 
+            Area23Log.LogStatic($"ChatRoomClose(string cryptMsg) finished. deleted chat room chatroomId =  {_chatRoomNumber}.\n");
 
             return _responseString;
 

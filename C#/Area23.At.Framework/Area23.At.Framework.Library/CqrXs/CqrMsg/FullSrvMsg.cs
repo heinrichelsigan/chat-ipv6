@@ -26,7 +26,15 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         public CqrContact Sender { get; set; }
 
-        public  List<string> Emails
+        public HashSet<CqrContact> Recipients { get; set; }
+
+        public TC TContent { get; set; }
+
+        public string ChatRoomNr { get; set; }
+
+
+        [Newtonsoft.Json.JsonIgnore]
+        protected internal List<string> Emails
         {
             get
             {
@@ -40,7 +48,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             }
         }
 
-        internal List<Guid> Cuids
+        [Newtonsoft.Json.JsonIgnore]
+        protected internal List<Guid> Cuids
         {
             get
             {
@@ -55,10 +64,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         }
 
 
-
-        public HashSet<CqrContact> Recipients { get; set; }
-
-        public CqrContact Recipient
+        [Newtonsoft.Json.JsonIgnore]
+        protected internal CqrContact Recipient
         {
             get => (Recipients == null || Recipients.Count < 1) ? null : Recipients.ElementAt(0);
             set
@@ -72,27 +79,28 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                     }
                     else
                     {
+                        CqrContact toRemove = null;
                         for (int ix = 0; ix < Recipients.Count; ix++)
                         {
-                            if (value.Cuid == Recipients.ElementAt(ix).Cuid &&
-                                (value.Email == Recipients.ElementAt(ix).Email ||
-                                (value.NameEmail == Recipients.ElementAt(ix).NameEmail ||
-                                value.ContactId == Recipients.ElementAt(ix).ContactId)))
+                            if ((value.Cuid != null && value.Cuid != Guid.Empty && value.Cuid == Recipients.ElementAt(ix).Cuid) &&
+                                ((value.Email == Recipients.ElementAt(ix).Email) ||
+                                    (value.NameEmail == Recipients.ElementAt(ix).NameEmail) ||
+                                    (value.Mobile == Recipients.ElementAt(ix).Mobile)))
                             {
-                                CqrContact toRemove = Recipients.ElementAt(ix);
-                                Recipients.Remove(toRemove);
-                                Recipients.Add(value);
+                                toRemove = Recipients.ElementAt(ix);
+                                break;
                             }
                         }
+                        if (toRemove != null)
+                        {
+                            Recipients.Remove(toRemove);
+                            Recipients.Add(value);
+                        }
+
                     }
                 }
             }
         }
-
-
-        public TC TContent { get; set; }
-
-        public string ChatRoomNr { get; set; } 
 
         #endregion properties
 
@@ -162,6 +170,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         #endregion ctor
 
+        #region members
 
         public override string ToJson()
         {
@@ -179,11 +188,11 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                 {
                     if (fullSrvMsg != null && !string.IsNullOrEmpty(fullSrvMsg.Message))
                     {
-                        Sender = fullSrvMsg.Sender;
-                        _hash = fullSrvMsg._hash;
+                        Sender = fullSrvMsg.Sender;                        
                         Recipients = fullSrvMsg.Recipients;
                         TContent = fullSrvMsg.TContent;
                         ChatRoomNr = fullSrvMsg.ChatRoomNr;
+                        _hash = fullSrvMsg._hash;
                     }
                     return tc;
                 }
@@ -195,6 +204,10 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
             return default(FullSrvMsg<TC>);
         }
+
+        public string[] GetEmails() => this.Emails.ToArray();
+
+        #endregion members
 
     }
 

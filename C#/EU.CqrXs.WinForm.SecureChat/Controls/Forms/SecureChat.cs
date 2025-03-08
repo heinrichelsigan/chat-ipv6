@@ -648,14 +648,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 Entities.Settings.Instance.MyContact.Cuid = rfmsg.Sender.Cuid;
                 Entities.Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                Entities.Settings.Instance.MyContact.PolledMsgDates = rfmsg.Sender.PolledMsgDates;
+                Entities.Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
                 Entities.Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
 
                 Entities.Settings.Save();
 
             }
             // TODO: Email zur Einladung
-            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + "\nfor " + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + "\nfor " + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
             this.TextBoxDestionation.Text = chat.AddFriendMessage(msgChatRoom);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
@@ -767,13 +767,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (rfmsg != null && rfmsg.Sender != null)
                 {
                     Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                    Settings.Instance.MyContact.PolledMsgDates = rfmsg.Sender.PolledMsgDates;
+                    Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
                     Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
 
                     Settings.Save();
                 }
 
-                string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+                string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                 AppendText(TextBoxDestionation, chat.AddFriendMessage(msgChatRoom));
                 string userMsg = chat.AddMyMessage(unencrypted);
                 AppendText(TextBoxSource, userMsg);
@@ -919,13 +919,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             if (rfmsg != null && rfmsg.Sender != null)
                             {
                                 Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                                Settings.Instance.MyContact.PolledMsgDates = rfmsg.Sender.PolledMsgDates;
+                                Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
                                 Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
 
                                 Settings.Save();
                             }
 
-                            string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+                            string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                             this.TextBoxDestionation.Text = msgChatRoom;
 
 
@@ -1004,13 +1004,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (rfmsg != null && rfmsg.Sender != null)
                 {
                     Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                    Settings.Instance.MyContact.PolledMsgDates = rfmsg.Sender.PolledMsgDates;
+                    Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
                     Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
 
                     Settings.Save();
                 }
 
-                string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+                string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                                 MsgContent msgContent;
                 try
                 {                    

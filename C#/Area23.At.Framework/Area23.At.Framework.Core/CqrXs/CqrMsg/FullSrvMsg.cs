@@ -27,7 +27,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         public CqrContact? Sender { get; set; }
 
-        public  List<string> Emails
+        [Newtonsoft.Json.JsonIgnore]
+        protected internal List<string> Emails
         {
             get
             {
@@ -41,7 +42,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             }
         }
 
-        internal List<Guid> Cuids
+        [Newtonsoft.Json.JsonIgnore]
+        protected internal List<Guid> Cuids
         {
             get
             {
@@ -56,16 +58,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         }
 
 
-
         public HashSet<CqrContact> Recipients { get; set; }
 
-        public CqrContact? Recipient
+        [Newtonsoft.Json.JsonIgnore]
+        protected internal CqrContact? Recipient
         {
             get => (Recipients == null || Recipients.Count < 1) ? null : Recipients.ElementAt(0);
             set
             {
+                CqrContact? toRemove = null;
                 if (value != null && !string.IsNullOrEmpty(value.NameEmail))
-                {
+                {                     
                     if (Recipients == null || Recipients.Count == 0)
                     {
                         Recipients = new HashSet<CqrContact>();
@@ -75,15 +78,19 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     {
                         for (int ix = 0; ix < Recipients.Count; ix++)
                         {
-                            if (value.Cuid == Recipients.ElementAt(ix).Cuid &&
-                                (value.Email == Recipients.ElementAt(ix).Email ||
-                                (value.NameEmail == Recipients.ElementAt(ix).NameEmail ||
-                                value.ContactId == Recipients.ElementAt(ix).ContactId)))
+                            if ((value.Cuid != null && value.Cuid != Guid.Empty && value.Cuid == Recipients.ElementAt(ix).Cuid) &&
+                                ((value.Email == Recipients.ElementAt(ix).Email) ||
+                                    (value.NameEmail == Recipients.ElementAt(ix).NameEmail) ||
+                                    (value.Mobile == Recipients.ElementAt(ix).Mobile)))
                             {
-                                CqrContact toRemove = Recipients.ElementAt(ix);
-                                Recipients.Remove(toRemove);
-                                Recipients.Add(value); ;
+                                toRemove = Recipients.ElementAt(ix);
+                                break;
                             }
+                        }
+                        if (toRemove != null)
+                        {
+                            Recipients.Remove(toRemove);
+                            Recipients.Add(value);
                         }
                     }
                 }
@@ -105,7 +112,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             _hash = string.Empty;
             Sender = null;
             Recipients = new HashSet<CqrContact>();
-            Recipient = null;
             TContent = null;
             ChatRoomNr = string.Empty; 
         }
@@ -167,6 +173,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         #endregion ctor
 
+        #region members
 
         public override string ToJson()
         {
@@ -175,7 +182,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             return jsonText;
         }
 
-        public new FullSrvMsg<TC> FromJson(string jsonText)
+        public new FullSrvMsg<TC>? FromJson(string jsonText)
         {
             FullSrvMsg<TC> tc = JsonConvert.DeserializeObject<FullSrvMsg<TC>>(jsonText);
             try
@@ -187,6 +194,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         Sender = fullSrvMsg.Sender;
                         _hash = fullSrvMsg._hash;
                         Recipients = fullSrvMsg.Recipients;
+                        ChatRoomNr = fullSrvMsg.ChatRoomNr;
                         TContent = fullSrvMsg.TContent;
                     }
                     return tc;
@@ -197,9 +205,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 SLog.Log(exJson);
             }
 
-            return default(FullSrvMsg<TC>);
+            return null;
         }
 
+        public string[] GetEmails() => this.Emails.ToArray();
+
+        #endregion members
+    
     }
 
 }

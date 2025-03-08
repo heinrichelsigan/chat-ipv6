@@ -729,14 +729,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 Entities.Settings.Instance.MyContact.Cuid = rfmsg.Sender.Cuid;
                 Entities.Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                Entities.Settings.Instance.MyContact.PolledMsgDates = rfmsg.Sender.PolledMsgDates;
+                Entities.Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
                 Entities.Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
 
                 Entities.Settings.Save();
 
             }
             // TODO: Email zur Einladung
-            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + "\nfor " + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + "\nfor " + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
             this.TextBoxDestionation.Text = chat.AddFriendMessage(msgChatRoom);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;

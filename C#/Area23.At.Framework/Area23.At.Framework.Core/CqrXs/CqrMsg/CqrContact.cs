@@ -49,10 +49,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         [Newtonsoft.Json.JsonIgnore]
         internal IPAddress? ClientIp { get; set; }
 
-
         public string ChatRoomId { get; set; }
 
-        public List<DateTime> PolledMsgDates { get; set; }
+        public DateTime LastPushed { get; set; }
 
         public DateTime LastPolled { get; set; }
 
@@ -74,7 +73,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ContactImage = null;
             ChatRoomId = string.Empty;
             LastPolled = DateTime.MinValue;
-            PolledMsgDates = new List<DateTime>();
+            LastPushed = DateTime.MinValue;
         }
 
         public CqrContact(string cs, MsgEnum msgArt = MsgEnum.Json)
@@ -91,7 +90,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Address = address;
             _hash = string.Empty;
             LastPolled = DateTime.MinValue;
-            PolledMsgDates = new List<DateTime>();
+            LastPushed = DateTime.MinValue;
             ChatRoomId = string.Empty;
             ClientIp = null;
         }
@@ -106,7 +105,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             _hash = string.Empty;
             ChatRoomId = string.Empty;
             LastPolled = DateTime.MinValue;
-            PolledMsgDates = new List<DateTime>();
+            LastPushed = DateTime.MinValue;
             ClientIp = null;
         }
 
@@ -154,18 +153,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             this._hash = hash;
             ChatRoomId = c.ChatRoomId;
             LastPolled = c.LastPolled;
-            PolledMsgDates = new List<DateTime>((IEnumerable<DateTime>)c.PolledMsgDates);
-            if (c.PolledMsgDates != null && c.PolledMsgDates.Count > 0)
-            {
-                foreach (var date in c.PolledMsgDates)
-                {
-                    if (DateTime.UtcNow.Subtract(date).TotalDays >= 1) ;
-                    else
-                        PolledMsgDates.Add(date);
-                }
-            }
-            if (!PolledMsgDates.Contains(LastPolled))
-                PolledMsgDates.Add(LastPolled);
+            LastPushed = c.LastPushed;
             ClientIp = c.ClientIp ?? null;
         }
 
@@ -177,18 +165,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Cuid = c.Cuid;
             ChatRoomId = chatRoomId;
             LastPolled = c.LastPolled;
-            PolledMsgDates = new List<DateTime>((IEnumerable<DateTime>)c.PolledMsgDates);
-            if (c.PolledMsgDates != null && c.PolledMsgDates.Count > 0)
-            {
-                foreach (var date in c.PolledMsgDates)
-                {
-                    if (DateTime.UtcNow.Subtract(date).TotalDays >= 1) ;
-                    else
-                        PolledMsgDates.Add(date);
-                }
-            }
-            if (!PolledMsgDates.Contains(LastPolled))
-                PolledMsgDates.Add(LastPolled);
+            LastPushed = c.LastPushed; 
             ClientIp = c.ClientIp ?? null;
         }
 
@@ -200,18 +177,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Cuid = c.Cuid;
             ChatRoomId = chatRoomId;
             LastPolled = c.LastPolled;
-            PolledMsgDates = new List<DateTime>((IEnumerable<DateTime>)c.PolledMsgDates);
-            if (c.PolledMsgDates != null && c.PolledMsgDates.Count > 0)
-            {
-                foreach (var date in c.PolledMsgDates)
-                {
-                    if (DateTime.UtcNow.Subtract(date).TotalDays >= 1) ;
-                    else
-                        PolledMsgDates.Add(date);
-                }
-            }
-            if (!PolledMsgDates.Contains(LastPolled))
-                PolledMsgDates.Add(LastPolled);
+            LastPushed = c.LastPushed;
             ClientIp = c.ClientIp ?? null;
         }
 
@@ -246,7 +212,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         Address = cqrContactJson.Address;
                         ContactImage = cqrContactJson.ContactImage;
                         LastPolled = cqrContactJson.LastPolled;
-                        PolledMsgDates = cqrContactJson.PolledMsgDates;
+                        LastPushed =  cqrContactJson.LastPushed;
                         ChatRoomId = cqrContactJson.ChatRoomId;
                         
                         _message = cqrContactJson._message;
@@ -283,7 +249,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 Address = cCnt.Address;
                 ContactImage = cCnt.ContactImage;
                 LastPolled = cCnt.LastPolled;
-                PolledMsgDates = cCnt.PolledMsgDates;
+                LastPushed = cCnt.LastPushed;
                 ChatRoomId = cCnt.ChatRoomId;
 
                 _message = cCnt._message;

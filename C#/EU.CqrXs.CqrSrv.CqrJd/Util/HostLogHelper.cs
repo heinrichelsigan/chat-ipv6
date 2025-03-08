@@ -25,7 +25,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 catch (Exception ex)
                 {
                     userHost = Constants.UNKNOWN;
-                    Area23Log.LogStatic(ex);
+                    Area23Log.LogStatic($"Unknown Host Exception {ex.GetType()} {ex.Message}\n\t{ex}\n");
                 }
 
                 return userHost;
@@ -36,7 +36,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         internal static void LogRequest(object sender, EventArgs e, string preMsg = "")
         {
             object oNull = (object)(Constants.SNULL);
-            string logMsg = String.Format("{0} {1} object sender={2}, EventArgs e={3}",
+            string logMsg = String.Format("{0} {1} object sender={2}, EventArgs e={3}\n",
                 UserHost,
                 preMsg ?? "",
                 (sender ?? oNull).ToString(),
@@ -48,7 +48,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         internal static string LogRequest(object sender, EventArgs e)
         {
             object oNull = (object)(Constants.SNULL);
-            string logReq = String.Format("from {0} object sender={1}, EventArgs e={2}",
+            string logReq = String.Format("from {0} object sender={1}, EventArgs e={2}\n",
                 UserHost,
                 (sender ?? oNull).ToString(),
                 (e ?? oNull).ToString());

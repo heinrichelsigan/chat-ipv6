@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
 
+    [Serializable]
     public class Settings : CqrSettings, IDisposable
     {
         protected new static readonly Lazy<Settings> _instance =
