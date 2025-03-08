@@ -153,7 +153,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        public CqrContact SendFirstSrvMsg(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        public CqrContact SendFirstSrvMsg_Soap(CqrContact myContact, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
 
             myContact._hash = PipeString;

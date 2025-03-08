@@ -13,6 +13,7 @@ using System.IO;
 using Area23.At.Framework.Library.Static;
 using System.Diagnostics.Contracts;
 using StackExchange.Redis;
+using Newtonsoft.Json;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
@@ -27,7 +28,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         protected internal string _serverKey = string.Empty;
         protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
         protected internal string _responseString = string.Empty;
-        protected internal string _chatRoomNumber = string.Empty;
+        protected internal string _chatRoomNumber = string.Empty;        
         // protected internal ConnectionMultiplexer redis;
         // protected internal ConfigurationOptions options;
         protected internal static bool useAWSCache = false, useAppState = true;
@@ -35,7 +36,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         // protected internal StackExchange.Redis.IDatabase db;
 
         public static bool UseApplicationState
-        {            
+        {
             get
             {
                 if (ConfigurationManager.AppSettings["UseHttpApplicationState"] != null)
@@ -48,10 +49,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     useAppState = true;
                 }
                 return useAppState;
-            }        
+            }
         }
 
-        public static  bool UseAmazonElasticCache
+        public static bool UseAmazonElasticCache
         {
             get
             {
@@ -95,7 +96,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 //memClient = new MemcachedClient(config);
             }
         }
-            
+
         [WebMethod]
         public virtual string TestService()
         {
@@ -137,7 +138,61 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         public virtual string GetIPAddress()
         {
             string userHostAddr = HttpContext.Current.Request.UserHostAddress;
-            return userHostAddr;            
+            return userHostAddr;
+        }
+
+
+        [WebMethod]
+        public virtual string TestCache()
+        {
+            string testReport = $"{DateTime.Now.Area23DateTimeMilliseconds()}:TestCache() started.\n";
+            try
+            {
+                InitMethod();
+            }
+            catch (Exception ex1)
+            {
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex1.GetType()}: {ex1.Message}\n\t{ex1}\n";
+            }
+
+            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: InitMethod() completed.\n";
+
+            Dictionary<Guid, CqrContact> dictCacheTest = new Dictionary<Guid, CqrContact>();
+            foreach (CqrContact c in _contacts)
+            {
+                if (c != null && c.Cuid != null && c.Cuid != Guid.Empty &&
+                    !dictCacheTest.Keys.Contains(c.Cuid))
+                    dictCacheTest.Add(c.Cuid, c);
+            }
+            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
+            if (UseAmazonElasticCache)
+            {
+                try
+                {
+                    if (UseAmazonElasticCache)
+                    {
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT]}\n";
+                        string status = RedIs.ConnMux.GetStatus();
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}\n";
+
+                        string dictJson = JsonConvert.SerializeObject(dictCacheTest);
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Serialized Dictionary<Guid, CqrContact> to json string.\n";
+                        RedIs.Db.StringSet("TestCache", dictJson);
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache.\n";
+
+                        string jsonOut = RedIs.Db.StringGet("TestCache");
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got json serialized string from cache: {jsonOut}.\n";
+                        Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)JsonConvert.DeserializeObject<Dictionary<Guid, CqrContact>>(jsonOut);
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deserialized json sring to (Dictionary<Guid, CqrContact> with {outdict.Keys.Count} keys.";
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+                }
+            }
+
+            return testReport;
         }
 
 
@@ -182,7 +237,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 //    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
                 //    cqrContact.ContactImage.ImageBase64 != null &&
                 //    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageBase64))
-                foundCt.ContactImage = null;               
+                foundCt.ContactImage = null;
             }
             else
             {
@@ -191,7 +246,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 _contacts.Add(cqrContact);
                 foundCt = cqrContact;
                 foundCt.ContactImage = null;
-                
+
             }
 
             UpdateContact(foundCt);
@@ -327,7 +382,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 if ((fullSrvMsg.Sender.NameEmail == chatRoomMsg.Sender.NameEmail) ||
                     (!string.IsNullOrEmpty(fullSrvMsg.Sender.Email) && fullSrvMsg.Sender.Email == chatRoomMsg.Sender.Email))
                 {
-                    _contact = chatRoomMsg.Sender;                    
+                    _contact = chatRoomMsg.Sender;
                     isValid = true;
                     return isValid;
                 }
@@ -343,11 +398,41 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 }
 
             }
-        
+
             return isValid;
         }
 
-       
+
+        /// <summary>
+        /// Add LastPolled to contact and also to <see cref="CqrContact.PolledMsgDates"/>
+        /// reduces <see cref="CqrContact.PolledMsgDates"/>, if contact wears a to huge amount of polling history
+        /// TODO: implement ring buffer here
+        /// </summary>
+        /// <param name="contact"><see cref="CqrContact"/> to modify</param>
+        /// <param name="date"></param>
+        /// <returns>modified <see cref="CqrContact"/></returns>
+        public CqrContact AddPollDate(CqrContact contact, DateTime date)
+        {
+            DateTime maxDate = DateTime.MinValue;            
+            if (contact.PolledMsgDates.Count > 8)
+            {
+                for (int i = (contact.PolledMsgDates.Count - 8); i >= 0; i--)
+                {
+                    if (contact.PolledMsgDates[i] > maxDate)
+                        maxDate = contact.PolledMsgDates[i];
+                    else if ((date.Subtract(contact.PolledMsgDates[i]).TotalDays >= 2) || contact.PolledMsgDates.Count > 8)
+                        contact.PolledMsgDates.RemoveAt(i);
+                }
+            }
+
+            contact.LastPolled = date;
+            if (!contact.PolledMsgDates.Contains(date))                
+                contact.PolledMsgDates.Add(date);
+
+            return contact;
+                
+        }
+            
 
     }
 }

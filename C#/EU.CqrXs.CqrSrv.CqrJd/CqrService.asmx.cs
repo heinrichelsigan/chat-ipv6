@@ -128,18 +128,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                         RedIs.Db.StringSet(chatRoomId, dictJson);
                     }
 
-                    _contact.LastPolled = now;
-                    if (_contact.PolledMsgDates.Count > 12)
-                        for (int i = (_contact.PolledMsgDates.Count - 8); i >= 0; i--)
-                            _contact.PolledMsgDates.RemoveAt(i);
-                    if (!_contact.PolledMsgDates.Contains(now))
-                        _contact.PolledMsgDates.Add(now);
-                    chatRSrvMsg.Sender.LastPolled = now;
-                    if (chatRSrvMsg.Sender.PolledMsgDates.Count > 12)
-                        for (int i = (chatRSrvMsg.Sender.PolledMsgDates.Count - 8); i >= 0; i--)
-                            chatRSrvMsg.Sender.PolledMsgDates.RemoveAt(i);
-                    if (!chatRSrvMsg.Sender.PolledMsgDates.Contains(now))
-                        chatRSrvMsg.Sender.PolledMsgDates.Add(now);
+                    _contact = AddPollDate(_contact, now);
+                    chatRSrvMsg.Sender = AddPollDate(chatRSrvMsg.Sender, now);                   
 
                     UpdateContacts(_contact, chatRSrvMsg, chatRoomId);
 
@@ -217,18 +207,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
                             chatRoomMsg.TContent = firstPollClientMsg;
 
-                            _contact.LastPolled = polledMsgDate;
-                            if (_contact.PolledMsgDates.Count > 12)
-                                for (int i = (_contact.PolledMsgDates.Count - 8); i >= 0; i--)
-                                    _contact.PolledMsgDates.RemoveAt(i);
-                            if (!_contact.PolledMsgDates.Contains(polledMsgDate))
-                                _contact.PolledMsgDates.Add(polledMsgDate);
-                            chatRoomMsg.Sender.LastPolled = polledMsgDate;
-                            if (chatRoomMsg.Sender.PolledMsgDates.Count > 12)
-                                for (int i = (chatRoomMsg.Sender.PolledMsgDates.Count - 8); i >= 0; i--)
-                                    chatRoomMsg.Sender.PolledMsgDates.RemoveAt(i);
-                            if (!chatRoomMsg.Sender.PolledMsgDates.Contains(polledMsgDate))
-                                chatRoomMsg.Sender.PolledMsgDates.Add(polledMsgDate);
+                            _contact = AddPollDate(_contact, polledMsgDate);
+                            chatRoomMsg.Sender = AddPollDate(chatRoomMsg.Sender, polledMsgDate);                            
 
                             UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
                             chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
@@ -302,19 +282,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                             RedIs.Db.StringSet(_chatRoomNumber, dictJson);
                         }
 
-                        _contact.LastPolled = now;
-                        if (_contact.PolledMsgDates.Count > 12)
-                            for (int i = (_contact.PolledMsgDates.Count - 8); i >= 0; i--)
-                                _contact.PolledMsgDates.RemoveAt(i);
-                        if (!_contact.PolledMsgDates.Contains(now))
-                            _contact.PolledMsgDates.Add(now);
-                        
-                        chatRoomMsg.Sender.LastPolled = now;
-                        if (chatRoomMsg.Sender.PolledMsgDates.Count > 12)
-                            for (int i = (chatRoomMsg.Sender.PolledMsgDates.Count - 8); i >= 0; i--)
-                                chatRoomMsg.Sender.PolledMsgDates.RemoveAt(i);
-                        if (!chatRoomMsg.Sender.PolledMsgDates.Contains(now))
-                            chatRoomMsg.Sender.PolledMsgDates.Add(now);
+                        _contact = AddPollDate(_contact, now);
+                        chatRoomMsg.Sender = AddPollDate(chatRoomMsg.Sender, now);
                         
                         UpdateContacts(_contact, chatRoomMsg, _chatRoomNumber);
                         chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
@@ -398,59 +367,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
 
-
         [WebMethod]
         public virtual string TestCache()
         {
-            string testReport = $"{DateTime.Now.Area23DateTimeMilliseconds()}:TestCache() started.\n";
-            try
-            {
-                InitMethod(); 
-            }
-            catch (Exception ex1)
-            {
-                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex1.GetType()}: {ex1.Message}\n\t{ex1}\n";
-            }
-            
-            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: InitMethod() completed.\n";
-
-            Dictionary<Guid, CqrContact> dictCacheTest = new Dictionary<Guid, CqrContact>();
-            foreach (CqrContact c in _contacts)
-            {
-                if (c != null && c.Cuid != null && c.Cuid != Guid.Empty && 
-                    !dictCacheTest.Keys.Contains(c.Cuid))
-                    dictCacheTest.Add(c.Cuid, c);
-            }
-            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
-            if (UseAmazonElasticCache)
-            {
-                
-                try
-                {
-                    if (UseAmazonElasticCache)
-                    {
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT]}\n";
-                        string status = RedIs.ConnMux.GetStatus();
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}\n";
-
-                        string dictJson = JsonConvert.SerializeObject(dictCacheTest);
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Serialized Dictionary<Guid, CqrContact> to json string.\n";
-                        RedIs.Db.StringSet("TestCache", dictJson);
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache.\n";
-
-                        string jsonOut = RedIs.Db.StringGet("TestCache");
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got json serialized string from cache: {jsonOut}.\n";
-                        Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)JsonConvert.DeserializeObject<Dictionary<Guid, CqrContact>>(jsonOut);
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deserialized json sring to (Dictionary<Guid, CqrContact> with {outdict.Keys.Count} keys."; 
-                    }                    
-                }
-                catch (Exception ex2)
-                {
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
-                }
-            }
-
-            return testReport;
+            return base.TestCache();
         }
 
 

@@ -30,6 +30,7 @@
     "Mobile": "",
     "Address": "",
     "SecretKey": null,
+    "ContactImage": null,
     "NameEmail": "heinrich elsigan <he@area23.at>",
     "ChatRoomId": null,
     "PolledMsgDates": [],
@@ -66,6 +67,76 @@
     "RawMessage": "",
     "Hash": "6CDgbXFf",
     "Md5Hash": ""
+  },
+  {
+    "_hash": "6CDgbXFf",
+    "_message": "",
+    "ContactId": -1,
+    "Cuid": "452571cf-1bbd-413e-b946-3b017c0c5b13",
+    "Name": "Heinrich Elsigan",
+    "Email": "heinrich.elsigan@gmail.com",
+    "Mobile": "+43 650 7527928",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "Heinrich Elsigan <heinrich.elsigan@gmail.com>",
+    "ChatRoomId": "room_25030813_heinrich_elsigan_gmail_com.json",
+    "PolledMsgDates": [
+      "0001-01-01T00:00:00",
+      "2025-03-08T13:56:19.3655683+01:00",
+      "2025-03-08T13:56:19.3655683+01:00"
+    ],
+    "LastPolled": "2025-03-08T13:56:19.3655683+01:00",
+    "MsgType": 0,
+    "Message": "",
+    "RawMessage": "",
+    "Hash": "6CDgbXFf",
+    "Md5Hash": ""
+  },
+  {
+    "_hash": "6CDgbXFf",
+    "_message": "",
+    "ContactId": -1,
+    "Cuid": "596ce131-8085-400f-9187-807a1c577ca3",
+    "Name": "Testuser Tom",
+    "Email": "tom@area23.at",
+    "Mobile": "",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "Testuser Tom <tom@area23.at>",
+    "ChatRoomId": "",
+    "PolledMsgDates": [
+      "0001-01-01T00:00:00"
+    ],
+    "LastPolled": "0001-01-01T00:00:00",
+    "MsgType": 0,
+    "Message": "",
+    "RawMessage": "",
+    "Hash": "6CDgbXFf",
+    "Md5Hash": ""
+  },
+  {
+    "_hash": "6CDgbXFf",
+    "_message": "",
+    "ContactId": -1,
+    "Cuid": "bfa97c8e-f420-47b2-a7c5-12428cfae9ae",
+    "Name": "Test User Gabriele",
+    "Email": "gabriele@area23.at",
+    "Mobile": "",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "Test User Gabriele <gabriele@area23.at>",
+    "ChatRoomId": "",
+    "PolledMsgDates": [
+      "0001-01-01T00:00:00"
+    ],
+    "LastPolled": "0001-01-01T00:00:00",
+    "MsgType": 0,
+    "Message": "",
+    "RawMessage": "",
+    "Hash": "6CDgbXFf",
+    "Md5Hash": ""
   }
 ]
- 

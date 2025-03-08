@@ -511,23 +511,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             Thread.Sleep(100);
 
             this.StripProgressBar.Value = 60;
-            CqrContact? returnContact = srv1stMsg.SendFirstSrvMsg(myContact, ServerIpAddress, EncodingType.Base64);
+            CqrContact? returnContact = srv1stMsg.SendFirstSrvMsg_Soap(myContact, ServerIpAddress, EncodingType.Base64);
 
-            this.TextBoxSource.Text = myContact.ToString() + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
+            string usrMsg = $"Registering contact: {myContact.NameEmail}\n";
+            string srvMsg = "";
+            this.TextBoxSource.Text = chat.AddMyMessage(usrMsg);
             if (returnContact != null)
             {
                 Settings.Instance.MyContact = returnContact;
-                this.TextBoxDestionation.Text = returnContact.ToString() + "\n";
-                chat.AddFriendMessage(returnContact.ToJson());
+                srvMsg = $"Got Cuid: {returnContact.Cuid} for {returnContact.NameEmail}\n";
+                this.TextBoxDestionation.Text = chat.AddFriendMessage(srvMsg);
                 Settings.Save();
             }
-
-            chat.AddMyMessage(myContact.ToJson());
-            
-
+                        
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
-
             StripStatusLabel.Text = "Finished 1st registration";
         }
 
@@ -687,21 +685,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 chat = new Chat(0);
 
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
-               return false;
-           
+                return false;
+
 
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
 
+            this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomId) ?? string.Empty;
+
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
-            CqrContact myContact = Entities.Settings.Singleton.MyContact;
+
+            CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
             CqrContact? friendContact = null;
             foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
             {
                 if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    friendContact = c;
+                    friendContact = new CqrContact(c, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
                     break;
                 }
             }
@@ -709,32 +710,40 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
-
+            myContact._hash = TextBoxPipe.Text;
+            friendContact._hash = TextBoxPipe.Text;
+            serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
             FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, myContact.Email, serverMessage.PipeString);
+            string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\n";
+            this.TextBoxSource.Text = chat.AddMyMessage(myReqMsg);
 
-            string encrypted = serverMessage.CqrSrvMsg<string>(fmsg, MsgKind.Server, EncodingType.Base64);
-            string response = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
-
-
-            this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
+            FullSrvMsg<string> rfmsg = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
+            if (rfmsg == null || string.IsNullOrEmpty(rfmsg.ChatRoomNr))
+            {
+                MessageBox.Show($"Response message form server {ServerIpAddress} is null. Please call helpdesk +436507527928", "Invite Chatroom failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
             this.textBoxChatSession.Text = rfmsg.ChatRoomNr;
+            if (rfmsg != null && rfmsg.Sender != null && rfmsg.Sender.NameEmail.Equals(myContact.NameEmail))
+            {
+                Entities.Settings.Instance.MyContact.Cuid = rfmsg.Sender.Cuid;
+                Entities.Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
+                Entities.Settings.Instance.MyContact.PolledMsgDates = rfmsg.Sender.PolledMsgDates;
+                Entities.Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+
+                Entities.Settings.Save();
+
+            }
             // TODO: Email zur Einladung
-
-            string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
-            this.TextBoxDestionation.Text = msgChatRoom;
-
-            chat.AddMyMessage(String.Join(", ", fmsg.Emails.ToArray()));
-            chat.AddFriendMessage(msgChatRoom);
+            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + "\nfor " + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            this.TextBoxDestionation.Text = chat.AddFriendMessage(msgChatRoom);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
-
-            SetStatusText(StripStatusLabel, "Finished 1st registration");
+            SetStatusText(StripStatusLabel, msgChatRoom.Replace("\n", " "));
 
             return true;
-
         }
 
 

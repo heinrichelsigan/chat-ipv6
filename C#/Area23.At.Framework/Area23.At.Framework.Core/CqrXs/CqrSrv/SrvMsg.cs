@@ -456,17 +456,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        public string Send_InitChatRoom_Soap<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        public FullSrvMsg<string> Send_InitChatRoom_Soap<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
             where T : class
         {
             string cryptSrv = CqrSrvMsg<T>(fullServerMsg);
             
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
 
-            string resp = string.Empty;
+            string response = string.Empty;
             try
             {
-                resp = client.ChatRoomInvite(cryptSrv);
+                response = client.ChatRoomInvite(cryptSrv);
             }
             catch (Exception exSoap)
             {
@@ -474,7 +474,10 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                 throw;
             }
 
-            return resp;
+            FullSrvMsg<string> rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
+            
+
+            return rfmsg;
         }
 
 
@@ -492,15 +495,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
-        public string SendChatMsg_Soap_Simple<TS>(FullSrvMsg<TS> fullServerMsg, string encryptedClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        public FullSrvMsg<string> SendChatMsg_Soap_Simple<TS>(FullSrvMsg<TS> fullServerMsg, string encryptedClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
            where TS : class
         {
             string cryptSrv = CqrSrvMsg<TS>(fullServerMsg, MsgKind.Server);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
-            string resp = client.ChatRoomPushMessage(cryptSrv, encryptedClientMsg);
+            string response = client.ChatRoomPushMessage(cryptSrv, encryptedClientMsg);
 
-            return resp;
+            FullSrvMsg<string> rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
+
+            return rfmsg;
         }
 
 

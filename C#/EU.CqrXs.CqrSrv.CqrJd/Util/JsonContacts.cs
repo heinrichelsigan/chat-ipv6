@@ -3,6 +3,7 @@ using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -19,6 +20,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         static JsonContacts()
         {
             _contacts = LoadJsonContacts();
+            ChatRoomNumbersFromFs();
         }
 
         internal static HashSet<CqrContact> LoadJsonContacts()
@@ -131,6 +133,20 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
 
 
+        public static List<string> ChatRoomNumbersFromFs()
+        {
+            string[] csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
+            List<string> chatRooms = new List<string>(csr);
 
+            if (BaseWebService.UseApplicationState)
+                HttpContext.Current.Application["ChatRooms"] = chatRooms;
+            if (BaseWebService.UseAmazonElasticCache)
+            {
+                string hashChatRoomsJson = JsonConvert.SerializeObject(chatRooms);
+                RedIs.Db.StringSet("ChatRooms", hashChatRoomsJson);
+            }
+
+            return chatRooms;
+        }
     }
 }

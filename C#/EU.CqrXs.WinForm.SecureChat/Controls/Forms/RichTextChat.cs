@@ -535,16 +535,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 chat = new Chat(0);
 
 
-            myServerKey = CqrXsEuSrvKey;
-
-            if (!string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) &&
-                !this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                myServerKey = this.ComboBoxSecretKey.Text;
-            }
-            else
-                this.ComboBoxSecretKey.Text = myServerKey;
-
+            myServerKey = CqrXsEuSrvKey;            
             SrvMsg1 srv1stMsg = new SrvMsg1(CqrXsEuSrvKey);
             this.TextBoxPipe.Text = srv1stMsg.PipeString;
             Thread.Sleep(100);
@@ -557,16 +548,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             Thread.Sleep(100);
 
             this.StripProgressBar.Value = 60;
-            CqrContact? returnContact = srv1stMsg.SendFirstSrvMsg(myContact, ServerIpAddress, EncodingType.Base64);
+            CqrContact? returnContact = srv1stMsg.SendFirstSrvMsg_Soap(myContact, ServerIpAddress, EncodingType.Base64);
 
-            this.TextBoxSource.Text = myContact.ToString() + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
+            string usrMsg = $"Registering contact: {myContact.NameEmail}\n";
+            string srvMsg = "";
+            this.TextBoxSource.Text = usrMsg;
             if (returnContact != null)
             {
                 Settings.Instance.MyContact = returnContact;
-                this.TextBoxDestionation.Text = returnContact.ToString() + "\n";
-                chat.AddFriendMessage(returnContact.ToJson());
+                srvMsg = $"Got Cuid: {returnContact.Cuid} for {returnContact.NameEmail}\n";
+                this.TextBoxDestionation.Text = srvMsg;
+                chat.AddFriendMessage(srvMsg);
                 Settings.Save();
             }
+
+            chat.AddMyMessage(usrMsg);
 
             chat.AddMyMessage(myContact.ToJson());
 
@@ -663,14 +659,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
             FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, myContact.Email, serverMessage.PipeString);
+            string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\n";
+            this.TextBoxSource.Text = chat.AddMyMessage(myReqMsg); 
 
-            string encrypted = serverMessage.CqrSrvMsg<string>(fmsg, MsgKind.Server, EncodingType.Base64);
-            string response = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
-
-
-            this.TextBoxSource.Text = fmsg.Message + "\n"; //  + "\r\n" + serverMessage.symmPipe.HexStages;
-            FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
-
+            FullSrvMsg<string> rfmsg = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
             if (rfmsg == null || string.IsNullOrEmpty(rfmsg.ChatRoomNr))
             {
                 MessageBox.Show($"Response message form server {ServerIpAddress} is null. Please call helpdesk +436507527928", "Invite Chatroom failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -688,18 +680,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             }
             // TODO: Email zur Einladung
-
-
-            string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
-            this.TextBoxDestionation.Text = msgChatRoom;
-
-            chat.AddMyMessage(String.Join(", ", fmsg.Emails.ToArray()));
-            chat.AddFriendMessage(msgChatRoom);
+            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + "\nfor " + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            this.TextBoxDestionation.Text = chat.AddFriendMessage(msgChatRoom);                        
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
-
-            SetStatusText(StripStatusLabel, "Finished 1st registration");
+            SetStatusText(StripStatusLabel, msgChatRoom.Replace("\n", " "));
 
             return true;
 
@@ -712,12 +698,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private void MenuCommandsItemSend_Click(object sender, EventArgs e)
         {
-            // TODO: implement it via socket directly or to registered user
-            // if Ip is pingable and reachable and connectable
-            // send HELLO to IP
             if (chat == null)
                 chat = new Chat(0);
 
+            // you must enter a secret key
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
             {
                 StripStatusLabel.Text = "Nothing to send!";
@@ -726,9 +710,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             string unencrypted = this.RichTextBoxChat.Text; //.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
 
+            // if Peer-2-Peer chat
             if (this.PeerSessionTriState == PeerSession3State.Peer2Peer)
             {
-
                 if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
                 {
                     StripStatusLabel.Text = "Nothing to send (no ip addr).";
@@ -757,6 +741,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     PlaySoundFromResource("sound_warning");
                 }
             }
+            // if ChatServer session chat
             else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
 
@@ -802,10 +787,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
                 string encrypted = pmsg.CqrPeerMsg(unencrypted);
 
-                string response = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
-
-                FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
-
+                FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
                 if (rfmsg != null && rfmsg.Sender != null)
                 {
                     Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
@@ -815,13 +797,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     Settings.Save();
                 }
 
-                string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
-                this.TextBoxDestionation.Text = msgChatRoom;
-
+                string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;                
+                AppendText(TextBoxDestionation, chat.AddFriendMessage(msgChatRoom));
                 string userMsg = chat.AddMyMessage(unencrypted);
                 AppendText(TextBoxSource, userMsg);
                 chat.AddMyMessage(userMsg);
-                chat.AddFriendMessage(msgChatRoom);
+                
 
                 // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
                 Format_Lines_RichTextBox();
@@ -958,9 +939,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
-                            string response = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
-                            FullSrvMsg<string> rfmsg = serverMessage.NCqrSrvMsg<string>(response, EncodingType.Base64);
-
+                            
+                            FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64); 
                             if (rfmsg != null && rfmsg.Sender != null)
                             {
                                 Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
@@ -971,8 +951,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             }
 
                             string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.Emails.ToArray()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
-                            this.TextBoxDestionation.Text = msgChatRoom;
-
+                            AppendText(TextBoxDestionation, chat.AddFriendMessage(msgChatRoom));
 
                             string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
                             AppendText(TextBoxSource, userMsg);
@@ -1506,7 +1485,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                         if (clientIpAddress.ToString().Contains("::1"))
                                             SetComboBoxText(this.ComboBoxIp, "::1");
 
-                                    //ComboBoxIp_FocusLeave(sender, e);
+                                    ComboBoxIp_FocusLeave(sender, e);
                                 }
                             }
                         }

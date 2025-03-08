@@ -111,16 +111,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         public HashSet<string> ChatRoomNumbersFromFs()
         {
-            string[] csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
-            HashSet<string> chatRooms = new HashSet<string>(csr);
-            if (BaseWebService.UseApplicationState)
-                HttpContext.Current.Application["ChatRooms"] = chatRooms;
-            if (BaseWebService.UseAmazonElasticCache)
-            {
-                string hashChatRoomsJson = JsonConvert.SerializeObject(chatRooms);
-                RedIs.Db.StringSet("ChatRooms", hashChatRoomsJson);
-            }
-
+            HashSet<string> chatRooms = JsonContacts.ChatRoomNumbersFromFs().ToHashSet();
             return chatRooms;
         }
 
