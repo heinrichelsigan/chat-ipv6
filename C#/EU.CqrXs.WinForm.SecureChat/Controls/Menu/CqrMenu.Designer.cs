@@ -69,7 +69,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Menu
             MenuOptionsItemClearAllOnClose = new ToolStripMenuItem();
             MenuOptionsItemDontSendProfilePictures = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
-            MenuOptionsPeer2Peer = new ToolStripMenuItem();
+            MenuOptionsItemPeer2Peer = new ToolStripMenuItem();
             MenuOptionsItemServerSession = new ToolStripMenuItem();
             MenuHelp = new ToolStripMenuItem();
             MenuHelpItemViewHelp = new ToolStripMenuItem();
@@ -357,7 +357,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Menu
             // MenuOptions
             // 
             MenuOptions.BackColor = SystemColors.MenuBar;
-            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures, toolStripSeparator1, MenuOptionsPeer2Peer, MenuOptionsItemServerSession });
+            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures, toolStripSeparator1, MenuOptionsItemPeer2Peer, MenuOptionsItemServerSession });
             MenuOptions.Name = "MenuOptions";
             MenuOptions.Size = new Size(72, 21);
             MenuOptions.Text = "options";
@@ -403,12 +403,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Menu
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new Size(332, 6);
             // 
-            // MenuOptionsPeer2Peer
+            // MenuOptionsItemPeer2Peer
             // 
-            MenuOptionsPeer2Peer.CheckOnClick = true;
-            MenuOptionsPeer2Peer.Name = "MenuOptionsPeer2Peer";
-            MenuOptionsPeer2Peer.Size = new Size(335, 22);
-            MenuOptionsPeer2Peer.Text = "peer-2-peer mode";
+            MenuOptionsItemPeer2Peer.CheckOnClick = true;
+            MenuOptionsItemPeer2Peer.Name = "MenuOptionsItemPeer2Peer";
+            MenuOptionsItemPeer2Peer.Size = new Size(335, 22);
+            MenuOptionsItemPeer2Peer.Text = "peer-2-peer mode";
             // 
             // MenuOptionsItemServerSession
             // 
@@ -535,7 +535,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Menu
         internal ToolStripMenuItem MenuOptionsItemClearAllOnClose;
         internal ToolStripMenuItem MenuOptionsItemDontSendProfilePictures;
         internal ToolStripSeparator toolStripSeparator1;
-        internal ToolStripMenuItem MenuOptionsPeer2Peer;
+        internal ToolStripMenuItem MenuOptionsItemPeer2Peer;
         internal ToolStripMenuItem MenuOptionsItemServerSession;
 
         internal ToolStripMenuItem MenuHelp;

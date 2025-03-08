@@ -1,7 +1,4 @@
-﻿using Amazon.ElastiCacheCluster;
-using Enyim.Caching;
-using Enyim.Caching.Memcached;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.CqrXs;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;

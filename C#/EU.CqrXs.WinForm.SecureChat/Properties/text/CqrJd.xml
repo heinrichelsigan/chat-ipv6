@@ -401,21 +401,21 @@
             Sends a init secure message to contact over server proxy
             </summary>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuItemSend_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemSend_Click(System.Object,System.EventArgs)">
             <summary>
             Sends a secure message
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuItemAttach_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemAttach_Click(System.Object,System.EventArgs)">
             <summary>
             Attaches a file to send
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuItemClear_Click(System.Object,System.EventArgs)" -->
+        <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemClear_Click(System.Object,System.EventArgs)" -->
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.OnClientReceive(System.Object,Area23.At.Framework.Core.Util.Area23EventArgs{Area23.At.Framework.Core.Net.IpSocket.ReceiveData})">
             <summary>
             OnClientReceive event is fired, 
@@ -449,7 +449,7 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuView_ItemTopBottom_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuViewItemTopBottom_Click(System.Object,System.EventArgs)">
             <summary>
             MenuView_ItemTopBottom_Click occures, when user clicks on Top-Bottom in chat app
             shows top bottom view of chat líke ancient talk/talks
@@ -457,14 +457,14 @@
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuView_ItemLeftRíght_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuViewItemLeftRíght_Click(System.Object,System.EventArgs)">
             <summary>
             MenuView_ItemLeftRíght_Click occurs, when user clicks on View->Left-Right in chat app
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuView_Item1View_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuViewItem1View_Click(System.Object,System.EventArgs)">
             <summary>
             MenuView_Item1View_Click, occurs, when user clicks on 1-View in chat app
             shows only a single rich textbox instead of sender and receiver view
@@ -564,21 +564,21 @@
             Sends a init secure message to contact over server proxy
             </summary>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuItemSend_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemSend_Click(System.Object,System.EventArgs)">
             <summary>
             Sends a secure message
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuItemAttach_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemAttach_Click(System.Object,System.EventArgs)">
             <summary>
             Attaches a file to send
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuItemClear_Click(System.Object,System.EventArgs)" -->
+        <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemClear_Click(System.Object,System.EventArgs)" -->
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.OnClientReceive(System.Object,Area23.At.Framework.Core.Util.Area23EventArgs{Area23.At.Framework.Core.Net.IpSocket.ReceiveData})">
             <summary>
             OnClientReceive event is fired, 

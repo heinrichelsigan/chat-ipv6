@@ -32,8 +32,6 @@ using System.ComponentModel;
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
 
-
-
     /// <summary>
     /// RichTextChat main form
     /// </summary>
@@ -114,6 +112,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxContacts.Text = Constants.ENTER_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
             MiniToolBox.CreateAttachDirectory();
+            
+            StripMenu.MenuFileItemOpen.Click += MenuFileItemOpen_Click;
+            StripMenu.MenuFileItemSave.Click += MenuFileItemSave_Click;
+            StripMenu.MenuFileItemExit.Click += MenuFileItemExit_Click;
+            StripMenu.MenuViewItemLeftRíght.Click += MenuViewItemLeftRíght_Click;
+            StripMenu.MenuViewItemTopBottom.Click += MenuViewItemTopBottom_Click;
+            StripMenu.MenuViewItem1View.Click += MenuViewItem1View_Click;
+            StripMenu.MenuCommandsItemSend.Click += MenuCommandsItemSend_Click;
+            StripMenu.MenuCommandsItemAttach.Click += MenuCommandsItemAttach_Click;
+            StripMenu.MenuCommandsItemRefresh.Click += MenuCommandsItemRefresh_Click;
+            StripMenu.MenuCommandsItemClear.Click += MenuCommandsItemClear_Click;
+            StripMenu.MenuContactsItemMe.Click += MenuContactsItemMyContact_Click;
+            StripMenu.MenuContactsItemAdd.Click += MenuContactsItemAdd_Click;
+            StripMenu.MenuContactsItemView.Click += MenuContactsItemView_Click;
+            StripMenu.MenuContactstemImport.Click += MenuContactstemImport_Click;
+            StripMenu.MenuOptionsItemClearAllOnClose.Click += MenuOptionsItemClearAllOnClose_Click;
+            StripMenu.MenuOptionsItemPeer2Peer.Click += MenuOptionsItemPeer2Peer_Click;
+            StripMenu.MenuOptionsItemServerSession.Click += MenuOptionsItemServerSession_Click;
+            StripMenu.MenuHelpItemViewHelp.Click += MenuHelpItemViewHelp_Click;
+            StripMenu.MenuHelpItemInfo.Click += MenuHelpItemInfo_Click;
+            StripMenu.MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;
+
             this.DragNDropGroupBox.OnDragNDrop += OnDragNDrop;
             this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
             this.PeerServerSwitch.FireUpChanged += TooglePeerServer;
@@ -492,7 +512,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #endregion ComboBoxContacts FocusLeave SelectedIndexChanged
 
-        #region MenuSend MenuAttach MenuRefresh MenuClear
+        #region MenuCommands MenuSend MenuAttach MenuRefresh MenuClear incl. Buttons
 
         /// <summary>
         /// Send_1st_Server_Registration sends contact registration to cqrxs.eu server
@@ -679,7 +699,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuItemSend_Click(object sender, EventArgs e)
+        private void MenuCommandsItemSend_Click(object sender, EventArgs e)
         {
             // TODO: implement it via socket directly or to registered user
             // if Ip is pingable and reachable and connectable
@@ -808,7 +828,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuItemAttach_Click(object sender, EventArgs e)
+        private void MenuCommandsItemAttach_Click(object sender, EventArgs e)
         {
             if (chat == null)
                 chat = new Chat(0);
@@ -865,7 +885,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         }
 
-        private void MenuItemRefresh_Click(object sender, EventArgs e)
+        private void MenuCommandsItemRefresh_Click(object sender, EventArgs e)
         {
             if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
@@ -992,7 +1012,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MenuItemClear_Click(object sender, EventArgs e)
+        private void MenuCommandsItemClear_Click(object sender, EventArgs e)
         {
             // TODO: add warning and saving here
             PlaySoundFromResource("sound_glasses");
@@ -1013,7 +1033,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.RichTextBoxChat.Clear();
         }
 
-        #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
+        private void ButtonAttach_Click(object sender, EventArgs e) => this.MenuCommandsItemAttach_Click(sender, e);
+
+        private void ButtonSend_Click(object sender, EventArgs e) => this.MenuCommandsItemSend_Click(sender, e);
+
+        private void ButtonClear_Click(object sender, EventArgs e) => this.MenuCommandsItemClear_Click(sender, e);
+
+
+        #endregion MenuCommands OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear incl. Buttons
 
 
         #region OnClientReceive OnDragNDrop TooglePeerServer OnDragNDrop delegate jump back invocation target members
@@ -1136,7 +1163,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                     }
                     StripMenu.MenuOptionsItemServerSession.Checked = false;
-                    StripMenu.MenuOptionsPeer2Peer.Checked = true;
+                    StripMenu.MenuOptionsItemPeer2Peer.Checked = true;
                     break;
                 case 2:
                     this.PeerSessionTriState = PeerSession3State.ChatServer;
@@ -1150,7 +1177,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                     }
                     StripMenu.MenuOptionsItemServerSession.Checked = true;
-                    StripMenu.MenuOptionsPeer2Peer.Checked = false;
+                    StripMenu.MenuOptionsItemPeer2Peer.Checked = false;
                     break;
                 case 1:
                 default:
@@ -1164,7 +1191,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                     }
                     StripMenu.MenuOptionsItemServerSession.Checked = true;
-                    StripMenu.MenuOptionsPeer2Peer.Checked = true;
+                    StripMenu.MenuOptionsItemPeer2Peer.Checked = true;
                     break;
             }
             this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState);
@@ -1439,7 +1466,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.PictureBoxYou.Image = bmp;
         }
 
-        private void MenuItemAddContact_Click(object sender, EventArgs e)
+        private void MenuContactsItemAdd_Click(object sender, EventArgs e)
         {
             ContactSettings contactSettings = new ContactSettings("Add Contact Info", 1);
             contactSettings.ShowInTaskbar = true;
@@ -1699,7 +1726,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuView_ItemTopBottom_Click(object sender, EventArgs e)
+        private void MenuViewItemTopBottom_Click(object sender, EventArgs e)
         {
             StripMenu.MenuViewItemLeftRíght.Checked = false;
             StripMenu.MenuViewItemTopBottom.Checked = true;
@@ -1726,7 +1753,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuView_ItemLeftRíght_Click(object sender, EventArgs e)
+        private void MenuViewItemLeftRíght_Click(object sender, EventArgs e)
         {
             StripMenu.MenuViewItemLeftRíght.Checked = true;
             StripMenu.MenuViewItemTopBottom.Checked = false;
@@ -1753,7 +1780,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void MenuView_Item1View_Click(object sender, EventArgs e)
+        private void MenuViewItem1View_Click(object sender, EventArgs e)
         {
             StripMenu.MenuViewItemLeftRíght.Checked = false;
             StripMenu.MenuViewItemTopBottom.Checked = false;
@@ -1768,11 +1795,43 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #endregion SplitChatWindowLayout
 
 
+        #region MenuOptions ClearAllOnClose Peer2Peer Session Server
+
+        public void MenuOptionsItemClearAllOnClose_Click(object sender, EventArgs e)
+        {
+            // TODO add to settings
+            this.StripMenu.MenuOptionsItemClearAllOnClose.Checked = (!this.StripMenu.MenuOptionsItemClearAllOnClose.Checked);
+            AppDomain.CurrentDomain.SetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE, StripMenu.MenuOptionsItemClearAllOnClose.Checked);
+        }
+
+        private void MenuOptionsItemPeer2Peer_Click(object sender, EventArgs e)
+        {
+            if (StripMenu.MenuOptionsItemPeer2Peer.Checked && !StripMenu.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(0);
+            else if (!this.StripMenu.MenuOptionsItemPeer2Peer.Checked && this.StripMenu.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(2);
+            else
+                TooglePeerSessionServerTriState(1);
+
+        }
+
+        private void MenuOptionsItemServerSession_Click(object sender, EventArgs e)
+        {
+            if (this.StripMenu.MenuOptionsItemPeer2Peer.Checked && !this.StripMenu.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(0);
+            else if (!this.StripMenu.MenuOptionsItemPeer2Peer.Checked && this.StripMenu.MenuOptionsItemServerSession.Checked)
+                TooglePeerSessionServerTriState(2);
+            else
+                TooglePeerSessionServerTriState(1);
+        }
+
+        #endregion MenuOptions ClearAllOnClose Peer2Peer Session Server
+
+
         /// <summary>
         /// SetupNetwork async method to setup network
         /// </summary>
         /// <returns><see cref="Task"/></returns>
-
         internal async Task SetupNetwork()
         {
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
@@ -2081,12 +2140,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
-        public void MenuOptionsItemClearAllOnClose_Click(object sender, EventArgs e)
-        {
-            // TODO add to settings
-            this.StripMenu.MenuOptionsItemClearAllOnClose.Checked = (!this.StripMenu.MenuOptionsItemClearAllOnClose.Checked);
-            AppDomain.CurrentDomain.SetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE, StripMenu.MenuOptionsItemClearAllOnClose.Checked);
-        }
 
         #region LoadSaveChatContent
 
@@ -2103,7 +2156,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
 
-        protected internal virtual void toolStripMenuItemSave_Click(object sender, EventArgs e)
+        protected internal virtual void MenuFileItemSave_Click(object sender, EventArgs e)
         {
             SafeFileName();
         }
@@ -2170,41 +2223,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #endregion LoadSaveChatContent
 
 
-        private void ButtonAttach_Click(object sender, EventArgs e)
-        {
-            this.MenuItemAttach_Click(sender, e);
-        }
 
-        private void ButtonSend_Click(object sender, EventArgs e)
-        {
-            this.MenuItemSend_Click(sender, e);
-        }
-
-        private void ButtonClear_Click(object sender, EventArgs e)
-        {
-            this.MenuItemClear_Click(sender, e);
-        }
-
-        private void MenuOptionsPeer2Peer_Click(object sender, EventArgs e)
-        {
-            if (StripMenu.MenuOptionsPeer2Peer.Checked && !StripMenu.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(0);
-            else if (!this.StripMenu.MenuOptionsPeer2Peer.Checked && this.StripMenu.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(2);
-            else
-                TooglePeerSessionServerTriState(1);
-
-        }
-
-        private void MenuOptionsItemServerSession_Click(object sender, EventArgs e)
-        {
-            if (this.StripMenu.MenuOptionsPeer2Peer.Checked && !this.StripMenu.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(0);
-            else if (!this.StripMenu.MenuOptionsPeer2Peer.Checked && this.StripMenu.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(2);
-            else
-                TooglePeerSessionServerTriState(1);
-        }
     }
 
 }
