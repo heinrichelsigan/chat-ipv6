@@ -9,8 +9,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
     public enum PeerSession3State
     {
         Peer2Peer = 0,
-        Both = 1,
-        ChatServer = 2
+        None = 1,
+        ChatServer = 2 
+        //, Both = 3
 
     }
 }

@@ -319,6 +319,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void ComboBoxIp_FocusLeave(object sender, EventArgs e)
         {
+            if (!GetComboBoxEnabled(ComboBoxIp))
+                return;
 
             if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
                 return;
@@ -385,6 +387,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void ComboBoxIp_SelectedIndexChanged(object sender, EventArgs e)
         {
+
+            if (!GetComboBoxEnabled(ComboBoxIp))
+                return;
+
             if (string.IsNullOrEmpty(this.ComboBoxIp.Text) ||
                 this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -426,11 +432,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void ComboBoxContacts_FocusLeave(object sender, EventArgs e)
         {
-
+            if (!GetComboBoxEnabled(ComboBoxContacts))
+                return;
         }
 
         private void ComboBoxContacts_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (!GetComboBoxEnabled(ComboBoxContacts))
+                return;
+
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return;
 
@@ -1162,17 +1172,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     break;
                 case 1:
                 default:
-                    this.PeerSessionTriState = PeerSession3State.Both;
+                    this.PeerSessionTriState = PeerSession3State.None;
                     try
                     {
-                        this.ComboBoxContacts.Enabled = true;
-                        this.ComboBoxIp.Enabled = true;
+                        this.ComboBoxContacts.Enabled = false;
+                        this.ComboBoxIp.Enabled = false;
                     }
                     catch (Exception ex)
                     {
                     }
-                    this.MenuOptionsItemServerSession.Checked = true;
-                    this.MenuOptionsItemPeer2Peer.Checked = true;
+                    this.MenuOptionsItemServerSession.Checked = false;
+                    this.MenuOptionsItemPeer2Peer.Checked = false;
                     break;
             }
             this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState);
@@ -1294,7 +1304,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             InterfaceIpAddresses = await NetworkAddresses.GetIpAddressesAsync();            
             ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);            
 
-            if (PeerSessionTriState == PeerSession3State.Peer2Peer || PeerSessionTriState == PeerSession3State.Both)
+            if (PeerSessionTriState == PeerSession3State.Peer2Peer)
             {
                 if (ipSockListener != null && ipSockListener.ServerSocket != null &&
                    (ipSockListener.ServerSocket.Connected || ipSockListener.ServerSocket.IsBound) &&

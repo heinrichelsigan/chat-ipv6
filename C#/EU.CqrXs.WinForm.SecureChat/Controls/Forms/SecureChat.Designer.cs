@@ -87,8 +87,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonKey = new Button();
             PanelEnCodeCrypt = new Panel();
             TextBoxPipe = new TextBox();
-            ButtonCheck = new Button();
             textBoxChatSession = new TextBox();
+            ButtonCheck = new Button();
             ComboBoxContacts = new ComboBox();
             ComboBoxIp = new ComboBox();
             ComboBoxSecretKey = new ComboBox();
@@ -111,7 +111,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ((System.ComponentModel.ISupportInitialize)PictureBoxYou).BeginInit();
             PanelEnCodeCrypt.SuspendLayout();
             PanelDestination.SuspendLayout();
-            PeerServerSwitch.SuspendLayout();
             PanelCenter.SuspendLayout();
             PanelBottom.SuspendLayout();
             SuspendLayout();
@@ -684,6 +683,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             TextBoxPipe.Size = new Size(93, 26);
             TextBoxPipe.TabIndex = 13;
             // 
+            // textBoxChatSession
+            // 
+            textBoxChatSession.Font = new Font("Lucida Sans Unicode", 8F);
+            textBoxChatSession.HideSelection = false;
+            textBoxChatSession.Location = new Point(456, 6);
+            textBoxChatSession.Margin = new Padding(1);
+            textBoxChatSession.Name = "textBoxChatSession";
+            textBoxChatSession.Size = new Size(368, 24);
+            textBoxChatSession.TabIndex = 19;
+            // 
             // ButtonCheck
             // 
             ButtonCheck.BackColor = SystemColors.ButtonHighlight;
@@ -699,16 +708,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonCheck.TabIndex = 17;
             ButtonCheck.UseVisualStyleBackColor = false;
             // 
-            // textBoxChatSession
-            // 
-            textBoxChatSession.Font = new Font("Lucida Sans Unicode", 8F);
-            textBoxChatSession.HideSelection = false;
-            textBoxChatSession.Location = new Point(456, 6);
-            textBoxChatSession.Margin = new Padding(1);
-            textBoxChatSession.Name = "textBoxChatSession";
-            textBoxChatSession.Size = new Size(368, 24);
-            textBoxChatSession.TabIndex = 19;
-            // 
             // ComboBoxContacts
             // 
             ComboBoxContacts.BackColor = SystemColors.ControlLightLight;
@@ -718,10 +717,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxContacts.FormattingEnabled = true;
             ComboBoxContacts.Location = new Point(456, 35);
             ComboBoxContacts.Margin = new Padding(1);
+            ComboBoxContacts.Enabled = false;
             ComboBoxContacts.Name = "ComboBoxContacts";
             ComboBoxContacts.Size = new Size(369, 24);
             ComboBoxContacts.TabIndex = 18;
-            ComboBoxContacts.Text = "[enter peer IPv4 or IPv6 for directly connect]";
+            ComboBoxContacts.Text = "[Select Contact]";
             ComboBoxContacts.SelectedIndexChanged += ComboBoxContacts_SelectedIndexChanged;
             ComboBoxContacts.Leave += ComboBoxContacts_FocusLeave;
             // 
@@ -734,6 +734,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxIp.Location = new Point(4, 35);
             ComboBoxIp.Margin = new Padding(1);
             ComboBoxIp.Name = "ComboBoxIp";
+            ComboBoxIp.Enabled = false;
             ComboBoxIp.Size = new Size(297, 24);
             ComboBoxIp.TabIndex = 15;
             ComboBoxIp.Text = "[enter peer IPv4/IPv6]";
@@ -772,7 +773,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelDestination.BackColor = SystemColors.ActiveCaption;
             PanelDestination.Controls.Add(PeerServerSwitch);
             PanelDestination.Controls.Add(ButtonSend);
-            PanelDestination.Controls.Add(ButtonAttach);            
+            PanelDestination.Controls.Add(ButtonAttach);
             PanelDestination.Controls.Add(DragNDropGroupBox);
             PanelDestination.Controls.Add(LinkedLabelsBox);
             PanelDestination.Controls.Add(PictureBoxYou);
@@ -786,7 +787,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // PeerServerSwitch
             // 
             PeerServerSwitch.AllowDrop = true;
-            PeerServerSwitch.BackColor = SystemColors.GradientActiveCaption;            
+            PeerServerSwitch.BackColor = SystemColors.GradientActiveCaption;
             PeerServerSwitch.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             PeerServerSwitch.Location = new Point(8, 2);
             PeerServerSwitch.Margin = new Padding(1);
@@ -919,8 +920,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelEnCodeCrypt.ResumeLayout(false);
             PanelEnCodeCrypt.PerformLayout();
             PanelDestination.ResumeLayout(false);
-            PeerServerSwitch.ResumeLayout(false);
-            PeerServerSwitch.PerformLayout();
             PanelCenter.ResumeLayout(false);
             PanelBottom.ResumeLayout(false);
             ResumeLayout(false);

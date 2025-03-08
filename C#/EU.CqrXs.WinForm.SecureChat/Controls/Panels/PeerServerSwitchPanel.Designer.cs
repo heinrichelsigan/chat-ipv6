@@ -40,10 +40,10 @@
             // 
             LabelServer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             LabelServer.AutoSize = true;
-            LabelServer.BackColor = SystemColors.GradientInactiveCaption;
-            LabelServer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Italic, GraphicsUnit.Point, 0);
-            LabelServer.ForeColor = SystemColors.Highlight;
-            LabelServer.Location = new Point(78, 1);
+            LabelServer.BackColor = SystemColors.ActiveCaption;
+            LabelServer.ForeColor = SystemColors.ControlText;
+            LabelServer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Italic, GraphicsUnit.Point, 0);            
+            LabelServer.Location = new Point(78, 1);                         
             LabelServer.Margin = new Padding(1, 0, 1, 0);
             LabelServer.Name = "LabelServer";
             LabelServer.Size = new Size(73, 16);
@@ -52,8 +52,10 @@
             // 
             // LabelPeer
             // 
-            LabelPeer.AutoSize = true;
-            LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Bold);
+            LabelPeer.AutoSize = true;            
+            LabelPeer.BackColor = SystemColors.ActiveCaption;
+            LabelPeer.ForeColor = SystemColors.ControlText;
+            LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Regular);
             LabelPeer.Location = new Point(1, 1);
             LabelPeer.Margin = new Padding(1, 0, 1, 0);
             LabelPeer.Name = "LabelPeer";
@@ -70,6 +72,7 @@
             TrackBarPeerServer.Maximum = 2;
             TrackBarPeerServer.Name = "TrackBarPeerServer";
             TrackBarPeerServer.Size = new Size(151, 45);
+            TrackBarPeerServer.Value = 1;
             TrackBarPeerServer.TabIndex = 1;
             TrackBarPeerServer.TickStyle = TickStyle.TopLeft;
             TrackBarPeerServer.ValueChanged += TrackBarPeerServer_ValueChanged;

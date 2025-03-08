@@ -1,7 +1,8 @@
 {
   "profiles": {
     "EU.CqrXs.WinForm.SecureChat": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "rich"
     }
   }
 }

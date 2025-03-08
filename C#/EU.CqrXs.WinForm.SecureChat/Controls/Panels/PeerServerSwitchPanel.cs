@@ -33,7 +33,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
             InitializeComponent();
         }
 
-        public void SetPeerServerSessionTriState(PeerSession3State peerSession3State = PeerSession3State.Both)
+        public void SetPeerServerSessionTriState(PeerSession3State peerSession3State = PeerSession3State.None)
         {
             switch (peerSession3State)
             {
@@ -43,7 +43,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
                 case PeerSession3State.ChatServer:
                     TrackBarPeerServer.Value = 2;
                     break;
-                case PeerSession3State.Both:
+                case PeerSession3State.None:
                 default:
                     TrackBarPeerServer.Value = 1;
                     break;

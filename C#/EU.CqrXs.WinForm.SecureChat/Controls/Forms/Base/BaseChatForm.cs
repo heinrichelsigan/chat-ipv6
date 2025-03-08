@@ -53,7 +53,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         protected internal Lock _lock = new Lock();
         protected internal OpenFileDialog FileOpenDialog;
         protected internal SaveFileDialog FileSaveDialog;
-        protected internal PeerSession3State PeerSessionTriState = PeerSession3State.Both;
+        protected internal PeerSession3State PeerSessionTriState = PeerSession3State.None;
         protected internal BgWorkerMonitor bgWorkerMonitor;
 
         #endregion fields
@@ -1093,6 +1093,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         #region ComboBox
 
         internal delegate string? GetComboBoxNameCallback(System.Windows.Forms.ComboBox comboBox);
+        internal delegate bool GetComboBoxEnabledCallback(System.Windows.Forms.ComboBox comboBox);
         internal delegate string GetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox);
         internal delegate System.Windows.Forms.ComboBox.ObjectCollection? GetComboBoxItemsCallback(System.Windows.Forms.ComboBox tsCombo);
         internal delegate void SetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox, string text);
@@ -1132,6 +1133,41 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             }
 
             return getName;
+        }
+
+
+        /// <summary>
+        /// thread save deleagte to get enabled state from <see cref="ComboBox"/>
+        /// </summary>
+        /// <param name="comboBox"><see cref="ComboBox"/> from which name to get</param>
+        /// <returns><see cref="string"/> name from <see cref="ComboBox.Text" /></returns>
+        internal bool GetComboBoxEnabled(System.Windows.Forms.ComboBox comboBox)
+        {
+            bool ena = false;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (comboBox.InvokeRequired)
+            {
+                GetComboBoxEnabledCallback getComboBoxEnabledCallback =
+                    delegate (System.Windows.Forms.ComboBox cmbx)
+                    {
+                        return (cmbx != null) ? cmbx.Enabled : false;
+                    };
+                try
+                {
+                    ena = (bool)comboBox.Invoke(getComboBoxEnabledCallback, new object[] { comboBox });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxName.\n", exDelegate);
+                }
+            }
+            else
+            {
+                ena = (comboBox != null) ? comboBox.Enabled : false;
+            }
+
+            return ena;
         }
 
 

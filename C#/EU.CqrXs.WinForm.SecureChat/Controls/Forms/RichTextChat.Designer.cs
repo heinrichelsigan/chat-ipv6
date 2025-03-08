@@ -79,17 +79,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             // StripMenu
             // 
+            StripMenu.BackgroundImageLayout = ImageLayout.None;
             StripMenu.AllowItemReorder = true;
             StripMenu.BackColor = SystemColors.MenuBar;
             StripMenu.Font = new Font("Lucida Sans Unicode", 10F);
             StripMenu.GripStyle = ToolStripGripStyle.Visible;
-            // StripMenu.Items.AddRange(new ToolStripItem[] { MenuFile, MenuView, MenuNetwork, MenuCommands, MenuContacts, MenuOptions, MenuHelp });
+            // StripMenu.Items.AddRange(new ToolStripItem[] { StripMenu.MenuFile, StripMenu.MenuView, StripMenu.MenuNetwork, StripMenu.MenuCommands, StripMenu.MenuContacts, StripMenu.MenuOptions, StripMenu.MenuHelp });
             StripMenu.Location = new Point(0, 0);
             StripMenu.Name = "StripMenu";
             StripMenu.RenderMode = ToolStripRenderMode.System;
             StripMenu.Size = new Size(998, 25);
+            StripMenu.ClientSize = new Size(998, 25);
             StripMenu.TabIndex = 1;
-            StripMenu.Visible = true;
             StripMenu.Text = "StripMenu";
             // 
             // StripStatus
@@ -273,9 +274,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxContacts.Location = new Point(456, 35);
             ComboBoxContacts.Margin = new Padding(1);
             ComboBoxContacts.Name = "ComboBoxContacts";
+            ComboBoxContacts.Enabled = false;
             ComboBoxContacts.Size = new Size(369, 24);
             ComboBoxContacts.TabIndex = 18;
-            ComboBoxContacts.Text = "[enter peer IPv4 or IPv6 for directly connect]";
+            ComboBoxContacts.Text = "[Select Contact]";
             ComboBoxContacts.SelectedIndexChanged += ComboBoxContacts_SelectedIndexChanged;
             ComboBoxContacts.Leave += ComboBoxContacts_FocusLeave;
             // 
@@ -286,6 +288,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxIp.ForeColor = SystemColors.ControlText;
             ComboBoxIp.FormattingEnabled = true;
             ComboBoxIp.Location = new Point(4, 35);
+            ComboBoxIp.Enabled = false;
             ComboBoxIp.Margin = new Padding(1);
             ComboBoxIp.Name = "ComboBoxIp";
             ComboBoxIp.Size = new Size(297, 24);
@@ -449,8 +452,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             Controls.Add(PanelDestination);
             Controls.Add(PanelBottom);
             Controls.Add(PanelEnCodeCrypt);
-            Controls.Add(StripStatus);
             Controls.Add(StripMenu);
+            Controls.Add(StripStatus);
             Font = new Font("Lucida Sans Unicode", 10F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenuStrip = StripMenu;
@@ -498,7 +501,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private Button ButtonAttach;
         private Button ButtonCheck;
         private Controls.GroupBoxes.LinkLabelsBox GroupBoxLinks;
-        private Controls.Menu.CqrMenu StripMenu;
+        internal Controls.Menu.CqrMenu StripMenu;
         private StatusStrip StripStatus;
         private ToolStripStatusLabel StripStatusLabel;
 

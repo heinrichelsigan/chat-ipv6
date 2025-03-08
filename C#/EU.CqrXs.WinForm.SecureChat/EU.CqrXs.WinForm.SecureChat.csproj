@@ -25,7 +25,7 @@
 	<SignAssembly>False</SignAssembly>
 	<Company>Heinrich Georg Elsigan</Company>
 	<Copyright>Copyleft © 2000-2040</Copyright>
-	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<GenerateDocumentationFile>False</GenerateDocumentationFile>
 	<DocumentationFile>S:\chat-ipv6\C#\EU.CqrXs.WinForm.SecureChat\Properties\text\CqrJd.xml</DocumentationFile>	  	
 	<!-- PublishTrimmed>True</PublishTrimmed -->
   </PropertyGroup>
