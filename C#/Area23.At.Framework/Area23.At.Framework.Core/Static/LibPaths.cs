@@ -185,13 +185,23 @@ namespace Area23.At.Framework.Core.Static
                         switch (sysDirTry)
                         {
                             case 0:
-                                if (SepChar == "/" && Path.DirectorySeparatorChar == '/' && SepCh == Path.DirectorySeparatorChar &&
-                                            ConfigurationManager.AppSettings["AppDirPathUnix"] != null &&
-                                            ConfigurationManager.AppSettings["AppDirPathUnix"] != "")
-                                    systemDirPath = ConfigurationManager.AppSettings["AppDirPathUnix"]; break;
+                                try
+                                {
+                                    if (SepChar == "/" && Path.DirectorySeparatorChar == '/' && SepCh == Path.DirectorySeparatorChar &&
+                                                ConfigurationManager.AppSettings["AppDirPathUnix"] != null &&
+                                                ConfigurationManager.AppSettings["AppDirPathUnix"] != "")
+                                        systemDirPath = ConfigurationManager.AppSettings["AppDirPathUnix"]; 
+                                }
+                                catch { }
+                                break;
                             case 1:
-                                if (ConfigurationManager.AppSettings["AppDirPathWin"] != null)
-                                    systemDirPath = ConfigurationManager.AppSettings["AppDirPathWin"]; break;
+                                try
+                                {
+                                    if (ConfigurationManager.AppSettings["AppDirPathWin"] != null)
+                                    systemDirPath = ConfigurationManager.AppSettings["AppDirPathWin"];
+                                }
+                                catch { }
+                                break;
                             case 2: systemDirPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location); break;
                             case 3: if (AppContext.BaseDirectory != null) systemDirPath = AppContext.BaseDirectory; break;
                             case 4: if (AppDomain.CurrentDomain != null) systemDirPath = AppDomain.CurrentDomain.BaseDirectory; break;
