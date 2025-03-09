@@ -1,6 +1,7 @@
 ﻿using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 using System.Net;
+using System.Security.Policy;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -168,6 +169,20 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             LastPolled = c.LastPolled;
             LastPushed = c.LastPushed;
             ClientIp = c.ClientIp ?? null;
+        }
+
+
+        public CqrContact(CqrContact ct, string chatRoomId, CqrImage? image, string hash) :
+            this(ct.ContactId, ct.Name, ct.Email, ct.Mobile, ct.Address)
+        {
+            _hash = hash;
+            ContactImage = (image != null) ? image : null;
+            Cuid = ct.Cuid;
+            ChatRoomId = chatRoomId;
+            LastPolled = ct.LastPolled;
+            LastPushed = ct.LastPushed;
+            
+            ClientIp = ct.ClientIp ?? null;
         }
 
 

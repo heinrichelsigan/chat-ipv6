@@ -987,9 +987,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 if (rfmsg != null && rfmsg.Sender != null)
                 {
-                    Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                    Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                    Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, Settings.Instance.MyContact.ContactImage, rfmsg.Sender.Hash);
+                    Settings.Instance.MyContact = myContact;
 
                     Settings.Save();
                 }
