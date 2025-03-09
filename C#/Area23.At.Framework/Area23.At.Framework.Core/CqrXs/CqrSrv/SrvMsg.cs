@@ -1,20 +1,15 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
+﻿using Area23.At.Framework.Core.CqrXs.CqrJd;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
-using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
-using EU.CqrXs.CqrSrv.CqrJd;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Cms;
 using System.Configuration;
 using System.Net;
 using System.Runtime.Serialization;
-using System.Security.Policy;
-using System.Windows.Interop;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 {

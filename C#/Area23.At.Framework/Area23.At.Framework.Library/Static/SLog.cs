@@ -118,7 +118,7 @@ namespace Area23.At.Framework.Library.Static
         /// <param name="appName">application name</param>
         public static void Log(Exception exLog, string appName = "")
         {
-            string excMsg = String.Format("Exception {0} ⇒ {1}\t{2}\t{3\n",
+            string excMsg = String.Format("Exception {0} ⇒ {1}\t{2}\t{3}\n",
                 exLog.GetType(),
                 exLog.Message,
                 exLog.ToString().Replace("\r", "").Replace("\n", " "),

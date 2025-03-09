@@ -14,6 +14,9 @@ using Area23.At.Framework.Library.Static;
 using System.Diagnostics.Contracts;
 using StackExchange.Redis;
 using Newtonsoft.Json;
+using Area23.At.Framework.Library.Net.WebHttp;
+using System.Net;
+using System.Net.Http;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
@@ -24,7 +27,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
     {
         protected internal static HashSet<CqrContact> _contacts;
         protected internal CqrContact _contact;
-        protected internal string _literalServerIPv4, _literalServerIPv6, _literalClientIp;
+        // protected internal string _literalServerIPv4, _literalServerIPv6;
         protected internal string _serverKey = string.Empty;
         protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
         protected internal string _responseString = string.Empty;
@@ -81,7 +84,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         {
             _contacts = GetContacts();
             GetServerKey();
-            _literalClientIp = HttpContext.Current.Request.UserHostAddress;
             _decrypted = string.Empty;
             _responseString = string.Empty;
             _contact = null;
@@ -198,7 +200,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         protected string GetServerKey()
         {
-            _literalClientIp = HttpContext.Current.Request.UserHostAddress;
+            // _serverKey = Constants.AUTHOR_EMAIL;            
 
             if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
                 _serverKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];

@@ -1,17 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
-using System;
-using System.Drawing;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Area23.At.Framework.Core.Util;
+using Newtonsoft.Json.Linq;
 using System.Drawing.Imaging;
-using System.ComponentModel;
-using System.Runtime.Serialization;
-using Area23.At.Framework.Core.Static;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {

@@ -1,26 +1,14 @@
-﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
-using Area23.At.Framework.Core.Crypt.Cipher;
+﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
-using Area23.At.Framework.Core.Net.WebHttp;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Area23.At.Framework.Core.Net.IpSocket;
-using System.Net;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using System.Windows.Interop;
-using Newtonsoft.Json;
-using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Util;
-using System.Runtime.InteropServices.JavaScript;
+using Newtonsoft.Json;
+using System.Net;
+
 
 namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 {
-
 
     /// <summary>
     /// Provides a secure encrypted message to send to the server or receive from server

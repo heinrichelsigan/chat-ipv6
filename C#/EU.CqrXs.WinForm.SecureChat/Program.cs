@@ -1,14 +1,7 @@
 using Area23.At.Framework.Core.CqrXs;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Win32Api;
-using System;
-using System.Diagnostics;
 using System.Reflection;
-using System.Threading;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace EU.CqrXs.WinForm.SecureChat
 {

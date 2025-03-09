@@ -79,6 +79,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             {
                 lock (_lock)
                 {
+                    // _CqrXsServerKey = Constants.AUTHOR_EMAIL;
+
                     if (string.IsNullOrEmpty(_CqrXsServerKey) ||  DateTime.Now.Subtract(LastExternalTime).TotalSeconds >= 1800)
                     {
                         if (ExternalIpAddressV6 != null && ExternalIpAddressV6?.AddressFamily == AddressFamily.InterNetworkV6)

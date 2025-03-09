@@ -1,32 +1,22 @@
-﻿using Area23FwCore = Area23.At.Framework.Core;
-using Area23.At.Framework.Core.CqrXs;
+﻿using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
-using Area23.At.Framework.Core.Net;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Net;
 using Area23.At.Framework.Core.Net.IpSocket;
+using Area23.At.Framework.Core.Net.NameService;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
-using EU.CqrXs.WinForm.SecureChat.Entities;
-using EU.CqrXs.WinForm.SecureChat.Properties;
-using System;
-using System.Configuration;
-using System.Net;
-using System.Reflection;
-using System.Text;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using EU.CqrXs.WinForm.SecureChat.Util;
-using Area23.At.Framework.Core.Net.NameService;
-using System.Media;
-using System.Windows.Controls.Primitives;
-using EU.CqrXs.WinForm.SecureChat.Controls.UserControls;
-using System.Net.Sockets;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
-using Org.BouncyCastle.Utilities;
+using EU.CqrXs.WinForm.SecureChat.Controls.UserControls;
+using EU.CqrXs.WinForm.SecureChat.Entities;
+using EU.CqrXs.WinForm.SecureChat.Util;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms

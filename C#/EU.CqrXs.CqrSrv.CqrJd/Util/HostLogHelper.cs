@@ -2,6 +2,7 @@
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using System;
+using System.Net.Http;
 using System.Web;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
@@ -17,10 +18,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             {
                 string userHost = Constants.UNKNOWN;
                 try
-                {
-                    userHost = (!string.IsNullOrEmpty(HttpContext.Current.Request.UserHostName)) ?
-                        HttpContext.Current.Request.UserHostName :
-                        (HttpContext.Current.Request.UserHostAddress ?? "unknown");
+                {                    
+                    if (HttpContext.Current != null && HttpContext.Current.Request != null && HttpContext.Current.Request.UserHostAddress != null)
+                    {
+                        userHost = HttpContext.Current.Request.UserHostAddress;                        
+                    }                    
                 }
                 catch (Exception ex)
                 {

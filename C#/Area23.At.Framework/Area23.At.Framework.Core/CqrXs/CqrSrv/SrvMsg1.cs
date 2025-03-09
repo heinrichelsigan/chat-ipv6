@@ -1,21 +1,13 @@
-﻿using Area23.At.Framework.Core.Crypt;
+﻿using Area23.At.Framework.Core.CqrXs.CqrJd;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System.Configuration;
 using System.Net;
-using System.Security.Policy;
-using Area23.At.Framework.Core.Crypt.Hash;
-using System.Runtime.Serialization;
-using System.Windows.Interop;
-using static QRCoder.Core.PayloadGenerator;
-using System.Text;
-using Newtonsoft.Json.Linq;
-using EU.CqrXs.CqrSrv.CqrJd;
+
 
 namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 {

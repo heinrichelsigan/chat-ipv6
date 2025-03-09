@@ -8,7 +8,7 @@
       "System.Collections.Generic.Dictionary`2"
     ],
     "namespaceMappings": [
-      "*, EU.CqrXs.CqrSrv.CqrJd"
+      "*, Area23.At.Framework.Core.CqrXs.CqrJd"
     ],
     "references": [
       "BouncyCastle.Cryptography, {BouncyCastle.Cryptography, 2.5.1}",

@@ -9,12 +9,12 @@
 
 using Area23.At.Framework.Core.Static;
 
-namespace EU.CqrXs.CqrSrv.CqrJd
+namespace Area23.At.Framework.Core.CqrXs.CqrJd
 {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace="https://cqrjd.eu/cqrsrv/cqrjd/", ConfigurationName="EU.CqrXs.CqrSrv.CqrJd.CqrServiceSoap")]
+    [System.ServiceModel.ServiceContractAttribute(Namespace="https://cqrjd.eu/cqrsrv/cqrjd/", ConfigurationName="Area23.At.Framework.Core.CqrXs.CqrJd.CqrServiceSoap")]
     public interface CqrServiceSoap
     {
         
@@ -76,13 +76,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    public interface CqrServiceSoapChannel : EU.CqrXs.CqrSrv.CqrJd.CqrServiceSoap, System.ServiceModel.IClientChannel
+    public interface CqrServiceSoapChannel : Area23.At.Framework.Core.CqrXs.CqrJd.CqrServiceSoap, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    public partial class CqrServiceSoapClient : System.ServiceModel.ClientBase<EU.CqrXs.CqrSrv.CqrJd.CqrServiceSoap>, EU.CqrXs.CqrSrv.CqrJd.CqrServiceSoap
+    public partial class CqrServiceSoapClient : System.ServiceModel.ClientBase<Area23.At.Framework.Core.CqrXs.CqrJd.CqrServiceSoap>, Area23.At.Framework.Core.CqrXs.CqrJd.CqrServiceSoap
     {
         
         /// <summary>
@@ -143,7 +143,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             return base.Channel.ChatRoomPoll(cryptMsg);
         }
         
-        public System.Threading.Tasks.Task<string> ChatRoomPollAsync(string cryptMsg) 
+        public System.Threading.Tasks.Task<string> ChatRoomPollAsync(string cryptMsg)
         {
             return base.Channel.ChatRoomPollAsync(cryptMsg);
         }
@@ -202,8 +202,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         {
             return System.Threading.Tasks.Task.Factory.FromAsync(((System.ServiceModel.ICommunicationObject)(this)).BeginOpen(null, null), new System.Action<System.IAsyncResult>(((System.ServiceModel.ICommunicationObject)(this)).EndOpen));
         }
-
-
+  
         private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(EndpointConfiguration endpointConfiguration)
         {
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap))
@@ -224,7 +223,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 #endif
                 return result;
             }
-            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12) || endpointConfiguration == EndpointConfiguration.CqrServiceSoapv4  ||
+            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12) || endpointConfiguration == EndpointConfiguration.CqrServiceSoapv4 ||
                 endpointConfiguration == EndpointConfiguration.CqrServiceSoapv6)
             {
                 System.ServiceModel.Channels.CustomBinding result = new System.ServiceModel.Channels.CustomBinding();
