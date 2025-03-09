@@ -1,5 +1,7 @@
 ﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
+using System.Windows.Forms;
+using System.Windows.Input;
 
 
 namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
@@ -159,10 +161,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 case SymmCipherEnum.Tea:
                 case SymmCipherEnum.XTea:
                 default:
-                    CryptParamsPrefered cpParams = CryptHelper.GetPreferedCryptParams(cipherAlgo);
-                    cpParams.Key = secretKey;
-                    cpParams.Hash = hashIv;
-
+                    CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hashIv);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
                     encryptBytes = cryptBounceCastle.Encrypt(inBytes);
                     break;
@@ -236,9 +235,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 case SymmCipherEnum.Tea:
                 case SymmCipherEnum.XTea:
                 default:
-                    CryptParamsPrefered cpParams = CryptHelper.GetPreferedCryptParams(cipherAlgo, fishOnAesEngine);
-                    cpParams.Key = secretKey;
-                    cpParams.Hash = hashIv;
+                    CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hashIv, fishOnAesEngine);
 
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
                     decryptBytes = cryptBounceCastle.Decrypt(cipherBytes);

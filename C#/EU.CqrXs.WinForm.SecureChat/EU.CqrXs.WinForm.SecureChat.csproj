@@ -9,7 +9,8 @@
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <StartupObject>EU.CqrXs.WinForm.SecureChat.Program</StartupObject>
     <RootNamespace>EU.CqrXs.WinForm.SecureChat</RootNamespace>
-    <AssemblyVersion>2.25.305</AssemblyVersion>
+	<ApplicationIcon>RemoteConnectedIcon.ico</ApplicationIcon>
+	<AssemblyVersion>2.25.305</AssemblyVersion>
     <FileVersion>2.25.305</FileVersion>
     <ErrorReport>send</ErrorReport>
     <Title>SecureChat</Title>
@@ -17,18 +18,18 @@
 	<IncludeSymbols>true</IncludeSymbols>
 	<PlatformTarget>AnyCPU</PlatformTarget>
 	<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>	
-	<PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
-	<IsTrimmable>true</IsTrimmable>
-	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
 	<AnalysisLevel>latest</AnalysisLevel>
 	<EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
 	<SignAssembly>False</SignAssembly>
 	<Company>Heinrich Georg Elsigan</Company>
 	<Copyright>Copyleft © 2000-2040</Copyright>
 	<GenerateDocumentationFile>False</GenerateDocumentationFile>
-	<DocumentationFile>S:\chat-ipv6\C#\EU.CqrXs.WinForm.SecureChat\Properties\text\CqrJd.xml</DocumentationFile>
-	<UseWPF>False</UseWPF>	  	
+	<DocumentationFile>S:\chat-ipv6\C#\EU.CqrXs.WinForm.SecureChat\Properties\text\CqrJd.xml</DocumentationFile>	
+	<UseWPF>False</UseWPF>	  		
+	<IsTrimmable>true</IsTrimmable>
+	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
 	<!-- PublishTrimmed>True</PublishTrimmed -->
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -317,8 +318,8 @@
   </ItemGroup>
 
 
-	<!-- feature switches for trimming 
-	
+	<!-- feature switches for trimming  -->
+	<!-- 
 	<ItemGroup>
 		<Using Include="System.Drawing" />
 	</ItemGroup>
@@ -335,6 +336,6 @@
 		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Primitives.TypeConverterHelper.UseComponentModelRegisteredTypes" Value="true" Trim="true" />
 		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Control.UseComponentModelRegisteredTypes" Value="true" Trim="true" />
 	</ItemGroup>
-	
-    -->
+	-->
+   
 </Project>

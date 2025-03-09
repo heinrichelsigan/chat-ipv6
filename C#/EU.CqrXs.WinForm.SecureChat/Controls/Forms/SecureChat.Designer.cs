@@ -898,6 +898,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             Controls.Add(StripStatus);
             Controls.Add(StripMenu);
             Controls.Add(PanelCenter);
+            Icon = Properties.fr.Resources.SatIcon;
             Font = new Font("Lucida Sans Unicode", 10F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenuStrip = StripMenu;

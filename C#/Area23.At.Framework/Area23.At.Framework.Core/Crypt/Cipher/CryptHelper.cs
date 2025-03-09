@@ -56,6 +56,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// </summary>
         /// <param name="symmCipherAlgo">symmetric prefered alogorithm to chipher</param>
         /// <returns><see cref="IBlockCipher"/></returns>
+        [Obsolete("Please use directly ctor of CryptParamsPrefered to get IBlockCipher from your prefered crypt parameters", false)]
         public static IBlockCipher GetPreferedBlockCipher(SymmCipherEnum symmCipherAlgo, bool fishOnAesEngine = true)
         {
             CryptParamsPrefered cryptParamsPrefered = new CryptParamsPrefered(symmCipherAlgo, fishOnAesEngine);
@@ -69,6 +70,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// </summary>
         /// <param name="symmCipherAlgo">alogorithm to chipher</param>
         /// <returns>CryptParamsPrefered</returns>
+        [Obsolete("Please use directly ctor of CryptParamsPrefered to get your prefered crypt parameters", false)]
         public static CryptParamsPrefered GetPreferedCryptParams(SymmCipherEnum symmCipherAlgo, bool fishOnAesEngine = false)
         {
             return new CryptParamsPrefered(symmCipherAlgo, fishOnAesEngine);
