@@ -61,7 +61,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.BlowFish:
                 case CipherEnum.Fish2:
                 case CipherEnum.Fish3:
-                case CipherEnum.ThreeFish1024:
+                case CipherEnum.ThreeFish256:
                 case CipherEnum.Camellia:
                 case CipherEnum.CamelliaLight:
                 case CipherEnum.Cast5:
@@ -137,7 +137,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.BlowFish:
                 case CipherEnum.Fish2:
                 case CipherEnum.Fish3:
-                case CipherEnum.ThreeFish1024:
+                case CipherEnum.ThreeFish256:
 
                 case CipherEnum.Camellia:
                 case CipherEnum.CamelliaLight:
