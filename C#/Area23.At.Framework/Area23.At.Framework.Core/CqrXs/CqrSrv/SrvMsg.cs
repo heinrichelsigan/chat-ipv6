@@ -438,8 +438,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             string cryptSrv = CqrSrvMsg<T>(fullServerMsg, MsgKind.Server);
             string cryptPatner = CqrSrvMsg<TC>(fullClientMsg, MsgKind.Client);
             
-            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
-            string response = client.ChatRoomPushMessage(cryptSrv, cryptPatner);
+            CqrService webService = new CqrService();
+            string response = webService.ChatRoomPushMessage(cryptSrv, cryptPatner);
             FullSrvMsg<string> rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
 
             return rfmsg;
