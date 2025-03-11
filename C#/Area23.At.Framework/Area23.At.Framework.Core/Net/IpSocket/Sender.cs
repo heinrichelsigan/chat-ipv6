@@ -35,11 +35,17 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 byte[] data = EnDeCodeHelper.GetBytes(msg);
                 // byte[] data = Encoding.UTF8.GetBytes(msg);
                 tcpClient.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
+                tcpClient.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-                tcpClient.Connect(serverIp, serverPort);
+                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                // tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontFragment, true);
+                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
+                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                 tcpClient.Client.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
+                tcpClient.Connect(serverIp, serverPort);
+                
                 tcpClient.Client.NoDelay = true;
-                tcpClient.Client.SendTimeout = 10000;
+                tcpClient.Client.SendTimeout = 16000;
                 tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
 
                 // NetworkStream netStream = tcpClient.GetStream();

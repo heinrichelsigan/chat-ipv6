@@ -149,9 +149,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             MsgEnum msgEnum = MsgEnum.RawWithHashAtEnd;
             if (decrypted.IsValidJson())
                 msgEnum = MsgEnum.Json;
-            if (decrypted.IsValidXml())
+           if (decrypted.IsValidXml())
                 msgEnum = MsgEnum.Xml;
-
+                
             MsgContent msgContent = new MsgContent(decrypted, msgEnum);
             string hashVerification = msgContent.Hash;
             bool verified = VerifyHash(hashVerification, symmPipe.PipeString);
