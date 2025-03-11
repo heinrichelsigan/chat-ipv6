@@ -295,6 +295,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         {
             List<object> oList = new List<object>();
             oList.Add(ContactId);
+            oList.Add(Cuid);
             oList.Add(Name);
             oList.Add(Email);
             oList.Add(Mobile);
