@@ -38,6 +38,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         protected internal static IPAddress? clientIpAddress;
         protected internal static IPAddress? partnerIpAddress;
         protected internal static Listener? ipSockListener;
+        // protected internal static SockTcpListener? sockTcpListener;
         internal delegate void ClientSocket_DataReceived(object sender, Area23EventArgs<ReceiveData> eventReceived);
         internal ClientSocket_DataReceived clientSocket_DataReceived;
         internal EventHandler<Area23EventArgs<ReceiveData>> receivedDataEventHandler;
@@ -1152,18 +1153,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         return;
                     }
-                    string friendMsg = string.Empty;
-                    try
-                    {
-                        CqrFile cqf = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
-                        SLog.Log("CqrFile is true " + cqf.CqrFileName + "\n");
-                    }
-                    catch (Exception exif)
-                    {
-                        SLog.Log("CqrFile failed " + exif.Message + "\n" + exif + "\n");
-                    }
-                    ;
-
+                    string friendMsg = string.Empty;                    
                     if (msgContent.IsCqrFile())
                     {
                         CqrFile? cqrFile = msgContent.ToCqrFile();

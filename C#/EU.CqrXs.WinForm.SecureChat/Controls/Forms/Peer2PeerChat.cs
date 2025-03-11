@@ -584,17 +584,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         return;
                     }
                     string friendMsg = string.Empty;
-                    try
-                    {
-                        CqrFile cqf = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
-                        SLog.Log("CqrFile is true " + cqf.CqrFileName + "\n");
-                    }
-                    catch (Exception exif)
-                    {
-                        SLog.Log("CqrFile failed " + exif.Message + "\n" + exif + "\n");
-                    }
-                    ;
-                    
+                   
                     if (msgContent.IsCqrFile())
                     {
                         CqrFile? cqrFile = msgContent.ToCqrFile();

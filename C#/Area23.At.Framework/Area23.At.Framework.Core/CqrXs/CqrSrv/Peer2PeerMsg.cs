@@ -3,7 +3,9 @@ using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
+using System.Formats.Tar;
 using System.Net;
 
 
@@ -144,7 +146,16 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         public string Send_CqrPeerMsg(string msg, IPAddress peerIp, int serverPort = 7777, EncodingType encodingType = EncodingType.Base64)
         {
             string encrypted = CqrPeerMsg(msg, encodingType);
+            Area23Log.LogStatic($"msg.Lentgh = {msg.Length}, encrypted.Length = {encrypted.Length}.");
             string response = Sender.Send(peerIp, encrypted, Constants.CHAT_PORT);
+            return response;
+        }
+
+        public string Send_CqrPeerMsg_SockTcpSender(string msg, IPAddress peerIp, int serverPort = 7777, EncodingType encodingType = EncodingType.Base64)
+        {
+            string encrypted = CqrPeerMsg(msg, encodingType);
+            Area23Log.LogStatic($"msg.Lentgh = {msg.Length}, encrypted.Length = {encrypted.Length}.");
+            string response = SockTcpSender.Send(peerIp, encrypted, Constants.CHAT_PORT);
             return response;
         }
 
@@ -164,7 +175,18 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             cqrFile._hash = PipeString;
             cqrFile.MsgType = msgType;
             string encrypted = CqrFile(cqrFile, msgType, encType);
+            Area23Log.LogStatic($"FileName: {cqrFile.CqrFileName}, File.Lentgh = {cqrFile.Data.Length}, encrypted.Length = {encrypted.Length}.");
             string response = Sender.Send(peerIp, encrypted, Constants.CHAT_PORT);
+            return response;
+        }
+
+        public string Send_CqrFile_SockTcpSender(CqrFile cqrFile, IPAddress peerIp, int serverPort = 7777, MsgEnum msgType = MsgEnum.Json, EncodingType encType = EncodingType.Base64)
+        {
+            cqrFile._hash = PipeString;
+            cqrFile.MsgType = msgType;
+            string encrypted = CqrFile(cqrFile, msgType, encType);
+            Area23Log.LogStatic($"FileName: {cqrFile.CqrFileName}, File.Lentgh = {cqrFile.Data.Length}, encrypted.Length = {encrypted.Length}.");
+            string response = SockTcpSender.Send(peerIp, encrypted, Constants.CHAT_PORT);
             return response;
         }
 

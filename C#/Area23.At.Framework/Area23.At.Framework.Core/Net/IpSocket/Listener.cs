@@ -16,6 +16,8 @@ namespace Area23.At.Framework.Core.Net.IpSocket
 
     /// <summary>
     /// Net.IpSocket.Listener creates a server socket and listen and accept multi threaded connections
+    /// When using <see cref="SockTcpListener"/> as server, you must use <see cref="SockTcpSender"/> as client,
+    /// when using <see cref="Listener"/> as server, you should use <see cref="Sender"/> as client.
     /// </summary>
     public class Listener : IDisposable
     {
@@ -77,11 +79,11 @@ namespace Area23.At.Framework.Core.Net.IpSocket
             
             ServerSocket = new Socket(ServerAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             ServerSocket.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
-            ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+            // ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
             ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
             ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
-            ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
-            ServerSocket.NoDelay = true;
+            // ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
+            // ServerSocket.NoDelay = true;
             ServerSocket.Bind(ServerEndPoint);
             ServerSocket.Listen(Constants.BACKLOG);
             ListenerName = ServerEndPoint.ToString();
@@ -150,14 +152,14 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     ClientSocket.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                     ClientSocket.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                     ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-                    ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                    // ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                     ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                     ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                     SocketFlags flags = SocketFlags.None;
                     SocketError errorCode;
                     ClientSocket.ReceiveTimeout = 16000;
-                    ClientSocket.NoDelay = true;
-                    //long rsize = -1;
+                    // ClientSocket.NoDelay = true;
+                    //int rsize = -1;
                     //using (NetworkStream netStream = new NetworkStream(ClientSocket))
                     //{
                     //    using (StreamReader sr = new StreamReader(netStream))
@@ -176,23 +178,24 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     // int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_BYTE_BUFFEER, flags, out errorCode);
                     BufferedData = new byte[rsize];
 
-                    Array.Copy(buffer, 0, BufferedData, 0, (int)rsize);
+                    Array.Copy(buffer, 0, BufferedData, 0, rsize);
 
                     // ReceiveData receiveData = new ReceiveData(buf.ToArray(), (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
                     ReceiveData receiveData = new ReceiveData(buffer, (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
 
-                    // byte[] sendData = new byte[8];
-                    // sendData = Encoding.Default.GetBytes("ACK\r\n\0");
-                    // ClientSocket.Send(sendData, SocketFlags.None); 
-                   
+                    byte[] sendData = new byte[32];
+                    sendData = Encoding.Default.GetBytes(rsize.ToString());
+                    ClientSocket.Send(sendData, SocketFlags.None); 
+
+                    ClientSocket.Close();
+
                     if (EventHandlerClientRequest != null)
                     {
                         EventHandler<Area23EventArgs<ReceiveData>> handler = EventHandlerClientRequest;
                         Area23EventArgs<ReceiveData> area23EventArgs = new Area23EventArgs<ReceiveData>(receiveData);
                         handler?.Invoke(this, area23EventArgs);
                     }
-
-                    ClientSocket.Close();
+                    
                 }
             }
         }

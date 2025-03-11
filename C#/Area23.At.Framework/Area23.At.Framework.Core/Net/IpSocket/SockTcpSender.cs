@@ -13,11 +13,11 @@ namespace Area23.At.Framework.Core.Net.IpSocket
 {
 
     /// <summary>
-    /// IpSocket.Sender encapsulation of tcp ipv46 sender 
+    /// IpSocket.SockTcpSender encapsulation of tcp ipv46 sender 
     /// When using <see cref="SockTcpListener"/> as server, you must use <see cref="SockTcpSender"/> as client,
     /// when using <see cref="Listener"/> as server, you should use <see cref="Sender"/> as client.
     /// </summary>
-    public static class Sender
+    public static class SockTcpSender
     {
 
         /// <summary>
@@ -37,39 +37,33 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 byte[] data = EnDeCodeHelper.GetBytes(msg);
                 // byte[] data = Encoding.UTF8.GetBytes(msg);
                 tcpClient.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
-                tcpClient.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
-                // tcpClient.NoDelay = true;
-                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-                // tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
-                // tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontFragment, true);
-                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
-                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
+                //tcpClient.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
+                //tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);           
+                //tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
+                //tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                 tcpClient.Client.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 tcpClient.Connect(serverIp, serverPort);
-                
-                // tcpClient.Client.NoDelay = true;
                 tcpClient.Client.SendTimeout = 16000;
-                int ssize = tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
+                // int ssize = tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
                 // if (ssize < msg.Length) ;
                 byte[] outbuf = new byte[8192];
-                //using (NetworkStream netStream = tcpClient.GetStream())
-                //{
-                //    using (StreamWriter sw = new StreamWriter(netStream))
-                //    {
-                //        sw.Write(msg);
-                //        sw.Flush();
-                //    }
-                //    using (StreamReader sr = new StreamReader(netStream))
-                //    {                        
-                //        sr.Read(charbuf, 0, charbuf.Length);
-                //    }
-                //}
+                using (NetworkStream netStream = tcpClient.GetStream())
+                {
+                    using (StreamWriter sw = new StreamWriter(netStream))
+                    {
+                        sw.Write(msg);
+                        sw.Flush();
+                    }
+                    using (StreamReader sr = new StreamReader(netStream))
+                    {                        
+                        sr.BaseStream.Read(outbuf, 0, outbuf.Length);
+                    }
+                }
                 
-                int read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
                 string rs = EnDeCodeHelper.GetString(outbuf);
                 if (Int32.TryParse(rs, out int rsize))
                 {
-                    Area23Log.LogStatic($"msg.Length = {msg.Length}, ssize = {ssize}, rsize = {rsize}\n");
+                    Area23Log.LogStatic($"msg.Length = {msg.Length}, rsize = {rsize}\n");
                 }
                 // sr.BaseStream.Read(outbuf, 0, 8192);
 
