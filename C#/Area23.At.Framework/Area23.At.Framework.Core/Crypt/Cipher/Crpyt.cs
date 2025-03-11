@@ -12,7 +12,6 @@ using Area23.At.Framework.Core.Static;
 namespace Area23.At.Framework.Core.Crypt.Cipher
 {
 
-
     /// <summary>
     /// Basic functionality for Crypt, <see cref="Area23.At.Framework.Library.Core.Cipher.Symm.Crypt"/>
     /// </summary>
@@ -39,10 +38,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     RC564.RC564GenWithKey(secretKey, keyIv, true);
                     encryptBytes = RC564.Encrypt(inBytes);
                     break;
-                case CipherEnum.Rijndael:
-                    Rijndael.RijndaelGenWithNewKey(secretKey, keyIv, true);
-                    encryptBytes = Rijndael.Encrypt(inBytes);
-                    break;
                 case CipherEnum.Rsa:
                     var keyPair = Asymmetric.Rsa.RsaGenWithKey(Constants.RSA_PUB, Constants.RSA_PRV);
                     string privKey = keyPair.Private.ToString();
@@ -53,34 +48,42 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     encryptBytes = Serpent.Encrypt(inBytes);
                     break;
                 case CipherEnum.ZenMatrix:
-                    encryptBytes = (new ZenMatrix(secretKey, keyIv, false)).Encrypt(inBytes);
+                    encryptBytes = (new ZenMatrix(secretKey, keyIv, true)).Encrypt(inBytes);
                     break;
                 case CipherEnum.ZenMatrix2:
                     encryptBytes = (new ZenMatrix2(secretKey, keyIv, false)).Encrypt(inBytes);
                     break;
                 case CipherEnum.Aes:
+                case CipherEnum.Aria:
+                case CipherEnum.AesLight:
+                case CipherEnum.Rijndael:
+
                 case CipherEnum.BlowFish:
                 case CipherEnum.Fish2:
                 case CipherEnum.Fish3:
+                case CipherEnum.ThreeFish1024:
                 case CipherEnum.Camellia:
+                case CipherEnum.CamelliaLight:
                 case CipherEnum.Cast5:
                 case CipherEnum.Cast6:
                 case CipherEnum.Des:
                 case CipherEnum.Des3:
+                case CipherEnum.Dstu7624:
+
                 case CipherEnum.Gost28147:
                 case CipherEnum.Idea:
                 case CipherEnum.Noekeon:
                 case CipherEnum.RC2:
+                case CipherEnum.RC532:
                 case CipherEnum.RC6:
                 case CipherEnum.Seed:
+                case CipherEnum.SM4:
                 case CipherEnum.SkipJack:
                 case CipherEnum.Tnepres:
                 case CipherEnum.Tea:
                 case CipherEnum.XTea:
                 default:
-                    CryptParams cparams = new CryptParams(cipherAlgo, secretKey, keyIv); 
-                    // CryptHelper.GetCryptParams(cipherAlgo);
-
+                    CryptParams cparams = new CryptParams(cipherAlgo, secretKey, keyIv);
                     Symm.CryptBounceCastle cryptBounceCastle = new Symm.CryptBounceCastle(cparams, true);
                     encryptBytes = cryptBounceCastle.Encrypt(inBytes);
 
@@ -111,10 +114,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     RC564.RC564GenWithKey(secretKey, keyIv, true);
                     decryptBytes = RC564.Decrypt(cipherBytes);
                     break;
-                case CipherEnum.Rijndael:
-                    Rijndael.RijndaelGenWithNewKey(secretKey, keyIv, true);
-                    decryptBytes = Rijndael.Decrypt(cipherBytes);
-                    break;
                 case CipherEnum.Rsa:
                     AsymmetricCipherKeyPair keyPair = Asymmetric.Rsa.RsaGenWithKey(Constants.RSA_PUB, Constants.RSA_PRV);
                     string privKey = keyPair.Private.ToString();
@@ -125,32 +124,43 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     decryptBytes = Serpent.Decrypt(cipherBytes);
                     break;
                 case CipherEnum.ZenMatrix:
-                    decryptBytes = (new ZenMatrix(secretKey, keyIv, false)).Decrypt(cipherBytes);
+                    decryptBytes = (new ZenMatrix(secretKey, keyIv, true)).Decrypt(cipherBytes);
                     break;
                 case CipherEnum.ZenMatrix2:
                     decryptBytes = (new ZenMatrix2(secretKey, keyIv, false)).Decrypt(cipherBytes);
                     break;
                 case CipherEnum.Aes:
+                case CipherEnum.Rijndael:
+                case CipherEnum.AesLight:
+                case CipherEnum.Aria:
+
                 case CipherEnum.BlowFish:
                 case CipherEnum.Fish2:
                 case CipherEnum.Fish3:
+                case CipherEnum.ThreeFish1024:
+
                 case CipherEnum.Camellia:
+                case CipherEnum.CamelliaLight:
                 case CipherEnum.Cast5:
                 case CipherEnum.Cast6:
                 case CipherEnum.Des:
                 case CipherEnum.Des3:
+                case CipherEnum.Dstu7624:
+
                 case CipherEnum.Gost28147:
                 case CipherEnum.Idea:
                 case CipherEnum.Noekeon:
                 case CipherEnum.RC2:
+                case CipherEnum.RC532:
                 case CipherEnum.RC6:
                 case CipherEnum.Seed:
+                case CipherEnum.SM4:
                 case CipherEnum.SkipJack:
                 case CipherEnum.Tnepres:
                 case CipherEnum.Tea:
                 case CipherEnum.XTea:
                 default:
-                    CryptParams cparams = new CryptParams(cipherAlgo, secretKey, keyIv);                    
+                    CryptParams cparams = new CryptParams(cipherAlgo, secretKey, keyIv);
                     Symm.CryptBounceCastle cryptBounceCastle = new Symm.CryptBounceCastle(cparams, true);
                     decryptBytes = cryptBounceCastle.Decrypt(cipherBytes);
 

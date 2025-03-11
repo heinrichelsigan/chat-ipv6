@@ -42,6 +42,10 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 
         #region ctor
 
+        /// <summary>
+        /// SymmCipherPipe constructor with an array of <see cref="SymmCipherEnum[]"/> as inpipe
+        /// </summary>
+        /// <param name="symmCipherEnums">array of <see cref="SymmCipherEnum[]"/> as inpipe</param>
         public SymmCipherPipe(SymmCipherEnum[] symmCipherEnums)
         {
             inPipe = new List<SymmCipherEnum>(symmCipherEnums).ToArray();
@@ -98,6 +102,33 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 
         }
 
+
+        /// <summary>
+        /// SymmCipherPipe constructor with an array of <see cref="string[]"/> as inpipe
+        /// </summary>
+        /// <param name="symmCipherAlgos">array of <see cref="string[]"/> as inpipe</param>
+        public SymmCipherPipe(string[] symmCipherAlgos)
+        {
+            List<SymmCipherEnum> symmCipherEnums = new List<SymmCipherEnum>();
+            foreach (string algo in symmCipherAlgos)
+            {
+                if (!string.IsNullOrEmpty(algo))
+                {
+                    SymmCipherEnum cipherAlgo = SymmCipherEnum.Aes;
+                    if (!Enum.TryParse<SymmCipherEnum>(algo, out cipherAlgo))
+                        cipherAlgo = SymmCipherEnum.Aes;
+
+                    symmCipherEnums.Add(cipherAlgo);
+                }
+            }
+
+            inPipe = new List<SymmCipherEnum>(symmCipherEnums).ToArray();
+            outPipe = symmCipherEnums.Reverse<SymmCipherEnum>().ToArray();
+            foreach (SymmCipherEnum symmCipher in inPipe)
+                pipeString += symmCipher.GetSymmCipherChar();
+        }
+
+
         #endregion ctor
 
         #region static members EncryptBytesFast DecryptBytesFast
@@ -121,27 +152,21 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 
             switch (cipherAlgo)
             {
-                //case SymmCipherEnum.Rijndael:
-                //    Rijndael.RijndaelGenWithNewKey(secretKey, hashIv, true);
-                //    encryptBytes = Rijndael.Encrypt(inBytes);
-                //    break;
                 case SymmCipherEnum.Serpent:
                     Serpent.SerpentGenWithKey(secretKey, hashIv, true);
                     encryptBytes = Serpent.Encrypt(inBytes);
                     break;
                 case SymmCipherEnum.ZenMatrix:
                     encryptBytes = (new ZenMatrix(secretKey, hashIv, false)).Encrypt(inBytes);
-                    break;                
+                    break;
                 case SymmCipherEnum.Aes:
-                    //Aes.AesGenWithKeyHash(secretKey, hashIv, true);
-                    //encryptBytes = Aes.Encrypt(inBytes);
-                    //break;
                 case SymmCipherEnum.BlowFish:
                 case SymmCipherEnum.Fish2:
                 case SymmCipherEnum.Fish3:
                 case SymmCipherEnum.Camellia:
-                case SymmCipherEnum.RC532:
                 case SymmCipherEnum.Cast6:
+                case SymmCipherEnum.Des3:
+                case SymmCipherEnum.RC532:               
                 case SymmCipherEnum.Gost28147:
                 case SymmCipherEnum.Idea:
                 case SymmCipherEnum.Seed:
@@ -152,7 +177,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                     CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hashIv);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
                     encryptBytes = cryptBounceCastle.Encrypt(inBytes);
-                    break;                                 
+                    break;
             }
 
             return encryptBytes;
@@ -177,11 +202,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             byte[] decryptBytes = cipherBytes;
 
             switch (cipherAlgo)
-            {                
-                //case SymmCipherEnum.Rijndael:
-                    // sameKey = Rijndael.RijndaelGenWithNewKey(secretKey, hashIv, true);
-                    // decryptBytes = Rijndael.Decrypt(cipherBytes);
-                    // break;
+            {
                 case SymmCipherEnum.Serpent:
                     sameKey = Serpent.SerpentGenWithKey(secretKey, hashIv, true);
                     decryptBytes = Serpent.Decrypt(cipherBytes);
@@ -190,15 +211,12 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                     decryptBytes = (new ZenMatrix(secretKey, hashIv, false)).Decrypt(cipherBytes);
                     break;
                 case SymmCipherEnum.Aes:
-                    // sameKey = Aes.AesGenWithKeyHash(secretKey, hashIv, true);
-                    // decryptBytes = Aes.Decrypt(cipherBytes);
-                    // break;
                 case SymmCipherEnum.BlowFish:
                 case SymmCipherEnum.Fish2:
                 case SymmCipherEnum.Fish3:
                 case SymmCipherEnum.Camellia:
                 case SymmCipherEnum.Cast6:
-                case SymmCipherEnum.Des3:                                
+                case SymmCipherEnum.Des3:
                 case SymmCipherEnum.Gost28147:
                 case SymmCipherEnum.Idea:
                 case SymmCipherEnum.RC532:
@@ -210,7 +228,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                     CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hashIv, fishOnAesEngine);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
                     decryptBytes = cryptBounceCastle.Decrypt(cipherBytes);
-                    
+
                     break;
 
             }

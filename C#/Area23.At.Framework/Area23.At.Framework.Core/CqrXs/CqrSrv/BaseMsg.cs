@@ -24,7 +24,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         #region ctor
 
-
         /// <summary>
         /// CqrBaseMsg constructor with srvKey
         /// </summary>
@@ -53,7 +52,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// </summary>
         /// <param name="msg">plain text string</param>
         /// <param name="encType"><see cref="EncodingType"/></param>
-        /// <returns>encrypted msg via <see cref="SymmCipherPipe"/></returns>
+        /// <returns>encrypted msg via <see cref="CipherPipe"/></returns>
         public virtual string CqrBaseMsg(string msg, EncodingType encType = EncodingType.Base64)
         {
             MsgContent msc;
@@ -76,7 +75,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// </summary>
         /// <param name="msc">plain MsgContent</param>
         /// <param name="encType"><see cref="EncodingType"/></param>
-        /// <returns>encrypted msg via <see cref="SymmCipherPipe"/></returns>
+        /// <returns>encrypted msg via <see cref="CipherPipe"/></returns>
         public virtual string CqrBaseMsg(MsgContent msc, EncodingType encType = EncodingType.Base64)
         {
             byte[] msgBytes = new byte[msc.RawMessage.Length];
@@ -124,7 +123,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
             return CqrMessage;
         }
-
 
         #endregion CqrBaseMsg encrypts a string or MsgContent msc
 
@@ -183,7 +181,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             hash = !string.IsNullOrEmpty(msgContent._hash) ? msgContent._hash : hash;
             if (msgContent.IsCqrFile())
             {
-                CqrFile? cqFile = msgContent.ToCqrFile();
+                CqrFile cqFile = msgContent.ToCqrFile();
                 hash = cqFile._hash;
                 // CqrFile? cfile = (CqrFile)ICqrMessagable.IsTo<CqrFile>((CqrFile)msgContent);
                 // hash = cfile._hash;
@@ -193,7 +191,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         }
 
         /// <summary>
-        /// VerifyHash verifies hash against <see cref="SymmCipherPipe.PipeString"/>
+        /// VerifyHash verifies hash against <see cref="CipherPipe.PipeString"/>
         /// </summary>
         /// <param name="hash">verification hash parsed out of msg</param>
         /// <returns>true, if msg could be verified, otherwise false</returns>
@@ -212,8 +210,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         #endregion verify hash
 
-
     }
-
 
 }

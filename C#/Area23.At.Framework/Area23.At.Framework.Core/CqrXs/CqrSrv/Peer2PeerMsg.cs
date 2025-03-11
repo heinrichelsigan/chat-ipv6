@@ -29,23 +29,17 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// </summary>
         /// <param name="msg">plain text string</param>
         /// <param name="encType"><see cref="EncodingType"/></param>
-        /// <returns>encrypted msg via <see cref="SymmCipherPipe"/></returns>
+        /// <returns>encrypted msg via <see cref="CipherPipe"/></returns>
         public string CqrPeerMsg(string msg, EncodingType encType = EncodingType.Base64)
         {
             return CqrBaseMsg(msg, encType);
         }
 
-
-        /// <summary>
-        /// CqrPeerMsg encrypts a <see cref="MsgContent"/> msg
-        /// </summary>
-        /// <param name="msc"><see cref="MsgContent"/> </param>
-        /// <param name="encType"><see cref="EncodingType"/></param>
-        /// <returns>encrypted msg via <see cref="SymmCipherPipe"/></returns>
         public virtual string CqrPeerMsg(MsgContent msc, EncodingType encType = EncodingType.Base64)
         {
             return CqrBaseMsg(msc, encType);
         }
+
 
 
         /// <summary>
@@ -56,7 +50,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="encType"></param>
         /// <returns></returns>
         public string CqrFile(CqrFile cqrFile, MsgEnum msgType = MsgEnum.Json, EncodingType encType = EncodingType.Base64)
-        {            
+        {
             if (msgType == MsgEnum.None || msgType == MsgEnum.RawWithHashAtEnd)
             {
                 cqrFile.RawMessage += "\n" + symmPipe.PipeString + "\0";
@@ -64,7 +58,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             else if (msgType == MsgEnum.Json)
             {
                 cqrFile.RawMessage = JsonConvert.SerializeObject(cqrFile);
-            }            
+            }
             else if (msgType == MsgEnum.Xml)
             {
                 cqrFile.RawMessage = Utils.SerializeToXml(cqrFile);
@@ -79,7 +73,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             return CqrMessage;
         }
 
-
         /// <summary>
         /// NCqrPeerMsg decryptes an secure encrypted msg 
         /// </summary>
@@ -90,7 +83,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// if server and client or both side use a different secret key 4 encryption</exception>
         public MsgContent NCqrPeerMsg(string cqrMessage, EncodingType encType = EncodingType.Base64)
         {
-            MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType);           
+            MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType);
             return msgContent;
         }
 
@@ -111,15 +104,15 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, key, hash) : cipherBytes;
             string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
             while (decrypted[decrypted.Length - 1] == '\0')
-                    decrypted = decrypted.Substring(0, decrypted.Length - 1);
+                decrypted = decrypted.Substring(0, decrypted.Length - 1);
 
             if (decrypted.IsValidJson())
                 msgType = MsgEnum.Json;
-            else if (decrypted.IsValidXml()) 
+            else if (decrypted.IsValidXml())
                 msgType = MsgEnum.Xml;
             else msgType = MsgEnum.RawWithHashAtEnd;
 
-            CqrFile cqrFile =  new CqrFile(decrypted, msgType);
+            CqrFile cqrFile = new CqrFile(decrypted, msgType);
             string hashVerification = cqrFile.Hash;
             bool verified = VerifyHash(hashVerification, symmPipe.PipeString);
             if (!verified)
@@ -129,7 +122,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                     string.Format("SymmCiphers [{0}] in crypt pipeline doesn't match serverside key !?$* byte length={1}.",
                         hashSymShow.Substring(0, 2) + "...." + hashSymShow.Substring(6), keyBytes.Length));
             }
-            
+
             return cqrFile;
         }
 
@@ -139,7 +132,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             return msgOutContent;
         }
 
-        #region send via socket
 
         /// <summary>
         /// Send_CqrPeerMsg, sends a plain-text message to peer 2 peer partner
@@ -157,6 +149,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         }
 
 
+
         /// <summary>
         /// Send_CqrFile, sends an attached file to peer 2 peer partner
         /// </summary>
@@ -170,12 +163,10 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         {
             cqrFile._hash = PipeString;
             cqrFile.MsgType = msgType;
-            string encrypted = CqrFile(cqrFile, msgType, encType);           
+            string encrypted = CqrFile(cqrFile, msgType, encType);
             string response = Sender.Send(peerIp, encrypted, Constants.CHAT_PORT);
             return response;
         }
-
-        #endregion send via socket
 
     }
 
