@@ -671,7 +671,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
             }
 
-            string unencrypted = this.RichTextBoxChat.Text; //.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
+            string unencrypted = GetRichTextBoxText(this.RichTextBoxChat);  // Text; //.Replace("\r\n", "\n").Replace("\n", " " + Environment.NewLine);
+            if (string.IsNullOrEmpty(unencrypted) || unencrypted.Trim(" \t\n\r\v".ToCharArray()).Length < 1)
+            {
+                SetStatusText(StripStatusLabel, "Empty message could not be send!");
+                return;
+            }
 
             if (this.PeerSessionTriState == PeerSession3State.Peer2Peer)
             {

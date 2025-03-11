@@ -22,6 +22,7 @@ using Org.BouncyCastle.Asn1.Pkcs;
 using System.Net.Sockets;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using System.ComponentModel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 // using static System.Net.Mime.MediaTypeNames;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
@@ -234,6 +235,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         #region TextBox&RichTextBox
 
+        internal delegate string GetRichTextBoxTextCallback(System.Windows.Forms.RichTextBox textBox);
+
         internal delegate void SetTextCallback(System.Windows.Forms.TextBox textBox, string text);
 
         internal delegate void AppendTextCallback(System.Windows.Forms.TextBox textBox, string text);
@@ -257,6 +260,34 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         internal delegate void DeselectAllRichTextCallback(System.Windows.Forms.RichTextBox richTextBox);
 
+
+        internal string GetRichTextBoxText(System.Windows.Forms.RichTextBox textBox)
+        {
+            string returnTxt = "";
+            if (textBox.InvokeRequired)
+            {
+                GetRichTextBoxTextCallback getRichTextBoxTextCallback =
+                    delegate (System.Windows.Forms.RichTextBox txtbox)
+                    {
+                        return (txtbox != null && txtbox.Text != null) ? txtbox.Text : "";
+                    };
+                try
+                {
+                    returnTxt = (string)textBox.Invoke(getRichTextBoxTextCallback, new object[] { textBox });
+                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetRichTextBoxText(RichTextBox textBox): \"{exDelegate.Message}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                returnTxt = (textBox != null && textBox.Text != null) ? textBox.Text : "";                
+            }
+
+            return returnTxt;
+        }
 
         /// <summary>
         /// AppendText - appends text on a <see cref="System.Windows.Forms.TextBox"/>

@@ -46,16 +46,26 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 
                 tcpClient.Client.NoDelay = true;
                 tcpClient.Client.SendTimeout = 16000;
-                tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
-
-                // NetworkStream netStream = tcpClient.GetStream();
-                // StreamWriter sw = new StreamWriter(netStream);
-                // StreamReader sr = new StreamReader(netStream);
-                // sw.Write(msg);
-                // sw.Flush();
-                // byte[] outbuf = new byte[8192];
+                int ssize = tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
+                if (ssize < msg.Length) ;
+                //char[] charbuf = new char[8192];
+                //using (NetworkStream netStream = tcpClient.GetStream())
+                //{
+                //    using (StreamWriter sw = new StreamWriter(netStream))
+                //    {
+                //        sw.Write(msg);
+                //        sw.Flush();
+                //    }
+                //    using (StreamReader sr = new StreamReader(netStream))
+                //    {                        
+                //        sr.Read(charbuf, 0, charbuf.Length);
+                //    }
+                //}
+                
                 // int read = tcpClient.Client.Receive(outbuf);
                 // sr.BaseStream.Read(outbuf, 0, 8192);
+                
+                
                 resp = tcpClient.Client.LocalEndPoint?.ToString();
                 if (resp != null && resp.Contains("::ffff:"))
                 {
@@ -72,7 +82,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 // netStream.Close();
                 
                 // tcpClient.Client.Shutdown(SocketShutdown.Both);
-                tcpClient.Close();
+                tcpClient.Close();                
             }
             catch (Exception ex)
             {
