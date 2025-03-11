@@ -204,7 +204,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
                             UpdateContact(chatRoomMsg.Sender);
                             chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
-                            chatRoomMsg.Sender.LastPolled = polledMsgDate;
+                            chatRoomMsg.Sender.LastPolled = polledMsgDate.AddSeconds(5);
                         }
 
                     }

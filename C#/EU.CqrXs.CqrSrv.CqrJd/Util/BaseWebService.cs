@@ -442,9 +442,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         public CqrContact AddPollDate(CqrContact contact, DateTime date, bool pushed = false)
         {
             if (pushed)
-                contact.LastPushed = date;
+                contact.LastPushed = date.AddSeconds(2);
             else
-                contact.LastPolled = date.AddMilliseconds(100);
+                contact.LastPolled = date.AddSeconds(2);
             
             return contact;       
         }
