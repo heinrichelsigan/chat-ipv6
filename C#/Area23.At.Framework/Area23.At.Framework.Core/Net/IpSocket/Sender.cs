@@ -35,11 +35,11 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 byte[] data = EnDeCodeHelper.GetBytes(msg);
                 // byte[] data = Encoding.UTF8.GetBytes(msg);
                 tcpClient.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
-                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
                 tcpClient.Connect(serverIp, serverPort);
                 tcpClient.Client.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 tcpClient.Client.NoDelay = true;
-                tcpClient.Client.SendTimeout = 4000;
+                tcpClient.Client.SendTimeout = 10000;
                 tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
 
                 // NetworkStream netStream = tcpClient.GetStream();
@@ -65,7 +65,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 // sr.Close();
                 // netStream.Close();
                 
-                tcpClient.Client.Shutdown(SocketShutdown.Both);
+                // tcpClient.Client.Shutdown(SocketShutdown.Both);
                 tcpClient.Close();
             }
             catch (Exception ex)
