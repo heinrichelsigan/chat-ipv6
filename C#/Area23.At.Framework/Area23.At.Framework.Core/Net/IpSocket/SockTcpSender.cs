@@ -30,6 +30,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
         public static string Send(IPAddress serverIp, string msg, int serverPort = 7777)
         {
             string? resp = string.Empty;
+            byte[] outbuf = new byte[8192];
             try
             {
                 IPEndPoint serverIep = new IPEndPoint(serverIp, serverPort);
@@ -46,29 +47,35 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 tcpClient.Client.SendTimeout = 16000;
                 // int ssize = tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
                 // if (ssize < msg.Length) ;
-                byte[] outbuf = new byte[8192];
+                resp = tcpClient.Client.LocalEndPoint?.ToString();
+                
                 using (NetworkStream netStream = tcpClient.GetStream())
                 {
-                    using (StreamWriter sw = new StreamWriter(netStream))
-                    {
-                        sw.Write(msg);
-                        sw.Flush();
-                    }
-                    using (StreamReader sr = new StreamReader(netStream))
-                    {                        
-                        sr.BaseStream.Read(outbuf, 0, outbuf.Length);
-                    }
+                    netStream.Write(data, 0, data.Length);
+                    netStream.Read(outbuf, 0, outbuf.Length);
+                    netStream.Flush();
+
+                    //using (StreamWriter sw = new StreamWriter(netStream))
+                    //{
+                    //    sw.Write(msg);
+                    //    sw.Flush();
+                    //}
+                    //using (StreamReader sr = new StreamReader(netStream))
+                    //{                        
+                    //    sr.BaseStream.Read(outbuf, 0, outbuf.Length);
+                    //}
                 }
-                
+                // sw.Close();
+                // sr.Close();
+                // netStream.Close();
+
                 string rs = EnDeCodeHelper.GetString(outbuf);
                 if (Int32.TryParse(rs, out int rsize))
                 {
                     Area23Log.LogStatic($"msg.Length = {msg.Length}, rsize = {rsize}\n");
                 }
                 // sr.BaseStream.Read(outbuf, 0, 8192);
-
-
-                resp = tcpClient.Client.LocalEndPoint?.ToString();
+               
                 if (resp != null && resp.Contains("::ffff:"))
                 {
                     resp = resp?.Replace("::ffff:", "");
@@ -79,12 +86,9 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     }
                     resp = resp?.Trim("[{()}]".ToCharArray());
                 }
-                // sw.Close();
-                // sr.Close();
-                // netStream.Close();
-                
+
                 // tcpClient.Client.Shutdown(SocketShutdown.Both);
-                tcpClient.Close();                
+                tcpClient.Close();
             }
             catch (Exception ex)
             {
