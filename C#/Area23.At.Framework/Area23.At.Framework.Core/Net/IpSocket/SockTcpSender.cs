@@ -30,7 +30,8 @@ namespace Area23.At.Framework.Core.Net.IpSocket
         public static string Send(IPAddress serverIp, string msg, int serverPort = 7777)
         {
             string? resp = string.Empty;
-            byte[] outbuf = new byte[8192];
+            byte[] outbuf = new byte[1024];
+            char[] charbuf = new char[1024];
             try
             {
                 IPEndPoint serverIep = new IPEndPoint(serverIp, serverPort);
@@ -39,24 +40,31 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 // byte[] data = Encoding.UTF8.GetBytes(msg);
                 tcpClient.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 //tcpClient.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
-                //tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);           
+                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);           
                 //tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
-                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
+                // tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                 tcpClient.Client.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
-                tcpClient.Connect(serverIp, serverPort);
+                tcpClient.Connect(serverIep);
                 tcpClient.Client.SendTimeout = 16000;
                 // int ssize = tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
                 // if (ssize < msg.Length) ;
                 resp = tcpClient.Client.LocalEndPoint?.ToString();
-                
+
+                string tcpClientSettings = "address/port: " + resp + " , TcpClient.Client.SocketType = " + tcpClient.Client.SocketType + ",\n" +
+                    " TcpClient SendBufferSize    = " + tcpClient.SendBufferSize + " TcpClient.SendTimeOut = " + tcpClient.SendTimeout + "\n" +
+                    " TcpCLient.ReceiveBufferSize = " + tcpClient.ReceiveBufferSize + " TcpClient.ReceiveTimeout = " + tcpClient.ReceiveTimeout + "\n" +
+                    " TcpClient.Client.SendBufferSize = " + tcpClient.Client.SendBufferSize + " TcpClient.Client.SendTimeOut = " + tcpClient.Client.SendTimeout + "\n" +
+                    " TcpClient.Client.ReceiveBufferSize = " + tcpClient.Client.ReceiveBufferSize + " TcpClient.Client.ReceiveTimeout = " + tcpClient.Client.ReceiveTimeout + "\n" +
+                    " TcpClient.Client.Ttl = " + tcpClient.Client.Ttl + " TcpClient.Client.NoDelay = " + tcpClient.Client.NoDelay + ",\n" +
+                    " TcpClient.Client.Blocking = " + tcpClient.Client.Blocking + ";\n";
+                Area23Log.LogStatic("Client: " + tcpClientSettings);
+                                           
+
                 using (NetworkStream netStream = tcpClient.GetStream())
                 {
-                    netStream.ReadTimeout = 6000;
-                    netStream.WriteTimeout = 6000;
-                    netStream.Write(data, 0, data.Length);                    
-                    // netStream.Flush();                    
-                    netStream.Read(outbuf, 0, outbuf.Length);
-                    netStream.Flush();
+                    netStream.Write(data, 0, data.Length);
+                    netStream.Read(outbuf, 0, outbuf.Length);                    
+                    netStream.Flush();                    
                     //using (StreamReader sr = new StreamReader(netStream))
                     //{                        
                     //    sr.BaseStream.Read(outbuf, 0, outbuf.Length);
@@ -67,6 +75,8 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 // netStream.Close();
 
                 string rs = EnDeCodeHelper.GetString(outbuf);
+                // string rs = "";
+                // foreach (char ch in charbuf) rs += ch;
                 if (Int32.TryParse(rs, out int rsize))
                 {
                     Area23Log.LogStatic($"msg.Length = {msg.Length}, rsize = {rsize}\n");

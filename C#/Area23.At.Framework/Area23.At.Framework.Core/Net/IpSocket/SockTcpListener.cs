@@ -83,6 +83,13 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 ServerTcpListener.Server.ReceiveTimeout = 16000;
                 ServerTcpListener.Server.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 Console.WriteLine(ListenToString());
+                string tcpServerSettings = "address/port: " + ServerEndPoint.ToString() + " , ServerTcpListener.Server.SocketType = " + ServerTcpListener.Server.SocketType + ",\n" +
+                    " ServerTcpListener.Server.SendBufferSize = " + ServerTcpListener.Server.SendBufferSize + ", ServerTcpListener.Server.SendTimeOut = " + ServerTcpListener.Server.SendTimeout + ",\n" +
+                    " ServerTcpListener.Server.ReceiveBufferSize = " + ServerTcpListener.Server.ReceiveBufferSize + ", ServerTcpListener.Server.ReceiveTimeout = " + ServerTcpListener.Server.ReceiveTimeout + ",\n" +
+                    " ServerTcpListener.Server.Ttl = " + ServerTcpListener.Server.Ttl + ", ServerTcpListener.Server.NoDelay = " + ServerTcpListener.Server.NoDelay + ",\n" +
+                    " ServerTcpListener.Server.Blocking = " + ServerTcpListener.Server.Blocking + ";\n";
+                Area23Log.LogStatic("Server: " + tcpServerSettings);
+
                 if (ServerTcpListener.Pending())
                 {
                     lock (_lock)
@@ -119,14 +126,23 @@ namespace Area23.At.Framework.Core.Net.IpSocket
         {
             if (ClientTcpClient != null && ClientSocket != null)
             {
+                byte[] buffer = new byte[Constants.MAX_SOCKET_BYTE_BUFFEER];
+                // char[] charbuf = new char[Constants.MAX_SOCKET_BYTE_BUFFEER];
+                IPEndPoint clientIEP = (IPEndPoint?)ClientSocket.RemoteEndPoint;
+
+                string tcpClientSettings = "address/port: " + clientIEP.ToString() + " , ClientTcpClient.Client.SocketType = " + ClientTcpClient.Client.SocketType + ",\n" +
+                    ", ClientTcpClient SendBufferSize    = " + ClientTcpClient.SendBufferSize + ", ClientTcpClient.SendTimeOut = " + ClientTcpClient.SendTimeout + ",\n" +
+                    " ClientTcpClient.ReceiveBufferSize = " + ClientTcpClient.ReceiveBufferSize + ", ClientTcpClient.ReceiveTimeout = " + ClientTcpClient.ReceiveTimeout + ",\n" +
+                    " ClientTcpClient.Client.SendBufferSize = " + ClientTcpClient.Client.SendBufferSize + ", ClientTcpClient.Client.SendTimeOut = " + ClientTcpClient.Client.SendTimeout + ",\n" +
+                    " ClientTcpClient.Client.ReceiveBufferSize = " + ClientTcpClient.Client.ReceiveBufferSize + ", ClientTcpClient.Client.ReceiveTimeout = " + ClientTcpClient.Client.ReceiveTimeout + ",\n" +
+                    " ClientTcpClient.Client.Ttl = " + ClientTcpClient.Client.Ttl + ", ClientTcpClient.Client.NoDelay = " + ClientTcpClient.Client.NoDelay + ",\n" +
+                    " ClientTcpClient.Client.Blocking = " + ClientTcpClient.Client.Blocking + ";\n";    
+                string sstring = "Accept connection from " + clientIEP?.Address.ToString() + ":" + clientIEP?.Port.ToString() + " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
+                Area23Log.Logger.LogInfo(sstring);
+                Area23Log.LogStatic("Client: " + tcpClientSettings);
+
                 lock (_lock)
                 {
-                    byte[] buffer = new byte[Constants.MAX_SOCKET_BYTE_BUFFEER];
-                    // char[] charbuf = new char[Constants.MAX_SOCKET_BYTE_BUFFEER];
-                    IPEndPoint clientIEP = (IPEndPoint?)ClientSocket.RemoteEndPoint;
-                    string sstring = "Accept connection from " + clientIEP?.Address.ToString() + ":" + clientIEP?.Port.ToString() +
-                        " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
-                    Area23Log.Logger.LogInfo(sstring);
                     
                     int rsize = -1;
                     using (NetworkStream netStream = ClientTcpClient.GetStream())
