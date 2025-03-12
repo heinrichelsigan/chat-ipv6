@@ -131,6 +131,8 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     int rsize = -1;
                     using (NetworkStream netStream = ClientTcpClient.GetStream())
                     {
+                        netStream.ReadTimeout = 6000;
+                        netStream.WriteTimeout = 6000;
                         rsize = netStream.Read(buffer, 0, buffer.Length);
                         if (netStream.CanWrite)
                         {

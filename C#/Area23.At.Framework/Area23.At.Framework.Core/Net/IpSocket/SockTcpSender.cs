@@ -41,7 +41,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 //tcpClient.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 //tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);           
                 //tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
-                //tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
+                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                 tcpClient.Client.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 tcpClient.Connect(serverIp, serverPort);
                 tcpClient.Client.SendTimeout = 16000;
@@ -51,15 +51,16 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 
                 using (NetworkStream netStream = tcpClient.GetStream())
                 {
-                    netStream.Write(data, 0, data.Length);
+                    netStream.ReadTimeout = 6000;
+                    netStream.WriteTimeout = 6000;
+                    // netStream.Write(data, 0, data.Length);                    
+                    // netStream.Flush();
+                    using (StreamWriter sw = new StreamWriter(netStream))
+                    {
+                        sw.Write(msg);
+                        sw.Flush();
+                    }
                     netStream.Read(outbuf, 0, outbuf.Length);
-                    netStream.Flush();
-
-                    //using (StreamWriter sw = new StreamWriter(netStream))
-                    //{
-                    //    sw.Write(msg);
-                    //    sw.Flush();
-                    //}
                     //using (StreamReader sr = new StreamReader(netStream))
                     //{                        
                     //    sr.BaseStream.Read(outbuf, 0, outbuf.Length);
