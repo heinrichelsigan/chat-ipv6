@@ -53,14 +53,10 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 {
                     netStream.ReadTimeout = 6000;
                     netStream.WriteTimeout = 6000;
-                    // netStream.Write(data, 0, data.Length);                    
-                    // netStream.Flush();
-                    using (StreamWriter sw = new StreamWriter(netStream))
-                    {
-                        sw.Write(msg);
-                        sw.Flush();
-                    }
+                    netStream.Write(data, 0, data.Length);                    
+                    // netStream.Flush();                    
                     netStream.Read(outbuf, 0, outbuf.Length);
+                    netStream.Flush();
                     //using (StreamReader sr = new StreamReader(netStream))
                     //{                        
                     //    sr.BaseStream.Read(outbuf, 0, outbuf.Length);

@@ -232,7 +232,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             if (IsCqrFile())
             {
                 CqrFile? cqFile = ToCqrFile();
-                // CqrFile? cfile = IsTo<CqrFile>(out CqrFile? t);
                 if (cqFile != null && !string.IsNullOrEmpty(cqFile.Hash))
                 {
                     _hash = cqFile._hash;
@@ -260,6 +259,25 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 _hash = RawMessage;
             }
 
+            if (string.IsNullOrEmpty(_hash))
+            {
+                string hsh = "";
+                if (RawMessage.Contains("\"_hash\":\""))
+                {
+                    int hshlen = "\"_hash\":\"".Length;
+                    int hidx = RawMessage.IndexOf("\"_hash\":\"");
+                    if (hidx > 0)
+                    {
+                        hsh = RawMessage.Substring((int)(hidx + hshlen));
+                        if ((hidx = hsh.IndexOf("\"")) > 0)
+                        {
+                            _hash = hsh.Substring(0, hidx);
+                            return _hash;
+                        }
+                    }
+                }
+            }
+            
 
             if (_hash.Length > 4 && RawMessage.Substring(RawMessage.Length - _hash.Length).Equals(_hash, StringComparison.InvariantCulture))
                 msg = RawMessage.Substring(0, RawMessage.Length - _hash.Length);
