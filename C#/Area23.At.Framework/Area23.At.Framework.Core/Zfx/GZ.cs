@@ -92,7 +92,7 @@ namespace Area23.At.Framework.Core.Zfx
             if (string.IsNullOrEmpty(inFile) || !File.Exists(inFile))
                 throw new ArgumentNullException("string GzFile(string inFile, bool zip = true) => inFile is either null or empty or doesn't exist!");
 
-            string outreturn = (zip) ? $"...gzip {Path.GetFileName(inFile)} " : $"...gunzip {Path.GetFileName(inFile)} ";
+            string outreturn = (zip) ? $"gzip {Path.GetFileName(inFile)} ... " : $"gunzip {Path.GetFileName(inFile)} ... ";
             byte[] inBytes = File.ReadAllBytes(inFile);
             byte[] outBytes = (zip) ? GZipViaStream(inBytes) : GUnZipViaStream(inBytes);
             string outFile = (zip) ? inFile + ".gz" : inFile.EndsWith(".gz") ?

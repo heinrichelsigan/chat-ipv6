@@ -72,10 +72,10 @@ namespace Area23.At.Framework.Core.Zfx
             if (string.IsNullOrEmpty(inFile) || !File.Exists(inFile))
                 throw new ArgumentNullException("string BzFile(string inFile, bool zip = true) => inFile is either null or empty or doesn't exist!");
 
-            string outreturn = (zip) ? $"...bzip2 {Path.GetFileName(inFile)} " : $"...bunzip2 {Path.GetFileName(inFile)} ";
+            string outreturn = (zip) ? $"bzip2 {Path.GetFileName(inFile)} ... " : $"bunzip2 {Path.GetFileName(inFile)} ... ";
             byte[] inBytes = File.ReadAllBytes(inFile);
             byte[] outBytes = (zip) ? BZipViaStream(inBytes) : BUnZipViaStream(inBytes);
-            string outFile = (zip) ? inFile + "bz2" : inFile.EndsWith(".bz2") ?
+            string outFile = (zip) ? inFile + ".bz2" : inFile.EndsWith(".bz2") ?
                 inFile.Replace(".bz2", "").Replace(".bz", "") : DateTime.Now.ToString("yy-MM-dd_") + inFile;
             File.WriteAllBytes(outFile, outBytes);
 
