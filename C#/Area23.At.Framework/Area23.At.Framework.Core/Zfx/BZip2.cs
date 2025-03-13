@@ -60,6 +60,34 @@ namespace Area23.At.Framework.Core.Zfx
             return zipBytes;
         }
 
+
+        /// <summary>
+        /// BzFile bzips or bunzips a file
+        /// </summary>
+        /// <param name="infile"><see cref="string">full (unc) filepath to file</see></param>
+        /// <param name="zip"><see cref="bool">(bool)true for bzip2, (bool)false for bunzip2 (bzip2 -d)</see></param>
+        /// <returns><see cref="string">string name of processed (bzipped/bunzipped) file</see></returns>
+        public static string BzFile(string inFile, bool zip = true)
+        {
+            if (string.IsNullOrEmpty(inFile) || !File.Exists(inFile))
+                throw new ArgumentNullException("string BzFile(string inFile, bool zip = true) => inFile is either null or empty or doesn't exist!");
+
+            string outreturn = (zip) ? $"...bzip2 {Path.GetFileName(inFile)} " : $"...bunzip2 {Path.GetFileName(inFile)} ";
+            byte[] inBytes = File.ReadAllBytes(inFile);
+            byte[] outBytes = (zip) ? BZipViaStream(inBytes) : BUnZipViaStream(inBytes);
+            string outFile = (zip) ? inFile + "bz2" : inFile.EndsWith(".bz2") ?
+                inFile.Replace(".bz2", "").Replace(".bz", "") : DateTime.Now.ToString("yy-MM-dd_") + inFile;
+            File.WriteAllBytes(outFile, outBytes);
+
+            FileInfo fi = new FileInfo(outFile);
+            if (fi.Exists)
+                outreturn += $"created file {fi.Name} length={fi.Length} at {fi.CreationTime.ToShortDateString()} {fi.CreationTime.ToShortTimeString()}\nin directory {fi.DirectoryName}";
+            else outreturn += $"=> file {outFile} NOT created; something went wrong!";
+            
+            return outreturn;
+        }
+
+
         public static byte[] BUnZip(byte[] inBytes)
         {
             MemoryStream msIn = new MemoryStream();
