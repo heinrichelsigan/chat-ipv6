@@ -73,6 +73,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.fr {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Click2UploadBackground {
+            get {
+                object obj = ResourceManager.GetObject("Click2UploadBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ClickToUpload {
             get {
                 object obj = ResourceManager.GetObject("ClickToUpload", resourceCulture);
@@ -96,16 +106,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.fr {
         internal static System.Drawing.Bitmap ClickUpload {
             get {
                 object obj = ResourceManager.GetObject("ClickUpload", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Click2UploadBackground {
-            get {
-                object obj = ResourceManager.GetObject("Click2UploadBackground", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
