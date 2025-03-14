@@ -158,6 +158,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                         }
                      }                       
                                         
+                    
                     BufferedData = new byte[rsize];
                     Array.Copy(buffer, 0, BufferedData, 0, rsize);
                     ReceiveData receiveData = new ReceiveData(buffer, (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
