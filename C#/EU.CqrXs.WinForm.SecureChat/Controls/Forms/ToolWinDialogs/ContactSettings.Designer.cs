@@ -197,7 +197,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // pictureBoxImage
             // 
             pictureBoxImage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBoxImage.BackgroundImage = Properties.fr.Resources.ClickToUpload;
+            pictureBoxImage.BackgroundImage = Properties.fr.Resources.Click2UploadBackground;
             pictureBoxImage.BackgroundImageLayout = ImageLayout.Center;
             pictureBoxImage.BorderStyle = BorderStyle.FixedSingle;
             pictureBoxImage.Location = new Point(269, 134);

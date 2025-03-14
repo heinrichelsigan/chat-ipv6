@@ -21,8 +21,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             InitializeComponent();
             pictureBoxImage.Image = null;
-            if (Properties.fr.Resources.ClickToUpload != null) 
-                pictureBoxImage.BackgroundImage = Properties.fr.Resources.ClickToUploadBackground;
+            if (Properties.fr.Resources.Click2UploadBackground != null) 
+                pictureBoxImage.BackgroundImage = Properties.fr.Resources.Click2UploadBackground;
 
             using (MemoryStream ms = new MemoryStream(Resources.WinFormAboutDialog))
             {
@@ -208,10 +208,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         else
                         {
                             pictureBoxImage.Tag = $"ClickToUpload{contact.ContactId}.gif";
-                            if (Properties.fr.Resources.ClickToUpload != null)
+                            if (Properties.fr.Resources.Click2UploadBackground != null)
                             {
                                 pictureBoxImage.Image = null;
-                                pictureBoxImage.BackgroundImage = Properties.fr.Resources.ClickToUploadBackground;
+                                pictureBoxImage.BackgroundImage = Properties.fr.Resources.Click2UploadBackground;
                             }
                         }
                     }
