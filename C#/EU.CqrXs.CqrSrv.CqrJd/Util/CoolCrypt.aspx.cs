@@ -147,8 +147,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 {
                     switch (ztype)
                     {
-                        case ZipType.GZip: encryptBytes = GZ.GZipViaStream(inBytes); break;
-                        case ZipType.BZip2: encryptBytes = BZip2.BZip(inBytes); break;
+                        case ZipType.GZip: encryptBytes = GZ.GZipBytes(inBytes); break;
+                        case ZipType.BZip2: encryptBytes = BZip2.BUnZip2Bytes(inBytes); break;
                         case ZipType.Zip: encryptBytes = WinZip.Zip(inBytes); break;
                         case ZipType.None:
                         default: break;
@@ -302,8 +302,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 {
                     switch (ztype)
                     {
-                        case ZipType.GZip: decryptedBytes = GZ.GUnZipViaStream(cipherBytes); break;
-                        case ZipType.BZip2: decryptedBytes = BZip2.BUnZip(cipherBytes); break;
+                        case ZipType.GZip: decryptedBytes = GZ.GUnZipBytes(cipherBytes); break;
+                        case ZipType.BZip2: decryptedBytes = BZip2.BUnZip2Bytes(cipherBytes); break;
                         case ZipType.Zip: decryptedBytes = WinZip.UnZip(cipherBytes); break;
                         case ZipType.None:
                         default: decryptedBytes = cipherBytes; break;
@@ -633,8 +633,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                         {
                             switch (ztype)
                             {
-                                case ZipType.GZip: inBytes = GZ.GZipViaStream(outBytes); break;
-                                case ZipType.BZip2: inBytes = BZip2.BZip(outBytes); break;
+                                case ZipType.GZip: inBytes = GZ.GZipBytes(outBytes); break;
+                                case ZipType.BZip2: inBytes = BZip2.BUnZip2Bytes(outBytes); break;
                                 case ZipType.Zip: inBytes = WinZip.Zip(outBytes); break;
                                 case ZipType.Z7:
                                 case ZipType.None:
@@ -778,10 +778,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                             switch (ztype)
                             {
                                 case ZipType.GZip:
-                                    outBytes = GZ.GUnZipViaStream(inBytes);
+                                    outBytes = GZ.GUnZipBytes(inBytes);
                                     break;
                                 case ZipType.BZip2:
-                                    outBytes = BZip2.BUnZip(inBytes);
+                                    outBytes = BZip2.BUnZip2Bytes(inBytes);
                                     break;
                                 case ZipType.Zip:
                                     outBytes = WinZip.UnZip(inBytes);

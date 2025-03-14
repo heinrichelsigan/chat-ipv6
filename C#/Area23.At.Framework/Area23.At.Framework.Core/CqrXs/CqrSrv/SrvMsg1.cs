@@ -64,9 +64,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <returns><see cref="CqrContact"/>CqrContact decrypted string</returns>
         /// <exception cref="InvalidOperationException">will be thrown, 
         /// if server and client or both side use a different secret key 4 encryption</exception>
-        public CqrContact NCqrSrvMsg1(string cqrMessage, EncodingType encType = EncodingType.Base64)
+        public CqrContact? NCqrSrvMsg1(string cqrMessage, EncodingType encType = EncodingType.Base64)
         {
-            CqrContact myContact = null;
+            CqrContact? myContact = null;
             MsgContent msgContent = base.NCqrBaseMsg(cqrMessage, encType);
             if (msgContent != null && !string.IsNullOrEmpty(msgContent.Message))
                 myContact = JsonConvert.DeserializeObject<CqrContact>(msgContent.Message);
