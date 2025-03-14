@@ -475,14 +475,14 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         /// <param name="srvIp"></param>
         /// <param name="encodingType"></param>
         /// <returns><see cref="FullSrvMsg{string}"/>, containing char room number, last polled date, updated sender and recipients</returns>
-        public FullSrvMsg<string> ReceiveChatMsg_Soap<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+        public FullSrvMsg<string>? ReceiveChatMsg_Soap<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         where T : class
         {
             string cryptSrv = CqrSrvMsg<T>(fullServerMsg, MsgKind.Server);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
             string response = client.ChatRoomPoll(cryptSrv);
-            FullSrvMsg<string> rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
+            FullSrvMsg<string>? rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
 
             return rfmsg;
 

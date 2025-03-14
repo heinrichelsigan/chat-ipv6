@@ -42,8 +42,10 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             return Hex32.FromHex32(encodedString);
         }
 
-        public bool IsValid(string encodedStr) => Hex32.IsValidHex32(encodedStr);
+        public bool IsValidShowError(string encodedString, out string error) => Hex32.IsValidHex32(encodedString, out error);
+        
 
+        public bool IsValid(string encodedStr) => Hex32.IsValidHex32(encodedStr, out string error);
 
         #endregion common interface, interfaces for static members appear in C# 7.3 or later
 
@@ -189,14 +191,19 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             return result.ToString();
         }
 
-        public static bool IsValidHex32(string inString)
+        public static bool IsValidHex32(string inString, out string error)
         {
+            bool valid = true;
+            error = "";
             foreach (char ch in inString)
             {
                 if (!VALID_CHARS.ToCharArray().Contains(ch))
-                    return false;
+                {
+                    error += ch.ToString();
+                    valid = false;
+                }                    
             }
-            return true;
+            return valid;
         }
 
     }

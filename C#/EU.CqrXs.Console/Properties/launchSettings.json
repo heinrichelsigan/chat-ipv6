@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EU.CqrXs.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "-i -d=base64 -u=gz"
+    }
+  }
+}
