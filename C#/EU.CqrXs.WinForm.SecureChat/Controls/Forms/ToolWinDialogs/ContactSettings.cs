@@ -1,7 +1,5 @@
 ﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Properties;
 using Newtonsoft.Json;
@@ -23,10 +21,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             InitializeComponent();
             pictureBoxImage.Image = null;
-            using (MemoryStream memoryStream = new MemoryStream(Resources.ClickToUpload))
-            {                
-                pictureBoxImage.BackgroundImage = new Bitmap(memoryStream);
-            }
+            if (Properties.fr.Resources.ClickToUpload != null) 
+                pictureBoxImage.BackgroundImage = Properties.fr.Resources.ClickToUploadBackground;
+
             using (MemoryStream ms = new MemoryStream(Resources.WinFormAboutDialog))
             {
                 this.logoPictureBox.Image = new Bitmap(ms);
@@ -103,7 +100,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             contact.Email = this.textBoxEmail.Text ?? string.Empty; //
                             contact.Mobile = this.textBoxMobile.Text ?? string.Empty; //
                             contact.Address = this.textBoxAddress.Text ?? string.Empty;
-                            if (pictureBoxImage.Image != null)    
+                            if (pictureBoxImage.Image != null) 
                                 contact.ContactImage = CqrImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString());
 
                             foundContact = true;
@@ -206,14 +203,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         {
                             pictureBoxImage.Tag = contact.ContactImage?.ImageFileName;
                             this.pictureBoxImage.Image = base64image.Base64ToImage();
+                            this.pictureBoxImage.BackgroundImage = null;
                         }
                         else
                         {
-                            pictureBoxImage.Tag = $"ClickToUpload{contact.ContactId}.png";
-                            using (MemoryStream memoryStream = new MemoryStream(Resources.ClickToUpload))
+                            pictureBoxImage.Tag = $"ClickToUpload{contact.ContactId}.gif";
+                            if (Properties.fr.Resources.ClickToUpload != null)
                             {
                                 pictureBoxImage.Image = null;
-                                pictureBoxImage.BackgroundImage = new Bitmap(memoryStream);
+                                pictureBoxImage.BackgroundImage = Properties.fr.Resources.ClickToUploadBackground;
                             }
                         }
                     }

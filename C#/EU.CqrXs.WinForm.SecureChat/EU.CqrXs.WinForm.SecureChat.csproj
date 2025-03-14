@@ -94,6 +94,7 @@
     <None Remove="Properties\Image\SatLink.png" />
     <None Remove="Properties\Image\TransparentFormsIcon.ico" />
     <None Remove="Properties\Image\WinFormAboutDialog.png" />
+    <None Remove="Properties\text\settings.json" />
   </ItemGroup>
 
   <ItemGroup>
