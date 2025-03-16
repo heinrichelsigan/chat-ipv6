@@ -1,8 +1,10 @@
 ﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 
 namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 {
@@ -12,9 +14,11 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
     /// </summary>
     public class SymmCipherPipe
     {
+        
         private readonly SymmCipherEnum[] inPipe;
         public readonly SymmCipherEnum[] outPipe;
         private readonly string pipeString;
+        private string symmCipherKey = "", symmCipherHash = "";
 
         public SymmCipherEnum[] InPipe { get => inPipe; }
 
@@ -23,7 +27,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         public string PipeString { get => pipeString; }
 
 #if DEBUG
-        public Dictionary<SymmCipherEnum, byte[]> stageDictionary;
+        public Dictionary<SymmCipherEnum, byte[]> stageDictionary = new Dictionary<SymmCipherEnum, byte[]>();
 
         public string HexStages
         {
@@ -40,7 +44,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         }
 #endif
 
-        #region ctor
+        #region ctor SymmCipherPipe
 
         /// <summary>
         /// SymmCipherPipe constructor with an array of <see cref="SymmCipherEnum[]"/> as inpipe
@@ -50,58 +54,10 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         {
             inPipe = new List<SymmCipherEnum>(symmCipherEnums).ToArray();
             outPipe = symmCipherEnums.Reverse<SymmCipherEnum>().ToArray();
+            pipeString = "";
             foreach (SymmCipherEnum symmCipher in inPipe)
                 pipeString += symmCipher.GetSymmCipherChar();
-
         }
-
-        /// <summary>
-        /// SymmCipherPipe ctor with array of user key bytes
-        /// </summary>
-        /// <param name="keyBytes">user key bytes</param>
-        /// <param name="maxpipe">maximum lentgh <see cref="Constants.MAX_PIPE_LEN"/></param>
-        public SymmCipherPipe(byte[] keyBytes, uint maxpipe = 8)
-        {
-            // What ever is entered here as parameter, maxpipe has to be not greater 8, because of no such agency
-            maxpipe = (maxpipe > Constants.MAX_PIPE_LEN) ? Constants.MAX_PIPE_LEN : maxpipe; // if somebody wants more, he/she/it gets less
-
-            ushort scnt = 0;
-            List<SymmCipherEnum> pipeList = new List<SymmCipherEnum>();
-            Dictionary<char, SymmCipherEnum> symDict = new Dictionary<char, SymmCipherEnum>();
-            foreach (SymmCipherEnum symmC in Enum.GetValues(typeof(SymmCipherEnum)))
-            {
-                string hex = $"{((ushort)symmC):x1}";
-                scnt++;
-                symDict.Add(hex[0], symmC);
-            }
-
-            string hexString = string.Empty;
-            HashSet<char> hashBytes = new HashSet<char>();
-            foreach (byte bb in keyBytes)
-            {
-                hexString = string.Format("{0:x2}", bb);
-                if (hexString.Length > 0 && !hashBytes.Contains(hexString[0]))
-                    hashBytes.Add(hexString[0]);
-                if (hexString.Length > 0 && !hashBytes.Contains(hexString[1]))
-                    hashBytes.Add(hexString[1]);
-            }
-
-            hexString = string.Empty;
-            for (int kcnt = 0; kcnt < hashBytes.Count && pipeList.Count < maxpipe; kcnt++)
-            {
-                hexString += hashBytes.ElementAt(kcnt).ToString();
-                SymmCipherEnum sym0 = symDict[hashBytes.ElementAt(kcnt)];
-                pipeList.Add(sym0);
-            }
-
-            inPipe = new List<SymmCipherEnum>(pipeList).ToArray();
-            outPipe = pipeList.Reverse<SymmCipherEnum>().ToArray();
-
-            foreach (SymmCipherEnum symmCipher in inPipe)
-                pipeString += symmCipher.GetSymmCipherChar();
-
-        }
-
 
         /// <summary>
         /// SymmCipherPipe constructor with an array of <see cref="string[]"/> as inpipe
@@ -124,12 +80,65 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 
             inPipe = new List<SymmCipherEnum>(symmCipherEnums).ToArray();
             outPipe = symmCipherEnums.Reverse<SymmCipherEnum>().ToArray();
+            pipeString = "";
+           foreach (SymmCipherEnum symmCipher in inPipe)
+                pipeString += symmCipher.GetSymmCipherChar();
+        }
+
+        /// <summary>
+        /// SymmCipherPipe ctor with array of user key bytes
+        /// </summary>
+        /// <param name="keyBytes">user key bytes</param>
+        /// <param name="maxpipe">maximum lentgh <see cref="Constants.MAX_PIPE_LEN"/></param>
+        public SymmCipherPipe(byte[] keyBytes, uint maxpipe = 8)
+        {
+            // What ever is entered here as parameter, maxpipe has to be not greater 8, because of no such agency
+            maxpipe = (maxpipe > Constants.MAX_PIPE_LEN) ? Constants.MAX_PIPE_LEN : maxpipe; // if somebody wants more, he/she/it gets less
+
+            ushort scnt = 0;
+            List<SymmCipherEnum> pipeList = new List<SymmCipherEnum>();
+            Dictionary<char, SymmCipherEnum> symDict = SymmCipherEnumExtensions.GetCharSymmCipherDict();
+            SymmCipherEnum[] symmCiphers = SymmCipherEnumExtensions.GetSymmCipherTypes();
+
+            string hexString = string.Empty;
+            HashSet<char> hashBytes = new HashSet<char>();
+            foreach (byte bb in keyBytes)
+            {
+                hexString = string.Format("{0:x2}", bb);
+                if (hexString.Length > 0 && !hashBytes.Contains(hexString[0]))
+                    hashBytes.Add(hexString[0]);
+                if (hexString.Length > 0 && !hashBytes.Contains(hexString[1]))
+                    hashBytes.Add(hexString[1]);
+            }
+
+            hexString = string.Empty;
+            for (int kcnt = 0; kcnt < hashBytes.Count && pipeList.Count < maxpipe; kcnt++)
+            {
+                hexString += hashBytes.ElementAt(kcnt).ToString();
+                SymmCipherEnum sym0 = symDict[hashBytes.ElementAt(kcnt)];               
+                pipeList.Add(sym0);
+            }
+            Area23Log.LogStatic($"On generating symmetric encryption cipher pipe: {hexString}");
+
+            inPipe = new List<SymmCipherEnum>(pipeList).ToArray();
+            outPipe = pipeList.Reverse<SymmCipherEnum>().ToArray();
+            pipeString = "";
             foreach (SymmCipherEnum symmCipher in inPipe)
                 pipeString += symmCipher.GetSymmCipherChar();
         }
 
+        /// <summary>
+        /// Constructs a <see cref="SymmCipherPipe"/> from key and hash
+        /// by getting <see cref="byte[]">byte[] keybytes</see> with <see cref="CryptHelper.GetUserKeyBytes(string, string, int)"/>
+        /// </summary>
+        /// <param name="key">secret key to generate pipe</param>
+        /// <param name="hash">hash value of secret key</param>
+        public SymmCipherPipe(string key = "heinrich.elsigan@area23.at", string hash = "6865696e726963682e656c736967616e406172656132332e6174")
+            : this(CryptHelper.GetUserKeyBytes(key, hash, 16), Constants.MAX_PIPE_LEN)
+        {
+        }
 
-        #endregion ctor
+        #endregion ctor SymmCipherPipe
 
         #region static members EncryptBytesFast DecryptBytesFast
 
@@ -164,9 +173,9 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                 case SymmCipherEnum.Fish2:
                 case SymmCipherEnum.Fish3:
                 case SymmCipherEnum.Camellia:
-                case SymmCipherEnum.Cast6:
                 case SymmCipherEnum.Des3:
-                case SymmCipherEnum.RC532:               
+                case SymmCipherEnum.Cast6:
+                case SymmCipherEnum.RC532:
                 case SymmCipherEnum.Gost28147:
                 case SymmCipherEnum.Idea:
                 case SymmCipherEnum.Seed:
@@ -250,6 +259,13 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             string secretKey = "heinrich.elsigan@area23.at",
             string hashIv = "6865696e726963682e656c736967616e406172656132332e6174")
         {
+            if (!string.IsNullOrEmpty(symmCipherKey) && !string.IsNullOrEmpty(symmCipherHash))
+            {
+                if (secretKey.Equals(symmCipherKey, StringComparison.CurrentCulture))
+                    ; // TODO wajz Exception should be thrown ??
+            }
+            symmCipherKey = secretKey;
+            symmCipherHash = hashIv;
             byte[] encryptedBytes = new byte[inBytes.Length * 3 + 1];
 #if DEBUG
             stageDictionary = new Dictionary<SymmCipherEnum, byte[]>();
@@ -280,7 +296,13 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             string hashIv = "6865696e726963682e656c736967616e406172656132332e6174",
             bool fishOnAesEngine = false)
         {
-
+            if (!string.IsNullOrEmpty(symmCipherKey) && !string.IsNullOrEmpty(symmCipherHash))
+            {
+                if (secretKey.Equals(symmCipherKey, StringComparison.CurrentCulture))
+                    ; // TODO wajz Exception should be thrown ??
+            }
+            symmCipherKey = secretKey;
+            symmCipherHash = hashIv;
             byte[] decryptedBytes = new byte[cipherBytes.Length * 3 + 1];
 #if DEBUG
             stageDictionary = new Dictionary<SymmCipherEnum, byte[]>();

@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
+﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using System.ComponentModel;
 
 namespace Area23.At.Framework.Core.Crypt.Cipher
@@ -135,6 +136,11 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             return s;
         }
 
+
+        public static CipherEnum FromSymmCipherEnum(Symmetric.SymmCipherEnum symmCipherEnum)
+        {
+            return symmCipherEnum.ToCipherEnum();
+        }
     }
 
 }

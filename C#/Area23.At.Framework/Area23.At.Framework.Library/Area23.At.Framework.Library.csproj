@@ -100,6 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Crypt\Cipher\CipherPipe.cs" />
+    <Compile Include="Net\IpSocket\SockTcpListener.cs" />
+    <Compile Include="Net\IpSocket\SockTcpSender.cs" />
+    <Compile Include="Net\WebHttp\WebServiceSoap.cs" />
     <Compile Include="Util\Area23Log.cs" />
     <Compile Include="CqrXs\CqrException.cs" />
     <Compile Include="CqrXs\CqrJd\CqrService.cs" />
@@ -124,8 +127,6 @@
     <Compile Include="Crypt\Cipher\CipherEnum.cs" />
     <Compile Include="Crypt\Cipher\CryptHelper.cs" />
     <Compile Include="Crypt\Cipher\CryptParams.cs" />
-    <Compile Include="Crypt\Cipher\Symmetric\Fish2.cs" />
-    <Compile Include="Crypt\Cipher\Symmetric\Fish3.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\FishRequiresAesEngineException.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\RC564.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\Rijndael.cs" />

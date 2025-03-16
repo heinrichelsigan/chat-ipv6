@@ -1,11 +1,11 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrJd;
+﻿using Area23.At.Framework.Library.CqrXs.CqrJd;
 using System.Net;
 
 namespace Area23.At.Framework.Core.Net.WebHttp
 {
 
     /// <summary>
-    /// WebServiceSoap implements a static WebServiceSoap Request via <see cref="CqrServiceSoapClient"/>
+    /// WebServiceSoap implements a static WebServiceSoap Request via <see cref="CqrService"/>
     /// and maily provides
     /// <see cref="ExternalClientIpFromServer()"
     /// <see cref="ExternalClientIpv6FromServer()"/>
@@ -21,13 +21,14 @@ namespace Area23.At.Framework.Core.Net.WebHttp
         { 
         }
 
+
         /// <summary>
         /// ExternalClientIpFromServer gets external network ip for client from server
         /// </summary>
         /// <returns>external official gateway <see cref="IPAddress">ip address</see> of client</returns>
-        public static IPAddress? ExternalClientIpFromServer()
+        public static IPAddress ExternalClientIpFromServer()
         {
-            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoapv4);
+            CqrService client = new CqrService();            
             string resp = client.GetIPAddress();
             return IPAddress.Parse(resp);
         }
@@ -36,12 +37,13 @@ namespace Area23.At.Framework.Core.Net.WebHttp
         /// ExternalClientIpv6FromServer gets external network ip for client from server
         /// </summary>
         /// <returns>external official gateway <see cref="IPAddress">ip address</see> of client</returns>
-        public static IPAddress? ExternalClientIpv6FromServer()
+        public static IPAddress ExternalClientIpv6FromServer()
         {
-            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoapv6);
+            CqrService client = new CqrService();
             string resp = client.GetIPAddress();
             return IPAddress.Parse(resp);
         }
+
 
     }
 

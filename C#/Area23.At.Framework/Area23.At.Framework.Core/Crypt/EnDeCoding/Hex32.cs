@@ -22,30 +22,26 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 
         public static HashSet<char>? ValidCharList { get; private set; } = new HashSet<char>(VALID_CHARS.ToCharArray());
 
+
         /// <summary>
         /// Encodes byte[] to valid encode formatted string
         /// </summary>
         /// <param name="inBytes">byte array to encode</param>
         /// <returns>encoded string</returns>
-        public string Encode(byte[] inBytes)
-        {
-            return Hex32.ToHex32(inBytes);
-        }
-
+        public string Encode(byte[] inBytes) => Hex32.ToHex32(inBytes);
+        
         /// <summary>
         /// Decodes an encoded string to byte[]
         /// </summary>
         /// <param name="encodedString">encoded string</param>
         /// <returns>byte array</returns>
-        public byte[] Decode(string encodedString)
-        {
-            return Hex32.FromHex32(encodedString);
-        }
+        public byte[] Decode(string encodedString) => Hex32.FromHex32(encodedString);
+
+
+        public bool IsValid(string encodedStr) => Hex32.IsValidHex32(encodedStr, out _);
 
         public bool IsValidShowError(string encodedString, out string error) => Hex32.IsValidHex32(encodedString, out error);
         
-
-        public bool IsValid(string encodedStr) => Hex32.IsValidHex32(encodedStr, out string error);
 
         #endregion common interface, interfaces for static members appear in C# 7.3 or later
 

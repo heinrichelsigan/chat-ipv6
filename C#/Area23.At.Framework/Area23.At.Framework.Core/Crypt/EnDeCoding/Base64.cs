@@ -33,7 +33,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// <returns>byte array</returns>
         public byte[] Decode(string encodedString) => Base64.FromBase64(encodedString);
 
-        public bool IsValid(string encodedStr) => Base64.IsValidBase64(encodedStr, out string error);
+        public bool IsValid(string encodedStr) => Base64.IsValidBase64(encodedStr, out _);
 
         public bool IsValidShowError(string encodedString, out string error) => Base64.IsValidBase64(encodedString, out error);
         

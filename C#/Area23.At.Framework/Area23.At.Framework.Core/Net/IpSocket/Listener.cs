@@ -92,7 +92,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
         }
 
         public Listener(IPAddress connectedIpIfAddr, EventHandler<Area23EventArgs<ReceiveData>> evClReq) : this(connectedIpIfAddr)
-        {
+        {            
             Thread.Sleep(100);
             EventHandlerClientRequest = evClReq;
             Thread.Sleep(100);

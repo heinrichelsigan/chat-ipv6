@@ -1,8 +1,10 @@
-﻿using Org.BouncyCastle.Crypto;
+﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
@@ -250,7 +252,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         public CryptParams(CipherEnum cipherAlgo, string key, string hash) : this(cipherAlgo)
         {
             Key = key;
-            Hash = hash;
+            Hash = (string.IsNullOrEmpty(hash)) ? EnDeCodeHelper.KeyToHex(key) : hash;
         }
 
         /// <summary>

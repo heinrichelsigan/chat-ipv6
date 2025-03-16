@@ -67,7 +67,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="encodedString">encoded string</param>
         /// <returns>true, when encoding is OK, otherwise false, if encoding contains illegal characters</returns>
-        public bool IsValid(string encodedString) => Base32.IsValidBase32(encodedString, out string error);
+        public bool IsValid(string encodedString) => Base32.IsValidBase32(encodedString, out _);
 
         public bool IsValidShowError(string encodedString, out string error) => Base32.IsValidBase32(encodedString, out error);
 

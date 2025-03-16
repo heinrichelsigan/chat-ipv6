@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 {
+
     /// <summary>
     /// More complex sbyte mapping from 0x0 .. to 0xf as symmetric cipher matrix
     /// position swaps and byte mappings are seperated in 2 matrizes 

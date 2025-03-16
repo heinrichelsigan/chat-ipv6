@@ -9,7 +9,6 @@ using Area23.At.Framework.Library.Static;
 namespace Area23.At.Framework.Library.Zfx
 {
 
-
     /// <summary>
     /// abstraction of gnu zip gzip compression & decompression
     /// </summary>
@@ -76,7 +75,6 @@ namespace Area23.At.Framework.Library.Zfx
         }
 
         #endregion gzip compression
-
 
         #region gunzip decompression
 
@@ -149,11 +147,13 @@ namespace Area23.At.Framework.Library.Zfx
 
         #endregion gunzip decompression
 
-
         /// <summary>
         /// GzFile gzips or gunzips a file
         /// </summary>
-        /// <param name="infile"><see cref="string">full (unc) filepath to file</see></param>
+        /// <param name="inFile"><see cref="string">full (unc) filepath to file</see></param>
+        /// <param name="outMessage">string with information, what happend</param>
+        /// <param name="outFile"><see cref="string"/>full (unc) filepath to outfile,
+        /// if keept empty, .gz will be added after compression and .gz will be removed after decompressing gzip'd file.</param>
         /// <param name="zip"><see cref="bool">(bool)true for gzip, (bool)false for gunzip</see></param>
         /// <param name="compressionLevel">level of compression: 
         ///  1  ... for at least no compression, 
@@ -161,25 +161,36 @@ namespace Area23.At.Framework.Library.Zfx
         ///  9  ... for strongest bzip2 compression, generating smallest most compact output 
         /// </param>
         /// <returns><see cref="string">string name of processed (gzipped/gunzipped) file</see></returns>
-        public static string GzFile(string inFile, bool zip = true, int compressionLevel = 6)
+        /// <exception cref="ArgumentNullException"></exception>
+        public static bool GzFile(string inFile, out string outMessage, string outFile = "", bool zip = true, int compressionLevel = 6)
         {
             if (string.IsNullOrEmpty(inFile) || !File.Exists(inFile))
                 throw new ArgumentNullException("string GzFile(string inFile, bool zip = true) => inFile is either null or empty or doesn't exist!");
 
+            outMessage = String.Format("{0}: {1} {2} ... ",
+                DateTime.Now.Area23DateTimeWithSeconds(),
+                (zip ? $"gzip " : $"gunzip "),
+                Path.GetFileName(inFile));
+
             byte[] inBytes = File.ReadAllBytes(inFile);
             byte[] outBytes = zip ? GZipBytes(inBytes) : GUnZipBytes(inBytes);
-            string outFile = zip ? inFile + ".gz" : inFile.EndsWith(".gz") ?
-                inFile.Replace(".gz", "") : DateTime.Now.ToString("yy-MM-dd_") + inFile;
+            if (string.IsNullOrEmpty(outFile))
+                outFile = zip ? inFile + ".gz" : inFile.EndsWith(".gz") ?
+                    inFile.Replace(".gz", "") : DateTime.Now.ToString("yy-MM-dd_") + inFile;
             File.WriteAllBytes(outFile, outBytes);
 
             FileInfo fi = new FileInfo(outFile);
             if (fi.Exists)
-                return $"File {fi.Name} length={fi.Length} created at {fi.CreationTime.ToShortDateString()} {fi.CreationTime.ToShortTimeString()}\nin directory {fi.DirectoryName}";
+            {
+                outMessage += $"created file {fi.Name} length={fi.Length} at {fi.CreationTime.ToShortDateString()} {fi.CreationTime.ToShortTimeString()}\nin directory {fi.DirectoryName}";
+                return true;
+            }
+            else
+                outMessage += $"=> file {outFile} NOT created; something went wrong!";
 
-            return $"File {outFile} could doesn't exist, something went wrong!";
+            return false;
         }
 
     }
-
 
 }

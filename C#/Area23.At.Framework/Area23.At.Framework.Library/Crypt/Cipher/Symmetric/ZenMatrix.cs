@@ -138,12 +138,11 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         /// </summary>
         public HashSet<sbyte> PermutationKeyHash { get; protected internal set; }
 
-        public string AlgorithmName => SYMMCIPHERALGONAME;
-
 
         #endregion Properties
-
         #region IBlockCipher interface
+
+        public string AlgorithmName => SYMMCIPHERALGONAME;
 
         public int GetBlockSize() => BLOCK_SIZE;
 
@@ -190,6 +189,11 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             }
 
             return BLOCK_SIZE;
+        }
+
+        public int ProcessBlock(ReadOnlySpan<byte> input, Span<byte> output)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion IBlockCipher interface
@@ -586,18 +590,18 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             {
                 case EncodingType.Null:
                 case EncodingType.None:
-                    return EnDeCodeHelper.GetString(ecdata);
+                    return RawString.ToRawString(ecdata);
                 case EncodingType.Hex16:
-                    return Hex16.Encode(ecdata);
+                    return Hex16.ToHex16(ecdata);
                 case EncodingType.Base32:
-                    return Base32.Encode(ecdata);
+                    return Base32.ToBase32(ecdata);
                 case EncodingType.Hex32:
-                    return Hex32.Encode(ecdata);
+                    return Hex32.ToHex32(ecdata);
                 case EncodingType.Uu:
                     return Uu.Encode(ecdata);
                 case EncodingType.Base64:
                 default:
-                    return Convert.ToBase64String(ecdata);
+                    return Base64.ToBase64(ecdata);
             }
 
             // return new byte[0];
@@ -641,23 +645,23 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             {
                 case EncodingType.Null:
                 case EncodingType.None:
-                    ecdata = EnDeCodeHelper.GetBytes(encodedStr);
+                    ecdata = RawString.FromRawString(encodedStr);
                     break;
                 case EncodingType.Hex16:
-                    ecdata = Hex16.Decode(encodedStr);
+                    ecdata = Hex16.FromHex16(encodedStr);
                     break;
                 case EncodingType.Base32:
-                    ecdata = Base32.Decode(encodedStr);
+                    ecdata = Base32.FromBase32(encodedStr);
                     break;
                 case EncodingType.Hex32:
-                    ecdata = Hex32.Decode(encodedStr);
+                    ecdata = Hex32.FromHex32(encodedStr);
                     break;
                 case EncodingType.Uu:
                     ecdata = Uu.Decode(encodedStr);
                     break;
                 case EncodingType.Base64:
                 default:
-                    ecdata = Base64.Decode(encodedStr);
+                    ecdata = Base64.FromBase64(encodedStr);
                     break;
             }
 

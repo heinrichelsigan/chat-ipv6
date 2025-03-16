@@ -1,4 +1,6 @@
 ﻿using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
+using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher
@@ -55,6 +57,17 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
     public static class CipherEnumExtensions
     {
 
+        public static CipherEnum[] GetCipherTypes()
+        {
+            List<CipherEnum> list = new List<CipherEnum>();
+            foreach (string encName in Enum.GetNames(typeof(CipherEnum)))
+            {
+                list.Add((CipherEnum)Enum.Parse(typeof(CipherEnum), encName));
+            }
+
+            return list.ToArray();
+        }
+
         /// <summary>
         /// Extensions method for Enum <see cref="CipherEnum"/>
         /// gets a character for each Cipher Algorithm, that is used here
@@ -110,6 +123,24 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
             }
 
             return 'A';
+        }
+
+
+        public static string PrintChipherTypes()
+        {
+            string s = "";
+            foreach (CipherEnum cipher in GetCipherTypes())
+            {
+                s += "\t" + cipher.GetCipherChar() + "\t" + cipher.ToString() + "\t" + cipher.ToString("x:2");
+            }
+
+            return s;
+        }
+
+
+        public static CipherEnum FromSymmCipherEnum(Symmetric.SymmCipherEnum symmCipherEnum)
+        {
+            return symmCipherEnum.ToCipherEnum();
         }
 
     }

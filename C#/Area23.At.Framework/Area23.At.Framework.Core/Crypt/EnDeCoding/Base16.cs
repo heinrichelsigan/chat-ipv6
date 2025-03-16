@@ -24,22 +24,17 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// </summary>
         /// <param name="inBytes">byte array to encode</param>
         /// <returns>hex16 encoded string</returns>
-        public string Encode(byte[] inBytes)
-        {
-            return Base16.ToBase16(inBytes);
-        }
+        public string Encode(byte[] inBytes) => Base16.ToBase16(inBytes);
 
         /// <summary>
         /// Decodes a hex string to byte[]
         /// </summary>
         /// <param name="hexString">hex16 encoded string</param>
         /// <returns></returns>
-        public byte[] Decode(string encodedString)
-        {
-            return Base16.FromBase16(encodedString);
-        }
+        public byte[] Decode(string encodedString) => Base16.FromBase16(encodedString);
+     
 
-        public bool IsValid(string encodedStr) => Base16.IsValidBase16(encodedStr, out string error);
+        public bool IsValid(string encodedStr) => Base16.IsValidBase16(encodedStr, out _);
 
         public bool IsValidShowError(string encodedString, out string error) => Base16.IsValidBase16(encodedString, out error);
 
