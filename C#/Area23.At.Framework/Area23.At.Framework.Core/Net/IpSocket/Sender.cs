@@ -30,23 +30,24 @@ namespace Area23.At.Framework.Core.Net.IpSocket
         public static string Send(IPAddress serverIp, string msg, int serverPort = 7777)
         {
             string? resp = string.Empty;
+            TcpClient? tcpClient = null;
             try
             {
                 IPEndPoint serverIep = new IPEndPoint(serverIp, serverPort);
-                TcpClient tcpClient = new TcpClient();
+                tcpClient = new TcpClient();
                 byte[] data = EnDeCodeHelper.GetBytes(msg);
                 // byte[] data = Encoding.UTF8.GetBytes(msg);
                 tcpClient.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 tcpClient.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 // tcpClient.NoDelay = true;
-                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                // tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontFragment, true);
                 // tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 // tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontFragment, true);
                 tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                 tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                 tcpClient.Client.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 tcpClient.Connect(serverIp, serverPort);
-                
+
                 // tcpClient.Client.NoDelay = true;
                 tcpClient.Client.SendTimeout = 16000;
                 int ssize = tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
@@ -64,12 +65,16 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 //        sr.Read(charbuf, 0, charbuf.Length);
                 //    }
                 //}
-                
+
                 int read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
                 string rs = EnDeCodeHelper.GetString(outbuf);
                 if (Int32.TryParse(rs, out int rsize))
                 {
-                    Area23Log.LogStatic($"msg.Length = {msg.Length}, ssize = {ssize}, rsize = {rsize}\n");
+                    if (ssize != rsize)
+                    {
+                        Area23Log.LogStatic($"msg.Length = {msg.Length}, ssize = {ssize}, rsize = {rsize}\n");
+                        throw new IndexOutOfRangeException($"msg.Length = {msg.Length}, ssize = {ssize}, rsize = {rsize}");
+                    }
                 }
                 // sr.BaseStream.Read(outbuf, 0, 8192);
 
@@ -88,14 +93,33 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 // sw.Close();
                 // sr.Close();
                 // netStream.Close();
-                
+
                 // tcpClient.Client.Shutdown(SocketShutdown.Both);
-                tcpClient.Close();                
+                tcpClient.Close();
             }
             catch (Exception ex)
             {
                 Area23Log.Logger.Log(ex);
                 throw;
+            }
+            finally
+            {
+                if (tcpClient != null)
+                {
+                    try
+                    {
+                        tcpClient.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Area23Log.Logger.Log(ex);
+                    }
+                    try
+                    {
+                        tcpClient.Dispose();
+                    }
+                    catch { }
+                }
             }
 
             return resp ?? string.Empty;

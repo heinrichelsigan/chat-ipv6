@@ -79,6 +79,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
             
             ServerSocket = new Socket(ServerAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             ServerSocket.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
+            ServerSocket.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
             // ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
             ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
             ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
@@ -115,6 +116,9 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                             try
                             {
                                 ClientSocket = ServerSocket.Accept();
+                                ClientSocket.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
+                                ClientSocket.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
+                                ClientSocket.ReceiveTimeout = 16000;
                             }
                             catch (Exception exSock)
                             {
@@ -151,7 +155,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
 
                     ClientSocket.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                     ClientSocket.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
-                    ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                    // ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontFragment, true);
                     // ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                     ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                     ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);

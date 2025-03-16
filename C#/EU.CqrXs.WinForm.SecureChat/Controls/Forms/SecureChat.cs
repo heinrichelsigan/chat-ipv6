@@ -239,6 +239,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SrvMsg serverMessage = new SrvMsg(myServerKey, myServerKey);
             // TODO: SetText delegate AppendText()
             this.TextBoxPipe.Text = serverMessage.PipeString;
+            this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString; 
         }
 
 
@@ -508,6 +509,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             SrvMsg1 srv1stMsg = new SrvMsg1(CqrXsEuSrvKey);
             this.TextBoxPipe.Text = srv1stMsg.PipeString;
+            this.toolStripTextBoxCqrPipe.Text = srv1stMsg.PipeString;
             Thread.Sleep(100);
 
             this.StripProgressBar.Value = 50;
@@ -616,6 +618,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
+            this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
             myContact._hash = TextBoxPipe.Text;
             friendContact._hash = TextBoxPipe.Text;
             serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
@@ -741,6 +744,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
+                this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                 myContact._hash = TextBoxPipe.Text;
                 myContact.ChatRoomId = chatRoomNr;
                 friendContact._hash = TextBoxPipe.Text;
@@ -876,6 +880,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
+                this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                 myContact._hash = TextBoxPipe.Text;
                 myContact.ChatRoomId = chatRoomNr;
                 friendContact._hash = TextBoxPipe.Text;
@@ -983,6 +988,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
+                this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                 myContact._hash = TextBoxPipe.Text;
                 myContact.ChatRoomId = chatRoomNr;
                 friendContact._hash = TextBoxPipe.Text;
@@ -1102,6 +1108,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 ; // todo launch blocking entering window with input secret key
 
+            if (PeerSessionTriState != PeerSession3State.Peer2Peer)
+                TooglePeerSessionServerTriState(0, false);
 
             if (sender != null)
             {
@@ -1127,9 +1135,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                 SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
                                 AddIpToFriendList(sender, new EventArgs());
                             }
-
                         }
-                        encrypted = EnDeCodeHelper.GetString(area23EvArgs.GenericTData.BufferedData);
+                        if (ipSockListener.BufferedData.Length >= area23EvArgs.GenericTData.BufferedData.Length)
+                            encrypted = EnDeCodeHelper.GetString(ipSockListener.BufferedData);
+                        else
+                            encrypted = EnDeCodeHelper.GetString(area23EvArgs.GenericTData.BufferedData);
+
                     }
 
 
@@ -1180,7 +1191,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
 
-        public void TooglePeerSessionServerTriState(short svalue)
+        public void TooglePeerSessionServerTriState(short svalue, bool fireUp = true)
         {
             switch (svalue)
             {
@@ -1227,7 +1238,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     this.MenuOptionsItemPeer2Peer.Checked = false;
                     break;
             }
-            this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState);
+            this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState, fireUp);
         }
 
         public void TooglePeerServer(object sender, EventArgs e)
@@ -1340,6 +1351,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                         this.TextBoxPipe.Text = serverMessage.PipeString;
+                        this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                         myContact._hash = TextBoxPipe.Text;
                         myContact.ChatRoomId = chatRoomNr;
                         friendContact._hash = TextBoxPipe.Text;

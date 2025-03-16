@@ -17,6 +17,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public EventHandler<Area23EventArgs<int>>? FireUpChanged { get; set; }
 
+        public delegate void SetTrackBarPeerServerValueCallback(TrackBar track, int val);
+
+        public void SetTrackBarPeerServerValue(TrackBar trackbar, int trackValue)
+        {
+            if (trackbar.InvokeRequired)
+            {
+                SetTrackBarPeerServerValueCallback setTrackBarPeerServerValue = delegate (TrackBar track, int val)
+                {
+                    if (track != null) track.Value = val;
+                };
+                try
+                {
+                    trackbar.Invoke(setTrackBarPeerServerValue, new object[] { trackbar, trackValue });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetTrackBarPeerServerValue val: \"{trackValue}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (trackbar != null)
+                    trackbar.Value = trackValue;
+            }
+        }
+
         public PeerServerSwitchPanel()
         {
             components = new System.ComponentModel.Container();
@@ -33,22 +59,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
             InitializeComponent();
         }
 
-        public void SetPeerServerSessionTriState(PeerSession3State peerSession3State = PeerSession3State.None)
+        public void SetPeerServerSessionTriState(PeerSession3State peerSession3State = PeerSession3State.None, bool fireUp = true)
         {
             switch (peerSession3State)
             {
                 case PeerSession3State.Peer2Peer:
-                    TrackBarPeerServer.Value = 0;
+                    SetTrackBarPeerServerValue(TrackBarPeerServer, 0);
                     break;
                 case PeerSession3State.ChatServer:
-                    TrackBarPeerServer.Value = 2;
+                    SetTrackBarPeerServerValue(TrackBarPeerServer, 2);
                     break;
                 case PeerSession3State.None:
                 default:
-                    TrackBarPeerServer.Value = 1;
+                    SetTrackBarPeerServerValue(TrackBarPeerServer, 1);
                     break;
             }
-            TrackBarPeerServer_ValueChanged("SetPeerServerSessionTriState", new EventArgs());
+            if (fireUp)
+                TrackBarPeerServer_ValueChanged("SetPeerServerSessionTriState", new EventArgs());
         }
 
         private void TrackBarPeerServer_ValueChanged(object sender, EventArgs e)
