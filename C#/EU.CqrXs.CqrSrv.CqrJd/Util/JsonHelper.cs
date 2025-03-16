@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Library;
+using Area23.At.Framework.Library.Static;
 using EU.CqrXs.CqrSrv.CqrJd.Util;
 using Newtonsoft.Json;
 using System;
@@ -16,6 +17,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
     {
         internal static string JsonFileName { get => Area23.At.Framework.Library.Static.JsonHelper.JsonFileName; }
 
+
+        public static string JsonContactsFile { get => Area23.At.Framework.Library.Static.JsonHelper.JsonContactsFile; }
+
+
         internal static Dictionary<string, Uri> ShortenMapJson
         { 
             get => Area23.At.Framework.Library.Static.JsonHelper.ShortenMapJson;
@@ -23,11 +28,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
-        internal static void SaveDictionaryToJson(Dictionary<string, Uri> saveDict)
-        {
-            Area23.At.Framework.Library.Static.JsonHelper.SaveDictionaryToJson(saveDict);
-            return;
-        }
+        internal static void SaveDictionaryToJson(Dictionary<string, Uri> saveDict) => Area23.At.Framework.Library.Static.JsonHelper.SaveDictionaryToJson(saveDict);
         
     }
 

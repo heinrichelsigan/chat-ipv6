@@ -30,23 +30,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         protected internal void InitializeComponent()
         {
             dataGridContacts = new DataGridView();
-            ComboCuid = new ComboBox();
-            ComboName = new ComboBox();
-            ComboEmail = new ComboBox();
-            labelSearch = new Label();
-            ComboMobil = new ComboBox();
-            ComboAddress = new ComboBox();
             ContactId = new DataGridViewTextBoxColumn();
             Cuid = new DataGridViewTextBoxColumn();
             ContactName = new DataGridViewTextBoxColumn();
             ContactEmail = new DataGridViewTextBoxColumn();
             ContactMobile = new DataGridViewTextBoxColumn();
             ContactAddress = new DataGridViewTextBoxColumn();
+            ComboName = new ComboBox();
+            ComboEmail = new ComboBox();
+            labelSearch = new Label();
+            ComboMobil = new ComboBox();
+            ComboAddress = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)dataGridContacts).BeginInit();
             SuspendLayout();
             // 
             // dataGridContacts
             // 
+            dataGridContacts.AllowUserToAddRows = false;
             dataGridContacts.AllowUserToDeleteRows = false;
             dataGridContacts.AllowUserToResizeColumns = false;
             dataGridContacts.AllowUserToResizeRows = false;
@@ -57,95 +57,43 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             dataGridContacts.Location = new Point(2, 40);
             dataGridContacts.Margin = new Padding(2);
             dataGridContacts.Name = "dataGridContacts";
-            dataGridContacts.Size = new Size(959, 430);
+            dataGridContacts.Size = new Size(1000, 430);
             dataGridContacts.TabIndex = 26;
             dataGridContacts.MultiSelectChanged += DataGrid_MultiSelectChange;
-            // 
-            // ComboCuid
-            // 
-            ComboCuid.FormattingEnabled = true;
-            ComboCuid.Location = new Point(105, 5);
-            ComboCuid.Name = "ComboCuid";
-            ComboCuid.Size = new Size(106, 24);
-            ComboCuid.TabIndex = 27;
-            ComboCuid.TextUpdate += CuidCombo_TextUpdate;
-            // 
-            // ComboName
-            // 
-            ComboName.FormattingEnabled = true;
-            ComboName.Location = new Point(218, 5);
-            ComboName.Name = "ComboName";
-            ComboName.Size = new Size(176, 24);
-            ComboName.TabIndex = 28;
-            ComboName.TextUpdate += ComboName_TextUpdate;
-            // 
-            // ComboEmail
-            // 
-            ComboEmail.FormattingEnabled = true;
-            ComboEmail.Location = new Point(400, 5);
-            ComboEmail.Name = "ComboEmail";
-            ComboEmail.Size = new Size(206, 24);
-            ComboEmail.TabIndex = 29;
-            ComboEmail.TextUpdate += ComboEmail_TextUpdate;
-            // 
-            // labelSearch
-            // 
-            labelSearch.AutoSize = true;
-            labelSearch.Location = new Point(5, 8);
-            labelSearch.Name = "labelSearch";
-            labelSearch.Size = new Size(54, 17);
-            labelSearch.TabIndex = 30;
-            labelSearch.Text = "Search";
-            // 
-            // ComboMobil
-            // 
-            ComboMobil.FormattingEnabled = true;
-            ComboMobil.Location = new Point(615, 5);
-            ComboMobil.Name = "ComboMobil";
-            ComboMobil.Size = new Size(120, 24);
-            ComboMobil.TabIndex = 31;
-            ComboMobil.TextUpdate += ComboMobil_TextUpdate;
-            // 
-            // ComboAddress
-            // 
-            ComboAddress.FormattingEnabled = true;
-            ComboAddress.Location = new Point(744, 5);
-            ComboAddress.Name = "ComboAddress";
-            ComboAddress.Size = new Size(208, 24);
-            ComboAddress.TabIndex = 32;
-            ComboAddress.TextUpdate += ComboAddress_TextUpdate;
             // 
             // ContactId
             // 
             ContactId.HeaderText = "Id";
-            ContactId.MinimumWidth = 32;
+            ContactId.MinimumWidth = 24;
             ContactId.Name = "ContactId";
             ContactId.ReadOnly = true;
+            ContactId.Resizable = DataGridViewTriState.False;
             ContactId.ToolTipText = "Contact Identifier";
-            ContactId.Width = 60;
+            ContactId.Width = 32;
             // 
             // Cuid
             // 
             Cuid.HeaderText = "Cuid";
-            Cuid.MinimumWidth = 72;
+            Cuid.MinimumWidth = 108;
             Cuid.Name = "Cuid";
             Cuid.ReadOnly = true;
-            Cuid.Width = 108;
+            Cuid.ToolTipText = "Contact Unique Identifier";
+            Cuid.Width = 144;
             // 
             // ContactName
             // 
             ContactName.HeaderText = "Name";
-            ContactName.MinimumWidth = 96;
+            ContactName.MinimumWidth = 132;
             ContactName.Name = "ContactName";
             ContactName.ReadOnly = true;
             ContactName.Resizable = DataGridViewTriState.True;
             ContactName.ToolTipText = "Contact Name";
-            ContactName.Width = 184;
+            ContactName.Width = 196;
             // 
             // ContactEmail
             // 
             ContactEmail.HeaderText = "E-Mail";
-            ContactEmail.MinimumWidth = 120;
+            ContactEmail.MinimumWidth = 132;
             ContactEmail.Name = "ContactEmail";
             ContactEmail.ReadOnly = true;
             ContactEmail.ToolTipText = "Contact E-Mail";
@@ -154,33 +102,77 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // ContactMobile
             // 
             ContactMobile.HeaderText = "Mobile";
-            ContactMobile.MinimumWidth = 60;
+            ContactMobile.MinimumWidth = 108;
             ContactMobile.Name = "ContactMobile";
             ContactMobile.ReadOnly = true;
             ContactMobile.Resizable = DataGridViewTriState.True;
             ContactMobile.ToolTipText = "Contact Mobile";
-            ContactMobile.Width = 128;
+            ContactMobile.Width = 144;
             // 
             // ContactAddress
             // 
-            ContactAddress.HeaderText = "ContactAddress";
-            ContactAddress.MinimumWidth = 96;
+            ContactAddress.HeaderText = "Address";
+            ContactAddress.MinimumWidth = 144;
             ContactAddress.Name = "ContactAddress";
             ContactAddress.ReadOnly = true;
             ContactAddress.ToolTipText = "Contact Address";
             ContactAddress.Width = 216;
             // 
+            // ComboName
+            // 
+            ComboName.FormattingEnabled = true;
+            ComboName.Location = new Point(218, 5);
+            ComboName.Name = "ComboName";
+            ComboName.Size = new Size(187, 24);
+            ComboName.TabIndex = 28;
+            ComboName.TextUpdate += ComboName_TextUpdate;
+            // 
+            // ComboEmail
+            // 
+            ComboEmail.FormattingEnabled = true;
+            ComboEmail.Location = new Point(421, 5);
+            ComboEmail.Name = "ComboEmail";
+            ComboEmail.Size = new Size(206, 24);
+            ComboEmail.TabIndex = 29;
+            ComboEmail.TextUpdate += ComboEmail_TextUpdate;
+            // 
+            // labelSearch
+            // 
+            labelSearch.AutoSize = true;
+            labelSearch.Location = new Point(2, 8);
+            labelSearch.Name = "labelSearch";
+            labelSearch.Size = new Size(54, 17);
+            labelSearch.TabIndex = 30;
+            labelSearch.Text = "Search";
+            // 
+            // ComboMobil
+            // 
+            ComboMobil.FormattingEnabled = true;
+            ComboMobil.Location = new Point(633, 5);
+            ComboMobil.Name = "ComboMobil";
+            ComboMobil.Size = new Size(139, 24);
+            ComboMobil.TabIndex = 31;
+            ComboMobil.TextUpdate += ComboMobil_TextUpdate;
+            // 
+            // ComboAddress
+            // 
+            ComboAddress.FormattingEnabled = true;
+            ComboAddress.Location = new Point(778, 5);
+            ComboAddress.Name = "ComboAddress";
+            ComboAddress.Size = new Size(208, 24);
+            ComboAddress.TabIndex = 32;
+            ComboAddress.TextUpdate += ComboAddress_TextUpdate;
+            // 
             // ContactsView
             // 
             AutoScaleMode = AutoScaleMode.None;
             BackColor = SystemColors.Control;
-            ClientSize = new Size(963, 472);
+            ClientSize = new Size(1004, 472);
             Controls.Add(ComboAddress);
             Controls.Add(ComboMobil);
             Controls.Add(labelSearch);
             Controls.Add(ComboEmail);
             Controls.Add(ComboName);
-            Controls.Add(ComboCuid);
             Controls.Add(dataGridContacts);
             Name = "ContactsView";
             Text = "ContactsView";
@@ -194,7 +186,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #endregion
         private DataGridView dataGridContacts;
-        private ComboBox ComboCuid;
         private ComboBox ComboName;
         private ComboBox ComboEmail;
         private Label labelSearch;

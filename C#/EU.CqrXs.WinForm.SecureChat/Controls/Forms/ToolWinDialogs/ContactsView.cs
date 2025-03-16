@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.Static;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -61,100 +62,126 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void Form_Closed(object sender, FormClosedEventArgs e)
         {
+            HashSet<CqrContact> cqrContacts = new HashSet<CqrContact>();
             for (int r = 0; r < dataGridContacts.SelectedRows.Count; r++)
             {
-                var v1 = dataGridContacts.SelectedRows[r].Cells[0].Value;
-                var v2 = dataGridContacts.SelectedRows[r].Cells[1].Value;
-                var v3 = dataGridContacts.SelectedRows[r].Cells[2].Value;
+                var cid = dataGridContacts.SelectedRows[r].Cells[0].Value;
+                var ccuid = dataGridContacts.SelectedRows[r].Cells[1].Value;
+                var cname = dataGridContacts.SelectedRows[r].Cells[2].Value?.ToString();
+                var cemail = dataGridContacts.SelectedRows[r].Cells[3].Value?.ToString();
+                var cmobile = dataGridContacts.SelectedRows[r].Cells[4].Value?.ToString();
+                var caddress = dataGridContacts.SelectedRows[r].Cells[5].Value?.ToString();
+                CqrContact ctc = Util.JsonContacts.FindContactByNameEmail(Entities.Settings.Instance.Contacts, cname, cemail, cmobile);
+                if (ctc != null)
+                    cqrContacts.Add(ctc);
             }
+            if (cqrContacts.Count > 0) 
+                AppDomain.CurrentDomain.SetData(Constants.JSON_CONTACTS_SELECTED, cqrContacts);
         }
 
-        private void CuidCombo_TextUpdate(object sender, EventArgs e)
-        {
-            CqrContact[] contacts;
-            this.dataGridContacts.Rows.Clear();
-            if ((contacts = Entities.Settings.Singleton.Contacts.ToArray()) != null)
-            {
-                contactsCount = contacts.Length;
-                foreach (CqrContact contact in contacts)
-                {
-                    if (string.IsNullOrEmpty(this.ComboName.Text) ||
-                        contact.Cuid.ToString().Contains(this.ComboName.Text, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        this.dataGridContacts.Rows.Add(contact.GetRowParams());
-                    }
-                }
-            }
-        }
+        
 
         private void ComboName_TextUpdate(object sender, EventArgs e)
         {
-            CqrContact[] contacts;
-            this.dataGridContacts.Rows.Clear();
-            if ((contacts = Entities.Settings.Singleton.Contacts.ToArray()) != null)
+            dataGridContacts.CurrentCell = null;
+            for (int r = 0; r < this.dataGridContacts.Rows.Count; r++)
             {
-                contactsCount = contacts.Length;
-                foreach (CqrContact contact in contacts)
+                if (dataGridContacts.Rows[r] != null)
+                    dataGridContacts.Rows[r].Visible = true;
+
+                if (dataGridContacts.Rows[r] != null && dataGridContacts.Rows[r].Cells != null &&
+                    !string.IsNullOrEmpty(this.ComboName.Text))
                 {
-                    if (string.IsNullOrEmpty(this.ComboName.Text) || 
-                        contact.Name.Contains(this.ComboName.Text, StringComparison.InvariantCultureIgnoreCase))
+                    if (dataGridContacts.Rows[r].Cells.Count > 3 && dataGridContacts.Rows[r].Cells[2] != null &&
+                       dataGridContacts.Rows[r].Cells[2].Value != null && !string.IsNullOrEmpty(ComboName.Text))
                     {
-                        this.dataGridContacts.Rows.Add(contact.GetRowParams());
+                        string rname = dataGridContacts.Rows[r].Cells[2].Value.ToString();
+                        if (!string.IsNullOrEmpty(rname) &&
+                            rname.Contains(this.ComboName.Text, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            // dataGridContacts.Rows[r].Visible = true;
+                            continue;
+                        }
                     }
+                    dataGridContacts.Rows[r].Visible = false;
                 }
-            }
+            }            
         }
 
         private void ComboAddress_TextUpdate(object sender, EventArgs e)
         {
-            CqrContact[] contacts;
-            this.dataGridContacts.Rows.Clear();
-            if ((contacts = Entities.Settings.Singleton.Contacts.ToArray()) != null)
+            dataGridContacts.CurrentCell = null;
+            foreach (DataGridViewRow row in this.dataGridContacts.Rows)
             {
-                contactsCount = contacts.Length;
-                foreach (CqrContact contact in contacts)
+                if (row != null) 
+                    row.Visible = true;
+                
+                if (row != null && row.Cells != null && !string.IsNullOrEmpty(ComboAddress.Text))
                 {
-                    if (string.IsNullOrEmpty(this.ComboName.Text) ||
-                        contact.Address.Contains(this.ComboName.Text, StringComparison.InvariantCultureIgnoreCase))
+                    if (row.Cells.Count > 4 && row.Cells[5] != null && row.Cells[5].Value != null &&
+                        !string.IsNullOrEmpty(row.Cells[5].Value.ToString()) && !string.IsNullOrEmpty(ComboAddress.Text))
                     {
-                        this.dataGridContacts.Rows.Add(contact.GetRowParams());
+                        string raddress = row.Cells[5].Value.ToString();
+                        if (!string.IsNullOrEmpty(raddress) &&
+                                raddress.Contains(this.ComboAddress.Text, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            // row.Visible = true;
+                            continue;
+                        }
                     }
+                    row.Visible = false;
                 }
             }
         }
 
         private void ComboMobil_TextUpdate(object sender, EventArgs e)
         {
-            CqrContact[] contacts;
-            this.dataGridContacts.Rows.Clear();
-            if ((contacts = Entities.Settings.Singleton.Contacts.ToArray()) != null)
+            dataGridContacts.CurrentCell = null;
+            foreach (DataGridViewRow row in this.dataGridContacts.Rows)
             {
-                contactsCount = contacts.Length;
-                foreach (CqrContact contact in contacts)
+                if (row != null)
+                    row.Visible = true;
+
+                if (row != null && row.Cells != null)
                 {
-                    if (string.IsNullOrEmpty(this.ComboMobil.Text) ||
-                        contact.Mobile.Contains(this.ComboMobil.Text, StringComparison.InvariantCultureIgnoreCase))
+                    if (row.Cells.Count > 4 && row.Cells[4] != null && row.Cells[4].Value != null &&
+                        !string.IsNullOrEmpty(row.Cells[4].Value.ToString()) && !string.IsNullOrEmpty(ComboMobil.Text))
                     {
-                        this.dataGridContacts.Rows.Add(contact.GetRowParams());
+                        string rmobile = row.Cells[4].Value.ToString();
+                        if (!string.IsNullOrEmpty(rmobile) &&
+                                rmobile.Contains(this.ComboMobil.Text, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            // row.Visible = true;
+                            continue;
+                        }
                     }
+                    row.Visible = false;
                 }
-            }
+            }            
         }
 
         private void ComboEmail_TextUpdate(object sender, EventArgs e)
         {
-            CqrContact[] contacts;
-            this.dataGridContacts.Rows.Clear();
-            if ((contacts = Entities.Settings.Singleton.Contacts.ToArray()) != null)
+            dataGridContacts.CurrentCell = null;
+            foreach (DataGridViewRow row in this.dataGridContacts.Rows)
             {
-                contactsCount = contacts.Length;
-                foreach (CqrContact contact in contacts)
+                if (row != null)
+                    row.Visible = true;
+
+                if (row != null && row.Cells != null)
                 {
-                    if (string.IsNullOrEmpty(this.ComboEmail.Text) ||
-                        contact.Email.Contains(this.ComboEmail.Text, StringComparison.InvariantCultureIgnoreCase))
+                    if (row.Cells.Count > 3 && row.Cells[3] != null && row.Cells[3].Value != null &&
+                        !string.IsNullOrEmpty(row.Cells[3].Value.ToString()) && !string.IsNullOrEmpty(ComboEmail.Text))
                     {
-                        this.dataGridContacts.Rows.Add(contact.GetRowParams());
+                        string remail = row.Cells[3].Value.ToString();
+                        if (!string.IsNullOrEmpty(remail) &&
+                                remail.Contains(this.ComboEmail.Text, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            // row.Visible = true;
+                            continue;
+                        }
                     }
+                    row.Visible = false;
                 }
             }
         }

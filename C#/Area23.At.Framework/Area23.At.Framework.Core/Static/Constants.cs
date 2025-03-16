@@ -110,7 +110,7 @@ namespace Area23.At.Framework.Core.Static
         public const string OUT_DIR = "out";
         public const string TMP_DIR = "tmp";
         public const string QR_DIR = "Qr";
-        public const string JSON_DIR = "json";
+        public const string JSON_DIR = "json";        
         public const string RES_DIR = "res";
         public const string RES_FOLDER = "res";
         public const string TEXT_DIR = "text";
@@ -134,6 +134,9 @@ namespace Area23.At.Framework.Core.Static
 
         public const string UTF8_JSON = "utf8symol.json";
         public const string JSON_SAVE_FILE = "urlshort.json";
+        public const string JSON_CONTACTS_FILE = "contacts.json";
+        public const string JSON_CONTACTS = "contacts";
+        public const string JSON_CONTACTS_SELECTED = "contacts_selected";
         public const string JSON_SETTINGS_FILE = "settings.json";
         public const string CQR_CHAT_FILE = "cqr{0}chat.json";
         public const string PREVIOUS_EXCEPTION = "previous_exception";

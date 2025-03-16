@@ -1,5 +1,5 @@
-﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
-using Area23.At.Framework.Library.Static;
+﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,18 +9,25 @@ using System.Net.NetworkInformation;
 using System.Threading;
 using System.Web;
 
-namespace EU.CqrXs.CqrSrv.CqrJd.Util
+namespace EU.CqrXs.WinForm.SecureChat.Util
 {
     public static class JsonContacts
     {
         static object _lock = new object();
         static HashSet<CqrContact> _contacts;
-        internal static string JsonContactsFileName { get => Area23.At.Framework.Library.Static.JsonHelper.JsonContactsFile; }
+        internal static string JsonContactsFileName { get => JsonHelper.JsonContactsFile; }
 
         static JsonContacts()
         {
-            _contacts = LoadJsonContacts();
-            ChatRoomNumbersFromFs();
+            try
+            {
+                _contacts = LoadJsonContacts();
+            }
+            catch { }
+            if (_contacts == null || _contacts.Count == 0)
+            {
+                _contacts = new HashSet<CqrContact>(Entities.Settings.Instance.Contacts);
+            }
         }
 
         internal static HashSet<CqrContact> LoadJsonContacts()
@@ -99,14 +106,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             return _contacts;
         }
 
-        public static CqrContact FindContactByNameEmail(HashSet<CqrContact> contacts, CqrContact searchContact)
+        public static CqrContact FindContactByNameEmail(List<CqrContact> contacts, CqrContact searchContact)
         {
             CqrContact foundC = FindContactByNameEmail(contacts, searchContact.Name, searchContact.Email, searchContact.Mobile);
             return foundC;
         }
         
 
-        public static CqrContact FindContactByNameEmail(HashSet<CqrContact> contacts, string cName, string cEmail, string cMobile)
+        public static CqrContact FindContactByNameEmail(List<CqrContact> contacts, string cName, string cEmail, string cMobile)
         {
 
             if (!string.IsNullOrEmpty(cName) || !string.IsNullOrEmpty(cEmail))
@@ -139,21 +146,17 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         {
 
             List<string> chatRooms = new List<string>();
-            string[] csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
+            string[] csr = Directory.GetFiles(LibPaths.SystemDirPath, "room*.json");
             string file = "";
             foreach (string filedir in csr)
             {
                 file = Path.GetFileName(filedir);
                 chatRooms.Add(file);
-            }                        
-
-            if (BaseWebService.UseApplicationState)
-                HttpContext.Current.Application["ChatRooms"] = chatRooms;
-            if (BaseWebService.UseAmazonElasticCache)
-            {
-                string hashChatRoomsJson = JsonConvert.SerializeObject(chatRooms);
-                RedIs.Db.StringSet("ChatRooms", hashChatRoomsJson);
             }
+
+            // if (BaseWebService.UseApplicationState)
+            //     HttpContext.Current.Application["ChatRooms"] = chatRooms;
+
 
             return chatRooms;
         }

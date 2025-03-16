@@ -255,14 +255,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
             MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { MenuItemExternalIp });
             MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
-            MenuNetworkItemMyIps.Size = new Size(180, 22);
+            MenuNetworkItemMyIps.Size = new Size(177, 22);
             MenuNetworkItemMyIps.Text = "my ip's";
             // 
             // MenuItemExternalIp
             // 
             MenuItemExternalIp.BackColor = SystemColors.MenuBar;
             MenuItemExternalIp.Name = "MenuItemExternalIp";
-            MenuItemExternalIp.Size = new Size(160, 22);
+            MenuItemExternalIp.Size = new Size(180, 22);
             MenuItemExternalIp.Text = "External Ip's";
             // 
             // MenuItemFriendIp
@@ -270,7 +270,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuItemFriendIp.BackColor = SystemColors.MenuBar;
             MenuItemFriendIp.DropDownItems.AddRange(new ToolStripItem[] { MenuNetworkComboBoxFriendIp });
             MenuItemFriendIp.Name = "MenuItemFriendIp";
-            MenuItemFriendIp.Size = new Size(180, 22);
+            MenuItemFriendIp.Size = new Size(177, 22);
             MenuItemFriendIp.Text = "friend ip's";
             MenuItemFriendIp.ToolTipText = "You can enter here directly friend ip's, if your connection is free of SNAT/DNAT";
             // 
@@ -284,7 +284,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             MenuNetworkItemProxyServers.BackColor = SystemColors.MenuBar;
             MenuNetworkItemProxyServers.Name = "MenuNetworkItemProxyServers";
-            MenuNetworkItemProxyServers.Size = new Size(180, 22);
+            MenuNetworkItemProxyServers.Size = new Size(177, 22);
             MenuNetworkItemProxyServers.Text = "proxies";
             MenuNetworkItemProxyServers.ToolTipText = "proxies are needed mainly to connect to people, where no endpoint to endpoint ip connection is possible";
             // 
@@ -293,14 +293,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuNetworkSeparatorIp.BackColor = SystemColors.MenuBar;
             MenuNetworkSeparatorIp.ForeColor = SystemColors.ActiveBorder;
             MenuNetworkSeparatorIp.Name = "MenuNetworkSeparatorIp";
-            MenuNetworkSeparatorIp.Size = new Size(177, 6);
+            MenuNetworkSeparatorIp.Size = new Size(174, 6);
             // 
             // MenuNetworkItemIPv6Secure
             // 
             MenuNetworkItemIPv6Secure.BackColor = SystemColors.MenuBar;
             MenuNetworkItemIPv6Secure.Name = "MenuNetworkItemIPv6Secure";
             MenuNetworkItemIPv6Secure.ShortcutKeys = Keys.Control | Keys.D6;
-            MenuNetworkItemIPv6Secure.Size = new Size(180, 22);
+            MenuNetworkItemIPv6Secure.Size = new Size(177, 22);
             MenuNetworkItemIPv6Secure.Text = "ip6 cqr";
             MenuNetworkItemIPv6Secure.ToolTipText = "you can check it only, when you have an ipv6 address and you want to chat only to partners, where ip6 connect is possible";
             // 
@@ -720,7 +720,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxContacts.FormattingEnabled = true;
             ComboBoxContacts.Location = new Point(456, 35);
             ComboBoxContacts.Margin = new Padding(1);
-            ComboBoxContacts.Enabled = false;
             ComboBoxContacts.Name = "ComboBoxContacts";
             ComboBoxContacts.Size = new Size(369, 24);
             ComboBoxContacts.TabIndex = 18;
@@ -731,13 +730,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // ComboBoxIp
             // 
             ComboBoxIp.BackColor = SystemColors.ControlLightLight;
+            ComboBoxIp.Enabled = false;
             ComboBoxIp.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             ComboBoxIp.ForeColor = SystemColors.ControlText;
             ComboBoxIp.FormattingEnabled = true;
             ComboBoxIp.Location = new Point(4, 35);
             ComboBoxIp.Margin = new Padding(1);
             ComboBoxIp.Name = "ComboBoxIp";
-            ComboBoxIp.Enabled = false;
             ComboBoxIp.Size = new Size(297, 24);
             ComboBoxIp.TabIndex = 15;
             ComboBoxIp.Text = "[enter peer IPv4/IPv6]";
@@ -831,11 +830,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             DragNDropGroupBox.BackColor = SystemColors.AppWorkspace;
             DragNDropGroupBox.Font = new Font("Lucida Sans Unicode", 8.5F);
             DragNDropGroupBox.ForeColor = SystemColors.ActiveCaptionText;
-            DragNDropGroupBox.Location = new Point(8, 503);
+            DragNDropGroupBox.Location = new Point(8, 537);
             DragNDropGroupBox.Margin = new Padding(1);
             DragNDropGroupBox.Name = "DragNDropGroupBox";
             DragNDropGroupBox.Padding = new Padding(1);
-            DragNDropGroupBox.Size = new Size(154, 127);
+            DragNDropGroupBox.Size = new Size(154, 93);
             DragNDropGroupBox.TabIndex = 81;
             DragNDropGroupBox.TabStop = false;
             DragNDropGroupBox.Text = "   Drag'N'Drop Box";
@@ -849,7 +848,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             LinkedLabelsBox.Margin = new Padding(0);
             LinkedLabelsBox.Name = "LinkedLabelsBox";
             LinkedLabelsBox.Padding = new Padding(0);
-            LinkedLabelsBox.Size = new Size(160, 279);
+            LinkedLabelsBox.Size = new Size(160, 307);
             LinkedLabelsBox.TabIndex = 83;
             LinkedLabelsBox.TabStop = false;
             LinkedLabelsBox.Text = "Attachments";
@@ -901,9 +900,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             Controls.Add(StripStatus);
             Controls.Add(StripMenu);
             Controls.Add(PanelCenter);
-            Icon = Properties.fr.Resources.SatIcon;
             Font = new Font("Lucida Sans Unicode", 10F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            Icon = Properties.fr.Resources.SatIcon;
             MainMenuStrip = StripMenu;
             Name = "RichTextChat";
             SizeGripStyle = SizeGripStyle.Show;
