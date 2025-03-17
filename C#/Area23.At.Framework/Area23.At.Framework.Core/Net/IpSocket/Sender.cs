@@ -99,6 +99,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                         else
                             fsize += ssize;
                     }
+                    Thread.Sleep(10);
                 }
                               
                 // compare bytes total read / send with initial length
@@ -129,7 +130,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 // sw.Close();
                 // sr.Close();
                 // netStream.Close();
-
+                Thread.Sleep(100);
                 // tcpClient.Client.Shutdown(SocketShutdown.Both);
                 tcpClient.Close();
             }
