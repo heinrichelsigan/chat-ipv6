@@ -21,7 +21,6 @@ using System.Runtime.InteropServices.JavaScript;
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
 
-
     /// <summary>
     /// SecureChat main form
     /// </summary>
@@ -235,7 +234,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return;
-
+            
             SrvMsg serverMessage = new SrvMsg(myServerKey, myServerKey);
             // TODO: SetText delegate AppendText()
             this.TextBoxPipe.Text = serverMessage.PipeString;
@@ -619,8 +618,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
             this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-            myContact._hash = TextBoxPipe.Text;
-            friendContact._hash = TextBoxPipe.Text;
+            myContact._hash = GetHash();
+            friendContact._hash = GetHash();
             serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
             FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, myContact.Email, serverMessage.PipeString);
@@ -716,8 +715,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
 
-                if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
-                    return ;
+                // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                //     return ;
 
                 string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
@@ -745,14 +744,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
                 this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-                myContact._hash = TextBoxPipe.Text;
+                myContact._hash = GetHash();
                 myContact.ChatRoomId = chatRoomNr;
-                friendContact._hash = TextBoxPipe.Text;
-                friendContact.ChatRoomId = chatRoomNr;
-                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
+                if (friendContact != null)
+                {
+                    friendContact._hash = GetHash();
+                    friendContact.ChatRoomId = chatRoomNr;
+                    serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                }
+                else
+                    serverMessage = new SrvMsg(myContact, myContact, CqrXsEuSrvKey, myServerKey);
 
-                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
                 // FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
                 // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
                 // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
@@ -852,8 +856,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
-                if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
-                    return;
+                //if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                //    return;
 
                 string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
@@ -881,14 +885,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
                 this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-                myContact._hash = TextBoxPipe.Text;
+                myContact._hash = GetHash();
                 myContact.ChatRoomId = chatRoomNr;
-                friendContact._hash = TextBoxPipe.Text;
-                friendContact.ChatRoomId = chatRoomNr;
-                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                if (friendContact != null)
+                {
+                    friendContact._hash = GetHash();
+                    friendContact.ChatRoomId = chatRoomNr;
+                    serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                }
+                else
+                    serverMessage = new SrvMsg(myContact, myContact, CqrXsEuSrvKey, myServerKey);
 
-
-                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
                 // FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
                 // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
                 // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
@@ -953,8 +961,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
 
-                if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
-                    return;
+                // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                //     return;
 
                 string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
@@ -983,19 +991,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
 
+                myContact._hash = GetHash();
                 myContact.ChatRoomId = chatRoomNr;
-                friendContact.ChatRoomId = chatRoomNr;
 
-                SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                if (friendContact != null)
+                {
+                    friendContact._hash = GetHash();
+                    friendContact.ChatRoomId = chatRoomNr;
+                }
+                SrvMsg serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
                 this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-                myContact._hash = TextBoxPipe.Text;
-                myContact.ChatRoomId = chatRoomNr;
-                friendContact._hash = TextBoxPipe.Text;
-                friendContact.ChatRoomId = chatRoomNr;
-                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                
+
+                serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
                                
-                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
                 FullSrvMsg<string> rfmsg = serverMessage.ReceiveChatMsg_Soap<string>(fmsg, ServerIpAddress, EncodingType.Base64);
 
 
@@ -1352,9 +1363,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                         this.TextBoxPipe.Text = serverMessage.PipeString;
                         this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-                        myContact._hash = TextBoxPipe.Text;
+                        myContact._hash = GetHash();
                         myContact.ChatRoomId = chatRoomNr;
-                        friendContact._hash = TextBoxPipe.Text;
+                        friendContact._hash = GetHash();
                         friendContact.ChatRoomId = chatRoomNr;
                         serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
@@ -2340,6 +2351,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #endregion LoadSaveChatContent
 
+
+        protected string GetHash()
+        {
+            if (!string.IsNullOrEmpty(this.TextBoxPipe.Text))
+                return this.TextBoxPipe.Text;
+            if (!string.IsNullOrEmpty(this.toolStripTextBoxCqrPipe.Text))
+                return this.toolStripTextBoxCqrPipe.Text;
+
+            Peer2PeerMsg peerMsg = new Peer2PeerMsg(this.ComboBoxSecretKey.Text);
+            return peerMsg.PipeString;
+        }
 
 
     }

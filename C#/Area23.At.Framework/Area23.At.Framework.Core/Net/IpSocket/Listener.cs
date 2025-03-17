@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Area23.At.Framework.Core.Util;
-using System.Diagnostics.Eventing.Reader;
+﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
-using System.Windows.Interop;
+using Area23.At.Framework.Core.Util;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 
 namespace Area23.At.Framework.Core.Net.IpSocket
 {
@@ -50,29 +45,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
         {
             if (connectedIpIfAddr.AddressFamily != AddressFamily.InterNetwork && connectedIpIfAddr.AddressFamily != AddressFamily.InterNetworkV6)
                 throw new InvalidOperationException("We can only handle AddressFamily == AddressFamily.InterNetwork and AddressFamily.InterNetworkV6");
-
-            //if (ClientSocket != null)
-            //{
-            //    if (ClientSocket.Connected)
-            //        ClientSocket.Disconnect(true);
-            //    if (ClientSocket.IsBound)
-            //        ClientSocket.Close();
-            //    ClientSocket.Dispose();
-            //}
-            //ClientSocket = null;
-            //if (ServerSocket != null)
-            //{
-            //    if (ServerSocket.Connected)
-            //        ServerSocket.Disconnect(true);
-            //    if (ServerSocket.IsBound)
-            //        ServerSocket.Close();
-            //    ServerSocket.Dispose();
-            //}
-            //ServerSocket = null;            
-
-            // ServerTcpListener = new TcpListener(ServerEndPoint);
-            // ServerTcpListener.Start();
-
+           
             disposed = false;
             ServerAddress = connectedIpIfAddr;
             ServerEndPoint = new IPEndPoint(ServerAddress, Constants.CHAT_PORT);
@@ -80,11 +53,8 @@ namespace Area23.At.Framework.Core.Net.IpSocket
             ServerSocket = new Socket(ServerAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             ServerSocket.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
             ServerSocket.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
-            // ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
-            ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
             ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
-            // ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
-            // ServerSocket.NoDelay = true;
+            ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
             ServerSocket.Bind(ServerEndPoint);
             ServerSocket.Listen(Constants.BACKLOG);
             ListenerName = ServerEndPoint.ToString();
@@ -109,8 +79,8 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 Console.WriteLine(ListenToString());
                 while (!disposed)
                 {
-                    lock (_lock)
-                    {
+                    //lock (_lock)
+                    //{
                         if (ServerSocket != null && ServerSocket.IsBound)
                         {
                             try
@@ -118,6 +88,8 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                                 ClientSocket = ServerSocket.Accept();
                                 ClientSocket.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                                 ClientSocket.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
+                                ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
+                                ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                                 ClientSocket.ReceiveTimeout = 16000;
                             }
                             catch (Exception exSock)
@@ -131,9 +103,27 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                             t.Start();
                             Thread.Sleep(256);
                         }                        
-                    }                    
+                    //}                    
                 }
             }
+        }
+
+        static void DisplayPendingByteCount(Socket s)
+        {
+            byte[] outValue = BitConverter.GetBytes(0);
+
+            // Check how many bytes have been received.
+            s.IOControl(IOControlCode.DataToRead, null, outValue);
+
+            uint bytesAvailable = BitConverter.ToUInt32(outValue, 0);
+            string a0 = $"server has {bytesAvailable} bytes pending.";
+            Area23Log.LogStatic(a0);
+            Console.Write(a0);
+            string a1 = "Available property says {s.Available}.";
+            Console.WriteLine(a1);
+            Area23Log.LogStatic(a1);
+
+            return;
         }
 
         /// <summary>
@@ -145,9 +135,11 @@ namespace Area23.At.Framework.Core.Net.IpSocket
             {
                 lock (_lock)
                 {
+                    DisplayPendingByteCount(ClientSocket);
+                    byte[] minibuf = new byte[Constants.MIN_SOCKET_BYTE_BUFFEER];
                     byte[] buffer = new byte[Constants.MAX_SOCKET_BYTE_BUFFEER];
                     // char[] charbuf = new char[Constants.MAX_SOCKET_BYTE_BUFFEER];
-                    Span<byte> buf = new Span<byte>(buffer, 0, Constants.MAX_SOCKET_BYTE_BUFFEER);
+                    // Span<byte> buf = new Span<byte>(buffer, 0, buffer.Length);
                     IPEndPoint clientIEP = (IPEndPoint?)ClientSocket.RemoteEndPoint;
                     string sstring = "Accept connection from " + clientIEP?.Address.ToString() + ":" + clientIEP?.Port.ToString() +
                         " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
@@ -155,33 +147,38 @@ namespace Area23.At.Framework.Core.Net.IpSocket
 
                     ClientSocket.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                     ClientSocket.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
-                    // ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontFragment, true);
-                    // ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                     ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                     ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, Constants.MAX_SOCKET_BYTE_BUFFEER);
                     SocketFlags flags = SocketFlags.None;
                     SocketError errorCode;
                     ClientSocket.ReceiveTimeout = 16000;
-                    // ClientSocket.NoDelay = true;
-                    //int rsize = -1;
-                    //using (NetworkStream netStream = new NetworkStream(ClientSocket))
-                    //{
-                    //    using (StreamReader sr = new StreamReader(netStream))
-                    //    {
-                    //        rsize = sr.BaseStream.Read(buffer, 0, buffer.Length);
-                    //    }
-                    //    using (StreamWriter sw = new StreamWriter(netStream))
-                    //    {
-                    //        sw.Write($"ACK {clientIEP?.Address.ToString()}:{clientIEP?.Port} => {ServerAddress.ToString()}:{Constants.CHAT_PORT}!");
-                    //        sw.Flush();
-                    //    }
-                    //}
-                    // long rsize = (long)ClientSocket.Receive(buf, flags, out errorCode);
+                    int ssize = ClientSocket.Receive(minibuf, 0, Constants.MIN_SOCKET_BYTE_BUFFEER, flags, out errorCode);
+             
+                    string rs = EnDeCodeHelper.GetString(minibuf);
+                    if (!Int32.TryParse(rs, out int msize))
+                        msize = Constants.MAX_SOCKET_BYTE_BUFFEER;
+                   
+                        // i
+
+                        // ClientSocket.NoDelay = true;
+                        //int rsize = -1;
+                        //using (NetworkStream netStream = new NetworkStream(ClientSocket))
+                        //{
+                        //    using (StreamReader sr = new StreamReader(netStream))
+                        //    {
+                        //        rsize = sr.BaseStream.Read(buffer, 0, buffer.Length);
+                        //    }
+                        //    using (StreamWriter sw = new StreamWriter(netStream))
+                        //    {
+                        //        sw.Write($"ACK {clientIEP?.Address.ToString()}:{clientIEP?.Port} => {ServerAddress.ToString()}:{Constants.CHAT_PORT}!");
+                        //        sw.Flush();
+                        //    }
+                        //}a
+                        // laong rsize = (long)ClientSocket.Receive(buf, flags, out errorCode);
                     int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_SOCKET_BYTE_BUFFEER, flags, out errorCode);
-
-                    // int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_BYTE_BUFFEER, flags, out errorCode);
+                    // int rsize = ClientSocket.Receive(buf, flags, out errorCode);
+                    
                     BufferedData = new byte[rsize];
-
                     Array.Copy(buffer, 0, BufferedData, 0, rsize);
 
                     // ReceiveData receiveData = new ReceiveData(buf.ToArray(), (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);

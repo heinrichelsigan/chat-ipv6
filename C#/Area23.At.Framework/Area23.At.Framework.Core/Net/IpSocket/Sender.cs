@@ -36,6 +36,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 IPEndPoint serverIep = new IPEndPoint(serverIp, serverPort);
                 tcpClient = new TcpClient();
                 byte[] data = EnDeCodeHelper.GetBytes(msg);
+                //Span<byte> spanBuffer = new Span<byte>(data);
                 // byte[] data = Encoding.UTF8.GetBytes(msg);
                 tcpClient.SendBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
                 tcpClient.ReceiveBufferSize = Constants.MAX_SOCKET_BYTE_BUFFEER;
@@ -50,7 +51,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
 
                 // tcpClient.Client.NoDelay = true;
                 tcpClient.Client.SendTimeout = 16000;
-                int ssize = tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
+                
                 // if (ssize < msg.Length) ;
                 byte[] outbuf = new byte[8192];
                 //using (NetworkStream netStream = tcpClient.GetStream())
@@ -65,8 +66,17 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 //        sr.Read(charbuf, 0, charbuf.Length);
                 //    }
                 //}
-
+                byte[] sendData = Encoding.Default.GetBytes(data.Length.ToString());
+                tcpClient.Client.Send(sendData, SocketFlags.None);
                 int read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
+                string resp1 = EnDeCodeHelper.GetString(outbuf);
+
+                if (!resp1.Equals(Constants.ACK))
+                    ; // rtodo i+nvli+d prorocoll
+                
+                int ssize = tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
+               
+                 read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
                 string rs = EnDeCodeHelper.GetString(outbuf);
                 if (Int32.TryParse(rs, out int rsize))
                 {
