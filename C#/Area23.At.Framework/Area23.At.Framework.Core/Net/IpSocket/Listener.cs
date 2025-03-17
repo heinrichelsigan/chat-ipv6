@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.Static;
+﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using System.Net;
 using System.Net.Sockets;
@@ -135,9 +136,10 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 lock (_lock)
                 {
                     DisplayPendingByteCount(ClientSocket);
+                    byte[] minibuf = new byte[Constants.MIN_SOCKET_BYTE_BUFFEER];
                     byte[] buffer = new byte[Constants.MAX_SOCKET_BYTE_BUFFEER];
                     // char[] charbuf = new char[Constants.MAX_SOCKET_BYTE_BUFFEER];
-                    Span<byte> buf = new Span<byte>(buffer, 0, buffer.Length);
+                    // Span<byte> buf = new Span<byte>(buffer, 0, buffer.Length);
                     IPEndPoint clientIEP = (IPEndPoint?)ClientSocket.RemoteEndPoint;
                     string sstring = "Accept connection from " + clientIEP?.Address.ToString() + ":" + clientIEP?.Port.ToString() +
                         " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
@@ -150,27 +152,34 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     SocketFlags flags = SocketFlags.None;
                     SocketError errorCode;
                     ClientSocket.ReceiveTimeout = 16000;
-                    // ClientSocket.NoDelay = true;
-                    //int rsize = -1;
-                    //using (NetworkStream netStream = new NetworkStream(ClientSocket))
-                    //{
-                    //    using (StreamReader sr = new StreamReader(netStream))
-                    //    {
-                    //        rsize = sr.BaseStream.Read(buffer, 0, buffer.Length);
-                    //    }
-                    //    using (StreamWriter sw = new StreamWriter(netStream))
-                    //    {
-                    //        sw.Write($"ACK {clientIEP?.Address.ToString()}:{clientIEP?.Port} => {ServerAddress.ToString()}:{Constants.CHAT_PORT}!");
-                    //        sw.Flush();
-                    //    }
-                    //}
-                    // long rsize = (long)ClientSocket.Receive(buf, flags, out errorCode);
-                    // int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_SOCKET_BYTE_BUFFEER, flags, out errorCode);
-                    int rsize = ClientSocket.Receive(buf, flags, out errorCode);
+                    int ssize = ClientSocket.Receive(minibuf, 0, Constants.MIN_SOCKET_BYTE_BUFFEER, flags, out errorCode);
+             
+                    string rs = EnDeCodeHelper.GetString(minibuf);
+                    if (!Int32.TryParse(rs, out int msize))
+                        msize = Constants.MAX_SOCKET_BYTE_BUFFEER;
+                   
+                        // i
+
+                        // ClientSocket.NoDelay = true;
+                        //int rsize = -1;
+                        //using (NetworkStream netStream = new NetworkStream(ClientSocket))
+                        //{
+                        //    using (StreamReader sr = new StreamReader(netStream))
+                        //    {
+                        //        rsize = sr.BaseStream.Read(buffer, 0, buffer.Length);
+                        //    }
+                        //    using (StreamWriter sw = new StreamWriter(netStream))
+                        //    {
+                        //        sw.Write($"ACK {clientIEP?.Address.ToString()}:{clientIEP?.Port} => {ServerAddress.ToString()}:{Constants.CHAT_PORT}!");
+                        //        sw.Flush();
+                        //    }
+                        //}a
+                        // laong rsize = (long)ClientSocket.Receive(buf, flags, out errorCode);
+                    int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_SOCKET_BYTE_BUFFEER, flags, out errorCode);
+                    // int rsize = ClientSocket.Receive(buf, flags, out errorCode);
                     
                     BufferedData = new byte[rsize];
-
-                    Array.Copy(buf.ToArray(), 0, BufferedData, 0, rsize);
+                    Array.Copy(buffer, 0, BufferedData, 0, rsize);
 
                     // ReceiveData receiveData = new ReceiveData(buf.ToArray(), (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
                     ReceiveData receiveData = new ReceiveData(buffer, (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
