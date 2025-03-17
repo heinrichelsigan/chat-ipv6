@@ -38,7 +38,6 @@ namespace Area23.At.Framework.Library.Static
         public const string VERSION = "v2.25.305";
         public const string VALKEY_CACHE_HOST_PORT = "ValkeyCacheHostPort";
 
-
         public const string AREA23_URL = "https://area23.at";
         public const string APP_PATH = "https://area23.at/net/";
         public const string RPN_URL = "https://area23.at/net/RpnCalc.aspx";

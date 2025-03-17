@@ -5,6 +5,7 @@ using EU.CqrXs.WinForm.SecureChat.Properties;
 using Newtonsoft.Json;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -23,6 +24,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             pictureBoxImage.Image = null;
             if (EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Click2UploadBackground != null) 
                 pictureBoxImage.BackgroundImage = EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Click2UploadBackground;
+            pictureBoxImage.Tag = Constants.IMAGE_UPLOAD_CLICK + Constants.IMAGE_UPLOAD_EXTENSION;
 
             using (MemoryStream ms = new MemoryStream(Resources.WinFormAboutDialog))
             {
@@ -40,14 +42,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 if (_id == 0 && Settings.Singleton.MyContact != null)
                 {
-                    this.Text = Settings.Singleton.MyContact.ContactId + " " + Settings.Singleton.MyContact.Name;
-                    this.comboBoxName.Text = Settings.Singleton.MyContact.Name;
-                    this.textBoxEmail.Text = Settings.Singleton.MyContact.Email;
-                    this.textBoxMobile.Text = Settings.Singleton.MyContact.Mobile;
-                    this.textBoxAddress.Text = Settings.Singleton.MyContact.Address;                    
-                    base64image = Entities.Settings.Singleton.MyContact.ContactImage?.ImageBase64 ?? string.Empty;
-                    if (!string.IsNullOrEmpty(base64image))
-                        this.pictureBoxImage.Image = base64image.Base64ToImage();
+                    if (Settings.Singleton.MyContact.ContactId < 0)
+                    {
+                        _id = 0;
+                        Settings.Singleton.MyContact.ContactId = 0;
+                        Settings.SaveSettings(Settings.Singleton);
+                    }
+                    else
+                    {
+                        this.Text = Settings.Singleton.MyContact.ContactId + " " + Settings.Singleton.MyContact.Name;
+                        this.comboBoxName.Text = Settings.Singleton.MyContact.Name;
+                        this.textBoxEmail.Text = Settings.Singleton.MyContact.Email;
+                        this.textBoxMobile.Text = Settings.Singleton.MyContact.Mobile;
+                        this.textBoxAddress.Text = Settings.Singleton.MyContact.Address;
+                        base64image = Entities.Settings.Singleton.MyContact.ContactImage?.ImageBase64 ?? string.Empty;
+                        if (!string.IsNullOrEmpty(base64image))
+                        {
+                            this.pictureBoxImage.Image = base64image.Base64ToImage();
+                            pictureBoxImage.Tag = Entities.Settings.Singleton.MyContact.ContactImage?.ImageFileName;
+                        }
+                    }
                 }
                 else if (_id > 0 && Entities.Settings.Singleton.Contacts.Count > 0)
                 {
@@ -207,7 +221,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         else
                         {
-                            pictureBoxImage.Tag = $"ClickToUpload{contact.ContactId}.gif";                            
+                            pictureBoxImage.Tag = Constants.IMAGE_UPLOAD_CLICK + contact.ContactId + Constants.IMAGE_UPLOAD_EXTENSION;
                             if (Properties.fr.Resources.Click2UploadBackground != null)
                             {
                                 pictureBoxImage.Image = null;
@@ -239,14 +253,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         {
                             pictureBoxImage.Tag = contact.ContactImage?.ImageFileName;
                             this.pictureBoxImage.Image = contact.ContactImage?.ToDrawingBitmap();
+                            this.pictureBoxImage.BackgroundImage = null;
                         }
                         else
                         {
-                            pictureBoxImage.Tag = "ClickToUpload.png";
-                            using (MemoryStream memoryStream = new MemoryStream(Resources.ClickToUpload))
-                            {
-                                pictureBoxImage.Image = new Bitmap(memoryStream);
-                            }
+                            pictureBoxImage.Tag = Constants.IMAGE_UPLOAD_CLICK + contact.ContactId + Constants.IMAGE_UPLOAD_EXTENSION;
+                            this.pictureBoxImage.BackgroundImage = Properties.fr.Resources.Click2UploadBackground;
+                            this.pictureBoxImage.Image = null;
                         }
                             
                         break;

@@ -155,6 +155,8 @@ namespace Area23.At.Framework.Core.Static
         public const string QR_COLOR = "QrColor";
         public const string BACK_COLOR_STRING = "BackColorString";
         public const string QR_COLOR_STRING = "QrColorString";
+        public const string IMAGE_UPLOAD_CLICK = "click_here_to_upload";
+        public const string IMAGE_UPLOAD_EXTENSION = ".png";
 
         public const string ROACH_DESKTOP_WINDOW = "Roach.Desktop.Window";
         public const string MUTEX_REGOPS = "Mutex.Registry.Operations";
