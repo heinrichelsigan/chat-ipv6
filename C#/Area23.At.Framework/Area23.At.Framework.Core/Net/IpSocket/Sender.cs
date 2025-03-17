@@ -53,7 +53,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 tcpClient.Client.SendTimeout = 16000;
                 
                 // if (ssize < msg.Length) ;
-                byte[] outbuf = new byte[8192];
+                byte[] outbuf = new byte[32];
                 //using (NetworkStream netStream = tcpClient.GetStream())
                 //{
                 //    using (StreamWriter sw = new StreamWriter(netStream))
@@ -66,26 +66,52 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 //        sr.Read(charbuf, 0, charbuf.Length);
                 //    }
                 //}
+                int ssize = 0, fsize = 0;
+
+                // Send full data length before sending 
                 byte[] sendData = Encoding.Default.GetBytes(data.Length.ToString());
                 tcpClient.Client.Send(sendData, SocketFlags.None);
+                
+                // We must receive full size + " " + ACK
                 int read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
                 string resp1 = EnDeCodeHelper.GetString(outbuf);
-
-                if (!resp1.Equals(Constants.ACK))
+                if (!resp1.Equals(data.Length.ToString() +  " " + Constants.ACK))
                     ; // rtodo i+nvli+d prorocoll
-                
-                int ssize = tcpClient.Client.Send(data, 0, data.Length, SocketFlags.None, out SocketError errorCode);
-               
-                 read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
-                string rs = EnDeCodeHelper.GetString(outbuf);
-                if (Int32.TryParse(rs, out int rsize))
+
+                // repeat until send all data
+                while (fsize < data.Length)
                 {
-                    if (ssize != rsize)
+                    ssize = tcpClient.Client.Send(data, fsize, data.Length, SocketFlags.None, out SocketError errorCode);
+                    Area23Log.LogStatic($"Socket send: data.len = {data.Length}, offset = {fsize} SocketError = {errorCode.ToString()} \n");
+
+                    Thread.Sleep(10);
+
+                    outbuf = new byte[32];
+                    read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
+                    string rs = EnDeCodeHelper.GetString(outbuf);
+                    if (Int32.TryParse(rs, out int rsize))
                     {
-                        Area23Log.LogStatic($"msg.Length = {msg.Length}, ssize = {ssize}, rsize = {rsize}\n");
-                        throw new IndexOutOfRangeException($"msg.Length = {msg.Length}, ssize = {ssize}, rsize = {rsize}");
+                        if (ssize != rsize)
+                        {
+                            fsize += rsize;
+                            Area23Log.LogStatic($"msg.Length = {msg.Length}, fsize = {fsize}, rsize = {rsize}\n");                            
+                        }
+                        else
+                            fsize += ssize;
                     }
                 }
+                              
+                // compare bytes total read / send with initial length
+                //read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
+                //string rc = EnDeCodeHelper.GetString(outbuf);
+                //if (Int32.TryParse(rc, out int rsize))
+                //{
+                //    if (fsize != rsize)
+                //    {
+                //        Area23Log.LogStatic($"msg.Length = {msg.Length}, ssize = {ssize}, rsize = {rsize}\n");
+                //        throw new IndexOutOfRangeException($"msg.Length = {msg.Length}, ssize = {ssize}, rsize = {rsize}");
+                //    }
+                //}
                 // sr.BaseStream.Read(outbuf, 0, 8192);
 
 
