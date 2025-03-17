@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Formats.Tar;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime;
 using System.Runtime.InteropServices.JavaScript;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
@@ -526,10 +527,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.TextBoxSource.Text = chat.AddMyMessage(usrMsg);
             if (returnContact != null)
             {
+                returnContact.ContactId = 0;
                 Settings.Instance.MyContact = returnContact;
                 srvMsg = $"Got Cuid: {returnContact.Cuid} for {returnContact.NameEmail}\n";
                 this.TextBoxDestionation.Text = chat.AddFriendMessage(srvMsg);
-                Settings.Save();
+                Settings.SaveSettings(Settings.Singleton);
             }
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
@@ -635,12 +637,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.textBoxChatSession.Text = rfmsg.ChatRoomNr;
             if (rfmsg != null && rfmsg.Sender != null && rfmsg.Sender.NameEmail.Equals(myContact.NameEmail))
             {
-                Entities.Settings.Instance.MyContact.Cuid = rfmsg.Sender.Cuid;
-                Entities.Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                Entities.Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                Entities.Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                Settings.Singleton.MyContact.Cuid = rfmsg.Sender.Cuid;
+                Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
+                Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
+                Settings.Singleton.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
 
-                Entities.Settings.Save();
+                Settings.SaveSettings(Settings.Singleton);
 
             }
             // TODO: Email zur Einladung
@@ -766,11 +768,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64); 
                 if (rfmsg != null && rfmsg.Sender != null)
                 {
-                    Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                    Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                    Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                    Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
+                    Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
+                    Settings.Singleton.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
 
-                    Settings.Save();
+                    Settings.SaveSettings(Settings.Singleton);
                 }
 
                 // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
@@ -922,11 +924,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
                             if (rfmsg != null && rfmsg.Sender != null)
                             {
-                                Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                                Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                                Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                                Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
+                                Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
+                                Settings.Singleton.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
 
-                                Settings.Save();
+                                Settings.SaveSettings(Settings.Singleton);
                             }
 
                             // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
@@ -1013,13 +1015,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (rfmsg != null && rfmsg.Sender != null)
                 {
                     myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, Settings.Instance.MyContact.ContactImage, rfmsg.Sender.Hash);
-                    Settings.Instance.MyContact = myContact;
+                    Settings.Singleton.MyContact = myContact;
 
-                    Settings.Save();
+                    Settings.SaveSettings(Settings.Singleton);
                 }
 
                 string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
-                                MsgContent msgContent;
+                MsgContent msgContent;
                 try
                 {                    
                     msgContent = pmsg.NCqrPeerMsg(((string)rfmsg.TContent));
@@ -1388,11 +1390,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
                         if (rfmsg != null && rfmsg.Sender != null)
                         {
-                            Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                            Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                            Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                            Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
+                            Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
+                            Settings.Singleton.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
 
-                            Settings.Save();
+                            Settings.SaveSettings(Settings.Singleton);
                         }
 
                         // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
