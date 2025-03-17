@@ -20,10 +20,8 @@ using System.Net.Sockets;
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
 
-
     /// <summary>
     /// RichTextChat main form
-    /// <see cref="Listener"/> replaced with <see cref="SockTcpListener"/>
     /// </summary>
     public partial class RichTextChat : BaseChatForm
     {
@@ -37,8 +35,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected internal static IPAddress? clientIpAddress;
         protected internal static IPAddress? partnerIpAddress;
-        // protected internal static Listener? ipSockListener;
-        protected internal static SockTcpListener? sockTcpListener;
+        protected internal static Listener? ipSockListener;
+        // protected internal static SockTcpListener? sockTcpListener;
         internal delegate void ClientSocket_DataReceived(object sender, Area23EventArgs<ReceiveData> eventReceived);
         internal ClientSocket_DataReceived clientSocket_DataReceived;
         internal EventHandler<Area23EventArgs<ReceiveData>> receivedDataEventHandler;
@@ -239,6 +237,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SrvMsg serverMessage = new SrvMsg(myServerKey, myServerKey);
             // TODO: SetText delegate AppendText()
             this.TextBoxPipe.Text = serverMessage.PipeString;
+            this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
         }
 
 
@@ -508,6 +507,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             SrvMsg1 srv1stMsg = new SrvMsg1(CqrXsEuSrvKey);
             this.TextBoxPipe.Text = srv1stMsg.PipeString;
+            this.toolStripTextBoxCqrPipe.Text = srv1stMsg.PipeString;
             Thread.Sleep(100);
 
             this.StripProgressBar.Value = 50;
@@ -559,7 +559,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     throw new InvalidDataException("Cannot parse " + ipAddrString + " to IPAddress!");
 
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                pmsg.Send_CqrPeerMsg_SockTcpSender(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+                pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
 
                 string userMsg = chat.AddMyMessage(unencrypted);
                 AppendText(TextBoxSource, userMsg);
@@ -616,8 +616,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
-            myContact._hash = TextBoxPipe.Text;
-            friendContact._hash = TextBoxPipe.Text;
+            this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+            myContact._hash = GetHash();
+            friendContact._hash = GetHash();
             serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
             FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, myContact.Email, serverMessage.PipeString);
@@ -694,7 +695,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         throw new InvalidDataException("Cannot parse IPAddress " + ipAddrString);
 
                     Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
-                    pmsg.Send_CqrPeerMsg_SockTcpSender(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+                    pmsg.Send_CqrPeerMsg(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
 
                     string userMsg = chat.AddMyMessage(unencrypted);
                     AppendText(TextBoxSource, userMsg);
@@ -713,8 +714,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
 
-                if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
-                    return;
+                // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                //     return ;
 
                 string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
@@ -741,14 +742,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
-                myContact._hash = TextBoxPipe.Text;
+                this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+                myContact._hash = GetHash();
                 myContact.ChatRoomId = chatRoomNr;
-                friendContact._hash = TextBoxPipe.Text;
-                friendContact.ChatRoomId = chatRoomNr;
-                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
+                if (friendContact != null)
+                {
+                    friendContact._hash = GetHash();
+                    friendContact.ChatRoomId = chatRoomNr;
+                    serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                }
+                else
+                    serverMessage = new SrvMsg(myContact, myContact, CqrXsEuSrvKey, myServerKey);
 
-                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
                 // FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
                 // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
                 // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
@@ -824,7 +831,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             partnerIpAddress = IPAddress.Parse(this.ComboBoxIp.Text);
 
                             // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                            pmsg.Send_CqrFile_SockTcpSender(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
+                            pmsg.Send_CqrFile(cqrFile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
 
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
@@ -848,8 +855,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
-                if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
-                    return;
+                //if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                //    return;
 
                 string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
@@ -876,14 +883,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
-                myContact._hash = TextBoxPipe.Text;
+                this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+                myContact._hash = GetHash();
                 myContact.ChatRoomId = chatRoomNr;
-                friendContact._hash = TextBoxPipe.Text;
-                friendContact.ChatRoomId = chatRoomNr;
-                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                if (friendContact != null)
+                {
+                    friendContact._hash = GetHash();
+                    friendContact.ChatRoomId = chatRoomNr;
+                    serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                }
+                else
+                    serverMessage = new SrvMsg(myContact, myContact, CqrXsEuSrvKey, myServerKey);
 
-
-                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
                 // FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
                 // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
                 // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
@@ -948,8 +960,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
 
-                if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
-                    return;
+                // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                //     return;
 
                 string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
@@ -978,18 +990,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
 
+                myContact._hash = GetHash();
                 myContact.ChatRoomId = chatRoomNr;
-                friendContact.ChatRoomId = chatRoomNr;
 
-                SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                if (friendContact != null)
+                {
+                    friendContact._hash = GetHash();
+                    friendContact.ChatRoomId = chatRoomNr;
+                }
+                SrvMsg serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
-                myContact._hash = TextBoxPipe.Text;
-                myContact.ChatRoomId = chatRoomNr;
-                friendContact._hash = TextBoxPipe.Text;
-                friendContact.ChatRoomId = chatRoomNr;
-                serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
+                this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
 
-                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+
+                serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
+
+                FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
                 FullSrvMsg<string> rfmsg = serverMessage.ReceiveChatMsg_Soap<string>(fmsg, ServerIpAddress, EncodingType.Base64);
 
 
@@ -1102,14 +1118,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 ; // todo launch blocking entering window with input secret key
 
+            if (PeerSessionTriState != PeerSession3State.Peer2Peer)
+                TooglePeerSessionServerTriState(0, false);
 
             if (sender != null)
             {
-                if (sockTcpListener.BufferedData != null && sockTcpListener.BufferedData.Length > 0)
+                if (ipSockListener?.BufferedData != null && ipSockListener.BufferedData.Length > 0)
                 {
                     if (chat == null)
                         chat = new Chat(0);
-                    string encrypted = EnDeCodeHelper.GetString(sockTcpListener.BufferedData);
+                    string encrypted = EnDeCodeHelper.GetString(ipSockListener.BufferedData);
 
                     Area23EventArgs<ReceiveData>? area23EvArgs = null;
                     if (eventReceived != null && eventReceived is Area23EventArgs<ReceiveData>)
@@ -1127,9 +1145,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                 SetComboBoxText(ComboBoxIp, area23EvArgs.GenericTData.ClientIPAddr);
                                 AddIpToFriendList(sender, new EventArgs());
                             }
-
                         }
-                        encrypted = EnDeCodeHelper.GetString(area23EvArgs.GenericTData.BufferedData);
+                        if (ipSockListener.BufferedData.Length >= area23EvArgs.GenericTData.BufferedData.Length)
+                            encrypted = EnDeCodeHelper.GetString(ipSockListener.BufferedData);
+                        else
+                            encrypted = EnDeCodeHelper.GetString(area23EvArgs.GenericTData.BufferedData);
+
                     }
 
 
@@ -1180,7 +1201,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
 
-        public void TooglePeerSessionServerTriState(short svalue)
+        public void TooglePeerSessionServerTriState(short svalue, bool fireUp = true)
         {
             switch (svalue)
             {
@@ -1227,7 +1248,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     this.MenuOptionsItemPeer2Peer.Checked = false;
                     break;
             }
-            this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState);
+            this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState, fireUp);
         }
 
         public void TooglePeerServer(object sender, EventArgs e)
@@ -1340,9 +1361,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                         this.TextBoxPipe.Text = serverMessage.PipeString;
-                        myContact._hash = TextBoxPipe.Text;
+                        this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+                        myContact._hash = GetHash();
                         myContact.ChatRoomId = chatRoomNr;
-                        friendContact._hash = TextBoxPipe.Text;
+                        friendContact._hash = GetHash();
                         friendContact.ChatRoomId = chatRoomNr;
                         serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
@@ -1421,12 +1443,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             if (PeerSessionTriState == PeerSession3State.Peer2Peer)
             {
-                if (sockTcpListener != null && sockTcpListener.ServerSocket != null &&
-                   (sockTcpListener.ServerSocket.Connected || sockTcpListener.ServerSocket.IsBound) &&
-                   !sockTcpListener.ServerSocket.Blocking)
+                if (ipSockListener != null && ipSockListener.ServerSocket != null &&
+                   (ipSockListener.ServerSocket.Connected || ipSockListener.ServerSocket.IsBound) &&
+                   !ipSockListener.ServerSocket.Blocking)
                 {
-                    if (sockTcpListener.ServerEndPoint != null)
-                        Area23Log.LogStatic($"sockTcpListener enpoint peforming normal: {sockTcpListener.ServerEndPoint.ToString()}");
+                    if (ipSockListener.ServerEndPoint != null)
+                        Area23Log.LogStatic($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
                 }
                 else // Rebind Server Socket
                 {
@@ -1468,15 +1490,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                                 try
                                 {
-                                    if (sockTcpListener != null)
-                                        sockTcpListener.Dispose();
+                                    if (ipSockListener != null)
+                                        ipSockListener.Dispose();
                                 }
                                 catch (Exception exi)
                                 {
                                     SLog.Log(exi);
                                 }
-                                try { 
-                                    sockTcpListener = null;
+                                try
+                                {
+                                    ipSockListener = null;
                                 }
                                 catch (Exception exi)
                                 {
@@ -1490,7 +1513,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                                 OnClientReceive(sender, eventReceived);
                                             };
                                 receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
-                                sockTcpListener = new Area23.At.Framework.Core.Net.IpSocket.SockTcpListener(clientIpAddress, receivedDataEventHandler);
+                                ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                                 SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
 
                                 if (IPAddress.IsLoopback(clientIpAddress))
@@ -2079,7 +2102,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                             OnClientReceive(sender, eventReceived);
                                         };
                                     receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
-                                    sockTcpListener = new Area23.At.Framework.Core.Net.IpSocket.SockTcpListener(clientIpAddress, receivedDataEventHandler);
+                                    ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                                 }
 
                                 break;
@@ -2128,8 +2151,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         try
                         {
-                            if (sockTcpListener != null)
-                                sockTcpListener.Dispose();
+                            if (ipSockListener != null)
+                                ipSockListener.Dispose();
                         }
                         catch (Exception exi)
                         {
@@ -2137,7 +2160,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         try
                         {
-                            sockTcpListener = null;
+                            ipSockListener = null;
                         }
                         catch (Exception exi)
                         {
@@ -2151,7 +2174,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                             OnClientReceive(sender, eventReceived);
                                         };
                         receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
-                        sockTcpListener = new Area23.At.Framework.Core.Net.IpSocket.SockTcpListener(clientIpAddress, receivedDataEventHandler);
+                        ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                         SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
 
                         if (IPAddress.IsLoopback(clientIpAddress))
@@ -2328,7 +2351,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #endregion LoadSaveChatContent
 
 
+        protected string GetHash()
+        {
+            if (!string.IsNullOrEmpty(this.TextBoxPipe.Text))
+                return this.TextBoxPipe.Text;
+            if (!string.IsNullOrEmpty(this.toolStripTextBoxCqrPipe.Text))
+                return this.toolStripTextBoxCqrPipe.Text;
+
+            Peer2PeerMsg peerMsg = new Peer2PeerMsg(this.ComboBoxSecretKey.Text);
+            return peerMsg.PipeString;
+        }
+
 
     }
+
 
 }

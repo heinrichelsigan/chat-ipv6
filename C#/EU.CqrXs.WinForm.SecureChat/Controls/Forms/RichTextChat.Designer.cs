@@ -73,13 +73,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuOptionsItemFileSecure = new ToolStripMenuItem();
             MenuOptionsItemClearAllOnClose = new ToolStripMenuItem();
             MenuOptionsItemDontSendProfilePictures = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
+            MenuOptionsSeparator = new ToolStripSeparator();
             MenuOptionsItemPeer2Peer = new ToolStripMenuItem();
             MenuOptionsItemServerSession = new ToolStripMenuItem();
             MenuHelp = new ToolStripMenuItem();
             MenuHelpItemViewHelp = new ToolStripMenuItem();
             MenuHelpItemInfo = new ToolStripMenuItem();
             MenuHelpItemAbout = new ToolStripMenuItem();
+            SeparatorMenu0 = new ToolStripSeparator();
+            MenuItemCqrPipe = new ToolStripMenuItem();
+            toolStripTextBoxCqrPipe = new ToolStripTextBox();
+            SeparatorMenu1 = new ToolStripSeparator();
+            MenuItemChatRoom = new ToolStripMenuItem();
+            MenuTextBoxChatRoom = new ToolStripTextBox();
             StripStatus = new StatusStrip();
             StripStatusLabel = new ToolStripStatusLabel();
             StripProgressBar = new ToolStripProgressBar();
@@ -124,11 +130,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             StripMenu.BackColor = SystemColors.MenuBar;
             StripMenu.Font = new Font("Lucida Sans Unicode", 10F);
             StripMenu.GripStyle = ToolStripGripStyle.Visible;
-            StripMenu.Items.AddRange(new ToolStripItem[] { MenuFile, MenuView, MenuNetwork, MenuCommands, MenuContacts, MenuOptions, MenuHelp });
+            StripMenu.Items.AddRange(new ToolStripItem[] { MenuFile, MenuView, MenuNetwork, MenuCommands, MenuContacts, MenuOptions, MenuHelp, SeparatorMenu0, MenuItemCqrPipe, toolStripTextBoxCqrPipe, SeparatorMenu1, MenuItemChatRoom, MenuTextBoxChatRoom });
             StripMenu.Location = new Point(0, 0);
             StripMenu.Name = "StripMenu";
             StripMenu.RenderMode = ToolStripRenderMode.System;
-            StripMenu.Size = new Size(998, 25);
+            StripMenu.Size = new Size(998, 29);
             StripMenu.TabIndex = 1;
             StripMenu.Text = "StripMenu";
             // 
@@ -140,7 +146,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuFile.Name = "MenuFile";
             MenuFile.Padding = new Padding(3, 0, 3, 0);
             MenuFile.ShortcutKeys = Keys.Alt | Keys.F;
-            MenuFile.Size = new Size(73, 21);
+            MenuFile.Size = new Size(73, 25);
             MenuFile.Text = "cqr chat";
             // 
             // MenuFileItemOpen
@@ -205,7 +211,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuView.Name = "MenuView";
             MenuView.Padding = new Padding(3, 0, 3, 0);
             MenuView.ShortcutKeys = Keys.Alt | Keys.V;
-            MenuView.Size = new Size(48, 21);
+            MenuView.Size = new Size(48, 25);
             MenuView.Text = "view";
             // 
             // MenuViewItemLeftRíght
@@ -246,7 +252,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuNetwork.DropDownItems.AddRange(new ToolStripItem[] { MenuNetworkItemMyIps, MenuItemFriendIp, MenuNetworkItemProxyServers, MenuNetworkSeparatorIp, MenuNetworkItemIPv6Secure });
             MenuNetwork.Name = "MenuNetwork";
             MenuNetwork.ShortcutKeys = Keys.Alt | Keys.N;
-            MenuNetwork.Size = new Size(76, 21);
+            MenuNetwork.Size = new Size(76, 25);
             MenuNetwork.Text = "network";
             MenuNetwork.ToolTipText = "network provides ip addresses & secure things";
             // 
@@ -262,7 +268,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             MenuItemExternalIp.BackColor = SystemColors.MenuBar;
             MenuItemExternalIp.Name = "MenuItemExternalIp";
-            MenuItemExternalIp.Size = new Size(180, 22);
+            MenuItemExternalIp.Size = new Size(160, 22);
             MenuItemExternalIp.Text = "External Ip's";
             // 
             // MenuItemFriendIp
@@ -309,7 +315,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommands.BackColor = SystemColors.MenuBar;
             MenuCommands.DropDownItems.AddRange(new ToolStripItem[] { MenuCommandsItemSend, MenuCommandsItemAttach, MenuCommandsSeperator, MenuCommandsItemRefresh, MenuCommandsItemClear });
             MenuCommands.Name = "MenuCommands";
-            MenuCommands.Size = new Size(128, 21);
+            MenuCommands.Size = new Size(128, 25);
             MenuCommands.Text = "chat commands";
             MenuCommands.ToolTipText = "possible chat commands";
             // 
@@ -318,7 +324,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemSend.BackColor = SystemColors.MenuBar;
             MenuCommandsItemSend.Name = "MenuCommandsItemSend";
             MenuCommandsItemSend.ShortcutKeys = Keys.Control | Keys.S;
-            MenuCommandsItemSend.Size = new Size(180, 22);
+            MenuCommandsItemSend.Size = new Size(178, 22);
             MenuCommandsItemSend.Text = "send";
             MenuCommandsItemSend.ToolTipText = "sends a message";
             MenuCommandsItemSend.Click += MenuCommandsItemSend_Click;
@@ -328,7 +334,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemAttach.BackColor = SystemColors.MenuBar;
             MenuCommandsItemAttach.Name = "MenuCommandsItemAttach";
             MenuCommandsItemAttach.ShortcutKeys = Keys.Control | Keys.A;
-            MenuCommandsItemAttach.Size = new Size(180, 22);
+            MenuCommandsItemAttach.Size = new Size(178, 22);
             MenuCommandsItemAttach.Text = "attach";
             MenuCommandsItemAttach.ToolTipText = "attaches file to send; in prototype only  file extension image audio and video is supported";
             MenuCommandsItemAttach.Click += MenuCommandsItemAttach_Click;
@@ -337,14 +343,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             MenuCommandsSeperator.BackColor = SystemColors.MenuBar;
             MenuCommandsSeperator.Name = "MenuCommandsSeperator";
-            MenuCommandsSeperator.Size = new Size(177, 6);
+            MenuCommandsSeperator.Size = new Size(175, 6);
             // 
             // MenuCommandsItemRefresh
             // 
             MenuCommandsItemRefresh.BackColor = SystemColors.MenuBar;
             MenuCommandsItemRefresh.Name = "MenuCommandsItemRefresh";
             MenuCommandsItemRefresh.ShortcutKeys = Keys.Control | Keys.R;
-            MenuCommandsItemRefresh.Size = new Size(180, 22);
+            MenuCommandsItemRefresh.Size = new Size(178, 22);
             MenuCommandsItemRefresh.Text = "refresh";
             MenuCommandsItemRefresh.ToolTipText = "refreshes, when the terminal is flushed";
             MenuCommandsItemRefresh.Click += MenuCommandsItemRefresh_Click;
@@ -354,7 +360,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemClear.BackColor = SystemColors.MenuBar;
             MenuCommandsItemClear.Name = "MenuCommandsItemClear";
             MenuCommandsItemClear.ShortcutKeys = Keys.Control | Keys.Delete;
-            MenuCommandsItemClear.Size = new Size(180, 22);
+            MenuCommandsItemClear.Size = new Size(178, 22);
             MenuCommandsItemClear.Text = "clear";
             MenuCommandsItemClear.ToolTipText = "clears completey all chat windows";
             MenuCommandsItemClear.Click += MenuCommandsItemClear_Click;
@@ -364,7 +370,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuContacts.BackColor = SystemColors.MenuBar;
             MenuContacts.DropDownItems.AddRange(new ToolStripItem[] { MenuContactsItemMe, MenuContactsItemAdd, MenuContactsItemView, MenuContactsSeparetor, MenuContactstemImport, MenuContactstemExport });
             MenuContacts.Name = "MenuContacts";
-            MenuContacts.Size = new Size(77, 21);
+            MenuContacts.Size = new Size(77, 25);
             MenuContacts.Text = "contacts";
             // 
             // MenuContactsItemMe
@@ -425,9 +431,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // MenuOptions
             // 
             MenuOptions.BackColor = SystemColors.MenuBar;
-            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures, toolStripSeparator1, MenuOptionsItemPeer2Peer, MenuOptionsItemServerSession });
+            MenuOptions.DropDownItems.AddRange(new ToolStripItem[] { MenuOptionsItemCompress, MenuOptionsItemFileSecure, MenuOptionsItemClearAllOnClose, MenuOptionsItemDontSendProfilePictures, MenuOptionsSeparator, MenuOptionsItemPeer2Peer, MenuOptionsItemServerSession });
             MenuOptions.Name = "MenuOptions";
-            MenuOptions.Size = new Size(72, 21);
+            MenuOptions.Size = new Size(72, 25);
             MenuOptions.Text = "options";
             // 
             // MenuOptionsItemCompress
@@ -467,10 +473,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuOptionsItemDontSendProfilePictures.Text = "only peer-2-peer chat";
             MenuOptionsItemDontSendProfilePictures.ToolTipText = "Only use this chat for peer 2 peer network, not server sessions with invitations";
             // 
-            // toolStripSeparator1
+            // MenuOptionsSeparator
             // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(332, 6);
+            MenuOptionsSeparator.Name = "MenuOptionsSeparator";
+            MenuOptionsSeparator.Size = new Size(332, 6);
             // 
             // MenuOptionsItemPeer2Peer
             // 
@@ -499,7 +505,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuHelp.Name = "MenuHelp";
             MenuHelp.Padding = new Padding(3, 0, 3, 0);
             MenuHelp.ShortcutKeys = Keys.Alt | Keys.F7;
-            MenuHelp.Size = new Size(48, 21);
+            MenuHelp.Size = new Size(48, 25);
             MenuHelp.Text = "help";
             // 
             // MenuHelpItemViewHelp
@@ -539,6 +545,57 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuHelpItemAbout.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuHelpItemAbout.ToolTipText = "displays a large modal dialog with version info and  copy left info";
             MenuHelpItemAbout.Click += MenuHelpItemAbout_Click;
+            // 
+            // SeparatorMenu0
+            // 
+            SeparatorMenu0.BackColor = SystemColors.MenuBar;
+            SeparatorMenu0.ForeColor = SystemColors.MenuText;
+            SeparatorMenu0.Margin = new Padding(1);
+            SeparatorMenu0.Name = "SeparatorMenu0";
+            SeparatorMenu0.Size = new Size(6, 23);
+            // 
+            // MenuItemCqrPipe
+            // 
+            MenuItemCqrPipe.BackColor = SystemColors.Menu;
+            MenuItemCqrPipe.BackgroundImageLayout = ImageLayout.None;
+            MenuItemCqrPipe.Enabled = false;
+            MenuItemCqrPipe.ForeColor = SystemColors.MenuText;
+            MenuItemCqrPipe.ImageAlign = ContentAlignment.MiddleRight;
+            MenuItemCqrPipe.Name = "MenuItemCqrPipe";
+            MenuItemCqrPipe.Padding = new Padding(2, 0, 2, 0);
+            MenuItemCqrPipe.Size = new Size(72, 25);
+            MenuItemCqrPipe.Text = "cqrpipe:";
+            MenuItemCqrPipe.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // toolStripTextBoxCqrPipe
+            // 
+            toolStripTextBoxCqrPipe.Font = new Font("Lucida Sans Unicode", 8.75F);
+            toolStripTextBoxCqrPipe.MaxLength = 1024;
+            toolStripTextBoxCqrPipe.Name = "toolStripTextBoxCqrPipe";
+            toolStripTextBoxCqrPipe.ReadOnly = true;
+            toolStripTextBoxCqrPipe.Size = new Size(104, 25);
+            toolStripTextBoxCqrPipe.ToolTipText = "CqrPipe";
+            // 
+            // SeparatorMenu1
+            // 
+            SeparatorMenu1.BackColor = SystemColors.MenuBar;
+            SeparatorMenu1.ForeColor = SystemColors.MenuText;
+            SeparatorMenu1.Margin = new Padding(1);
+            SeparatorMenu1.Name = "SeparatorMenu1";
+            SeparatorMenu1.Size = new Size(6, 23);
+            // 
+            // MenuItemChatRoom
+            // 
+            MenuItemChatRoom.Enabled = false;
+            MenuItemChatRoom.Name = "MenuItemChatRoom";
+            MenuItemChatRoom.Size = new Size(94, 25);
+            MenuItemChatRoom.Text = "chat room:";
+            MenuItemChatRoom.ToolTipText = "chat room";
+            // 
+            // MenuTextBoxChatRoom
+            // 
+            MenuTextBoxChatRoom.Name = "MenuTextBoxChatRoom";
+            MenuTextBoxChatRoom.Size = new Size(168, 25);
             // 
             // StripStatus
             // 
@@ -649,7 +706,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonKey.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
             ButtonKey.ForeColor = SystemColors.ActiveCaptionText;
             ButtonKey.Image = Properties.Resources.a_right_key;
-            ButtonKey.Location = new Point(306, 3);
+            ButtonKey.Location = new Point(368, 2);
             ButtonKey.Margin = new Padding(1);
             ButtonKey.Name = "ButtonKey";
             ButtonKey.Padding = new Padding(1);
@@ -677,23 +734,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             // TextBoxPipe
             // 
-            TextBoxPipe.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TextBoxPipe.Font = new Font("Lucida Sans Unicode", 8.75F);
             TextBoxPipe.HideSelection = false;
-            TextBoxPipe.Location = new Point(353, 4);
+            TextBoxPipe.Location = new Point(277, 4);
             TextBoxPipe.Margin = new Padding(1);
             TextBoxPipe.Name = "TextBoxPipe";
             TextBoxPipe.ReadOnly = true;
-            TextBoxPipe.Size = new Size(93, 26);
+            TextBoxPipe.Size = new Size(83, 25);
             TextBoxPipe.TabIndex = 13;
             // 
             // textBoxChatSession
             // 
             textBoxChatSession.Font = new Font("Lucida Sans Unicode", 8F);
             textBoxChatSession.HideSelection = false;
-            textBoxChatSession.Location = new Point(456, 6);
+            textBoxChatSession.Location = new Point(416, 5);
             textBoxChatSession.Margin = new Padding(1);
             textBoxChatSession.Name = "textBoxChatSession";
-            textBoxChatSession.Size = new Size(368, 24);
+            textBoxChatSession.Size = new Size(408, 24);
             textBoxChatSession.TabIndex = 19;
             // 
             // ButtonCheck
@@ -703,7 +760,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonCheck.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
             ButtonCheck.ForeColor = SystemColors.ActiveCaptionText;
             ButtonCheck.Image = Properties.de.Resources.CableWireCut;
-            ButtonCheck.Location = new Point(306, 30);
+            ButtonCheck.Location = new Point(368, 30);
             ButtonCheck.Margin = new Padding(1);
             ButtonCheck.Name = "ButtonCheck";
             ButtonCheck.Padding = new Padding(1);
@@ -718,10 +775,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxContacts.Font = new Font("Lucida Sans Unicode", 9F);
             ComboBoxContacts.ForeColor = SystemColors.ControlText;
             ComboBoxContacts.FormattingEnabled = true;
-            ComboBoxContacts.Location = new Point(456, 35);
+            ComboBoxContacts.Location = new Point(416, 35);
             ComboBoxContacts.Margin = new Padding(1);
             ComboBoxContacts.Name = "ComboBoxContacts";
-            ComboBoxContacts.Size = new Size(369, 24);
+            ComboBoxContacts.Size = new Size(408, 24);
             ComboBoxContacts.TabIndex = 18;
             ComboBoxContacts.Text = "[Select Contact]";
             ComboBoxContacts.SelectedIndexChanged += ComboBoxContacts_SelectedIndexChanged;
@@ -737,7 +794,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxIp.Location = new Point(4, 35);
             ComboBoxIp.Margin = new Padding(1);
             ComboBoxIp.Name = "ComboBoxIp";
-            ComboBoxIp.Size = new Size(297, 24);
+            ComboBoxIp.Size = new Size(356, 24);
             ComboBoxIp.TabIndex = 15;
             ComboBoxIp.Text = "[enter peer IPv4/IPv6]";
             ComboBoxIp.SelectedIndexChanged += ComboBoxIp_SelectedIndexChanged;
@@ -748,10 +805,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxSecretKey.BackColor = SystemColors.ControlLightLight;
             ComboBoxSecretKey.ForeColor = SystemColors.ControlText;
             ComboBoxSecretKey.FormattingEnabled = true;
-            ComboBoxSecretKey.Location = new Point(3, 4);
+            ComboBoxSecretKey.Location = new Point(3, 5);
             ComboBoxSecretKey.Margin = new Padding(1);
             ComboBoxSecretKey.Name = "ComboBoxSecretKey";
-            ComboBoxSecretKey.Size = new Size(297, 24);
+            ComboBoxSecretKey.Size = new Size(265, 24);
             ComboBoxSecretKey.TabIndex = 11;
             ComboBoxSecretKey.Text = "[enter secret key here]";
             ComboBoxSecretKey.SelectedIndexChanged += ComboBoxSecretKey_SelectedIndexChanged;
@@ -904,6 +961,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = Properties.fr.Resources.SatIcon;
             MainMenuStrip = StripMenu;
+            MaximizeBox = false;
             Name = "RichTextChat";
             SizeGripStyle = SizeGripStyle.Show;
             Text = "RichTextChat";
@@ -993,7 +1051,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private ToolStripMenuItem MenuOptionsItemFileSecure;
         private ToolStripMenuItem MenuOptionsItemClearAllOnClose;
         private ToolStripMenuItem MenuOptionsItemDontSendProfilePictures;
-        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripSeparator MenuOptionsSeparator;
         private ToolStripMenuItem MenuOptionsItemPeer2Peer;
         private ToolStripMenuItem MenuOptionsItemServerSession;
 
@@ -1009,7 +1067,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private Controls.Panels.PeerServerSwitchPanel PeerServerSwitch;
         private Button ButtonSend;
         private TextBox textBoxChatSession;
-
+        private ToolStripSeparator SeparatorMenu1;
+        private ToolStripMenuItem MenuItemCqrPipe;
+        private ToolStripTextBox toolStripTextBoxCqrPipe;
+        private ToolStripMenuItem MenuItemChatRoom;
+        private ToolStripSeparator SeparatorMenu0;
+        private ToolStripTextBox MenuTextBoxChatRoom;
     }
 
 }
