@@ -137,7 +137,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     DisplayPendingByteCount(ClientSocket);
                     byte[] buffer = new byte[Constants.MAX_SOCKET_BYTE_BUFFEER];
                     // char[] charbuf = new char[Constants.MAX_SOCKET_BYTE_BUFFEER];
-                    Span<byte> buf = new Span<byte>(buffer, 0, Constants.MAX_SOCKET_BYTE_BUFFEER);
+                    Span<byte> buf = new Span<byte>(buffer, 0, buffer.Length);
                     IPEndPoint clientIEP = (IPEndPoint?)ClientSocket.RemoteEndPoint;
                     string sstring = "Accept connection from " + clientIEP?.Address.ToString() + ":" + clientIEP?.Port.ToString() +
                         " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
@@ -165,12 +165,12 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     //    }
                     //}
                     // long rsize = (long)ClientSocket.Receive(buf, flags, out errorCode);
-                    int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_SOCKET_BYTE_BUFFEER, flags, out errorCode);
-
-                    // int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_BYTE_BUFFEER, flags, out errorCode);
+                    // int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_SOCKET_BYTE_BUFFEER, flags, out errorCode);
+                    int rsize = ClientSocket.Receive(buf, flags, out errorCode);
+                    
                     BufferedData = new byte[rsize];
 
-                    Array.Copy(buffer, 0, BufferedData, 0, rsize);
+                    Array.Copy(buf.ToArray(), 0, BufferedData, 0, rsize);
 
                     // ReceiveData receiveData = new ReceiveData(buf.ToArray(), (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
                     ReceiveData receiveData = new ReceiveData(buffer, (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
