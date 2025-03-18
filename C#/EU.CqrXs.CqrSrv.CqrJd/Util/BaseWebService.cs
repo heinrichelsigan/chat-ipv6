@@ -1,30 +1,26 @@
 ﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
-using Area23.At.Framework.Library;
-using EU.CqrXs.CqrSrv.CqrJd.Util;
+using Area23.At.Framework.Library.Static;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Services;
-using System.Configuration;
-using Area23.At.Framework.Library.Crypt.EnDeCoding;
-using System.IO;
-using Area23.At.Framework.Library.Static;
-using System.Diagnostics.Contracts;
-using StackExchange.Redis;
-using Newtonsoft.Json;
-using Area23.At.Framework.Library.Net.WebHttp;
-using System.Net;
-using System.Net.Http;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
 
+    /// <summary>
+    /// BaseWebService
+    /// </summary>
     [WebService(Namespace = "https://cqrjd.eu/cqrsrv/cqrjd/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     public class BaseWebService : WebService
     {
+
         protected internal static HashSet<CqrContact> _contacts;
         protected internal CqrContact _contact;
         // protected internal string _literalServerIPv4, _literalServerIPv6;
@@ -38,42 +34,41 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         // protected internal string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         // protected internal StackExchange.Redis.IDatabase db;
 
-        public static bool UseApplicationState
-        {
-            get
-            {
-                if (ConfigurationManager.AppSettings["UseHttpApplicationState"] != null)
-                {
-                    if (Boolean.TryParse((string)ConfigurationManager.AppSettings["UseHttpApplicationState"].ToString(),
-                        out useAppState))
-                    {
-                        return useAppState;
-                    }
-                    useAppState = true;
-                }
-                return useAppState;
-            }
-        }
 
-        public static bool UseAmazonElasticCache
+        /// <summary>
+        /// Persist encrypted messages in chat rooms in application state
+        /// use this option only for testing, because you will you get soon an out of memory error
+        /// </summary>
+        public static bool PersistMsgInApplicationState
         {
-            get
-            {
-                if (ConfigurationManager.AppSettings["UseAmazonElasticCache"] != null)
-                {
-                    if (Boolean.TryParse((string)ConfigurationManager.AppSettings["UseAmazonElasticCache"].ToString(),
-                        out useAWSCache))
-                    {
-                        return useAWSCache;
-                    }
-                    useAWSCache = false;
-                }
-                return useAWSCache;
-            }
+            get => (PersistMsgIn.PersistMsg == PersistType.ApplicationState);
         }
 
 
+        /// <summary>
+        /// Use Amazon elastic cache to persist encrypted messages in chat rooms
+        /// Fast option, but expensive, when we have a lot of huge size messages
+        /// </summary>
+        public static bool PersistMsgInAmazonElasticCache
+        {
+            get => (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache);
 
+        }
+
+
+        /// <summary>
+        /// Use file system to encrypted messages in chat rooms
+        /// Fast option, but expensive, when we have a lot of huge size messages
+        /// </summary>
+        public static bool PersistMsgInFileSystem
+        {
+            get => (PersistMsgIn.PersistMsg == PersistType.FileSystem);
+        }
+
+
+        /// <summary>
+        /// BaseWebService
+        /// </summary>
         public BaseWebService()
         {
             InitMethod();
@@ -89,7 +84,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             _contact = null;
 
 
-            if (UseAmazonElasticCache)
+            if (PersistMsgInAmazonElasticCache)
             {
                 string status = RedIs.ConnMux.GetStatus();
 
@@ -167,11 +162,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     dictCacheTest.Add(c.Cuid, c);
             }
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
-            if (UseAmazonElasticCache)
+            if (PersistMsgInAmazonElasticCache)
             {
                 try
                 {
-                    if (UseAmazonElasticCache)
+                    if (PersistMsgInAmazonElasticCache)
                     {
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT]}\n";
                         string status = RedIs.ConnMux.GetStatus();
@@ -357,9 +352,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             Dictionary<long, string> dict = new Dictionary<long, string>();
             dict.Add(now.Ticks, "");
 
-            if (UseApplicationState)
+            if (PersistMsgInApplicationState)
                 HttpContext.Current.Application[chatRoomId] = dict;
-            if (UseAmazonElasticCache)
+            if (PersistMsgInAmazonElasticCache)
             {
                 string dictJson = JsonConvert.SerializeObject(dict);
                 RedIs.Db.StringSet(chatRoomId, dictJson);
@@ -401,7 +396,20 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
-        public bool ValidateChatRoomNr(FullSrvMsg<string> fullSrvMsg, FullSrvMsg<string> chatRoomMsg, string chatRoomId)
+        /// <summary>
+        /// ChatRoomCheckPermission
+        /// Validates, if a user has permission to poll or to push messages in the chat room by the following steps:
+        /// 1. chat room number in encrypted, now decrypted msg from webservice must be ident with chat room number from json file
+        /// 2. sender email from  encrypted, now decrypted msg from webservice must much
+        /// 2.a. either creator invitor of chat room
+        /// 2.b. on of the invited persons in invitation
+        /// </summary>
+        /// <param name="fullSrvMsg"><see cref="FullSrvMsg{string}"/> decoded from <see cref="CqrService.CqrService"/> Webservice</param>
+        /// <param name="chatRoomMsg"><see cref="FullSrvMsg{string}"/> generated from chat room json</param>
+        /// <param name="chatRoomId"><see cref="string"/> chat room number of chat room</param>
+        /// <param name="isClosingRequest">default false, only on close, where only creator can close chat room</param>
+        /// <returns>true, if person is allowed to push or receive msg from / to chat room</returns>        
+        public bool ChatRoomCheckPermission(FullSrvMsg<string> fullSrvMsg, FullSrvMsg<string> chatRoomMsg, string chatRoomId, bool isClosingRequest = false)
         {
 
             bool isValid = false;
@@ -414,17 +422,19 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     isValid = true;
                     return isValid;
                 }
-                foreach (CqrContact c in chatRoomMsg.Recipients)
+                if (!isClosingRequest)
                 {
-                    if (fullSrvMsg.Sender.NameEmail == c.NameEmail ||
-                        fullSrvMsg.Sender.Email == c.Email)
+                    foreach (CqrContact c in chatRoomMsg.Recipients)
                     {
-                        _contact = c;
-                        isValid = true;
-                        return isValid;
+                        if (fullSrvMsg.Sender.NameEmail == c.NameEmail ||
+                            fullSrvMsg.Sender.Email == c.Email)
+                        {
+                            _contact = c;
+                            isValid = true;
+                            return isValid;
+                        }
                     }
                 }
-
             }
 
             return isValid;
@@ -451,4 +461,5 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             
 
     }
+
 }

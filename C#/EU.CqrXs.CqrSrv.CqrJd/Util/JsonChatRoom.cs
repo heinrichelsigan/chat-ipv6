@@ -88,12 +88,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             JsonChatRoomNumber = chatRoomId;
             lock (_lock)
             {
-                if (BaseWebService.UseApplicationState)
+                if (BaseWebService.PersistMsgInApplicationState)
                 {
                     if (HttpContext.Current.Application.AllKeys.Contains(JsonChatRoomNumber))
                         HttpContext.Current.Application.Remove(JsonChatRoomNumber);
                 }
-                if (BaseWebService.UseAmazonElasticCache)
+                if (BaseWebService.PersistMsgInAmazonElasticCache)
                 {
                     RedIs.Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
                 }

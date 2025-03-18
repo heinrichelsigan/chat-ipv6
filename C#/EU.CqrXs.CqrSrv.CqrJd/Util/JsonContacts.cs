@@ -4,25 +4,35 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Threading;
 using System.Web;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
+
+    /// <summary>
+    /// JsonContacts 
+    /// </summary>
     public static class JsonContacts
     {
+
         static object _lock = new object();
         static HashSet<CqrContact> _contacts;
         internal static string JsonContactsFileName { get => Area23.At.Framework.Library.Static.JsonHelper.JsonContactsFile; }
-
+        
+        
+        /// <summary>
+        /// JsonContacts
+        /// </summary>
         static JsonContacts()
         {
             _contacts = LoadJsonContacts();
             ChatRoomNumbersFromFs();
         }
 
+        /// <summary>
+        /// LoadJsonContacts
+        /// </summary>
+        /// <returns><see cref="HashSet{CqrContact}"/></returns>
         internal static HashSet<CqrContact> LoadJsonContacts()
         {
             lock (_lock)
@@ -50,9 +60,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             return _contacts;
         }
 
+
+        /// <summary>
+        /// Method to persist Json Contacts
+        /// </summary>
+        /// <param name="contacts">contacts to save</param>
         internal static void SaveJsonContacts(HashSet<CqrContact> contacts)
         {
-
+            _contacts = _contacts ?? new HashSet<CqrContact>();
             if (contacts != null && contacts.Count > 0 && contacts.Count > _contacts.Count)
                 _contacts = contacts;
             JsonSerializerSettings jsets = new JsonSerializerSettings();
@@ -74,38 +89,38 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
+        /// <summary>
+        /// GetContacts get contacts from json file
+        /// </summary>
+        /// <returns><see cref="HashSet{CqrContact}"/></returns>
         internal static HashSet<CqrContact> GetContacts()
         {
-            bool loadJson = false;
-
             if (_contacts == null || _contacts.Count < 1)
-            {
-                //if (BaseWebService.UseApplicationState && HttpContext.Current.Application[Constants.JSON_CONTACTS] != null)
-                //    _contacts = (HashSet<CqrContact>)(HttpContext.Current.Application[Constants.JSON_CONTACTS]);                    
-                //if (BaseWebService.UseAmazonElasticCache)
-                //{
-                //    string dictContactsJson = RedIs.Db.StringGet(Constants.JSON_CONTACTS);
-                //    _contacts = (HashSet<CqrContact>)JsonConvert.DeserializeObject<HashSet<CqrContact>>(dictContactsJson);
-                //}
-                //if (_contacts == null || _contacts.Count < 2)
-                //    loadJson = true;
                 _contacts = JsonContacts.LoadJsonContacts();
-            }
-            //else 
-            //    loadJson = true;
-            //if (loadJson)
-               
             
             return _contacts;
         }
 
+        /// <summary>
+        /// FindContactByNameEmail
+        /// </summary>
+        /// <param name="contacts">contacts to search</param>
+        /// <param name="searchContact">contact to find</param>
+        /// <returns></returns>
         public static CqrContact FindContactByNameEmail(HashSet<CqrContact> contacts, CqrContact searchContact)
         {
             CqrContact foundC = FindContactByNameEmail(contacts, searchContact.Name, searchContact.Email, searchContact.Mobile);
             return foundC;
         }
-        
 
+        /// <summary>
+        /// FindContactByNameEmail find contact by name email
+        /// </summary>
+        /// <param name="contacts">contacts to search</param>
+        /// <param name="cName">name to find</param>
+        /// <param name="cEmail">email to find</param>
+        /// <param name="cMobile">mobile to find</param>
+        /// <returns><see cref="CqrContact"/></returns>
         public static CqrContact FindContactByNameEmail(HashSet<CqrContact> contacts, string cName, string cEmail, string cMobile)
         {
 
@@ -134,7 +149,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
-
+        /// <summary>
+        /// Loads a list of json chat rooms from fs
+        /// </summary>
+        /// <returns><see cref="List{string}"/></returns>
         public static List<string> ChatRoomNumbersFromFs()
         {
 
@@ -147,9 +165,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 chatRooms.Add(file);
             }                        
 
-            if (BaseWebService.UseApplicationState)
+            if (BaseWebService.PersistMsgInApplicationState)
                 HttpContext.Current.Application["ChatRooms"] = chatRooms;
-            if (BaseWebService.UseAmazonElasticCache)
+            if (BaseWebService.PersistMsgInAmazonElasticCache)
             {
                 string hashChatRoomsJson = JsonConvert.SerializeObject(chatRooms);
                 RedIs.Db.StringSet("ChatRooms", hashChatRoomsJson);
@@ -157,5 +175,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             return chatRooms;
         }
+    
     }
 }
