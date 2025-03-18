@@ -200,6 +200,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="res\img\0.png" />
     <Content Include="Util\CoolCrypt.aspx" />
     <Content Include="CqrService.asmx" />
     <Content Include="Default.aspx" />
