@@ -119,10 +119,7 @@
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="DefaultF55" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Properties\Image\DefaultF55.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DefaultF55" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Properties\Image\DefaultF55.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
+  </data>  
   <data name="DefaultF50" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Properties\Image\DefaultF50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -146,6 +143,12 @@
   </data>
   <data name="DefaultF45" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Properties\Image\DefaultF45.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+    <data name="DefaultF48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Properties\Image\DefaultF48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DefaultF42" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Properties\Image\DefaultF42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Key_right" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Properties\Image\Key_right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

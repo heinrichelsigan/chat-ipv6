@@ -153,9 +153,29 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.fr {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap DefaultF42 {
+            get {
+                object obj = ResourceManager.GetObject("DefaultF42", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DefaultF45 {
             get {
                 object obj = ResourceManager.GetObject("DefaultF45", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DefaultF48 {
+            get {
+                object obj = ResourceManager.GetObject("DefaultF48", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
