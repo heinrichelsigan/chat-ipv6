@@ -129,6 +129,8 @@ namespace Area23.At.Framework.Library.Static
         public const string JSON_DIR = "json";
         public const string RES_DIR = "res";
         public const string RES_FOLDER = "res";
+        public const string IMG_DIR = "img";
+        public const string IMG_FOLDER = "Image";
         public const string TEXT_DIR = "text";
         public const string UNIX_DIR = "Unix";
         public const string UTF8_DIR = "Utf8";

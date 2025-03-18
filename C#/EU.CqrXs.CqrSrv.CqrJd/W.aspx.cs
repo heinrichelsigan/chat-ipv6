@@ -39,16 +39,25 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 }
             }
 
-            title.Text = userHostName ?? Request.UserHostAddress;
+            title.Text = userHostName ?? Request.UserHostAddress + " " + ipAddress;
             string phypath = Server.MapPath("~/res/img/");
             string saveName = ipAddress.Replace(".", "_").Replace(":", "-") + ".png";
 
-            Bitmap bmp = (Bitmap)MergeImage(ipAddress, saveName);
-           
-            string r = Request.RawUrl.ToString();
-            hrefi.HRef = r.Substring(0, r.LastIndexOf("/") + 1) + "res/" + saveName;
-            hrefi.InnerText = "res/" + saveName;
-            hrefi.Target = "_blank";
+            Bitmap bmp;
+
+            try
+            {
+                bmp = (Bitmap)MergeImage(ipAddress, saveName);
+
+                string r = Request.RawUrl.ToString();
+                ahrefId.HRef = r.Substring(0, r.LastIndexOf("/") + 1) + "res/img/" + saveName;
+                ahrefId.InnerText = "res/img/" + saveName;
+                ahrefId.Target = "_blank";
+            }
+            catch (Exception ex)
+            {
+                Area23Log.LogStatic(ex); 
+            }
         }
 
         protected System.Drawing.Image MergeImage(string hexstring, string saveName)

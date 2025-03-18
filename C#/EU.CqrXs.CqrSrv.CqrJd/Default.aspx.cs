@@ -103,7 +103,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     Area23Log.LogStatic(ex);
                 }
                 
-                decrypted += "\n\r\nPlease wait until 5.Mars 2025 on next version\r\n and download new client then from https://cqrxs.eu/, \n\r\n";
+                decrypted += "\n\r\nPlease wait until 30.March 2025 on next version\r\n and download new client then from https://cqrxs.eu/, \n\r\n";
                 decrypted += "\r\nCurrently 3-fish rides on AesEngine,\r\n which is not propper and will be fixed soonly!\r\n\r\n";
                 decrypted += "\r\nSincerly he,\r\n have a nice day!\r\n\r\n</textarea>\r\n";
                 this.TextBoxDecrypted.Text = decrypted;

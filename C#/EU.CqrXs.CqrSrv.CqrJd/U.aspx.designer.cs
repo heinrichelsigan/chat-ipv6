@@ -11,7 +11,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 {
 
 
-    public partial class W
+    public partial class U
     {
 
         /// <summary>
@@ -42,6 +42,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// literalUserHost control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal literalUserHost;
+
+        /// <summary>
         /// imageFontControl control.
         /// </summary>
         /// <remarks>
@@ -49,14 +58,5 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::EU.CqrXs.CqrSrv.CqrJd.ImageFontControl imageFontControl;
-
-        /// <summary>
-        /// ahrefId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor ahrefId;
     }
 }
