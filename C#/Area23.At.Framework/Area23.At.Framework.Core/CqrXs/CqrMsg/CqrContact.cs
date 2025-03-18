@@ -39,7 +39,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         [Newtonsoft.Json.JsonIgnore]
         internal IPAddress? ClientIp { get; set; }
 
-        public string ChatRoomId { get; set; }
+        public Guid ChatRuid { get; set; }
+
+        public string ChatRoomNr { get; set; }
+
+        public List<long> TicksLong { get; set; }
 
         public DateTime LastPushed { get; set; }
 
@@ -61,7 +65,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Address = string.Empty;
             SecretKey = string.Empty;
             ContactImage = null;
-            ChatRoomId = string.Empty;
+            ChatRuid = Guid.NewGuid();
+            ChatRoomNr = string.Empty;
+            TicksLong = new List<long>();   
             LastPolled = DateTime.MinValue;
             LastPushed = DateTime.MinValue;
         }
@@ -79,9 +85,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Mobile = mobile;
             Address = address;
             _hash = string.Empty;
+            ChatRuid = Guid.NewGuid();
+            ChatRoomNr = string.Empty;
+            TicksLong = new List<long>();
             LastPolled = DateTime.MinValue;
             LastPushed = DateTime.MinValue;
-            ChatRoomId = string.Empty;
             ClientIp = null;
         }
 
@@ -93,7 +101,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Mobile = mobile;
             Address = address;
             _hash = string.Empty;
-            ChatRoomId = string.Empty;
+            ChatRuid = Guid.NewGuid();
+            ChatRoomNr = string.Empty;
+            TicksLong = new List<long>();
             LastPolled = DateTime.MinValue;
             LastPushed = DateTime.MinValue;
             ClientIp = null;
@@ -141,44 +151,52 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             : this(c.ContactId, c.Cuid, c.Name, c.Email, c.Mobile, c.Address, c.ContactImage, hash)
         {
             this._hash = hash;
-            ChatRoomId = c.ChatRoomId;
+            ChatRoomNr = c.ChatRoomNr;
+            ChatRuid = c.ChatRuid;
+            TicksLong = c.TicksLong;
             LastPolled = c.LastPolled;
             LastPushed = c.LastPushed;
             ClientIp = c.ClientIp ?? null;
         }
 
 
-        public CqrContact(CqrContact c, string chatRoomId, string hash) : this(c, hash)
+        public CqrContact(CqrContact c, string ChatRoomNr, string hash) : this(c, hash)
         {
             _hash = hash;
             ContactImage = null;
             Cuid = c.Cuid;
-            ChatRoomId = chatRoomId;
+            ChatRuid = c.ChatRuid;
+            ChatRoomNr = c.ChatRoomNr;
+            TicksLong = c.TicksLong;
             LastPolled = c.LastPolled;
             LastPushed = c.LastPushed; 
             ClientIp = c.ClientIp ?? null;
         }
 
 
-        public CqrContact(CqrContact c, string chatRoomId, DateTime lastPolled, string hash) : this(c, chatRoomId, hash)
+        public CqrContact(CqrContact c, string ChatRoomNr, DateTime lastPolled, string hash) : this(c, ChatRoomNr, hash)
         {
             _hash = hash;
             ContactImage = null;
             Cuid = c.Cuid;
-            ChatRoomId = chatRoomId;
+            ChatRuid = c.ChatRuid;
+            ChatRoomNr = c.ChatRoomNr;
+            TicksLong = c.TicksLong;
             LastPolled = c.LastPolled;
             LastPushed = c.LastPushed;
             ClientIp = c.ClientIp ?? null;
         }
 
 
-        public CqrContact(CqrContact ct, string chatRoomId, CqrImage? image, string hash) :
+        public CqrContact(CqrContact ct, string ChatRoomNr, CqrImage? image, string hash) :
             this(ct.ContactId, ct.Name, ct.Email, ct.Mobile, ct.Address)
         {
             _hash = hash;
             ContactImage = (image != null) ? image : null;
             Cuid = ct.Cuid;
-            ChatRoomId = chatRoomId;
+            ChatRuid = ct.ChatRuid;
+            ChatRoomNr = ct.ChatRoomNr;
+            TicksLong = ct.TicksLong;
             LastPolled = ct.LastPolled;
             LastPushed = ct.LastPushed;
             
@@ -215,10 +233,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         Mobile = cqrContactJson.Mobile;
                         Address = cqrContactJson.Address;
                         ContactImage = cqrContactJson.ContactImage;
+
+                        ChatRuid = cqrContactJson.ChatRuid;
+                        ChatRoomNr = cqrContactJson.ChatRoomNr;
+                        TicksLong = cqrContactJson.TicksLong;                        
                         LastPolled = cqrContactJson.LastPolled;
-                        LastPushed =  cqrContactJson.LastPushed;
-                        ChatRoomId = cqrContactJson.ChatRoomId;
-                        
+                        LastPushed = cqrContactJson.LastPushed;
+
                         _message = cqrContactJson._message;
                         _hash = cqrContactJson._hash;
                         RawMessage = cqrContactJson.RawMessage;                        
@@ -252,9 +273,12 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 Mobile = cCnt.Mobile;
                 Address = cCnt.Address;
                 ContactImage = cCnt.ContactImage;
+
+                ChatRuid = cCnt.ChatRuid;
+                ChatRoomNr = cCnt.ChatRoomNr;
+                TicksLong = cCnt.TicksLong;
                 LastPolled = cCnt.LastPolled;
                 LastPushed = cCnt.LastPushed;
-                ChatRoomId = cCnt.ChatRoomId;
 
                 _message = cCnt._message;
                 _hash = cCnt._hash ?? string.Empty;
@@ -279,6 +303,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 "\"Mobile\": \t\"" + Mobile ?? "" + "\";" + Environment.NewLine +
                 "\"Address\": \t\"" + Address ?? "" + "\";" + Environment.NewLine +
                 "\"NameEmail\": \t\"" + NameEmail ?? "" + "\";" + Environment.NewLine +
+                "\"ChatRuid\": \t\"" + ChatRuid ?? "" + "\";" + Environment.NewLine +
+                "\"ChatRoomNr\": \t\"" + ChatRoomNr ?? "" + "\";" + Environment.NewLine +
+                "\"TicksLong\": \t\"" + TicksLong ?? "" + "\";" + Environment.NewLine +
+                "\"LastPolled\": \t\"" + LastPolled ?? "" + "\";" + Environment.NewLine +
+                "\"LastPushed\": \t\"" + LastPushed ?? "" + "\";" + Environment.NewLine +
                 ((ContactImage != null) ?
                     "\"ContactImage\": \t" + Environment.NewLine +
                     "\"ContactImage.ImageFileName\": \t\"" + ContactImage.ImageFileName + "\";" + Environment.NewLine +

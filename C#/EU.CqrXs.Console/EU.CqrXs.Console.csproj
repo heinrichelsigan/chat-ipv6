@@ -13,6 +13,13 @@
     <ApplicationIcon>SatIcon.ico</ApplicationIcon>
     <SupportedOSPlatformVersion>10.0.20348.0</SupportedOSPlatformVersion>
     <PublishTrimmed>True</PublishTrimmed>
+    <Title>EU.CqrXs.Console</Title>
+    <Description>EU.CqrXs.Console</Description>
+    <Copyright>Copyright © 2000-2040 Copyleft https://cqrxs.eu</Copyright>
+    <PackageProjectUrl>https://cqrxs.eu/download/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
+    <AssemblyVersion>2.25.321</AssemblyVersion>
+    <FileVersion>2.25.321</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -30,6 +37,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="README.MD" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="README.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="SatIcon.ico" />
   </ItemGroup>
 

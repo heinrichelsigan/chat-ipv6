@@ -18,7 +18,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
     /// </summary>    
     public class SrvMsg1 : BaseMsg
     {
-        protected internal CqrContact MsgContact { get; set; }
+        protected internal CqrContact? MsgContact { get; set; }
 
         public SrvMsg1() { }
 
@@ -53,7 +53,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
             return CqrBaseMsg(MsgContact, encType);
         }
-
 
 
         /// <summary>

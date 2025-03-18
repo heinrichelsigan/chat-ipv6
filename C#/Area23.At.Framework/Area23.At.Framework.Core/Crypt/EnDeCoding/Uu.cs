@@ -88,8 +88,13 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             }
             else
             {
+                
                 string uuOutFile = DateTime.Now.Area23DateTimeWithMillis() + ".uu";
                 string uuOutPath = LibPaths.SytemDirUuPath + uuOutFile;
+                if (Directory.Exists(LibPaths.SystemDirResPath))
+                    Directory.CreateDirectory(LibPaths.SystemDirResPath);
+                if (Directory.Exists(LibPaths.SytemDirUuPath))
+                    Directory.CreateDirectory(LibPaths.SytemDirUuPath);
 
                 SLog.Log($"ToUu: uuOutFile={uuOutFile}, hexOutFile = {hexOutPath}.");
 
@@ -158,6 +163,11 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
                 string uuOutFile = DateTime.Now.Area23DateTimeWithMillis() + ".uu";
                 string uuOutPath = LibPaths.SytemDirUuPath + uuOutFile;
                 string hexOutPath = uuOutPath.Replace(".uu", ".oct");
+
+                if (Directory.Exists(LibPaths.SystemDirResPath))
+                    Directory.CreateDirectory(LibPaths.SystemDirResPath);
+                if (Directory.Exists(LibPaths.SytemDirUuPath))
+                    Directory.CreateDirectory(LibPaths.SytemDirUuPath);
 
                 SLog.Log($"FromUu: start wrting uuEncStr to file {uuOutPath}");
                 System.IO.File.WriteAllText(uuOutPath, uuEncStr);

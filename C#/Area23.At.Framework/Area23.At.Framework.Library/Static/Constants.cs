@@ -150,11 +150,12 @@ namespace Area23.At.Framework.Library.Static
         public const string ATTACH_FILES_DIR = "AttachFiles";
         public const string UPSAVED_FILE = "SavedFile";
 
+        public const string CHATROOMS = "ChatRooms";
         public const string UTF8_JSON = "utf8symol.json";
         public const string JSON_SAVE_FILE = "urlshort.json";
         public const string JSON_CONTACTS = "contacts";
         public const string JSON_CONTACTS_FILE = "contacts.json";
-        public const string JSON_SETTINGS_FILE = "settings.json";
+        public const string JSON_SETTINGS_FILE = "settings.json";        
         public const string CQR_CHAT_FILE = "cqr{0}chat.json";
         public const string PREVIOUS_EXCEPTION = "previous_exception";
         public const string LAST_EXCEPTION = "last_exception";

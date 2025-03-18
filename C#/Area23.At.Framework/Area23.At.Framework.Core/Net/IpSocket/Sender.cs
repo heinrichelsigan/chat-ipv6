@@ -84,7 +84,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     ssize = tcpClient.Client.Send(data, fsize, data.Length, SocketFlags.None, out SocketError errorCode);
                     Area23Log.LogStatic($"Socket send: data.len = {data.Length}, offset = {fsize} SocketError = {errorCode.ToString()} \n");
 
-                    Thread.Sleep(10);
+                    
 
                     outbuf = new byte[32];
                     read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
@@ -99,7 +99,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                         else
                             fsize += ssize;
                     }
-                    Thread.Sleep(10);
+                    Thread.Sleep(5);
                 }
                               
                 // compare bytes total read / send with initial length
@@ -130,9 +130,10 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 // sw.Close();
                 // sr.Close();
                 // netStream.Close();
-                Thread.Sleep(100);
-                // tcpClient.Client.Shutdown(SocketShutdown.Both);
-                tcpClient.Close();
+                Thread.Sleep(125);
+                tcpClient.Client.Shutdown(SocketShutdown.Both);
+                Thread.Sleep(125);
+                // tcpClient.Close();
             }
             catch (Exception ex)
             {

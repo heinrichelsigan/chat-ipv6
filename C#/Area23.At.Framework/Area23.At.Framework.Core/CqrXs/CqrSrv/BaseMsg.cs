@@ -101,7 +101,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         shouldSerialize = false;
                 }
                 if (shouldSerialize)
-                    msc.RawMessage = JsonConvert.SerializeObject(msc);
+                    msc.RawMessage = JsonConvert.SerializeObject(msc); 
             }
             else if (msc.MsgType == MsgEnum.Xml)
             {
@@ -112,7 +112,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     if (c != null && string.IsNullOrEmpty(c._hash) && c._hash.Equals(PipeString) && !string.IsNullOrEmpty(c._message))
                         shouldSerialize = false;
                 }
-                if (shouldSerialize)
+                if (shouldSerialize)                
                     msc.RawMessage = Static.Utils.SerializeToXml<MsgContent>(msc);
             }
 

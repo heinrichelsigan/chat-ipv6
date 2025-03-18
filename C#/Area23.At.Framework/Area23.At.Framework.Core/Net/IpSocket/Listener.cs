@@ -174,10 +174,10 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                         int rsize = ClientSocket.Receive(buffer, 0, Constants.MAX_SOCKET_BYTE_BUFFEER, flags, out errorCode);
                         buf.AddRange(buffer);
                         msize += rsize;
-                        Thread.Sleep(10);
+                        Thread.Sleep(5);
                         sendData = Encoding.Default.GetBytes(msize.ToString());
                         ClientSocket.Send(sendData, SocketFlags.None);
-                        Thread.Sleep(10);
+                        Thread.Sleep(5);
                     }
                     // ClientSocket.NoDelay = true;
                     //int rsize = -1;
@@ -202,7 +202,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     // ReceiveData receiveData = new ReceiveData(buf.ToArray(), (int)rsize, clientIEP?.Address.ToString(), clientIEP?.Port);
                     ReceiveData receiveData = new ReceiveData(buf.ToArray(), (int)fsize, clientIEP?.Address.ToString(), clientIEP?.Port);
 
-                    Thread.Sleep(25);
+                    Thread.Sleep(125);
                     ClientSocket.Close();
 
                     if (EventHandlerClientRequest != null)

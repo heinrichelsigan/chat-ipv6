@@ -7,6 +7,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.Services;
 
@@ -27,13 +28,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         protected internal string _serverKey = string.Empty;
         protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
         protected internal string _responseString = string.Empty;
-        protected internal string _chatRoomNumber = string.Empty;        
+        protected internal string _chatRoomNumber = string.Empty;
         // protected internal ConnectionMultiplexer redis;
         // protected internal ConfigurationOptions options;
         protected internal static bool useAWSCache = false, useAppState = true;
         // protected internal string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         // protected internal StackExchange.Redis.IDatabase db;
-
 
         /// <summary>
         /// Persist encrypted messages in chat rooms in application state
@@ -43,7 +43,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         {
             get => (PersistMsgIn.PersistMsg == PersistType.ApplicationState);
         }
-
 
         /// <summary>
         /// Use Amazon elastic cache to persist encrypted messages in chat rooms
@@ -55,7 +54,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         }
 
-
         /// <summary>
         /// Use file system to encrypted messages in chat rooms
         /// Fast option, but expensive, when we have a lot of huge size messages
@@ -65,7 +63,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             get => (PersistMsgIn.PersistMsg == PersistType.FileSystem);
         }
 
-
         /// <summary>
         /// BaseWebService
         /// </summary>
@@ -73,7 +70,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         {
             InitMethod();
         }
-
 
         public virtual void InitMethod()
         {
@@ -138,7 +134,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             return userHostAddr;
         }
 
-
         [WebMethod]
         public virtual string TestCache()
         {
@@ -170,17 +165,25 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     {
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT]}\n";
                         string status = RedIs.ConnMux.GetStatus();
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}\n";
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
 
                         string dictJson = JsonConvert.SerializeObject(dictCacheTest);
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Serialized Dictionary<Guid, CqrContact> to json string.\n";
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Serialized Dictionary<Guid, CqrContact> to json string." + Environment.NewLine;
                         RedIs.Db.StringSet("TestCache", dictJson);
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache.\n";
-
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache." + Environment.NewLine;
+                        
                         string jsonOut = RedIs.Db.StringGet("TestCache");
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got json serialized string from cache: {jsonOut}.\n";
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got json serialized string from cache: {jsonOut}." + Environment.NewLine;
                         Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)JsonConvert.DeserializeObject<Dictionary<Guid, CqrContact>>(jsonOut);
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deserialized json sring to (Dictionary<Guid, CqrContact> with {outdict.Keys.Count} keys.";
+
+                        List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}:Found {chatRooms.Count} chat room keys in cache." + Environment.NewLine;
+                        foreach (string room in chatRooms)
+                        {
+                            Dictionary<long, string> dicTest = GetCachedMessageDict(room);
+                            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: chat room {room} with keys {dicTest.Keys.Count} messages." + Environment.NewLine;
+                        }
                     }
                 }
                 catch (Exception ex2)
@@ -191,7 +194,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             return testReport;
         }
-
 
         protected string GetServerKey()
         {
@@ -225,8 +227,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     foundCt.Address = cqrContact.Address;
                 if (cqrContact.Mobile != null && cqrContact.Mobile.Length > 1)
                     foundCt.Mobile = cqrContact.Mobile;
-                if (!string.IsNullOrEmpty(cqrContact.ChatRoomId))
-                    foundCt.ChatRoomId = cqrContact.ChatRoomId;
+                if (!string.IsNullOrEmpty(cqrContact.ChatRoomNr))
+                    foundCt.ChatRoomNr = cqrContact.ChatRoomNr;
                 if (cqrContact.LastPolled != null && cqrContact.LastPolled > DateTime.MinValue)
                     foundCt.LastPolled = cqrContact.LastPolled;
 
@@ -251,7 +253,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             return foundCt;
         }
 
-
         internal void UpdateContact(CqrContact cqrContact)
         {
             CqrContact toAddContact = null;
@@ -264,7 +265,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 if ((ct.Cuid == cqrContact.Cuid && ct.Email == cqrContact.Email) ||
                     (ct.NameEmail == cqrContact.NameEmail))
                 {
-                    toAddContact = new CqrContact(cqrContact, cqrContact.ChatRoomId, cqrContact.LastPolled, cqrContact.Hash);
+                    toAddContact = new CqrContact(cqrContact, cqrContact.ChatRoomNr, cqrContact.LastPolled, cqrContact.Hash);
                     toAddContact.Mobile = cqrContact.Mobile;
                     toAddContact.ContactImage = null;
                     toAddContact.Cuid = (cqrContact.Cuid != null && cqrContact.Cuid != Guid.Empty) ? cqrContact.Cuid : Guid.NewGuid();
@@ -327,47 +328,45 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         }
 
-
         /// <summary>
-        /// Generates a chat room with a new chatroomid, containing sender and recpients
+        /// Generates a chat room with a new ChatRoomNr, containing sender and recpients
         /// </summary>
         /// <param name="fullSrvMsg"><see cref="FullSrvMsg{string}"/></param>
         /// <returns><see cref="FullSrvMsg{string}"/></returns>
         internal FullSrvMsg<string> InviteToChatRoom(FullSrvMsg<string> fullSrvMsg)
         {
-            string chatRoomId = string.Empty;
+            string ChatRoomNr = string.Empty;
+            DateTime now = DateTime.Now;
             List<CqrContact> _invited = new List<CqrContact>();
-                       
-            if (string.IsNullOrEmpty(chatRoomId))
-                chatRoomId = String.Format("room_{0:yyMMddHH}_{1}.json", DateTime.Now,
+
+            if (string.IsNullOrEmpty(ChatRoomNr))
+                ChatRoomNr = String.Format("room_{0:MMddHH}_{1}.json", DateTime.Now,
                     fullSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_"));
 
-            if (string.IsNullOrEmpty(chatRoomId))
-                chatRoomId = $"room_{DateTime.Now:yyMMddHHmmss}_0.json";
+            if (string.IsNullOrEmpty(ChatRoomNr))
+                ChatRoomNr = $"room_{DateTime.Now:MMddHHmm}_0.json";
 
-            fullSrvMsg.ChatRoomNr = chatRoomId;
-            fullSrvMsg.Sender.ChatRoomId = chatRoomId;
+            
+            fullSrvMsg.ChatRoomNr = ChatRoomNr;
+            fullSrvMsg.ChatRuid = Guid.NewGuid();
+            fullSrvMsg.Sender.ChatRoomNr = ChatRoomNr;
+            fullSrvMsg.Sender.ChatRuid = fullSrvMsg.ChatRuid;
+            fullSrvMsg.LastPushed = now;
+            fullSrvMsg.LastPolled = now;
 
-            DateTime now = DateTime.Now;
+
             Dictionary<long, string> dict = new Dictionary<long, string>();
             dict.Add(now.Ticks, "");
 
-            if (PersistMsgInApplicationState)
-                HttpContext.Current.Application[chatRoomId] = dict;
-            if (PersistMsgInAmazonElasticCache)
-            {
-                string dictJson = JsonConvert.SerializeObject(dict);
-                RedIs.Db.StringSet(chatRoomId, dictJson);
-            }
-                      
             fullSrvMsg.Sender.LastPolled = now;
-            fullSrvMsg.Sender.LastPushed = now;            
+            fullSrvMsg.Sender.LastPushed = now;
 
             bool addSender = true;
             foreach (CqrContact c in fullSrvMsg.Recipients)
             {
-                c.ChatRoomId = chatRoomId;
-               
+                c.ChatRoomNr = ChatRoomNr;
+                c.ChatRuid = fullSrvMsg.ChatRuid;
+
                 _invited.Add(c);
                 if ((!string.IsNullOrEmpty(c.NameEmail) && c.NameEmail == fullSrvMsg.Sender.NameEmail) ||
                     (c.Cuid != null && c.Cuid != Guid.Empty && c.Cuid == fullSrvMsg.Sender.Cuid))
@@ -376,25 +375,29 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             if (addSender)
                 _invited.Add(fullSrvMsg.Sender);
 
- 
+            SetCachedMessageDict(ChatRoomNr, dict);
+
             FullSrvMsg<string> chatRSrvMsg = new FullSrvMsg<string>();
-            chatRSrvMsg.Sender = fullSrvMsg.Sender;
-            chatRSrvMsg.Sender.ChatRoomId = chatRoomId;
-            chatRSrvMsg.Sender.LastPolled = DateTime.Now;
-            chatRSrvMsg.Sender.LastPushed = DateTime.Now;
+            chatRSrvMsg.Sender = new CqrContact(fullSrvMsg.Sender, fullSrvMsg._hash);
             chatRSrvMsg.Recipients = new HashSet<CqrContact>(_invited);
             chatRSrvMsg._hash = fullSrvMsg._hash;
-            chatRSrvMsg.ChatRoomNr = chatRoomId;
-            chatRSrvMsg.MsgType = MsgEnum.Json;
-            chatRSrvMsg = (new JsonChatRoom(chatRoomId)).SaveJsonChatRoom(chatRSrvMsg, chatRoomId);
-            
+            chatRSrvMsg.ChatRoomNr = ChatRoomNr;
+            chatRSrvMsg.ChatRuid = fullSrvMsg.ChatRuid;
+            chatRSrvMsg.LastPushed = now;
+            chatRSrvMsg.LastPushed = now;
+            chatRSrvMsg.TicksLong = dict.Keys.ToList();
+            chatRSrvMsg.MsgType = MsgEnum.Json;            
+
+            chatRSrvMsg = (new JsonChatRoom(ChatRoomNr)).SaveJsonChatRoom(chatRSrvMsg, ChatRoomNr);
+            _chatRoomNumber = chatRSrvMsg.ChatRoomNr;
+            JsonChatRoom.AddJsonChatRoomToCache(_chatRoomNumber);
+
             // serialize chat room in msg later then saving
             chatRSrvMsg.RawMessage = chatRSrvMsg.ToJson();
             chatRSrvMsg._message = chatRSrvMsg.ToJson();
 
             return chatRSrvMsg;
         }
-
 
         /// <summary>
         /// ChatRoomCheckPermission
@@ -406,14 +409,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         /// </summary>
         /// <param name="fullSrvMsg"><see cref="FullSrvMsg{string}"/> decoded from <see cref="CqrService.CqrService"/> Webservice</param>
         /// <param name="chatRoomMsg"><see cref="FullSrvMsg{string}"/> generated from chat room json</param>
-        /// <param name="chatRoomId"><see cref="string"/> chat room number of chat room</param>
+        /// <param name="ChatRoomNr"><see cref="string"/> chat room number of chat room</param>
         /// <param name="isClosingRequest">default false, only on close, where only creator can close chat room</param>
         /// <returns>true, if person is allowed to push or receive msg from / to chat room</returns>        
-        public bool ChatRoomCheckPermission(FullSrvMsg<string> fullSrvMsg, FullSrvMsg<string> chatRoomMsg, string chatRoomId, bool isClosingRequest = false)
+        public bool ChatRoomCheckPermission(FullSrvMsg<string> fullSrvMsg, FullSrvMsg<string> chatRoomMsg, string ChatRoomNr, bool isClosingRequest = false)
         {
 
             bool isValid = false;
-            if (chatRoomId.Equals(chatRoomMsg.ChatRoomNr))
+            if (ChatRoomNr.Equals(chatRoomMsg.ChatRoomNr))
             {
                 if ((fullSrvMsg.Sender.NameEmail == chatRoomMsg.Sender.NameEmail) ||
                     (!string.IsNullOrEmpty(fullSrvMsg.Sender.Email) && fullSrvMsg.Sender.Email == chatRoomMsg.Sender.Email))
@@ -440,7 +443,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             return isValid;
         }
 
-
         /// <summary>
         /// Add LastPolled to contact and also to <see cref="CqrContact.PolledMsgDates"/>
         /// reduces <see cref="CqrContact.PolledMsgDates"/>, if contact wears a to huge amount of polling history
@@ -455,10 +457,59 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 contact.LastPushed = date.AddSeconds(2);
             else
                 contact.LastPolled = date.AddSeconds(2);
-            
-            return contact;       
+
+            return contact;
         }
-            
+
+        /// <summary>
+        /// GetCachedMessageDict returns one chat room message dictionary
+        /// either from Application State in proc or from Valkey Elastic Cache on AWS
+        /// </summary>
+        /// <param name="chatRoomNumber">json chat room number</param>
+        /// <returns>one chat room message dictionary</returns>
+        public static Dictionary<long, string> GetCachedMessageDict(string chatRoomNumber)
+        {
+            Dictionary<long, string> dict = new Dictionary<long, string>();
+
+            // ApplicationState as Cache
+            if (PersistMsgInApplicationState && (HttpContext.Current.Application[chatRoomNumber] != null))
+                dict = (Dictionary<long, string>)HttpContext.Current.Application[chatRoomNumber];
+
+            // Amazon Redis Valkey Cache
+            if (PersistMsgInAmazonElasticCache)
+            {
+                string dictJson = RedIs.Db.StringGet(chatRoomNumber);
+                dict = (Dictionary<long, string>)JsonConvert.DeserializeObject<Dictionary<long, string>>(dictJson);
+            }
+
+            // TODO: implement filesystem 
+
+            return dict;
+
+        }
+
+
+        /// <summary>
+        /// SetCachedMessageDict saves the mesage dictionary for chat room in 
+        /// either application state in proc or Amazon Valkey Elastic cache
+        /// </summary>
+        /// <param name="chatRoomNumber">json chat room number</param>
+        /// <param name="dict">the mesage dictionary for chat room </param>
+        public static void SetCachedMessageDict(string chatRoomNumber, Dictionary<long, string> dict)
+        {
+
+            if (BaseWebService.PersistMsgInApplicationState)
+                HttpContext.Current.Application[chatRoomNumber] = dict;
+            if (BaseWebService.PersistMsgInAmazonElasticCache)
+            {
+                string dictJson = JsonConvert.SerializeObject(dict);
+                RedIs.Db.StringSet(chatRoomNumber, dictJson);
+            }
+
+            return;
+        }
+
+
 
     }
 

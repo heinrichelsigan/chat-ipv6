@@ -1,0 +1,76 @@
+{
+  "TimeStamp": "2025-03-17T05:45:30.9138005+01:00",
+  "SaveStamp": "2025-03-22T01:30:01.0233042+01:00",
+  "MyContact": {
+    "_hash": "6CDgbXFf",
+    "_message": "",
+    "ContactId": 0,
+    "Cuid": "00000000-0000-0000-0000-000000000000",
+    "Name": "Heinrich G. Elsigan",
+    "Email": "helsigan@outlook.at",
+    "Mobile": "",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "Heinrich G. Elsigan <helsigan@outlook.at>",
+    "ChatRuid": "a46f26c7-215a-4731-b6dc-98383ebbe1fc",
+    "ChatRoomNr": "",
+    "TicksLong": [],
+    "LastPushed": "2025-03-19T16:43:05.411229+01:00",
+    "LastPolled": "2025-03-19T16:43:05.411228+01:00",
+    "MsgType": 0,
+    "Message": "",
+    "RawMessage": "",
+    "Hash": "6CDgbXFf",
+    "Md5Hash": ""
+  },
+  "Contacts": [
+    {
+      "_hash": "",
+      "_message": "",
+      "ContactId": 1,
+      "Cuid": "00000000-0000-0000-0000-000000000000",
+      "Name": "igot sekowski",
+      "Email": "pirx777@gmail.com",
+      "Mobile": "",
+      "Address": "",
+      "SecretKey": "",
+      "ContactImage": null,
+      "NameEmail": "igot sekowski <pirx777@gmail.com>",
+      "ChatRuid": "2a8d4c95-54e4-4601-a195-9185605eaee5",
+      "ChatRoomNr": "",
+      "TicksLong": [],
+      "LastPushed": "0001-01-01T00:00:00",
+      "LastPolled": "0001-01-01T00:00:00",
+      "MsgType": 0,
+      "Message": "",
+      "RawMessage": "",
+      "Hash": "",
+      "Md5Hash": ""
+    }
+  ],
+  "FriendIPs": [
+    "10.0.0.248",
+    "10.0.0.254",
+    "::1",
+    "10.0.0.249",
+    "10.0.0.246"
+  ],
+  "MyIPs": [
+    "169.254.219.156",
+    "172.21.144.1",
+    "192.168.32.82",
+    "169.254.116.213",
+    "169.254.13.116",
+    "::1",
+    "127.0.0.1",
+    "172.21.208.1",
+    "172.31.80.1",
+    "172.21.32.1"
+  ],
+  "Proxies": [
+    "18.101.101.108",
+    "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
+  ],
+  "SecretKeys": []
+}

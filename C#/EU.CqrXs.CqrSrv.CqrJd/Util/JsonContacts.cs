@@ -25,8 +25,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         /// </summary>
         static JsonContacts()
         {
-            _contacts = LoadJsonContacts();
-            ChatRoomNumbersFromFs();
+            _contacts = LoadJsonContacts();            
         }
 
         /// <summary>
@@ -149,32 +148,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
-        /// <summary>
-        /// Loads a list of json chat rooms from fs
-        /// </summary>
-        /// <returns><see cref="List{string}"/></returns>
-        public static List<string> ChatRoomNumbersFromFs()
-        {
-
-            List<string> chatRooms = new List<string>();
-            string[] csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
-            string file = "";
-            foreach (string filedir in csr)
-            {
-                file = Path.GetFileName(filedir);
-                chatRooms.Add(file);
-            }                        
-
-            if (BaseWebService.PersistMsgInApplicationState)
-                HttpContext.Current.Application["ChatRooms"] = chatRooms;
-            if (BaseWebService.PersistMsgInAmazonElasticCache)
-            {
-                string hashChatRoomsJson = JsonConvert.SerializeObject(chatRooms);
-                RedIs.Db.StringSet("ChatRooms", hashChatRoomsJson);
-            }
-
-            return chatRooms;
-        }
     
     }
 }
