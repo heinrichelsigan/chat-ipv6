@@ -1,23 +1,10 @@
-﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Utilities;
-using System;
-using System.Collections.Generic;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Xml.Serialization;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using Area23.At.Framework.Core.Util;
 
 
 namespace Area23.At.Framework.Core.Static
@@ -175,6 +162,7 @@ namespace Area23.At.Framework.Core.Static
             }
             return -1;
         }
+
 
         /// <summary>
         /// <see cref="byte[]"/>.ToFile(string filePath, string fileName, string fext) extension method: writes a byte array to a file

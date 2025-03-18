@@ -339,6 +339,7 @@
     <Compile Include="Util\JsonChatRoom.cs" />
     <Compile Include="Util\JsonContacts.cs" />
     <Compile Include="Util\JsonHelper.cs" />
+    <Compile Include="Util\PersistMsgIn.cs" />
     <Compile Include="Util\RedisSingleton.cs" />
     <Compile Include="W.aspx.cs">
       <DependentUpon>W.aspx</DependentUpon>

@@ -84,6 +84,10 @@ namespace Area23.At.Framework.Core.Static
         public const string CQRXS_TEST_FORM = "CqrXsTestForm";
         public const string FISH_ON_AES_ENGINE = "FishOnAesEngine";
         public const string CQRXS_DELETE_DATA_ON_CLOSE = "CqrXsDeleteDataOnClose";
+        public const string PERSIST_MSG_IN = "PersistMsgIn"; s
+        public const string PERSIST_MSG_IN_APPLICATION_STATE = "ApplicationState";
+        public const string PERSIST_MSG_IN_AMAZON_ELASTIC_CACHE = "AmazonElasticCache";
+        public const string PERSIST_MSG_IN_FILE_SYSTEM = "FileSystem";
 
         public const string ACK = "Ack";
         public const string NACK = "Nack";

@@ -49,9 +49,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             Area23Log.LogStatic($"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
 
-            if (UseApplicationState)
+            if (PersistMsgInApplicationState)
                 HttpContext.Current.Application["lastmsg"] = cryptMsg;
-            if (UseAmazonElasticCache)                           
+            if (PersistMsgInAmazonElasticCache)                           
                 RedIs.Db.StringSet("lastmsg", cryptMsg);            
 
             SrvMsg1 srv1stMsg = new SrvMsg1(_serverKey);
@@ -76,9 +76,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
-                if (UseApplicationState)
+                if (PersistMsgInApplicationState)
                     Application["lastdecrypted"] = _decrypted;
-                if (UseAmazonElasticCache)
+                if (PersistMsgInAmazonElasticCache)
                     RedIs.Db.StringSet("lastdecrypted", _decrypted);
 
                 CqrContact foundCt = AddContact(_contact);
@@ -164,13 +164,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.ChatRoomId;
 
                     FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).LoadJsonChatRoom(fullSrvMsg, _chatRoomNumber);
-                    isValid = ValidateChatRoomNr(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
+                    isValid = ChatRoomCheckPermission(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
                     if (isValid)
                     {
-                        if (UseApplicationState && (HttpContext.Current.Application[_chatRoomNumber] != null))
+                        if (PersistMsgInApplicationState && (HttpContext.Current.Application[_chatRoomNumber] != null))
                             dict = (Dictionary<long, string>)HttpContext.Current.Application[_chatRoomNumber];
                         
-                        if (UseAmazonElasticCache)
+                        if (PersistMsgInAmazonElasticCache)
                         {
                             string dictJson = RedIs.Db.StringGet(_chatRoomNumber);
                             dict = (Dictionary<long, string>)JsonConvert.DeserializeObject<Dictionary<long, string>>(dictJson);                            
@@ -252,15 +252,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.ChatRoomId;
 
                     FullSrvMsg<string> chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).LoadJsonChatRoom(fullSrvMsg, _chatRoomNumber);
-                    isValid = ValidateChatRoomNr(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
+                    isValid = ChatRoomCheckPermission(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
                     if (isValid)
                     {
                         DateTime now = DateTime.Now;
 
                         dict = new Dictionary<long, string>();                      
-                        if (BaseWebService.UseApplicationState && HttpContext.Current.Application[_chatRoomNumber] != null)
+                        if (BaseWebService.PersistMsgInApplicationState && HttpContext.Current.Application[_chatRoomNumber] != null)
                             dict = (Dictionary<long, string>)HttpContext.Current.Application[_chatRoomNumber]; 
-                        if (BaseWebService.UseAmazonElasticCache)
+                        if (BaseWebService.PersistMsgInAmazonElasticCache)
                         {
                             string dictJson = RedIs.Db.StringGet(_chatRoomNumber);
                             dict = (Dictionary<long, string>)JsonConvert.DeserializeObject<Dictionary<long, string>>(dictJson);
@@ -268,9 +268,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
                         dict.Add(now.Ticks, chatRoomMembersCrypted);
                         
-                        if (BaseWebService.UseApplicationState)
+                        if (BaseWebService.PersistMsgInApplicationState)
                             HttpContext.Current.Application[_chatRoomNumber] = dict;
-                        if (BaseWebService.UseAmazonElasticCache)
+                        if (BaseWebService.PersistMsgInAmazonElasticCache)
                         {
                             string dictJson = JsonConvert.SerializeObject(dict);
                             RedIs.Db.StringSet(_chatRoomNumber, dictJson);
@@ -300,9 +300,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
 
-
         /// <summary>
-        /// 
+        /// ChatRoomClose
         /// </summary>
         /// <param name="cryptMsg"></param>
         /// <returns></returns>
@@ -327,7 +326,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.ChatRoomId;
                     JsonChatRoom jschatRoom = new JsonChatRoom(_chatRoomNumber);
                     FullSrvMsg<string> chatRoomMsg = jschatRoom.LoadJsonChatRoom(fullSrvMsg, _chatRoomNumber);
-                    isValid = ValidateChatRoomNr(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
+                    isValid = ChatRoomCheckPermission(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
                     if (isValid)
                     {
                         jschatRoom.DeleteJsonChatRoom(_chatRoomNumber);
@@ -350,7 +349,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
 
-
         [WebMethod]
         public override string TestService()
         {
@@ -362,7 +360,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         {
             return base.GetIPAddress();
         }
-
 
         [WebMethod]
         public virtual string TestCache()
