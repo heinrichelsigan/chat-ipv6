@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core.CqrXs;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 
@@ -62,6 +63,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             if (settings != null)
             {
                 _instance.Value.Contacts = settings.Contacts;
+                if (_instance.Value.Contacts == null || _instance.Value.Contacts.Count == 0)
+                    _instance.Value.Contacts = new List<CqrContact>(JsonContacts.LoadJsonContacts());
                 _instance.Value.MyContact = settings.MyContact;
                 _instance.Value.FriendIPs = settings.FriendIPs;
                 _instance.Value.MyIPs = settings.MyIPs;
@@ -84,10 +87,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             string saveString = string.Empty;
             if (settings == null)
                 settings = Settings.Singleton;
+            
+            JsonSerializerSettings jsets = new JsonSerializerSettings();
+            jsets.Formatting = Formatting.Indented;
+            jsets.SerializationBinder = new Newtonsoft.Json.Serialization.DefaultSerializationBinder();
+            jsets.MaxDepth = 16;
+
             try
             {
                 settings.SaveStamp = DateTime.Now;
-                saveString = JsonConvert.SerializeObject(settings);
+                JsonContacts.SetContacts(new HashSet<CqrContact>(settings.Contacts));
+                saveString = JsonConvert.SerializeObject(settings, jsets);
                 File.WriteAllText(LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE, saveString);
             }
             catch (Exception ex)
