@@ -30,7 +30,7 @@ namespace EU.CqrXs.Console
     internal class Program
     {
 
-        static string? inName = null, outName = null, outEnviron = null;
+        static string? inName = null, outName = null, outEnviron = null, key = null;
         static FileInfo? inFile = null, outFile = null;
         static byte[]? inBytes = null, outBytes = null;
 
@@ -54,9 +54,11 @@ namespace EU.CqrXs.Console
             {
                 string optStr = GetOption(args[i], out OptEnum optEnum);
 
-                if (optEnum == OptEnum.OutParam || optEnum == OptEnum.InParam)
+                if (optEnum == OptEnum.OutP || optEnum == OptEnum.InParam)
                     ; // nothing todo for input or output options
-                else
+                else if (optEnum == OptEnum.Key)
+                    key = optStr;
+                else 
                     dict.Add(optEnum, optStr);
             }
             if (string.IsNullOrEmpty(inName))
@@ -110,13 +112,38 @@ namespace EU.CqrXs.Console
                     case OptEnum.Decode:
                         outBytes = EnDeCodeHelper.DecodeBytes(inBytes, optStr);
                         break;
+                    case OptEnum.Key: 
                     case OptEnum.Crypt:
-                        SymmCipherPipe inPipe = new SymmCipherPipe(optStr, EnDeCodeHelper.KeyToHex(optStr)); ;
-                        outBytes = inPipe.MerryGoRoundEncrpyt(inBytes, optStr, EnDeCodeHelper.KeyToHex(optStr)); // EnDeCodeHelper.KeyToHex(optStr));
+                        if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
+                        {
+                            System.Console.Error.WriteLine($"Urecognized crypt option \"{optStr}\" without --key={key} ");
+                            Usage();
+                        }
+                        SymmCipherPipe inPipe;
+                        if (string.IsNullOrEmpty(optStr))
+                            inPipe = new SymmCipherPipe(key, EnDeCodeHelper.KeyToHex(key)); 
+                        else
+                        {
+                            string[] algos = optStr.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                            inPipe = new SymmCipherPipe(algos);
+                        }
+                        outBytes = inPipe.MerryGoRoundEncrpyt(inBytes, key, EnDeCodeHelper.KeyToHex(key)); // EnDeCodeHelper.KeyToHex(optStr));
                         break;
                     case OptEnum.Decrypt:
-                        SymmCipherPipe outPipe = new SymmCipherPipe(optStr, EnDeCodeHelper.KeyToHex(optStr));
-                        outBytes = outPipe.DecrpytRoundGoMerry(inBytes, optStr, EnDeCodeHelper.KeyToHex(optStr));
+                        if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
+                        {
+                            System.Console.Error.WriteLine($"Urecognized decrypt option \"{optStr}\" without --key={key} ");
+                            Usage();
+                        }
+                        SymmCipherPipe outPipe;
+                        if (string.IsNullOrEmpty(optStr))
+                            outPipe = new SymmCipherPipe(key, EnDeCodeHelper.KeyToHex(key));
+                        else
+                        {
+                            string[] algos = optStr.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                            outPipe = new SymmCipherPipe(algos);
+                        }                       
+                        outBytes = outPipe.DecrpytRoundGoMerry(inBytes, key, EnDeCodeHelper.KeyToHex(key));
                         break;
                     case OptEnum.HashSum:
                         if (optStr.ToLower().Contains("md5"))
@@ -191,7 +218,7 @@ namespace EU.CqrXs.Console
                     }
                     return optOut;
                 case 'O':
-                case 'o': optEnum = OptEnum.OutParam;
+                case 'o': optEnum = OptEnum.OutP;
                     outName = optOut;
                     if (string.IsNullOrEmpty(outName))
                         ; // to stdout                    
@@ -200,6 +227,8 @@ namespace EU.CqrXs.Console
                     else if (!string.IsNullOrEmpty(outName) || arg.ToLower().Contains("text") || optOut.StartsWith("$"))
                         outEnviron = optOut;
                     return optOut;
+                case 'K':
+                case 'k': optEnum = OptEnum.Key; return optOut;
                 case 'Z':
                 case 'z': optEnum = OptEnum.Zip; return optOut;
                 case 'U':
@@ -208,7 +237,7 @@ namespace EU.CqrXs.Console
                 case 'e': optEnum = OptEnum.Encode; return optOut;
                 case 'd': optEnum = OptEnum.Decode; return optOut;
                 case 'C':
-                case 'c':  optEnum = OptEnum.Crypt; return optOut;
+                case 'c': optEnum = OptEnum.Crypt; return optOut;
                 case 'D': optEnum = OptEnum.Decrypt; return optOut;
                 case 'H':
                 case 'h': optEnum = OptEnum.HashSum; return optOut;
@@ -225,8 +254,19 @@ namespace EU.CqrXs.Console
     -z | --zip={gzip|bzip2}
     -d | --decode={raw|hex16|hex32|base32|base64|uu}
     -e | --encode={raw|hex16|hex32|base32|base64|uu}
-    -c | --crypt={[des3,fish2,fish3] | key}
-    -D | --decrypt={[des3,fish2,fish3]|key}
+    -c | --crypt={algo1,algo2,...}  
+        -k | --key={secret_key}
+         algo:
+            Aes,AesLight,Rijndael,Des,Des3,Dstu7624,
+            Aria,Camellia,CamelliaLight,Cast5,Cast6,
+            BlowFish,Fish2,Fish3,ThreeFish256,
+            Gost28147,Idea,Noekeon,
+            RC2,RC532,RC564,RC6,
+            Seed,SkipJack,Serpent,SM4,
+            Tea,Tnepres,XTea,
+            ZenMatrix,ZenMatrix2
+    -D | --decrypt={algo1,algo2,...} 
+        -k | --key={secret_key}
     -s | --hashSum={md5|sha256|sha512} 
     -h | --help");
 

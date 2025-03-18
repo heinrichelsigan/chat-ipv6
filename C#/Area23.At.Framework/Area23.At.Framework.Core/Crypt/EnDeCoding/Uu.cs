@@ -22,8 +22,8 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         public static readonly object _lock = new object();
         public const string VALID_CHARS = "!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_` \r\n";
         
-        public static bool IsUnix { get => (Path.DirectorySeparatorChar == '/'); }
-        public static bool IsWindows { get => (Path.DirectorySeparatorChar == '\\'); }
+        //public static bool IsUnix { get => (Path.DirectorySeparatorChar == '/'); }
+        //public static bool IsWindows { get => (Path.DirectorySeparatorChar == '\\'); }
         
 
         #region common interface, interfaces for static members appear in C# 7.3 or later

@@ -8,15 +8,16 @@ namespace EU.CqrXs.Console
 {
     public enum OptEnum
     {
-        Usage = 0,
-        InParam = 1,
-        OutParam = 2,
-        Zip = 3,
-        Unzip = 4,
-        Encode = 5,
-        Decode = 6,        
-        Crypt = 7,
-        Decrypt = 8,
-        HashSum = 9
+        Usage   = 0x0,
+        InParam = 0x1,
+        OutP    = 0x2,
+        Zip     = 0x3,
+        Unzip   = 0x4,
+        Encode  = 0x5,
+        Decode  = 0x6,        
+        Crypt   = 0x7,
+        Key     = 0x8,
+        Decrypt = 0x9,
+        HashSum = 0xa
     }
 }
