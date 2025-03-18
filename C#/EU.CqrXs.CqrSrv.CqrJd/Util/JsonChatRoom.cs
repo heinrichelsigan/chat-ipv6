@@ -119,7 +119,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         public HashSet<string> ChatRoomNumbersFromFs()
         {
-            HashSet<string> chatRooms = JsonContacts.ChatRoomNumbersFromFs().ToHashSet();
+            HashSet<string> chatRooms = new HashSet<string>(JsonContacts.ChatRoomNumbersFromFs().ToArray());
             return chatRooms;
         }
 

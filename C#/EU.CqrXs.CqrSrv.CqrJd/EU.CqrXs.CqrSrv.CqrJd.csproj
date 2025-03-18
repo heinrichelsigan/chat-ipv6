@@ -261,6 +261,7 @@
     <Content Include="Settings\Default.aspx" />
     <Content Include="Settings\.htaccess" />
     <Content Include="Settings\TestForm.aspx" />
+    <Content Include="U.aspx" />
     <Content Include="W.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -278,7 +279,6 @@
     <Compile Include="Util\CqrJdBasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CqrController.cs" />
     <Compile Include="CqrService.asmx.cs">
       <DependentUpon>CqrService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -341,6 +341,13 @@
     <Compile Include="Util\JsonHelper.cs" />
     <Compile Include="Util\PersistMsgIn.cs" />
     <Compile Include="Util\RedisSingleton.cs" />
+    <Compile Include="U.aspx.cs">
+      <DependentUpon>U.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="U.aspx.designer.cs">
+      <DependentUpon>U.aspx</DependentUpon>
+    </Compile>
     <Compile Include="W.aspx.cs">
       <DependentUpon>W.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

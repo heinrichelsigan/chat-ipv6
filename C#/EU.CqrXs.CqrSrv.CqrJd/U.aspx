@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="W.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.W" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="U.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.U" %>
 <%@ Register TagPrefix="uc" TagName="ImageFontControl" Src="~/ImageFontControl.ascx" %>
 <!DOCTYPE html>
 
@@ -9,9 +9,10 @@
 <body>
     <form id="form1" runat="server">
         <div>
+            <asp:Literal ID="literalUserHost" runat="server"></asp:Literal>
+            <bt />
             <uc:ImageFontControl ID="imageFontControl" runat="server" />
             <hr />
-            <a id="ahrefId" runat="server" href="#" target="_blank" />
         </div>        
     </form>
 </body>

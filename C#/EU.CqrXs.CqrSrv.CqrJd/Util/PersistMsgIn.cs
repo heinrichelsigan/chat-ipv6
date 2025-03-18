@@ -15,7 +15,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
     {
         None = 0,
         ApplicationState = 1,
-        Va
         AmazonElasticCache = 2,
         FileSystem = 3
         // ReddisCache = 3,
