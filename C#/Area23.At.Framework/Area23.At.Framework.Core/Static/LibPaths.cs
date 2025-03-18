@@ -24,11 +24,20 @@ namespace Area23.At.Framework.Core.Static
         private static string logFilePath = "";
         private static string cqrServiceSoap = "";
         private static string cqrServiceSoap12 = "";
+        private static readonly char _sepCh;
         private static int daysave = -1;
 
-        public static char SepCh { get => Path.DirectorySeparatorChar; }
+        public static char SepCh { get => _sepCh; }
 
-        public static string SepChar { get => Path.DirectorySeparatorChar.ToString(); }
+        public static string SepChar { get => _sepCh.ToString(); }
+
+        /// <summary>
+        /// static constructor
+        /// </summary>
+        static LibPaths()
+        {
+            _sepCh = Path.DirectorySeparatorChar;
+        }
 
         #region Web App Paths
 
@@ -167,6 +176,28 @@ namespace Area23.At.Framework.Core.Static
 
         #endregion WebServices
 
+        #region other properties 
+
+        public static bool CqrEncrypt
+        {
+            get
+            {
+                bool _cqrEncrypt = Constants.CQR_ENCRYPT;
+                try
+                {
+                    if (ConfigurationManager.AppSettings["CqrEncrypt"] != null)
+                        _cqrEncrypt = Convert.ToBoolean(ConfigurationManager.AppSettings["CqrEncrypt"].ToString());
+                }
+                catch
+                {
+                    _cqrEncrypt = true;
+                }
+                return _cqrEncrypt;
+            }
+        }
+
+        #endregion other properties 
+
         #region directory & file paths
 
         /// <summary>
@@ -289,6 +320,8 @@ namespace Area23.At.Framework.Core.Static
 
         public static string AttachmentFilesDir { get => SystemDirPath + Constants.ATTACH_FILES_DIR + SepChar; }
 
+        #endregion directory & file paths
+
         #region LogFiles and LogPaths
 
         /// <summary>
@@ -314,6 +347,8 @@ namespace Area23.At.Framework.Core.Static
                 return logDirPath;
             }
         }
+
+        public static string LogFileSystemPath { get => SystemDirLogPath + Constants.AppLogFile; }
 
         /// <summary>
         /// GetLogFilePath - gets individual named logfile with substring appName
@@ -343,33 +378,9 @@ namespace Area23.At.Framework.Core.Static
             return logFilePath;
         }
 
-        public static string LogFileSystemPath { get => SystemDirLogPath + Constants.AppLogFile; }
 
         #endregion LogFiles and LogPaths
 
-        #endregion directory & file paths
-
-        #region other properties 
-
-        public static bool CqrEncrypt
-        {
-            get
-            {
-                bool _cqrEncrypt = Constants.CQR_ENCRYPT;
-                try
-                {
-                    if (ConfigurationManager.AppSettings["CqrEncrypt"] != null)
-                        _cqrEncrypt = Convert.ToBoolean(ConfigurationManager.AppSettings["CqrEncrypt"].ToString());
-                }
-                catch
-                {
-                    _cqrEncrypt = true;
-                }
-                return _cqrEncrypt;
-            }
-        }
-
-        #endregion other properties 
 
     }
 
