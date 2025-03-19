@@ -1208,6 +1208,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             switch (svalue)
             {
+
                 case 0:
                     PeerSessionTriState = PeerSession3State.Peer2Peer;
                     SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
