@@ -37,7 +37,31 @@ namespace Area23.At.Framework.Core.Static
         static LibPaths()
         {
             _sepCh = Path.DirectorySeparatorChar;
+            if (Directory.Exists(LibPaths.SystemDirResPath))
+                try {
+                    Directory.CreateDirectory(LibPaths.SystemDirResPath);
+                } catch { }
+            if (Directory.Exists(LibPaths.SytemDirUuPath))
+                try {
+                    Directory.CreateDirectory(LibPaths.SytemDirUuPath);
+                } catch { }
+            if (Directory.Exists(LibPaths.SystemDirOutPath))
+                try {
+                    Directory.CreateDirectory(LibPaths.SystemDirOutPath);
+                }
+                catch { }
+            if (Directory.Exists(LibPaths.SystemDirTmpPath))
+                try {
+                    Directory.CreateDirectory(LibPaths.SystemDirTmpPath);
+                }
+                catch { }
+            if (Directory.Exists(LibPaths.SystemDirLogPath))
+                try {
+                    Directory.CreateDirectory(LibPaths.SystemDirLogPath);
+                }
+                catch { }
         }
+
 
         #region Web App Paths
 

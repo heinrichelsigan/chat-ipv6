@@ -58,7 +58,9 @@ namespace EU.CqrXs.Console
                     ; // nothing todo for input or output options
                 else if (optEnum == OptEnum.Key)
                     key = optStr;
-                else 
+                else if (optEnum == OptEnum.Help)
+                    Usage();
+                else
                     dict.Add(optEnum, optStr);
             }
             if (string.IsNullOrEmpty(inName))

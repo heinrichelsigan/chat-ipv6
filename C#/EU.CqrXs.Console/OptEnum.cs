@@ -18,6 +18,7 @@ namespace EU.CqrXs.Console
         Crypt   = 0x7,
         Key     = 0x8,
         Decrypt = 0x9,
-        HashSum = 0xa
+        HashSum = 0xa,
+        Help    = 0xb
     }
 }
