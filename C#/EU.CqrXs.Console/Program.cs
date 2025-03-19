@@ -90,7 +90,7 @@ namespace EU.CqrXs.Console
                         if (optStr.ToLower().Contains("gz"))
                             outBytes = GZ.GZipBytes(inBytes);
                         else if (optStr.ToLower().Contains("bz"))
-                            outBytes = BZip2.BZip2Bytes(inBytes);
+                            outBytes = BZip2.BZip(inBytes);
                         else
                         {
                             System.Console.Error.WriteLine("Urecognized zip option: " + optStr);
@@ -101,7 +101,7 @@ namespace EU.CqrXs.Console
                         if (optStr.ToLower().Contains("gz") || optStr.ToLower().Contains("gunzip"))
                             outBytes = GZ.GUnZipBytes(inBytes);
                         else if (optStr.ToLower().Contains("bz") || optStr.ToLower().Contains("bunzip") || optStr.ToLower().Contains("2"))
-                            outBytes = BZip2.BUnZip2Bytes(inBytes);
+                            outBytes = BZip2.BUnZip(inBytes);
                         else
                         {
                             System.Console.Error.WriteLine("Urecognized unzip option: " + optStr);
@@ -114,7 +114,7 @@ namespace EU.CqrXs.Console
                     case OptEnum.Decode:
                         outBytes = EnDeCodeHelper.DecodeBytes(inBytes, optStr);
                         break;
-                    case OptEnum.Key: 
+                    // case OptEnum.Key: 
                     case OptEnum.Crypt:
                         if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
                         {
@@ -126,7 +126,7 @@ namespace EU.CqrXs.Console
                             inPipe = new SymmCipherPipe(key, EnDeCodeHelper.KeyToHex(key)); 
                         else
                         {
-                            string[] algos = optStr.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                            string[] algos = optStr.Split(",;:".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                             inPipe = new SymmCipherPipe(algos);
                         }
                         outBytes = inPipe.MerryGoRoundEncrpyt(inBytes, key, EnDeCodeHelper.KeyToHex(key)); // EnDeCodeHelper.KeyToHex(optStr));
@@ -142,7 +142,7 @@ namespace EU.CqrXs.Console
                             outPipe = new SymmCipherPipe(key, EnDeCodeHelper.KeyToHex(key));
                         else
                         {
-                            string[] algos = optStr.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                            string[] algos = optStr.Split(",;:".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                             outPipe = new SymmCipherPipe(algos);
                         }                       
                         outBytes = outPipe.DecrpytRoundGoMerry(inBytes, key, EnDeCodeHelper.KeyToHex(key));
@@ -181,7 +181,7 @@ namespace EU.CqrXs.Console
                 optEnum = OptEnum.Usage;
                 return optOut;
             }
-            string arg = argument.TrimStart("-".ToCharArray());
+            string arg = argument.TrimStart("-/".ToCharArray());
 
             if (arg.Contains("="))
                 optOut = arg.GetSubStringByPattern("=", true, "", " ", true, StringComparison.CurrentCultureIgnoreCase);
@@ -241,8 +241,11 @@ namespace EU.CqrXs.Console
                 case 'C':
                 case 'c': optEnum = OptEnum.Crypt; return optOut;
                 case 'D': optEnum = OptEnum.Decrypt; return optOut;
+                case '?':
                 case 'H':
-                case 'h': optEnum = OptEnum.HashSum; return optOut;
+                case 'h': optEnum = OptEnum.Help; Usage();  return optOut;
+                case 'S':
+                case 's': optEnum = OptEnum.HashSum; return optOut;
                 default: optEnum = OptEnum.Usage; return argument;
             }
         }
@@ -269,10 +272,14 @@ namespace EU.CqrXs.Console
             ZenMatrix,ZenMatrix2
     -D | --decrypt={algo1,algo2,...} 
         -k | --key={secret_key}
-    -s | --hashSum={md5|sha256|sha512} 
+    -s | --Sum={md5|sha256|sha512} 
     -h | --help");
 
-            System.Console.Out.WriteLine($"\n      \t{Path.GetFileName(progName)} and many other things in future....");
+            System.Console.Out.WriteLine($"\nExamples:");
+            System.Console.Out.WriteLine($"      \t{Path.GetFileName(progName)} -i=test.jpg -z=bzip2 -e=base32 -o=test.jpg.bz2.base32");
+            System.Console.Out.WriteLine($"      \t{Path.GetFileName(progName)} -i=test.jpg.bz2.base32 -d=base32 -u=bzip2 -o=test1.jpg");
+            System.Console.Out.WriteLine($"      \t{Path.GetFileName(progName)} --inFile=test.jpg --zip=gzip --crypt=AesLight,Fish3 -k=MySecretKey -e=base64 -o=test.jpg.gz.aeslight.fish3.base64");
+            System.Console.Out.WriteLine($"      \t{Path.GetFileName(progName)} -i=test.jpg.gz.aeslight.fish3.base64 -d=base64  -D=AesLight,Fish3 -k=MySecretKey -e=base64  --unzip=gzip  -o=test2.jpg");
             System.Environment.Exit(0);
         }
 
