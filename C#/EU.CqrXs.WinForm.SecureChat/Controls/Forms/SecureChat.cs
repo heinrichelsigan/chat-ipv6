@@ -580,7 +580,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
 
             return true;
-        }
+         }
 
         /// <summary>
         /// Sends a init secure message to contact over server proxy

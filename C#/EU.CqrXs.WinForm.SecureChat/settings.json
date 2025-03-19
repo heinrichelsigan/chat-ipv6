@@ -1,1 +1,67 @@
-{"TimeStamp":"2025-03-17T05:45:30.9138005+01:00","SaveStamp":"2025-03-17T09:22:27.4292489+01:00","MyContact":{"_hash":"6CDgbXFf","_message":"","ContactId":-1,"Cuid":"00000000-0000-0000-0000-000000000000","Name":"Igor Sekowski","Email":"ugor.sekowski@gmail.com","Mobile":"","Address":"","SecretKey":null,"ContactImage":null,"NameEmail":"Igor Sekowski <ugor.sekowski@gmail.com>","ChatRoomId":"room_25031704_ugor_sekowski_gmail_com.json","LastPushed":"2025-03-17T05:50:28.384233+01:00","LastPolled":"2025-03-17T04:50:28.384233","MsgType":0,"Message":"","RawMessage":"","Hash":"6CDgbXFf","Md5Hash":""},"Contacts":[],"FriendIPs":["10.0.0.248","10.0.0.254","::1","10.0.0.249"],"MyIPs":["169.254.182.167","169.254.237.208","10.0.0.254","::1","127.0.0.1"],"Proxies":["18.101.101.108","2a05:d011:cdf:3a00:75d:d95d:136e:9e41"],"SecretKeys":["1234"]}
+{
+  "TimeStamp": "2025-03-17T05:45:30.9138005+01:00",
+  "SaveStamp": "2025-03-19T16:43:44.0598978+01:00",
+  "MyContact": {
+    "_hash": "6CDgbXFf",
+    "_message": "",
+    "ContactId": 0,
+    "Cuid": "00000000-0000-0000-0000-000000000000",
+    "Name": "Heinrich G. Elsigan",
+    "Email": "helsigan@outlook.at",
+    "Mobile": "",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "Heinrich G. Elsigan <helsigan@outlook.at>",
+    "ChatRoomId": "room_25031915_helsigan_outlook_at.json",
+    "LastPushed": "2025-03-19T16:43:05.411229+01:00",
+    "LastPolled": "2025-03-19T16:43:05.411228+01:00",
+    "MsgType": 0,
+    "Message": "",
+    "RawMessage": "",
+    "Hash": "6CDgbXFf",
+    "Md5Hash": ""
+  },
+  "Contacts": [
+    {
+      "_hash": "",
+      "_message": "",
+      "ContactId": 1,
+      "Cuid": "00000000-0000-0000-0000-000000000000",
+      "Name": "igot sekowski",
+      "Email": "pirx777@gmail.com",
+      "Mobile": "",
+      "Address": "",
+      "SecretKey": "",
+      "ContactImage": null,
+      "NameEmail": "igot sekowski <pirx777@gmail.com>",
+      "ChatRoomId": "",
+      "LastPushed": "0001-01-01T00:00:00",
+      "LastPolled": "0001-01-01T00:00:00",
+      "MsgType": 0,
+      "Message": "",
+      "RawMessage": "",
+      "Hash": "",
+      "Md5Hash": ""
+    }
+  ],
+  "FriendIPs": [
+    "10.0.0.248",
+    "10.0.0.254",
+    "::1",
+    "10.0.0.249",
+    "10.0.0.246"
+  ],
+  "MyIPs": [
+    "169.254.182.167",
+    "169.254.237.208",
+    "10.0.0.249",
+    "::1",
+    "127.0.0.1"
+  ],
+  "Proxies": [
+    "18.101.101.108",
+    "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
+  ],
+  "SecretKeys": []
+}
