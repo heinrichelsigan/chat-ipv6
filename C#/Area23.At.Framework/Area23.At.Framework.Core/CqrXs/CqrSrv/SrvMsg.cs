@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Configuration;
 using System.Net;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 {
@@ -154,10 +155,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                 {
                     fullServMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString((string)fullServMsg.TContent.ToString());
                 }
-                catch
-                (Exception ex)
+                catch (Exception exMD5)
                 {
-                    Area23Log.LogStatic(ex);
+                    Area23Log.LogStatic($", when calculating MD5Sum of clientMsg.TContent.ToString()", exMD5, "");
                 }
             }
             if (string.IsNullOrEmpty(fullServMsg.ChatRoomNr))
@@ -197,10 +197,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                 {
                     fullServMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString((string)fullServMsg.TContent.ToString());
                 }
-                catch
-                (Exception ex)
+                catch (Exception exMD5)
                 {
-                    Area23Log.LogStatic(ex);
+                    Area23Log.LogStatic($", when calculating MD5Sum of clientMsg.TContent.ToString()", exMD5, "");
                 }
             }
             string allSrvMsg = fullServMsg.ToJson();
@@ -221,10 +220,9 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                 {
                     clientMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString((string)clientMsg.TContent.ToString());
                 }
-                catch
-                (Exception ex)
+                catch (Exception exMD5)
                 {
-                    Area23Log.LogStatic(ex);
+                    Area23Log.LogStatic($", when calculating MD5Sum of clientMsg.TContent.ToString()", exMD5, "");
                 }
             }
             string allClientMsg = clientMsg.ToJson();
@@ -269,7 +267,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                 {
                     if (Char.IsAsciiLetter(msgContent.Message[msgContent.Message.Length - 1]) || Char.IsDigit(msgContent.Message[msgContent.Message.Length - 1]))
                     {
-                        msgContent._message += "\" }";      
+                        msgContent._message += "\" }";
+                        msgContent.MsgType = MsgEnum.Json;
                     }
                     fullMsg = JsonConvert.DeserializeObject<FullSrvMsg<TS>>(msgContent.Message);
                 }
@@ -345,9 +344,10 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                 else if (Char.IsAsciiLetter(msgContent.Message[msgContent.Message.Length - 1]) || Char.IsDigit(msgContent.Message[msgContent.Message.Length - 1]))
                 {
                     msgContent._message += "\" }";
+                    msgContent.MsgType = MsgEnum.Json;
                 }
-                clientOutMsg = JsonConvert.DeserializeObject<FullSrvMsg<TS>>(msgContent.Message);
-                else if (msgContent.MsgType == MsgEnum.Xml || msgContent._message.IsValidXml())
+                clientOutMsg = JsonConvert.DeserializeObject<FullSrvMsg<TC>>(msgContent.Message);
+                if (msgContent.MsgType == MsgEnum.Xml || msgContent._message.IsValidXml())
                     clientOutMsg = Static.Utils.DeserializeFromXml<FullSrvMsg<TC>>(msgContent._message);
 
                 try

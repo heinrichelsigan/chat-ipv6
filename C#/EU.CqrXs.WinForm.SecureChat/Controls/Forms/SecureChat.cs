@@ -12,12 +12,13 @@ using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using EU.CqrXs.WinForm.SecureChat.Controls.UserControls;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Util;
+// using Microsoft.VisualBasic;
 using System.ComponentModel;
 using System.Formats.Tar;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime;
-using System.Runtime.InteropServices.JavaScript;
+// using System.Runtime.InteropServices.JavaScript;
 using System.Threading.Tasks;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
@@ -1215,14 +1216,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
                     try
                     {
-                        this.ComboBoxContacts.Enabled = false;
-                        this.ComboBoxIp.Enabled = true;
+                        this.SetComboBoxEnabled(this.ComboBoxIp, true);
+                        this.SetComboBoxEnabled(this.ComboBoxContacts, false);
+
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, true);
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemServerSession, true, false);                        
                     }
-                    catch (Exception ex)
+                    catch (Exception exTriState)
                     {
+                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
                     }
-                    this.MenuOptionsItemServerSession.Checked = false;
-                    this.MenuOptionsItemPeer2Peer.Checked = true;
                     await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
                 case 2:
@@ -1230,28 +1233,31 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
                     try
                     {
-                        this.ComboBoxContacts.Enabled = true;
-                        this.ComboBoxIp.Enabled = false;
+                        this.SetComboBoxEnabled(this.ComboBoxIp, false);
+                        this.SetComboBoxEnabled(this.ComboBoxContacts, true);
+
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, false);
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemServerSession, true, true);
                     }
-                    catch (Exception ex)
+                    catch (Exception exTriState)
                     {
-                    }
-                    this.MenuOptionsItemServerSession.Checked = true;
-                    this.MenuOptionsItemPeer2Peer.Checked = false;                    
+                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
+                    }                 
                     break;
                 case 1:
                 default:
                     this.PeerSessionTriState = PeerSession3State.None;
                     try
                     {
-                        this.ComboBoxContacts.Enabled = false;
-                        this.ComboBoxIp.Enabled = false;
+                        this.SetComboBoxEnabled(this.ComboBoxIp, false);
+                        this.SetComboBoxEnabled(this.ComboBoxContacts, false);
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, false);
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemServerSession, true, false);                        
                     }
-                    catch (Exception ex)
+                    catch (Exception exTriState)
                     {
-                    }
-                    this.MenuOptionsItemServerSession.Checked = false;
-                    this.MenuOptionsItemPeer2Peer.Checked = false;
+                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
+                    }                                        
                     await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
             }

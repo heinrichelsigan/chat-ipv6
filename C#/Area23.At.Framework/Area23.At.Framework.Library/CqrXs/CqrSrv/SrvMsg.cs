@@ -130,10 +130,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrSrv
                 {
                     fullMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString((string)fullMsg.TContent.ToString());
                 }
-                catch
-                (Exception ex)
+                catch (Exception exCqrSrvMsg)
                 {
-                    Area23Log.LogStatic(ex);
+                    Area23Log.LogStatic(exCqrSrvMsg);
                 }
             }
             string allMsg = fullMsg.ToJson();

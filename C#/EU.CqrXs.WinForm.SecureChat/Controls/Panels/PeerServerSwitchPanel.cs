@@ -112,9 +112,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
                         LabelPeer.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Regular);
                         LabelPeer.ForeColor = SystemColors.ControlText;
                         LabelPeer.BackColor = SystemColors.ActiveCaption;
-                        break;
-                    
-                    
+                        break;                    
                 }
                 SuspendResumeLayout(true);
 

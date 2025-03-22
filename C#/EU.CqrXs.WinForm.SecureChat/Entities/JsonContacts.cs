@@ -73,7 +73,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                     }
                     catch (Exception exCreateJsonFile)
                     {
-                        Area23Log.LogStatic(exCreateJsonFile);
+                        Area23Log.LogStatic($", when creating JsonContactsFile {JsonContactsFile}", exCreateJsonFile, "");
                     }
             }
 
@@ -87,7 +87,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 }
                 catch (Exception exReadJsonFile)
                 {
-                    Area23Log.LogStatic(exReadJsonFile);
+                    Area23Log.LogStatic($", when reading all text from JsonContactsFile {JsonContactsFile}", exReadJsonFile, "");
                 }
             }
 
@@ -112,9 +112,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 {
                     File.WriteAllText(JsonContactsFile, jsonString);
                 }
-                catch (Exception exCreateJsonFile)
+                catch (Exception exWriteJsonFile)
                 {
-                    Area23Log.LogStatic(exCreateJsonFile);
+                    Area23Log.LogStatic($", when writing all serialized text to JsonContactsFile {JsonContactsFile}", exWriteJsonFile, "");
                 }
             }
         }

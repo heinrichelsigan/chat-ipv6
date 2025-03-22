@@ -43,7 +43,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        protected void Page_Load(object sender, EventArgs e)
+        protected override void Page_Load(object sender, EventArgs e)
         {
             base.Page_Load(sender, e);
             if (!Page.IsPostBack)

@@ -1,7 +1,6 @@
 ﻿using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Crypt.Hash;
-using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

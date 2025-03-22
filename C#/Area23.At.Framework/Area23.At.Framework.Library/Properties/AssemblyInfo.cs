@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Area23.At.Framework.Library")]
 [assembly: AssemblyDescription(".Net 4.[678].* Framework Area23 Library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Heinrich Elsigan https://area23.at")]
+[assembly: AssemblyCompany("Heinrich Elsigan https://heinrichelsigan.area23.at")]
 [assembly: AssemblyProduct("area23.at FrameworkLibrary")]
 [assembly: AssemblyCopyright("Copyleft 2000-2040 © Copyright under MIT license")]
 [assembly: AssemblyTrademark("")]
