@@ -7,14 +7,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Formats.Tar;
 using System.Linq;
-using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Serialization;
-using System.Security.Cryptography;
-using System.Security.Policy;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Windows.Interop;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {

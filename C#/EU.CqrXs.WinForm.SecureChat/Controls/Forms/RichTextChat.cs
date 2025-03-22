@@ -1011,7 +1011,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 if (rfmsg != null && rfmsg.Sender != null)
                 {
-                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, Settings.Instance.MyContact.ContactImage, rfmsg.Sender.Hash);
+                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.LastPushed, rfmsg.Sender.Hash);
                     Settings.Singleton.MyContact = myContact;
 
                     Settings.SaveSettings(Settings.Singleton);
