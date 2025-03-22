@@ -188,8 +188,6 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             // ClientIp = c.ClientIp ?? null;
         }
 
-
-
         #endregion constructors
 
         #region members

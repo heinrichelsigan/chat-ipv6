@@ -525,6 +525,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.TextBoxSource.Text = chat.AddMyMessage(usrMsg);
             if (returnContact != null)
             {
+                returnContact.ContactId = 0;
                 Settings.Instance.MyContact = returnContact;
                 srvMsg = $"Got Cuid: {returnContact.Cuid} for {returnContact.NameEmail}\n";
                 this.TextBoxDestionation.Text = chat.AddFriendMessage(srvMsg);
@@ -1011,7 +1012,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 if (rfmsg != null && rfmsg.Sender != null)
                 {
-                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.LastPushed, rfmsg.Sender.Hash);
+                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.LastPolled, rfmsg.Sender.Hash);
                     Settings.Singleton.MyContact = myContact;
 
                     Settings.SaveSettings(Settings.Singleton);
@@ -1119,7 +1120,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 ; // todo launch blocking entering window with input secret key
 
             if (PeerSessionTriState != PeerSession3State.Peer2Peer)
-                TooglePeerSessionServerTriState(0, false);
+                Task.Run((async () => await TooglePeerSessionServerTriState(0, false)));
 
             if (sender != null)
             {
@@ -1201,51 +1202,59 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
 
-        public void TooglePeerSessionServerTriState(short svalue, bool fireUp = true)
+        public async Task TooglePeerSessionServerTriState(short svalue, bool fireUp = true)
         {
             switch (svalue)
             {
+
                 case 0:
                     PeerSessionTriState = PeerSession3State.Peer2Peer;
                     SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
                     try
                     {
-                        this.ComboBoxContacts.Enabled = false;
-                        this.ComboBoxIp.Enabled = true;
+                        this.SetComboBoxEnabled(this.ComboBoxIp, true);
+                        this.SetComboBoxEnabled(this.ComboBoxContacts, false);
+
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, true);
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemServerSession, true, false);
                     }
-                    catch (Exception ex)
+                    catch (Exception exTriState)
                     {
+                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
                     }
-                    this.MenuOptionsItemServerSession.Checked = false;
-                    this.MenuOptionsItemPeer2Peer.Checked = true;
+                    await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
                 case 2:
                     this.PeerSessionTriState = PeerSession3State.ChatServer;
                     SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
                     try
                     {
-                        this.ComboBoxContacts.Enabled = true;
-                        this.ComboBoxIp.Enabled = false;
+                        this.SetComboBoxEnabled(this.ComboBoxIp, false);
+                        this.SetComboBoxEnabled(this.ComboBoxContacts, true);
+
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, false);
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemServerSession, true, true);
                     }
-                    catch (Exception ex)
+                    catch (Exception exTriState)
                     {
+                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
                     }
-                    this.MenuOptionsItemServerSession.Checked = true;
-                    this.MenuOptionsItemPeer2Peer.Checked = false;
                     break;
                 case 1:
                 default:
                     this.PeerSessionTriState = PeerSession3State.None;
                     try
                     {
-                        this.ComboBoxContacts.Enabled = false;
-                        this.ComboBoxIp.Enabled = false;
+                        this.SetComboBoxEnabled(this.ComboBoxIp, false);
+                        this.SetComboBoxEnabled(this.ComboBoxContacts, false);
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, false);
+                        SetMenuItemEnabledChecked(this.MenuOptionsItemServerSession, true, false);
                     }
-                    catch (Exception ex)
+                    catch (Exception exTriState)
                     {
+                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
                     }
-                    this.MenuOptionsItemServerSession.Checked = false;
-                    this.MenuOptionsItemPeer2Peer.Checked = false;
+                    await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
             }
             this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState, fireUp);
@@ -1255,45 +1264,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             if (e is Area23EventArgs<int> ev)
             {
-                TooglePeerSessionServerTriState((short)ev.GenericTData);
-                //if (ev.GenericTData < 1)
-                //{
+                if (PeerSessionTriState != PeerSession3State.Peer2Peer)
+                    Task.Run((async () => await TooglePeerSessionServerTriState((short)ev.GenericTData)));
 
-                //    SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
-                //    try
-                //    {
-                //        this.ComboBoxContacts.Enabled = false;
-                //        this.ComboBoxIp.Enabled = true;
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //    }
-
-                //}
-                //else if (ev.GenericTData > 1)
-                //{
-                //    SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
-                //    try
-                //    {
-                //        this.ComboBoxContacts.Enabled = true;
-                //        this.ComboBoxIp.Enabled = false;
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //    }
-
-                //}
-                //else
-                //{
-                //    try
-                //    {
-                //        this.ComboBoxContacts.Enabled = true;
-                //        this.ComboBoxIp.Enabled = true;
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //    }
-                //}
             }
         }
 
@@ -1436,13 +1409,40 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             await base.BgWorkerMonitor_WorkMonitorAsync(sender, e);
 
             IPAddress? newAddr = null;
-            ToolStripMenuItem? newIpIem = null;
+            ToolStripMenuItem? oldIpItem = null, newIpIem = null;
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
             InterfaceIpAddresses = await NetworkAddresses.GetIpAddressesAsync();
             ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
 
-            if (PeerSessionTriState == PeerSession3State.Peer2Peer)
+            if (PeerSessionTriState == PeerSession3State.Peer2Peer || PeerSessionTriState == PeerSession3State.None)
             {
+                bool anyChecked = false;
+                if (clientIpAddress != null)
+                {
+                    foreach (ToolStripMenuItem tsItem in MenuNetworkItemMyIps.DropDown.Items)
+                    {
+                        if (tsItem.Text == clientIpAddress.AddressFamily + clientIpAddress.ToString())
+                        {
+                            newIpIem = tsItem;
+                            newAddr = clientIpAddress;
+                            if (tsItem.Checked)
+                                anyChecked = true;
+                        }
+                        else
+                            if (tsItem.Checked)
+                        {
+                            oldIpItem = tsItem;
+                            anyChecked = true;
+                        }
+                    }
+                    if (anyChecked && oldIpItem != null && newIpIem != null)
+                    {
+                        newIpIem.Checked = true;
+                        oldIpItem.Checked = false;
+                    }
+                }
+
+
                 if (ipSockListener != null && ipSockListener.ServerSocket != null &&
                    (ipSockListener.ServerSocket.Connected || ipSockListener.ServerSocket.IsBound) &&
                    !ipSockListener.ServerSocket.Blocking)
@@ -1452,7 +1452,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 else // Rebind Server Socket
                 {
-
                     foreach (ToolStripMenuItem tsmItem in MenuNetworkItemMyIps.DropDown.Items)
                     {
                         if (tsmItem.Checked)
@@ -2249,22 +2248,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private void MenuOptionsItemPeer2Peer_Click(object sender, EventArgs e)
         {
             if (this.MenuOptionsItemPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(0);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)0)));
             else if (!this.MenuOptionsItemPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(2);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)2)));
             else
-                TooglePeerSessionServerTriState(1);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)1)));
 
         }
 
         private void MenuOptionsItemServerSession_Click(object sender, EventArgs e)
         {
             if (this.MenuOptionsItemPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(0);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)0)));
             else if (!this.MenuOptionsItemPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(2);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)2)));
             else
-                TooglePeerSessionServerTriState(1);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)1)));
         }
 
         #endregion MenuOptions
@@ -2364,6 +2363,5 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
     }
-
 
 }

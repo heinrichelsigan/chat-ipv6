@@ -104,9 +104,13 @@ namespace Area23.At.Framework.Library.CqrMsg
 
         #endregion constructors
 
+
         #region members
 
-        
+        /// <summary>
+        /// Serializes this <see cref="CqrImage"/> to <see cref="string">serialized json string</see>
+        /// </summary>
+        /// <returns><see cref="string">serialized json string</see></returns>
         public override string ToJson()
         {
             CqrImage image = new CqrImage(ImageFileName, ImageData);
@@ -114,6 +118,11 @@ namespace Area23.At.Framework.Library.CqrMsg
             return jsonString;
         }
 
+        /// <summary>
+        /// FromJson deserializes a <see cref="CqrImage"/> from serialized json <see cref="string"/>
+        /// </summary>
+        /// <param name="jsonText">serialized json <see cref="string"/></param>
+        /// <returns>deserialized  <see cref="CqrImage"/></returns>
         public virtual CqrImage FromJson(string jsonText)
         {
             CqrImage cqrJsonImage;
@@ -137,14 +146,21 @@ namespace Area23.At.Framework.Library.CqrMsg
             return null;
         }
 
+        /// <summary>
+        /// ToXml serializes this <see cref="CqrImage"/> to serialized xml <see cref="string"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToXml() => this.ToXml();
 
-
-        public override T FromXml<T>(string xmlText)
+        /// <summary>
+        /// FromXml deserializes <see cref="CqrImage"/> from <see cref="string">xml serialized string</see>
+        /// </summary>
+        /// <param name="xmlText"><see cref="string">xml serialized string</see></param>
+        /// <returns>deserialized <see cref="CqrImage"/> /returns>
+        public virtual CqrImage FromXml(string xmlText) 
         {
-            T cqrT = default(T);
-            cqrT = base.FromXml<T>(xmlText);
-            if (cqrT is CqrImage cimg)
+            CqrImage cqrImg = Utils.DeserializeFromXml<CqrImage>(xmlText ?? "");
+            if (cqrImg != null && cqrImg is CqrImage cimg)
             {
                 ImageFileName = cimg.ImageFileName;
                 ImageBase64 = cimg.ImageBase64;
@@ -157,10 +173,13 @@ namespace Area23.At.Framework.Library.CqrMsg
                 RawMessage = cimg.RawMessage;
             }
 
-            return cqrT;
-
+            return cqrImg;
         }
 
+        /// <summary>
+        /// ToDrawingBitmap converts this <see cref="CqrImage"/> to <see cref="System.Drawing.Bitmap"/>
+        /// </summary>
+        /// <returns>transformed see cref="System.Drawing.Bitmap"/></returns>
         public virtual Bitmap ToDrawingBitmap()
         {
             Bitmap bmpImage;
@@ -183,11 +202,16 @@ namespace Area23.At.Framework.Library.CqrMsg
             return bmpImage;
         }
 
-
         #endregion members
 
         #region static members
 
+        /// <summary>
+        /// Saves a <see cref="CqrImage"/> to a filepath
+        /// </summary>
+        /// <param name="image"><see cref="CqrImage"/></param>
+        /// <param name="directoryPath">full directory and file path</param>
+        /// <exception cref="DirectoryNotFoundException"></exception>
         public static void SaveCqrImage(CqrImage image, string directoryPath)
         {
             if (!Directory.Exists(directoryPath))
@@ -199,7 +223,12 @@ namespace Area23.At.Framework.Library.CqrMsg
             return;
         }
 
-
+        /// <summary>
+        /// LoadCqrImage loads a <see cref="CqrImage"/> from filepath
+        /// </summary>
+        /// <param name="imageFilePath">full filepath</param>
+        /// <returns><see cref="CqrImage"/></returns>
+        /// <exception cref="FileNotFoundException"></exception>
         public static CqrImage LoadCqrImage(string imageFilePath)
         {
             if (!File.Exists(imageFilePath))
@@ -213,6 +242,11 @@ namespace Area23.At.Framework.Library.CqrMsg
 
         }
 
+        /// <summary>
+        /// ToDrawingImage converts a <see cref="CqrImage"/> to a <see cref="System.Drawing.Image"/>
+        /// </summary>
+        /// <param name="cqrImage"><see cref="CqrImage"/> to convert</param>
+        /// <returns>converted <see cref="System.Drawing.Image"/></returns>
         public static Image ToDrawingImage(CqrImage cqrImage)
         {
             Bitmap bmpImage;
@@ -231,11 +265,17 @@ namespace Area23.At.Framework.Library.CqrMsg
                     bmpImage = new Bitmap(ms, true);
                 }
             }
-            
+
 
             return (Image)bmpImage;
         }
 
+        /// <summary>
+        /// FromDrawingImage converts a <see cref="CqrImage"/> from a <see cref="System.Drawing.Image"/>
+        /// </summary>
+        /// <param name="image"><see cref="System.Drawing.Image"/></param>
+        /// <param name="imgName"><see cref="string">string imgName</see></param>
+        /// <returns><see cref="CqrImage">converted CqrImage</see></returns>
         public static CqrImage FromDrawingImage(Image image, string imgName = "")
         {
             if (image == null)
@@ -378,6 +418,7 @@ namespace Area23.At.Framework.Library.CqrMsg
         }
 
         #endregion static members
+
     }
 
 }

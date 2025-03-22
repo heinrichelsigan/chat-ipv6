@@ -126,9 +126,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         /// <typeparam name="T"></typeparam>
         /// <param name="jsonText"></param>
         /// <returns></returns>
-        public override T? FromJson<T>(string jsonText) where T : default
+        public override T FromJson<T>(string jsonText) 
         {
-            T? t = JsonConvert.DeserializeObject<T>(jsonText);
+            T t = JsonConvert.DeserializeObject<T>(jsonText);
             if (t != null)
             {
                 if (t is MsgContent mc)
@@ -159,9 +159,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         public override string ToXml() => this.ToXml();
 
 
-        public override T? FromXml<T>(string xmlText) where T : default
+        public override T FromXml<T>(string xmlText) 
         {
-            T? cqrT = default(T);
+            T cqrT = default(T);
             cqrT = base.FromXml<T>(xmlText);
             if (cqrT is CqrFile cf)
             {
