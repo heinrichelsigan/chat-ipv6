@@ -10,7 +10,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 {
     public partial class Error : CqrJdBasePage
     {
-        protected void Page_Load(object sender, EventArgs e)
+        protected override void Page_Load(object sender, EventArgs e)
         {
             
             this.DivException.Visible = true;

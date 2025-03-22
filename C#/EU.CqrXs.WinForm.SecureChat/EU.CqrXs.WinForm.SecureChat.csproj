@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows7.0</TargetFramework>	
+    <OutputType>WinExe</OutputType>	
 	<UseWindowsForms>True</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -28,6 +27,7 @@
 	<UseWPF>False</UseWPF>	  		
 	<IsTrimmable>true</IsTrimmable>
 	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+	<TargetFrameworks>net9.0-windows7.0</TargetFrameworks>
 	<!-- PublishTrimmed>True</PublishTrimmed -->
 
   </PropertyGroup>
@@ -36,12 +36,14 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>embedded</DebugType>
     <DefineConstants>$(DefineConstants);HILLARIOUSTRUMPED</DefineConstants>
+    <IsAotCompatible>True</IsAotCompatible>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
     <WarningLevel>8</WarningLevel>
     <DefineConstants>$(DefineConstants);HILLARIOUSTRUMPED</DefineConstants>
+    <IsAotCompatible>True</IsAotCompatible>
   </PropertyGroup>
 
   <ItemGroup>

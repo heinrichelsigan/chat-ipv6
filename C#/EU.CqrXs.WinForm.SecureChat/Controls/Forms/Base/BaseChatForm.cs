@@ -23,6 +23,7 @@ using System.Net.Sockets;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using System.ComponentModel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 // using static System.Net.Mime.MediaTypeNames;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
@@ -701,6 +702,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         internal delegate void ResetProgressBarCallback(ToolStripProgressBar progressBar);
         internal delegate string GetMenuItemTextCallback(ToolStripMenuItem menuItem);
+        internal delegate void SetMenuItemEnabledCheckedCallback(ToolStripMenuItem tsmItem, bool miEnabled, bool miChecked);
         internal delegate void SetMenuItemTextCallback(ToolStripMenuItem menuItem, string text);
 
         internal void ResetProgressBar(ToolStripProgressBar progressBar)
@@ -760,6 +762,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
             return reText;
         }
+        
         internal void SetMenuItemText(ToolStripMenuItem mItem, string text)
         {
             string setText = !string.IsNullOrEmpty(text) ? text : string.Empty;
@@ -788,6 +791,39 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             }
         }
 
+        internal void SetMenuItemEnabledChecked(ToolStripMenuItem tsMenuItem, bool tsmiEnabled, bool tsmiChecked)
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (tsMenuItem.GetCurrentParent() != null && tsMenuItem.GetCurrentParent().InvokeRequired)
+            {
+                SetMenuItemEnabledCheckedCallback setMenuItemEnabledCheckedCallback = 
+                    delegate (ToolStripMenuItem tsmItem, bool miEnabled, bool miChecked)
+                {
+                    if (tsmItem != null)
+                    {
+                        tsmItem.Enabled = miEnabled;
+                        tsmItem.Checked = miChecked;
+                    }                        
+                };
+                try
+                {
+                    tsMenuItem.GetCurrentParent()?.Invoke(setMenuItemEnabledCheckedCallback, new object[] { tsMenuItem, tsmiEnabled, tsmiChecked });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemEnabledChecked menu item: {tsMenuItem.Name}, enabled: \"{tsmiEnabled}\", checked: \"{tsmiChecked}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (tsMenuItem != null)
+                {
+                    tsMenuItem.Enabled = tsmiEnabled;
+                    tsMenuItem.Checked = tsmiChecked;
+                }
+            }
+
+        }
 
         internal delegate Color GetMenuItemForeColorCallback(ToolStripMenuItem menuItem);
         internal delegate void SetMenuItemForeColorCallback(ToolStripMenuItem menuItem, Color foreColor);
@@ -1129,6 +1165,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         internal delegate bool GetComboBoxEnabledCallback(System.Windows.Forms.ComboBox comboBox);
         internal delegate string GetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox);
         internal delegate System.Windows.Forms.ComboBox.ObjectCollection? GetComboBoxItemsCallback(System.Windows.Forms.ComboBox tsCombo);
+        internal delegate void SetComboBoxEnabledCallback(System.Windows.Forms.ComboBox comboBox, bool enabled);
         internal delegate void SetComboBoxTextCallback(System.Windows.Forms.ComboBox comboBox, string text);
         internal delegate void SetComboBackColorCallback(System.Windows.Forms.ComboBox comboBox, Color color);
         internal delegate void FocusComboBoxCallback(System.Windows.Forms.ComboBox comboBox);
@@ -1269,6 +1306,38 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             {
                 if (comboBox != null && setText != null)
                     comboBox.Text = setText;
+            }
+        }
+
+        /// <summary>
+        /// thread save deleagte to set enabled / disabled in a <see cref="ComboBox"/>
+        /// </summary>
+        /// <param name="comboBox"><see cref="ComboBox.Text" /> where set text <see cref="string"/></param>
+        /// <param name="enabled"><see cref="true"/> for enable, <see cref="false"/> for disabled</param>
+        internal void SetComboBoxEnabled(System.Windows.Forms.ComboBox comboBox, bool enabled)
+        {           
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (comboBox.InvokeRequired)
+            {
+                SetComboBoxEnabledCallback setComboBoxEnabledCallback =
+                    delegate (System.Windows.Forms.ComboBox cmbx, bool endisable)
+                    {
+                        if (cmbx != null)
+                            cmbx.Enabled = endisable;
+                    };
+                try
+                {
+                    comboBox.Invoke(setComboBoxEnabledCallback, new object[] { comboBox, enabled });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetComboBoxEnabled ComboBox = {comboBox.Name}, enabled = \"{enabled}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (comboBox != null)
+                    comboBox.Enabled = enabled;
             }
         }
         

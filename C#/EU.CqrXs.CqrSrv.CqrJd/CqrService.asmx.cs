@@ -347,7 +347,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         }
 
         [WebMethod]
-        public virtual string TestCache()
+        public override string TestCache()
         {
             return base.TestCache();
         }
