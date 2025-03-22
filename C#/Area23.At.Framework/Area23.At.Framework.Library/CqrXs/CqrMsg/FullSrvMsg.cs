@@ -30,8 +30,19 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         public TC TContent { get; set; }
 
+        #region chatroom properties
+        
         public string ChatRoomNr { get; set; }
 
+        public Guid ChatRuid { get; set; }
+
+        public List<long> TicksLong { get; set; }
+
+        public DateTime LastPushed { get; set; }
+
+        public DateTime LastPolled { get; set; }
+
+        #endregion chatroom properties
 
         [Newtonsoft.Json.JsonIgnore]
         protected internal List<string> Emails
@@ -116,12 +127,18 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             Recipient = null;
             TContent = null;
             ChatRoomNr = string.Empty;
+            ChatRuid = Guid.NewGuid();
+            TicksLong = new List<long>();
+            LastPushed = DateTime.MinValue;
+            LastPolled = DateTime.MinValue;
+            TicksLong = new List<long>();
         }
 
         public FullSrvMsg(string fm, MsgEnum msgArt = MsgEnum.Json) : base()
         {
             this.FromJson<FullSrvMsg<TC>>(fm);
         }
+
 
         [Obsolete("Always user FullSrvMsg(CqrContact sender, CqrContact to, TC tc, string hash) : base() ctor", false)]
         public FullSrvMsg(CqrContact sender, CqrContact to, TC tc) : base()
@@ -132,6 +149,7 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             TContent = tc;
             ChatRoomNr = string.Empty;
         }
+
 
         /// <summary>
         /// Please always use this constuctor
@@ -192,6 +210,10 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
                         Recipients = fullSrvMsg.Recipients;
                         TContent = fullSrvMsg.TContent;
                         ChatRoomNr = fullSrvMsg.ChatRoomNr;
+                        ChatRuid = fullSrvMsg.ChatRuid;
+                        TicksLong = fullSrvMsg.TicksLong;
+                        LastPushed = fullSrvMsg.LastPushed;
+                        LastPolled = fullSrvMsg.LastPolled;
                         _hash = fullSrvMsg._hash;
                     }
                     return tc;

@@ -18,6 +18,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime;
 using System.Runtime.InteropServices.JavaScript;
+using System.Threading.Tasks;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -600,7 +601,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
 
-            this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomId) ?? string.Empty;
+            this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomNr) ?? string.Empty;
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
@@ -640,7 +641,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 Settings.Singleton.MyContact.Cuid = rfmsg.Sender.Cuid;
                 Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
                 Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                Settings.Singleton.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                Settings.Singleton.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
 
                 Settings.SaveSettings(Settings.Singleton);
 
@@ -720,7 +721,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 //     return ;
 
-                string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
+                string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
                     textBoxChatSession.Text = chatRoomNr;
                 
@@ -747,12 +748,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 this.TextBoxPipe.Text = serverMessage.PipeString;
                 this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                 myContact._hash = GetHash();
-                myContact.ChatRoomId = chatRoomNr;
+                myContact.ChatRoomNr = chatRoomNr;
 
                 if (friendContact != null)
                 {
                     friendContact._hash = GetHash();
-                    friendContact.ChatRoomId = chatRoomNr;
+                    friendContact.ChatRoomNr = chatRoomNr;
                     serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                 }
                 else
@@ -770,7 +771,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
                     Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                    Settings.Singleton.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                    Settings.Singleton.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
 
                     Settings.SaveSettings(Settings.Singleton);
                 }
@@ -861,7 +862,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 //if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 //    return;
 
-                string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
+                string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
                     textBoxChatSession.Text = chatRoomNr;
 
@@ -888,11 +889,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 this.TextBoxPipe.Text = serverMessage.PipeString;
                 this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                 myContact._hash = GetHash();
-                myContact.ChatRoomId = chatRoomNr;
+                myContact.ChatRoomNr = chatRoomNr;
                 if (friendContact != null)
                 {
                     friendContact._hash = GetHash();
-                    friendContact.ChatRoomId = chatRoomNr;
+                    friendContact.ChatRoomNr = chatRoomNr;
                     serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                 }
                 else
@@ -926,7 +927,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             {
                                 Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
                                 Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                                Settings.Singleton.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                                Settings.Singleton.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
 
                                 Settings.SaveSettings(Settings.Singleton);
                             }
@@ -966,7 +967,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 //     return;
 
-                string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
+                string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
                     textBoxChatSession.Text = chatRoomNr;
 
@@ -994,12 +995,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
 
                 myContact._hash = GetHash();
-                myContact.ChatRoomId = chatRoomNr;
+                myContact.ChatRoomNr = chatRoomNr;
 
                 if (friendContact != null)
                 {
                     friendContact._hash = GetHash();
-                    friendContact.ChatRoomId = chatRoomNr;
+                    friendContact.ChatRoomNr = chatRoomNr;
                 }
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
                 this.TextBoxPipe.Text = serverMessage.PipeString;
@@ -1122,7 +1123,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 ; // todo launch blocking entering window with input secret key
 
             if (PeerSessionTriState != PeerSession3State.Peer2Peer)
-                TooglePeerSessionServerTriState(0, false);
+                Task.Run((async () => await TooglePeerSessionServerTriState(0, false)));
 
             if (sender != null)
             {
@@ -1204,7 +1205,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
 
-        public void TooglePeerSessionServerTriState(short svalue, bool fireUp = true)
+        public async Task TooglePeerSessionServerTriState(short svalue, bool fireUp = true)
         {
             switch (svalue)
             {
@@ -1222,6 +1223,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     this.MenuOptionsItemServerSession.Checked = false;
                     this.MenuOptionsItemPeer2Peer.Checked = true;
+                    await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
                 case 2:
                     this.PeerSessionTriState = PeerSession3State.ChatServer;
@@ -1235,7 +1237,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                     }
                     this.MenuOptionsItemServerSession.Checked = true;
-                    this.MenuOptionsItemPeer2Peer.Checked = false;
+                    this.MenuOptionsItemPeer2Peer.Checked = false;                    
                     break;
                 case 1:
                 default:
@@ -1250,6 +1252,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     this.MenuOptionsItemServerSession.Checked = false;
                     this.MenuOptionsItemPeer2Peer.Checked = false;
+                    await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
             }
             this.PeerServerSwitch.SetPeerServerSessionTriState(PeerSessionTriState, fireUp);
@@ -1259,45 +1262,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             if (e is Area23EventArgs<int> ev)
             {
-                TooglePeerSessionServerTriState((short)ev.GenericTData);
-                //if (ev.GenericTData < 1)
-                //{
-
-                //    SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
-                //    try
-                //    {
-                //        this.ComboBoxContacts.Enabled = false;
-                //        this.ComboBoxIp.Enabled = true;
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //    }
-
-                //}
-                //else if (ev.GenericTData > 1)
-                //{
-                //    SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
-                //    try
-                //    {
-                //        this.ComboBoxContacts.Enabled = true;
-                //        this.ComboBoxIp.Enabled = false;
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //    }
-
-                //}
-                //else
-                //{
-                //    try
-                //    {
-                //        this.ComboBoxContacts.Enabled = true;
-                //        this.ComboBoxIp.Enabled = true;
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //    }
-                //}
+                if (PeerSessionTriState != PeerSession3State.Peer2Peer)
+                    Task.Run((async () => await TooglePeerSessionServerTriState((short)ev.GenericTData)));
+                
             }
         }
 
@@ -1340,7 +1307,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
                     {
 
-                        string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomId;
+                        string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
                         if (string.IsNullOrEmpty(textBoxChatSession.Text))
                             textBoxChatSession.Text = chatRoomNr;
 
@@ -1367,9 +1334,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         this.TextBoxPipe.Text = serverMessage.PipeString;
                         this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                         myContact._hash = GetHash();
-                        myContact.ChatRoomId = chatRoomNr;
+                        myContact.ChatRoomNr = chatRoomNr;
                         friendContact._hash = GetHash();
-                        friendContact.ChatRoomId = chatRoomNr;
+                        friendContact.ChatRoomNr = chatRoomNr;
                         serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
                         string filename = ea.GenericTData;
@@ -1393,7 +1360,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         {
                             Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
                             Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                            Settings.Singleton.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                            Settings.Singleton.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
 
                             Settings.SaveSettings(Settings.Singleton);
                         }
@@ -1440,13 +1407,40 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             await base.BgWorkerMonitor_WorkMonitorAsync(sender, e);
 
             IPAddress? newAddr = null;
-            ToolStripMenuItem? newIpIem = null;
+            ToolStripMenuItem? oldIpItem = null, newIpIem = null;
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
             InterfaceIpAddresses = await NetworkAddresses.GetIpAddressesAsync();            
-            ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);            
-
-            if (PeerSessionTriState == PeerSession3State.Peer2Peer)
+            ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
+           
+            if (PeerSessionTriState == PeerSession3State.Peer2Peer || PeerSessionTriState == PeerSession3State.None)
             {
+                bool anyChecked = false;
+                if (clientIpAddress != null)
+                {
+                    foreach (ToolStripMenuItem tsItem in MenuNetworkItemMyIps.DropDown.Items)
+                    {
+                        if (tsItem.Text == clientIpAddress.AddressFamily + clientIpAddress.ToString())
+                        {
+                            newIpIem = tsItem;
+                            newAddr = clientIpAddress;
+                            if (tsItem.Checked)
+                                anyChecked = true;
+                        }
+                        else
+                            if (tsItem.Checked)
+                        {
+                            oldIpItem = tsItem;
+                            anyChecked = true;
+                        }
+                    }
+                    if (anyChecked && oldIpItem != null && newIpIem != null)
+                    {
+                        newIpIem.Checked = true;
+                        oldIpItem.Checked = false;
+                    }
+                }
+
+
                 if (ipSockListener != null && ipSockListener.ServerSocket != null &&
                    (ipSockListener.ServerSocket.Connected || ipSockListener.ServerSocket.IsBound) &&
                    !ipSockListener.ServerSocket.Blocking)
@@ -1455,8 +1449,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         Area23Log.LogStatic($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
                 }
                 else // Rebind Server Socket
-                {
-
+                {                   
                     foreach (ToolStripMenuItem tsmItem in MenuNetworkItemMyIps.DropDown.Items)
                     {
                         if (tsmItem.Checked)
@@ -2253,22 +2246,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private void MenuOptionsItemPeer2Peer_Click(object sender, EventArgs e)
         {
             if (this.MenuOptionsItemPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(0);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)0)));
             else if (!this.MenuOptionsItemPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(2);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)2)));
             else
-                TooglePeerSessionServerTriState(1);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)1)));
 
         }
 
         private void MenuOptionsItemServerSession_Click(object sender, EventArgs e)
         {
-            if (this.MenuOptionsItemPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(0);
+            if (this.MenuOptionsItemPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)               
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)0)));
             else if (!this.MenuOptionsItemPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
-                TooglePeerSessionServerTriState(2);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)2)));             
             else
-                TooglePeerSessionServerTriState(1);
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)1)));
         }
 
         #endregion MenuOptions

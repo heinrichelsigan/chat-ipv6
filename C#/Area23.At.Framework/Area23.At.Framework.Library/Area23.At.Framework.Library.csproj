@@ -99,6 +99,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CqrXs\CqrMsg\CqrChatRoom.cs" />
     <Compile Include="Crypt\Cipher\CipherPipe.cs" />
     <Compile Include="Net\IpSocket\SockTcpListener.cs" />
     <Compile Include="Net\IpSocket\SockTcpSender.cs" />

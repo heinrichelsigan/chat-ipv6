@@ -54,17 +54,12 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         public string CqrFile(CqrFile cqrFile, MsgEnum msgType = MsgEnum.Json, EncodingType encType = EncodingType.Base64)
         {
             if (msgType == MsgEnum.None || msgType == MsgEnum.RawWithHashAtEnd)
-            {
                 cqrFile.RawMessage += "\n" + symmPipe.PipeString + "\0";
-            }
             else if (msgType == MsgEnum.Json)
-            {
                 cqrFile.RawMessage = JsonConvert.SerializeObject(cqrFile);
-            }
             else if (msgType == MsgEnum.Xml)
-            {
                 cqrFile.RawMessage = Utils.SerializeToXml(cqrFile);
-            }
+            
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cqrFile.RawMessage);
 
             // Crypt cipherbytes from message
@@ -110,6 +105,14 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
             if (decrypted.IsValidJson())
                 msgType = MsgEnum.Json;
+            else if (decrypted.StartsWith("{\"") && decrypted.Contains("\"_hash\":") && decrypted.Contains("\"_message\":"))
+            {
+                if (Char.IsAsciiLetter(decrypted[decrypted.Length - 1]) || Char.IsDigit(decrypted[decrypted.Length - 1]))
+                {
+                    decrypted += "\" }";
+                    msgType = MsgEnum.Json;
+                }
+            }
             else if (decrypted.IsValidXml())
                 msgType = MsgEnum.Xml;
             else msgType = MsgEnum.RawWithHashAtEnd;

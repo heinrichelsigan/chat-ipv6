@@ -8,6 +8,10 @@ using System.Web;
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
+
+    /// <summary>
+    /// Redis AWS elastic valkey cache singelton connector
+    /// </summary>
     public class RedIs
     {
         private static readonly Lazy<RedIs> _instance = new Lazy<RedIs>(() => new RedIs());
@@ -48,7 +52,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
-
+        /// <summary>
+        /// default parameterless constructor for RedIs cache singleton 
+        /// </summary>
         public RedIs()
         {
             endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";

@@ -13,8 +13,29 @@ using Windows.Networking;
 
 namespace EU.CqrXs.Console
 {
-    
     /// <summary>
+    /// OptEnum different option types
+    /// </summary>
+    public enum OptEnum
+    {
+        Usage = 0x0,
+        InParam = 0x1,
+        OutP = 0x2,
+        Zip = 0x3,
+        Unzip = 0x4,
+        Encode = 0x5,
+        Decode = 0x6,
+        Crypt = 0x7,
+        Key = 0x8,
+        Decrypt = 0x9,
+        HashSum = 0xa,
+        Help = 0xb
+    }
+
+
+    /// <summary>
+    /// Console app pipe for crypt/decrypt zip/unzip encode/decode md5sum/shaSum
+    /// 
     /// EU.CqrXs.Console.Program 
     /// -i | --inFile= | --inText={string|EnviromentVariable} | --inStd    
     /// -o | --outFile= | --outText=EnviromentVariable | --outStd
@@ -36,12 +57,12 @@ namespace EU.CqrXs.Console
 
         static readonly string? progName = System.Environment.ProcessPath;
         static readonly string? progDirectory = Path.GetFullPath(System.Environment.ProcessPath);
-        //progName = System.AppDomain.CurrentDomain.FriendlyName;
-        //progName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-        //progName = System.Reflection.Assembly.GetExecutingAssembly().Location;
-        //progName = System.Environment.GetCommandLineArgs()[0];
-        //progName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 
+
+        /// <summary>
+        /// Console app pipe for crypt/decrypt zip/unzip encode/decode md5sum/shaSum
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             if (args.Length <= 1)
@@ -173,6 +194,12 @@ namespace EU.CqrXs.Console
         }
 
 
+        /// <summary>
+        /// Gets an option by argument
+        /// </summary>
+        /// <param name="argument">cmd line argument</param>
+        /// <param name="optEnum"><see cref="OptEnum">OptEnum cmd arg option enum</see></param>
+        /// <returns></returns>
         public static string GetOption(string argument, out OptEnum optEnum)
         {
             string optOut = "";
@@ -250,6 +277,9 @@ namespace EU.CqrXs.Console
             }
         }
 
+        /// <summary>
+        /// Usage shows the usage of console application
+        /// </summary>
         static void Usage()
         {
             System.Console.Out.WriteLine("Usage:\t" + Path.GetFileName(progName) + @"

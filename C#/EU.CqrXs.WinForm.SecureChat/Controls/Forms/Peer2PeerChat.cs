@@ -22,7 +22,6 @@ using System.Reflection;
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
 
-
     /// <summary>
     /// Peer2PeerChat main form
     /// </summary>
@@ -468,6 +467,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #region OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
 
+
         /// <summary>
         /// Send_1st_Server_Registration sends contact registration to cqrxs.eu server
         /// </summary>
@@ -477,7 +477,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             if (chat == null)
                 chat = new Chat(0);
-
 
             myServerKey = CqrXsEuSrvKey;
                 
@@ -518,6 +517,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             Format_Lines_RichTextBox();
             StripStatusLabel.Text = "Finished 1st registration";
         }
+
 
         /// <summary>
         /// OnClientReceive event is fired, 
@@ -667,11 +667,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return false;
 
-
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
 
-            this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomId) ?? string.Empty;
+            this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomNr) ?? string.Empty;
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
@@ -710,7 +709,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 Entities.Settings.Instance.MyContact.Cuid = rfmsg.Sender.Cuid;
                 Entities.Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
                 Entities.Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                Entities.Settings.Instance.MyContact.ChatRoomId = rfmsg.Sender.ChatRoomId;
+                Entities.Settings.Instance.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
 
                 Entities.Settings.Save();
 
@@ -725,8 +724,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             return true;
         }
-
-
 
         /// <summary>
         /// Sends a secure message
@@ -778,7 +775,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // otherwise send message to registered user via server
             // Always encrypt via key
         }
-
 
         /// <summary>
         /// Attaches a file to send
@@ -996,7 +992,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             LinkedLabelsBox.SetNameFilePath(fileName, filePath);
         }
-
 
         #endregion OnClientReceive MenuSend MenuAttach MenuRefresh MenuClear
 

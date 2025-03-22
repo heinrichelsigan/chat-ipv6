@@ -29,8 +29,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
         public string ClientPipeString { get; set; }
         public string cClientMessage { get; protected internal set; }
 
-        public CqrContact CqrSender { get; private set; }
-        public CqrContact CqrRecipient { get; private set; }
+        public CqrContact? CqrSender { get; private set; }
+        public CqrContact? CqrRecipient { get; private set; }
 
 
         /// <summary>
@@ -49,6 +49,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             cKeyBytes = CryptHelper.GetUserKeyBytes(cKey, cHash, 16);
             clientSymmPipe = new SymmCipherPipe(cKeyBytes, 8);
             ClientPipeString = clientSymmPipe.PipeString;
+            cClientMessage = "";
         }
 
         /// <summary>
@@ -160,7 +161,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                 }
             }
             if (string.IsNullOrEmpty(fullServMsg.ChatRoomNr))
-                fullServMsg.ChatRoomNr = (!string.IsNullOrEmpty(fullServMsg.Sender.ChatRoomId)) ? fullServMsg.Sender.ChatRoomId : fullServMsg.ChatRoomNr;
+                fullServMsg.ChatRoomNr = (!string.IsNullOrEmpty(fullServMsg.Sender.ChatRoomNr)) ? fullServMsg.Sender.ChatRoomNr : fullServMsg.ChatRoomNr;
 
             string allMsg = fullServMsg.ToJson();
             fullServMsg._message = allMsg;
@@ -237,8 +238,6 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
             cClientMessage = EnDeCodeHelper.EncodeBytes(clientMsgBytes, encType);
 
-
-
             string[] rets = { CqrMessage, cClientMessage };
             return rets;
         }
@@ -266,6 +265,14 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             {
                 if (msgContent.Message.IsValidJson())
                     fullMsg = JsonConvert.DeserializeObject<FullSrvMsg<TS>>(msgContent.Message);
+                else if (msgContent.Message.StartsWith("{\"") && msgContent.Message.Contains("\"_hash\":") && msgContent.Message.Contains("\"_message\":"))
+                {
+                    if (Char.IsAsciiLetter(msgContent.Message[msgContent.Message.Length - 1]) || Char.IsDigit(msgContent.Message[msgContent.Message.Length - 1]))
+                    {
+                        msgContent._message += "\" }";      
+                    }
+                    fullMsg = JsonConvert.DeserializeObject<FullSrvMsg<TS>>(msgContent.Message);
+                }
                 else if (msgContent.Message.IsValidXml())
                     fullMsg = Static.Utils.DeserializeFromXml<FullSrvMsg<TS>>(msgContent.Message);
                 try
@@ -275,8 +282,12 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                         fullMsg.Sender = fullSrvMsg.Sender;
                         fullMsg._hash = fullSrvMsg._hash;
                         fullMsg.Recipients = fullSrvMsg.Recipients;
-                        fullMsg.TContent = fullSrvMsg.TContent;
+                        fullMsg.TContent = fullSrvMsg.TContent;                        
                         fullMsg.ChatRoomNr = fullSrvMsg.ChatRoomNr;
+                        fullMsg.ChatRuid = fullSrvMsg.ChatRuid;
+                        fullMsg.TicksLong = fullSrvMsg.TicksLong;
+                        fullMsg.LastPolled = fullSrvMsg.LastPolled;
+                        fullMsg.LastPushed = fullSrvMsg.LastPushed;
                         fullMsg.Md5Hash = fullSrvMsg.Md5Hash;
                     }
                     return fullMsg;
@@ -306,6 +317,14 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             MsgEnum msgEnum = MsgEnum.RawWithHashAtEnd;
             if (decrypted.IsValidJson())
                 msgEnum = MsgEnum.Json;
+            else if (decrypted.StartsWith("{\"") && decrypted.Contains("\"_hash\":") && decrypted.Contains("\"_message\":"))
+            {
+                if (Char.IsAsciiLetter(decrypted[decrypted.Length - 1]) || Char.IsDigit(decrypted[decrypted.Length - 1]))
+                {
+                    decrypted += "\" }";
+                    msgEnum = MsgEnum.Json;
+                }
+            }
             else if (decrypted.IsValidXml())
                 msgEnum = MsgEnum.Xml;
 
@@ -323,6 +342,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             {
                 if (msgContent.MsgType == MsgEnum.Json || msgContent._message.IsValidJson())
                     clientOutMsg = JsonConvert.DeserializeObject<FullSrvMsg<TC>>(msgContent._message);
+                else if (Char.IsAsciiLetter(msgContent.Message[msgContent.Message.Length - 1]) || Char.IsDigit(msgContent.Message[msgContent.Message.Length - 1]))
+                {
+                    msgContent._message += "\" }";
+                }
+                clientOutMsg = JsonConvert.DeserializeObject<FullSrvMsg<TS>>(msgContent.Message);
                 else if (msgContent.MsgType == MsgEnum.Xml || msgContent._message.IsValidXml())
                     clientOutMsg = Static.Utils.DeserializeFromXml<FullSrvMsg<TC>>(msgContent._message);
 
@@ -335,6 +359,10 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                         clientOutMsg.Recipients = fullSrvMsg.Recipients;
                         clientOutMsg.Md5Hash = fullSrvMsg.Md5Hash;
                         clientOutMsg.ChatRoomNr = fullSrvMsg.ChatRoomNr;
+                        clientOutMsg.ChatRuid = fullSrvMsg.ChatRuid;
+                        clientOutMsg.TicksLong = fullSrvMsg.TicksLong;
+                        clientOutMsg.LastPolled = fullSrvMsg.LastPolled;
+                        clientOutMsg.LastPushed = fullSrvMsg.LastPushed;
                         clientOutMsg.TContent = fullSrvMsg.TContent;
 
                         return clientOutMsg;
