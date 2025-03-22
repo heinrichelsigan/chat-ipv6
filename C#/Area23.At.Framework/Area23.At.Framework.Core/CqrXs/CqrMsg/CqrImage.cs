@@ -101,7 +101,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         #region members
         
-        public virtual string ToJson()
+        public override string ToJson()
         {
             CqrImage image = new CqrImage(ImageFileName, ImageData);
             string jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(image, Formatting.Indented);

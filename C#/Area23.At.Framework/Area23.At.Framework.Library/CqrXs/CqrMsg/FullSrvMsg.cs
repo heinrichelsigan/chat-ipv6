@@ -124,14 +124,12 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             _hash = string.Empty;
             Sender = null;
             Recipients = new HashSet<CqrContact>();
-            Recipient = null;
             TContent = null;
-            ChatRoomNr = string.Empty;
-            ChatRuid = Guid.NewGuid();
             TicksLong = new List<long>();
             LastPushed = DateTime.MinValue;
             LastPolled = DateTime.MinValue;
-            TicksLong = new List<long>();
+            ChatRoomNr = string.Empty;
+            ChatRuid = Guid.NewGuid();
         }
 
         public FullSrvMsg(string fm, MsgEnum msgArt = MsgEnum.Json) : base()
@@ -147,7 +145,6 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             CqrContact[] tos = (to != null) ? new CqrContact[1] { to } : new CqrContact[0];
             Recipients = new HashSet<CqrContact>(tos);
             TContent = tc;
-            ChatRoomNr = string.Empty;
         }
 
 
@@ -166,6 +163,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             TContent = tc;
             _hash = hash;
             ChatRoomNr = chatRoomNr;
+            string allMsg = this.ToJson();
+            _message = allMsg;
+            RawMessage = allMsg;
         }
 
 
@@ -183,6 +183,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             TContent = tc;
             _hash = hash;
             ChatRoomNr = chatRoomNr;
+            string allMsg = this.ToJson();
+            _message = allMsg;
+            RawMessage = allMsg;
         }
 
 
