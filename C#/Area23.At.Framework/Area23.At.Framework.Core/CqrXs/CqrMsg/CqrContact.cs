@@ -35,14 +35,29 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         #region from server given properties
 
+        /// <summary>
+        /// Chat Room unique id
+        /// </summary>
         public Guid ChatRuid { get; set; }
 
+        /// <summary>
+        /// ChatRoom number of Chat Room on Sessiopn Server
+        /// </summary>
         public string ChatRoomNr { get; set; }
 
+        /// <summary>
+        /// List of message indices, which user has already received
+        /// </summary>
         public List<long> TicksLong { get; set; }
 
+        /// <summary>
+        /// Date, where user pushed last message to server
+        /// </summary>
         public DateTime LastPushed { get; set; }
 
+        /// <summary>
+        /// DateTime, where user polled last time server
+        /// </summary>
         public DateTime LastPolled { get; set; }
 
         #endregion from server given properties

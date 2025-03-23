@@ -166,43 +166,26 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     {
                         dict = GetCachedMessageDict(_chatRoomNumber);
 
-                        List<long> pollKeys = new List<long>();
-                        foreach (long ticksLong in dict.Keys)
-                        {
-                            chatRoomMsg.TicksLong.Add(ticksLong);
-                            if (ticksLong > fullSrvMsg.Sender.LastPolled.Ticks)
-                                pollKeys.Add(ticksLong);
-                        }
+                        List<long> pollKeys = GetNewMessageIndices(dict.Keys.ToList(), fullSrvMsg.Sender);
+                        
                         long polledPtr = -1;
                         if (pollKeys.Count > 0)
                         {
                             polledPtr = pollKeys[0];
                             string firstPollClientMsg = dict[polledPtr];
-                            if (string.IsNullOrEmpty(firstPollClientMsg))
+                            if (string.IsNullOrEmpty(firstPollClientMsg) && pollKeys.Count > 1)
                             {
-                                if (pollKeys.Count > 1)
-                                {
-                                    polledPtr = pollKeys[1];
-                                    firstPollClientMsg = dict[polledPtr];
-                                }
+                                chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);
+                                polledPtr = pollKeys[1];
+                                firstPollClientMsg = dict[polledPtr];
                             }
-
-                            if (fullSrvMsg.TicksLong.Contains(polledPtr) || fullSrvMsg.Sender.TicksLong.Contains(polledPtr))
-                                chatRoomMsg.TContent = "";
-                            else
-                            {
-                                chatRoomMsg.TContent = firstPollClientMsg;
-                                chatRoomMsg.TicksLong.Add(polledPtr);
-                                chatRoomMsg.Sender.TicksLong.Add(polledPtr);
-                            }
-
-                            DateTime polledMsgDate = new DateTime(polledPtr);
-                            _contact = AddPollDate(_contact, polledMsgDate, false);
-                            chatRoomMsg.Sender = AddPollDate(chatRoomMsg.Sender, polledMsgDate, false);                         
+                            
+                            chatRoomMsg.TContent = firstPollClientMsg;
+                                                        
+                            chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);                            
 
                             UpdateContact(chatRoomMsg.Sender);
-                            chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
-                            chatRoomMsg.Sender.LastPolled = polledMsgDate.AddSeconds(5);
+                            chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);                            
                         }
 
                     }

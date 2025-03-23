@@ -328,6 +328,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         }
 
+
         /// <summary>
         /// Generates a chat room with a new ChatRoomNr, containing sender and recpients
         /// </summary>
@@ -443,6 +444,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             return isValid;
         }
 
+
         /// <summary>
         /// Add LastPolled to contact and also to <see cref="CqrContact.PolledMsgDates"/>
         /// reduces <see cref="CqrContact.PolledMsgDates"/>, if contact wears a to huge amount of polling history
@@ -454,12 +456,43 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         public CqrContact AddPollDate(CqrContact contact, DateTime date, bool pushed = false)
         {
             if (pushed)
-                contact.LastPushed = date.AddSeconds(2);
+                contact.LastPushed = date;
             else
-                contact.LastPolled = date.AddSeconds(2);
+                contact.LastPolled = date;
 
             return contact;
         }
+
+
+        /// <summary>
+        /// AddLastDate adds lastPolled or lastPushed date and tickIndex to TicksLong
+        /// </summary>
+        /// <param name="chatRoomMsg"><see cref="FullSrvMsg{string}"/> chat room msg to be returned to chat client app</param>
+        /// <param name="tickIndex">tick long index</param>
+        /// <param name="pushed">false for poolled, true for pushed</param>
+        /// <returns><see cref="FullSrvMsg{string}"/></returns>
+        public FullSrvMsg<string> AddLastDate(FullSrvMsg<string> chatRoomMsg, long tickIndex, bool pushed = false)
+        {
+            DateTime date = new DateTime(tickIndex);
+            if (pushed)
+            {
+                chatRoomMsg.LastPushed = date;
+                // TODO should we add tickindex, when pushing
+                chatRoomMsg.Sender.LastPushed = date;
+            }
+            else
+            {
+                chatRoomMsg.LastPolled = date;
+                if (!chatRoomMsg.TicksLong.Contains(tickIndex))
+                    chatRoomMsg.TicksLong.Add(tickIndex);
+                chatRoomMsg.Sender.LastPushed = date;
+                if (!chatRoomMsg.Sender.TicksLong.Contains(tickIndex))
+                    chatRoomMsg.Sender.TicksLong.Add(tickIndex);                
+            }
+
+            return chatRoomMsg;
+        }
+
 
         /// <summary>
         /// GetCachedMessageDict returns one chat room message dictionary
@@ -486,6 +519,28 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             return dict;
 
+        }
+
+
+        /// <summary>
+        /// GetNewMessageIndices get all chat room indices, 
+        /// which are newer than last <see cref="CqrContact.LastPolled">polling date of user</see>
+        /// or user hasn't read and that are not in list <see cref="CqrContact.TicksLong"></see>
+        /// </summary>
+        /// <param name="dictKeys"><see cref="DateTime.Ticks"/> as index key of chat room message dictionary</param>
+        /// <param name="sender"><see cref="CqrContact"/></param>
+        /// <returns><see cref="List{long}">key indices of messages, that are new and not already polled</see></returns>
+        public static List<long> GetNewMessageIndices(List<long> dictKeys, CqrContact sender)
+        {
+            
+            List<long> pollKeys = new List<long>();
+            foreach (long tickIndex in dictKeys)
+            {
+                if (tickIndex > sender.LastPolled.Ticks || !sender.TicksLong.Contains(tickIndex))
+                    pollKeys.Add(tickIndex);
+            }
+
+            return pollKeys;
         }
 
 
