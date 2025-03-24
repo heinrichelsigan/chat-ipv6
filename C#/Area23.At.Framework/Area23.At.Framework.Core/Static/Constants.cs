@@ -394,6 +394,10 @@ PMsi2xTrUPC6pAERVgu7wz02ka3WPOdlxfoG0o9s/BwJmhi5EEBqGB4CriR8R8AY
         public static bool UNIX => SEP_CHAR == '/';
         public static bool WIN32 => SEP_CHAR == '\\';
 
+        public static bool NOLog { get; set; } = false;
+
+        public static bool DirCreate { get; set; } = true;
+
         /// <summary>
         /// AppLogFile - logfile with <see cref="Framework.Library.Extensions.Area23Date(DateTime)"/> prefix
         /// </summary>

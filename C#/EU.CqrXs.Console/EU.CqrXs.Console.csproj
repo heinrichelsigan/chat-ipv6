@@ -2,24 +2,24 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0-windows10.0.20348.0</TargetFramework>
+    <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PublishAot>True</PublishAot>
+    <PublishAot>False</PublishAot>
 	<IsAotCompatible>True</IsAotCompatible>
     <InvariantGlobalization>True</InvariantGlobalization>
 	<StripSymbols>False</StripSymbols>
     <StartupObject>EU.CqrXs.Console.Program</StartupObject>
     <ApplicationIcon>SatIcon.ico</ApplicationIcon>
-    <SupportedOSPlatformVersion>10.0.20348.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
     <PublishTrimmed>True</PublishTrimmed>
     <Title>EU.CqrXs.Console</Title>
     <Description>EU.CqrXs.Console</Description>
     <Copyright>Copyright © 2000-2040 Copyleft https://cqrxs.eu</Copyright>
     <PackageProjectUrl>https://cqrxs.eu/download/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
-    <AssemblyVersion>2.25.321</AssemblyVersion>
-    <FileVersion>2.25.321</FileVersion>
+    <AssemblyVersion>2.25.323</AssemblyVersion>
+    <FileVersion>2.25.323</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -45,6 +45,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="SatIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

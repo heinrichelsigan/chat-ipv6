@@ -9,8 +9,6 @@ using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System.Configuration;
 using System.Net;
-using System.Runtime.Serialization;
-using System.Security.Cryptography;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 {

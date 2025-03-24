@@ -1,6 +1,7 @@
 ﻿using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -189,6 +190,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 this._hash = mc.Hash;
                 this._message = mc._message;
                 this.RawMessage = mc.RawMessage;
+                this.MsgType = mc.MsgType;
+                this.Md5Hash = mc.Md5Hash;
             }
             return t;
         }
@@ -203,6 +206,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 this._hash = mc._hash;
                 this.RawMessage = mc.RawMessage;
                 this._message = mc._message;
+                this.MsgType = mc.MsgType;
+                this.Md5Hash = mc.Md5Hash;
             }
             
             return cqrT;

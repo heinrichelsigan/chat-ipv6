@@ -623,6 +623,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.TextBoxPipe.Text = serverMessage.PipeString;
             this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
             myContact._hash = GetHash();
+            myContact.TicksLong = new List<long>();
+            myContact.LastPushed = DateTime.Now;
+
             friendContact._hash = GetHash();
             serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
 
@@ -630,25 +633,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\n";
             this.TextBoxSource.Text = chat.AddMyMessage(myReqMsg);
 
-            FullSrvMsg<string> rfmsg = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);            
+            // Send chat room invite via WebService
+            FullSrvMsg<string> rfmsg = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);       
+            
+
             if (rfmsg == null || string.IsNullOrEmpty(rfmsg.ChatRoomNr))
             {
                 MessageBox.Show($"Response message form server {ServerIpAddress} is null. Please call helpdesk +436507527928", "Invite Chatroom failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
+            
             this.textBoxChatSession.Text = rfmsg.ChatRoomNr;
-            if (rfmsg != null && rfmsg.Sender != null && rfmsg.Sender.NameEmail.Equals(myContact.NameEmail))
+            
+            if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) && 
+                rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
             {
-                Settings.Singleton.MyContact.Cuid = rfmsg.Sender.Cuid;
-                Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                Settings.Singleton.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
-
+                myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                Settings.Singleton.MyContact = myContact;
                 Settings.SaveSettings(Settings.Singleton);
-
             }
+           
             // TODO: Email zur Einladung
-            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + "\nfor " + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + " \nfor " + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
             this.TextBoxDestionation.Text = chat.AddFriendMessage(msgChatRoom);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
@@ -767,13 +773,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
                 string encrypted = pmsg.CqrPeerMsg(unencrypted);
 
-                FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64); 
-                if (rfmsg != null && rfmsg.Sender != null)
+                // Send msg to WebService
+                FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
+                
+                
+                if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                    rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                    Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                    Settings.Singleton.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
-
+                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                    Settings.Singleton.MyContact = myContact;
                     Settings.SaveSettings(Settings.Singleton);
                 }
 
@@ -923,19 +931,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
                             
+                            // Send to WebService
                             FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
-                            if (rfmsg != null && rfmsg.Sender != null)
+                            
+                            if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                                rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
                             {
-                                Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                                Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                                Settings.Singleton.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
-
+                                myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                                Settings.Singleton.MyContact = myContact;
                                 Settings.SaveSettings(Settings.Singleton);
                             }
-
-                            // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
-                            // this.TextBoxDestionation.Text = msgChatRoom;
-
 
                             string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
                             AppendText(TextBoxSource, userMsg);
@@ -1011,14 +1016,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
                                
                 FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverMessage.PipeString, chatRoomNr);
+                
+                // Receive Msg from WebSerive
                 FullSrvMsg<string> rfmsg = serverMessage.ReceiveChatMsg_Soap<string>(fmsg, ServerIpAddress, EncodingType.Base64);
 
 
-                if (rfmsg != null && rfmsg.Sender != null)
+                if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                    rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.LastPolled, rfmsg.Sender.Hash);
+                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
                     Settings.Singleton.MyContact = myContact;
-
                     Settings.SaveSettings(Settings.Singleton);
                 }
 
@@ -1361,13 +1368,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         CqrFile cfile = new CqrFile(fileNameOnly, mimeType, fileBytes, pmsg.PipeString, md5, sha256);
                         string encrypted = pmsg.CqrFile(cfile, MsgEnum.Json, EncodingType.Base64);
+                        
+                        // Send message to WebService
                         FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
-                        if (rfmsg != null && rfmsg.Sender != null)
+                        
+                        
+                        if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                            rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
                         {
-                            Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                            Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                            Settings.Singleton.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
-
+                            myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                            Settings.Singleton.MyContact = myContact;
                             Settings.SaveSettings(Settings.Singleton);
                         }
 

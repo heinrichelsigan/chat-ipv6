@@ -51,7 +51,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         public static bool PersistMsgInAmazonElasticCache
         {
             get => (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache);
-
         }
 
         /// <summary>
@@ -265,7 +264,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 if ((ct.Cuid == cqrContact.Cuid && ct.Email == cqrContact.Email) ||
                     (ct.NameEmail == cqrContact.NameEmail))
                 {
-                    toAddContact = new CqrContact(cqrContact, cqrContact.ChatRoomNr, cqrContact.LastPolled, cqrContact.Hash);
+                    toAddContact = new CqrContact(cqrContact, cqrContact.ChatRoomNr, cqrContact.Hash);
                     toAddContact.Mobile = cqrContact.Mobile;
                     toAddContact.ContactImage = null;
                     toAddContact.Cuid = (cqrContact.Cuid != null && cqrContact.Cuid != Guid.Empty) ? cqrContact.Cuid : Guid.NewGuid();
@@ -288,7 +287,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             if ((chatRoomMsg.Sender.Cuid == contact.Cuid && chatRoomMsg.Sender.Email == contact.Email) ||
                 (chatRoomMsg.Sender.NameEmail == contact.NameEmail))
             {
-                chatRoomMsg.Sender = new CqrContact(contact, chatRoomNr, contact.LastPolled, contact.Hash);
+                chatRoomMsg.Sender = new CqrContact(contact, chatRoomNr, contact.Hash);
             }
             for (int i = 0; i < chatRoomMsg.Recipients.Count; i++)
             {
@@ -303,7 +302,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }
             if (foundCt)
                 if (chatRoomMsg.Recipients.Remove(toDelContact))
-                    chatRoomMsg.Recipients.Add(new CqrContact(contact, chatRoomNr, contact.LastPolled, contact._hash));
+                    chatRoomMsg.Recipients.Add(new CqrContact(contact, chatRoomNr, contact._hash));
 
             (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
 
@@ -322,12 +321,11 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }
             if (foundCt)
                 if (_contacts.Remove(toDelContact))
-                    _contacts.Add(new CqrContact(contact, chatRoomNr, contact.LastPolled, contact.Hash));
+                    _contacts.Add(new CqrContact(contact, chatRoomNr, contact.Hash));
 
             JsonContacts.SaveJsonContacts(_contacts);
 
         }
-
 
         /// <summary>
         /// Generates a chat room with a new ChatRoomNr, containing sender and recpients
@@ -337,7 +335,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         internal FullSrvMsg<string> InviteToChatRoom(FullSrvMsg<string> fullSrvMsg)
         {
             string ChatRoomNr = string.Empty;
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.Now; // now1 = now.AddMilliseconds(10);
             List<CqrContact> _invited = new List<CqrContact>();
 
             if (string.IsNullOrEmpty(ChatRoomNr))
@@ -361,6 +359,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             fullSrvMsg.Sender.LastPolled = now;
             fullSrvMsg.Sender.LastPushed = now;
+            fullSrvMsg.Sender.TicksLong = dict.Keys.ToList();
 
             bool addSender = true;
             foreach (CqrContact c in fullSrvMsg.Recipients)
@@ -444,7 +443,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             return isValid;
         }
 
-
         /// <summary>
         /// Add LastPolled to contact and also to <see cref="CqrContact.PolledMsgDates"/>
         /// reduces <see cref="CqrContact.PolledMsgDates"/>, if contact wears a to huge amount of polling history
@@ -462,7 +460,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             return contact;
         }
-
 
         /// <summary>
         /// AddLastDate adds lastPolled or lastPushed date and tickIndex to TicksLong
@@ -493,7 +490,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             return chatRoomMsg;
         }
 
-
         /// <summary>
         /// GetCachedMessageDict returns one chat room message dictionary
         /// either from Application State in proc or from Valkey Elastic Cache on AWS
@@ -521,7 +517,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
         }
 
-
         /// <summary>
         /// GetNewMessageIndices get all chat room indices, 
         /// which are newer than last <see cref="CqrContact.LastPolled">polling date of user</see>
@@ -536,13 +531,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             List<long> pollKeys = new List<long>();
             foreach (long tickIndex in dictKeys)
             {
-                if (tickIndex > sender.LastPolled.Ticks || !sender.TicksLong.Contains(tickIndex))
+                if (tickIndex > sender.LastPolled.Ticks && !sender.TicksLong.Contains(tickIndex))
                     pollKeys.Add(tickIndex);
             }
 
             return pollKeys;
         }
-
 
         /// <summary>
         /// SetCachedMessageDict saves the mesage dictionary for chat room in 
@@ -563,8 +557,6 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             return;
         }
-
-
 
     }
 

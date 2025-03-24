@@ -1,8 +1,8 @@
 {
   "TimeStamp": "2025-03-17T05:45:30.9138005+01:00",
-  "SaveStamp": "2025-03-22T22:23:43.4768794+01:00",
+  "SaveStamp": "2025-03-24T03:52:30.3333208+01:00",
   "MyContact": {
-    "_hash": "6DgCXbFf",
+    "_hash": "6CDgbXFf",
     "_message": "",
     "ContactId": 0,
     "Cuid": "dce8d022-ba33-4c3f-a2dc-df49b473776e",
@@ -10,27 +10,20 @@
     "Email": "helsigan@outlook.at",
     "Mobile": "+43 670 406 89 83",
     "Address": "",
-    "SecretKey": null,
+    "SecretKey": "",
     "ContactImage": null,
     "NameEmail": "Heinrich G. Elsigan <helsigan@outlook.at>",
-    "ChatRuid": "65a0969b-b61a-4455-aae1-fdc7fa638644",
-    "ChatRoomNr": "room_032222_helsigan_outlook_at.json",
+    "ChatRuid": "e6d04cf2-1206-4d5e-abb6-df2042cd898a",
+    "ChatRoomNr": "room_032403_helsigan_outlook_at.json",
     "TicksLong": [
-      638782785153941144,
-      638782785300591942,
-      638782785901115348,
-      638782785153941144,
-      638782787153206276,
-      638782787153206276,
-      638782788014621511,
       638782788014621511
     ],
-    "LastPushed": "2025-03-22T22:22:17.2892319+01:00",
-    "LastPolled": "2025-03-22T22:20:03.4621511",
+    "LastPushed": "2025-03-24T03:47:12.1341061+01:00",
+    "LastPolled": "2025-03-24T03:47:12.1341061+01:00",
     "MsgType": 0,
     "Message": "",
     "RawMessage": "",
-    "Hash": "6DgCXbFf",
+    "Hash": "6CDgbXFf",
     "Md5Hash": ""
   },
   "Contacts": [
@@ -3007,12 +3000,12 @@
       "ContactId": 130,
       "Cuid": "785ef326-38fd-4298-9292-bd7c9282d8e7",
       "Name": "Igor Sekowski",
-      "Email": "piotr.kadaj@gmail.com",
+      "Email": "igor.sekowski@gmail.com",
       "Mobile": "+4367762540360",
       "Address": "",
       "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Igor Sekowski <piotr.kadaj@gmail.com>",
+      "NameEmail": "Igor Sekowski <igor.sekowski@gmail.com>",
       "ChatRuid": "38e54fc2-c8c9-4299-91cd-fde4d5b7623c",
       "ChatRoomNr": "",
       "TicksLong": [],
@@ -5334,16 +5327,19 @@
   ],
   "MyIPs": [
     "169.254.219.156",
+    "169.254.116.213",
     "169.254.3.120",
     "169.254.131.162",
-    "192.168.43.177",
+    "10.0.0.246",
     "::1",
     "127.0.0.1",
-    "172.30.144.1"
+    "172.29.128.1"
   ],
   "Proxies": [
     "18.101.101.108",
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
-  "SecretKeys": []
+  "SecretKeys": [
+    "1234567890"
+  ]
 }

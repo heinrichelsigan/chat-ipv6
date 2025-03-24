@@ -1,2 +1,0 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ImageFontControl.ascx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.ImageFontControl" %>
-<asp:PlaceHolder ID="placeHolderImages" runat="server" Visible="true"></asp:PlaceHolder>

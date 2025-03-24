@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EU.CqrXs.CqrSrv.CqrJd
+namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
 
 
-    public partial class U
+    public partial class W
     {
 
         /// <summary>
@@ -42,21 +42,21 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// literalUserHost control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal literalUserHost;
-
-        /// <summary>
         /// imageFontControl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::EU.CqrXs.CqrSrv.CqrJd.ImageFontControl imageFontControl;
+        protected global::EU.CqrXs.CqrSrv.CqrJd.Util.ImageFontControl imageFontControl;
+
+        /// <summary>
+        /// ahrefId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor ahrefId;
     }
 }

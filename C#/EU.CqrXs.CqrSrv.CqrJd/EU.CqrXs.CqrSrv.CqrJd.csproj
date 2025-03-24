@@ -210,7 +210,7 @@
     <Content Include="Default.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="Global.asax" />
-    <Content Include="ImageFontControl.ascx" />
+    <Content Include="Util\ImageFontControl.ascx" />
     <Content Include="R.aspx" />
     <Content Include="Qr\2024-03-24_19_18__894.png" />
     <Content Include="res\css\area23.at.mono.css" />
@@ -266,8 +266,8 @@
     <Content Include="Settings\Default.aspx" />
     <Content Include="Settings\.htaccess" />
     <Content Include="Settings\TestForm.aspx" />
-    <Content Include="U.aspx" />
-    <Content Include="W.aspx" />
+    <Content Include="Util\U.aspx" />
+    <Content Include="Util\W.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -305,11 +305,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="ImageFontControl.ascx.cs">
+    <Compile Include="Util\ImageFontControl.ascx.cs">
       <DependentUpon>ImageFontControl.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ImageFontControl.ascx.designer.cs">
+    <Compile Include="Util\ImageFontControl.ascx.designer.cs">
       <DependentUpon>ImageFontControl.ascx</DependentUpon>
     </Compile>
     <Compile Include="R.aspx.cs">
@@ -346,18 +346,18 @@
     <Compile Include="Util\JsonHelper.cs" />
     <Compile Include="Util\PersistMsgIn.cs" />
     <Compile Include="Util\RedisSingleton.cs" />
-    <Compile Include="U.aspx.cs">
+    <Compile Include="Util\U.aspx.cs">
       <DependentUpon>U.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="U.aspx.designer.cs">
+    <Compile Include="Util\U.aspx.designer.cs">
       <DependentUpon>U.aspx</DependentUpon>
     </Compile>
-    <Compile Include="W.aspx.cs">
+    <Compile Include="Util\W.aspx.cs">
       <DependentUpon>W.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="W.aspx.designer.cs">
+    <Compile Include="Util\W.aspx.designer.cs">
       <DependentUpon>W.aspx</DependentUpon>
     </Compile>
   </ItemGroup>

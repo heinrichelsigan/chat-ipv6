@@ -1,7 +1,5 @@
 ﻿using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
-using System.Net;
-using System.Security.Policy;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {
@@ -29,7 +27,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         public string SecretKey { get; set; }
 
-        public CqrImage ContactImage { get; set; }
+        public CqrImage? ContactImage { get; set; }
 
         public string NameEmail { get => string.IsNullOrEmpty(Email) ? Name : $"{Name} <{Email}>"; }
 
@@ -64,13 +62,15 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 
         #endregion properties
 
-
         #region constructors
 
+        /// <summary>
+        /// Parameterless default constructor
+        /// </summary>
         public CqrContact() : base()
         {
             ContactId = -1;
-            Cuid = Guid.Empty;
+            Cuid = Guid.NewGuid();
             Name = string.Empty;
             Email = string.Empty;
             Mobile = string.Empty;
@@ -81,11 +81,32 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ChatRoomNr = string.Empty;
             LastPolled = DateTime.MinValue;
             LastPushed = DateTime.MinValue;
+            TicksLong = new List<long>();
         }
 
         public CqrContact(string cs, MsgEnum msgArt = MsgEnum.Json)
         {
-            FromJson<CqrContact>(cs);
+            CqrContact cqrContactJson = FromJson<CqrContact>(cs);            
+            ContactId = cqrContactJson.ContactId;
+            Cuid = cqrContactJson.Cuid;
+            Name = cqrContactJson.Name;
+            Email = cqrContactJson.Email;
+            Mobile = cqrContactJson.Mobile;
+            Address = cqrContactJson.Address;
+            SecretKey = cqrContactJson.SecretKey;
+            ContactImage = cqrContactJson.ContactImage;
+
+            ChatRuid = cqrContactJson.ChatRuid;
+            ChatRoomNr = cqrContactJson.ChatRoomNr;
+            TicksLong = cqrContactJson.TicksLong;
+            LastPolled = cqrContactJson.LastPolled;
+            LastPushed = cqrContactJson.LastPushed;
+
+            _message = cqrContactJson._message;
+            _hash = cqrContactJson._hash;
+            RawMessage = cqrContactJson.RawMessage;
+            MsgType = cqrContactJson.MsgType;
+            Md5Hash = cqrContactJson.Md5Hash;
         }
 
         public CqrContact(int cid, string name, string email, string mobile, string address) : base()
@@ -95,11 +116,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Email = email;
             Mobile = mobile;
             Address = address;
+            SecretKey = "";
             ChatRuid = Guid.Empty;
-            ChatRoomNr = string.Empty;
+            ChatRoomNr = "";
             LastPolled = DateTime.MinValue;
             LastPushed = DateTime.MinValue;
-            ChatRoomNr = string.Empty;
+            ContactImage = null;
+            TicksLong = new List<long>();
         }
 
         public CqrContact(Guid guid, string name, string email, string mobile, string address) : base()
@@ -109,10 +132,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             Email = email;
             Mobile = mobile;
             Address = address;
+            SecretKey = "";
             ChatRuid = Guid.Empty;
-            ChatRoomNr = string.Empty;
+            ChatRoomNr = "";
             LastPolled = DateTime.MinValue;
             LastPushed = DateTime.MinValue;
+            ContactImage = null;
+            TicksLong = new List<long>();
             // ClientIp = null;
         }
 
@@ -122,14 +148,14 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ContactImage = cqrImage;
         }
 
-        public CqrContact(int cid, Guid cuid, string name, string email, string mobile, string address, CqrImage cqrImage)
+        public CqrContact(int cid, Guid cuid, string name, string email, string mobile, string address, CqrImage? cqrImage)
             : this(cid, name, email, mobile, address)
         {
             Cuid = cuid;
             ContactImage = cqrImage;
         }
 
-        public CqrContact(int cid, Guid cuid, string name, string email, string mobile, string address, CqrImage cqrImage, string hash)
+        public CqrContact(int cid, Guid cuid, string name, string email, string mobile, string address, CqrImage? cqrImage, string hash)
             : this(cid, cuid, name, email, mobile, address, cqrImage)
         {
             _hash = hash;
@@ -154,46 +180,65 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             this._hash = hash;
         }
 
-        public CqrContact(CqrContact c, string hash)
-            : this(c.ContactId, c.Cuid, c.Name, c.Email, c.Mobile, c.Address, c.ContactImage, hash)
+        public CqrContact(CqrContact c, string hash) : this(c.ContactId, c.Cuid, c.Name, c.Email, c.Mobile, c.Address, c.ContactImage, hash)
         {
             this._hash = hash;
             ChatRoomNr = c.ChatRoomNr;
-            ChatRuid = c.ChatRuid;
-            TicksLong = c.TicksLong;
+            Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
+            ChatRuid = (c.ChatRuid == Guid.Empty) ? Guid.NewGuid() : c.ChatRuid;
+            TicksLong = c.TicksLong ?? new List<long>();
             LastPolled = c.LastPolled;
             LastPushed = c.LastPushed;
             // ClientIp = c.ClientIp ?? null;
         }
 
-        public CqrContact(CqrContact c, string ChatRoomNr, string hash) : this(c, hash)
+
+        /// <summary>
+        /// Constructor only for sending contact to service with null empty picture
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="chatRoomNr"></param>
+        /// <param name="hash"></param>
+        public CqrContact(CqrContact c, string chatRoomNr, string hash) : this(c, hash)
         {
             _hash = hash;
+            ChatRoomNr = chatRoomNr;
             ContactImage = null;
-            Cuid = c.Cuid;
-            ChatRuid = c.ChatRuid;
+            Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
+            ChatRuid = (c.ChatRuid == Guid.Empty) ? Guid.NewGuid() : c.ChatRuid;
             ChatRoomNr = c.ChatRoomNr;
-            TicksLong = c.TicksLong;
+            TicksLong = c.TicksLong ?? new List<long>();
             LastPolled = c.LastPolled;
             LastPushed = c.LastPushed;
             // ClientIp = c.ClientIp ?? null;
         }
 
-        public CqrContact(CqrContact c, string ChatRoomNr, DateTime lastPolled, string hash) : this(c, ChatRoomNr, hash)
+        /// <summary>
+        /// constuctor to update local contact on Windows Chat Client, picture will be set again
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="chatRoomNr"></param>
+        /// <param name="hash"></param>
+        /// <param name="contactImage"></param>
+        public CqrContact(CqrContact c, string chatRoomNr, string hash, CqrImage? contactImage) : 
+            this(c.Cuid, c.Name, c.Email, c.Mobile, c.Address)
         {
             _hash = hash;
-            ContactImage = null;
-            Cuid = c.Cuid;
-            ChatRuid = c.ChatRuid;
+            ChatRoomNr = chatRoomNr;
+            if (contactImage != null)
+                ContactImage = contactImage;
+
+            ContactId = c.ContactId;
+            Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
+            ChatRuid = (c.ChatRuid == Guid.Empty) ? Guid.NewGuid() : c.ChatRuid;
             ChatRoomNr = c.ChatRoomNr;
-            TicksLong = c.TicksLong;
+            TicksLong = c.TicksLong ?? new List<long>();
             LastPolled = c.LastPolled;
             LastPushed = c.LastPolled;
             // ClientIp = c.ClientIp ?? null;
         }
 
         #endregion constructors
-
 
         #region members
 
@@ -222,6 +267,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                         Mobile = cqrContactJson.Mobile;
                         Address = cqrContactJson.Address;
                         ContactImage = cqrContactJson.ContactImage;
+                        SecretKey = cqrContactJson.SecretKey;
 
                         ChatRuid = cqrContactJson.ChatRuid;
                         ChatRoomNr = cqrContactJson.ChatRoomNr;
@@ -321,6 +367,5 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         #endregion members
 
     }
-
 
 }

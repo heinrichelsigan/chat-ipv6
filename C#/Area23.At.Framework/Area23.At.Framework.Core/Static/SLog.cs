@@ -2,9 +2,14 @@
 using Microsoft.VisualBasic.Logging;
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows.Interop;
 
 namespace Area23.At.Framework.Core.Static
 {
+
+    /// <summary>
+    /// Most simple & tiny static logger
+    /// </summary>
     public static class SLog
     {
         private static readonly Lock _lock = new Lock();
@@ -50,6 +55,12 @@ namespace Area23.At.Framework.Core.Static
         /// <param name="appName">application name</param>
         public static void Log(string msg, string appName = "")
         {
+            if (Constants.NOLog)
+            {
+                Console.Error.WriteLine(msg);
+                return;
+            }
+                
             string logMsg = string.Empty;
 
             if (string.IsNullOrEmpty(LogFile) || !CheckedToday)
@@ -76,7 +87,6 @@ namespace Area23.At.Framework.Core.Static
                 }
             }
 
-
             string logFile1 = "";
             lock (_lock)
             {
@@ -96,7 +106,6 @@ namespace Area23.At.Framework.Core.Static
                     logFile1 = logFile1.Replace(".log", "_1.log");
                 }
             }
-
 
             lock (_lock)
             {
@@ -120,7 +129,6 @@ namespace Area23.At.Framework.Core.Static
         }
 
 
-
         /// <summary>
         /// Log - static logging method
         /// </summary>
@@ -129,6 +137,7 @@ namespace Area23.At.Framework.Core.Static
         public static void Log(Exception exLog, string appName = "")
         {
             MethodBase? mBase = (new StackFrame(1))?.GetMethod();
+
             string excMsg = String.Format("{0}throwed {1} ⇒ {2}\t{3}\nStacktrace: \t{4}\n",
                 (mBase != null) ? mBase.ToString() + " " : "",
                 exLog.GetType(),
@@ -136,7 +145,13 @@ namespace Area23.At.Framework.Core.Static
                 exLog.ToString().Replace("\r", "").Replace("\n", " "),
                 exLog.StackTrace?.Replace("\r", "").Replace("\n", " "));
 
-            Log(excMsg, appName);
+            if (Constants.NOLog)
+            {
+                Console.Error.WriteLine(excMsg);
+                return; 
+            }
+               
+            Log(excMsg, appName);                
         }
 
         /// <summary>
@@ -161,18 +176,20 @@ namespace Area23.At.Framework.Core.Static
                 exLog.ToString().Replace("\r", "").Replace("\n", " "),
                 exLog.StackTrace?.Replace("\r", "").Replace("\n", " "));
 
-            Log(string.Concat(msgPrefix, "\n \t", exMsg), appName);
+            if (Constants.NOLog)
+            {
+                Console.Error.WriteLine(string.Concat(msgPrefix, "\n \t", exMsg));
+                return;
+            }
+            
+            Log(string.Concat(msgPrefix, "\n \t", exMsg), appName);                
         }
+
 
         /// <summary>
         /// private static ctor of SLog
         /// </summary>
-        static SLog()
-        {
-            ;
-        }
-
-
+        static SLog() { ; }
 
     }
 }

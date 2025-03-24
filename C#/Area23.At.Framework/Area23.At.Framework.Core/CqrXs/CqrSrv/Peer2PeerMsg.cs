@@ -70,6 +70,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             return CqrMessage;
         }
 
+
         /// <summary>
         /// NCqrPeerMsg decryptes an secure encrypted msg 
         /// </summary>

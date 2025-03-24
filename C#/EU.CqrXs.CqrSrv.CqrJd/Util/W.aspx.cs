@@ -12,7 +12,7 @@ using System.Windows.Media;
 using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.Util;
 
-namespace EU.CqrXs.CqrSrv.CqrJd
+namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
 
     /// <summary>

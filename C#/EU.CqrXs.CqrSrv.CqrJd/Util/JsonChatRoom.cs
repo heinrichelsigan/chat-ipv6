@@ -178,7 +178,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         }
 
 
-
+        /// <summary>
+        /// GetJsonChatRoomsFromCache loads chatroom list from ApplicationState in proc or redis cache
+        /// if no entries are found there, GetJsonChatRoomsFromCache() loads chatroom list from filesystem
+        /// and stores it either in ApplicationState in proc or in redis elastic cache
+        /// </summary>
+        /// <returns><see cref="List{string}<">List of chat room names / keys</see></returns>
         public static List<string> GetJsonChatRoomsFromCache()
         {
             List<string> chatRooms = new List<string>();
@@ -186,18 +191,33 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 chatRooms = (List<string>)HttpContext.Current.Application[Constants.CHATROOMS];
             if (BaseWebService.PersistMsgInAmazonElasticCache)
             {
-                string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
-                chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
+                try
+                {
+                    string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
+                    chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
+                }
+                catch (Exception exLoadFromCache)
+                {
+                    Area23Log.LogStatic("Failed to load chatrooms from cache", exLoadFromCache, "");
+                }
             }
 
             if (chatRooms == null || chatRooms.Count < 1)
+            {
                 chatRooms = ChatRoomNumbersFromFs();
+                if (chatRooms != null && chatRooms.Count > 0)
+                    SetJsonChatRoomsToCache(chatRooms);
+            }
 
             return chatRooms;
 
         }
 
 
+        /// <summary>
+        /// SetJsonChatRoomsToCache persist list of chat rooms of 
+        /// </summary>
+        /// <param name="chatRooms"><see cref="List{string}">list of chat rooms</see></param>
         public static void SetJsonChatRoomsToCache(List<string> chatRooms)
         {
             if (BaseWebService.PersistMsgInApplicationState)

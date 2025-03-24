@@ -715,7 +715,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             }
             // TODO: Email zur Einladung
-            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + "\nfor " + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + " \nfor " + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
             this.TextBoxDestionation.Text = chat.AddFriendMessage(msgChatRoom);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;

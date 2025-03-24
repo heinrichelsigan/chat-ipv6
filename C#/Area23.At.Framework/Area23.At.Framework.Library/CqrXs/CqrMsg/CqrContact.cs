@@ -78,6 +78,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
 
         #region constructors
 
+        /// <summary>
+        /// Parameterless default constructor
+        /// </summary>
         public CqrContact() : base()
         {
             ContactId = -1;
@@ -169,8 +172,9 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             : this(c.ContactId, c.Cuid, c.Name, c.Email, c.Mobile, c.Address, c.ContactImage, hash)
         {
             this._hash = hash;
+            Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
             ChatRoomNr = c.ChatRoomNr;
-            ChatRuid = c.ChatRuid;
+            ChatRuid = (c.ChatRuid == Guid.Empty) ? Guid.NewGuid() : c.ChatRuid;
             TicksLong = c.TicksLong;
             LastPolled = c.LastPolled;
             LastPushed = c.LastPushed;
@@ -181,8 +185,8 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
         {
             _hash = hash;
             ContactImage = null;
-            Cuid = c.Cuid;
-            ChatRuid = c.ChatRuid;
+            Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
+            ChatRuid = (c.ChatRuid == Guid.Empty) ? Guid.NewGuid() : c.ChatRuid;
             ChatRoomNr = c.ChatRoomNr;
             TicksLong = c.TicksLong;
             LastPolled = c.LastPolled;
@@ -190,13 +194,14 @@ namespace Area23.At.Framework.Library.CqrXs.CqrMsg
             // ClientIp = c.ClientIp ?? null;
         }
 
-        public CqrContact(CqrContact c, string ChatRoomNr, DateTime lastPolled, string hash) : this(c, ChatRoomNr, hash)
+        public CqrContact(CqrContact c, string chatRoomNr, string hash, CqrImage cqrImage) : this(c, chatRoomNr, hash)
         {
+            ChatRoomNr = chatRoomNr;
             _hash = hash;
-            ContactImage = null;
-            Cuid = c.Cuid;
-            ChatRuid = c.ChatRuid;
-            ChatRoomNr = c.ChatRoomNr;
+            ContactImage = cqrImage;
+            ContactId = c.ContactId;
+            Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
+            ChatRuid = (c.ChatRuid == Guid.Empty) ? Guid.NewGuid() : c.ChatRuid;             
             TicksLong = c.TicksLong;
             LastPolled = c.LastPolled;
             LastPushed = c.LastPolled;

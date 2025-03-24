@@ -7,8 +7,9 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
-namespace EU.CqrXs.CqrSrv.CqrJd
+namespace EU.CqrXs.CqrSrv.CqrJd.Util
 {
+
     public partial class ImageFontControl : System.Web.UI.UserControl
     {
 
@@ -26,8 +27,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             {
                 string rawurl = Request.Url.AbsoluteUri.ToString();
                 string absurl = Request.Url.AbsoluteUri.ToString();
-                rawurl = rawurl.Substring(0, rawurl.LastIndexOf("/") + 1) + Constants.RES_DIR + LibPaths.SepCh + Constants.IMG_DIR + LibPaths.SepCh;
-                absurl = absurl.Substring(0, absurl.LastIndexOf("/") + 1) + Constants.RES_DIR + LibPaths.SepCh + Constants.IMG_DIR + LibPaths.SepCh;
+                rawurl = rawurl.Substring(0, rawurl.LastIndexOf("/") + 1).Replace("/Util/", "/").Replace("Util", "") + Constants.RES_DIR + LibPaths.SepCh + Constants.IMG_DIR + LibPaths.SepCh;
+                absurl = absurl.Substring(0, absurl.LastIndexOf("/") + 1).Replace("/Util/", "/").Replace("Util", "") + Constants.RES_DIR + LibPaths.SepCh + Constants.IMG_DIR + LibPaths.SepCh;
                 short imgNr = 0;
                 foreach (char ch in ipAddr)
                 {
@@ -46,6 +47,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
                 placeHolderImages.Visible = true;
             }
+
         }
+
     }
+
 }

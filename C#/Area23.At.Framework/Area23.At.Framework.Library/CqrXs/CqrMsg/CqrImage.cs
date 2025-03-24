@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.Crypt.Hash;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
@@ -54,6 +55,7 @@ namespace Area23.At.Framework.Library.CqrMsg
             ImageData = new byte[0];
             ImageMimeType = string.Empty;
             ImageBase64 = "";
+            Md5Hash = "";
         }
 
 
@@ -68,6 +70,7 @@ namespace Area23.At.Framework.Library.CqrMsg
             ImageData = data;
             ImageMimeType = MimeType.GetMimeType(ImageData, ImageFileName);
             ImageBase64 = Convert.ToBase64String(ImageData, 0, ImageData.Length);
+            Md5Hash = MD5Sum.Hash(ImageData, ImageFileName);
         }
 
         /// <summary>
@@ -81,6 +84,7 @@ namespace Area23.At.Framework.Library.CqrMsg
             ImageBase64 = base64Image;
             ImageData = Convert.FromBase64String(base64Image);
             ImageMimeType = MimeType.GetMimeType(ImageData, ImageFileName);
+            Md5Hash = MD5Sum.Hash(ImageData, ImageFileName);
         }
 
         /// <summary>
@@ -99,6 +103,7 @@ namespace Area23.At.Framework.Library.CqrMsg
                 ImageMimeType = cqrImage.ImageMimeType;
                 ImageData = cqrImage.ImageData;
                 ImageBase64 = cqrImage.ImageBase64;
+                Md5Hash = MD5Sum.Hash(ImageData, ImageFileName);
             }
         }
 

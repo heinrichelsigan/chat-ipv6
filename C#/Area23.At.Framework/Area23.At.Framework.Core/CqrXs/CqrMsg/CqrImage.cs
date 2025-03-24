@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.Static;
+﻿using Area23.At.Framework.Core.Crypt.Hash;
+using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Drawing.Imaging;
@@ -43,12 +44,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// <summary>
         /// Default empty constructor (needed for json serialize & deserialize)
         /// </summary>
-        public CqrImage()
+        public CqrImage() 
         {
             ImageFileName = string.Empty;
             ImageData = new byte[0];
             ImageMimeType = string.Empty;
             ImageBase64 = "";
+            Md5Hash = "";
         }
 
 
@@ -57,12 +59,13 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="data"></param>
-        public CqrImage(string fileName, byte[] data)
+        public CqrImage(string fileName, byte[] data) 
         {
             ImageFileName = fileName;
             ImageData = data;
             ImageMimeType = MimeType.GetMimeType(ImageData, ImageFileName);
             ImageBase64 = Convert.ToBase64String(ImageData, 0, ImageData.Length);
+            Md5Hash = MD5Sum.Hash(ImageData, ImageFileName);
         }
 
         /// <summary>
@@ -76,6 +79,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             ImageBase64 = base64Image;
             ImageData = Convert.FromBase64String(base64Image);
             ImageMimeType = MimeType.GetMimeType(ImageData, ImageFileName);
+            Md5Hash = MD5Sum.Hash(ImageData, ImageFileName);
         }
 
         /// <summary>
@@ -85,7 +89,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
         /// <param name="fileName">fileName for the image,
         /// if fileName is null or empty
         /// then a name <see cref="Extensions.Area23DateTimeWithMillis(DateTime)"/></param> + "_image." + extension based mime type will be given
-        public CqrImage(Image image, string? fileName = "")
+        public CqrImage(Image image, string? fileName = "") 
         {
             CqrImage? cqrImage = FromDrawingImage(image, fileName);
             if (cqrImage != null)
@@ -94,6 +98,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                 ImageMimeType = cqrImage.ImageMimeType;
                 ImageData = cqrImage.ImageData;
                 ImageBase64 = cqrImage.ImageBase64;
+                Md5Hash = MD5Sum.Hash(ImageData, ImageFileName);
             }
         }
 
@@ -129,6 +134,8 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
                     ImageBase64 = cqrJsonImage.ImageBase64;
                     ImageMimeType = cqrJsonImage.ImageMimeType;
                     ImageData = cqrJsonImage.ImageData;
+                    _hash = cqrJsonImage._hash;
+                    Md5Hash = cqrJsonImage.Md5Hash;
                     return cqrJsonImage;
                 }
             }

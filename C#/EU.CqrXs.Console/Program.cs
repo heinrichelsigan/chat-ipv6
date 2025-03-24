@@ -1,14 +1,11 @@
-﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+﻿using Area23.At.Framework.Core.CqrXs;
+using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Win32Api;
 using Area23.At.Framework.Core.Zfx;
-using Org.BouncyCastle.Utilities;
-using System.Security.Cryptography;
 using System.Text;
-using System.Windows;
-using System.Xml.Linq;
-using Windows.Networking;
 
 
 namespace EU.CqrXs.Console
@@ -50,13 +47,12 @@ namespace EU.CqrXs.Console
     /// </summary>
     internal class Program
     {
-
+        static readonly string? progName = System.Environment.ProcessPath;
+        static readonly string? progDirectory = Path.GetFullPath(System.Environment.ProcessPath);
+        private static readonly Lock _lock = new Lock();
         static string? inName = null, outName = null, outEnviron = null, key = null;
         static FileInfo? inFile = null, outFile = null;
         static byte[]? inBytes = null, outBytes = null;
-
-        static readonly string? progName = System.Environment.ProcessPath;
-        static readonly string? progDirectory = Path.GetFullPath(System.Environment.ProcessPath);
 
 
         /// <summary>
@@ -65,9 +61,12 @@ namespace EU.CqrXs.Console
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            if (args.Length <= 1)
+            lock (_lock)
             {
-                Usage();
+                if (args.Length <= 1)
+                    Usage();
+                Constants.DirCreate = false;
+                Constants.NOLog = true;
             }
 
             Dictionary<OptEnum, string> dict = new Dictionary<OptEnum, string>();
@@ -75,12 +74,13 @@ namespace EU.CqrXs.Console
             {
                 string optStr = GetOption(args[i], out OptEnum optEnum);
 
+
                 if (optEnum == OptEnum.OutP || optEnum == OptEnum.InParam)
                     ; // nothing todo for input or output options
+                else if (optEnum == OptEnum.Help || optEnum == OptEnum.Usage)
+                    Usage();
                 else if (optEnum == OptEnum.Key)
                     key = optStr;
-                else if (optEnum == OptEnum.Help)
-                    Usage();
                 else
                     dict.Add(optEnum, optStr);
             }
@@ -113,10 +113,8 @@ namespace EU.CqrXs.Console
                         else if (optStr.ToLower().Contains("bz"))
                             outBytes = BZip2.BZip(inBytes);
                         else
-                        {
-                            System.Console.Error.WriteLine("Urecognized zip option: " + optStr);
-                            Usage();
-                        }
+                            Usage("urecognized zip option: " + optStr);   
+                        
                         break;
                     case OptEnum.Unzip:
                         if (optStr.ToLower().Contains("gz") || optStr.ToLower().Contains("gunzip"))
@@ -124,10 +122,8 @@ namespace EU.CqrXs.Console
                         else if (optStr.ToLower().Contains("bz") || optStr.ToLower().Contains("bunzip") || optStr.ToLower().Contains("2"))
                             outBytes = BZip2.BUnZip(inBytes);
                         else
-                        {
-                            System.Console.Error.WriteLine("Urecognized unzip option: " + optStr);
-                            Usage();
-                        }
+                            Usage("urecognized unzip option: " + optStr);
+
                         break;
                     case OptEnum.Encode:
                         outBytes = EnDeCodeHelper.EncodeBytes(inBytes, optStr);
@@ -138,10 +134,8 @@ namespace EU.CqrXs.Console
                     // case OptEnum.Key: 
                     case OptEnum.Crypt:
                         if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
-                        {
-                            System.Console.Error.WriteLine($"Urecognized crypt option \"{optStr}\" without --key={key} ");
-                            Usage();
-                        }
+                            Usage($"urecognized crypt option \"{optStr}\" without --key={key} ");
+                        
                         SymmCipherPipe inPipe;
                         if (string.IsNullOrEmpty(optStr))
                             inPipe = new SymmCipherPipe(key, EnDeCodeHelper.KeyToHex(key)); 
@@ -153,11 +147,9 @@ namespace EU.CqrXs.Console
                         outBytes = inPipe.MerryGoRoundEncrpyt(inBytes, key, EnDeCodeHelper.KeyToHex(key)); // EnDeCodeHelper.KeyToHex(optStr));
                         break;
                     case OptEnum.Decrypt:
-                        if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
-                        {
-                            System.Console.Error.WriteLine($"Urecognized decrypt option \"{optStr}\" without --key={key} ");
-                            Usage();
-                        }
+                        if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))                        
+                            Usage($"unrecognized decrypt option \"{optStr}\" without --key={key} ");
+                        
                         SymmCipherPipe outPipe;
                         if (string.IsNullOrEmpty(optStr))
                             outPipe = new SymmCipherPipe(key, EnDeCodeHelper.KeyToHex(key));
@@ -188,8 +180,7 @@ namespace EU.CqrXs.Console
                 File.WriteAllBytes(outFile.FullName, outBytes);
             else if (!string.IsNullOrEmpty(outEnviron))
                 System.Environment.SetEnvironmentVariable(outEnviron, Encoding.UTF8.GetString(outBytes));
-
-
+           
             return;
         }
 
@@ -202,22 +193,22 @@ namespace EU.CqrXs.Console
         /// <returns></returns>
         public static string GetOption(string argument, out OptEnum optEnum)
         {
-            string optOut = "";
-            if (string.IsNullOrEmpty(argument) || argument.Length < 2 || argument[0] != '-') 
-                {
+            string optArg = "";
+            if (string.IsNullOrEmpty(argument) || argument.Length < 2 || argument[0] != '-')
+            {
                 optEnum = OptEnum.Usage;
-                return optOut;
+                return optArg;
             }
             string arg = argument.TrimStart("-/".ToCharArray());
 
             if (arg.Contains("="))
-                optOut = arg.GetSubStringByPattern("=", true, "", " ", true, StringComparison.CurrentCultureIgnoreCase);
+                optArg = arg.GetSubStringByPattern("=", true, "", " ", true, StringComparison.CurrentCultureIgnoreCase);
 
             switch (arg[0])
             {
                 case 'I':
                 case 'i': optEnum = OptEnum.InParam;
-                    inName = optOut;
+                    inName = optArg;
                     if (string.IsNullOrEmpty(inName))
                         ; // Else
                     else if (arg.ToLower().Contains("file") || File.Exists(inName) || File.Exists(Path.Combine(progDirectory, inName)))
@@ -231,8 +222,7 @@ namespace EU.CqrXs.Console
                         {
                             inFile = new FileInfo(inName);
                             inBytes = File.ReadAllBytes(inName);
-                        }
-                        
+                        }                        
                     }
                     else if (arg.ToLower().Contains("text") || !string.IsNullOrEmpty(inName))
                     {
@@ -241,47 +231,50 @@ namespace EU.CqrXs.Console
                             inStr = inName;
                         inBytes = Encoding.UTF8.GetBytes(inStr);
                     }
-                    else {
-                        System.Console.Error.WriteLine("Unrecognized option: " + argument);
-                        Usage();
-                    }
-                    return optOut;
+                    else
+                        Usage($"unrecognized option: {argument}.");
+
+                    return optArg;
                 case 'O':
                 case 'o': optEnum = OptEnum.OutP;
-                    outName = optOut;
+                    outName = optArg;
                     if (string.IsNullOrEmpty(outName))
                         ; // to stdout                    
-                    else if (arg.ToLower().Contains("file") || optOut.Contains(LibPaths.SepChar) || optOut.Contains('.') || !string.IsNullOrEmpty(outName))
+                    else if (arg.ToLower().Contains("file") || optArg.Contains(LibPaths.SepChar) || optArg.Contains('.') || !string.IsNullOrEmpty(outName))
                         outFile = new FileInfo(outName);
-                    else if (!string.IsNullOrEmpty(outName) || arg.ToLower().Contains("text") || optOut.StartsWith("$"))
-                        outEnviron = optOut;
-                    return optOut;
+                    else if (!string.IsNullOrEmpty(outName) || arg.ToLower().Contains("text") || optArg.StartsWith("$"))
+                        outEnviron = optArg;
+
+                    return optArg;
                 case 'K':
-                case 'k': optEnum = OptEnum.Key; return optOut;
+                case 'k': optEnum = OptEnum.Key; return optArg;
                 case 'Z':
-                case 'z': optEnum = OptEnum.Zip; return optOut;
+                case 'z': optEnum = OptEnum.Zip; return optArg;
                 case 'U':
-                case 'u': optEnum = OptEnum.Unzip; return optOut;
+                case 'u': optEnum = OptEnum.Unzip; return optArg;
                 case 'E':
-                case 'e': optEnum = OptEnum.Encode; return optOut;
-                case 'd': optEnum = OptEnum.Decode; return optOut;
+                case 'e': optEnum = OptEnum.Encode; return optArg;
+                case 'd': optEnum = OptEnum.Decode; return optArg;
                 case 'C':
-                case 'c': optEnum = OptEnum.Crypt; return optOut;
-                case 'D': optEnum = OptEnum.Decrypt; return optOut;
+                case 'c': optEnum = OptEnum.Crypt; return optArg;
+                case 'D': optEnum = OptEnum.Decrypt; return optArg;
                 case '?':
                 case 'H':
-                case 'h': optEnum = OptEnum.Help; Usage();  return optOut;
+                case 'h': optEnum = OptEnum.Help; Usage();  return optArg;
                 case 'S':
-                case 's': optEnum = OptEnum.HashSum; return optOut;
-                default: optEnum = OptEnum.Usage; return argument;
+                case 's': optEnum = OptEnum.HashSum; return optArg;
+                default: optEnum = OptEnum.Usage; Usage($"unrecognized option: {argument}.");  return argument;
             }
         }
 
         /// <summary>
         /// Usage shows the usage of console application
         /// </summary>
-        static void Usage()
+        static void Usage(string errMsg = "")
         {
+            if (!string.IsNullOrEmpty(errMsg))
+                System.Console.Error.WriteLine(errMsg);
+
             System.Console.Out.WriteLine("Usage:\t" + Path.GetFileName(progName) + @"
     -i | --inFile= | --inText={string|EnviromentVariable} | --inStd    
     -o | --outFile= | --outText=EnviromentVariable | --outStd
@@ -310,6 +303,7 @@ namespace EU.CqrXs.Console
             System.Console.Out.WriteLine($"      \t{Path.GetFileName(progName)} -i=test.jpg.bz2.base32 -d=base32 -u=bzip2 -o=test1.jpg");
             System.Console.Out.WriteLine($"      \t{Path.GetFileName(progName)} --inFile=test.jpg --zip=gzip --crypt=AesLight,Fish3 -k=MySecretKey -e=base64 -o=test.jpg.gz.aeslight.fish3.base64");
             System.Console.Out.WriteLine($"      \t{Path.GetFileName(progName)} -i=test.jpg.gz.aeslight.fish3.base64 -d=base64  -D=AesLight,Fish3 -k=MySecretKey -e=base64  --unzip=gzip  -o=test2.jpg");
+
             System.Environment.Exit(0);
         }
 

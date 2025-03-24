@@ -11,15 +11,14 @@ namespace EU.CqrXs.WinForm.SecureChat
     /// </summary>
     internal static class Program
     {
-        internal static string progName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
+
+        internal static readonly string? progName = System.Environment.ProcessPath;
+        internal static readonly string? progDirectory = Path.GetFullPath(System.Environment.ProcessPath);
         private static Mutex mutex = new Mutex(true, progName);
         static internal int mode = 0;
         static internal string startFormSwitch = string.Empty;
 
-        internal static Mutex PMutec
-        {
-            get => mutex;
-        }
+        internal static Mutex PMutec { get => mutex; }
 
         /// <summary>
         ///  The main entry point for the application.
@@ -34,7 +33,7 @@ namespace EU.CqrXs.WinForm.SecureChat
             {                
                 NativeWrapper.Kernel32.AttachConsole(NativeWrapper.Kernel32.ATTACH_PARENT_PROCESS);
                 // Area23.At.Framework.Library.Area23Log.Logger.LogOriginMsg(roachName, $"Another instance of {roachName} is already running!");
-                Console.Out.WriteLine($"Another instance of {progName} is already running!");
+                Console.Error.WriteLine($"Another instance of {progName} is already running!");
                 MessageBox.Show($"Another instance of {progName} is already running!", $"{progName}: multiple startup!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return;
             }
@@ -43,6 +42,11 @@ namespace EU.CqrXs.WinForm.SecureChat
             {
                 foreach (string arg in args)
                 {
+                    if (arg.ToLower().Contains("nolog"))
+                        Constants.NOLog = true;
+                    if (arg.ToLower().Contains("dir") &&
+                        (arg.ToLower().Contains("no") || arg.ToLower().Contains("false")))
+                        Constants.DirCreate = false;
                     if (arg.ToLower().Contains("test"))
                         AppDomain.CurrentDomain.SetData(Constants.CQRXS_TEST_FORM, true);
                     if (arg.ToLower().Contains("fishonaes") || arg.ToLower().Contains("fish on aes"))
@@ -52,7 +56,7 @@ namespace EU.CqrXs.WinForm.SecureChat
                     if (arg.ToLower().Contains("rich"))
                         startFormSwitch = "rich";
                     if (arg.ToLower().Contains("secure"))
-                        startFormSwitch = "secure";
+                        startFormSwitch = "secure";                    
                 }
             }
 
@@ -86,8 +90,6 @@ namespace EU.CqrXs.WinForm.SecureChat
             ReleaseCloseDisposeMutex(mutex);
 
         }
-
-
 
         /// <summary>
         /// Release Mutax exclusion, that not 2 chat programs could be started at same machine

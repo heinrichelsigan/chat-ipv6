@@ -27,6 +27,8 @@ namespace Area23.At.Framework.Core.Static
         private static readonly char _sepCh;
         private static int daysave = -1;
 
+        public static bool LogDebug { get; private set; }  
+
         public static char SepCh { get => _sepCh; }
 
         public static string SepChar { get => _sepCh.ToString(); }
@@ -37,29 +39,39 @@ namespace Area23.At.Framework.Core.Static
         static LibPaths()
         {
             _sepCh = Path.DirectorySeparatorChar;
-            if (Directory.Exists(LibPaths.SystemDirResPath))
-                try {
-                    Directory.CreateDirectory(LibPaths.SystemDirResPath);
-                } catch { }
-            if (Directory.Exists(LibPaths.SytemDirUuPath))
-                try {
-                    Directory.CreateDirectory(LibPaths.SytemDirUuPath);
-                } catch { }
-            if (Directory.Exists(LibPaths.SystemDirOutPath))
-                try {
-                    Directory.CreateDirectory(LibPaths.SystemDirOutPath);
-                }
-                catch { }
-            if (Directory.Exists(LibPaths.SystemDirTmpPath))
-                try {
-                    Directory.CreateDirectory(LibPaths.SystemDirTmpPath);
-                }
-                catch { }
-            if (Directory.Exists(LibPaths.SystemDirLogPath))
-                try {
-                    Directory.CreateDirectory(LibPaths.SystemDirLogPath);
-                }
-                catch { }
+            if (Constants.DirCreate)
+            {
+                if (Directory.Exists(LibPaths.SystemDirResPath))
+                    try
+                    {
+                        Directory.CreateDirectory(LibPaths.SystemDirResPath);
+                    }
+                    catch { }
+                if (Directory.Exists(LibPaths.SytemDirUuPath))
+                    try
+                    {
+                        Directory.CreateDirectory(LibPaths.SytemDirUuPath);
+                    }
+                    catch { }
+                if (Directory.Exists(LibPaths.SystemDirOutPath))
+                    try
+                    {
+                        Directory.CreateDirectory(LibPaths.SystemDirOutPath);
+                    }
+                    catch { }
+                if (Directory.Exists(LibPaths.SystemDirTmpPath))
+                    try
+                    {
+                        Directory.CreateDirectory(LibPaths.SystemDirTmpPath);
+                    }
+                    catch { }
+                if (Directory.Exists(LibPaths.SystemDirLogPath))
+                    try
+                    {
+                        Directory.CreateDirectory(LibPaths.SystemDirLogPath);
+                    }
+                    catch { }
+            }
         }
 
 
@@ -308,7 +320,8 @@ namespace Area23.At.Framework.Core.Static
                         {
                             string dirNotFoundMsg = string.Format("out directory {0} doesn't exist, creating it!", systemDirResPath);
                             SLog.Log(dirNotFoundMsg);
-                            Directory.CreateDirectory(systemDirResPath);
+                            if (Constants.DirCreate)
+                                Directory.CreateDirectory(systemDirResPath);
                         }
                         catch (Exception ex)
                         {
@@ -363,7 +376,9 @@ namespace Area23.At.Framework.Core.Static
                     {
                         try
                         {
-                            Directory.CreateDirectory(logDirPath);
+                            if (Constants.DirCreate && !Constants.NOLog)
+                                Directory.CreateDirectory(logDirPath);
+
                         }
                         catch { }
                     }
@@ -394,7 +409,8 @@ namespace Area23.At.Framework.Core.Static
                 {
                     try
                     {
-                        File.Create(logFilePath);
+                        if (!Constants.NOLog)
+                            File.Create(logFilePath);
                     }
                     catch { }
                 }

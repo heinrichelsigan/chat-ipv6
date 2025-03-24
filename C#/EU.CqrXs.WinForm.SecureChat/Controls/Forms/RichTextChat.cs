@@ -644,7 +644,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             }
             // TODO: Email zur Einladung
-            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + "\nfor " + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+            string msgChatRoom = "Received ChatRoomNr: " + rfmsg.ChatRoomNr + " \nfor " + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
             this.TextBoxDestionation.Text = chat.AddFriendMessage(msgChatRoom);
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
@@ -1012,7 +1012,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 if (rfmsg != null && rfmsg.Sender != null)
                 {
-                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.LastPolled, rfmsg.Sender.Hash);
+                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
                     Settings.Singleton.MyContact = myContact;
 
                     Settings.SaveSettings(Settings.Singleton);
