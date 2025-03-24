@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.Net.WebHttp;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using System;
@@ -10,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Web;
 
 
 namespace EU.CqrXs.CqrSrv.CqrJd.Util
@@ -132,9 +134,13 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         {
             string externalClientIp = Request.UserHostAddress;
             if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
+            {
                 externalClientIp = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
+            }
+            else
+                externalClientIp = HttpContext.Current.Request.UserHostAddress;
+            
             IPAddress clientIpAddr = IPAddress.Parse(externalClientIp);
-
             return clientIpAddr;
         }
 

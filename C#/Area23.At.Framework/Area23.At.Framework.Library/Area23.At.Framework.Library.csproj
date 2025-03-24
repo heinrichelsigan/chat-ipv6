@@ -172,6 +172,11 @@
     <Compile Include="Net\IpSocket\SockTcpListener.cs" />
     <Compile Include="Net\IpSocket\SockTcpSender.cs" />
     <Compile Include="Net\WebHttp\WebServiceSoap.cs" />
+    <Compile Include="Properties\Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
     <Compile Include="Util\Area23Log.cs" />
     <Compile Include="CqrXs\CqrException.cs" />
     <Compile Include="CqrXs\CqrJd\CqrService.cs" />
@@ -232,11 +237,6 @@
     <Compile Include="Net\NetworkAddresses.cs" />
     <Compile Include="Net\WebHttp\WebClientRequest.cs" />
     <Compile Include="Static\ProcessCmd.cs" />
-    <Compile Include="Properties\Resource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.resx</DependentUpon>
-    </Compile>
     <Compile Include="Static\ResReader.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\CryptBounceCastle.cs" />
     <Compile Include="Crypt\Cipher\Symmetric\CryptParamsPrefered.cs" />

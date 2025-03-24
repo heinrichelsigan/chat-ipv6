@@ -11,14 +11,14 @@ namespace EU.CqrXs.WinForm.SecureChat
     /// </summary>
     internal static class Program
     {
-
-        internal static readonly string? progName = System.Environment.ProcessPath;
+        internal static string progName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
+        // internal static readonly string? progName = System.Environment.ProcessPath;
         internal static readonly string? progDirectory = Path.GetFullPath(System.Environment.ProcessPath);
-        private static Mutex mutex = new Mutex(true, progName);
+        private static Mutex? _mutex = null;
         static internal int mode = 0;
         static internal string startFormSwitch = string.Empty;
 
-        internal static Mutex PMutec { get => mutex; }
+        internal static Mutex PMutec { get => _mutex; }
 
         /// <summary>
         ///  The main entry point for the application.
@@ -26,10 +26,10 @@ namespace EU.CqrXs.WinForm.SecureChat
         [STAThread]
         static void Main(string[] args)
         {
-            if (PMutec == null)
-                mutex = new Mutex(true, progName);
+            if (_mutex == null)
+                _mutex = new Mutex(true, progName);
 
-            if (!mutex.WaitOne(1000, false))
+            if (!_mutex.WaitOne(1000, false))
             {                
                 NativeWrapper.Kernel32.AttachConsole(NativeWrapper.Kernel32.ATTACH_PARENT_PROCESS);
                 // Area23.At.Framework.Library.Area23Log.Logger.LogOriginMsg(roachName, $"Another instance of {roachName} is already running!");
@@ -87,7 +87,7 @@ namespace EU.CqrXs.WinForm.SecureChat
             }
 
 
-            ReleaseCloseDisposeMutex(mutex);
+            ReleaseCloseDisposeMutex(_mutex);
 
         }
 

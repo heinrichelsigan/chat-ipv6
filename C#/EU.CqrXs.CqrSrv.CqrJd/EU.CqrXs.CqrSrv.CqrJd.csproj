@@ -204,6 +204,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
+    <Content Include="res\img\--1.png" />
     <Content Include="res\img\0.png" />
     <Content Include="Util\CoolCrypt.aspx" />
     <Content Include="CqrService.asmx" />
@@ -212,13 +213,6 @@
     <Content Include="Global.asax" />
     <Content Include="Util\ImageFontControl.ascx" />
     <Content Include="R.aspx" />
-    <Content Include="Qr\2024-03-24_19_18__894.png" />
-    <Content Include="res\css\area23.at.mono.css" />
-    <Content Include="res\css\fortune.css" />
-    <Content Include="res\css\frga.css" />
-    <Content Include="res\css\frog.css" />
-    <Content Include="res\css\od.css" />
-    <Content Include="res\css\rpncalcweb.css" />
     <Content Include="res\img\1.png" />
     <Content Include="res\img\2.png" />
     <Content Include="res\img\3.png" />
@@ -254,15 +248,6 @@
     <Content Include="res\img\qrsample2.png" />
     <Content Include="res\img\transparentCanvas.png" />
     <Content Include="res\img\whiteCanvas.png" />
-    <Content Include="res\js\area23.js" />
-    <Content Include="res\js\bc.js" />
-    <Content Include="res\js\digiclock.js" />
-    <Content Include="res\js\fortune.js" />
-    <Content Include="res\js\frga.js" />
-    <Content Include="res\js\frog.js" />
-    <Content Include="res\js\gtag.js" />
-    <Content Include="res\js\od.js" />
-    <Content Include="res\js\rpn.js" />
     <Content Include="Settings\Default.aspx" />
     <Content Include="Settings\.htaccess" />
     <Content Include="Settings\TestForm.aspx" />
@@ -379,12 +364,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="res\bin\" />
-    <Folder Include="res\out\" />
-    <Folder Include="res\qr\" />
-    <Folder Include="res\text\" />
     <Folder Include="res\tmp\" />
-    <Folder Include="res\uu\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resource.resx">

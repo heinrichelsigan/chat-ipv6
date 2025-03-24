@@ -1,8 +1,8 @@
 {
   "TimeStamp": "2025-03-17T05:45:30.9138005+01:00",
-  "SaveStamp": "2025-03-24T03:52:30.3333208+01:00",
+  "SaveStamp": "2025-03-24T13:36:28.0501635+01:00",
   "MyContact": {
-    "_hash": "6CDgbXFf",
+    "_hash": "6CDgAbXs",
     "_message": "",
     "ContactId": 0,
     "Cuid": "dce8d022-ba33-4c3f-a2dc-df49b473776e",
@@ -13,17 +13,19 @@
     "SecretKey": "",
     "ContactImage": null,
     "NameEmail": "Heinrich G. Elsigan <helsigan@outlook.at>",
-    "ChatRuid": "e6d04cf2-1206-4d5e-abb6-df2042cd898a",
-    "ChatRoomNr": "room_032403_helsigan_outlook_at.json",
+    "ChatRuid": "0aa9cb7d-06dc-41fb-9c88-831c41e77669",
+    "ChatRoomNr": "room_032413_helsigan_outlook_at.json",
     "TicksLong": [
-      638782788014621511
+      638784201218828345,
+      638784201700569561,
+      638784201794610116
     ],
-    "LastPushed": "2025-03-24T03:47:12.1341061+01:00",
-    "LastPolled": "2025-03-24T03:47:12.1341061+01:00",
+    "LastPushed": "2025-03-24T13:35:21.8828345+01:00",
+    "LastPolled": "2025-03-24T13:35:21.8828345+01:00",
     "MsgType": 0,
     "Message": "",
     "RawMessage": "",
-    "Hash": "6CDgbXFf",
+    "Hash": "6CDgAbXs",
     "Md5Hash": ""
   },
   "Contacts": [
@@ -5327,6 +5329,9 @@
   ],
   "MyIPs": [
     "169.254.219.156",
+    "2001:4bc9:a46:4184:1ce3:e3d8:1c20:9bfc",
+    "2001:4bc9:a46:4184:3032:8019:a9d2:dd98",
+    "192.168.181.138",
     "169.254.116.213",
     "169.254.3.120",
     "169.254.131.162",
@@ -5340,6 +5345,6 @@
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
   "SecretKeys": [
-    "1234567890"
+    "0123456789"
   ]
 }

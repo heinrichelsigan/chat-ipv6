@@ -173,6 +173,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.fr {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap DefaultF47 {
+            get {
+                object obj = ResourceManager.GetObject("DefaultF47", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DefaultF48 {
             get {
                 object obj = ResourceManager.GetObject("DefaultF48", resourceCulture);
@@ -186,6 +196,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.fr {
         internal static System.Drawing.Bitmap DefaultF50 {
             get {
                 object obj = ResourceManager.GetObject("DefaultF50", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DefaultF53 {
+            get {
+                object obj = ResourceManager.GetObject("DefaultF53", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

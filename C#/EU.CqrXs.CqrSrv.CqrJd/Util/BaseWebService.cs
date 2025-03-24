@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.Net.WebHttp;
 using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
@@ -199,7 +201,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             // _serverKey = Constants.AUTHOR_EMAIL;            
 
             if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
+            {
                 _serverKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
+            }                
             else
                 _serverKey = HttpContext.Current.Request.UserHostAddress;
             _serverKey += Constants.APP_NAME;
