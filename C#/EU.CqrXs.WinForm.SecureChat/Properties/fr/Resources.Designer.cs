@@ -231,6 +231,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.fr {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap InviteToChatRoom {
+            get {
+                object obj = ResourceManager.GetObject("InviteToChatRoom", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] Key_gray {
@@ -287,6 +297,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties.fr {
             get {
                 object obj = ResourceManager.GetObject("TransparentFormsIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap VisitChatRoom {
+            get {
+                object obj = ResourceManager.GetObject("VisitChatRoom", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

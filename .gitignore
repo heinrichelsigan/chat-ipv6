@@ -40,3 +40,9 @@ CSharp/EU.CqrXs/Publish
 
 *.class
 *.a
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/compmgmt.msc
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/compmgmt.msc.base64
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/compmgmt.msc.html
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/Wien_Energie_Rechnung_005151506171 (1).pdf
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/Wien_Energie_Rechnung_005151506171 (1).pdf.base64
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/Wien_Energie_Rechnung_005151506171 (1).pdf.html

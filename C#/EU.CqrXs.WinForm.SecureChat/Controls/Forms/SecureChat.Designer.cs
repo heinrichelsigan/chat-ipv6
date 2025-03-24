@@ -84,14 +84,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuItemChatRoom = new ToolStripMenuItem();
             MenuTextBoxChatRoom = new ToolStripTextBox();
             StripStatus = new StatusStrip();
-            StripStatusLabel = new ToolStripStatusLabel();
-            StripProgressBar = new ToolStripProgressBar();
             SplitChatView = new SplitContainer();
             TextBoxSource = new TextBox();
             TextBoxDestionation = new TextBox();
             PictureBoxYou = new PictureBox();
             ButtonKey = new Button();
             PanelEnCodeCrypt = new Panel();
+            ButtonInviteChatRoom = new Button();
+            buttonVisitChatRoom = new Button();
             TextBoxPipe = new TextBox();
             textBoxChatSession = new TextBox();
             ButtonCheck = new Button();
@@ -108,6 +108,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
+            StripStatusLabel = new ToolStripStatusLabel();
+            StripProgressBar = new ToolStripProgressBar();
             StripMenu.SuspendLayout();
             StripStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
@@ -597,32 +599,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // StripStatus
             // 
             StripStatus.GripMargin = new Padding(1);
+            StripStatus.GripStyle = ToolStripGripStyle.Visible;
             StripStatus.Items.AddRange(new ToolStripItem[] { StripStatusLabel, StripProgressBar });
             StripStatus.Location = new Point(0, 695);
             StripStatus.Name = "StripStatus";
             StripStatus.Size = new Size(998, 22);
             StripStatus.TabIndex = 102;
             StripStatus.Text = "StripStatus";
-            // 
-            // StripStatusLabel
-            // 
-            StripStatusLabel.AutoSize = false;
-            StripStatusLabel.BackColor = SystemColors.Info;
-            StripStatusLabel.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Top | ToolStripStatusLabelBorderSides.Right | ToolStripStatusLabelBorderSides.Bottom;
-            StripStatusLabel.BorderStyle = Border3DStyle.SunkenInner;
-            StripStatusLabel.LinkVisited = true;
-            StripStatusLabel.Margin = new Padding(0, 2, 0, 1);
-            StripStatusLabel.Name = "StripStatusLabel";
-            StripStatusLabel.Size = new Size(420, 19);
-            StripStatusLabel.Text = "Status";
-            // 
-            // StripProgressBar
-            // 
-            StripProgressBar.AutoSize = false;
-            StripProgressBar.Margin = new Padding(1);
-            StripProgressBar.Name = "StripProgressBar";
-            StripProgressBar.Size = new Size(548, 20);
-            StripProgressBar.Step = 104;
             // 
             // SplitChatView
             // 
@@ -715,6 +698,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // PanelEnCodeCrypt
             // 
             PanelEnCodeCrypt.BackColor = SystemColors.ActiveCaption;
+            PanelEnCodeCrypt.Controls.Add(ButtonInviteChatRoom);
+            PanelEnCodeCrypt.Controls.Add(buttonVisitChatRoom);
             PanelEnCodeCrypt.Controls.Add(TextBoxPipe);
             PanelEnCodeCrypt.Controls.Add(textBoxChatSession);
             PanelEnCodeCrypt.Controls.Add(ButtonCheck);
@@ -728,6 +713,39 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelEnCodeCrypt.Name = "PanelEnCodeCrypt";
             PanelEnCodeCrypt.Size = new Size(994, 64);
             PanelEnCodeCrypt.TabIndex = 10;
+            // 
+            // ButtonInviteChatRoom
+            // 
+            ButtonInviteChatRoom.BackColor = SystemColors.ButtonFace;
+            ButtonInviteChatRoom.BackgroundImageLayout = ImageLayout.Center;
+            ButtonInviteChatRoom.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            ButtonInviteChatRoom.ForeColor = SystemColors.ActiveCaptionText;
+            ButtonInviteChatRoom.Location = new Point(762, 30);
+            ButtonInviteChatRoom.Margin = new Padding(1);
+            ButtonInviteChatRoom.Name = "ButtonInviteChatRoom";
+            ButtonInviteChatRoom.Padding = new Padding(1);
+            ButtonInviteChatRoom.Size = new Size(64, 32);
+            ButtonInviteChatRoom.TabIndex = 21;
+            ButtonInviteChatRoom.Text = "Invite🚪";
+            ButtonInviteChatRoom.TextAlign = ContentAlignment.MiddleRight;
+            ButtonInviteChatRoom.UseVisualStyleBackColor = false;
+            ButtonInviteChatRoom.Click += ButtonInviteChatRoom_Click;
+            // 
+            // buttonVisitChatRoom
+            // 
+            buttonVisitChatRoom.BackColor = SystemColors.ButtonFace;
+            buttonVisitChatRoom.BackgroundImageLayout = ImageLayout.Center;
+            buttonVisitChatRoom.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            buttonVisitChatRoom.ForeColor = SystemColors.ActiveCaptionText;
+            buttonVisitChatRoom.Location = new Point(762, 2);
+            buttonVisitChatRoom.Margin = new Padding(1);
+            buttonVisitChatRoom.Name = "buttonVisitChatRoom";
+            buttonVisitChatRoom.Padding = new Padding(1);
+            buttonVisitChatRoom.Size = new Size(64, 27);
+            buttonVisitChatRoom.TabIndex = 20;
+            buttonVisitChatRoom.Text = "Visit 🚪";
+            buttonVisitChatRoom.TextAlign = ContentAlignment.MiddleRight;
+            buttonVisitChatRoom.UseVisualStyleBackColor = false;
             // 
             // TextBoxPipe
             // 
@@ -747,7 +765,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             textBoxChatSession.Location = new Point(416, 5);
             textBoxChatSession.Margin = new Padding(1);
             textBoxChatSession.Name = "textBoxChatSession";
-            textBoxChatSession.Size = new Size(408, 24);
+            textBoxChatSession.Size = new Size(340, 24);
             textBoxChatSession.TabIndex = 19;
             // 
             // ButtonCheck
@@ -775,7 +793,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxContacts.Location = new Point(416, 35);
             ComboBoxContacts.Margin = new Padding(1);
             ComboBoxContacts.Name = "ComboBoxContacts";
-            ComboBoxContacts.Size = new Size(408, 24);
+            ComboBoxContacts.Size = new Size(340, 24);
             ComboBoxContacts.TabIndex = 18;
             ComboBoxContacts.Text = "[Select Contact]";
             ComboBoxContacts.SelectedIndexChanged += ComboBoxContacts_SelectedIndexChanged;
@@ -941,6 +959,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelBottom.Size = new Size(824, 130);
             PanelBottom.TabIndex = 40;
             // 
+            // StripStatusLabel
+            // 
+            StripStatusLabel.AutoSize = false;
+            StripStatusLabel.BackColor = SystemColors.Info;
+            StripStatusLabel.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Top | ToolStripStatusLabelBorderSides.Right | ToolStripStatusLabelBorderSides.Bottom;
+            StripStatusLabel.BorderStyle = Border3DStyle.SunkenInner;
+            StripStatusLabel.LinkVisited = true;
+            StripStatusLabel.Margin = new Padding(0, 2, 0, 1);
+            StripStatusLabel.Name = "StripStatusLabel";
+            StripStatusLabel.Size = new Size(540, 19);
+            StripStatusLabel.Text = "Status";
+            // 
+            // StripProgressBar
+            // 
+            StripProgressBar.AutoSize = false;
+            StripProgressBar.Margin = new Padding(1);
+            StripProgressBar.Name = "StripProgressBar";
+            StripProgressBar.Size = new Size(420, 20);
+            StripProgressBar.Step = 104;
+            // 
             // SecureChat
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
@@ -1056,10 +1094,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private ToolStripMenuItem MenuHelpItemViewHelp;
         private ToolStripMenuItem MenuHelpItemInfo;
         private ToolStripMenuItem MenuHelpItemAbout;
-        private ToolStripStatusLabel StripStatusLabel;
 
         private Controls.GroupBoxes.DragNDropBox DragNDropGroupBox;
-        private ToolStripProgressBar StripProgressBar;
         private Controls.GroupBoxes.LinkLabelsBox LinkedLabelsBox;
         private Controls.Panels.PeerServerSwitchPanel PeerServerSwitch;
         private Button ButtonSend;
@@ -1070,6 +1106,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private ToolStripMenuItem MenuItemChatRoom;
         private ToolStripSeparator SeparatorMenu0;
         private ToolStripTextBox MenuTextBoxChatRoom;
+        private Button ButtonInviteChatRoom;
+        private Button buttonVisitChatRoom;
+        private ToolStripStatusLabel StripStatusLabel;
+        private ToolStripProgressBar StripProgressBar;
     }
 
 }

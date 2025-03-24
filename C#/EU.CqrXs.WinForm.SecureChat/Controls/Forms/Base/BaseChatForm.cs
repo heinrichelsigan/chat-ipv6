@@ -700,36 +700,64 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         #region ToolStripItemCollection
 
-        internal delegate void ResetProgressBarCallback(ToolStripProgressBar progressBar);
+        internal delegate int GetProgressBarCallback(ToolStripProgressBar progressBar);        
+        internal delegate void SetProgressBarCallback(ToolStripProgressBar progressBar, int progress);
         internal delegate string GetMenuItemTextCallback(ToolStripMenuItem menuItem);
         internal delegate void SetMenuItemEnabledCheckedCallback(ToolStripMenuItem tsmItem, bool miEnabled, bool miChecked);
         internal delegate void SetMenuItemTextCallback(ToolStripMenuItem menuItem, string text);
 
-        internal void ResetProgressBar(ToolStripProgressBar progressBar)
-        {
-            int progress = 0;
+        internal void ResetProgressBar(ToolStripProgressBar progressBar) => SetProgressBar(progressBar, 0);
 
+        internal int GetProgressBar(ToolStripProgressBar progressBar)
+        {
+            int progressValue = 0;
             // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
             if (progressBar != null && progressBar.GetCurrentParent() != null && progressBar.GetCurrentParent().InvokeRequired)
             {
-                ResetProgressBarCallback resetProgressBarCallback = delegate (ToolStripProgressBar pbar)
+                GetProgressBarCallback getProgressBarCallback = delegate (ToolStripProgressBar pbar)
                 {
-                    if (pbar != null)
-                        pbar.Value = 0;
+                    return (pbar != null) ? pbar.Value : 0;
                 };
                 try
                 {
-                    progressBar.GetCurrentParent().Invoke(resetProgressBarCallback, new object[] { progressBar });
+                    progressValue = (int)progressBar.GetCurrentParent().Invoke(getProgressBarCallback, new object[] { progressBar });
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate ResetProgressBar.\n", exDelegate);
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetProgressBar progress might be {progressValue}.\n", exDelegate);
+                }
+            }
+            else
+            {
+                progressValue = (progressBar != null) ? progressBar.Value : 0;
+            }
+
+            return progressValue;
+        }
+
+        internal void SetProgressBar(ToolStripProgressBar progressBar, int progress)
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            if (progressBar != null && progressBar.GetCurrentParent() != null && progressBar.GetCurrentParent().InvokeRequired)
+            {
+                SetProgressBarCallback setProgressBarCallback = delegate (ToolStripProgressBar pbar, int prgrss)
+                {
+                    if (pbar != null)
+                        pbar.Value = (prgrss < 100) ? progress : 100;
+                };
+                try
+                {
+                    progressBar.GetCurrentParent().Invoke(setProgressBarCallback, new object[] { progressBar, progress });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetProgressBar to {progress}.\n", exDelegate);
                 }
             }
             else
             {
                 if (progressBar != null)
-                    progressBar.Value = 0;
+                    progressBar.Value = (progress > 100) ? 100 : progress;
             }
 
             return;

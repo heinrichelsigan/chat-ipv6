@@ -535,7 +535,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             List<long> pollKeys = new List<long>();
             foreach (long tickIndex in dictKeys)
             {
-                if (tickIndex > sender.LastPolled.Ticks && !sender.TicksLong.Contains(tickIndex))
+                // if (tickIndex > sender.LastPolled.Ticks)
+                if (!sender.TicksLong.Contains(tickIndex))
                     pollKeys.Add(tickIndex);
             }
 
