@@ -485,6 +485,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
 
 
+        }
+
+
+        /// <summary>
+        /// Invites a selected contact to chat room, request a new chatroom
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">ÊventArgs e</param>
+        private void ButtonInviteChatRoom_Click(object sender, EventArgs e)
+        {
             bool sendInit = false;
             try
             {
@@ -1149,7 +1159,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #endregion MenuCommands MenuSend MenuAttach MenuRefresh MenuClear incl. Buttons
 
 
-       #region OnClientReceive OnDragNDrop TooglePeerServer OnDragNDrop delegate jump back invocation target members
+        #region OnClientReceive OnDragNDrop TooglePeerServer OnDragNDrop delegate jump back invocation target members
 
         /// <summary>
         /// OnClientReceive event is fired, 
