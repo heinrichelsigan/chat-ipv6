@@ -2017,8 +2017,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.SetProgressBar(this.StripProgressBar, progress);
 
 
-            this.SetProgressBar(this.StripProgressBar, progress + 5);
-                
             ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily.ShortInfo() + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
             extIpItem.Checked = true;
             extIpItem.Enabled = false;
