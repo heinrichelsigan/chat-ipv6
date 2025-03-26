@@ -168,6 +168,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (send1stReg)
                 Send_1st_Server_Registration(sender, e);                      
 
+            this.StripProgressBar.Value = 90;
+
             this.StripProgressBar.Value = 100;
             StripStatusLabel.Text = "Secure Chat init done.";
 
@@ -2015,6 +2017,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.SetProgressBar(this.StripProgressBar, progress);
 
 
+            this.SetProgressBar(this.StripProgressBar, progress + 5);
+                
             ToolStripMenuItem extIpItem = new ToolStripMenuItem(ExternalIpAddress.AddressFamily.ShortInfo() + ExternalIpAddress.ToString(), null, null, ExternalIpAddress.ToString());
             extIpItem.Checked = true;
             extIpItem.Enabled = false;
