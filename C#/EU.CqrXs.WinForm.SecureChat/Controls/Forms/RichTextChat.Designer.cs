@@ -749,6 +749,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             buttonVisitChatRoom.Text = "Visit 🚪";
             buttonVisitChatRoom.TextAlign = ContentAlignment.MiddleRight;
             buttonVisitChatRoom.UseVisualStyleBackColor = false;
+            buttonVisitChatRoom.Click += ButtonVisitChatRoom_Click;
             // 
             // TextBoxPipe
             // 

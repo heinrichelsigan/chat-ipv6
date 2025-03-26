@@ -164,6 +164,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (send1stReg)
                 Send_1st_Server_Registration(sender, e);
 
+            this.StripProgressBar.Value = 90;
+
             this.StripProgressBar.Value = 100;
             StripStatusLabel.Text = "Secure Chat init done.";
 
@@ -469,6 +471,36 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         }
 
+        /// <summary>
+        /// ButtonVisitChatRoom_Click visits a chat room
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonVisitChatRoom_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.textBoxChatSession.Text) ||
+                !this.textBoxChatSession.Text.StartsWith("room") ||
+                !this.textBoxChatSession.Text.EndsWith(".json"))
+            {
+                MessageBox.Show($"Invalid or empty chat room.", "Please enter a valid chat room image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                MenuCommandsItemRefresh_Click(sender, e);
+                ButtonCheck.Image = Properties.Resources.SatLink;
+                PlaySoundFromResource("sound_push");
+            }
+            catch (Exception exi)
+            {
+                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
+                PlaySoundFromResource("sound_hammer");
+            }
+
+        }
+
 
         /// <summary>
         /// Invites a selected contact to chat room, request a new chatroom
@@ -618,6 +650,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return false;
 
             this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomNr) ?? string.Empty;
+
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
             CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
@@ -628,7 +661,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (c.NameEmail.Contains(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                 {
                     friendContact = new CqrContact(c, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
-                    SetComboBoxText(ComboBoxContacts, friendContact.NameEmail);
                     break;
                 }
             }
@@ -639,6 +671,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             myContact._hash = GetHash();
             myContact.TicksLong = new List<long>();
             myContact.LastPushed = DateTime.Now;
+
 
             friendContact._hash = GetHash();
             serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
@@ -2449,5 +2482,4 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
     }
-
 }

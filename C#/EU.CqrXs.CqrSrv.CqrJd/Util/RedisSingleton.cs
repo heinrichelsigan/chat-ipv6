@@ -37,7 +37,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         {
             get
             {
-                if (_instance.Value.connMux == null)
+                 if (_instance.Value.connMux == null)
                 {
                     if (_instance.Value.options == null)
                         _instance.Value.options = new ConfigurationOptions
