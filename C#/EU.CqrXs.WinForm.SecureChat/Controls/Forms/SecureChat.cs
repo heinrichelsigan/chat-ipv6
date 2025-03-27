@@ -1546,10 +1546,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                 }
 
+                if (anyChecked && oldIpItem != null && newIpIem == null)
+                {
+                    oldIpItem.Checked = true;
+                }
+
 
                 if (ipSockListener != null && ipSockListener.ServerSocket != null &&
-                   (ipSockListener.ServerSocket.Connected || ipSockListener.ServerSocket.IsBound) &&
-                   !ipSockListener.ServerSocket.Blocking)
+                   (ipSockListener.ServerSocket.Connected || ipSockListener.ServerSocket.IsBound))
+                    // && !ipSockListener.ServerSocket.Blocking)
                 {
                     if (ipSockListener.ServerEndPoint != null)
                         Area23Log.LogStatic($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
