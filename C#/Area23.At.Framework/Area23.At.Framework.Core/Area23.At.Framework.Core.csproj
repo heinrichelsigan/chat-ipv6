@@ -78,7 +78,6 @@
 
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
-    <PackageReference Include="DBTek.Crypto" Version="2.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.4.0" />
     <PackageReference Include="QRCoder.Core" Version="1.0.3" />
@@ -89,7 +88,6 @@
     <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="8.1.2" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="8.1.2" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.2" />
-    <PackageReference Include="System.ServiceModel.Security" Version="6.0.*" />
   </ItemGroup>
 
 </Project>
