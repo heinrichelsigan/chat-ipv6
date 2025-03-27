@@ -1358,7 +1358,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             if (e is Area23EventArgs<int> ev)
             {
-                if (PeerSessionTriState != PeerSession3State.Peer2Peer)
+                if (((short)PeerSessionTriState) != ((short)ev.GenericTData))
                     Task.Run((async () => await TooglePeerSessionServerTriState((short)ev.GenericTData)));
 
             }
@@ -2407,22 +2407,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private void MenuOptionsItemPeer2Peer_Click(object sender, EventArgs e)
         {
             if (this.MenuOptionsItemPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
-                Task.Run((async () => await TooglePeerSessionServerTriState((short)0)));
-            else if (!this.MenuOptionsItemPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
-                Task.Run((async () => await TooglePeerSessionServerTriState((short)2)));
-            else
-                Task.Run((async () => await TooglePeerSessionServerTriState((short)1)));
-
+                ;
+            else 
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)0)));            
         }
 
         private void MenuOptionsItemServerSession_Click(object sender, EventArgs e)
         {
-            if (this.MenuOptionsItemPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
-                Task.Run((async () => await TooglePeerSessionServerTriState((short)0)));
-            else if (!this.MenuOptionsItemPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
-                Task.Run((async () => await TooglePeerSessionServerTriState((short)2)));
+            if (!this.MenuOptionsItemPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
+                ;
             else
-                Task.Run((async () => await TooglePeerSessionServerTriState((short)1)));
+                Task.Run((async () => await TooglePeerSessionServerTriState((short)2)));
         }
 
         #endregion MenuOptions
