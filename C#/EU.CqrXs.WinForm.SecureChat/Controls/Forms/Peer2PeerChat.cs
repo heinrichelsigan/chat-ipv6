@@ -54,8 +54,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (_serverIpAddress != null && !_serverIpAddress.IsIPv6UniqueLocal)
                     return _serverIpAddress;
 
-                // TODO: change it
-                List<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                List<IPAddress> list;
+                try
+                {
+                    list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                }
+                catch (Exception exDns)
+                {
+                    string srvIp = Properties.Resources.Proxies.Split(';')[0];
+                    if (IPAddress.TryParse(srvIp, out _serverIpAddress))
+                    {
+                        return _serverIpAddress;
+                    }
+                    Area23Log.LogStatic("Exception on getting server ip address via dns", exDns, "");
+                    throw;
+                }
                 foreach (IPAddress ip in list)
                 {
                     if (Proxies.Contains(ip))

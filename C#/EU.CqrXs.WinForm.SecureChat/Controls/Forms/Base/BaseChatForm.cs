@@ -108,7 +108,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
 
                 LastExternalTime = DateTime.Now;
-                _externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx");
+                try
+                {
+                    _externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx");
+                }
+                catch (Exception exNoInet)
+                {
+                    Area23Log.LogStatic("No external ip address", exNoInet, "");
+                    _externalIPAddress = IPAddress.Parse("0.0.0.0");
+                }
                 return _externalIPAddress;
             }
         }
@@ -1703,7 +1711,25 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                         SLog.Log(ex);
                     }
                 }
-                List<IPAddress> cqrXsEuIpList = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                List<IPAddress> cqrXsEuIpList;
+                try
+                {
+                    cqrXsEuIpList = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                }
+                catch (Exception exDns)
+                {
+                    IPAddress? srvPIp, srvPIp6;
+                    string srvIp4 = Properties.Resources.Proxies.Split(';')[0];
+                    string srvIp6 = Properties.Resources.Proxies.Split(';')[1];
+                    cqrXsEuIpList = new List<IPAddress>();
+                    if (IPAddress.TryParse(srvIp4, out srvPIp))
+                        cqrXsEuIpList.Add(srvPIp);
+                    if (IPAddress.TryParse(srvIp6, out srvPIp6))
+                        cqrXsEuIpList.Add(srvPIp6);
+                
+                    Area23Log.LogStatic("Exception on getting server ip address via dns", exDns, "");
+                }
+
                 foreach (IPAddress euIp in cqrXsEuIpList)
                 {
                     try
@@ -1729,6 +1755,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     }
                     catch (Exception ex)
                     {
+                        IPAddress? proxyAddr;
+                        if (IPAddress.TryParse(proxyStr, out proxyAddr))
+                            _proxies.Add(proxyAddr);
+
                         CqrException.SetLastException(ex);
                         SLog.Log(ex);
                     }

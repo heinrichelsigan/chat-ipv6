@@ -57,8 +57,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (_serverIpAddress != null && !_serverIpAddress.IsIPv6UniqueLocal)
                     return _serverIpAddress;
 
-                // TODO: change it
-                List<IPAddress> list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                List<IPAddress> list;
+                try
+                {
+                    list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
+                } 
+                catch (Exception exDns)
+                {
+                    string srvIp = Properties.Resources.Proxies.Split(';')[0];
+                    if (IPAddress.TryParse(srvIp, out _serverIpAddress))
+                    {
+                        return _serverIpAddress;
+                    }
+                    Area23Log.LogStatic("Exception on getting server ip address via dns", exDns, "");
+                    throw;
+                }
                 foreach (IPAddress ip in list)
                 {
                     if (Proxies.Contains(ip))
@@ -70,7 +83,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         if (ip.AddressFamily == AddressFamily.InterNetwork && !MenuNetworkItemIPv6Secure.Checked)
                         {
-                            _serverIpAddress = ip;
+                            _serverIpAddress = ip; 
                             return _serverIpAddress;
                         }
                     }
@@ -1496,7 +1509,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ToolStripMenuItem? oldIpItem = null, newIpIem = null;
             List<IPAddress> addresses = GetProxiesFromSettingsResources();
             InterfaceIpAddresses = await NetworkAddresses.GetIpAddressesAsync();
-            ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
+            try
+            {
+                ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
+            }
+            catch (Exception noInternetEx)
+            {
+                SetStatusText(StripStatusLabel, $"No connection to internet {noInternetEx.Message}.");
+            }            
 
             if (PeerSessionTriState == PeerSession3State.Peer2Peer || PeerSessionTriState == PeerSession3State.None)
             {
@@ -2143,11 +2163,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetStatusText(StripStatusLabel, $"Setup Network: All network interfaces addresses fetched.");
             pvalue += 10;
             SetProgressBar(StripProgressBar, pvalue);
-                
-            ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
+
+            try
+            {
+                ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
+                SetStatusText(StripStatusLabel, $"Setup Network: All active connected ip addresses fetched.");
+            } 
+            catch (Exception noInternetEx)  
+            {
+                SetStatusText(StripStatusLabel, $"No connection to internet {noInternetEx.Message}.");
+            }
             pvalue += 10;
             SetProgressBar(StripProgressBar, pvalue);
-            SetStatusText(StripStatusLabel, $"Setup Network: All active connected ip addresses fetched.");
+            
 
             MenuNetworkItemMyIps.DropDown.Items.Clear();
             MenuItemExternalIp = new ToolStripMenuItem();
