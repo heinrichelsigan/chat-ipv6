@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+	<TargetFramework>net9.0-windows</TargetFramework>
 	<IsTrimmable>true</IsTrimmable>
 	<UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -18,6 +18,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <Title>Area23.At.Framework.Core</Title>
     <Description>a small Area23.At.Framework.Core framework with minimalistic helper methods</Description>
+    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -1,38 +1,30 @@
 {
   "TimeStamp": "2025-03-09T09:31:01.7046892+01:00",
-  "SaveStamp": "2025-03-26T16:48:17.7751594+01:00",
+  "SaveStamp": "2025-03-27T13:33:33.2469924+01:00",
   "MyContact": {
-    "_hash": "",
+    "_hash": "6CDgbXFf",
     "_message": "",
-    "ContactId": -1,
-    "Cuid": "00000000-0000-0000-0000-000000000000",
-    "Name": "Igor Sekowski",
-    "Email": "igor.sekowski@gmail.com",
-    "Mobile": "+4367762540360",
+    "ContactId": 0,
+    "Cuid": "37282a6e-b958-453a-b63d-6a03746f8898",
+    "Name": "Heinrich Elsigan",
+    "Email": "heinrich.elsigan@live.at",
+    "Mobile": "+436507527928",
     "Address": "",
     "SecretKey": "",
-    "ContactImage": {
-      "_hash": "",
-      "_message": "",
-      "ImageFileName": "0.jpg",
-      "ImageMimeType": "image/jpeg",
-      "ImageBase64": "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",
-      "MsgType": 0,
-      "Message": "",
-      "RawMessage": "",
-      "Hash": "",
-      "Md5Hash": ""
-    },
-    "NameEmail": "Igor Sekowski <igor.sekowski@gmail.com>",
-    "ChatRuid": "00000000-0000-0000-0000-000000000000",
-    "ChatRoomNr": "",
-    "TicksLong": [],
-    "LastPushed": "0001-01-01T00:00:00",
-    "LastPolled": "0001-01-01T00:00:00",
+    "ContactImage": null,
+    "NameEmail": "Heinrich Elsigan <heinrich.elsigan@live.at>",
+    "ChatRuid": "df34c782-4b5f-4e66-ba01-42af0050e3e9",
+    "ChatRoomNr": "room_032712_heinrich_elsigan_live_at.json",
+    "TicksLong": [
+      638786753103253110,
+      638786753416808290
+    ],
+    "LastPushed": "2025-03-27T13:28:30.325311+01:00",
+    "LastPolled": "2025-03-27T13:28:30.325311+01:00",
     "MsgType": 0,
     "Message": "",
     "RawMessage": "",
-    "Hash": "",
+    "Hash": "6CDgbXFf",
     "Md5Hash": ""
   },
   "Contacts": [
@@ -5359,12 +5351,13 @@
   ],
   "MyIPs": [
     "169.254.219.156",
-    "2001:4bc9:a46:4184:ea5c:e2b:e832:58c7",
-    "2001:4bc9:a46:4184:68cd:8f69:785b:3e26",
-    "192.168.181.155",
-    "169.254.116.213",
+    "172.22.160.1",
+    "2001:4bc9:a47:bcee:c007:56b2:da67:6d92",
+    "2001:4bc9:a47:bcee:45ee:541a:1fbb:60a6",
+    "192.168.95.139",
     "169.254.253.181",
     "169.254.52.122",
+    "169.254.116.213",
     "10.0.0.246",
     "::1",
     "127.0.0.1"
@@ -5374,6 +5367,6 @@
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
   "SecretKeys": [
-    "1234"
+    "1234565789"
   ]
 }

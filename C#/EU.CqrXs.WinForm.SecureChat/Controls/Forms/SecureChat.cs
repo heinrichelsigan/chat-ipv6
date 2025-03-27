@@ -684,6 +684,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\n";
             this.TextBoxSource.Text = chat.AddMyMessage(myReqMsg);
 
+
+            SetStatusText(StripStatusLabel, myReqMsg);
             // Send chat room invite via WebService
             FullSrvMsg<string> rfmsg = serverMessage.Send_InitChatRoom_Soap(fmsg, ServerIpAddress, EncodingType.Base64);
 
@@ -823,6 +825,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
                 string encrypted = pmsg.CqrPeerMsg(unencrypted);
 
+                SetStatusText(StripStatusLabel, $"Starting send to {chatRoomNr} via server {ServerIpAddress} ...");
+
                 // Send msg to WebService
                 FullSrvMsg<string> rfmsg = serverMessage.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
 
@@ -842,10 +846,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
                 Format_Lines_RichTextBox();
-                this.RichTextBoxChat.Text = string.Empty;
-                StripStatusLabel.Text = $"Send to {chatRoomNr} via server {ServerIpAddress} successfully.";
+                this.RichTextBoxChat.Text = string.Empty;                
                 PlaySoundFromResource("sound_arrow");
-                SetStatusText(StripStatusLabel, "Finished 1st registration");
+                SetStatusText(StripStatusLabel, $"Send to {chatRoomNr} via server {ServerIpAddress} successfully.");
             }
             // otherwise send message to registered user via server
             // Always encrypt via key

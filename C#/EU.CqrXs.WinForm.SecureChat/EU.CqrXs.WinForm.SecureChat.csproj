@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>	
+    <OutputType>WinExe</OutputType>
+	<TargetFramework>net9.0-windows</TargetFramework>
 	<UseWindowsForms>True</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -27,7 +28,10 @@
 	<UseWPF>False</UseWPF>	  		
 	<IsTrimmable>true</IsTrimmable>
 	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
-	<TargetFrameworks>net9.0-windows7.0</TargetFrameworks>
+	<TargetFrameworks></TargetFrameworks>
+	<Description>https://cqrxs.eu/help</Description>
+	<PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
+	<NuGetAuditMode>all</NuGetAuditMode>
 	<!-- PublishTrimmed>True</PublishTrimmed -->
 
   </PropertyGroup>
@@ -35,15 +39,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>4</WarningLevel>
     <DebugType>embedded</DebugType>
-    <DefineConstants>$(DefineConstants);HILLARIOUSTRUMPED</DefineConstants>
+    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
     <WarningLevel>8</WarningLevel>
-    <DefineConstants>$(DefineConstants);HILLARIOUSTRUMPED</DefineConstants>
+    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
