@@ -2,9 +2,10 @@
 	CqrJDialog
 	https://heinrichelsigan.area23.at
 */
-// package eu.cqrxs.gui;
+package eu.cqrxs.gui;
 
-// import eu.cqrxs.gui.*;
+import eu.cqrxs.gui.CqrJDialog;
+import eu.cqrxs.gui.*;
 
 import java.awt.*;
 import java.awt.event.*;

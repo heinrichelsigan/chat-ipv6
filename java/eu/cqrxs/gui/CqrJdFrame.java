@@ -2,9 +2,12 @@
 	CqrJdFrame
 	https://heinrichelsigan.area23.at
 */
-// package eu.cqrxs.gui;
+package eu.cqrxs.gui;
 
-// import eu.cqrxs.gui.CqrJDialog;
+import eu.cqrxs.gui.CqrJdFrame;
+import eu.cqrxs.gui.*;
+import eu.cqrxs.gui.CqrJDialog;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -22,7 +25,6 @@ public class CqrJdFrame extends JFrame
 	}
 
 
-	
 	public void AddMenus(JMenuBar jBar) {
 		
 		menuFile = new JMenu();

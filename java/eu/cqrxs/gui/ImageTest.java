@@ -2,7 +2,10 @@
 	ImageTest 
 	https://heinrichelsigan.area23.at
 */
-package cqrxs.eu.gui;
+package eu.cqrxs.gui;
+
+import eu.cqrxs.gui.*;
+import eu.cqrxs.gui.ImageTest;
 
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
@@ -12,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
 
 public class ImageTest {
 

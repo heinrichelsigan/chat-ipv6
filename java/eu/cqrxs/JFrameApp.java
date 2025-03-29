@@ -1,6 +1,8 @@
 /*
-A basic extension of the JApplet class
+    JFrameApp - a basic extension of the JApplet class
 */
+
+package eu.cqrxs;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -10,13 +12,24 @@ import java.net.*;
 import java.lang.*;
 import java.time.Duration;
 
-public class CqrJFrame extends JFrame
+public class JFrameApp extends JFrame
 {
 
-	public void CqrJFrame() {
+
+	public static void main(String args[]) {
+		
+		jframeApp = new JFrameApp();
+		jframeApp.setLayout(null);
+		jframeApp.setSize(480,360);
+		jframeApp.Init(jframeApp);
+		jframeApp.setVisible(true);
+		jframeApp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+
+	public void JFrameApp() {
 
 	}
-
 
 	
 	public void AddMenus(JMenuBar jBar) {
@@ -267,7 +280,7 @@ public class CqrJFrame extends JFrame
 	}
 
 	//{{DECLARE_CONTROLS
-	public static CqrJFrame cqrJFrame;
+	public static JFrameApp jframeApp;
 	JComboBox jComboBox = new JComboBox();
 	JPanel jPanelCenter = new JPanel();
 	JButton JButton1 = new JButton();
@@ -302,16 +315,6 @@ public class CqrJFrame extends JFrame
 	JMenuItem menuHelp_itemAbout = new JMenuItem();
 	//}}
 
-	public static void main(String args[]) {
-		
-		cqrJFrame = new CqrJFrame();
-		cqrJFrame.setLayout(null);
-		cqrJFrame.setSize(480,360);
-		cqrJFrame.Init(cqrJFrame);
-		cqrJFrame.setVisible(true);
-		cqrJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	}
-	
 
 	class SymAction implements ActionListener
 	{
