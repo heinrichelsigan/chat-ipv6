@@ -2,6 +2,10 @@
 A basic extension of the JApplet class
 */
 
+package eu.cqrxs.cqrframe;
+
+import eu.cqrxs.cqrframe.CqrFrame;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
