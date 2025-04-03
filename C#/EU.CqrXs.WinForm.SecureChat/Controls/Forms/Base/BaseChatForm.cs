@@ -244,6 +244,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         #region TextBox&RichTextBox
 
+        internal delegate string GetTextBoxTextCallback(System.Windows.Forms.TextBox textBox);
+
         internal delegate string GetRichTextBoxTextCallback(System.Windows.Forms.RichTextBox textBox);
 
         internal delegate void SetTextCallback(System.Windows.Forms.TextBox textBox, string text);
@@ -271,6 +273,34 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         internal delegate void DeselectAllRichTextCallback(System.Windows.Forms.RichTextBox richTextBox);
 
+
+        internal string GetTextBoxText(System.Windows.Forms.TextBox textBox)
+        {
+            string returnTxt = "";
+            if (textBox.InvokeRequired)
+            {
+                GetTextBoxTextCallback getTextBoxTextCallback =
+                    delegate (System.Windows.Forms.TextBox txtbox)
+                    {
+                        return (txtbox != null && txtbox.Text != null) ? txtbox.Text : "";
+                    };
+                try
+                {
+                    returnTxt = (string)textBox.Invoke(getTextBoxTextCallback, new object[] { textBox });
+                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetTextBoxText(RichTextBox textBox): \"{exDelegate.Message}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                returnTxt = (textBox != null && textBox.Text != null) ? textBox.Text : "";
+            }
+
+            return returnTxt;
+        }
 
         internal string GetRichTextBoxText(System.Windows.Forms.RichTextBox textBox)
         {
@@ -335,6 +365,38 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     textBox.AppendText(textToAppend);
             }
         }
+
+        internal void SetTextBoxText(System.Windows.Forms.TextBox textBox, string text)
+        {
+            string textToSet = !string.IsNullOrEmpty(text) ? text : string.Empty;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (textBox.InvokeRequired)
+            {
+                SetTextCallback setTextCallback = // new AppendTextCallback(SetTextSpooler);
+                    delegate (System.Windows.Forms.TextBox textArea, string setTxt)
+                    {
+                        if (textArea != null && textArea.Text != null && setTxt != null)
+                            textArea.Text = setTxt;
+                    };
+                try
+                {
+                    textBox.Invoke(setTextCallback, new object[] { textBox, textToSet });
+                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetRichText text: \"{text}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (textBox != null && textBox.Text != null && textToSet != null)
+                    textBox.Text = textToSet;
+            }
+        }
+
 
         internal void SetRichText(System.Windows.Forms.RichTextBox richTextBox, string text)
         {

@@ -1051,14 +1051,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
-                    textBoxChatSession.Text = chatRoomNr;
+                    SetTextBoxText(this.textBoxChatSession,  chatRoomNr);
 
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
                 {
                     InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                     dialog.ShowDialog();
                     chatRoomNr = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
-                    textBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : textBoxChatSession.Text;
+                    SetTextBoxText(textBoxChatSession, ((!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : GetTextBoxText(textBoxChatSession)));
                 }
 
                 CqrContact? friendContact = null;
@@ -1088,8 +1088,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     friendContact.ChatRoomNr = chatRoomNr;
                 }
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
-                this.TextBoxPipe.Text = serverMessage.PipeString;
-                this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+                SetTextBoxText(TextBoxPipe, serverMessage.PipeString);
+                try
+                {
+                    this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+                }
+                catch { }
 
 
                 serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
