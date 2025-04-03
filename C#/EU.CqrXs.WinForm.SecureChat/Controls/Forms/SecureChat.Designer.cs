@@ -326,7 +326,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemSend.Size = new Size(178, 22);
             MenuCommandsItemSend.Text = "send";
             MenuCommandsItemSend.ToolTipText = "sends a message";
-            MenuCommandsItemSend.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemSend_Click(sender, e)); ;
+            MenuCommandsItemSend.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemSend_Click(sender, e)); 
             // 
             // MenuCommandsItemAttach
             // 

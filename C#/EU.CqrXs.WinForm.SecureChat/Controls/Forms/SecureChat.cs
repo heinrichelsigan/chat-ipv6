@@ -717,6 +717,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
                 Settings.Singleton.MyContact = myContact;
                 Settings.SaveSettings(Settings.Singleton);
+                //if (rfmsg.Recipients != null && rfmsg.Recipients.Count > 0)
+                //{
+                //    if (!string.IsNullOrEmpty(rfmsg.Recipients.ElementAt(0).NameEmail))
+                //        SetComboBoxText(this.ComboBoxContacts, rfmsg.Recipients.ElementAt(0).NameEmail);
+                //}
             }
 
             // TODO: Email zur Einladung
@@ -2058,6 +2063,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #endregion SplitChatWindowLayout
 
 
+        #region network functionality
+
         /// <summary>
         /// SetupNetwork async method to setup network
         /// </summary>
@@ -2170,8 +2177,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.SetProgressBar(this.StripProgressBar, progress + 25);
             SetStatusText(StripStatusLabel, $"Setup Network complete, saving settings!");
         }
-
-
 
         internal async Task<List<IPAddress>> SetupAllNetworkInterfacesAndConnectedIpAddresses(List<IPAddress> addresses, int pvalue = 0)
         {
@@ -2365,7 +2370,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
-
         public void ServerProxyAddressSelected(object sender, EventArgs e)
         {
             if (sender != null && sender is ToolStripMenuItem newProxyItem)
@@ -2404,6 +2408,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
             }
         }
+
+        #endregion network functionality
 
         #region MenuOptions
 
