@@ -494,7 +494,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonVisitChatRoom_Click(object sender, EventArgs e)
+        internal async Task ButtonVisitChatRoom_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(this.textBoxChatSession.Text) ||
                 !this.textBoxChatSession.Text.StartsWith("room") ||
@@ -506,15 +506,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
            
             try
             {
-                MenuCommandsItemRefresh_Click(sender, e);
+                await MenuCommandsItemRefresh_Click(sender, e);
                 ButtonCheck.Image = Properties.Resources.SatLink;
-                PlaySoundFromResource("sound_push");
+                await PlaySoundFromResourcesAsync("sound_push");
             }
             catch (Exception exi)
             {
                 Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
                 SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
-                PlaySoundFromResource("sound_hammer");
+                await PlaySoundFromResourcesAsync("sound_hammer");
             }
 
         }
@@ -974,7 +974,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         friendContact._hash = GetHash();
                         friendContact.ChatRoomNr = chatRoomNr;
-                        serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                     }
                     else
                         serverMessage = new SrvMsg(myContact, myContact, CqrXsEuSrvKey, myServerKey);
@@ -1152,13 +1151,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         SetAttachmentTextLink(cqrReceivedFile);
                         friendMsg = cqrReceivedFile.GetFileNameContentLength() + Environment.NewLine;
-                        PlaySoundFromResource("sound_wind");
+                        await PlaySoundFromResourcesAsync("sound_wind");
                     }
                 }
                 else
                 {
                     friendMsg = msgContent.Message + Environment.NewLine;
-                    PlaySoundFromResource("sound_push");
+                    await PlaySoundFromResourcesAsync("sound_push");
                 }
 
                 string appendDestMsg = chat.AddFriendMessage(friendMsg);

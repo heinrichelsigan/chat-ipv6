@@ -1,8 +1,8 @@
 {
   "TimeStamp": "2025-03-09T09:31:01.7046892+01:00",
-  "SaveStamp": "2025-04-03T08:45:36.2233781+02:00",
+  "SaveStamp": "2025-04-03T09:23:59.7963952+02:00",
   "MyContact": {
-    "_hash": "6CDgbXFf",
+    "_hash": "6DgCXbFf",
     "_message": "",
     "ContactId": 0,
     "Cuid": "37282a6e-b958-453a-b63d-6a03746f8898",
@@ -13,19 +13,17 @@
     "SecretKey": "",
     "ContactImage": null,
     "NameEmail": "Heinrich Elsigan <heinrich.elsigan@live.at>",
-    "ChatRuid": "86f2ed20-3838-4836-831e-79b59ec8911b",
-    "ChatRoomNr": "room_040306_heinrich_elsigan_live_at.json",
+    "ChatRuid": "5394fa60-544c-4fec-927f-840d3f019942",
+    "ChatRoomNr": "room_040307_heinrich_elsigan_live_at.json",
     "TicksLong": [
-      638792594647625230,
-      638792594772665540,
-      638792595040878770
+      638792618386898520
     ],
-    "LastPushed": "2025-04-03T08:44:24.762523+02:00",
-    "LastPolled": "2025-04-03T08:44:24.762523+02:00",
+    "LastPushed": "2025-04-03T09:23:58.689852+02:00",
+    "LastPolled": "2025-04-03T09:23:58.689852+02:00",
     "MsgType": 0,
     "Message": "",
     "RawMessage": "",
-    "Hash": "6CDgbXFf",
+    "Hash": "6DgCXbFf",
     "Md5Hash": ""
   },
   "Contacts": [
@@ -5354,9 +5352,6 @@
     "192.168.43.240"
   ],
   "MyIPs": [
-    "169.254.253.181",
-    "169.254.52.122",
-    "10.0.0.246",
     "10.0.0.130",
     "192.168.43.177",
     "::1",
