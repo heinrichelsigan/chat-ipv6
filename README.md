@@ -7,7 +7,9 @@
 # <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/doc">**doc**</a>
 
 <hr />
-<pre>next release (pre-alpha) deployed on 2025-04-03 here:
+<pre>all releases could be found here:
+  <a href="https://cqrxs.eu/download/" target="_blank">https://cqrxs.eu/download/</a> (please take always the newest.)
+  next release (pre-alpha) deployed on 2025-04-03 here:
   <a href="https://cqrxs.eu/download/2025-04-03_WinChat_x86.7z" target="_blank">https://cqrxs.eu/download/2025-04-03_WinChat_x86.7z</a>
   
 Features:
