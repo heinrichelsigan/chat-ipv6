@@ -858,6 +858,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     this.RichTextBoxChat.Text = string.Empty;
                     await PlaySoundFromResourcesAsync("sound_arrow");
                     SetStatusText(StripStatusLabel, $"Send to {chatRoomNr} via server {ServerIpAddress} successfully.");
+
+                    await MenuCommandsItemRefresh_Click(sender, e);
                 }
                 // otherwise send message to registered user via server
                 // Always encrypt via key
@@ -986,39 +988,31 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         if (cqrFile != null && !string.IsNullOrEmpty(this.textBoxChatSession.Text))
                         {
-                            try
+                            // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
+                            encrypted = pmsg.CqrFile(cqrFile, MsgEnum.Json, EncodingType.Base64);
+
+                            string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
+                            System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
+
+                            // Send to WebService
+                            FullSrvMsg<string>? rfmsg = await serverMessage.SendChatMsg_Soap_SimpleAsync<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
+
+                            if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                                rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
                             {
-
-                                // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                                encrypted = pmsg.CqrFile(cqrFile, MsgEnum.Json, EncodingType.Base64);
-
-                                string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName + Constants.BASE64_EXT);
-                                System.IO.File.WriteAllText(base64FilePath, cqrFile.ToBase64());
-
-                                // Send to WebService
-                                FullSrvMsg<string>? rfmsg = await serverMessage.SendChatMsg_Soap_SimpleAsync<string>(fmsg, encrypted, ServerIpAddress, EncodingType.Base64);
-
-                                if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                                    rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
-                                {
-                                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
-                                    Settings.Singleton.MyContact = myContact;
-                                    Settings.SaveSettings(Settings.Singleton);
-                                }
-
-                                string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
-                                AppendText(TextBoxSource, userMsg);
-                                Format_Lines_RichTextBox();
-                                this.RichTextBoxChat.Text = string.Empty;
-                                await PlaySoundFromResourcesAsync("sound_push");
-                                SetStatusText(StripStatusLabel, $"File {cqrFile.CqrFileName} send to {partnerIpAddress} successfully!");
+                                myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                                Settings.Singleton.MyContact = myContact;
+                                Settings.SaveSettings(Settings.Singleton);
                             }
-                            catch (Exception ex)
-                            {
-                                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
-                                SetStatusText(StripStatusLabel, "Attach FAILED: " + ex.Message);
-                                await PlaySoundFromResourcesAsync("sound_warning");
-                            }
+
+                            string userMsg = chat.AddMyMessage(cqrFile.GetFileNameContentLength());
+                            AppendText(TextBoxSource, userMsg);
+                            Format_Lines_RichTextBox();
+                            this.RichTextBoxChat.Text = string.Empty;
+                            await PlaySoundFromResourcesAsync("sound_push");
+                            SetStatusText(StripStatusLabel, $"File {cqrFile.CqrFileName} send to {partnerIpAddress} successfully!");
+
+                            await MenuCommandsItemRefresh_Click(sender, e);
                         }
 
                     }
@@ -1033,6 +1027,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
+        /// <summary>
+        /// MenuCommandsItemRefresh_Click refresh in session server mode from server
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <returns></returns>
 
         internal async Task MenuCommandsItemRefresh_Click(object sender, EventArgs e)
         {
