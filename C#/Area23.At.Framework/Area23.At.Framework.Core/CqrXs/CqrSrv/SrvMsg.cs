@@ -448,6 +448,38 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
 
         /// <summary>
+        /// Send_InitChatRoom_SoapAsync{<typeparamref name="T"/>} Sends async an chat roomm invitation
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fullServerMsg"><see cref="FullSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="srvIp"></param>
+        /// <param name="encodingType"></param>
+        /// <returns><see cref="Task{FullSrvMsg{string}}"/>, containing char room number, last polled date, updated sender and recipients</returns>
+        public async Task<FullSrvMsg<string>?> Send_InitChatRoom_SoapAsync<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+            where T : class
+        {
+            string cryptSrv = CqrSrvMsg<T>(fullServerMsg);
+
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
+
+            string response = string.Empty;
+            try
+            {
+                response = await client.ChatRoomInviteAsync(cryptSrv);
+            }
+            catch (Exception exSoap)
+            {
+                Area23Log.LogStatic($"Exception {exSoap.GetType()}: {exSoap.Message}\n\t{exSoap}\n");
+                throw;
+            }
+
+            FullSrvMsg<string>? rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
+
+
+            return rfmsg;
+        }
+
+        /// <summary>
         /// SendChatMsg_Soap{<typeparamref name="T"/>, <typeparamref name="TC"/>} 
         /// </summary>
         /// <param name="fullServerMsg"><see cref="FullSrvMsg{T}"/>, containing char room number, sender and recipients</param>
@@ -465,6 +497,28 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
             string response = client.ChatRoomPushMessage(cryptSrv, cryptPatner);
             FullSrvMsg<string> rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
+
+            return rfmsg;
+        }
+
+        /// <summary>
+        /// SendChatMsg_SoapAsync{<typeparamref name="T"/>, <typeparamref name="TC"/>} 
+        /// </summary>
+        /// <param name="fullServerMsg"><see cref="FullSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="fullClientMsg">client encrypted messagem, that server can't decrypt, <see cref="FullSrvMsg{TC}"/></param>fullClientMsgfullClientMsg
+        /// <param name="srvIp"></param>
+        /// <param name="encodingType"></param>
+        /// <returns><see cref="Task{FullSrvMsg{string}?}"/>, containing char room number, last polled date, updated sender and recipients</returns>
+        public async Task<FullSrvMsg<string>?> SendChatMsg_SoapAsync<T, TC>(FullSrvMsg<T> fullServerMsg, FullSrvMsg<TC> fullClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+            where T : class
+            where TC : class
+        {
+            string cryptSrv = CqrSrvMsg<T>(fullServerMsg, MsgKind.Server);
+            string cryptPatner = CqrSrvMsg<TC>(fullClientMsg, MsgKind.Client);
+
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+            string response = await client.ChatRoomPushMessageAsync(cryptSrv, cryptPatner);
+            FullSrvMsg<string>? rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
 
             return rfmsg;
         }
@@ -492,6 +546,29 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
             return rfmsg;
         }
 
+        /// <summary>
+        /// SendChatMsg_Soap_Simple{<typeparamref name="TS"/>} send a simple push message to the server
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fullServerMsg"><see cref="FullSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="encryptedClientMsg">already encrypted client msg, that server can't read</param>
+        /// <param name="srvIp"></param>
+        /// <param name="encodingType"></param>
+        /// <returns><see cref="Task{FullSrvMsg{string}}"/>, containing char room number, last polled date, updated sender and recipients</returns>
+        public async Task<FullSrvMsg<string>?> SendChatMsg_Soap_SimpleAsync<TS>(FullSrvMsg<TS> fullServerMsg, string encryptedClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
+           where TS : class
+        {
+            string cryptSrv = CqrSrvMsg<TS>(fullServerMsg, MsgKind.Server);
+
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+            string response = await client.ChatRoomPushMessageAsync(cryptSrv, encryptedClientMsg);
+
+            FullSrvMsg<string>? rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
+
+            return rfmsg;
+        }
+
+
 
         /// <summary>
         /// ReceiveChatMsg_Soap{<typeparamref name="T"/>} is a polling chat server request
@@ -508,6 +585,28 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
             string response = client.ChatRoomPoll(cryptSrv);
+            FullSrvMsg<string>? rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
+
+            return rfmsg;
+
+        }
+
+        /// <summary>
+        /// ReceiveChatMsg_SoapAsync{<typeparamref name="T"/>} async polling chat server request
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fullServerMsg"><see cref="FullSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="srvIp"></param>
+        /// <param name="encodingType"></param>
+        /// <returns><see cref="Task{FullSrvMsg{string}}"/>, containing char room number, last polled date, updated sender and recipients</returns>
+        public async Task<FullSrvMsg<string>?> ReceiveChatMsg_SoapAsync<T>(FullSrvMsg<T> fullServerMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64) 
+            where T : class
+        {
+            string cryptSrv = CqrSrvMsg<T>(fullServerMsg, MsgKind.Server);
+
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap12);
+            string response = await client.ChatRoomPollAsync(cryptSrv);
+            
             FullSrvMsg<string>? rfmsg = NCqrSrvMsg<string>(response, EncodingType.Base64);
 
             return rfmsg;

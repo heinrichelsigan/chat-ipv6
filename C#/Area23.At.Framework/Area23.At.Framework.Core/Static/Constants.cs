@@ -29,7 +29,7 @@ namespace Area23.At.Framework.Core.Static
         
         // constants time intervals
         public const int CLOSING_TIMEOUT = 1000;
-        public const int BGWORKWE_BUSYWAITING_SLEEP = 720000;
+        public const int BGWORKWE_BUSYWAITING_SLEEP = 360000;
         
         // constants bool
         public const bool CQR_ENCRYPT = true;

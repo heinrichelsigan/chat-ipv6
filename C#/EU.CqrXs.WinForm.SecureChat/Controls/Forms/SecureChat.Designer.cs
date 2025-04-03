@@ -326,7 +326,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemSend.Size = new Size(178, 22);
             MenuCommandsItemSend.Text = "send";
             MenuCommandsItemSend.ToolTipText = "sends a message";
-            MenuCommandsItemSend.Click += MenuCommandsItemSend_Click;
+            MenuCommandsItemSend.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemSend_Click(sender, e)); ;
             // 
             // MenuCommandsItemAttach
             // 
@@ -336,7 +336,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemAttach.Size = new Size(178, 22);
             MenuCommandsItemAttach.Text = "attach";
             MenuCommandsItemAttach.ToolTipText = "attaches file to send; in prototype only  file extension image audio and video is supported";
-            MenuCommandsItemAttach.Click += MenuCommandsItemAttach_Click;
+            MenuCommandsItemAttach.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemAttach_Click(sender, e)); 
             // 
             // MenuCommandsSeperator
             // 
@@ -352,7 +352,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemRefresh.Size = new Size(178, 22);
             MenuCommandsItemRefresh.Text = "refresh";
             MenuCommandsItemRefresh.ToolTipText = "refreshes, when the terminal is flushed";
-            MenuCommandsItemRefresh.Click += MenuCommandsItemRefresh_Click;
+            MenuCommandsItemRefresh.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemRefresh_Click(sender, e));
             // 
             // MenuCommandsItemClear
             // 
@@ -362,7 +362,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemClear.Size = new Size(178, 22);
             MenuCommandsItemClear.Text = "clear";
             MenuCommandsItemClear.ToolTipText = "clears completey all chat windows";
-            MenuCommandsItemClear.Click += MenuCommandsItemClear_Click;
+            MenuCommandsItemClear.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemClear_Click(sender, e)); 
             // 
             // MenuContacts
             // 
@@ -729,7 +729,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonInviteChatRoom.Text = "Invite🚪";
             ButtonInviteChatRoom.TextAlign = ContentAlignment.MiddleRight;
             ButtonInviteChatRoom.UseVisualStyleBackColor = false;
-            ButtonInviteChatRoom.Click += ButtonInviteChatRoom_Click;
+            ButtonInviteChatRoom.Click += new System.EventHandler(async (sender, e) => await ButtonInviteChatRoom_Click(sender, e));
             // 
             // buttonVisitChatRoom
             // 
@@ -882,7 +882,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonSend.TabIndex = 83;
             ButtonSend.Text = "Send";
             ButtonSend.UseVisualStyleBackColor = true;
-            ButtonSend.Click += ButtonSend_Click;
+            ButtonSend.Click += new System.EventHandler(async (sender, e) => await ButtonSend_Click(sender, e));
             // 
             // ButtonAttach
             // 
@@ -895,7 +895,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonAttach.TabIndex = 82;
             ButtonAttach.Text = "Attach";
             ButtonAttach.UseVisualStyleBackColor = true;
-            ButtonAttach.Click += ButtonAttach_Click;
+            ButtonAttach.Click +=  new System.EventHandler(async (sender, e) => await ButtonAttach_Click(sender, e));
             // 
             // DragNDropGroupBox
             // 
