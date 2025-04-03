@@ -7,8 +7,9 @@
 # <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/doc">**doc**</a>
 
 <hr />
-<pre>next release (pre-alpha) 
-launches on 2025-03-05
+<pre>next release (pre-alpha) deployed on 2025-04-03 here:
+  <a href="https://cqrxs.eu/download/2025-04-03_WinChat_x86.7z" target="_blank">https://cqrxs.eu/download/2025-04-03_WinChat_x86.7z</a>
+  
 Features:
 - C# full client as fat .exe 
   requires no framework
