@@ -1040,6 +1040,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         internal async Task MenuCommandsItemRefresh_Click(object sender, EventArgs e)
         {
+            if (chat == null)
+                chat = new Chat(0);
 
             if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
@@ -1101,24 +1103,29 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (rfmsg == null || string.IsNullOrEmpty(rfmsg.TContent))
                 {
                     MessageBox.Show("Empty message or empty body", "Message from Service is null or body is empty!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    if (rfmsg == null)
+                        return;
+                    if (string.IsNullOrEmpty(rfmsg.TContent))
+                        rfmsg.TContent = " ";
                 }
 
-                if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                    rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail))
                 {
-                    myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                    if (rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                    }
+                    else  
+                    {
+                        myContact = new CqrContact(Settings.Singleton.MyContact, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                        myContact.LastPolled = rfmsg.Sender.LastPolled;
+                        myContact.LastPushed = rfmsg.Sender.LastPushed;
+                        myContact.TicksLong = new List<long>(rfmsg.TicksLong);
+                    }
                     Settings.Singleton.MyContact = myContact;
                     Settings.SaveSettings(Settings.Singleton);
-                    if (rfmsg.Recipients != null)
-                    {
-                        foreach (CqrContact rctc in rfmsg.Recipients)
-                        {
-                            if (!rctc.NameEmail.Equals(myContact.NameEmail) && string.IsNullOrEmpty(contactNameEmail))
-                                SetComboBoxText(this.ComboBoxContacts, rctc.NameEmail);
-                        }
-                    }
                 }
+                    
 
                 string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                 MsgContent msgContent;
@@ -1129,7 +1136,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 catch (Exception exCrypt)
                 {
-                    PlaySoundFromResource("sound_hammer");
+                    await PlaySoundFromResourcesAsync("sound_hammer");
                     if (exCrypt is InvalidOperationException)
                     {
                         MessageBox.Show(((InvalidOperationException)exCrypt).Message, "Invalid or non matching secret key for decrypt.", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1165,8 +1172,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 // AppendText(TextBoxDestionation, friendMsg);
                 // this.RichTextBoxOneView.Text = unencrypted;
                 Format_Lines_RichTextBox();
-                this.RichTextBoxChat.Text = string.Empty;
-                StripStatusLabel.Text = $"Received msg from server {ServerIpAddress} chat room {chatRoomNr}.";
+                SetRichText(RichTextBoxChat, string.Empty);
+                SetStatusText(StripStatusLabel, $"Received msg from server {ServerIpAddress} chat room {chatRoomNr}.");
             }
         }
 

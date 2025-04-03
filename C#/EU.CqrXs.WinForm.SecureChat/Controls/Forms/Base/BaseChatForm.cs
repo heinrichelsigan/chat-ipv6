@@ -248,6 +248,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         internal delegate void SetTextCallback(System.Windows.Forms.TextBox textBox, string text);
 
+        internal delegate void SetRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, string text);
+
         internal delegate void AppendTextCallback(System.Windows.Forms.TextBox textBox, string text);
 
         internal delegate void AppendRichTextCallback(System.Windows.Forms.RichTextBox richTextBox, string text);
@@ -331,6 +333,37 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             {
                 if (textBox != null && textBox.Text != null && textToAppend != null)
                     textBox.AppendText(textToAppend);
+            }
+        }
+
+        internal void SetRichText(System.Windows.Forms.RichTextBox richTextBox, string text)
+        {
+            string textToSet = !string.IsNullOrEmpty(text) ? text : string.Empty;
+
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (richTextBox.InvokeRequired)
+            {
+                SetRichTextCallback setRichTextCallback = // new AppendTextCallback(SetTextSpooler);
+                    delegate (System.Windows.Forms.RichTextBox textArea, string setTxt)
+                    {
+                        if (textArea != null && textArea.Text != null && setTxt != null)
+                            textArea.Text = setTxt;
+                    };
+                try
+                {
+                    richTextBox.Invoke(setRichTextCallback, new object[] { richTextBox, textToSet });
+                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetRichText text: \"{text}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (richTextBox != null && richTextBox.Text != null && textToSet != null)
+                    richTextBox.Text = textToSet;
             }
         }
 
