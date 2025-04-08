@@ -1691,7 +1691,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                         cbValue = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
                         if (cbValue != null)
                         {
-                            foreach (CqrContact c in Settings.Instance.Contacts)
+                            foreach (CqrContact c in Settings.Singleton.Contacts)
                             {
                                 if (c.Name.Contains(cbValue) || c.NameEmail.Contains(cbValue, StringComparison.CurrentCultureIgnoreCase) || c.Email.Contains(cbValue, StringComparison.CurrentCultureIgnoreCase))
                                 {
@@ -1803,7 +1803,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     catch (Exception ex)
                     {
                         CqrException.SetLastException(ex);
-                        SLog.Log(ex);
                     }
                 }
                 List<IPAddress> cqrXsEuIpList;
@@ -1835,7 +1834,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     catch (Exception ex)
                     {
                         CqrException.SetLastException(ex);
-                        SLog.Log(ex);
                     }
                 }
                 string[] proxyNameStrs = Resources.ProxyNames.Split(";,".ToCharArray());
@@ -1855,7 +1853,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                             _proxies.Add(proxyAddr);
 
                         CqrException.SetLastException(ex);
-                        SLog.Log(ex);
                     }
                 }
 
@@ -1965,6 +1962,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             {
                 components.Dispose();
             }
+            Entities.Settings.Singleton.Dispose(disposing);
+
             base.Dispose(disposing);
         }
 
@@ -1987,7 +1986,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             catch (Exception exFormClose)
             {
                 CqrException.SetLastException(exFormClose);
-                SLog.Log(exFormClose);
             }
             try
             {
@@ -1996,7 +1994,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             catch (Exception exFormDispose)
             {
                 CqrException.SetLastException(exFormDispose);
-                SLog.Log(exFormDispose);
             }
 
             return;
@@ -2017,9 +2014,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         protected virtual void DeleteAllAttachmentAndChatsBeforeExit(object sender, EventArgs e)
         {
-            if ((AppDomain.CurrentDomain.GetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE) != null) && 
-                    (Convert.ToBoolean(AppDomain.CurrentDomain.GetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE))))
-            {
+            if (Settings.Singleton != null && Settings.Singleton.ClearAllOnClose)
+            {                
                 if (Directory.Exists(LibPaths.AttachmentFilesDir))
                 {
                     string[] entries = Directory.GetFileSystemEntries(LibPaths.AttachmentFilesDir);
@@ -2048,8 +2044,27 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                         }
                     }
                 }
-            }
 
+                try
+                {
+                    SrvMsg srvMsgClose = new SrvMsg(CqrXsEuSrvKey, CqrXsEuSrvKey);
+
+                    string chatRoomNr = Settings.Singleton.MyContact.ChatRoomNr ?? "";
+                    if (!string.IsNullOrEmpty(chatRoomNr))
+                    {
+                        var cqrList = new List<CqrContact>();
+                        cqrList.Add(Settings.Singleton.MyContact);
+                        CqrContact[] cqrContacts = cqrList.ToArray();
+                        FullSrvMsg<string> fullSrvMsg = new FullSrvMsg<string>(Settings.Singleton.MyContact, cqrContacts, "", CqrXsEuSrvKey, chatRoomNr);
+                        var resp = srvMsgClose.Send_CloseChatRoom_Soap(fullSrvMsg, chatRoomNr);
+                    }
+                }
+                catch (Exception closeSesionRoomExc)
+                {
+                    CqrException.SetLastException(closeSesionRoomExc);
+                }
+            
+            }
         
         }
 
@@ -2060,9 +2075,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         internal virtual void AppCloseAllFormsExit(object sender, EventArgs e)
         {
             string settingsNotSavedReason = string.Empty;
+
+            
             try
             {
-                if (!Settings.SaveSettings(null))
+                if (!Settings.SaveSettings())
                     settingsNotSavedReason = CqrException.LastException != null ?
                         CqrException.LastException.Message : "Unknown reason!";
             }
@@ -2100,7 +2117,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     catch (Exception exForm)
                     {
                         CqrException.SetLastException(exForm);
-                        SLog.Log(exForm);
                     }
                 }
 
@@ -2113,7 +2129,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                SLog.Log(ex);
             }
 
             Application.ExitThread();

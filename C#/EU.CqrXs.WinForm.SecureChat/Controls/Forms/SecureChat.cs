@@ -62,7 +62,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 try
                 {
                     list = DnsHelper.GetIpAddrsByHostName(Constants.CQRXS_EU);
-                } 
+                }
                 catch (Exception exDns)
                 {
                     string srvIp = Properties.Resources.Proxies.Split(';')[0];
@@ -84,7 +84,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         if (ip.AddressFamily == AddressFamily.InterNetwork && !MenuNetworkItemIPv6Secure.Checked)
                         {
-                            _serverIpAddress = ip; 
+                            _serverIpAddress = ip;
                             return _serverIpAddress;
                         }
                     }
@@ -118,6 +118,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxIp.Text = Constants.ENTER_IP;
             ComboBoxContacts.Text = Constants.ENTER_CONTACT;
             ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
+
+            MenuCommandsItemSend.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemSend_Click(sender, e));
+            MenuCommandsItemAttach.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemAttach_Click(sender, e));
+            MenuCommandsItemRefresh.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemRefresh_Click(sender, e));
+            MenuCommandsItemClear.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemClear_Click(sender, e));
+            ButtonInviteChatRoom.Click += new System.EventHandler(async (sender, e) => await ButtonInviteChatRoom_Click(sender, e));
+            buttonVisitChatRoom.Click += new System.EventHandler(async (sender, e) => await ButtonVisitChatRoom_Click(sender, e));
+            ButtonSend.Click += new System.EventHandler(async (sender, e) => await ButtonSend_Click(sender, e));
+            ButtonAttach.Click += new System.EventHandler(async (sender, e) => await ButtonAttach_Click(sender, e));
+
             MiniToolBox.CreateAttachDirectory();
             this.DragNDropGroupBox.OnDragNDrop += OnDragNDrop;
             this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
@@ -157,30 +167,54 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             bgWorkerMonitor.RunWorkerAsync();
 
             AddContactsToIpContact();
-            this.StripProgressBar.Value = 20;            
+            this.StripProgressBar.Value = 20;
 
 
             StripStatusLabel.Text = "Setup Network";
             await PlaySoundFromResourcesAsync("sound_volatage");
             await SetupNetwork();
-            
+
             int progress = this.GetProgressBar(this.StripProgressBar);
             this.StripProgressBar.Value = progress;
 
             Bitmap? bmp = Properties.fr.Resources.DefaultF45;
-            if (Entities.Settings.Singleton != null && Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null &&
-                !string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.ContactImage.ImageBase64))
+            if (Entities.Settings.Singleton != null)
             {
-                bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
-                if (bmp == null)
-                    bmp = Properties.fr.Resources.DefaultF45;
+
+                if (Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null &&
+                    !string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.ContactImage.ImageBase64))
+                {
+                    bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
+                    if (bmp == null)
+                        bmp = Properties.fr.Resources.DefaultF45;
+                }
+                this.PictureBoxYou.Image = bmp;
+
+                this.MenuOptionsItemClearAllOnClose.Checked = Settings.Singleton.ClearAllOnClose;
+                if (Settings.Singleton.OnlyPeer2PeerChat)
+                {
+                    MenuOptionsItemOnlyPeer2PeerChat_Click("ctor", new EventArgs());
+                }
+                this.MenuOptionsItemCompress.Checked = Settings.Singleton.ZipBeforeSend;
+                this.MenuOptionsItemFileTypeSecure.Checked = Settings.Singleton.OnlySecureFileTypes;
+                if (Settings.Singleton.SecretKeys != null && Settings.Singleton.SecretKeys.Count > 0)
+                {
+                    string secLastKey = "";
+                    foreach (string secKey in Settings.Singleton.SecretKeys)
+                    {                        
+                        secLastKey = secKey;
+                        this.ComboBoxSecretKey.Items.Add(secLastKey);
+                    }
+                    this.ComboBoxSecretKey.Text = string.IsNullOrEmpty(secLastKey) ? "" : secLastKey;
+                    ButtonKey_Click(sender, e);
+                }
+                
             }
-            this.PictureBoxYou.Image = bmp;
 
             this.StripProgressBar.Value = (progress < 100) ? progress + 5 : 100;
 
             if (send1stReg)
-                Send_1st_Server_Registration(sender, e);                      
+                Send_1st_Server_Registration(sender, e);
 
             this.StripProgressBar.Value = 90;
 
@@ -259,9 +293,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
 
             SrvMsg serverMessage = new SrvMsg(myServerKey, myServerKey);
+
+            SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
+
             // TODO: SetText delegate AppendText()
-            this.TextBoxPipe.Text = serverMessage.PipeString;
             this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+
+
+            if (!Settings.Singleton.SecretKeys.Contains(myServerKey))
+            {
+                Settings.Singleton.SecretKeys.Add(myServerKey);
+                Settings.SaveSettings();
+            }
+
         }
 
 
@@ -300,7 +344,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
-            ButtonKey_Click(sender, e);
+            // ButtonKey_Click(sender, e);
         }
 
         /// <summary>
@@ -503,7 +547,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 MessageBox.Show($"Invalid or empty chat room.", "Please enter a valid chat room image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-           
+
             try
             {
                 await MenuCommandsItemRefresh_Click(sender, e);
@@ -594,7 +638,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (returnContact != null)
             {
                 returnContact.ContactId = 0;
-                Settings.Instance.MyContact = returnContact;
+                Settings.Singleton.MyContact = returnContact;
                 srvMsg = $"Got Cuid: {returnContact.Cuid} for {returnContact.NameEmail}\n";
                 this.TextBoxDestionation.Text = chat.AddFriendMessage(srvMsg);
                 Settings.SaveSettings(Settings.Singleton);
@@ -663,12 +707,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return false;
 
-            
+
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
-                
-            this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomNr) ?? string.Empty;            
-            
+
+            this.textBoxChatSession.Text = (Settings.Singleton.MyContact.ChatRoomNr) ?? string.Empty;
+
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
             CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
@@ -678,11 +722,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 if (c.NameEmail.Contains(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    friendContact = new CqrContact(c, this.textBoxChatSession.Text, this.TextBoxPipe.Text);                    
+                    friendContact = new CqrContact(c, this.textBoxChatSession.Text, this.TextBoxPipe.Text);
                     break;
                 }
             }
-               
+
             SrvMsg serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
             this.TextBoxPipe.Text = serverMessage.PipeString;
             this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
@@ -690,7 +734,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             myContact.TicksLong = new List<long>();
             myContact.LastPushed = DateTime.Now;
 
-            
+
             friendContact._hash = GetHash();
             serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
 
@@ -1043,6 +1087,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (chat == null)
                 chat = new Chat(0);
 
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+            {
+                SetStatusText(StripStatusLabel, "Nothing to send!");
+                return;
+            }
+
+
             if (this.PeerSessionTriState == PeerSession3State.ChatServer)
             {
                 if ((contactNameEmail = GetComboBoxText(ComboBoxContacts)) == Constants.ENTER_CONTACT)
@@ -1051,7 +1102,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 string chatRoomNr = textBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
-                    SetTextBoxText(this.textBoxChatSession,  chatRoomNr);
+                    SetTextBoxText(this.textBoxChatSession, chatRoomNr);
 
                 if (string.IsNullOrEmpty(textBoxChatSession.Text))
                 {
@@ -1119,7 +1170,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         myContact = new CqrContact(rfmsg.Sender, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
                     }
-                    else  
+                    else
                     {
                         myContact = new CqrContact(Settings.Singleton.MyContact, rfmsg.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
                         myContact.LastPolled = rfmsg.Sender.LastPolled;
@@ -1129,7 +1180,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     Settings.Singleton.MyContact = myContact;
                     Settings.SaveSettings(Settings.Singleton);
                 }
-                    
+
 
                 string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                 MsgContent msgContent;
@@ -1316,6 +1367,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         public async Task TooglePeerSessionServerTriState(short svalue, bool fireUp = true)
         {
+            if (Settings.Singleton.OnlyPeer2PeerChat)
+                svalue = 0;
+
             switch (svalue)
             {
 
@@ -1705,8 +1759,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (ct != null && !string.IsNullOrEmpty(ct.NameEmail))
                 {
                     if (!currentContactItems.Contains(ct.NameEmail))
-                        AddItemToComboBox(ComboBoxContacts, ct.NameEmail);                                        
-                }                    
+                        AddItemToComboBox(ComboBoxContacts, ct.NameEmail);
+                }
             }
 
             SetComboBoxText(ComboBoxContacts, currentContactText);
@@ -2090,7 +2144,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             List<IPAddress> myIpList = await SetupAllNetworkInterfacesAndConnectedIpAddresses(addresses, progress + 10);
             progress = this.GetProgressBar(this.StripProgressBar);
-            
+
             this.SetProgressBar(this.StripProgressBar, progress);
 
 
@@ -2199,14 +2253,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 ConnectedIpAddresses = await NetworkAddresses.GetConnectedIpAddressesAsync(addresses);
                 SetStatusText(StripStatusLabel, $"Setup Network: All active connected ip addresses fetched.");
-            } 
-            catch (Exception noInternetEx)  
+            }
+            catch (Exception noInternetEx)
             {
                 SetStatusText(StripStatusLabel, $"No connection to internet {noInternetEx.Message}.");
             }
             pvalue += 10;
             SetProgressBar(StripProgressBar, pvalue);
-            
+
 
             MenuNetworkItemMyIps.DropDown.Items.Clear();
             MenuItemExternalIp = new ToolStripMenuItem();
@@ -2223,7 +2277,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             pvalue += 5;
             SetProgressBar(StripProgressBar, pvalue);
-            
+
             List<IPAddress> myIpList = new List<IPAddress>();
             int mchecked = 0;
             this.MenuNetworkItemIPv6Secure.Checked = false;
@@ -2296,7 +2350,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     AddMenuItemToItems(MenuNetworkItemMyIps, (ToolStripDropDownItem)item);
                     SetProgressBar(StripProgressBar, pvalue);
                     pvalue += 5;
-                    SetStatusText(StripStatusLabel, $"Interface {tmpAddr.AddressFamily.ToString()} {tmpAddr.ToString()} added.");                    
+                    SetStatusText(StripStatusLabel, $"Interface {tmpAddr.AddressFamily.ToString()} {tmpAddr.ToString()} added.");
                     // this.MenuNetworkItemMyIps.DropDownItems.Add(item);
                 }
             }
@@ -2423,28 +2477,56 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #region MenuOptions
 
-        public void MenuOptionsItemClearAllOnClose_Click(object sender, EventArgs e)
+
+        internal void MenuOptionsItemFileTypeSecure_Click(object sender, EventArgs e)
+        {
+            this.MenuOptionsItemFileTypeSecure.Checked = !this.MenuOptionsItemFileTypeSecure.Checked;
+            Settings.Singleton.OnlySecureFileTypes = this.MenuOptionsItemFileTypeSecure.Checked;
+            Settings.SaveSettings();
+        }
+
+        internal void MenuOptionsItemClearAllOnClose_Click(object sender, EventArgs e)
         {
             // TODO add to settings
             this.MenuOptionsItemClearAllOnClose.Checked = (!this.MenuOptionsItemClearAllOnClose.Checked);
-            AppDomain.CurrentDomain.SetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE, MenuOptionsItemClearAllOnClose.Checked);
+            Settings.Singleton.ClearAllOnClose = this.MenuOptionsItemClearAllOnClose.Checked;
+            Settings.SaveSettings();
+        }
+
+        private void MenuOptionsItemCompress_Click(object sender, EventArgs e)
+        {
+            this.MenuOptionsItemCompress.Checked = !this.MenuOptionsItemCompress.Checked;
+            Settings.Singleton.ZipBeforeSend = this.MenuOptionsItemCompress.Checked;
+            Settings.SaveSettings();
+        }
+
+        internal void MenuOptionsItemOnlyPeer2PeerChat_Click(object sender, EventArgs e)
+        {
+            this.MenuOptionsItemOnlyPeer2PeerChat.Checked = (!this.MenuOptionsItemOnlyPeer2PeerChat.Checked);            
+            Settings.Singleton.OnlyPeer2PeerChat = this.MenuOptionsItemOnlyPeer2PeerChat.Checked;
+            Settings.SaveSettings();            
+            this.PeerServerSwitch.SetTrackSwitchEnabled(!Settings.Singleton.OnlyPeer2PeerChat);
+            MenuOptionsItemPeer2Peer_Click(sender, e);
+            SetMenuItemEnabledChecked(MenuOptionsItemPeer2Peer, !Settings.Singleton.OnlyPeer2PeerChat, true);
+            SetMenuItemEnabledChecked(MenuOptionsItemServerSession, !Settings.Singleton.OnlyPeer2PeerChat, false);
         }
 
 
         private void MenuOptionsItemPeer2Peer_Click(object sender, EventArgs e)
         {
-            if (this.MenuOptionsItemPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked)
-                ;
-            else 
-                Task.Run((async () => await TooglePeerSessionServerTriState((short)0)));            
+            if (this.MenuOptionsItemPeer2Peer.Checked && !this.MenuOptionsItemServerSession.Checked && PeerSessionTriState == PeerSession3State.Peer2Peer)
+                return;
+
+            Task.Run((async () => await TooglePeerSessionServerTriState((short)0)));
         }
+
 
         private void MenuOptionsItemServerSession_Click(object sender, EventArgs e)
         {
-            if (!this.MenuOptionsItemPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked)
-                ;
-            else
-                Task.Run((async () => await TooglePeerSessionServerTriState((short)2)));
+            if (!this.MenuOptionsItemPeer2Peer.Checked && this.MenuOptionsItemServerSession.Checked && PeerSessionTriState == PeerSession3State.ChatServer)
+                return;
+
+            Task.Run((async () => await TooglePeerSessionServerTriState((short)2)));
         }
 
         #endregion MenuOptions
@@ -2542,7 +2624,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             return peerMsg.PipeString;
         }
 
-       
+
     }
 
 }

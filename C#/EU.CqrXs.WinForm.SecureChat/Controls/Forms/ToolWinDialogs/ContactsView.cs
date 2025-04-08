@@ -72,7 +72,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 var cemail = dataGridContacts.SelectedRows[r].Cells[3].Value?.ToString();
                 var cmobile = dataGridContacts.SelectedRows[r].Cells[4].Value?.ToString();
                 var caddress = dataGridContacts.SelectedRows[r].Cells[5].Value?.ToString();
-                CqrContact ctc = JsonContacts.FindContactByNameEmail(Entities.Settings.Instance.Contacts, cname, cemail, cmobile);
+                CqrContact ctc = JsonContacts.FindContactByNameEmail(Entities.Settings.Singleton.Contacts, cname, cemail, cmobile);
                 if (ctc != null)
                     cqrContacts.Add(ctc);
             }

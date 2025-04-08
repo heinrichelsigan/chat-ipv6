@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 
@@ -19,6 +20,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
 
         public static Settings Singleton { get => (Settings)_instance.Value; }
 
+        public bool ClearAllOnClose { get; set; }
+
+        public bool OnlyPeer2PeerChat { get; set; }
+
+        public bool ZipBeforeSend { get; set; }
+
+        public bool OnlySecureFileTypes { get; set; }
+
+        public List<string> SecretKeysCrypted { get; set; }
+
         #endregion properties
 
         #region ctor Settings() Settings(DateTime timeStamp) => Load()
@@ -26,11 +37,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         /// <summary>
         /// Settings constructor maybe needed public for NewTonSoftJson serializing object
         /// </summary>
-        public Settings() : base() { }
+        public Settings() : base()
+        {
+            SecretKeysCrypted = new List<string>();
+            ClearAllOnClose = false;
+            OnlyPeer2PeerChat = false;
+            ZipBeforeSend = false;
+            OnlySecureFileTypes = false;
+            
+        }
 
-        public Settings(DateTime timeStamp) : base(timeStamp) { }
+        public Settings(DateTime timeStamp) : this()
+        {
+            TimeStamp = timeStamp;            
+            ClearAllOnClose = false;
+            OnlyPeer2PeerChat = false;
+        }
 
         #endregion ctor Settings() Settings(DateTime timeStamp) => Load()
+
+        #region member functions
+
+        protected override void Load() => LoadSettings();
+
+        protected override bool Save() => SaveSettings(this, false, LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE);
+
+        #endregion member functions
 
         #region static members Load() Save(Settings? settings)
 
@@ -40,19 +72,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         /// and deserialize it to singleton instance <see cref="Settings"/> of <seealso cref="Lazy{Settings}"/>
         /// </summary>
         /// <returns>singelton <see cref="Settings.Instance"/></returns>
-        public static Settings? LoadSettings()
+        public new static Settings? LoadSettings(string? jsonFileName = null, bool forceCreateNewJsonFile = true)
         {
             string settingsJsonString = string.Empty;
             Settings? settings = null;
-            string fileName = LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE;
+            jsonFileName = jsonFileName ?? LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE;
             try
             {
-                if (!File.Exists(fileName) && Directory.Exists(LibPaths.AppPath))
+                if (Directory.Exists(LibPaths.SystemDirPath) && !File.Exists(jsonFileName) && forceCreateNewJsonFile)
                 {
-                    File.CreateText(fileName);
+                    File.CreateText(jsonFileName);
                 }
 
-                settingsJsonString = File.ReadAllText(fileName);
+                settingsJsonString = File.ReadAllText(jsonFileName);
                 settings = JsonConvert.DeserializeObject<Settings>(settingsJsonString);
             }
             catch (Exception ex)
@@ -71,6 +103,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 _instance.Value.Proxies = settings.Proxies;
                 _instance.Value.TimeStamp = settings.TimeStamp;
                 _instance.Value.SaveStamp = settings.SaveStamp;
+                _instance.Value.ClearAllOnClose = settings.ClearAllOnClose;
+                _instance.Value.OnlyPeer2PeerChat = settings.OnlyPeer2PeerChat;
+                _instance.Value.ZipBeforeSend = settings.ZipBeforeSend;
+                _instance.Value.OnlySecureFileTypes = settings.OnlySecureFileTypes;
+                _instance.Value.SecretKeys = new List<string>();
+                foreach (string skey in settings.SecretKeysCrypted)
+                {
+                    string sdec = "";
+                    try
+                    {
+                        sdec = SelfCryptMsg.Decrypt(skey);
+                    }
+                    catch (Exception exDec)
+                    {
+                        CqrException.SetLastException(exDec);
+                        sdec = skey;
+                        if (skey.Length > 8)
+                            continue;
+                    }
+                    if (!_instance.Value.SecretKeys.Contains(sdec))
+                        _instance.Value.SecretKeysCrypted.Add(sdec);
+                }
             }
             return settings;
         }
@@ -82,9 +136,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         /// </summary>
         /// <param name="settings">settings to save</param>
         /// <returns>true on successfully save</returns>
-        public static bool SaveSettings(Settings? settings)
+        public static bool SaveSettings(Settings? settings = null, bool forceSave = false, string ? jsonFileName = null)
         {
             string saveString = string.Empty;
+            jsonFileName = jsonFileName ?? LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE;
             if (settings == null)
                 settings = Settings.Singleton;
             
@@ -93,18 +148,40 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             jsets.SerializationBinder = new Newtonsoft.Json.Serialization.DefaultSerializationBinder();
             jsets.MaxDepth = 16;
 
-            try
+            lock (_lock)
             {
-                settings.SaveStamp = DateTime.Now;
-                JsonContacts.SetContacts(new HashSet<CqrContact>(settings.Contacts));
-                saveString = JsonConvert.SerializeObject(settings, jsets);
-                File.WriteAllText(LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE, saveString);
+                DateTime lastSaved = settings.SaveStamp ?? DateTime.Now;
+                if (settings.SaveStamp != null && !forceSave && DateTime.Now.Subtract(lastSaved).TotalSeconds <= 2)
+                    return true;
+
+                HashSet<string> cryptKeys = (settings.SecretKeys != null) ? settings.SecretKeys.ToHashSet() : new HashSet<string>();
+                settings.SecretKeys = new List<string>();
+                foreach (string plainKey in cryptKeys)
+                {
+                    if (string.IsNullOrEmpty(plainKey))
+                    {
+                        string ddec = (plainKey.Length < 12) ? SelfCryptMsg.Encrypt(plainKey) : plainKey;
+                        if (!settings.SecretKeysCrypted.Contains(ddec))
+                            settings.SecretKeysCrypted.Add(ddec);
+                    }
+                }
+
+                try
+                {
+                    JsonContacts.SetContacts(new HashSet<CqrContact>(settings.Contacts));
+                    string moveFile = LibPaths.SystemDirPath + DateTime.Now.ToString("yyyy-MM-dd_") + Constants.JSON_SETTINGS_FILE;
+                    File.Move(jsonFileName, moveFile, true);
+                    settings.SaveStamp = DateTime.Now;
+                    saveString = JsonConvert.SerializeObject(settings, jsets);
+                    File.WriteAllText(jsonFileName, saveString);
+                }
+                catch (Exception ex)
+                {
+                    CqrException.SetLastException(ex);
+                    return false;
+                }
             }
-            catch (Exception ex)
-            {                
-                CqrException.SetLastException(ex);                
-                return false;
-            }
+
             return true;
         }
 
@@ -124,7 +201,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 lock (_lock)
                 {
                     _destructed = true;
-                    _disposed = Settings.SaveSettings(Singleton);
+                    _disposed = Settings.SaveSettings(Singleton, true);
                 }
             }
 

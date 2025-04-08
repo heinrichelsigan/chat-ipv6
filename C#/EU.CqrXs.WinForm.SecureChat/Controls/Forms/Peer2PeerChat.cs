@@ -520,10 +520,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.TextBoxSource.Text = chat.AddMyMessage(usrMsg);
             if (returnContact != null)
             {
-                Settings.Instance.MyContact = returnContact;
+                Settings.Singleton.MyContact = returnContact;
                 srvMsg = $"Got Cuid: {returnContact.Cuid} for {returnContact.NameEmail}\n";
                 this.TextBoxDestionation.Text = chat.AddFriendMessage(srvMsg);
-                Settings.Save();
+                Settings.SaveSettings();
             }
                         
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
@@ -683,7 +683,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
 
-            this.textBoxChatSession.Text = (Settings.Instance.MyContact.ChatRoomNr) ?? string.Empty;
+            this.textBoxChatSession.Text = (Settings.Singleton.MyContact.ChatRoomNr) ?? string.Empty;
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
@@ -719,12 +719,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.textBoxChatSession.Text = rfmsg.ChatRoomNr;
             if (rfmsg != null && rfmsg.Sender != null && rfmsg.Sender.NameEmail.Equals(myContact.NameEmail))
             {
-                Entities.Settings.Instance.MyContact.Cuid = rfmsg.Sender.Cuid;
-                Entities.Settings.Instance.MyContact.LastPolled = rfmsg.Sender.LastPolled;
-                Entities.Settings.Instance.MyContact.LastPushed = rfmsg.Sender.LastPushed;
-                Entities.Settings.Instance.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
+                Entities.Settings.Singleton.MyContact.Cuid = rfmsg.Sender.Cuid;
+                Entities.Settings.Singleton.MyContact.LastPolled = rfmsg.Sender.LastPolled;
+                Entities.Settings.Singleton.MyContact.LastPushed = rfmsg.Sender.LastPushed;
+                Entities.Settings.Singleton.MyContact.ChatRoomNr = rfmsg.Sender.ChatRoomNr;
 
-                Entities.Settings.Save();
+                Entities.Settings.SaveSettings();
 
             }
             // TODO: Email zur Einladung
@@ -1677,8 +1677,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         public void MenuOptionsItemClearAllOnClose_Click(object sender, EventArgs e)
         {
             // TODO add to settings
-            this.MenuOptionsItemClearAllOnClose.Checked = (!this.MenuOptionsItemClearAllOnClose.Checked);            
-            AppDomain.CurrentDomain.SetData(Constants.CQRXS_DELETE_DATA_ON_CLOSE, MenuOptionsItemClearAllOnClose.Checked);
+            this.MenuOptionsItemClearAllOnClose.Checked = (!this.MenuOptionsItemClearAllOnClose.Checked);                        
         }
 
         #region LoadSaveChatContent

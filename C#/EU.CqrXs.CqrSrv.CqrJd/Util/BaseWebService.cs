@@ -342,14 +342,16 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             DateTime now = DateTime.Now; // now1 = now.AddMilliseconds(10);
             List<CqrContact> _invited = new List<CqrContact>();
 
+            string restMail = fullSrvMsg.Sender.Email.Contains("@") ? (fullSrvMsg.Sender.Email.Substring(0, fullSrvMsg.Sender.Email.IndexOf("@") - 1)) : fullSrvMsg.Sender.Email.Trim();
+            restMail = restMail.Replace("@", "_").Replace(".", "_");
             if (string.IsNullOrEmpty(ChatRoomNr))
-                ChatRoomNr = String.Format("room_{0:MMddHH}_{1}.json", DateTime.Now,
-                    fullSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_"));
+                ChatRoomNr = String.Format("room_{0:MMdd}_{1}.json", DateTime.Now, restMail);
 
             if (string.IsNullOrEmpty(ChatRoomNr))
-                ChatRoomNr = $"room_{DateTime.Now:MMddHHmm}_0.json";
+                ChatRoomNr = $"room_{DateTime.Now:MMddHHmm}.json";
 
-            
+            fullSrvMsg.ChatRuid = (fullSrvMsg.ChatRuid == Guid.Empty) ? Guid.NewGuid() : fullSrvMsg.ChatRuid;
+
             fullSrvMsg.ChatRoomNr = ChatRoomNr;
             fullSrvMsg.ChatRuid = Guid.NewGuid();
             fullSrvMsg.Sender.ChatRoomNr = ChatRoomNr;
@@ -434,7 +436,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     foreach (CqrContact c in chatRoomMsg.Recipients)
                     {
                         if (fullSrvMsg.Sender.NameEmail == c.NameEmail ||
-                            fullSrvMsg.Sender.Email == c.Email)
+                            fullSrvMsg.Sender.NameEmail.ToLower().Equals(c.NameEmail.ToLower()) ||
+                            fullSrvMsg.Sender.Email == c.Email ||
+                            fullSrvMsg.Sender.Email.ToLower().Equals(c.Email.ToLower()))
                         {
                             _contact = c;
                             isValid = true;

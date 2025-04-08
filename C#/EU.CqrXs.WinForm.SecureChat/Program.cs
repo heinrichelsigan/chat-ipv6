@@ -110,9 +110,7 @@ namespace EU.CqrXs.WinForm.SecureChat
                     }
                     catch (Exception exRelease)
                     {
-                        SLog.Log(exRelease);                        
-                        CqrException.SetLastException(exRelease);
-                        ex = exRelease;
+                        ex = CqrException.SetLastException(exRelease);
                     }
                     try
                     {
@@ -120,9 +118,7 @@ namespace EU.CqrXs.WinForm.SecureChat
                     }
                     catch (Exception exClose)
                     {
-                        SLog.Log(exClose);
-                        CqrException.SetLastException(exClose);
-                        ex = exClose;
+                        ex = CqrException.SetLastException(exClose);
                     }
                     try
                     {
@@ -130,9 +126,7 @@ namespace EU.CqrXs.WinForm.SecureChat
                     }
                     catch (Exception exDispose)
                     {
-                        SLog.Log(exDispose);
-                        CqrException.SetLastException(exDispose);
-                        ex = exDispose;
+                        ex = CqrException.SetLastException(exDispose);
                     }
 
                 }
@@ -143,9 +137,7 @@ namespace EU.CqrXs.WinForm.SecureChat
             }
             catch (Exception exNull)
             {
-                SLog.Log(exNull);
-                CqrException.SetLastException(exNull);
-                ex = exNull;
+                ex = CqrException.SetLastException(exNull);
             }
             finally
             {                

@@ -164,13 +164,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     if (!this.checkBoxDecrypt.Checked)
                     {
-                        string encrypted = srv1stMsg.CqrBaseMsg(this.textBoxSource.Text);
+                        string encrypted = srv1stMsg.CqrBaseMsg(this.textBoxSource.Text, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
                         this.textBoxDestination.Text = encrypted;
                     }
                     else
                     {
                         string decrypted = string.Empty;
-                        MsgContent content = srv1stMsg.NCqrBaseMsg(this.textBoxSource.Text);
+                        MsgContent content = srv1stMsg.NCqrBaseMsg(this.textBoxSource.Text, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
                         this.textBoxDestination.Text = content.Message;
                     }
 
@@ -180,7 +180,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 CqrException.SetLastException(ex);
                 this.textBoxDestination.Text += ex.ToString();
-                SLog.Log(ex);
             }
         }
 

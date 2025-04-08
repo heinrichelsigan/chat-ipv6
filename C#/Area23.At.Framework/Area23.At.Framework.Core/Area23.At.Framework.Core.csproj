@@ -10,8 +10,8 @@
     <Copyright>Copyleft © 2000-2040</Copyright>
     <PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
-    <AssemblyVersion>2.25.323</AssemblyVersion>
-    <FileVersion>2.25.323</FileVersion>
+    <AssemblyVersion>2.25.410</AssemblyVersion>
+    <FileVersion>2.25.410</FileVersion>
 	<IsTrimmable>true</IsTrimmable>
 	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
 	<PlatformTarget>AnyCPU</PlatformTarget>

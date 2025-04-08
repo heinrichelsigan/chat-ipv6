@@ -43,7 +43,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         {
             TimeStamp = DateTime.Today;
             ChatId = 0;
-            Friend = Entities.Settings.Instance.MyContact;
+            Friend = Entities.Settings.Singleton.MyContact;
             MyMsgTStamps = new HashSet<DateTime>();
             FriendMsgTStamps = new HashSet<DateTime>();
             CqrMsgs = new Dictionary<DateTime, string>();

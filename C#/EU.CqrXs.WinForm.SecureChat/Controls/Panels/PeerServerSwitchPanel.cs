@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.Util;
+﻿using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,33 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public EventHandler<Area23EventArgs<int>>? FireUpChanged { get; set; }
 
-        public delegate void SetTrackBarPeerServerValueCallback(TrackBar track, int val);
+        public delegate void SetTrackBarPeerServerEnabledCallback(TrackBar track, bool enabled);
+        public delegate void SetTrackBarPeerServerValueCallback(TrackBar track, int val);        
+
+        public void SetTrackBarPeerServerEnabled(TrackBar trackbar, bool enable)
+        {
+            bool ena = enable;
+            if (trackbar.InvokeRequired)
+            {
+                SetTrackBarPeerServerEnabledCallback setTrackBarPeerServerEnabledCallback = delegate (TrackBar track, bool enab)
+                {
+                    if (track != null) track.Enabled = enab;
+                };
+                try
+                {
+                    trackbar.Invoke(setTrackBarPeerServerEnabledCallback, new object[] { trackbar, ena });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetTrackBarPeerServerEnabled enabled: \"{ena}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (trackbar != null)
+                    trackbar.Enabled = ena;
+            }
+        }
 
         public void SetTrackBarPeerServerValue(TrackBar trackbar, int trackValue)
         {
@@ -48,6 +75,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
             components = new System.ComponentModel.Container();
             components.Add(this);
             InitializeComponent();
+            if (Entities.Settings.Singleton.OnlyPeer2PeerChat)
+            {
+                TrackBarPeerServer.Value = 0;
+                TrackBarPeerServer_ValueChanged(0, new Area23EventArgs<string>("PeerServerSwitchPanel()"));
+                TrackBarPeerServer.Enabled = false;
+            }
         }
 
         public PeerServerSwitchPanel(IContainer container)
@@ -57,6 +90,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
             container.Add(this);
             components = container;
             InitializeComponent();
+            if (Entities.Settings.Singleton.OnlyPeer2PeerChat)
+            {
+                TrackBarPeerServer.Value = 0;
+                TrackBarPeerServer_ValueChanged(0, new Area23EventArgs<string>("PeerServerSwitchPanel()"));
+                TrackBarPeerServer.Enabled = false;
+            }
         }
 
         public void SetPeerServerSessionTriState(PeerSession3State peerSession3State = PeerSession3State.None, bool fireUp = true)
@@ -189,6 +228,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
                 this.ResumeLayout(true);
                 this.PerformLayout();
             }
+        }
+
+        internal void SetTrackSwitchEnabled(bool enable)
+        {
+            SetTrackBarPeerServerEnabled(TrackBarPeerServer, enable);
         }
 
         #region show / hide tooltip
