@@ -537,7 +537,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e"></param>
         internal async Task ButtonVisitChatRoom_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.textBoxChatSession.Text) ||
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+            {
+                StripStatusLabel.Text = "Nothing to send!";
+                return;
+            }
+
+            if (this.PeerSessionTriState == PeerSession3State.Peer2Peer || this.PeerSessionTriState == PeerSession3State.None) 
+            {
+                MessageBox.Show($"You must set chat mode to server session to visit a chat room.", $"SessionTriState is {this.PeerSessionTriState.ToString()}, expected: ChatServer", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            
+            string? chatRoomTxt = GetTextBoxText(this.textBoxChatSession);
+
+            if (string.IsNullOrEmpty(chatRoomTxt) ||
                 !this.textBoxChatSession.Text.StartsWith("room") ||
                 !this.textBoxChatSession.Text.EndsWith(".json"))
             {
@@ -547,6 +560,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             try
             {
+                SetTextBoxText(this.TextBoxSource, "");
+                SetTextBoxText(this.TextBoxDestionation, "");
+                SetRichText(this.RichTextBoxOneView, "");
                 await MenuCommandsItemRefresh_Click(sender, e);
                 ButtonCheck.Image = Properties.Resources.SatLink;
                 await PlaySoundFromResourcesAsync("sound_push");
@@ -570,7 +586,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return;
-
 
             bool sendInit = false;
             try
@@ -706,9 +721,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return false;
 
 
+            if (this.PeerSessionTriState == PeerSession3State.Peer2Peer || this.PeerSessionTriState == PeerSession3State.None)
+            {
+                MessageBox.Show($"You must set chat mode to server session to invite to chat room.", $"SessionTriState is {this.PeerSessionTriState.ToString()}, expected: ChatServer", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return false;
-
+            
+            SetTextBoxText(this.TextBoxSource, "");
+            SetTextBoxText(this.TextBoxDestionation, "");
+            SetRichText(this.RichTextBoxOneView, "");
             this.textBoxChatSession.Text = (Settings.Singleton.MyContact.ChatRoomNr) ?? string.Empty;
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
@@ -1153,10 +1176,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
                 if (rfmsg == null || string.IsNullOrEmpty(rfmsg.TContent))
-                {
-                    MessageBox.Show("Empty message or empty body", "Message from Service is null or body is empty!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                {                    
                     if (rfmsg == null)
-                        return;
+                    {
+                        MessageBox.Show("Empty message or empty body", "Message from Service is null or body is empty!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    }
+                        
                     if (string.IsNullOrEmpty(rfmsg.TContent))
                         rfmsg.TContent = pmsg.CqrPeerMsg($"Invitation from {rfmsg.Sender.NameEmail} to {rfmsg.Sender.ChatRoomNr}", EncodingType.Base64);
                 }
