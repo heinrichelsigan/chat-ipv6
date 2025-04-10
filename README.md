@@ -7,9 +7,10 @@
 # <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/doc">**doc**</a>
 
 <hr />
-<pre>all release downloads could be found here: [<a href="https://cqrxs.eu/download/" target="_blank">cqrxs.eu/download/</a>]
+<pre>all release downloads could be found here: <a href="https://cqrxs.eu/download/" target="_blank">cqrxs.eu/download/</a>
   (please take always the newest.)
-  next release (pre-alpha) deployed on 2025-04-10 here: [<a href="https://cqrxs.eu/download/2025-04-03_WinChat_x86.7z" target="_blank">cqrxs.eu/download/2025-04-10-WinChat_x86.7z</a>]
+  last release (pre-alpha) deployed on 2025-04-10 is laterst here: 
+  <a href="https://cqrxs.eu/download/2025-04-03_WinChat_x86.7z" target="_blank">https://cqrxs.eu/download/2025-04-10-WinChat_x86.7z</a>
   
 Features:
 - C# full client as fat .exe 
@@ -35,7 +36,6 @@ and can directly connect a secure tcp connection to another chat-client.
 # CqrJd Session Server users connecting scenario
 
 <a href="https://github.com/heinrichelsigan/chat-ipv6/blob/main/doc/2025-03-01_AWS_Secure_Chat_With_Elastic_Cache.png" target="_blank"><img src="https://raw.githubusercontent.com/heinrichelsigan/chat-ipv6/refs/heads/main/doc/2025-03-01_AWS_Secure_Chat_With_Elastic_Cache.png" border="0" /></a>
-
 
 <hr />
 
