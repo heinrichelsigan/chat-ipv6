@@ -342,7 +342,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             DateTime now = DateTime.Now; // now1 = now.AddMilliseconds(10);
             List<CqrContact> _invited = new List<CqrContact>();
 
-            string restMail = fullSrvMsg.Sender.Email.Contains("@") ? (fullSrvMsg.Sender.Email.Substring(0, fullSrvMsg.Sender.Email.IndexOf("@") - 1)) : fullSrvMsg.Sender.Email.Trim();
+            string restMail = fullSrvMsg.Sender.Email.Contains("@") ? (fullSrvMsg.Sender.Email.Substring(0, fullSrvMsg.Sender.Email.IndexOf("@"))) : fullSrvMsg.Sender.Email.Trim();
             restMail = restMail.Replace("@", "_").Replace(".", "_");
             if (string.IsNullOrEmpty(ChatRoomNr))
                 ChatRoomNr = String.Format("room_{0:MMdd}_{1}.json", DateTime.Now, restMail);

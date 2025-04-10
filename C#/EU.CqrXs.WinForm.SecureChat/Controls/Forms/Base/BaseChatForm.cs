@@ -1927,12 +1927,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         protected internal void MenuHelpItemAbout_Click(object sender, EventArgs e)
         {
             
-            if ((AppDomain.CurrentDomain.GetData(Constants.CQRXS_TEST_FORM) != null) &&
-                Convert.ToBoolean(AppDomain.CurrentDomain.GetData(Constants.CQRXS_TEST_FORM)))
-            {
-                TestForm testForm = new TestForm();
-                testForm.Show();
-            }
             TransparentDialog dialog = new TransparentDialog();
             dialog.ShowDialog();
         }
@@ -1942,9 +1936,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             AppDomain.CurrentDomain.SetData("TransparentBadge", 0);
             string infoText = $"{Dialog.AssemblyProduct} v{Dialog.AssemblyVersion}\n{Dialog.AssemblyCopyright} {Dialog.AssemblyCompany}";
             string titleText = $"{Dialog.AssemblyTitle} v{Dialog.AssemblyVersion}";
+
+            if ((AppDomain.CurrentDomain.GetData(Constants.CQRXS_TEST_FORM) != null) &&
+                Convert.ToBoolean(AppDomain.CurrentDomain.GetData(Constants.CQRXS_TEST_FORM)))
+            {
+                TestForm testForm = new TestForm();
+                testForm.Show();
+
+                MessageBox.Show(infoText, $"{titleText}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            
             TransparentBadge badge = new TransparentBadge(titleText, infoText, MessageBoxIcon.Information, Properties.fr.Resources.CqrXsEuBadge);
             badge.ShowDialog();
-            // MessageBox.Show(infoText, $"{titleText}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            
         }
 
         #endregion Help About Info

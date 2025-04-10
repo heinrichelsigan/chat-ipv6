@@ -3,6 +3,7 @@ using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
+using System.Runtime;
 
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
@@ -107,6 +108,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 _instance.Value.OnlyPeer2PeerChat = settings.OnlyPeer2PeerChat;
                 _instance.Value.ZipBeforeSend = settings.ZipBeforeSend;
                 _instance.Value.OnlySecureFileTypes = settings.OnlySecureFileTypes;
+                _instance.Value.SecretKeysCrypted = new List<string>(settings.SecretKeysCrypted);
                 _instance.Value.SecretKeys = new List<string>();
                 foreach (string skey in settings.SecretKeysCrypted)
                 {
@@ -123,7 +125,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                             continue;
                     }
                     if (!_instance.Value.SecretKeys.Contains(sdec))
-                        _instance.Value.SecretKeysCrypted.Add(sdec);
+                        _instance.Value.SecretKeys.Add(sdec);
                 }
             }
             return settings;
@@ -154,11 +156,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 if (settings.SaveStamp != null && !forceSave && DateTime.Now.Subtract(lastSaved).TotalSeconds <= 2)
                     return true;
 
-                HashSet<string> cryptKeys = (settings.SecretKeys != null) ? settings.SecretKeys.ToHashSet() : new HashSet<string>();
-                settings.SecretKeys = new List<string>();
-                foreach (string plainKey in cryptKeys)
+                settings.SecretKeys = (settings.SecretKeys != null) ? settings.SecretKeys : new List<string>();
+                settings.SecretKeysCrypted = new List<string>();
+                foreach (string plainKey in settings.SecretKeys)
                 {
-                    if (string.IsNullOrEmpty(plainKey))
+                    if (!string.IsNullOrEmpty(plainKey))
                     {
                         string ddec = (plainKey.Length < 12) ? SelfCryptMsg.Encrypt(plainKey) : plainKey;
                         if (!settings.SecretKeysCrypted.Contains(ddec))

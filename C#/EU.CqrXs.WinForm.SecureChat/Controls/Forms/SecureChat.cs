@@ -201,14 +201,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     string secLastKey = "";
                     foreach (string secKey in Settings.Singleton.SecretKeys)
-                    {                        
+                    {
                         secLastKey = secKey;
                         this.ComboBoxSecretKey.Items.Add(secLastKey);
                     }
                     this.ComboBoxSecretKey.Text = string.IsNullOrEmpty(secLastKey) ? "" : secLastKey;
                     ButtonKey_Click(sender, e);
                 }
-                
+
             }
 
             this.StripProgressBar.Value = (progress < 100) ? progress + 5 : 100;
@@ -295,10 +295,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SrvMsg serverMessage = new SrvMsg(myServerKey, myServerKey);
 
             SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
-
-            // TODO: SetText delegate AppendText()
-            this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-
 
             if (!Settings.Singleton.SecretKeys.Contains(myServerKey))
             {
@@ -520,6 +516,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 foundContact = false;
             }
 
+            
             if (!foundContact)
             {
                 SetComboBoxBackColor(ComboBoxContacts, Color.Violet);
@@ -618,8 +615,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
             SrvMsg1 srv1stMsg = new SrvMsg1(CqrXsEuSrvKey);
-            this.TextBoxPipe.Text = srv1stMsg.PipeString;
-            this.toolStripTextBoxCqrPipe.Text = srv1stMsg.PipeString;
+            SetTextBoxText(TextBoxPipe, srv1stMsg.PipeString);
+            // this.TextBoxPipe.Text = srv1stMsg.PipeString;
+            
             Thread.Sleep(100);
 
             this.StripProgressBar.Value = 50;
@@ -728,8 +726,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
 
             SrvMsg serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
-            this.TextBoxPipe.Text = serverMessage.PipeString;
-            this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+            SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
+            // this.TextBoxPipe.Text = serverMessage.PipeString;
+            // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
             myContact._hash = GetHash();
             myContact.TicksLong = new List<long>();
             myContact.LastPushed = DateTime.Now;
@@ -862,8 +861,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
 
                     SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
-                    this.TextBoxPipe.Text = serverMessage.PipeString;
-                    this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+                    SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
+                    // this.TextBoxPipe.Text = serverMessage.PipeString;
+                    // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                     myContact._hash = GetHash();
                     myContact.ChatRoomNr = chatRoomNr;
 
@@ -1010,8 +1010,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
 
                     SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
-                    this.TextBoxPipe.Text = serverMessage.PipeString;
-                    this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+                    SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
+                    // this.TextBoxPipe.Text = serverMessage.PipeString;
+                    // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                     myContact._hash = GetHash();
                     myContact.ChatRoomNr = chatRoomNr;
                     if (friendContact != null)
@@ -1140,11 +1141,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 SrvMsg serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
                 SetTextBoxText(TextBoxPipe, serverMessage.PipeString);
-                try
-                {
-                    this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-                }
-                catch { }
+                // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
 
 
                 serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
@@ -1161,7 +1158,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     if (rfmsg == null)
                         return;
                     if (string.IsNullOrEmpty(rfmsg.TContent))
-                        rfmsg.TContent = " ";
+                        rfmsg.TContent = pmsg.CqrPeerMsg($"Invitation from {rfmsg.Sender.NameEmail} to {rfmsg.Sender.ChatRoomNr}", EncodingType.Base64);
                 }
 
                 if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail))
@@ -1499,8 +1496,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
 
                         SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
-                        this.TextBoxPipe.Text = serverMessage.PipeString;
-                        this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
+                        SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
+                        // this.TextBoxPipe.Text = serverMessage.PipeString;
+                        // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                         myContact._hash = GetHash();
                         myContact.ChatRoomNr = chatRoomNr;
                         friendContact._hash = GetHash();
@@ -2502,9 +2500,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         internal void MenuOptionsItemOnlyPeer2PeerChat_Click(object sender, EventArgs e)
         {
-            this.MenuOptionsItemOnlyPeer2PeerChat.Checked = (!this.MenuOptionsItemOnlyPeer2PeerChat.Checked);            
+            this.MenuOptionsItemOnlyPeer2PeerChat.Checked = (!this.MenuOptionsItemOnlyPeer2PeerChat.Checked);
             Settings.Singleton.OnlyPeer2PeerChat = this.MenuOptionsItemOnlyPeer2PeerChat.Checked;
-            Settings.SaveSettings();            
+            Settings.SaveSettings();
             this.PeerServerSwitch.SetTrackSwitchEnabled(!Settings.Singleton.OnlyPeer2PeerChat);
             MenuOptionsItemPeer2Peer_Click(sender, e);
             SetMenuItemEnabledChecked(MenuOptionsItemPeer2Peer, !Settings.Singleton.OnlyPeer2PeerChat, true);
@@ -2615,13 +2613,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         protected string GetHash()
         {
-            if (!string.IsNullOrEmpty(this.TextBoxPipe.Text))
-                return this.TextBoxPipe.Text;
-            if (!string.IsNullOrEmpty(this.toolStripTextBoxCqrPipe.Text))
-                return this.toolStripTextBoxCqrPipe.Text;
+            
+            string comboSecKeyTxt = GetComboBoxText(this.ComboBoxSecretKey);
+            Peer2PeerMsg peerMsg = new Peer2PeerMsg(comboSecKeyTxt);
+            string? pipeText = GetTextBoxText(this.TextBoxPipe);
+            if (!string.IsNullOrEmpty(pipeText)) 
+            {
+                if (peerMsg.PipeString.Equals(pipeText))
+                    return pipeText;
+            }
 
-            Peer2PeerMsg peerMsg = new Peer2PeerMsg(this.ComboBoxSecretKey.Text);
-            return peerMsg.PipeString;
+            pipeText = peerMsg.PipeString;
+            SetTextBoxText(this.TextBoxPipe, peerMsg.PipeString);
+
+            return pipeText;
+            
         }
 
 

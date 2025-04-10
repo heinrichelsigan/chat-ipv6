@@ -54,6 +54,13 @@
             <param name="comboBox"><see cref="T:System.Windows.Controls.ComboBox"/> from which name to get</param>
             <returns><see cref="T:System.String"/> name from <see cref="!:ComboBox.Text" /></returns>
         </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.GetComboBoxEnabled(System.Windows.Forms.ComboBox)">
+            <summary>
+            thread save deleagte to get enabled state from <see cref="T:System.Windows.Controls.ComboBox"/>
+            </summary>
+            <param name="comboBox"><see cref="T:System.Windows.Controls.ComboBox"/> from which name to get</param>
+            <returns><see cref="T:System.String"/> name from <see cref="!:ComboBox.Text" /></returns>
+        </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.GetComboBoxText(System.Windows.Forms.ComboBox)">
             <summary>
             thread save deleagte to get text out of a <see cref="T:System.Windows.Controls.ComboBox"/>
@@ -67,6 +74,13 @@
             </summary>
             <param name="comboBox"><see cref="!:ComboBox.Text" /> where set text <see cref="T:System.String"/></param>
             <param name="text">string text to set</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.SetComboBoxEnabled(System.Windows.Forms.ComboBox,System.Boolean)">
+            <summary>
+            thread save deleagte to set enabled / disabled in a <see cref="T:System.Windows.Controls.ComboBox"/>
+            </summary>
+            <param name="comboBox"><see cref="!:ComboBox.Text" /> where set text <see cref="T:System.String"/></param>
+            <param name="enabled"><see cref="!:true"/> for enable, <see cref="!:false"/> for disabled</param>
         </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.SetComboBoxBackColor(System.Windows.Forms.ComboBox,System.Drawing.Color)">
             <summary>
@@ -384,6 +398,20 @@
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.ButtonVisitChatRoom_Click(System.Object,System.EventArgs)">
+            <summary>
+            ButtonVisitChatRoom_Click visits a chat room
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.ButtonInviteChatRoom_Click(System.Object,System.EventArgs)">
+            <summary>
+            Invites a selected contact to chat room, request a new chatroom
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">ÊventArgs e</param>
+        </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.Send_1st_Server_Registration(System.Object,System.EventArgs)">
             <summary>
             Send_1st_Server_Registration sends contact registration to cqrxs.eu server
@@ -396,9 +424,10 @@
             Sends a init secure message to peer ip address
             </summary>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SendInit_Contact">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SendInvite_ToChatRoom">
             <summary>
-            Sends a init secure message to contact over server proxy
+            SendInvite_ToChatRoom sends an invitation to chat room for a contact
+            You have to tell your contact the secret key and chat room number
             </summary>
         </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemSend_Click(System.Object,System.EventArgs)">
@@ -414,6 +443,14 @@
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemRefresh_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuCommandsItemRefresh_Click refresh in session server mode from server
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemClear_Click(System.Object,System.EventArgs)" -->
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.OnClientReceive(System.Object,Area23.At.Framework.Core.Util.Area23EventArgs{Area23.At.Framework.Core.Net.IpSocket.ReceiveData})">
@@ -449,7 +486,7 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuViewItemTopBottom_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuView_ItemTopBottom_Click(System.Object,System.EventArgs)">
             <summary>
             MenuView_ItemTopBottom_Click occures, when user clicks on Top-Bottom in chat app
             shows top bottom view of chat líke ancient talk/talks
@@ -457,14 +494,14 @@
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuViewItemLeftRíght_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuView_ItemLeftRíght_Click(System.Object,System.EventArgs)">
             <summary>
             MenuView_ItemLeftRíght_Click occurs, when user clicks on View->Left-Right in chat app
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuViewItem1View_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuView_Item1View_Click(System.Object,System.EventArgs)">
             <summary>
             MenuView_Item1View_Click, occurs, when user clicks on 1-View in chat app
             shows only a single rich textbox instead of sender and receiver view
@@ -547,6 +584,20 @@
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
         </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.ButtonVisitChatRoom_Click(System.Object,System.EventArgs)">
+            <summary>
+            ButtonVisitChatRoom_Click visits a chat room
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.ButtonInviteChatRoom_Click(System.Object,System.EventArgs)">
+            <summary>
+            Invites a selected contact to chat room, request a new chatroom
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">ÊventArgs e</param>
+        </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.Send_1st_Server_Registration(System.Object,System.EventArgs)">
             <summary>
             Send_1st_Server_Registration sends contact registration to cqrxs.eu server
@@ -559,9 +610,10 @@
             Sends a init secure message to peer ip address
             </summary>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SendInit_Contact">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SendInvite_ToChatRoom">
             <summary>
-            Sends a init secure message to contact over server proxy
+            SendInvite_ToChatRoom sends an invitation to chat room for a contact
+            You have to tell your contact the secret key and chat room number
             </summary>
         </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemSend_Click(System.Object,System.EventArgs)">
@@ -577,6 +629,14 @@
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemRefresh_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuCommandsItemRefresh_Click refresh in session server mode from server
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemClear_Click(System.Object,System.EventArgs)" -->
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.OnClientReceive(System.Object,Area23.At.Framework.Core.Util.Area23EventArgs{Area23.At.Framework.Core.Net.IpSocket.ReceiveData})">
@@ -1071,12 +1131,23 @@
             CqrJsException is inherited from <see cref="T:Area23.At.Framework.Core.CqrXs.CqrException"/>
             </summary>
         </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Entities.JsonContacts">
+            <summary>
+            Static class for JsonContacts
+            providing load, save, get, find
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.JsonContacts.#cctor">
+            <summary>
+            Constructor for static class
+            </summary>
+        </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.Settings.#ctor">
             <summary>
             Settings constructor maybe needed public for NewTonSoftJson serializing object
             </summary>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.Settings.LoadSettings">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.Settings.LoadSettings(System.String,System.Boolean)">
             <summary>
             loads json serialized Settings data string from 
             <see cref="!:LibPaths.AppDirPath"/> + <see cref="F:Area23.At.Framework.Core.Static.Constants.JSON_SAVE_FILE"/>
@@ -1084,7 +1155,7 @@
             </summary>
             <returns>singelton <see cref="!:Settings.Instance"/></returns>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.Settings.SaveSettings(EU.CqrXs.WinForm.SecureChat.Entities.Settings)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.Settings.SaveSettings(EU.CqrXs.WinForm.SecureChat.Entities.Settings,System.Boolean,System.String)">
             <summary>
             json serializes <see cref="T:EU.CqrXs.WinForm.SecureChat.Entities.Settings"/> and 
             saves json serialized data string to 
@@ -1211,6 +1282,31 @@
               Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
             </summary>
         </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Click2UploadBackground">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.ClickToUpload">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.ClickToUploadBackground">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.ClickUpload">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.ClickUploadBackground">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
         <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.CqrXsEuBadge">
             <summary>
               Looks up a localized resource of type System.Drawing.Bitmap.
@@ -1226,12 +1322,32 @@
               Looks up a localized resource of type System.Drawing.Bitmap.
             </summary>
         </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF42">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
         <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF45">
             <summary>
               Looks up a localized resource of type System.Drawing.Bitmap.
             </summary>
         </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF47">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF48">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
         <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF50">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF53">
             <summary>
               Looks up a localized resource of type System.Drawing.Bitmap.
             </summary>
@@ -1244,6 +1360,11 @@
         <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.encryptedIcon">
             <summary>
               Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.InviteToChatRoom">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
             </summary>
         </member>
         <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Key_gray">
@@ -1274,6 +1395,11 @@
         <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.TransparentFormsIcon">
             <summary>
               Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.VisitChatRoom">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
             </summary>
         </member>
         <member name="T:EU.CqrXs.WinForm.SecureChat.Properties.Resources">
@@ -1510,6 +1636,11 @@
             </summary>
             <param name="sender">object sender</param>
             <returns>true, invoking EventHandler <see cref="!:Watch_Monitor"/> succeeds.</returns>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Util.JsonHelper">
+            <summary>
+            JsonHelper class for reading and writing json serialized store file.
+            </summary>
         </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Util.MiniToolBox.CreateAttachDirectory">
             <summary>

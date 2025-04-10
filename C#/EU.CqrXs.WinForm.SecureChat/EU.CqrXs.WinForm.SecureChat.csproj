@@ -23,7 +23,7 @@
 	<SignAssembly>False</SignAssembly>
 	<Company>Heinrich Georg Elsigan</Company>
 	<Copyright>Copyright © 2000-2040 Copyleft https://cqrxs.eu/</Copyright>
-	<GenerateDocumentationFile>False</GenerateDocumentationFile>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	<DocumentationFile>S:\chat-ipv6\C#\EU.CqrXs.WinForm.SecureChat\Properties\text\CqrJd.xml</DocumentationFile>	
 	<UseWPF>False</UseWPF>	  		
 	<IsTrimmable>true</IsTrimmable>
@@ -38,14 +38,14 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>4</WarningLevel>
-    <DebugType>embedded</DebugType>
+    <DebugType>full</DebugType>
     <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>embedded</DebugType>
+    <DebugType>full</DebugType>
     <WarningLevel>8</WarningLevel>
     <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
