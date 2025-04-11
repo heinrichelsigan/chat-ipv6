@@ -21,14 +21,16 @@ done
 echo -n -e "\n$0: javac -classpath .:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/cqrframe/.:./bcprov-jdk18on-1.79.jar -Xlint:deprecation gui/*.java\n"
 
 
-javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/cqrframe/.:./bcprov-jdk18on-1.79.jar" -Xlint:deprecation eu/cqrxs/gui/CqrJDialog.java eu/cqrxs/gui/CqrJdFrame.java
-javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/cqrframe/.:./bcprov-jdk18on-1.79.jar"    -Xlint:deprecation eu/cqrxs/gui/ImageTest.java
+javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/fw/net/.:./bcprov-jdk18on-1.79.jar" -Xlint:deprecation eu/cqrxs/fw/net/NetworkAddresses.java
 
-javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/cqrframe/.:./bcprov-jdk18on-1.79.jar"  -Xlint:deprecation eu/cqrxs/cqrframe/CqrFrame.java 
-javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/cqrframe/.:./bcprov-jdk18on-1.79.jar"  -Xlint:deprecation eu/cqrxs/cqrframe/CqrMenuBar.java
+javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/fw/net/.:./bcprov-jdk18on-1.79.jar" -Xlint:deprecation eu/cqrxs/gui/CqrJDialog.java eu/cqrxs/gui/CqrJdFrame.java
+javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/fw/net/.:./bcprov-jdk18on-1.79.jar"  -Xlint:deprecation eu/cqrxs/gui/ImageTest.java
 
+javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/fw/net/.:./bcprov-jdk18on-1.79.jar"  -Xlint:deprecation eu/cqrxs/cqrframe/CqrFrame.java 
+javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/fw/net/.:./bcprov-jdk18on-1.79.jar" -Xlint:deprecation eu/cqrxs/cqrframe/CqrMenuBar.java
 
-javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/cqrframe/.:./bcprov-jdk18on-1.79.jar"  -Xlint:deprecation eu/cqrxs/JFrameApp.java
+javac -classpath ".:./eu/cqrxs/.:./eu/cqrxs/gui/.:./eu/cqrxs/fw/net/.:./bcprov-jdk18on-1.79.jar"  -Xlint:deprecation eu/cqrxs/JFrameApp.java
+
 
 echo "build finished"
 

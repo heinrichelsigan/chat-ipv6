@@ -1,15 +1,25 @@
+/* 
+    class NetworkAddresses provides basic network interfaces and local addresses facility
+
+*/
+package eu.cqrxs.fw.net;
+
 import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.NetworkInterface;
 import java.net.*;
 import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+
 import static java.lang.System.out;
 
 public class NetworkAddresses {
 
     public static void main(String args[]) throws SocketException {
-        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-        for (NetworkInterface netint : Collections.list(nets))
-            displayInterfaceInformation(netint);
 		
+        getNetworkInterfaces();
 		getConnectedAddress();
     }
 	
@@ -40,13 +50,43 @@ public class NetworkAddresses {
 		return;
 	}
 
-    static void displayInterfaceInformation(NetworkInterface netint) throws SocketException {
-        out.printf("Display name: %s\n", netint.getDisplayName());
-        out.printf("Name: %s\n", netint.getName());
+    static Set<InetAddress> getIpAddrsFromNetIf(NetworkInterface netint) throws SocketException {
+        Set<InetAddress> addrss = new HashSet<InetAddress>();
+
         Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
         for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+            addrss.add(inetAddress);
             out.printf("InetAddress: %s\n", inetAddress);
         }
         out.printf("\n");
+        
+        return addrss; 
      }
+
+
+    static Set<InetAddress> getNetworkInterfaces() throws SocketException {
+            
+        Set<InetAddress> myAddrs = new HashSet<InetAddress>();
+        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces(); 
+        for (NetworkInterface netIf : Collections.list(nets)) { 
+            out.printf("Display name: %s\n", netIf.getDisplayName()); 
+            out.printf("Name: %s\n", netIf.getName()); 
+            displaySubInterfaces(netIf); 
+            Set<InetAddress> ifAddrSet = getIpAddrsFromNetIf(netIf);
+            for (InetAddress inetAddr : ifAddrSet)
+               myAddrs.add(inetAddr); 
+
+            out.printf("\n"); 
+        } 
+        return myAddrs;
+    }
+
+    static void displaySubInterfaces(NetworkInterface netIf) throws SocketException { 
+        Enumeration<NetworkInterface> subIfs = netIf.getSubInterfaces(); 
+        for (NetworkInterface subIf : Collections.list(subIfs)) { 
+            out.printf("\tSub Interface Display name: %s\n", subIf.getDisplayName()); 
+            out.printf("\tSub Interface Name: %s\n", subIf.getName()); 
+        }
+                                                                                                                                                                         }
+
 }  
