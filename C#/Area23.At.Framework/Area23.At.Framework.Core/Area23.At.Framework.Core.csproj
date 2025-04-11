@@ -91,6 +91,7 @@
     <PackageReference Include="NLog" Version="5.4.0" />
     <PackageReference Include="QRCoder.Core" Version="1.0.3" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.31" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.IO" Version="4.3.0" />

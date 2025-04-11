@@ -4,6 +4,100 @@
         <name>Area23.At.Framework.Core</name>
     </assembly>
     <members>
+        <member name="T:Area23.At.Framework.Core.Cache.RedIs">
+            <summary>
+            Redis AWS elastic valkey cache singelton connector
+            </summary>
+        </member>
+        <member name="M:Area23.At.Framework.Core.Cache.RedIs.#ctor">
+            <summary>
+            default parameterless constructor for RedIsValKey cache singleton 
+            </summary>
+        </member>
+        <member name="M:Area23.At.Framework.Core.Cache.RedIs.GetString(System.String,StackExchange.Redis.CommandFlags)">
+            <summary>
+            GetString gets a string value by redis key
+            </summary>
+            <param name="redIsKey">key</param>
+            <param name="flags"><see cref="T:StackExchange.Redis.CommandFlags"/></param>
+            <returns>(<see cref="T:System.String"/>) value for key redIsKey</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Area23.At.Framework.Core.Cache.RedIs.SetString(System.String,System.String,System.Nullable{System.TimeSpan},System.Boolean,StackExchange.Redis.When,StackExchange.Redis.CommandFlags)" -->
+        <member name="M:Area23.At.Framework.Core.Cache.RedIs.SetKey``1(System.String,``0,System.Nullable{System.TimeSpan},System.Boolean,StackExchange.Redis.When,StackExchange.Redis.CommandFlags)">
+            <summary>
+            SetKey<typeparamref name="T"/> sets a genric type T with a referenced key
+            </summary>
+            <typeparam name="T">generic type or class</typeparam>
+            <param name="redIsKey">key for cache</param>
+            <param name="tValue">Generic value to set</param>
+            <param name="expiry"></param>
+            <param name="keepTtl"></param>
+            <param name="when"></param>
+            <param name="flags"></param>
+        </member>
+        <member name="M:Area23.At.Framework.Core.Cache.RedIs.GetKey``1(System.String,StackExchange.Redis.CommandFlags)">
+            <summary>
+            GetKey<typeparamref name="T"/> gets a generic class type T from redis cache with key
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="redIsKey">key</param>
+            <param name="flags"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Area23.At.Framework.Core.Cache.RedIs.DeleteKey(System.String,StackExchange.Redis.CommandFlags)">
+            <summary>
+            DeleteKey delete entry referenced at key
+            </summary>
+            <param name="redIsKey">key</param>
+            <param name="flags"><see cref="F:StackExchange.Redis.CommandFlags.FireAndForget"/> as default</param>
+        </member>
+        <member name="T:Area23.At.Framework.Core.Cache.RedIstatic">
+            <summary>
+            RedIstatic static AWS elastic valkey cache singelton connector
+            </summary>
+        </member>
+        <member name="M:Area23.At.Framework.Core.Cache.RedIstatic.#cctor">
+            <summary>
+            static ctor for static class RedIstatic 
+            </summary>
+        </member>
+        <member name="M:Area23.At.Framework.Core.Cache.RedIstatic.GetString(System.String,StackExchange.Redis.CommandFlags)">
+            <summary>
+            GetString gets a string value by redis key
+            </summary>
+            <param name="redIsKey">key</param>
+            <param name="flags"><see cref="T:StackExchange.Redis.CommandFlags"/></param>
+            <returns>(<see cref="T:System.String"/>) value for key redIsKey</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Area23.At.Framework.Core.Cache.RedIstatic.SetString(System.String,System.String,System.Nullable{System.TimeSpan},System.Boolean,StackExchange.Redis.When,StackExchange.Redis.CommandFlags)" -->
+        <member name="M:Area23.At.Framework.Core.Cache.RedIstatic.SetKey``1(System.String,``0,System.Nullable{System.TimeSpan},System.Boolean,StackExchange.Redis.When,StackExchange.Redis.CommandFlags)">
+            <summary>
+            SetKey<typeparamref name="T"/> sets a genric type T with a referenced key
+            </summary>
+            <typeparam name="T">generic type or class</typeparam>
+            <param name="redIsKey">key for cache</param>
+            <param name="tValue">Generic value to set</param>
+            <param name="expiry"></param>
+            <param name="keepTtl"></param>
+            <param name="when"></param>
+            <param name="flags"></param>
+        </member>
+        <member name="M:Area23.At.Framework.Core.Cache.RedIstatic.GetKey``1(System.String,StackExchange.Redis.CommandFlags)">
+            <summary>
+            GetKey<typeparamref name="T"/> gets a generic class type T from redis cache with key
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="redIsKey">key</param>
+            <param name="flags"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Area23.At.Framework.Core.Cache.RedIstatic.DeleteKey(System.String,StackExchange.Redis.CommandFlags)">
+            <summary>
+            DeleteKey delete entry referenced at key
+            </summary>
+            <param name="redIsKey">key</param>
+            <param name="flags"><see cref="F:StackExchange.Redis.CommandFlags.FireAndForget"/> as default</param>
+        </member>
         <member name="T:Area23.At.Framework.Core.CqrXs.CqrException">
             <summary>
             CqrException is inherited from <see cref="T:System.ApplicationException"/>

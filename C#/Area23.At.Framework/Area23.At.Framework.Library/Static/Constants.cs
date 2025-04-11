@@ -35,8 +35,11 @@ namespace Area23.At.Framework.Library.Static
 
         public const string APP_NAME = "Area23.At";
         public const string APP_DIR = "net";
-        public const string VERSION = "v2.25.305";
-        public const string VALKEY_CACHE_HOST_PORT = "ValkeyCacheHostPort";
+        public const string VERSION = "v2.25.411";
+        public const string VALKEY_CACHE_HOST = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com";
+        public const int VALKEY_CACHE_PORT = 6379;
+        public const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
+        public const string VALKEY_CACHE_HOST_PORT_KEY = "ValkeyCacheHostPort";
 
         public const string AREA23_URL = "https://area23.at";
         public const string APP_PATH = "https://area23.at/net/";

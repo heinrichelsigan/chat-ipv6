@@ -1,7 +1,9 @@
-﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Library.Cache;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -105,7 +107,8 @@ public class JsonChatRoom
         }
         if (BaseService.PersistMsgInAmazonElasticCache)
         {
-            RedIs.Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
+            RedIs.ValKey.DeleteKey(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
+            // Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
         }
         DeleteJsonChatRoomFromCache(JsonChatRoomNumber);
 
@@ -191,8 +194,9 @@ public class JsonChatRoom
         {
             try
             {
-                string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
-                chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
+                RedIs.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
+                // string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
+                // chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
             }
             catch (Exception exLoadFromCache)
             {
@@ -221,9 +225,8 @@ public class JsonChatRoom
         if (BaseService.PersistMsgInApplicationState)
             HttpContext.Current.Application[Constants.CHATROOMS] = chatRooms;
         if (BaseService.PersistMsgInAmazonElasticCache)
-        {
-            string chatRoomsJson = JsonConvert.SerializeObject(chatRooms);
-            RedIs.Db.StringSet(Constants.CHATROOMS, chatRoomsJson);
+        {            
+            RedIs.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);            
         }
     }
 

@@ -1,6 +1,8 @@
-﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Library.Cache;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.Net.WebHttp;
 using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -150,6 +152,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: InitMethod() completed.\n";
 
+            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Persistence in {PersistMsgIn.PersistMsg.ToString()}\n";
+
             Dictionary<Guid, CqrContact> dictCacheTest = new Dictionary<Guid, CqrContact>();
             foreach (CqrContact c in _contacts)
             {
@@ -162,28 +166,34 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             {
                 try
                 {
-                    if (PersistMsgInAmazonElasticCache)
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
+                    string status = RedIs.ConnMux.GetStatus();
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
+
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to set Dictionary<Guid, CqrContact> in cache."+ Environment.NewLine;
+                    RedIs.ValKey.SetKey<Dictionary<Guid, CqrContact>>("TestCache", dictCacheTest);                                        
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache." + Environment.NewLine;
+
+                    Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)RedIs.ValKey.GetKey<Dictionary<Guid, CqrContact>>("TestCache");                   
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + Environment.NewLine;
+                    foreach (CqrContact contact in outdict.Values)
                     {
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT]}\n";
-                        string status = RedIs.ConnMux.GetStatus();
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Contact Cuid={contact.Cuid} NameEmail={contact.NameEmail} Mobile={contact.Mobile}" + Environment.NewLine;
+                    }
 
-                        string dictJson = JsonConvert.SerializeObject(dictCacheTest);
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Serialized Dictionary<Guid, CqrContact> to json string." + Environment.NewLine;
-                        RedIs.Db.StringSet("TestCache", dictJson);
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache." + Environment.NewLine;
-                        
-                        string jsonOut = RedIs.Db.StringGet("TestCache");
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got json serialized string from cache: {jsonOut}." + Environment.NewLine;
-                        Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)JsonConvert.DeserializeObject<Dictionary<Guid, CqrContact>>(jsonOut);
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deserialized json sring to (Dictionary<Guid, CqrContact> with {outdict.Keys.Count} keys.";
-
-                        List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}:Found {chatRooms.Count} chat room keys in cache." + Environment.NewLine;
-                        foreach (string room in chatRooms)
+                    List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}:Found {chatRooms.Count} chat room keys in cache." + Environment.NewLine;
+                    foreach (string room in chatRooms)
+                    {
+                        try
                         {
                             Dictionary<long, string> dicTest = GetCachedMessageDict(room);
                             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: chat room {room} with keys {dicTest.Keys.Count} messages." + Environment.NewLine;
+                        }
+                        catch (Exception exChatRoom)
+                        {
+                            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: loading chat room {room} failed. Exception: {exChatRoom.Message}." + Environment.NewLine;
+                            Area23Log.LogStatic($"Loading chat room {room} failed. ", exChatRoom, "");
                         }
                     }
                 }
@@ -515,8 +525,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             // Amazon Redis Valkey Cache
             if (PersistMsgInAmazonElasticCache)
             {
-                string dictJson = RedIs.Db.StringGet(chatRoomNumber);
-                dict = (Dictionary<long, string>)JsonConvert.DeserializeObject<Dictionary<long, string>>(dictJson);
+                dict = (Dictionary<long, string>)RedIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
             }
 
             // TODO: implement filesystem 
@@ -560,8 +569,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 HttpContext.Current.Application[chatRoomNumber] = dict;
             if (BaseWebService.PersistMsgInAmazonElasticCache)
             {
-                string dictJson = JsonConvert.SerializeObject(dict);
-                RedIs.Db.StringSet(chatRoomNumber, dictJson);
+                RedIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
             }
 
             return;

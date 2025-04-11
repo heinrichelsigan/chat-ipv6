@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Library.CqrXs;
+﻿using Area23.At.Framework.Library.Cache;
+using Area23.At.Framework.Library.CqrXs;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.CqrXs.CqrSrv;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
@@ -16,6 +17,7 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Web;
+using System.Web.Services;
 
 // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "Service" in code, svc and config file together.
 public class Service : BaseService, IService
@@ -34,7 +36,7 @@ public class Service : BaseService, IService
         if (PersistMsgInApplicationState)
             HttpContext.Current.Application["lastmsg"] = cryptMsg;
         if (PersistMsgInAmazonElasticCache)
-            RedIs.Db.StringSet("lastmsg", cryptMsg);
+            RedIs.ValKey.SetString("lastmsg", cryptMsg);
 
         SrvMsg1 srv1stMsg = new SrvMsg1(_serverKey);
         SrvMsg1 srv1stRespMsg = new SrvMsg1(_serverKey);
@@ -61,7 +63,7 @@ public class Service : BaseService, IService
             if (PersistMsgInApplicationState)
                 HttpContext.Current.Application["lastdecrypted"] = _decrypted;
             if (PersistMsgInAmazonElasticCache)
-                RedIs.Db.StringSet("lastdecrypted", _decrypted);
+                RedIs.ValKey.SetString("lastdecrypted", _decrypted);
 
             CqrContact foundCt = AddContact(_contact);
             _responseString = srv1stRespMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
@@ -323,20 +325,23 @@ public class Service : BaseService, IService
     }
 
 
-    public string TestCache()
+
+    [WebMethod]
+    public virtual string TestCache()
     {
-        string testReport = DateTime.Now.Area23DateTimeMilliseconds() + ":TestCache() started.\n";
+        string testReport = DateTime.Now.Area23DateTimeMilliseconds() + ": TestCache() started.\n";
         try
         {
             InitMethod();
         }
         catch (Exception ex1)
         {
-            testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Exception " +
-                ex1.GetType() + ": " +  ex1.Message + "\n\t" + ex1 + "\n";
+            testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Exception " + ex1.GetType() + ": " + ex1.Message + "\n\t" + ex1 + "\n";
         }
 
         testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": InitMethod() completed.\n";
+
+        testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Persistence in " + PersistMsgIn.PersistMsg.ToString() + "\n";
 
         Dictionary<Guid, CqrContact> dictCacheTest = new Dictionary<Guid, CqrContact>();
         foreach (CqrContact c in _contacts)
@@ -345,45 +350,56 @@ public class Service : BaseService, IService
                 !dictCacheTest.Keys.Contains(c.Cuid))
                 dictCacheTest.Add(c.Cuid, c);
         }
-        testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
+        testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added " + dictCacheTest.Count + " count contacts to Dictionary<Guid, CqrContact>...\n";
         if (PersistMsgInAmazonElasticCache)
         {
             try
             {
-                if (PersistMsgInAmazonElasticCache)
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Ready to connect to " + 
+                    ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] + "\n";
+                string status = RedIs.ConnMux.GetStatus();
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": ConnectionMulitplexer.Status = " + status + Environment.NewLine;
+
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Preparing to set Dictionary<Guid, CqrContact> in cache." + Environment.NewLine;
+                RedIs.ValKey.SetKey<Dictionary<Guid, CqrContact>>("TestCache", dictCacheTest);
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added serialized json string to cache." + Environment.NewLine;
+
+                Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)RedIs.ValKey.GetKey<Dictionary<Guid, CqrContact>>("TestCache");
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Got Dictionary<Guid, CqrContact> from cache with " + 
+                    outdict.Keys.Count + " keys." + Environment.NewLine;
+                foreach (CqrContact contact in outdict.Values)
                 {
-                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT]}\n";
-                    string status = RedIs.ConnMux.GetStatus();
-                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
+                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Contact Cuid=" + contact.Cuid + " NameEmail=" +
+                        contact.NameEmail + " Mobile=" + contact.Mobile + Environment.NewLine;
+                }
 
-                    string dictJson = JsonConvert.SerializeObject(dictCacheTest);
-                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Serialized Dictionary<Guid, CqrContact> to json string." + Environment.NewLine;
-                    RedIs.Db.StringSet("TestCache", dictJson);
-                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added serialized json string to cache." + Environment.NewLine;
-
-                    string jsonOut = RedIs.Db.StringGet("TestCache");
-                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Got json serialized string from cache: {jsonOut}." + Environment.NewLine;
-                    Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)JsonConvert.DeserializeObject<Dictionary<Guid, CqrContact>>(jsonOut);
-                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Deserialized json sring to (Dictionary<Guid, CqrContact> with {outdict.Keys.Count} keys.";
-
-                    List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
-                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ":Found {chatRooms.Count} chat room keys in cache." + Environment.NewLine;
-                    foreach (string room in chatRooms)
+                List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Found " + chatRooms.Count + " chat room keys in cache." + Environment.NewLine;
+                foreach (string room in chatRooms)
+                {
+                    try
                     {
                         Dictionary<long, string> dicTest = GetCachedMessageDict(room);
-                        testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": chat room {room} with keys {dicTest.Keys.Count} messages." + Environment.NewLine;
+                        testReport += DateTime.Now.Area23DateTimeMilliseconds() +": chat room " + room + " with keys " + dicTest.Keys.Count + ": messages." + Environment.NewLine;
+                    }
+                    catch (Exception exChatRoom)
+                    {                        
+                        string exMsg = "loading chat room " + room + " failed. Exception: " + exChatRoom.Message + "." + Environment.NewLine;
+                        testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": " + exMsg;
+                        Area23Log.LogStatic(exMsg, exChatRoom, "");
                     }
                 }
             }
             catch (Exception ex2)
             {
-                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Exception " + 
-                    ex2.GetType() + ": " + ex2.Message + "\n\t" + ex2 + "\n";
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Exception " +
+                    ex2.GetType() + ": " + ex2.Message + "\n\t" + ex2.ToString() + "\n";
             }
         }
 
         return testReport;
     }
+
 
     public string TestService()
     {

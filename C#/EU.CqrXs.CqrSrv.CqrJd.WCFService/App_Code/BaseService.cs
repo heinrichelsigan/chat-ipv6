@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Library.Cache;
+using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
+using StackExchange.Redis;
 
 /// <summary>
 /// Summary description for BaseService
@@ -62,7 +64,7 @@ public class BaseService
 
 
         if (PersistMsgInAmazonElasticCache)
-        {
+        {            
             string status = RedIs.ConnMux.GetStatus();
 
             //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -386,8 +388,8 @@ public class BaseService
         // Amazon Redis Valkey Cache
         if (PersistMsgInAmazonElasticCache)
         {
-            string dictJson = RedIs.Db.StringGet(chatRoomNumber);
-            dict = (Dictionary<long, string>)JsonConvert.DeserializeObject<Dictionary<long, string>>(dictJson);
+            dict = (Dictionary<long, string>)RedIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
+                
         }
 
         // TODO: implement filesystem 
@@ -431,8 +433,7 @@ public class BaseService
             HttpContext.Current.Application[chatRoomNumber] = dict;
         if (BaseService.PersistMsgInAmazonElasticCache)
         {
-            string dictJson = JsonConvert.SerializeObject(dict);
-            RedIs.Db.StringSet(chatRoomNumber, dictJson);
+            RedIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
         }
 
         return;

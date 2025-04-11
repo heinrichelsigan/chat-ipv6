@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CoolCrypt.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.Util.CoolCrypt" validateRequest="false" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CoolCrypt.aspx.cs" Inherits="EU.CqrXs.CqrSrv.CqrJd.CoolCrypt" validateRequest="false" %>
 
 <!DOCTYPE html>
 
@@ -14,7 +14,7 @@
      function changeCryptBackgroundFile() {
          var divAes = document.getElementById("DivAesImprove");
          if (divAes != null) {
-             divAes.setAttribute("style", "padding-left: 40px; margin-left: 2px; background-image: url('../res/img/AesBGFile.gif'); background-repeat: no-repeat; background-color: transparent;");
+             divAes.setAttribute("style", "padding-left: 40px; margin-left: 2px; background-image: url('res/img/AesBGFile.gif'); background-repeat: no-repeat; background-color: transparent;");
              divAes.style.backgroundImage = "url('res/img/AesBGFile.gif')";
          }
      }
@@ -35,7 +35,7 @@
         <div style="background-color: transparent; padding-left: 40px; margin-left: 2px;">
             <div class="odDiv">
                 <span class="leftSpan" style="width: 72px">
-                    <asp:Button ID="Button_Key" runat="server" Text="Key " ClientIDMode="Static"
+                    <asp:Button ID="Button_Key" runat="server" Text="key " ClientIDMode="Static"
                         OnClick="Button_Key_Click" ToolTip="save your user key in session" style="max-width: 72px" />
                 </span>
                 <span class="centerSpan" style="width: 72px">&nbsp&nbsp;Secret&nbsp;key:&nbsp;</span>
@@ -64,8 +64,8 @@
                     ToolTip="key generated hash" ReadOnly="true" Text="" MaxLength="192"  Width="480px"  style="width: 480px;" />
                 </span>
                 <span class="rightSpan" style="width: 72px">
-                    <asp:Button ID="Button_Reset_KeyIV" runat="server" Text="reset" ClientIDMode="Static" 
-                        OnClick="Button_Reset_KeyIV_Click" ToolTip="Reset secret key / iv" style="max-width: 72px" />
+                    <asp:Button ID="Button_SetPipeline" runat="server" Text="set pipe" ClientIDMode="Static" 
+                        OnClick="Button_SetPipeline_Click" ToolTip="Set symm chpher pipeline" style="max-width: 72px" />
                 </span>
             </div>
         </div>
@@ -74,40 +74,45 @@
             <div class="odDiv">
                 <span class="leftSpan" style="width: 72px;">                      
                     <asp:DropDownList ID="DropDownList_Zip" runat="server" style="width: 64px;">
-                        <asp:ListItem Enabled="true" Value="None" Selected="true">None</asp:ListItem>
-                        <asp:ListItem Enabled="true" Value="Z7" Selected="false">7Zip</asp:ListItem>                
+                        <asp:ListItem Enabled="true" Value="None" Selected="true">None</asp:ListItem>          
                         <asp:ListItem Enabled="true" Value="BZip2" Selected="false">BZip2</asp:ListItem>
-                        <asp:ListItem Enabled="true" Value="GZip" Selected="false">GZip</asp:ListItem>
-                        <asp:ListItem Enabled="true" Value="Zip" Selected="false">Zip</asp:ListItem>         
+                        <asp:ListItem Enabled="true" Value="GZip" Selected="false">GZip</asp:ListItem>        
                     </asp:DropDownList>
                     &rArr;
                 </span>
                 <span class="centerSpan" style="width: 72px;">                    
-                    <asp:DropDownList ID="DropDownList_Cipher" runat="server" style="width: 72px;">
+                    <asp:DropDownList ID="DropDownList_Cipher" runat="server" ClientIDMode="Static" style="width: 72px; z-index: 120;">
                         <asp:ListItem Enabled="true" Value="Aes" Selected="true">Aes</asp:ListItem>
-                        <asp:ListItem Enabled="true" Value="BlowFish" Selected="false">BlowFish</asp:ListItem>
+                        <asp:ListItem Enabled="true" Value="AesLight" Selected="false">AesLight</asp:ListItem>
+                        <asp:ListItem Enabled="true" Value="Aria" Selected="false">Aria</asp:ListItem>
+                        <asp:ListItem Enabled="true" Value="BlowFish" Selected="false">BlowFish</asp:ListItem>  
                         <asp:ListItem Enabled="true" Value="Fish2" Selected="false">Fish2</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="Fish3" Selected="false">Fish3</asp:ListItem>
+                        <asp:ListItem Enabled="true" Value="ThreeFish256" Selected="false">ThreeFish256</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="Camellia" Selected="false">Camellia</asp:ListItem>              
+                        <asp:ListItem Enabled="true" Value="CamelliaLight" Selected="false">CamelliaLight</asp:ListItem> 
                         <asp:ListItem Enabled="true" Value="Cast5" Selected="False">Cast5</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="Cast6" Selected="False">Cast6</asp:ListItem>
+                        <asp:ListItem Enabled="true" Value="Des" Selected="False">Des</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="Des3" Selected="False">Des3</asp:ListItem>
-                        <asp:ListItem Enabled="true" Value="Gost28147" Selected="False">Gost28147</asp:ListItem>
+                        <asp:ListItem Enabled="true" Value="Dstu7624" Selected="False">Dstu7624</asp:ListItem> 
+                        <asp:ListItem Enabled="true" Value="Gost28147" Selected="False">Gost28147</asp:ListItem> 
                         <asp:ListItem Enabled="true" Value="Idea" Selected="false">Idea</asp:ListItem>                        
                         <asp:ListItem Enabled="true" Value="Noekeon" Selected="false">Noekeon</asp:ListItem>                        
                         <asp:ListItem Enabled="true" Value="RC2" Selected="false">RC2</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="RC532" Selected="false">RC532</asp:ListItem>                
                         <asp:ListItem Enabled="true" Value="RC564" Selected="false">RC564</asp:ListItem> 
-                        <asp:ListItem Enabled="true" Value="RC6" Selected="false">RC6</asp:ListItem>                       
+                        <asp:ListItem Enabled="true" Value="RC6" Selected="false">RC6</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="Rijndael" Selected="false">Rijndael</asp:ListItem> 
-                        <asp:ListItem Enabled="true" Value="Rsa" Selected="false">Rsa</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="Seed" Selected="false">Seed</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="Serpent" Selected="false">Serpent</asp:ListItem>
+                        <asp:ListItem Enabled="true" Value="SM4" Selected="false">SM4</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="SkipJack" Selected="false">SkipJack</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="Tea" Selected="false">Tea</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="Tnepres" Selected="false">Tnepres</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="XTea" Selected="false">XTea</asp:ListItem>
                         <asp:ListItem Enabled="true" Value="ZenMatrix" Selected="false">ZenMatrix</asp:ListItem>
+                        <asp:ListItem Enabled="true" Value="ZenMatrix2" Selected="false">ZenMatrix2</asp:ListItem>
                     </asp:DropDownList>
                 </span>
                 <span class="centerSpan" style="width: 72px;"> 
@@ -164,7 +169,7 @@
             <div class="odDiv">                       
                 <span id="SpanLeftFile" runat="server" class="leftSpan" style="vertical-align: top;" visible="false">
                     <a id="aUploaded" runat="server" alt="Uploaded File" href="res/img/file.png">
-                        <img id="img1" runat="server" border="0" alt="" src="res/img/file.png" />
+                        <img id="imgIn" runat="server" border="0" alt="" src="res/img/file.png" />
                     </a>
                 </span>
                 <span id="SpanLabel" runat="server" class="centerSpan" visible="False">

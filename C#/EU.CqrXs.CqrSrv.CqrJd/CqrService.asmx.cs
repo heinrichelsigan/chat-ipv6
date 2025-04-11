@@ -22,6 +22,7 @@ using System.Web.Services;
 using System.Net;
 using Newtonsoft.Json;
 using System.Net.NetworkInformation;
+using Area23.At.Framework.Library.Cache;
 
 
 namespace EU.CqrXs.CqrSrv.CqrJd
@@ -51,8 +52,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
             if (PersistMsgInApplicationState)
                 HttpContext.Current.Application["lastmsg"] = cryptMsg;
-            if (PersistMsgInAmazonElasticCache)                           
-                RedIs.Db.StringSet("lastmsg", cryptMsg);            
+            if (PersistMsgInAmazonElasticCache)                
+                RedIs.ValKey.SetString("lastmsg", cryptMsg);
 
             SrvMsg1 srv1stMsg = new SrvMsg1(_serverKey);
             SrvMsg1 srv1stRespMsg = new SrvMsg1(_serverKey);
@@ -79,7 +80,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 if (PersistMsgInApplicationState)
                     HttpContext.Current.Application["lastdecrypted"] = _decrypted;
                 if (PersistMsgInAmazonElasticCache)
-                    RedIs.Db.StringSet("lastdecrypted", _decrypted);
+                    RedIs.ValKey.SetString("lastdecrypted", _decrypted);                
 
                 CqrContact foundCt = AddContact(_contact);
                 _responseString = srv1stRespMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);

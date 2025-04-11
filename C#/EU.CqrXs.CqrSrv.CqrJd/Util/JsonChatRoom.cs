@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Library;
+using Area23.At.Framework.Library.Cache;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
@@ -107,7 +108,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }
             if (BaseWebService.PersistMsgInAmazonElasticCache)
             {
-                RedIs.Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
+                RedIs.ValKey.DeleteKey(JsonChatRoomNumber);
             }
             DeleteJsonChatRoomFromCache(JsonChatRoomNumber);
 
@@ -172,7 +173,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 chatRooms.Add(file);
             }
 
-            SetJsonChatRoomsToCache(chatRooms);
+            if (chatRooms != null && chatRooms.Count > 0)
+                SetJsonChatRoomsToCache(chatRooms);
 
             return chatRooms;
         }
@@ -193,8 +195,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             {
                 try
                 {
-                    string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
-                    chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
+                    chatRooms = RedIs.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
                 }
                 catch (Exception exLoadFromCache)
                 {
@@ -224,8 +225,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 HttpContext.Current.Application[Constants.CHATROOMS] = chatRooms;
             if (BaseWebService.PersistMsgInAmazonElasticCache)
             {
-                string chatRoomsJson = JsonConvert.SerializeObject(chatRooms);
-                RedIs.Db.StringSet(Constants.CHATROOMS, chatRoomsJson);
+                RedIs.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);
             }
         }
 
