@@ -1,6 +1,5 @@
 ﻿using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -27,17 +26,6 @@ namespace Area23.At.Framework.Library.Cache
         private static HashSet<string> _allKeys = new HashSet<string>();
         public static string[] AllKeys { get => _allKeys.ToArray(); }
 
-        public static string EndPoint
-        {
-            get
-            {
-                _instance.Value.endpoint = Constants.VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";                
-                if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] != null)
-                    _instance.Value.endpoint = (string)ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY];
-                return _instance.Value.endpoint;
-            }
-        }
-
         public static StackExchange.Redis.IDatabase Db
         {
             get
@@ -57,7 +45,7 @@ namespace Area23.At.Framework.Library.Cache
                     if (_instance.Value.options == null)
                         _instance.Value.options = new ConfigurationOptions
                         {
-                            EndPoints = { EndPoint },
+                            EndPoints = { _instance.Value.endpoint },
                             Ssl = true
                         };
                     _instance.Value.connMux = ConnectionMultiplexer.Connect(_instance.Value.options);
@@ -120,8 +108,7 @@ namespace Area23.At.Framework.Library.Cache
             if (!_allKeys.Contains(redIsKey))
             {
                 _allKeys.Add(redIsKey);
-                string jsonVal = JsonConvert.SerializeObject(AllKeys);
-                Db.StringSet("AllKeys", jsonVal, null, false, When.Always, CommandFlags.None);
+                SetKey<string[]>("AllKeys", AllKeys);
             }
 
         }
@@ -152,7 +139,8 @@ namespace Area23.At.Framework.Library.Cache
         /// <returns></returns>
         public T GetKey<T>(string redIsKey, CommandFlags flags = CommandFlags.None)
         {
-            string jsonVal = Db.StringGet(redIsKey, flags); 
+            string jsonVal = GetString(redIsKey, flags);
+
             var tValue = JsonConvert.DeserializeObject<T>(jsonVal);
 
             return tValue;
@@ -169,8 +157,7 @@ namespace Area23.At.Framework.Library.Cache
             if (!_allKeys.Contains(redIsKey))
             {
                 _allKeys.Remove(redIsKey);
-                string jsonVal = JsonConvert.SerializeObject(AllKeys);
-                Db.StringSet("AllKeys", jsonVal, null, false, When.Always, flags);
+                SetKey<string[]>("AllKeys", AllKeys);
             }
         }
 
