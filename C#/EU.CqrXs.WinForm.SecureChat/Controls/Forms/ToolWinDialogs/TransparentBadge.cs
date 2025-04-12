@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Cache;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -26,10 +27,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         public TransparentBadge()
         {
             InitializeComponent();
-            if (AppDomain.CurrentDomain.GetData("TransparentBadge") == null)
-                AppDomain.CurrentDomain.SetData("TransparentBadge", i);
+            int? iBadge = AppHashTable.GetValue<int>(Constants.APP_TRANSPARENT_BADGE);
+            if (iBadge.HasValue && iBadge.Value != 0)
+                i = (int)iBadge.Value;
             else
-                i = (int) AppDomain.CurrentDomain.GetData("TransparentBadge");
+                AppHashTable.SetValue<int>(Constants.APP_TRANSPARENT_BADGE, i);            
         }
 
         public TransparentBadge(string text) : this()
@@ -158,7 +160,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         this.labelTitle.Font = badgeFont;
 
-                        AppDomain.CurrentDomain.SetData("TransparentBadge", j);
+                        AppHashTable.SetValue<int>(Constants.APP_TRANSPARENT_BADGE, j);
                         y -= (j - i);
                         this.SetDesktopLocation(x, y);
                         Thread.Sleep(200);

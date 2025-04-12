@@ -508,7 +508,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.StripProgressBar.Value = 50;
 
             CqrContact myContact = Entities.Settings.Singleton.MyContact;
-            string ser = (string)AppDomain.CurrentDomain.GetData(Constants.MY_CONTACT);
             string encrypted = srv1stMsg.CqrSrvMsg1(myContact, EncodingType.Base64);
             Thread.Sleep(100);
 

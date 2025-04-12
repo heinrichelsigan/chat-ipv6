@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Cache;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -92,7 +93,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             string? seckey = this.TextBoxSecureKey.Text;
             if (!string.IsNullOrEmpty(seckey) && !string.IsNullOrWhiteSpace(seckey))
             {
-                AppDomain.CurrentDomain.SetData("InputDialog", seckey);
+                AppHashTable.SetValue<string>(Constants.APP_INPUT_DIALOG, seckey);
                 this.labelX.Enabled = true;
                 this.labelX.ForeColor = Color.Black;
                 this.labelX.Font = new Font("Lucida Sans Unicode", 11F, FontStyle.Bold);
@@ -108,7 +109,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             else
             {
-                AppDomain.CurrentDomain.SetData("InputDialog", null);
+                AppHashTable.SetValue<string>(Constants.APP_INPUT_DIALOG, null);                
                 this.labelX.ForeColor = Color.Gray;
                 this.labelX.BackColor = SystemColors.InactiveCaption;
                 this.panelHeader.BackColor = SystemColors.InactiveCaption;
@@ -143,7 +144,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             else if (!string.IsNullOrEmpty(seckey) && !string.IsNullOrWhiteSpace(seckey) && buttonOK.Enabled && labelX.Enabled)
             {
-                AppDomain.CurrentDomain.SetData("InputDialog", seckey);
+                AppHashTable.SetValue<string>(Constants.APP_INPUT_DIALOG, seckey);
                 this.Close();
             }
         }

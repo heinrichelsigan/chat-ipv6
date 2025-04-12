@@ -1,3 +1,4 @@
+using Area23.At.Framework.Core.Cache;
 using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Win32Api;
@@ -17,6 +18,8 @@ namespace EU.CqrXs.WinForm.SecureChat
         private static Mutex? _mutex = null;
         static internal int mode = 0;
         static internal string startFormSwitch = string.Empty;
+        static internal bool firstRegistration = false;
+
 
         internal static Mutex PMutec { get => _mutex; }
 
@@ -44,13 +47,16 @@ namespace EU.CqrXs.WinForm.SecureChat
                 {
                     if (arg.ToLower().Contains("nolog"))
                         Constants.NOLog = true;
+                    if (arg.ToLower().Contains("firstreg") || arg.ToLower().Contains("1streg"))
+                        firstRegistration = true;                        
                     if (arg.ToLower().Contains("dir") &&
                         (arg.ToLower().Contains("no") || arg.ToLower().Contains("false")))
                         Constants.DirCreate = false;
                     if (arg.ToLower().Contains("test"))
-                        AppDomain.CurrentDomain.SetData(Constants.CQRXS_TEST_FORM, true);
+                        AppHashTable.SetValue<bool>(Constants.CQRXS_TEST_FORM, true);
+                        // AppDomain.CurrentDomain.SetData(Constants.CQRXS_TEST_FORM, true);
                     if (arg.ToLower().Contains("fishonaes") || arg.ToLower().Contains("fish on aes"))
-                        AppDomain.CurrentDomain.SetData(Constants.FISH_ON_AES_ENGINE, true);
+                        AppHashTable.SetValue<bool>(Constants.FISH_ON_AES_ENGINE, true);
                     if (arg.ToLower().Contains("peer"))
                         startFormSwitch = "peer";
                     if (arg.ToLower().Contains("rich"))
@@ -59,6 +65,8 @@ namespace EU.CqrXs.WinForm.SecureChat
                         startFormSwitch = "secure";                    
                 }
             }
+
+            AppHashTable.SetValue<bool>(Constants.APP_FIRST_REG, firstRegistration);
 
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.

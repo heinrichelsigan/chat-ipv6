@@ -21,6 +21,7 @@ using System.Text.Json.Nodes;
 using Newtonsoft.Json;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
+using Area23.At.Framework.Core.Cache;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -68,12 +69,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             this.textBoxExternalIp.Text = ExternalIpAddress.ToString();
 
-            if (AppDomain.CurrentDomain.GetData("ServerKey") != null)
-                myServerKey = (string)AppDomain.CurrentDomain.GetData("ServerKey");
+            string? appServerKey = AppHashTable.GetValue<string>(Constants.APP_SERVER_KEY);
+            if (!string.IsNullOrEmpty(appServerKey))
+                myServerKey = (string)appServerKey;
             else
             {
                 myServerKey = ExternalIpAddress.ToString() + Constants.APP_NAME;
-                AppDomain.CurrentDomain.SetData("ServerKey", myServerKey);
+                AppHashTable.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);                 
             }
 
             if (!string.IsNullOrEmpty(myServerKey))
@@ -145,7 +147,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (!string.IsNullOrEmpty(this.textBoxSecKey.Text))
             {
                 myServerKey = this.textBoxSecKey.Text;
-                AppDomain.CurrentDomain.SetData("ServerKey", myServerKey);
+                AppHashTable.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);
                 SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
                 this.textBoxPipeHash.Text = srv1stMsg.PipeString;
             }
@@ -158,7 +160,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (!string.IsNullOrEmpty(this.textBoxSecKey.Text))
                 {
                     myServerKey = this.textBoxSecKey.Text;
-                    AppDomain.CurrentDomain.SetData("ServerKey", myServerKey);
+                    AppHashTable.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);
                     SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
                     this.textBoxPipeHash.Text = srv1stMsg.PipeString;
 

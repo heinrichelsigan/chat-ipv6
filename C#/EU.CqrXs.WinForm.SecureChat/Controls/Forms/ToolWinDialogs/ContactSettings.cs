@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.Cache;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Static;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Properties;
@@ -16,13 +17,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
     partial class ContactSettings : Dialog
     {
         private int _id = 1;
+        bool firstReg = false;
         private string base64image = string.Empty;
         private System.ComponentModel.ComponentResourceManager res = new System.ComponentModel.ComponentResourceManager(typeof(ContactSettings));
         public ContactSettings() : base()
         {
             InitializeComponent();
             pictureBoxImage.Image = null;
-            if (EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Click2UploadBackground != null) 
+            if (EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Click2UploadBackground != null)
                 pictureBoxImage.BackgroundImage = EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Click2UploadBackground;
             pictureBoxImage.Tag = Constants.IMAGE_UPLOAD_CLICK + Constants.IMAGE_UPLOAD_EXTENSION;
 
@@ -31,6 +33,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 this.logoPictureBox.Image = new Bitmap(ms);
             }
             pictureBoxImage.SizeMode = PictureBoxSizeMode.AutoSize;
+
+            if (Settings.Singleton != null)
+                this.checkBoxRegister.Checked = Settings.Singleton.RegisterUser;
+            firstReg = AppHashTable.GetValue<bool>(Constants.APP_FIRST_REG);
+            if (!firstReg)
+                this.checkBoxRegister.Enabled = false;
 
         }
 
@@ -103,7 +111,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 string? currentSelectedName = (comboBoxName.Text != null) ? comboBoxName.Text :
                     (comboBoxName.SelectedItem != null) ? comboBoxName.SelectedItem.ToString() : null;
-                               
+
                 if (!string.IsNullOrEmpty(currentSelectedName))
                 {
                     foreach (CqrContact contact in Entities.Settings.Singleton.Contacts)
@@ -114,7 +122,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             contact.Email = this.textBoxEmail.Text ?? string.Empty; //
                             contact.Mobile = this.textBoxMobile.Text ?? string.Empty; //
                             contact.Address = this.textBoxAddress.Text ?? string.Empty;
-                            if (pictureBoxImage.Image != null) 
+                            if (pictureBoxImage.Image != null)
                                 contact.ContactImage = CqrImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString());
 
                             foundContact = true;
@@ -133,9 +141,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                 Mobile = this.textBoxMobile.Text ?? string.Empty,
                                 Address = this.textBoxAddress.Text ?? string.Empty,
                                 ContactImage = CqrImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString())
-                            }); 
+                            });
                     }
                 }
+                Settings.Singleton.RegisterUser = this.checkBoxRegister.Checked;
                 Settings.SaveSettings(Entities.Settings.Singleton);
                 return;
             }
@@ -170,7 +179,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         Name = this.comboBoxName.Text ?? string.Empty,
                         Email = this.textBoxEmail.Text ?? string.Empty,
                         Mobile = this.textBoxMobile.Text ?? string.Empty,
-                        Address = this.textBoxAddress.Text ?? string.Empty                         
+                        Address = this.textBoxAddress.Text ?? string.Empty
                     };
                     if (imgTest != null)
                         Settings.Singleton.MyContact.ContactImage = imgTest;
@@ -188,7 +197,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     if (imgTest != null)
                         Settings.Singleton.MyContact.ContactImage = imgTest;
                 }
-                AppDomain.CurrentDomain.SetData(Constants.MY_CONTACT, JsonConvert.SerializeObject(Settings.Singleton.MyContact));
+                AppHashTable.SetValue<CqrContact>(Constants.APP_MY_CONTACT, Settings.Singleton.MyContact);                
+                Settings.Singleton.RegisterUser = this.checkBoxRegister.Checked;
                 Settings.SaveSettings(Entities.Settings.Singleton);
             }
         }
@@ -244,7 +254,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     if (contact != null && !string.IsNullOrEmpty(contact.Name) && contact.Name.Equals(currentSelectedName, StringComparison.InvariantCultureIgnoreCase))
                     {
                         this.Text = contact.ContactId + " " + contact.Name;
-                        this.comboBoxName.Text = contact.Name;                        
+                        this.comboBoxName.Text = contact.Name;
                         this.textBoxEmail.Text = contact.Email ?? string.Empty;
                         this.textBoxMobile.Text = contact.Mobile ?? string.Empty;
                         this.textBoxAddress.Text = contact.Address ?? string.Empty;
@@ -261,7 +271,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             this.pictureBoxImage.BackgroundImage = Properties.fr.Resources.Click2UploadBackground;
                             this.pictureBoxImage.Image = null;
                         }
-                            
+
                         break;
                     }
                 }
@@ -291,9 +301,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     CqrContact? cqrContact = Entities.Settings.Singleton.Contacts.Where(c => c.ContactId == _id).ToList().FirstOrDefault();
                     fileName = cqrContact?.Name?.Replace(" ", "");
                     fileName += ((string.IsNullOrEmpty(fileName)) ? _id : "") + Path.GetExtension(FileOpenDialog.FileName);
-                    
+
                     byte[] bitmapBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);
-                    base64image = Convert.ToBase64String(bitmapBytes, Base64FormattingOptions.None); 
+                    base64image = Convert.ToBase64String(bitmapBytes, Base64FormattingOptions.None);
                     // Base64.Encode(bitmapBytes);
                     Bitmap bmp = new Bitmap(FileOpenDialog.FileName);
                     int h = bmp.Size.Height;
@@ -308,7 +318,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     else
                         this.pictureBoxImage.Image = bmp;
 
-                    
+
                     this.pictureBoxImage.Tag = fileName;
                 }
             }
@@ -345,6 +355,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             return destImage;
         }
-    
+
+        
     }
 }

@@ -43,6 +43,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             textBoxAddress = new TextBox();
             pictureBoxImage = new PictureBox();
             okButton = new Button();
+            checkBoxRegister = new CheckBox();
             FileOpenDialog = new OpenFileDialog();
             tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)logoPictureBox).BeginInit();
@@ -67,6 +68,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             tableLayoutPanel.Controls.Add(textBoxAddress, 2, 3);
             tableLayoutPanel.Controls.Add(pictureBoxImage, 2, 4);
             tableLayoutPanel.Controls.Add(okButton, 2, 5);
+            tableLayoutPanel.Controls.Add(checkBoxRegister, 1, 5);
             tableLayoutPanel.Dock = DockStyle.Fill;
             tableLayoutPanel.Font = new Font("Lucida Sans Unicode", 10F);
             tableLayoutPanel.Location = new Point(2, 2);
@@ -220,6 +222,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             okButton.TabIndex = 32;
             okButton.Text = "&OK";
             // 
+            // checkBoxRegister
+            // 
+            checkBoxRegister.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBoxRegister.AutoSize = true;
+            checkBoxRegister.Location = new Point(181, 303);
+            checkBoxRegister.Name = "checkBoxRegister";
+            checkBoxRegister.Size = new Size(83, 30);
+            checkBoxRegister.TabIndex = 33;
+            checkBoxRegister.Text = "Register";
+            checkBoxRegister.UseVisualStyleBackColor = true;
+            // 
             // FileOpenDialog
             // 
             FileOpenDialog.FileName = "FileOpenDialog";
@@ -258,5 +271,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private PictureBox pictureBoxImage;
         private OpenFileDialog FileOpenDialog;
         private ComboBox comboBoxName;
+        private CheckBox checkBoxRegister;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.CqrXs;
+﻿using Area23.At.Framework.Core.Cache;
+using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
@@ -12,6 +13,8 @@ using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using EU.CqrXs.WinForm.SecureChat.Controls.UserControls;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Util;
+using Newtonsoft.Json.Linq;
+
 
 // using Microsoft.VisualBasic;
 using System.ComponentModel;
@@ -143,8 +146,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private async void SecureChat_Load(object sender, EventArgs e)
         {
-            bool send1stReg = false;
-                        
+            bool? appFirstReg = AppHashTable.GetValue<bool>(Constants.APP_FIRST_REG);
+            bool send1stReg = (appFirstReg.HasValue && appFirstReg.Value);
+
+
             await BaseChatForm_Load(sender, e);
             bgWorkerMonitor.RunWorkerAsync();
 
@@ -158,29 +163,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             int progress = this.GetProgressBar(this.StripProgressBar);
             this.SetProgressBar(this.StripProgressBar, progress);
 
-            if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null)
+            if (send1stReg || (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null))
             {
+                send1stReg = true;
+                AppHashTable.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
                 // badge.Show();
                 await MenuContactsItemMyContact_Click(sender, e);
+                
                 progress = this.GetProgressBar(this.StripProgressBar);
-                this.SetProgressBar(this.StripProgressBar, progress + 5);
-                while (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name))
-                {
-                    string notFullReason = string.Empty;
-                    if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name))
-                        notFullReason += "Name is missing!" + Environment.NewLine;
-                    if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email))
-                        notFullReason += "Email Address is missing!" + Environment.NewLine;
-                    // if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Mobile))
-                    //     notFullReason += "Mobile phone is missing!" + Environment.NewLine;
-                    MessageBox.Show(notFullReason, "Please fill out your info fully", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    
-                    this.SetProgressBar(this.StripProgressBar, progress + 10);
-                    await MenuContactsItemMyContact_Click(sender, e);
-                }
-                send1stReg = true;
+                this.SetProgressBar(this.StripProgressBar, progress + 10);                               
             }
+            
             AddContactsToIpContact();
 
             Bitmap? bmp = Properties.fr.Resources.DefaultF45;
@@ -221,13 +215,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             progress = (progress < 100) ? progress + 5 : 100;
             this.SetProgressBar(this.StripProgressBar, progress);            
 
-            if (send1stReg)
+            if (send1stReg && Settings.Singleton.RegisterUser)
             {
                 DialogResult regServerResult = MessageBox.Show("Do you want to register?", "Register your account on server?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (regServerResult == DialogResult.Yes)
                     Send_1st_Server_Registration(sender, e);
-            }                
-            
+                else
+                {
+                    Settings.Singleton.RegisterUser = false;
+                    Settings.SaveSettings();
+                }
+            }
+            send1stReg = false;
+            AppHashTable.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
+
             this.SetProgressBar(this.StripProgressBar, 100);
             SetStatusText(StripStatusLabel, "Secure Chat init done.");
 
@@ -643,8 +644,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             barProgress = (barProgress <= 90) ? barProgress + 5 : 100;
             this.SetProgressBar(this.StripProgressBar, barProgress);
 
-            CqrContact myContact = Entities.Settings.Singleton.MyContact;
-            string ser = (string)AppDomain.CurrentDomain.GetData(Constants.MY_CONTACT);
+            CqrContact myContact = Entities.Settings.Singleton.MyContact;            
             string encrypted = srv1stMsg.CqrSrvMsg1(myContact, EncodingType.Base64);
             Thread.Sleep(32);
 
@@ -876,7 +876,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                         dialog.ShowDialog();
-                        chatRoomNr = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                        string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        chatRoomNr = (string.IsNullOrEmpty(appInputDialogChat)) ? string.Empty : appInputDialogChat;
                         TextBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : TextBoxChatSession.Text;
                     }
 
@@ -1025,7 +1026,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                         dialog.ShowDialog();
-                        chatRoomNr = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                        string? appInputChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        chatRoomNr = (string.IsNullOrEmpty(appInputChat)) ? string.Empty : appInputChat;
                         TextBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : TextBoxChatSession.Text;
                     }
 
@@ -1140,7 +1142,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                     dialog.ShowDialog();
-                    chatRoomNr = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                    string? appDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                    chatRoomNr = (string.IsNullOrEmpty(appDialogChat)) ? string.Empty : appDialogChat;                   
                     SetTextBoxText(TextBoxChatSession, ((!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : GetTextBoxText(TextBoxChatSession)));
                 }
 
@@ -1517,7 +1520,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         {
                             InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                             dialog.ShowDialog();
-                            chatRoomNr = (AppDomain.CurrentDomain.GetData("InputDialog") != null) ? ((string)AppDomain.CurrentDomain.GetData("InputDialog")) : string.Empty;
+                            string? appChatInputDialog = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                            chatRoomNr = (string.IsNullOrEmpty(appChatInputDialog)) ? string.Empty : appChatInputDialog;                            
                             TextBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : TextBoxChatSession.Text;
                         }
 
@@ -1810,11 +1814,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             ContactSettings contactSettings = new ContactSettings("My Contact Info", 0);
             contactSettings.ShowInTaskbar = true;
+            do
+            {
 #pragma warning disable WFO5002 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            await contactSettings.ShowDialogAsync();
+                await contactSettings.ShowDialogAsync();
 #pragma warning restore WFO5002 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+                string notFullReason = string.Empty;
+                if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name))
+                    notFullReason += "Name is missing! ";
+                if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email))
+                    notFullReason += "Email Address is missing!";
+                // if (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Mobile))
+                //     notFullReason += "Mobile phone is missing!" + Environment.NewLine;
+                if (!string.IsNullOrEmpty(notFullReason))
+                    MessageBox.Show(notFullReason, "Please fill out your contact info", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            Bitmap? bmp = Properties.fr.Resources.DefaultF45;
+            } while (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name));
+            
+            Bitmap ? bmp = Properties.fr.Resources.DefaultF45;
             if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.ContactImage.ImageBase64))
             {
                 try
@@ -2223,7 +2240,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     ToolStripMenuItem item = new ToolStripMenuItem(addrProxy.AddressFamily.ShortInfo() + addrProxy.ToString(), null, ServerProxyAddressSelected, addrProxy.ToString());
                     if ((addrProxy.AddressFamily == ServerIpAddress?.AddressFamily) &&
-                        (Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
+                        (Area23.At.Framework.Core.Static.Extensions.BytesCompare(addrProxy.GetAddressBytes(), ServerIpAddress.GetAddressBytes()) == 0))
                     {
 
                         if (!GetMenuItemChecked(MenuNetworkItemIPv6Secure) && addrProxy.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)

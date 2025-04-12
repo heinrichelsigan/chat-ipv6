@@ -96,8 +96,7 @@ namespace Area23.At.Framework.Core.Static
         public const string ENTER_SECRET_KEY = "[enter secret key here]";
         public const string ENTER_IP_CONTACT = "[Enter IPv4/IPv6 or select Contact]";
         public const string ENTER_IP = "[Enter peer IPv4/IPv6]";
-        public const string ENTER_CONTACT = "[Select Contact]";
-        public const string MY_CONTACT = "MyContact";
+        public const string ENTER_CONTACT = "[Select Contact]";      
 
         public const string AUTHOR = "Heinrich Elsigan";
         public const string AUTHOR_EMAIL = "heinrich.elsigan@area23.at";
@@ -187,6 +186,13 @@ namespace Area23.At.Framework.Core.Static
         public const string STRING_EMPTY = "";
         public const string STRING_NULL = null;
         public const string SNULL = "(null)";
+
+        public const string APP_CONCURRENT_DICT = "APP_CONCURRENT_DICT";
+        public const string APP_FIRST_REG = "APP_FIRST_REG";
+        public const string APP_TRANSPARENT_BADGE = "APP_TRANSPARENT_BADGE";
+        public const string APP_SERVER_KEY = "APP_SERVER_KEY";
+        public const string APP_INPUT_DIALOG = "APP_INPUT_DIALOG";
+        public const string APP_MY_CONTACT = "APP_MY_CONTACT";
 
         public const string AES_ENVIROMENT_KEY = "APP_ENCRYPTION_SECRET_KEY";
 
