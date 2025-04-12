@@ -244,6 +244,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         #region TextBox&RichTextBox
 
+        internal delegate void EnableTextBoxCallback(System.Windows.Forms.TextBox textBox, bool enabled); 
+
         internal delegate string GetTextBoxTextCallback(System.Windows.Forms.TextBox textBox);
 
         internal delegate string GetRichTextBoxTextCallback(System.Windows.Forms.RichTextBox textBox);
@@ -272,6 +274,36 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         internal delegate int GetLastIndexOfSubstringCallback(System.Windows.Forms.RichTextBox richTextBox, string pattern);
 
         internal delegate void DeselectAllRichTextCallback(System.Windows.Forms.RichTextBox richTextBox);
+
+
+        internal void EnableTextBox(System.Windows.Forms.TextBox textBox, bool enable)
+        {            
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (textBox.InvokeRequired)
+            {
+                EnableTextBoxCallback enableTextBoxCallback = // new EnableTextBoxCallback(EnableTextBox);
+                    delegate (System.Windows.Forms.TextBox txtBx, bool ena)
+                    {
+                        if (txtBx != null)
+                            txtBx.Enabled = ena;
+                    };
+                try
+                {
+                    textBox.Invoke(enableTextBoxCallback, new object[] { textBox, enable });
+                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate EnableTextBox enable: \"{enable}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (textBox != null)
+                    textBox.Enabled = enable;
+            }
+        }
 
 
         internal string GetTextBoxText(System.Windows.Forms.TextBox textBox)

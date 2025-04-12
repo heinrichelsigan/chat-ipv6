@@ -91,7 +91,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonInviteChatRoom = new Button();
             buttonVisitChatRoom = new Button();
             TextBoxPipe = new TextBox();
-            textBoxChatSession = new TextBox();
+            TextBoxChatSession = new TextBox();
             ButtonCheck = new Button();
             ComboBoxContacts = new ComboBox();
             ComboBoxIp = new ComboBox();
@@ -375,8 +375,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuContactsItemMe.ShortcutKeys = Keys.Alt | Keys.M;
             MenuContactsItemMe.Size = new Size(233, 22);
             MenuContactsItemMe.Text = "me myself mine";
+            // MenuContactsItemMe.Click += MenuContactsItemMyContact_Click;
             MenuContactsItemMe.ToolTipText = "edits my contact";
-            MenuContactsItemMe.Click += MenuContactsItemMyContact_Click;
             // 
             // MenuContactsItemAdd
             // 
@@ -682,7 +682,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelEnCodeCrypt.Controls.Add(ButtonInviteChatRoom);
             PanelEnCodeCrypt.Controls.Add(buttonVisitChatRoom);
             PanelEnCodeCrypt.Controls.Add(TextBoxPipe);
-            PanelEnCodeCrypt.Controls.Add(textBoxChatSession);
+            PanelEnCodeCrypt.Controls.Add(TextBoxChatSession);
             PanelEnCodeCrypt.Controls.Add(ButtonCheck);
             PanelEnCodeCrypt.Controls.Add(ComboBoxContacts);
             PanelEnCodeCrypt.Controls.Add(ComboBoxIp);
@@ -738,15 +738,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             TextBoxPipe.Size = new Size(83, 25);
             TextBoxPipe.TabIndex = 13;
             // 
-            // textBoxChatSession
+            // TextBoxChatSession
             // 
-            textBoxChatSession.Font = new Font("Lucida Sans Unicode", 8F);
-            textBoxChatSession.HideSelection = false;
-            textBoxChatSession.Location = new Point(416, 5);
-            textBoxChatSession.Margin = new Padding(1);
-            textBoxChatSession.Name = "textBoxChatSession";
-            textBoxChatSession.Size = new Size(340, 24);
-            textBoxChatSession.TabIndex = 19;
+            TextBoxChatSession.Font = new Font("Lucida Sans Unicode", 8F);
+            TextBoxChatSession.HideSelection = false;
+            TextBoxChatSession.Location = new Point(416, 5);
+            TextBoxChatSession.Margin = new Padding(1);
+            TextBoxChatSession.Name = "textBoxChatSession";
+            TextBoxChatSession.Size = new Size(340, 24);
+            TextBoxChatSession.TabIndex = 19;
             // 
             // ButtonCheck
             // 
@@ -1079,7 +1079,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private Controls.GroupBoxes.LinkLabelsBox LinkedLabelsBox;
         private Controls.Panels.PeerServerSwitchPanel PeerServerSwitch;
         private Button ButtonSend;
-        private TextBox textBoxChatSession;
+        private TextBox TextBoxChatSession;
         private ToolStripSeparator SeparatorMenu0;
         private Button ButtonInviteChatRoom;
         private Button buttonVisitChatRoom;

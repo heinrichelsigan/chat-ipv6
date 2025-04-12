@@ -29,6 +29,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
 
         public bool OnlySecureFileTypes { get; set; }
 
+        public bool RegisterUser {  get; set; } 
+
         public List<string> SecretKeysCrypted { get; set; }
 
         #endregion properties
@@ -45,7 +47,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             OnlyPeer2PeerChat = false;
             ZipBeforeSend = false;
             OnlySecureFileTypes = false;
-            
+            RegisterUser = false;
         }
 
         public Settings(DateTime timeStamp) : this()
