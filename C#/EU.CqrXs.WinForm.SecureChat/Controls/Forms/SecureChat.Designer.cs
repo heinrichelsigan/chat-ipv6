@@ -674,7 +674,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonKey.Size = new Size(40, 27);
             ButtonKey.TabIndex = 12;
             ButtonKey.UseVisualStyleBackColor = false;
-            ButtonKey.Click += ButtonKey_Click;
+            ButtonKey.Click += SecretKey_Update;
             // 
             // PanelEnCodeCrypt
             // 

@@ -135,6 +135,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.StripProgressBar.Value = 0;
         }
 
+        /// <summary>
+        /// async SecureChat_Load performs init at startup
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         private async void SecureChat_Load(object sender, EventArgs e)
         {
             bool send1stReg = false;
@@ -205,8 +210,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         secLastKey = secKey;
                         this.ComboBoxSecretKey.Items.Add(secLastKey);
                     }
-                    this.ComboBoxSecretKey.Text = string.IsNullOrEmpty(secLastKey) ? "" : secLastKey;
-                    ButtonKey_Click(sender, e);
+                    // this.ComboBoxSecretKey.Text = string.IsNullOrEmpty(secLastKey) ? "" : secLastKey;
+                    // SecretKey_Update(sender, e);
                 }
 
             }
@@ -214,7 +219,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.StripProgressBar.Value = (progress < 100) ? progress + 5 : 100;
 
             if (send1stReg)
-                Send_1st_Server_Registration(sender, e);
+            {
+                DialogResult regServerResult = MessageBox.Show("Do you want to register?", "Register your account on server?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (regServerResult == DialogResult.Yes)
+                    Send_1st_Server_Registration(sender, e);
+            }                
 
             this.StripProgressBar.Value = 90;
 
@@ -282,26 +291,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #region SecretKey & SymmCipherPipe.PipeString + ComboBoxSecretKey FocusLeave TextUpdate SelectedIndexChanged
 
         /// <summary>
-        /// ButtonKey_Click Event
+        /// SecretKey Update Event
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void ButtonKey_Click(object sender, EventArgs e)
+        private void SecretKey_Update(object sender, EventArgs e)
         {
             myServerKey = ExternalIpAddress?.ToString() + Constants.APP_NAME;
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return;
 
             SrvMsg serverMessage = new SrvMsg(myServerKey, myServerKey);
+            SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);            
+            SetStatusText(StripStatusLabel, $"Changed secret key to {myServerKey} => secure pipe: {serverMessage.PipeString}");
 
-            SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
+            if (this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
+                this.ComboBoxSecretKey.Items.Remove(this.ComboBoxSecretKey.Text);            
+            this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
 
-            if (!Settings.Singleton.SecretKeys.Contains(myServerKey))
+            if (Entities.Settings.Singleton != null)
             {
+                if (Settings.Singleton.SecretKeys.Contains(myServerKey))
+                    Settings.Singleton.SecretKeys.Remove(myServerKey);
                 Settings.Singleton.SecretKeys.Add(myServerKey);
                 Settings.SaveSettings();
             }
-
+            
         }
 
 
@@ -315,15 +330,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return;
 
-            ButtonKey_Click(sender, e);
-            if (Entities.Settings.Singleton != null)
-            {
-                if (!Entities.Settings.Singleton.SecretKeys.Contains(this.ComboBoxSecretKey.Text))
-                    Entities.Settings.Singleton.SecretKeys.Add(this.ComboBoxSecretKey.Text);
-                if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
-                    this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
-            }
-            SetStatusText(StripStatusLabel, "Added new secret key => calculated new SecurePipe...");
+            SecretKey_Update(sender, e);                        
         }
 
         /// <summary>
@@ -334,13 +341,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private void ComboBoxSecretKey_TextUpdate(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ComboBoxSecretKey.Text) ||
-                this.ComboBoxSecretKey.Text.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
+            string secretKey = GetComboBoxText(ComboBoxSecretKey);
+            if (string.IsNullOrEmpty(secretKey) ||
+                secretKey.Equals(Constants.ENTER_SECRET_KEY, StringComparison.InvariantCultureIgnoreCase))
             {
                 return;
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
-            // ButtonKey_Click(sender, e);
+            SrvMsg serverMessage = new SrvMsg(secretKey, secretKey);
+            SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
         }
 
         /// <summary>
@@ -352,15 +361,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return;
-            ButtonKey_Click(sender, e);
-            if (Entities.Settings.Singleton != null)
-            {
-                if (!Entities.Settings.Singleton.SecretKeys.Contains(this.ComboBoxSecretKey.Text))
-                    Entities.Settings.Singleton.SecretKeys.Add(this.ComboBoxSecretKey.Text);
-                if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
-                    this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
-            }
-            StripStatusLabel.Text = "Added new secret key => calculated new SecurePipe...";
+
+            SecretKey_Update(sender, e);            
         }
 
         #endregion SecretKey & SymmCipherPipe.PipeString + ComboBoxSecretKey FocusLeave TextUpdate SelectedIndexChanged
@@ -526,7 +528,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
             SetComboBoxBackColor(ComboBoxContacts, Color.White);
-            StripStatusLabel.Text = $"{contactNameEmail} selected. Click Invite to request new chatroom.";
+            SetStatusText(StripStatusLabel, $"{contactNameEmail} selected. Click Invite to request new chatroom.");
 
         }
 
@@ -539,7 +541,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
             {
-                StripStatusLabel.Text = "Nothing to send!";
+                SetStatusText(StripStatusLabel, "Nothing to send!");
                 return;
             }
 
@@ -659,7 +661,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
             Format_Lines_RichTextBox();
-            StripStatusLabel.Text = "Finished 1st registration";
+            SetStatusText(StripStatusLabel, "Finished 1st registration");
         }
 
         /// <summary>
@@ -817,7 +819,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
             {
-                StripStatusLabel.Text = "Nothing to send!";
+                SetStatusText(StripStatusLabel, "Nothing to send!");
                 return;
             }
 
@@ -835,7 +837,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
                     {
-                        StripStatusLabel.Text = "Nothing to send (no ip addr).";
+                        SetStatusText(StripStatusLabel, "Nothing to send (no ip addr).");
                         return;
                     }
 
@@ -850,7 +852,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     AppendText(TextBoxSource, userMsg);
                     Format_Lines_RichTextBox();
                     this.RichTextBoxChat.Text = string.Empty;
-                    StripStatusLabel.Text = $"Send to {partnerIpAddress} successfully.";
+                    SetStatusText(StripStatusLabel, $"Send to {partnerIpAddress} successfully.");
                     await PlaySoundFromResourcesAsync("sound_arrow");
 
                 }
@@ -970,7 +972,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
                     {
-                        StripStatusLabel.Text = "Nothing to send (no ip addr).";
+                        SetStatusText(StripStatusLabel, "Nothing to send (no ip addr).");
                         return;
                     }
 

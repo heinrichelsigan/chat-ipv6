@@ -10,8 +10,8 @@
     <StartupObject>EU.CqrXs.WinForm.SecureChat.Program</StartupObject>
     <RootNamespace>EU.CqrXs.WinForm.SecureChat</RootNamespace>
 	<ApplicationIcon>RemoteConnectedIcon.ico</ApplicationIcon>
-	<AssemblyVersion>2.25.411</AssemblyVersion>
-    <FileVersion>2.25.411</FileVersion>
+	<AssemblyVersion>2.25.413</AssemblyVersion>
+    <FileVersion>2.25.413</FileVersion>
     <ErrorReport>send</ErrorReport>
     <Title>SecureChat</Title>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>		
@@ -23,7 +23,7 @@
 	<SignAssembly>False</SignAssembly>
 	<Company>Heinrich Georg Elsigan</Company>
 	<Copyright>Copyright © 2000-2040 Copyleft https://cqrxs.eu/</Copyright>
-	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<GenerateDocumentationFile>False</GenerateDocumentationFile>
 	<DocumentationFile>S:\chat-ipv6\C#\EU.CqrXs.WinForm.SecureChat\Properties\text\CqrJd.xml</DocumentationFile>	
 	<UseWPF>False</UseWPF>	  		
 	<IsTrimmable>true</IsTrimmable>
@@ -32,12 +32,13 @@
 	<Description>https://cqrxs.eu/help</Description>
 	<PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
 	<NuGetAuditMode>all</NuGetAuditMode>
+	<NuGetAuditLevel>low</NuGetAuditLevel>
 	<!-- PublishTrimmed>True</PublishTrimmed -->
 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>8</WarningLevel>
     <DebugType>full</DebugType>
     <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
@@ -46,7 +47,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>full</DebugType>
-    <WarningLevel>8</WarningLevel>
+    <WarningLevel>4</WarningLevel>
     <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>

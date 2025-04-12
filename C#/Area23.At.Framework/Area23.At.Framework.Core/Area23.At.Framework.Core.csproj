@@ -10,8 +10,8 @@
     <Copyright>Copyleft © 2000-2040</Copyright>
     <PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
-    <AssemblyVersion>2.25.410</AssemblyVersion>
-    <FileVersion>2.25.410</FileVersion>
+    <AssemblyVersion>2.25.416</AssemblyVersion>
+    <FileVersion>2.25.416</FileVersion>
 	<IsTrimmable>true</IsTrimmable>
 	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
 	<PlatformTarget>AnyCPU</PlatformTarget>
@@ -19,8 +19,9 @@
     <Title>Area23.At.Framework.Core</Title>
     <Description>a small Area23.At.Framework.Core framework with minimalistic helper methods</Description>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <DocumentationFile>S:\chat-ipv6\C#\EU.CqrXs.WinForm.SecureChat\Properties\text\Area23Framework.xml</DocumentationFile>
+    <NuGetAuditMode>all</NuGetAuditMode>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -364,14 +364,21 @@
             Ctor
             </summary>
         </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.RichTextChat_Load(System.Object,System.EventArgs)">
+            <summary>
+            async RichTextChat_Load performs init at startup
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.Format_Lines_RichTextBox">
             <summary>
             Displays and formats lines in <see cref="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.RichTextBoxOneView" />
             </summary>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.ButtonKey_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SecretKey_Update(System.Object,System.EventArgs)">
             <summary>
-            ButtonKey_Click Event
+            SecretKey Update Event
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
@@ -550,14 +557,21 @@
             Ctor
             </summary>
         </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SecureChat_Load(System.Object,System.EventArgs)">
+            <summary>
+            async SecureChat_Load performs init at startup
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
         <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.Format_Lines_RichTextBox">
             <summary>
             Displays and formats lines in <see cref="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.RichTextBoxOneView" />
             </summary>
         </member>
-        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.ButtonKey_Click(System.Object,System.EventArgs)">
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SecretKey_Update(System.Object,System.EventArgs)">
             <summary>
-            ButtonKey_Click Event
+            SecretKey Update Event
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
