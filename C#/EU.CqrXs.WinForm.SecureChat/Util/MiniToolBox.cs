@@ -1,6 +1,8 @@
-﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
+using EU.CqrXs.WinForm.SecureChat.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +34,48 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             }
         }
 
+        internal static CqrContact? FindContactOrCreateByNameEmail(string nameEmail, string chatRoomSession, string pipeText)
+        {
+            CqrContact? friendContact = null, tmpContact = null;
+            foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
+            {
+                if (!string.IsNullOrEmpty(nameEmail) && nameEmail.Length > 3)
+                {
+                    if (c.NameEmail.Contains(nameEmail, StringComparison.InvariantCultureIgnoreCase) ||
+                        c.Email.Contains(nameEmail, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        friendContact = new CqrContact(c, chatRoomSession, pipeText)
+                        {
+                            TicksLong = new List<long>(), // open chat rooms => new tick list  
+                            LastPushed = DateTime.Now
+                        };
+                        break;
+                    }
+                }
+            }
+
+            if (friendContact == null && nameEmail.IsEmail())
+            {
+                string nameContact = nameEmail;
+                if (nameEmail.Contains("@"))
+                    nameContact = nameEmail.Substring(0, nameEmail.IndexOf("@")).Replace("@", "").Replace(".", " ");
+                if (!Int32.TryParse(DateTime.Now.ToString("yyMMdd"), out int cId))
+                    Int32.TryParse(DateTime.Now.ToString("Mdd"), out cId);
+                CqrImage? friendImg = null;
+                tmpContact = new CqrContact(cId, Guid.NewGuid(), nameContact, nameEmail, "", "", friendImg)
+                {
+                    TicksLong = new List<long>(), // open chat rooms => new tick list  
+                    LastPushed = DateTime.Now              
+                }; 
+                    
+                friendContact = new CqrContact(tmpContact, chatRoomSession, pipeText);
+                
+                Settings.Singleton.Contacts.Add(friendContact);
+                Settings.SaveSettings();
+            }
+
+            return friendContact;
+        }
 
 
         internal static string ShowZenMatrixPermutation(string secretKey, string iv = "")

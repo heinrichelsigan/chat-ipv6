@@ -740,32 +740,30 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetTextBoxText(this.TextBoxSource, "");
             SetTextBoxText(this.TextBoxDestionation, "");
             SetRichText(this.RichTextBoxOneView, "");
-            this.TextBoxChatSession.Text = (Settings.Singleton.MyContact.ChatRoomNr) ?? string.Empty;
+
+            string sessionChatText = (Settings.Singleton.MyContact.ChatRoomNr) ?? GetTextBoxText(TextBoxChatSession);
+            SetTextBoxText(TextBoxChatSession, sessionChatText);            
+            string pipeText = GetTextBoxText(TextBoxPipe);
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
-            CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, this.TextBoxChatSession.Text, this.TextBoxPipe.Text);
-            myContact.TicksLong = new List<long>(); // open chat rooms => new tick list
-            CqrContact? friendContact = null;
-            foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
-            {
-                if (c.NameEmail.Contains(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    friendContact = new CqrContact(c, this.TextBoxChatSession.Text, this.TextBoxPipe.Text);
-                    break;
-                }
-            }
+            CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, sessionChatText, pipeText) 
+            { 
+                TicksLong = new List<long>(), // open chat rooms => new tick list  
+                LastPushed = DateTime.Now
+            }; 
+                       
+            CqrContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, sessionChatText, pipeText);
+
 
             SrvMsg serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
             SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
             // this.TextBoxPipe.Text = serverMessage.PipeString;
             // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
             myContact._hash = GetHash();
-            myContact.TicksLong = new List<long>();
-            myContact.LastPushed = DateTime.Now;
+            if (friendContact != null)
+                friendContact._hash = GetHash();
 
-
-            friendContact._hash = GetHash();
             serverMessage = new SrvMsg(myContact, friendContact ?? myContact, CqrXsEuSrvKey, myServerKey);
 
             FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, myContact.Email, serverMessage.PipeString);
@@ -868,29 +866,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //     return ;
 
-                    string chatRoomNr = TextBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
-                    if (string.IsNullOrEmpty(TextBoxChatSession.Text))
-                        TextBoxChatSession.Text = chatRoomNr;
+                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
+                    if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
+                        SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
-                    if (string.IsNullOrEmpty(TextBoxChatSession.Text))
+                    if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                     {
                         InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                         dialog.ShowDialog();
                         string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
-                        chatRoomNr = (string.IsNullOrEmpty(appInputDialogChat)) ? string.Empty : appInputDialogChat;
-                        TextBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : TextBoxChatSession.Text;
+                        chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
+                        SetTextBoxText(TextBoxChatSession, chatRoomNr);                        
                     }
+                    string pipeText = GetTextBoxText(TextBoxPipe);
+                    string contactNameEmail = GetComboBoxText(this.ComboBoxContacts);
 
                     CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, TextBoxPipe.Text);
-                    CqrContact? friendContact = null;
-                    foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
-                    {
-                        if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            friendContact = new CqrContact(c, chatRoomNr, TextBoxPipe.Text);
-                            break;
-                        }
-                    }
+                    CqrContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, pipeText);
+
 
                     SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                     SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
@@ -1018,29 +1011,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     //if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //    return;
 
-                    string chatRoomNr = TextBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
-                    if (string.IsNullOrEmpty(TextBoxChatSession.Text))
-                        TextBoxChatSession.Text = chatRoomNr;
+                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
+                    if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
+                        SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
-                    if (string.IsNullOrEmpty(TextBoxChatSession.Text))
+                    if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                     {
                         InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                         dialog.ShowDialog();
-                        string? appInputChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
-                        chatRoomNr = (string.IsNullOrEmpty(appInputChat)) ? string.Empty : appInputChat;
-                        TextBoxChatSession.Text = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : TextBoxChatSession.Text;
+                        string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
+                        SetTextBoxText(TextBoxChatSession, chatRoomNr);
                     }
+                    string pipeText = GetTextBoxText(TextBoxPipe);
+                    string contactNameEmail = GetComboBoxText(this.ComboBoxContacts);
 
                     CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, TextBoxPipe.Text);
-                    CqrContact? friendContact = null;
-                    foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
-                    {
-                        if (c.NameEmail.Equals(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            friendContact = new CqrContact(c, chatRoomNr, TextBoxPipe.Text);
-                            break;
-                        }
-                    }
+                    CqrContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, pipeText);                    
 
                     SrvMsg serverMessage = new SrvMsg(myContact, friendContact, CqrXsEuSrvKey, myServerKey);
                     SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);
@@ -1134,34 +1121,23 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     contactNameEmail = "";
                 //     return;
 
-                string chatRoomNr = TextBoxChatSession.Text ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
-                if (string.IsNullOrEmpty(TextBoxChatSession.Text))
-                    SetTextBoxText(this.TextBoxChatSession, chatRoomNr);
+                string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.ChatRoomNr;
+                if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
+                    SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
-                if (string.IsNullOrEmpty(TextBoxChatSession.Text))
+                if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                 {
                     InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                     dialog.ShowDialog();
-                    string? appDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
-                    chatRoomNr = (string.IsNullOrEmpty(appDialogChat)) ? string.Empty : appDialogChat;                   
-                    SetTextBoxText(TextBoxChatSession, ((!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : GetTextBoxText(TextBoxChatSession)));
+                    string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                    chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
+                    SetTextBoxText(TextBoxChatSession, chatRoomNr);
                 }
+                string pipeText = GetTextBoxText(TextBoxPipe);                
 
-                CqrContact? friendContact = null;
-                if (!string.IsNullOrEmpty(contactNameEmail))
-                {
-                    foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
-                    {
-                        if (c.NameEmail.Contains(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            if ((friendContact = new CqrContact(c, chatRoomNr, TextBoxPipe.Text)) != null)
-                                SetComboBoxText(ComboBoxContacts, friendContact.NameEmail);
-                            break;
-                        }
-                    }
-                }
+                CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, TextBoxPipe.Text);
+                CqrContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, pipeText);
 
-                CqrContact myContact = new CqrContact(Entities.Settings.Singleton.MyContact, chatRoomNr, TextBoxPipe.Text);
 
                 Peer2PeerMsg pmsg = new Peer2PeerMsg(myServerKey);
 
@@ -1412,9 +1388,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
                     try
                     {
-                        this.SetComboBoxEnabled(this.ComboBoxIp, true);
-                        this.SetComboBoxEnabled(this.ComboBoxContacts, false);
                         EnableTextBox(this.TextBoxChatSession, false);
+                        SetComboBoxEnabled(this.ComboBoxIp, true);
+                        SetComboBoxEnabled(this.ComboBoxContacts, false);                        
 
                         SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, true);
                         SetMenuItemEnabledChecked(this.MenuOptionsItemServerSession, true, false);
@@ -1432,8 +1408,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     try
                     {
                         EnableTextBox(this.TextBoxChatSession, true);
-                        this.SetComboBoxEnabled(this.ComboBoxIp, false);
-                        this.SetComboBoxEnabled(this.ComboBoxContacts, true);
+                        SetComboBoxEnabled(this.ComboBoxIp, false);
+                        SetComboBoxEnabled(this.ComboBoxContacts, true);
 
                         SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, false);
                         SetMenuItemEnabledChecked(this.MenuOptionsItemServerSession, true, true);
@@ -1448,8 +1424,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     this.PeerSessionTriState = PeerSession3State.None;
                     try
                     {
-                        this.SetComboBoxEnabled(this.ComboBoxIp, false);
-                        this.SetComboBoxEnabled(this.ComboBoxContacts, false);
+                        EnableTextBox(this.TextBoxChatSession, false);
+                        SetComboBoxEnabled(this.ComboBoxIp, false);
+                        SetComboBoxEnabled(this.ComboBoxContacts, false);
                         SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, false);
                         SetMenuItemEnabledChecked(this.MenuOptionsItemServerSession, true, false);
                     }
