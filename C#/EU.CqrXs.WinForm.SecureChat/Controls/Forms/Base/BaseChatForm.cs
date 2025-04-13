@@ -25,6 +25,7 @@ using System.ComponentModel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 using Area23.At.Framework.Core.Cache;
+using Area23.At.Framework.Core.Cqr;
 // using static System.Net.Mime.MediaTypeNames;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base

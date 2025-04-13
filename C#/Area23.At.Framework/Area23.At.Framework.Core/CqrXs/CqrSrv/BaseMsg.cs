@@ -38,7 +38,7 @@ namespace Area23.At.Framework.Core.CqrXs.CqrMsg
             key = srvKey;
             hash = EnDeCodeHelper.KeyToHex(srvKey);
             keyBytes = CryptHelper.GetUserKeyBytes(key, hash, 16);
-            symmPipe = new SymmCipherPipe(keyBytes, 8);
+            symmPipe = new SymmCipherPipe(srvKey);
             PipeString = symmPipe.PipeString;
         }
 

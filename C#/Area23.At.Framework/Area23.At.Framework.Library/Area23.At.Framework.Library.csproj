@@ -167,6 +167,14 @@
     <Compile Include="Cache\AppHashDict.cs" />
     <Compile Include="Cache\RedIstatic.cs" />
     <Compile Include="CqrXs\CqrMsg\CqrChatRoom.cs" />
+    <Compile Include="Cqr\CqrFacade.cs" />
+    <Compile Include="Cqr\Msg\CFile.cs" />
+    <Compile Include="Cqr\Msg\CChatRoom.cs" />
+    <Compile Include="Cqr\Msg\CContact.cs" />
+    <Compile Include="Cqr\Msg\CImage.cs" />
+    <Compile Include="Cqr\Msg\CType.cs" />
+    <Compile Include="Cqr\Msg\CSrvMsg.cs" />
+    <Compile Include="Cqr\Msg\IMsgAble.cs" />
     <Compile Include="Crypt\Cipher\CipherPipe.cs" />
     <Compile Include="Net\IpSocket\SockTcpListener.cs" />
     <Compile Include="Net\IpSocket\SockTcpSender.cs" />
@@ -177,14 +185,14 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="Util\Area23Log.cs" />
-    <Compile Include="CqrXs\CqrException.cs" />
+    <Compile Include="Cqr\CqrException.cs" />
     <Compile Include="CqrXs\CqrJd\CqrService.cs" />
     <Compile Include="CqrXs\CqrMsg\ClientSrvMsg.cs" />
     <Compile Include="CqrXs\CqrMsg\CqrFile.cs" />
     <Compile Include="CqrXs\CqrMsg\FullSrvMsg.cs" />
     <Compile Include="CqrXs\CqrMsg\ICqrMessageable.cs" />
     <Compile Include="CqrXs\CqrMsg\MsgEnum.cs" />
-    <Compile Include="CqrXs\CqrSettings.cs" />
+    <Compile Include="Cqr\CqrSettings.cs" />
     <Compile Include="CqrXs\CqrSrv\SrvMsg1.cs" />
     <Compile Include="CqrXs\CqrSrv\BaseMsg.cs" />
     <Compile Include="CqrXs\CqrMsg\CqrContact.cs" />
@@ -265,6 +273,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Compile Include="Cqr\Msg\CContent.cs" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Properties\fortune.u8">
       <CustomToolNamespace>Area23.At.Framework.Library.Properties</CustomToolNamespace>

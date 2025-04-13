@@ -1,4 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs;
+﻿using Area23.At.Framework.Core.Cqr;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Static;

@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
@@ -57,7 +58,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         {
             _contacts = LoadJsonContacts();
             if (_contacts == null || _contacts.Count == 0)
-                _contacts = new HashSet<CqrContact>(Area23.At.Framework.Core.CqrXs.CqrSettings.Instance.Contacts);
+                _contacts = new HashSet<CqrContact>(CqrSettings.Instance.Contacts);
         }
 
         #region json load save

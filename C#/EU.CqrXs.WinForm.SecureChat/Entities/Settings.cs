@@ -1,4 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs;
+﻿using Area23.At.Framework.Core.Cqr;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Static;
@@ -61,9 +61,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
 
         #region member functions
 
-        protected override void Load() => LoadSettings();
+        protected virtual void Load() => LoadSettings(LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE);
 
-        protected override bool Save() => SaveSettings(this, false, LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE);
+        protected virtual bool Save() => SaveSettings(this, false, LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE);
 
         #endregion member functions
 
@@ -154,7 +154,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
 
             lock (_lock)
             {
-                DateTime lastSaved = settings.SaveStamp ?? DateTime.Now;
+                DateTime lastSaved = (Settings.Singleton.SaveStamp == null || Settings.Singleton.SaveStamp < DateTime.Today) ? DateTime.Now : Settings.Singleton.SaveStamp;
                 if (settings.SaveStamp != null && !forceSave && DateTime.Now.Subtract(lastSaved).TotalSeconds <= 2)
                     return true;
 

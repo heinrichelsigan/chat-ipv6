@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Cache;
+using Area23.At.Framework.Core.Cqr;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {

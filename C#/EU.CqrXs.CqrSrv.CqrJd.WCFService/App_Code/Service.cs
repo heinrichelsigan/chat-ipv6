@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Library.Cache;
+using Area23.At.Framework.Library.Cqr;
 using Area23.At.Framework.Library.CqrXs;
 using Area23.At.Framework.Library.CqrXs.CqrMsg;
 using Area23.At.Framework.Library.CqrXs.CqrSrv;

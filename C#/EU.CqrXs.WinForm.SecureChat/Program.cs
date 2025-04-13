@@ -1,4 +1,5 @@
 using Area23.At.Framework.Core.Cache;
+using Area23.At.Framework.Core.Cqr;
 using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Win32Api;
@@ -111,7 +112,8 @@ namespace EU.CqrXs.WinForm.SecureChat
                     }
                     catch (Exception exRelease)
                     {
-                        ex = CqrException.SetLastException(exRelease);
+                        ex = new CqrException("Releasing Mutex failed", exRelease);
+                        CqrException.SetLastException(ex);
                     }
                     try
                     {
@@ -119,7 +121,8 @@ namespace EU.CqrXs.WinForm.SecureChat
                     }
                     catch (Exception exClose)
                     {
-                        ex = CqrException.SetLastException(exClose);
+                        ex = new CqrException("Closing Mutex failed", exClose);
+                        CqrException.SetLastException(ex);
                     }
                     try
                     {
@@ -127,7 +130,8 @@ namespace EU.CqrXs.WinForm.SecureChat
                     }
                     catch (Exception exDispose)
                     {
-                        ex = CqrException.SetLastException(exDispose);
+                        ex = new CqrException("Disposing Mutex failed", exDispose);
+                        CqrException.SetLastException(ex);
                     }
 
                 }
@@ -138,7 +142,8 @@ namespace EU.CqrXs.WinForm.SecureChat
             }
             catch (Exception exNull)
             {
-                ex = CqrException.SetLastException(exNull);
+                ex = new CqrException("Setting Mutex to null failed", exNull);
+                CqrException.SetLastException(ex);
             }
             finally
             {                

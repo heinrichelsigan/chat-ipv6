@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Area23.At.Framework.Library.CqrXs
+namespace Area23.At.Framework.Library.Cqr
 {
 
     public class CqrSettings

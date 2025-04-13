@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Cqr;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
