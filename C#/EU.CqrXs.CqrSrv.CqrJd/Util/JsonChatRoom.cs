@@ -108,7 +108,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             }
             if (BaseWebService.PersistMsgInAmazonElasticCache)
             {
-                RedIs.ValKey.DeleteKey(JsonChatRoomNumber);
+                RedIS.ValKey.DeleteKey(JsonChatRoomNumber);
             }
             DeleteJsonChatRoomFromCache(JsonChatRoomNumber);
 
@@ -195,7 +195,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             {
                 try
                 {
-                    chatRooms = RedIs.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
+                    chatRooms = RedIS.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
                 }
                 catch (Exception exLoadFromCache)
                 {
@@ -225,7 +225,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 HttpContext.Current.Application[Constants.CHATROOMS] = chatRooms;
             if (BaseWebService.PersistMsgInAmazonElasticCache)
             {
-                RedIs.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);
+                RedIS.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);
             }
         }
 

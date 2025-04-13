@@ -14,9 +14,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
     /// <summary>
     /// Redis AWS elastic valkey cache singelton connector
     /// </summary>
-    public class RedIs
+    public class RedIS
     {
-        private static readonly Lazy<RedIs> _instance = new Lazy<RedIs>(() => new RedIs());
+        private static readonly Lazy<RedIS> _instance = new Lazy<RedIS>(() => new RedIS());
 
         private static readonly object _lock = new object();
 
@@ -25,7 +25,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         StackExchange.Redis.IDatabase db;
 
-        public static RedIs ValKey => _instance.Value;
+        public static RedIS ValKey => _instance.Value;
 
         private static HashSet<string> _allKeys = new HashSet<string>();
         public static string[] AllKeys { get => _allKeys.ToArray(); }
@@ -74,7 +74,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         /// <summary>
         /// default parameterless constructor for RedIsValKey cache singleton 
         /// </summary>
-        public RedIs()
+        public RedIS()
         {
             endpoint = Constants.VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
             if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] != null)

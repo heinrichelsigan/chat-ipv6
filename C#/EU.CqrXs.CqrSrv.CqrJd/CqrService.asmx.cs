@@ -53,7 +53,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             if (PersistMsgInApplicationState)
                 HttpContext.Current.Application["lastmsg"] = cryptMsg;
             if (PersistMsgInAmazonElasticCache)                
-                RedIs.ValKey.SetString("lastmsg", cryptMsg);
+                RedIS.ValKey.SetString("lastmsg", cryptMsg);
 
             SrvMsg1 srv1stMsg = new SrvMsg1(_serverKey);
             SrvMsg1 srv1stRespMsg = new SrvMsg1(_serverKey);
@@ -80,7 +80,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 if (PersistMsgInApplicationState)
                     HttpContext.Current.Application["lastdecrypted"] = _decrypted;
                 if (PersistMsgInAmazonElasticCache)
-                    RedIs.ValKey.SetString("lastdecrypted", _decrypted);                
+                    RedIS.ValKey.SetString("lastdecrypted", _decrypted);                
 
                 CqrContact foundCt = AddContact(_contact);
                 _responseString = srv1stRespMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);

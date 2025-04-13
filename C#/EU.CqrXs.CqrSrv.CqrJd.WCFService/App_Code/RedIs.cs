@@ -13,11 +13,11 @@ using System.Web;
 /// <summary>
 /// Redis AWS elastic valkey cache singelton connector
 /// </summary>
-public class RedIs
+public class REdIs
 {
-    private static readonly Lazy<RedIs> _instance = new Lazy<RedIs>(() => new RedIs());
+    private static readonly Lazy<REdIs> _instance = new Lazy<REdIs>(() => new REdIs());
     
-    public static RedIs ValKey { get { return _instance.Value; } }
+    public static REdIs ValKey { get { return _instance.Value; } }
 
     private static HashSet<string> _allKeys = new HashSet<string>();
     public static string[] AllKeys { get { return _allKeys.ToArray(); } }   
@@ -42,7 +42,7 @@ public class RedIs
     /// <summary>
     /// default parameterless constructor for RedIsValKey cache singleton 
     /// </summary>
-    public RedIs()
+    public REdIs()
     {
        
     }

@@ -65,7 +65,7 @@ public class BaseService
 
         if (PersistMsgInAmazonElasticCache)
         {            
-            string status = RedIs.ConnMux.GetStatus();
+            string status = REdIs.ConnMux.GetStatus();
 
             //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
             //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -388,7 +388,7 @@ public class BaseService
         // Amazon Redis Valkey Cache
         if (PersistMsgInAmazonElasticCache)
         {
-            dict = (Dictionary<long, string>)RedIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
+            dict = (Dictionary<long, string>)REdIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
                 
         }
 
@@ -433,7 +433,7 @@ public class BaseService
             HttpContext.Current.Application[chatRoomNumber] = dict;
         if (BaseService.PersistMsgInAmazonElasticCache)
         {
-            RedIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
+            REdIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
         }
 
         return;

@@ -36,7 +36,7 @@ public class Service : BaseService, IService
         if (PersistMsgInApplicationState)
             HttpContext.Current.Application["lastmsg"] = cryptMsg;
         if (PersistMsgInAmazonElasticCache)
-            RedIs.ValKey.SetString("lastmsg", cryptMsg);
+            REdIs.ValKey.SetString("lastmsg", cryptMsg);
 
         SrvMsg1 srv1stMsg = new SrvMsg1(_serverKey);
         SrvMsg1 srv1stRespMsg = new SrvMsg1(_serverKey);
@@ -63,7 +63,7 @@ public class Service : BaseService, IService
             if (PersistMsgInApplicationState)
                 HttpContext.Current.Application["lastdecrypted"] = _decrypted;
             if (PersistMsgInAmazonElasticCache)
-                RedIs.ValKey.SetString("lastdecrypted", _decrypted);
+                REdIs.ValKey.SetString("lastdecrypted", _decrypted);
 
             CqrContact foundCt = AddContact(_contact);
             _responseString = srv1stRespMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
@@ -357,14 +357,14 @@ public class Service : BaseService, IService
             {
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Ready to connect to " + 
                     ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] + "\n";
-                string status = RedIs.ConnMux.GetStatus();
+                string status = REdIs.ConnMux.GetStatus();
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": ConnectionMulitplexer.Status = " + status + Environment.NewLine;
 
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Preparing to set Dictionary<Guid, CqrContact> in cache." + Environment.NewLine;
-                RedIs.ValKey.SetKey<Dictionary<Guid, CqrContact>>("TestCache", dictCacheTest);
+                REdIs.ValKey.SetKey<Dictionary<Guid, CqrContact>>("TestCache", dictCacheTest);
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added serialized json string to cache." + Environment.NewLine;
 
-                Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)RedIs.ValKey.GetKey<Dictionary<Guid, CqrContact>>("TestCache");
+                Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)REdIs.ValKey.GetKey<Dictionary<Guid, CqrContact>>("TestCache");
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Got Dictionary<Guid, CqrContact> from cache with " + 
                     outdict.Keys.Count + " keys." + Environment.NewLine;
                 foreach (CqrContact contact in outdict.Values)

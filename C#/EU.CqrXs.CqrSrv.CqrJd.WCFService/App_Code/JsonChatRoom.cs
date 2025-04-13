@@ -107,7 +107,7 @@ public class JsonChatRoom
         }
         if (BaseService.PersistMsgInAmazonElasticCache)
         {
-            RedIs.ValKey.DeleteKey(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
+            REdIs.ValKey.DeleteKey(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
             // Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
         }
         DeleteJsonChatRoomFromCache(JsonChatRoomNumber);
@@ -194,7 +194,7 @@ public class JsonChatRoom
         {
             try
             {
-                RedIs.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
+                REdIs.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
                 // string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
                 // chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
             }
@@ -225,8 +225,8 @@ public class JsonChatRoom
         if (BaseService.PersistMsgInApplicationState)
             HttpContext.Current.Application[Constants.CHATROOMS] = chatRooms;
         if (BaseService.PersistMsgInAmazonElasticCache)
-        {            
-            RedIs.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);            
+        {
+            REdIs.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);            
         }
     }
 
