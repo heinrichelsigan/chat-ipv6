@@ -1,6 +1,5 @@
-﻿using Area23.At.Framework.Library.Cqr.Msg;
-using Area23.At.Framework.Library.CqrXs.CqrJd;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Library.Cqr;
+using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Crypt.Cipher;
 using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
@@ -79,7 +78,7 @@ namespace Area23.At.Framework.Library.Cqr
         /// <param name="msgType"><see cref="MsgEnum">msgType</see> default with <see cref="MsgEnum.Json"/></param>
         /// <param name="encType"><see cref="EncodingType"/> default to <see cref="EncodingType.Base64"/></param>
         /// <returns></returns>
-        public string Send_CFile_Peer(CFile cFile, IPAddress peerIp, int serverPort = 7777, MsgEnum msgType = MsgEnum.Json, EncodingType encType = EncodingType.Base64)
+        public string Send_CFile_Peer(CFile cFile, IPAddress peerIp, int serverPort = 7777, CType msgType = CType.Json, EncodingType encType = EncodingType.Base64)
         {
             cFile._hash = PipeString;
             cFile.MsgType = CType.Json;
@@ -91,15 +90,15 @@ namespace Area23.At.Framework.Library.Cqr
 
         #region CqrContact SendFirstSrvMsg_Soap(CqrContact myContact, IPAddress srvIp, ..)
 
-        
+
 
         /// <summary>
         /// Test_Send1st_CqrSrvMsg1_Soap test method only, please use <see cref="SendFirstSrvMsg_Soap(CqrContact, IPAddress, EncodingType)"/>
         /// </summary>
         /// <param name="myContact"></param>
         /// <param name="encodingType"></param>
-        /// <returns></returns>
-        public string Test_Send1st_CqrSrvMsg1_Soap(CContact myContact, EncodingType encodingType = EncodingType.Base64)
+        /// <returns>CContact</returns>
+        public CContact Test_Send1st_CqrSrvMsg1_Soap(CContact myContact, EncodingType encodingType = EncodingType.Base64)
         {
 
             myContact._hash = PipeString;
@@ -111,7 +110,11 @@ namespace Area23.At.Framework.Library.Cqr
             CqrService webService = new CqrService();
             string response = webService.Send1StSrvMsg(encMsg);
 
-            return response;
+
+            CContact tmpContact = new CContact();
+            CContact responseContact = tmpContact.DecryptFromJson(_key, response);
+
+            return responseContact;
         }
 
 

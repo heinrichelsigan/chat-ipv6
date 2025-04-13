@@ -1,11 +1,10 @@
 ﻿using Area23.At.Framework.Library.Cache;
 using Area23.At.Framework.Library.Cqr;
-using Area23.At.Framework.Library.CqrXs;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
-using Area23.At.Framework.Library.CqrXs.CqrSrv;
+using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
+using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -38,15 +37,14 @@ public class Service : BaseService, IService
             HttpContext.Current.Application["lastmsg"] = cryptMsg;
         if (PersistMsgInAmazonElasticCache)
             REdIs.ValKey.SetString("lastmsg", cryptMsg);
-
-        SrvMsg1 srv1stMsg = new SrvMsg1(_serverKey);
-        SrvMsg1 srv1stRespMsg = new SrvMsg1(_serverKey);
+        
+        CContact aContact = new CContact() { _hash = cqrFacade.PipeString };
 
         try
         {
             if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
             {
-                _contact = srv1stMsg.NCqrSrvMsg1(cryptMsg);
+                _contact = aContact.DecryptFromJson(_serverKey, cryptMsg);
                 _decrypted = _contact.ToJson();
                 Area23Log.LogStatic("Contact decrypted successfully: " + _decrypted + "\n");
             }
@@ -57,7 +55,7 @@ public class Service : BaseService, IService
             Area23Log.LogStatic("Exception " + ex.GetType() + " when decrypting contact: " + ex.Message + "\n\t" + ex.ToString() + "\n");
         }
 
-        _responseString = srv1stRespMsg.CqrBaseMsg("", EncodingType.Base64);
+        _responseString = _contact.EncryptToJson(_serverKey);
 
         if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
         {
@@ -66,8 +64,8 @@ public class Service : BaseService, IService
             if (PersistMsgInAmazonElasticCache)
                 REdIs.ValKey.SetString("lastdecrypted", _decrypted);
 
-            CqrContact foundCt = AddContact(_contact);
-            _responseString = srv1stRespMsg.CqrSrvMsg1(foundCt, EncodingType.Base64);
+            CContact foundCt = AddContact(_contact);
+            _responseString = foundCt.EncryptToJson(_serverKey);
         }
 
         Area23Log.LogStatic("Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = " + _contact.Cuid + ".\n");
@@ -86,20 +84,19 @@ public class Service : BaseService, IService
         InitMethod();
 
         _chatRoomNumber = "";
-        SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
-        FullSrvMsg<string> fullSrvMsg, chatRSrvMsg;
+        CSrvMsg<string> chatRoomMsg, cSrvMsg, aSrvMsg = new CSrvMsg<string>() { _hash = cqrFacade.PipeString };
 
-        _responseString = srvMsg.CqrBaseMsg(Constants.NACK);
+        _responseString = "";
 
         try
         {
             if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
             {
-                fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);           // decrypt FullSrvMsg<string>            
-                _contact = AddContact(fullSrvMsg.Sender);                   // add contact from FullSrvMsg<string>   
-                chatRSrvMsg = InviteToChatRoom(fullSrvMsg);                 // generate a FullSrvMsg<string> chatserver message by inviting                           
+                cSrvMsg =  aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);   // decrypt FullSrvMsg<string>            
+                _contact = AddContact(cSrvMsg.Sender);                      // add contact from FullSrvMsg<string>   
+                chatRoomMsg = InviteToChatRoom(cSrvMsg);                    // generate a FullSrvMsg<string> chatserver message by inviting                           
 
-                _responseString = srvMsg.CqrSrvMsg<string>(chatRSrvMsg);
+                _responseString = chatRoomMsg.EncryptToJson(_serverKey);
             }
         }
         catch (Exception ex)
@@ -130,28 +127,28 @@ public class Service : BaseService, IService
 
         Dictionary<long, string> dict = new Dictionary<long, string>();
         bool isValid = false;
-        SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
-        FullSrvMsg<string> fullSrvMsg;
 
-        _responseString = srvMsg.CqrBaseMsg(Constants.NACK);
+        CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>() { _hash = cqrFacade.PipeString };
+
+        _responseString = "";
 
         try
         {
             if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
             {
-                fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);           // decrypt FullSrvMsg<string>
-                _contact = fullSrvMsg.Sender;
-                _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.ChatRoomNr;
+                cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);           // decrypt FullSrvMsg<string>
+                _contact = cSrvMsg.Sender;
+                _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Sender.CRoom.ChatRoomNr;
 
-                FullSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(fullSrvMsg, _chatRoomNumber);
-                isValid = ChatRoomCheckPermission(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
+                CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
+                isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);
                 chatRoomMsg.TContent = string.Empty;
 
                 if (isValid)
                 {
                     dict = GetCachedMessageDict(_chatRoomNumber);
 
-                    List<long> pollKeys = GetNewMessageIndices(dict.Keys.ToList(), fullSrvMsg.Sender);
+                    List<long> pollKeys = GetNewMessageIndices(dict.Keys.ToList(), cSrvMsg);
 
                     long polledPtr = -1;
                     if (pollKeys.Count > 0)
@@ -170,12 +167,12 @@ public class Service : BaseService, IService
                         chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);
 
                         UpdateContact(chatRoomMsg.Sender);
-                        chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
+                        chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
                     }
 
                 }
 
-                _responseString = srvMsg.CqrSrvMsg<string>(chatRoomMsg);
+                _responseString = chatRoomMsg.EncryptToJson(_serverKey);
 
             }
         }
@@ -201,24 +198,24 @@ public class Service : BaseService, IService
         InitMethod();
         bool isValid = false;
         Dictionary<long, string> dict;
-        SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
-        FullSrvMsg<string> fullSrvMsg;
+
+        CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>() { _hash = cqrFacade.PipeString };
 
         _responseString = ""; // set empty response string per default
-        FullSrvMsg<string> chatRoomMsg = new FullSrvMsg<string>(); // construct an empty message
+        CSrvMsg<string> chatRoomMsg = new CSrvMsg<string>(); // construct an empty message
 
         try
         {
             if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
             {
-                fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
-                _contact = fullSrvMsg.Sender;
-                _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.ChatRoomNr;
+                cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);
+                _contact = cSrvMsg.Sender;
+                _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Sender.CRoom.ChatRoomNr;
 
-                chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).LoadJsonChatRoom(fullSrvMsg, _chatRoomNumber);
+                chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
                 chatRoomMsg.TContent = ""; // set string empty, if no message
 
-                isValid = ChatRoomCheckPermission(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
+                isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);
                 if (isValid)
                 {
                     DateTime now = DateTime.Now;
@@ -226,7 +223,7 @@ public class Service : BaseService, IService
                     dict = GetCachedMessageDict(_chatRoomNumber);
 
                     dict.Add(now.Ticks, chatRoomMembersCrypted);
-                    chatRoomMsg.TicksLong.Add(now.Ticks);
+                    chatRoomMsg.CRoom.TicksLong.Add(now.Ticks);
                     // chatRoomMsg.Sender.TicksLong.Add(now.Ticks);
 
                     SetCachedMessageDict(_chatRoomNumber, dict);
@@ -235,12 +232,12 @@ public class Service : BaseService, IService
                     chatRoomMsg.Sender = AddPollDate(chatRoomMsg.Sender, now, true);
 
                     UpdateContact(_contact);
-                    chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, _chatRoomNumber);
-                    chatRoomMsg.Sender.LastPushed = now;
+                    chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
+                    chatRoomMsg.Sender.CRoom.LastPushed = now;
 
                 }
 
-                _responseString = srvMsg.CqrSrvMsg<string>(chatRoomMsg);
+                _responseString = chatRoomMsg.EncryptToJson(_serverKey);
 
             }
         }
@@ -264,28 +261,28 @@ public class Service : BaseService, IService
         Area23Log.LogStatic("ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  " + cryptMsg.Length + ".\n");
         InitMethod();
         bool isValid = false;
-        SrvMsg srvMsg = new SrvMsg(_serverKey, _serverKey);
-        FullSrvMsg<string> fullSrvMsg;
-        List<CqrContact> _invited = new List<CqrContact>();
+        
+        CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>() { _hash = cqrFacade.PipeString };
+        List<CContact> _invited = new List<CContact>();
 
-        _responseString = srvMsg.CqrBaseMsg(Constants.NACK);
+        _responseString = "";
 
         try
         {
             if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
             {
-                fullSrvMsg = srvMsg.NCqrSrvMsg<string>(cryptMsg);
-                _contact = AddContact(fullSrvMsg.Sender);
-                _chatRoomNumber = (!string.IsNullOrEmpty(fullSrvMsg.ChatRoomNr)) ? fullSrvMsg.ChatRoomNr : fullSrvMsg.Sender.ChatRoomNr;
+                cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);
+                _contact = AddContact(cSrvMsg.Sender);
+                _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Sender.CRoom.ChatRoomNr;
                 JsonChatRoom jsonChatRoom = new JsonChatRoom(_chatRoomNumber);
-                FullSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(fullSrvMsg, _chatRoomNumber);
-                isValid = ChatRoomCheckPermission(fullSrvMsg, chatRoomMsg, _chatRoomNumber);
+                CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
+                isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);
                 if (isValid)
                 {
                     jsonChatRoom.DeleteJsonChatRoom(_chatRoomNumber);
                 }
 
-                _responseString = srvMsg.CqrSrvMsg<string>(chatRoomMsg);
+                _responseString = chatRoomMsg.EncryptToJson(_serverKey);
 
             }
         }
@@ -344,8 +341,8 @@ public class Service : BaseService, IService
 
         testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Persistence in " + PersistMsgIn.PersistMsg.ToString() + "\n";
 
-        Dictionary<Guid, CqrContact> dictCacheTest = new Dictionary<Guid, CqrContact>();
-        foreach (CqrContact c in _contacts)
+        Dictionary<Guid, CContact> dictCacheTest = new Dictionary<Guid, CContact>();
+        foreach (CContact c in _contacts)
         {
             if (c != null && c.Cuid != null && c.Cuid != Guid.Empty &&
                 !dictCacheTest.Keys.Contains(c.Cuid))
@@ -361,14 +358,14 @@ public class Service : BaseService, IService
                 string status = REdIs.ConnMux.GetStatus();
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": ConnectionMulitplexer.Status = " + status + Environment.NewLine;
 
-                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Preparing to set Dictionary<Guid, CqrContact> in cache." + Environment.NewLine;
-                REdIs.ValKey.SetKey<Dictionary<Guid, CqrContact>>("TestCache", dictCacheTest);
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Preparing to set Dictionary<Guid, CContact> in cache." + Environment.NewLine;
+                REdIs.ValKey.SetKey<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added serialized json string to cache." + Environment.NewLine;
 
-                Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)REdIs.ValKey.GetKey<Dictionary<Guid, CqrContact>>("TestCache");
-                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Got Dictionary<Guid, CqrContact> from cache with " + 
+                Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)REdIs.ValKey.GetKey<Dictionary<Guid, CContact>>("TestCache");
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Got Dictionary<Guid, CContact> from cache with " + 
                     outdict.Keys.Count + " keys." + Environment.NewLine;
-                foreach (CqrContact contact in outdict.Values)
+                foreach (CContact contact in outdict.Values)
                 {
                     testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Contact Cuid=" + contact.Cuid + " NameEmail=" +
                         contact.NameEmail + " Mobile=" + contact.Mobile + Environment.NewLine;

@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrJd;
+﻿using Area23.At.Framework.Core.Cqr.Msg;
+using Area23.At.Framework.Core.CqrXs.CqrJd;
 using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
@@ -9,6 +10,7 @@ using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System.Configuration;
 using System.Net;
+using CqrContact = Area23.At.Framework.Core.Cqr.Msg.CContact;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 {
@@ -85,9 +87,10 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
 
             FullSrvMsg<string> fullMsg = new FullSrvMsg<string>(sender, receipient, msg, PipeString);
             fullMsg.Md5Hash = Crypt.Hash.MD5Sum.HashString(msg);
-            string allMsg = fullMsg.ToJson();
-            fullMsg._message = allMsg;
-            fullMsg.RawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
+            fullMsg._hash = symmPipe.PipeString;
+            fullMsg._message = msg;
+            string allMsg = fullMsg.ToJson();            
+            fullMsg.SerializedMsg = allMsg;
 
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(allMsg);
             byte[] cqrMsgBytes = (LibPaths.CqrEncrypt) ? symmPipe.MerryGoRoundEncrpyt(msgBytes, key, hash) : msgBytes;
@@ -127,9 +130,11 @@ namespace Area23.At.Framework.Core.CqrXs.CqrSrv
                     Area23Log.LogStatic(ex);
                 }
             }
-            string allMsg = fullMsg.ToJson();
-            fullMsg._message = allMsg;
-            fullMsg.RawMessage = allMsg + "\n" + symmPipe.PipeString + "\0";
+            fullMsg._message = tcontent.ToString();
+            fullMsg._hash = symmPipe.PipeString;
+
+            string allMsg = fullMsg.ToJson();            
+            fullMsg.SerializedMsg = allMsg;
 
             byte[] allBytes = EnDeCodeHelper.GetBytesFromString(allMsg);
             byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(fullMsg._message);

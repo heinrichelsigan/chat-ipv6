@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Library.Cqr;
+using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using System;
@@ -86,7 +87,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             try
             {
                 tt = JsonConvert.DeserializeObject<T>(jsonText);
-                if (tt != null && tt is CqrChatRoom chatRoom)
+                if (tt != null && tt is CChatRoom chatRoom)
                 {
                     if (chatRoom != null && chatRoom.ChatRuid != Guid.Empty && !string.IsNullOrEmpty(chatRoom.ChatRoomNr))
                     {
@@ -116,7 +117,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         public override T FromXml<T>(string xmlText)
         {
             T cqrT = base.FromXml<T>(xmlText);
-            if (cqrT is CqrChatRoom chatRoom && chatRoom != null && chatRoom.ChatRuid != Guid.Empty && !string.IsNullOrEmpty(chatRoom.ChatRoomNr))
+            if (cqrT is CChatRoom chatRoom && chatRoom != null && chatRoom.ChatRuid != Guid.Empty && !string.IsNullOrEmpty(chatRoom.ChatRoomNr))
             {
                 ChatRuid = chatRoom.ChatRuid;
                 ChatRoomNr = chatRoom.ChatRoomNr;

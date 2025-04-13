@@ -1,5 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,6 +10,7 @@ using System.Windows.Forms;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Cqr.Msg;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
 {
@@ -314,12 +314,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
         }
 
 
-        public void SetMimeAttachmentTextLink(CqrFile cqrFile)
+        public void SetMimeAttachmentTextLink(CFile cFile)
         {
             MiniToolBox.CreateAttachDirectory();
-            string fileName = cqrFile.CqrFileName;
-            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName);
-            byte[] fileBytes = cqrFile.Data;
+            string fileName = cFile.FileName;
+            string filePath = Path.Combine(LibPaths.AttachmentFilesDir, cFile.FileName);
+            byte[] fileBytes = cFile.Data;
             // Area23.At.Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);
             System.IO.File.WriteAllBytes(filePath, fileBytes);
 

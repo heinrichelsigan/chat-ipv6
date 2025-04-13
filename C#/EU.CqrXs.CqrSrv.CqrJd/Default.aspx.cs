@@ -1,8 +1,6 @@
 ﻿using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.Cqr;
-using Area23.At.Framework.Library.CqrXs;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
-using Area23.At.Framework.Library.CqrXs.CqrSrv;
+using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using EU.CqrXs.CqrSrv.CqrJd.Util;
@@ -28,6 +26,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         protected override void Page_Load(object sender, EventArgs e)
         {
             base.Page_Load(sender, e);
+            Response.Redirect("CqrService.asmx");
+            return;
+
             //if (Application[Constants.JSON_CONTACTS] != null)
             //    _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
             //else
@@ -76,7 +77,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     this.preLast.InnerHtml = (string)Application["lastdecrypted"];
 
                 Area23Log.LogStatic("myServerKey = " + myServerKey);
-                SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
+                CqrFacade cqrFacade = new CqrFacade(myServerKey);
                 Application["ServerKey"] = myServerKey;
                 decrypted = string.Empty;
                 allStrng += "Msg: " + rq.ToString() + Environment.NewLine;
@@ -84,13 +85,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
                 Application["lastmsg"] = rq;
                 this.TextBoxEncrypted.Text = rq;
+                CContact aContact = new CContact() { _hash = cqrFacade.PipeString };
 
                 try
                 {
                     if (!string.IsNullOrEmpty(rq) && rq.Length >= 8)
                     {
                         AppDomain.CurrentDomain.SetData(Constants.FISH_ON_AES_ENGINE, true);
-                        myContact = srv1stMsg.NCqrSrvMsg1(rq, Area23.At.Framework.Library.Crypt.EnDeCoding.EncodingType.Base64);
+                        myContact = aContact.DecryptFromJson(myServerKey, rq);
                         decrypted = $"<textarea name=TextBoxDecrypted>\r\nThank you Mr./Mrs. for registration {myContact.Name} [{myContact.Email}],\r\n";
 
                         Area23Log.LogStatic("Contact.ToJson(): " + decrypted);
@@ -104,7 +106,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                     Area23Log.LogStatic(ex);
                 }
                 
-                decrypted += "\n\r\nPlease wait until 30.March 2025 on next version\r\n and download new client then from https://cqrxs.eu/, \n\r\n";
+                decrypted += "\n\r\nPlease wait until 30.April 2025 on next version\r\n and download new client then from https://cqrxs.eu/, \n\r\n";
                 decrypted += "\r\nCurrently 3-fish rides on AesEngine,\r\n which is not propper and will be fixed soonly!\r\n\r\n";
                 decrypted += "\r\nSincerly he,\r\n have a nice day!\r\n\r\n</textarea>\r\n";
                 this.TextBoxDecrypted.Text = decrypted;
@@ -112,7 +114,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
                 if (!string.IsNullOrEmpty(decrypted) && myContact != null && !string.IsNullOrEmpty(myContact.NameEmail))
                 {
                     
-                    CqrContact foundCt = FindContactByNameEmail(_contacts, myContact);
+                    CContact foundCt = FindContactByNameEmail(_contacts, myContact);
                     if (foundCt != null)
                     {
                         Area23Log.LogStatic("found contact: " + foundCt.ToString());

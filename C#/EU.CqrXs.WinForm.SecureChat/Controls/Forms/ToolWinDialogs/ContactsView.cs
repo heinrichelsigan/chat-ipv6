@@ -1,4 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Static;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 
@@ -27,14 +27,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         internal void Refresh_DataGrid(object sender, EventArgs e)
         {
-            CqrContact[] contacts;
+            CContact[] contacts;
             this.dataGridContacts.Rows.Clear();
             // DataGridViewRow row = new DataGridViewRow();
             string userCreatorOwner = Environment.UserName;
             if ((contacts = Entities.Settings.Singleton.Contacts.ToArray()) != null)
             {
                 contactsCount = contacts.Length;
-                foreach (CqrContact contact in contacts)
+                foreach (CContact contact in contacts)
                 {
                     this.dataGridContacts.Rows.Add(contact.GetRowParams());
                 }
@@ -63,7 +63,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void Form_Closed(object sender, FormClosedEventArgs e)
         {
-            HashSet<CqrContact> cqrContacts = new HashSet<CqrContact>();
+            HashSet<CContact> cqrContacts = new HashSet<CContact>();
             for (int r = 0; r < dataGridContacts.SelectedRows.Count; r++)
             {
                 var cid = dataGridContacts.SelectedRows[r].Cells[0].Value;
@@ -72,7 +72,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 var cemail = dataGridContacts.SelectedRows[r].Cells[3].Value?.ToString();
                 var cmobile = dataGridContacts.SelectedRows[r].Cells[4].Value?.ToString();
                 var caddress = dataGridContacts.SelectedRows[r].Cells[5].Value?.ToString();
-                CqrContact ctc = JsonContacts.FindContactByNameEmail(Entities.Settings.Singleton.Contacts, cname, cemail, cmobile);
+                CContact ctc = JsonContacts.FindContactByNameEmail(Entities.Settings.Singleton.Contacts, cname, cemail, cmobile);
                 if (ctc != null)
                     cqrContacts.Add(ctc);
             }

@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Library.Cache;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.Cqr;
+using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using System;
@@ -8,14 +9,18 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using StackExchange.Redis;
+using Area23.At.Framework.Library.Cqr.Msg;
+using Area23.At.Framework.Library.Cqr;
+using Area23.At.Framework.Library.Net.IpSocket;
 
 /// <summary>
 /// Summary description for BaseService
 /// </summary>
 public class BaseService
 {
-    protected internal static HashSet<CqrContact> _contacts;
-    protected internal CqrContact _contact;
+    protected internal static HashSet<CContact> _contacts;
+    protected internal CqrFacade cqrFacade;
+    protected internal CContact _contact;
     // protected internal string _literalServerIPv4, _literalServerIPv6;
     protected internal string _serverKey = string.Empty;
     protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
@@ -58,6 +63,7 @@ public class BaseService
     {
         _contacts = GetContacts();
         GetServerKey();
+        cqrFacade = new CqrFacade(_serverKey);
         _decrypted = string.Empty;
         _responseString = string.Empty;
         _contact = null;
@@ -88,29 +94,27 @@ public class BaseService
         return _serverKey;
     }
 
-    internal HashSet<CqrContact> GetContacts()
+    internal HashSet<CContact> GetContacts()
     {
         _contacts = JsonContacts.GetContacts();
         return _contacts;
     }
 
-    internal CqrContact AddContact(CqrContact cqrContact)
+    internal CContact AddContact(CContact cContact)
     {
         _contacts = JsonContacts.GetContacts();
-        CqrContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, cqrContact);
+        CContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, cContact);
         if (foundCt != null)
         {
-            foundCt.ContactId = cqrContact.ContactId;
+            foundCt.ContactId = cContact.ContactId;
             if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
                 foundCt.Cuid = Guid.NewGuid();
-            if (!string.IsNullOrEmpty(cqrContact.Address))
-                foundCt.Address = cqrContact.Address;
-            if (cqrContact.Mobile != null && cqrContact.Mobile.Length > 1)
-                foundCt.Mobile = cqrContact.Mobile;
-            if (!string.IsNullOrEmpty(cqrContact.ChatRoomNr))
-                foundCt.ChatRoomNr = cqrContact.ChatRoomNr;
-            if (cqrContact.LastPolled != null && cqrContact.LastPolled > DateTime.MinValue)
-                foundCt.LastPolled = cqrContact.LastPolled;
+            if (!string.IsNullOrEmpty(cContact.Address))
+                foundCt.Address = cContact.Address;
+            if (cContact.Mobile != null && cContact.Mobile.Length > 1)
+                foundCt.Mobile = cContact.Mobile;
+            if (cContact.CRoom != null && !string.IsNullOrEmpty(cContact.CRoom.ChatRoomNr))
+                foundCt.CRoom = new CChatRoom(cContact.CRoom);            
 
             //if (cqrContact != null && cqrContact.ContactImage != null &&
             //    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
@@ -120,10 +124,10 @@ public class BaseService
         }
         else
         {
-            if (cqrContact.Cuid == null || cqrContact.Cuid == Guid.Empty)
-                cqrContact.Cuid = Guid.NewGuid();
-            _contacts.Add(cqrContact);
-            foundCt = cqrContact;
+            if (cContact.Cuid == null || cContact.Cuid == Guid.Empty)
+                cContact.Cuid = Guid.NewGuid();
+            _contacts.Add(cContact);
+            foundCt = cContact;
             foundCt.ContactImage = null;
 
         }
@@ -133,22 +137,23 @@ public class BaseService
         return foundCt;
     }
 
-    internal void UpdateContact(CqrContact cqrContact)
+    internal void UpdateContact(CContact cContact)
     {
-        CqrContact toAddContact = null;
-        if (cqrContact == null || string.IsNullOrEmpty(cqrContact.Email))
+        CContact toAddContact = null;
+        if (cContact == null || string.IsNullOrEmpty(cContact.Email))
             return;
-        HashSet<CqrContact> contacts = new HashSet<CqrContact>();
+        HashSet<CContact> contacts = new HashSet<CContact>();
+        string chatRoomNr = (cContact.CRoom != null && !string.IsNullOrEmpty(cContact.CRoom.ChatRoomNr)) ? cContact.CRoom.ChatRoomNr : _chatRoomNumber;
 
-        foreach (CqrContact ct in _contacts)
+        foreach (CContact ct in _contacts)
         {
-            if ((ct.Cuid == cqrContact.Cuid && ct.Email == cqrContact.Email) ||
-                (ct.NameEmail == cqrContact.NameEmail))
+            if ((ct.Cuid == cContact.Cuid && ct.Email.Equals(cContact.Email, StringComparison.CurrentCultureIgnoreCase)) ||
+                (ct.NameEmail.Equals(cContact.NameEmail, StringComparison.InvariantCultureIgnoreCase)))
             {
-                toAddContact = new CqrContact(cqrContact, cqrContact.ChatRoomNr, cqrContact.Hash);
-                toAddContact.Mobile = cqrContact.Mobile;
+                toAddContact = new CContact(cContact, chatRoomNr, cContact.Hash);
+                toAddContact.Mobile = cContact.Mobile;
                 toAddContact.ContactImage = null;
-                toAddContact.Cuid = (cqrContact.Cuid != null && cqrContact.Cuid != Guid.Empty) ? cqrContact.Cuid : Guid.NewGuid();
+                toAddContact.Cuid = (cContact.Cuid != null && cContact.Cuid != Guid.Empty) ? cContact.Cuid : Guid.NewGuid();
                 contacts.Add(toAddContact);
             }
             else
@@ -158,17 +163,17 @@ public class BaseService
         JsonContacts.SaveJsonContacts(_contacts);
     }
 
-    internal void UpdateContacts(CqrContact contact, FullSrvMsg<string> chatRoomMsg, string chatRoomNr)
+    internal void UpdateContacts(CContact contact, CSrvMsg<string> chatRoomMsg, string chatRoomNr)
     {
         bool foundCt = false;
-        CqrContact toDelContact = null;
+        CContact toDelContact = null;
         if (contact == null || string.IsNullOrEmpty(contact.Email))
             return;
 
-        if ((chatRoomMsg.Sender.Cuid == contact.Cuid && chatRoomMsg.Sender.Email == contact.Email) ||
-            (chatRoomMsg.Sender.NameEmail == contact.NameEmail))
+        if ((chatRoomMsg.Sender.Cuid == contact.Cuid && chatRoomMsg.Sender.Email.Equals(contact.Email, StringComparison.CurrentCultureIgnoreCase)) ||
+            (chatRoomMsg.Sender.NameEmail.Equals(contact.NameEmail, StringComparison.CurrentCultureIgnoreCase)))
         {
-            chatRoomMsg.Sender = new CqrContact(contact, chatRoomNr, contact.Hash);
+            chatRoomMsg.Sender = new CContact(contact, chatRoomNr, contact.Hash);
         }
         for (int i = 0; i < chatRoomMsg.Recipients.Count; i++)
         {
@@ -183,9 +188,9 @@ public class BaseService
         }
         if (foundCt)
             if (chatRoomMsg.Recipients.Remove(toDelContact))
-                chatRoomMsg.Recipients.Add(new CqrContact(contact, chatRoomNr, contact._hash));
+                chatRoomMsg.Recipients.Add(new CContact(contact, chatRoomNr, contact._hash));
 
-        (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
+        JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);        
 
         foundCt = false;
         GetContacts();
@@ -202,7 +207,7 @@ public class BaseService
         }
         if (foundCt)
             if (_contacts.Remove(toDelContact))
-                _contacts.Add(new CqrContact(contact, chatRoomNr, contact.Hash));
+                _contacts.Add(new CContact(contact, chatRoomNr, contact.Hash));
 
         JsonContacts.SaveJsonContacts(_contacts);
 
@@ -211,71 +216,58 @@ public class BaseService
     /// <summary>
     /// Generates a chat room with a new ChatRoomNr, containing sender and recpients
     /// </summary>
-    /// <param name="fullSrvMsg"><see cref="FullSrvMsg{string}"/></param>
-    /// <returns><see cref="FullSrvMsg{string}"/></returns>
-    internal FullSrvMsg<string> InviteToChatRoom(FullSrvMsg<string> fullSrvMsg)
+    /// <param name="CSrvMsg"><see cref="CSrvMsg{string}"/></param>
+    /// <returns><see cref="CSrvMsg{string}"/></returns>
+    internal CSrvMsg<string> InviteToChatRoom(CSrvMsg<string> cSrvMsg)
     {
         string ChatRoomNr = string.Empty;
         DateTime now = DateTime.Now; // now1 = now.AddMilliseconds(10);
-        List<CqrContact> _invited = new List<CqrContact>();
+        List<CContact> _invited = new List<CContact>();
 
         if (string.IsNullOrEmpty(ChatRoomNr))
             ChatRoomNr = String.Format("room_{0:MMddHH}_{1}.json", DateTime.Now,
-                fullSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_"));
+                cSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_"));
 
         if (string.IsNullOrEmpty(ChatRoomNr))
             ChatRoomNr = String.Format("room_{0}_0.json", DateTime.Now.ToString("MMddHHmm"));
 
-
-        fullSrvMsg.ChatRoomNr = ChatRoomNr;
-        fullSrvMsg.ChatRuid = Guid.NewGuid();
-        fullSrvMsg.Sender.ChatRoomNr = ChatRoomNr;
-        fullSrvMsg.Sender.ChatRuid = fullSrvMsg.ChatRuid;
-        fullSrvMsg.LastPushed = now;
-        fullSrvMsg.LastPolled = now;
-
-
         Dictionary<long, string> dict = new Dictionary<long, string>();
         dict.Add(now.Ticks, "");
 
-        fullSrvMsg.Sender.LastPolled = now;
-        fullSrvMsg.Sender.LastPushed = now;
-        fullSrvMsg.Sender.TicksLong = dict.Keys.ToList();
+        cSrvMsg.CRoom = new CChatRoom(ChatRoomNr, Guid.NewGuid(), now, now);
+        cSrvMsg.CRoom.TicksLong = dict.Keys.ToList();
 
+
+        cSrvMsg.Sender.CRoom = new CChatRoom(cSrvMsg.CRoom);        
+        
         bool addSender = true;
-        foreach (CqrContact c in fullSrvMsg.Recipients)
+        foreach (CContact cr in cSrvMsg.Recipients)
         {
-            c.ChatRoomNr = ChatRoomNr;
-            c.ChatRuid = fullSrvMsg.ChatRuid;
-
-            _invited.Add(c);
-            if ((!string.IsNullOrEmpty(c.NameEmail) && c.NameEmail == fullSrvMsg.Sender.NameEmail) ||
-                (c.Cuid != null && c.Cuid != Guid.Empty && c.Cuid == fullSrvMsg.Sender.Cuid))
+            cr.CRoom = new CChatRoom(cSrvMsg.CRoom);
+            _invited.Add(cr);
+            
+            if ((!string.IsNullOrEmpty(cr.NameEmail) && cr.NameEmail == cSrvMsg.Sender.NameEmail) ||
+                (cr.Cuid != null && cr.Cuid != Guid.Empty && cr.Cuid == cSrvMsg.Sender.Cuid))
                 addSender = false;
         }
         if (addSender)
-            _invited.Add(fullSrvMsg.Sender);
+            _invited.Add(cSrvMsg.Sender);
 
         SetCachedMessageDict(ChatRoomNr, dict);
 
-        FullSrvMsg<string> chatRSrvMsg = new FullSrvMsg<string>();
-        chatRSrvMsg.Sender = new CqrContact(fullSrvMsg.Sender, fullSrvMsg._hash);
-        chatRSrvMsg.Recipients = new HashSet<CqrContact>(_invited);
-        chatRSrvMsg._hash = fullSrvMsg._hash;
-        chatRSrvMsg.ChatRoomNr = ChatRoomNr;
-        chatRSrvMsg.ChatRuid = fullSrvMsg.ChatRuid;
-        chatRSrvMsg.LastPushed = now;
-        chatRSrvMsg.LastPushed = now;
-        chatRSrvMsg.TicksLong = dict.Keys.ToList();
-        chatRSrvMsg.MsgType = MsgEnum.Json;
+        CSrvMsg<string> chatRSrvMsg = new CSrvMsg<string>();
+        chatRSrvMsg.Sender = new CContact(cSrvMsg.Sender, cSrvMsg.CRoom.ChatRoomNr, cSrvMsg._hash);
+        chatRSrvMsg.Recipients = new HashSet<CContact>(_invited);
+        chatRSrvMsg._hash = cSrvMsg._hash;       
+        chatRSrvMsg.MsgType = CType.Json;
 
-        chatRSrvMsg = (new JsonChatRoom(ChatRoomNr)).SaveJsonChatRoom(chatRSrvMsg, ChatRoomNr);
-        _chatRoomNumber = chatRSrvMsg.ChatRoomNr;
+        chatRSrvMsg = (new JsonChatRoom(ChatRoomNr)).SaveJsonChatRoom(chatRSrvMsg, cSrvMsg.CRoom);
+        _chatRoomNumber = chatRSrvMsg.CRoom.ChatRoomNr;
         JsonChatRoom.AddJsonChatRoomToCache(_chatRoomNumber);
 
         // serialize chat room in msg later then saving
-        chatRSrvMsg.RawMessage = chatRSrvMsg.ToJson();
-        chatRSrvMsg._message = chatRSrvMsg.ToJson();
+        chatRSrvMsg._message = _chatRoomNumber;
+        chatRSrvMsg.SerializedMsg = chatRSrvMsg.ToJson();
 
         return chatRSrvMsg;
     }
@@ -288,19 +280,19 @@ public class BaseService
     /// 2.a. either creator invitor of chat room
     /// 2.b. on of the invited persons in invitation
     /// </summary>
-    /// <param name="fullSrvMsg"><see cref="FullSrvMsg{string}"/> decoded from <see cref="CqrService.CqrService"/> Webservice</param>
-    /// <param name="chatRoomMsg"><see cref="FullSrvMsg{string}"/> generated from chat room json</param>
+    /// <param name="CSrvMsg"><see cref="CSrvMsg{string}"/> decoded from <see cref="CqrService.CqrService"/> Webservice</param>
+    /// <param name="chatRoomMsg"><see cref="CSrvMsg{string}"/> generated from chat room json</param>
     /// <param name="ChatRoomNr"><see cref="string"/> chat room number of chat room</param>
     /// <param name="isClosingRequest">default false, only on close, where only creator can close chat room</param>
     /// <returns>true, if person is allowed to push or receive msg from / to chat room</returns>        
-    public bool ChatRoomCheckPermission(FullSrvMsg<string> fullSrvMsg, FullSrvMsg<string> chatRoomMsg, string ChatRoomNr, bool isClosingRequest = false)
+    public bool ChatRoomCheckPermission(CSrvMsg<string> cSrvMsg, CSrvMsg<string> chatRoomMsg, string chatRoomNr, bool isClosingRequest = false)
     {
 
         bool isValid = false;
-        if (ChatRoomNr.Equals(chatRoomMsg.ChatRoomNr))
+        if (chatRoomNr.Equals(chatRoomMsg.CRoom.ChatRoomNr))
         {
-            if ((fullSrvMsg.Sender.NameEmail == chatRoomMsg.Sender.NameEmail) ||
-                (!string.IsNullOrEmpty(fullSrvMsg.Sender.Email) && fullSrvMsg.Sender.Email == chatRoomMsg.Sender.Email))
+            if ((cSrvMsg.Sender.NameEmail == chatRoomMsg.Sender.NameEmail) ||
+                (!string.IsNullOrEmpty(cSrvMsg.Sender.Email) && cSrvMsg.Sender.Email == chatRoomMsg.Sender.Email))
             {
                 _contact = chatRoomMsg.Sender;
                 isValid = true;
@@ -308,10 +300,10 @@ public class BaseService
             }
             if (!isClosingRequest)
             {
-                foreach (CqrContact c in chatRoomMsg.Recipients)
+                foreach (CContact c in chatRoomMsg.Recipients)
                 {
-                    if (fullSrvMsg.Sender.NameEmail == c.NameEmail ||
-                        fullSrvMsg.Sender.Email == c.Email)
+                    if (cSrvMsg.Sender.NameEmail == c.NameEmail ||
+                        cSrvMsg.Sender.Email == c.Email)
                     {
                         _contact = c;
                         isValid = true;
@@ -329,15 +321,15 @@ public class BaseService
     /// reduces <see cref="CqrContact.PolledMsgDates"/>, if contact wears a to huge amount of polling history
     /// TODO: implement ring buffer here
     /// </summary>
-    /// <param name="contact"><see cref="CqrContact"/> to modify</param>
+    /// <param name="contact"><see cref="CContact"/> to modify</param>
     /// <param name="date"></param>
-    /// <returns>modified <see cref="CqrContact"/></returns>
-    public CqrContact AddPollDate(CqrContact contact, DateTime date, bool pushed = false)
+    /// <returns>modified <see cref="CContact"/></returns>
+    public CContact AddPollDate(CContact contact, DateTime date, bool pushed = false)
     {
         if (pushed)
-            contact.LastPushed = date;
+            contact.CRoom.LastPushed = date;
         else
-            contact.LastPolled = date;
+            contact.CRoom.LastPolled = date;
 
         return contact;
     }
@@ -345,27 +337,27 @@ public class BaseService
     /// <summary>
     /// AddLastDate adds lastPolled or lastPushed date and tickIndex to TicksLong
     /// </summary>
-    /// <param name="chatRoomMsg"><see cref="FullSrvMsg{string}"/> chat room msg to be returned to chat client app</param>
+    /// <param name="chatRoomMsg"><see cref="CSrvMsg{string}"/> chat room msg to be returned to chat client app</param>
     /// <param name="tickIndex">tick long index</param>
     /// <param name="pushed">false for poolled, true for pushed</param>
-    /// <returns><see cref="FullSrvMsg{string}"/></returns>
-    public FullSrvMsg<string> AddLastDate(FullSrvMsg<string> chatRoomMsg, long tickIndex, bool pushed = false)
+    /// <returns><see cref="CSrvMsg{string}"/></returns>
+    public CSrvMsg<string> AddLastDate(CSrvMsg<string> chatRoomMsg, long tickIndex, bool pushed = false)
     {
         DateTime date = new DateTime(tickIndex);
         if (pushed)
         {
-            chatRoomMsg.LastPushed = date;
+            chatRoomMsg.CRoom.LastPushed = date;
             // TODO should we add tickindex, when pushing
-            chatRoomMsg.Sender.LastPushed = date;
+            chatRoomMsg.Sender.CRoom.LastPushed = date;
         }
         else
         {
-            chatRoomMsg.LastPolled = date;
-            if (!chatRoomMsg.TicksLong.Contains(tickIndex))
-                chatRoomMsg.TicksLong.Add(tickIndex);
-            chatRoomMsg.Sender.LastPushed = date;
-            if (!chatRoomMsg.Sender.TicksLong.Contains(tickIndex))
-                chatRoomMsg.Sender.TicksLong.Add(tickIndex);
+            chatRoomMsg.CRoom.LastPolled = date;
+            if (!chatRoomMsg.CRoom.TicksLong.Contains(tickIndex))
+                chatRoomMsg.CRoom.TicksLong.Add(tickIndex);
+            chatRoomMsg.Sender.CRoom.LastPushed = date;
+            if (!chatRoomMsg.Sender.CRoom.TicksLong.Contains(tickIndex))
+                chatRoomMsg.Sender.CRoom.TicksLong.Add(tickIndex);
         }
 
         return chatRoomMsg;
@@ -400,20 +392,21 @@ public class BaseService
 
     /// <summary>
     /// GetNewMessageIndices get all chat room indices, 
-    /// which are newer than last <see cref="CqrContact.LastPolled">polling date of user</see>
+    /// which are newer than last <see cref="CContact.LastPolled">polling date of user</see>
     /// or user hasn't read and that are not in list <see cref="CqrContact.TicksLong"></see>
     /// </summary>
     /// <param name="dictKeys"><see cref="DateTime.Ticks"/> as index key of chat room message dictionary</param>
-    /// <param name="sender"><see cref="CqrContact"/></param>
+    /// <param name="cSrvMsg"><see cref=CSrvMsg{string}"/></param>
     /// <returns><see cref="List{long}">key indices of messages, that are new and not already polled</see></returns>
-    public static List<long> GetNewMessageIndices(List<long> dictKeys, CqrContact sender)
+    public static List<long> GetNewMessageIndices(List<long> dictKeys, CSrvMsg<string> cSrvMsg)
     {
 
         List<long> pollKeys = new List<long>();
         foreach (long tickIndex in dictKeys)
         {
             // if (tickIndex > sender.LastPolled.Ticks)
-            if (!sender.TicksLong.Contains(tickIndex))
+            if (!cSrvMsg.CRoom.TicksLong.Contains(tickIndex) &&
+                !cSrvMsg.Sender.CRoom.TicksLong.Contains(tickIndex))
                 pollKeys.Add(tickIndex);
         }
 

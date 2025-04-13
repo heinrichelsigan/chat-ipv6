@@ -1,5 +1,4 @@
 ﻿using Area23.At.Framework.Core.Cqr.Msg;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
@@ -127,8 +126,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         {
             if (Encrypt(serverKey))
             {
-                this.SerializedMsg = JsonConvert.SerializeObject(this);
-                return this.SerializedMsg;
+                string serializedJson = ToJson();
+                return serializedJson;
             }
             throw new CqrException($"EncryptToJson(string severKey failed");
         }
@@ -223,9 +222,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <returns><see cref="string">serialized json string</see></returns>
         public override string ToJson()
         {
-            CImage cImage = new CImage(ImageFileName, ImageData);
-            string jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(cImage, Formatting.Indented);
-            return jsonString;
+            this.SerializedMsg = "";
+            string jsonText = JsonConvert.SerializeObject(this);
+            this.SerializedMsg = jsonText;
+            return jsonText;            
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                     _message = cJsonImage._message;
                     _hash = cJsonImage._hash;
                     MsgType = cJsonImage.MsgType;
-                    SerializedMsg = cJsonImage.SerializedMsg;
+                    SerializedMsg = jsonText;
                     return cJsonImage;
                 }
             }

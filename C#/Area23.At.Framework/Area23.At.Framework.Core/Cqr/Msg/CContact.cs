@@ -1,5 +1,4 @@
 ﻿using Area23.At.Framework.Core.Cqr.Msg;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
@@ -237,7 +236,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 contact.ContactImage = ContactImage;
                 contact.CRoom = new CChatRoom(CRoom);
                 contact.Mobile = Mobile;
-                contact.SerializedMsg = serialized;
+                contact.SerializedMsg = JsonConvert.SerializeObject(this);
                 return contact;
             }
             throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed for CContact");

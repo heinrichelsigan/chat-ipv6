@@ -7,21 +7,25 @@
 # <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/doc">**doc**</a>
 
 <hr />
-<pre>all release downloads could be found here: <a href="https://cqrxs.eu/download/" target="_blank">cqrxs.eu/download/</a>
-  (please take always the newest.)
-  last release (pre-alpha) deployed on 2025-04-10 is laterst here: 
-  <a href="https://cqrxs.eu/download/2025-04-03_WinChat_x86.7z" target="_blank">https://cqrxs.eu/download/2025-04-10-WinChat_x86.7z</a>
-  
-Features:
-- C# full client as fat .exe 
-  requires no framework
-  server part https://cqrxs.eu
-- java only skeleton, 
-  you need to wait until July
-- c even less then skeleton,
-  but all you need to build,
-  wait until automn for Linux
-  wait until winter for Win32/Win64
+<pre>
+- all release downloads could be found 
+  here: <a href="https://cqrxs.eu/download/" target="_blank">cqrxs.eu/download/</a>
+  (<i>please take always the newest</i>i>.)
+- last release (pre-alpha) deployed on 2025-04-10 is laterst here: 
+  - <b>x86</b> <a href="https://cqrxs.eu/download/2025-04-13_WinChat_x86.7z" target="_blank">https://cqrxs.eu/download/2025-04-13_WinChat_x86.7z</a>
+  - <b>x64</b> <a href="https://cqrxs.eu/download/2025-04-13_WinChat_x64.7z" target="_blank">https://cqrxs.eu/download/2025-04-13_WinChat_x64.7z</a>  
+- <b><i><u>Features</u></i></b>:
+  - <b>C#</b> full client as fat .exe 
+    requires no framework
+    - server part <a href="https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx" target="_blank">https://cqrxs.eu/cqrsrv/cqrjd/CqrService.asmx</a>
+    - <b>Now <i>refactoring</i></b> tiny and fast crypt msg handling entities:
+      <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/C%23/Area23.At.Framework/Area23.At.Framework.Core/Cqr" target="_blank">C%23/Area23.At.Framework/Area23.At.Framework.Core/Cqr</a>
+    - <b>java</b> only skeleton, 
+      you need to wait until July
+    - <b>c</b> even less then skeleton,
+      but all you need to build,
+      wait until automn for Linux
+      wait until winter for Win32/Win64
 </pre>
 
 <hr />

@@ -217,8 +217,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         {
             if (Encrypt(serverKey))
             {
-                this.SerializedMsg = JsonConvert.SerializeObject(this);
-                return this.SerializedMsg;
+                string serializedJson = ToJson();
+                return serializedJson;
             }
             throw new CqrException($"EncryptToJson(string severKey failed");
         }
@@ -309,6 +309,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public override string ToJson()
         {
+            this.SerializedMsg = "";
             string jsonText = JsonConvert.SerializeObject(this);
             this.SerializedMsg = jsonText;
             return jsonText;
@@ -316,20 +317,21 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public new CSrvMsg<TC> FromJson(string jsonText) 
         {
-            CSrvMsg<TC> tc = JsonConvert.DeserializeObject<CSrvMsg<TC>>(jsonText);
+            CSrvMsg<TC> cMsg = JsonConvert.DeserializeObject<CSrvMsg<TC>>(jsonText);
             try
             {
-                if (tc != null && tc is CSrvMsg<TC> cSrvMsg)
-                {
-                    if (cSrvMsg != null && !string.IsNullOrEmpty(cSrvMsg.Message))
-                    {
-                        Sender = cSrvMsg.Sender;                        
-                        Recipients = cSrvMsg.Recipients;
-                        TContent = cSrvMsg.TContent;
-                        CRoom = new CChatRoom(cSrvMsg.CRoom);
-                        _hash = cSrvMsg._hash;
-                    }
-                    return tc;
+                if (cMsg != null && cMsg is CSrvMsg<TC> cSrvMsg && cSrvMsg != null)
+                {                    
+                    Sender = cSrvMsg.Sender;
+                    Recipients = cSrvMsg.Recipients;
+                    TContent = cSrvMsg.TContent;
+                    CRoom = new CChatRoom(cSrvMsg.CRoom);
+                    _hash = cSrvMsg._hash;
+                    Md5Hash = cSrvMsg.Md5Hash;
+                    _message = cSrvMsg._message;
+                    SerializedMsg = jsonText;
+                    
+                    return cMsg;
                 }
             }
             catch (Exception exJson)
@@ -343,6 +345,53 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         public string[] GetEmails() => this.Emails.ToArray();
 
         #endregion members
+
+        #region static_members
+
+        public static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized)
+        {
+            if (string.IsNullOrEmpty(serialized))
+                throw new CqrException("static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized): serialized is null or empty.");
+
+            CSrvMsg<TC> csrvmsg = new CSrvMsg<TC>(serialized, CType.Json);
+            csrvmsg = DecryptSrvMsg(serverKey, csrvmsg);
+            if (csrvmsg != null)
+                return csrvmsg;
+            throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
+        }
+
+        public static CSrvMsg<TC> DecryptSrvMsg(string serverKey, CSrvMsg<TC> cSrvMsg)
+        {
+            try
+            {
+                string hash = EnDeCodeHelper.KeyToHex(serverKey);
+                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
+
+                byte[] cipherBytes = cSrvMsg.CBytes;
+                byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
+                string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
+                while (decrypted[decrypted.Length - 1] == '\0')
+                    decrypted = decrypted.Substring(0, decrypted.Length - 1);
+
+                string md5Hash = MD5Sum.HashString(decrypted, "");
+                if (!cSrvMsg._hash.Equals(symmPipe.PipeString))
+                    throw new CqrException($"Hash: {cSrvMsg._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+                if (!md5Hash.Equals(cSrvMsg.Md5Hash))
+                    throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {cSrvMsg.Md5Hash}");
+
+                cSrvMsg._message = decrypted;
+                cSrvMsg.CBytes = null;
+            }
+            catch (Exception exCrypt)
+            {
+                CqrException.SetLastException(exCrypt);
+                throw;
+            }
+
+            return cSrvMsg;
+        }
+
+        #endregion static_members
 
     }
 

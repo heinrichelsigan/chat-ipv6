@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Library.Cqr;
+using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Util;
 using EU.CqrXs.CqrSrv.CqrJd.Util;
 using System;
@@ -16,7 +17,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
 
         protected void Application_Start(object sender, EventArgs e)
         {
-            HashSet<CqrContact> contacts = JsonContacts.GetContacts();
+            HashSet<CContact> contacts = JsonContacts.GetContacts();
             List<string> chatRooms = JsonChatRoom.ChatRoomNumbersFromFs();
             Area23Log.LogStatic($"Application_Start: Loaded {contacts?.Count} contacts and {chatRooms?.Count} chat rooms.");                      
         }

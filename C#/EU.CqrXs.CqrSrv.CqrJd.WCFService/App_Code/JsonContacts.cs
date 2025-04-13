@@ -1,4 +1,4 @@
-﻿using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using System;
@@ -14,7 +14,7 @@ using System.Web;
     {
 
         static object _lock = new object();
-        static HashSet<CqrContact> _contacts;
+        static HashSet<CContact> _contacts;
         internal static string JsonContactsFileName { get { return Area23.At.Framework.Library.Static.JsonHelper.JsonContactsFile; } }
         
         
@@ -30,7 +30,7 @@ using System.Web;
         /// LoadJsonContacts
         /// </summary>
         /// <returns><see cref="HashSet{CqrContact}"/></returns>
-        internal static HashSet<CqrContact> LoadJsonContacts()
+        internal static HashSet<CContact> LoadJsonContacts()
         {
             lock (_lock)
             {
@@ -41,10 +41,10 @@ using System.Web;
             lock (_lock)
             {
                 string jsonText = System.IO.File.ReadAllText(JsonContactsFileName);
-                _contacts = JsonConvert.DeserializeObject<HashSet<CqrContact>>(jsonText);
+                _contacts = JsonConvert.DeserializeObject<HashSet<CContact>>(jsonText);
             }
             if (_contacts == null || _contacts.Count == 0)
-                _contacts = new HashSet<CqrContact>();
+                _contacts = new HashSet<CContact>();
 
             //if (BaseWebService.UseApplicationState)
             //        HttpContext.Current.Application[Constants.JSON_CONTACTS] = _contacts;
@@ -62,9 +62,9 @@ using System.Web;
         /// Method to persist Json Contacts
         /// </summary>
         /// <param name="contacts">contacts to save</param>
-        internal static void SaveJsonContacts(HashSet<CqrContact> contacts)
+        internal static void SaveJsonContacts(HashSet<CContact> contacts)
         {
-            _contacts = _contacts ?? new HashSet<CqrContact>();
+            _contacts = _contacts ?? new HashSet<CContact>();
             if (contacts != null && contacts.Count > 0 && contacts.Count > _contacts.Count)
                 _contacts = contacts;
             JsonSerializerSettings jsets = new JsonSerializerSettings();
@@ -90,7 +90,7 @@ using System.Web;
         /// GetContacts get contacts from json file
         /// </summary>
         /// <returns><see cref="HashSet{CqrContact}"/></returns>
-        internal static HashSet<CqrContact> GetContacts()
+        internal static HashSet<CContact> GetContacts()
         {
             if (_contacts == null || _contacts.Count < 1)
                 _contacts = JsonContacts.LoadJsonContacts();
@@ -104,9 +104,9 @@ using System.Web;
         /// <param name="contacts">contacts to search</param>
         /// <param name="searchContact">contact to find</param>
         /// <returns></returns>
-        public static CqrContact FindContactByNameEmail(HashSet<CqrContact> contacts, CqrContact searchContact)
+        public static CContact FindContactByNameEmail(HashSet<CContact> contacts, CContact searchContact)
         {
-            CqrContact foundC = FindContactByNameEmail(contacts, searchContact.Name, searchContact.Email, searchContact.Mobile);
+            CContact foundC = FindContactByNameEmail(contacts, searchContact.Name, searchContact.Email, searchContact.Mobile);
             return foundC;
         }
 
@@ -118,7 +118,7 @@ using System.Web;
         /// <param name="cEmail">email to find</param>
         /// <param name="cMobile">mobile to find</param>
         /// <returns><see cref="CqrContact"/></returns>
-        public static CqrContact FindContactByNameEmail(HashSet<CqrContact> contacts, string cName, string cEmail, string cMobile)
+        public static CContact FindContactByNameEmail(HashSet<CContact> contacts, string cName, string cEmail, string cMobile)
         {
 
             if (!string.IsNullOrEmpty(cName) || !string.IsNullOrEmpty(cEmail))
@@ -126,7 +126,7 @@ using System.Web;
                 string cNameEmail = string.IsNullOrEmpty(cEmail) ? cName : cName  + " <" + cEmail + ">";
                 string cPhone = cMobile ?? string.Empty;
 
-                foreach (CqrContact c in contacts)
+                foreach (CContact c in contacts)
                 {
                     if (c != null && !string.IsNullOrEmpty(c.NameEmail))
                     {

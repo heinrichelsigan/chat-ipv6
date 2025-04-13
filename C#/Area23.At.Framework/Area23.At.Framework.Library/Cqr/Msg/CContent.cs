@@ -1,5 +1,5 @@
-﻿using Area23.At.Framework.Library.CqrMsg;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Library.Cqr;
+using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Crypt.Hash;
@@ -161,16 +161,16 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
 		public virtual byte[] EncryptToJsonToBytes(string serverKey)
 		{
-			string serialized = EncryptToJson(serverKey);
-			return Encoding.UTF8.GetBytes(serialized);
+            this.SerializedMsg = EncryptToJson(serverKey);
+			return Encoding.UTF8.GetBytes(SerializedMsg);
 		}
 
         public virtual string EncryptToJson(string serverKey)
 		{
 			if (Encrypt(serverKey))
 			{
-				this.SerializedMsg = JsonConvert.SerializeObject(this);
-				return this.SerializedMsg;
+                string serializedJson = ToJson();
+                return serializedJson;
 			}
 			throw new CqrException($"EncryptToJson(string severKey failed");
         }
@@ -257,7 +257,12 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
 		#region serialization / deserialization
 
-		public virtual string ToJson() => Newtonsoft.Json.JsonConvert.SerializeObject(this);
+		public virtual string ToJson()
+		{
+			SerializedMsg = "";
+            SerializedMsg = Newtonsoft.Json.JsonConvert.SerializeObject(this);
+			return SerializedMsg;
+        } 
 
 		public virtual T FromJson<T>(string jsonText)
 		{
@@ -272,7 +277,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 				this._hash = mc.Hash;
 				this._message = mc._message;
 				this.CBytes = mc.CBytes;
-				// this.SerializedMsg = mc.SerializedMsg;
+				this.SerializedMsg = jsonText;
 			}
 			return t;
 		}
@@ -283,10 +288,14 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 		{
 			T cqrT = Utils.DeserializeFromXml<T>(xmlText);
 			if (cqrT is CContent mc)
-			{
-				this._hash = mc._hash;
-				this.SerializedMsg = mc.SerializedMsg;
-				this._message = mc._message;
+			{				
+				this.SerializedMsg = xmlText;
+				this.MsgType = CType.Xml;
+                this.Md5Hash = mc.Md5Hash;
+                this._hash = mc.Hash;
+                this._message = mc._message;
+                this.CBytes = mc.CBytes;
+                this._message = mc._message;
 			}
 
 			return cqrT;

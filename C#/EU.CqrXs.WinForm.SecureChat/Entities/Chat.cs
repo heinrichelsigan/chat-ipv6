@@ -1,7 +1,6 @@
 ﻿using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.CqrXs;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
@@ -27,7 +26,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         
         public int ChatId { get; set; }
 
-        public CqrContact Friend { get; set; }
+        public CContact Friend { get; set; }
 
         public DateTime TimeStamp { get; set; }
 
@@ -50,7 +49,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             CqrMsgs = new Dictionary<DateTime, string>();
         }
 
-        public Chat(CqrContact friend) : this()
+        public Chat(CContact friend) : this()
         {
             Friend = friend;
             ChatId = friend.ContactId;

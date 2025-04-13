@@ -38,21 +38,26 @@
 
   <ItemGroup>
     <Compile Remove="Cipher\**" />
+    <Compile Remove="CqrXs\CqrMsg\**" />
+    <Compile Remove="CqrXs\CqrSrv\**" />
     <Compile Remove="Crypt\CqrJd\**" />
     <Compile Remove="EnDeCoding\**" />
     <Compile Remove="Resources\**" />
     <EmbeddedResource Remove="Cipher\**" />
+    <EmbeddedResource Remove="CqrXs\CqrMsg\**" />
+    <EmbeddedResource Remove="CqrXs\CqrSrv\**" />
     <EmbeddedResource Remove="Crypt\CqrJd\**" />
     <EmbeddedResource Remove="EnDeCoding\**" />
     <EmbeddedResource Remove="Resources\**" />
     <None Remove="Cipher\**" />
+    <None Remove="CqrXs\CqrMsg\**" />
+    <None Remove="CqrXs\CqrSrv\**" />
     <None Remove="Crypt\CqrJd\**" />
     <None Remove="EnDeCoding\**" />
     <None Remove="Resources\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="CqrXs\CqrMsg\MimeAttachment.cs" />
     <Compile Remove="Crypt\EnDeCoding\DeEnCoder.cs" />
     <Compile Remove="Net\IpSocket\IpSocketSender.cs" />
     <Compile Remove="Net\IpSocket\IPSockListener.cs" />  
@@ -114,6 +119,10 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.3.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.0" />
     <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CqrXs\" />
   </ItemGroup>
 
 </Project>

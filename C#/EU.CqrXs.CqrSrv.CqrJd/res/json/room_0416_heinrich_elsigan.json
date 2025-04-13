@@ -1,0 +1,104 @@
+{
+  "_hash": "6DgCXbFf",
+  "_message": "room_0416_heinrich_elsigan.json",
+  "Sender": {
+    "_hash": "6AgCFfDb",
+    "_message": "",
+    "ContactId": 0,
+    "Cuid": "5cdd137c-b42a-44fa-8560-f213f2827368",
+    "Name": "Heinrich Elsigan",
+    "Email": "heinrich.elsigan@gmail.com",
+    "Mobile": "+436507527928",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "Heinrich Elsigan <heinrich.elsigan@gmail.com>",
+    "CRoom": {
+      "_hash": "",
+      "_message": "",
+      "ChatRuid": "791b17b0-1df9-4ddb-bd84-27962504a804",
+      "ChatRoomNr": "room_0416_heinrich_elsigan.json",
+      "TicksLong": [
+        638804104034663079,
+        638804104294800688
+      ],
+      "LastPushed": "0001-01-01T00:00:00",
+      "LastPolled": "2025-04-16T14:27:09.4800688",
+      "MsgType": 1,
+      "Hash": "",
+      "Message": "",
+      "SerializedMsg": "",
+      "Md5Hash": "",
+      "CBytes": null
+    },
+    "MsgType": 0,
+    "Message": "",
+    "SerializedMsg": "",
+    "Hash": "6AgCFfDb",
+    "Md5Hash": "",
+    "CBytes": null
+  },
+  "Recipients": [
+    {
+      "_hash": "6AgCFfDb",
+      "_message": "",
+      "ContactId": 20,
+      "Cuid": "f287a096-a1a3-44af-9a53-4e954f724fec",
+      "Name": "Igor Sekowski",
+      "Email": "pirx777@gmail.com",
+      "Mobile": "+4367762540360",
+      "Address": "",
+      "SecretKey": null,
+      "ContactImage": null,
+      "NameEmail": "Igor Sekowski <pirx777@gmail.com>",
+      "CRoom": {
+        "_hash": "",
+        "_message": "",
+        "ChatRuid": "791b17b0-1df9-4ddb-bd84-27962504a804",
+        "ChatRoomNr": "room_0416_heinrich_elsigan.json",
+        "TicksLong": [
+          638804104034663079
+        ],
+        "LastPushed": "2025-04-16T14:26:43.4663079+02:00",
+        "LastPolled": "2025-04-16T14:26:43.4663079+02:00",
+        "MsgType": 1,
+        "Hash": "",
+        "Message": "",
+        "SerializedMsg": "",
+        "Md5Hash": "",
+        "CBytes": null
+      },
+      "MsgType": 0,
+      "Message": "",
+      "SerializedMsg": "",
+      "Hash": "6AgCFfDb",
+      "Md5Hash": "",
+      "CBytes": null
+    }
+  ],
+  "TContent": "{\"_hash\":\"6AgCFfDb\",\"_message\":\"Hallo Gallo!\",\"MsgType\":1,\"Message\":\"Hallo Gallo!\",\"SerializedMsg\":\"\",\"Hash\":\"6AgCFfDb\",\"Md5Hash\":\"a2600bc615958f5167b5846add7e75eb\",\"CBytes\":\"zYwm6/0Fzw/7I+QhElrh7g7+UDnQUdHk+iHQtOKohODJPiWJkFrT7xv6mDlt+0G0vHNwinjp0dUafNvB3Grd9cvcizYvPwDl+hxINfTRHWdb8Z3+9r8yVeSnM+jxTTyO\"}",
+  "CRoom": {
+    "_hash": "",
+    "_message": "room_0416_heinrich_elsigan.json",
+    "ChatRuid": "791b17b0-1df9-4ddb-bd84-27962504a804",
+    "ChatRoomNr": "room_0416_heinrich_elsigan.json",
+    "TicksLong": [
+      638804104034663079,
+      638804104294800688
+    ],
+    "LastPushed": "0001-01-01T00:00:00",
+    "LastPolled": "2025-04-16T14:27:09.4800688",
+    "MsgType": 1,
+    "Hash": "",
+    "Message": "room_0416_heinrich_elsigan.json",
+    "SerializedMsg": "",
+    "Md5Hash": "",
+    "CBytes": null
+  },
+  "MsgType": 0,
+  "Message": "room_0416_heinrich_elsigan.json",
+  "SerializedMsg": "",
+  "Hash": "6DgCXbFf",
+  "Md5Hash": "4aee208c30a54373af1e9f7a1df29f34",
+  "CBytes": null
+}

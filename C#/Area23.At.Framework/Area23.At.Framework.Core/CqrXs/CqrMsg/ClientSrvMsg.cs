@@ -1,5 +1,7 @@
-﻿using Area23.At.Framework.Core.Static;
+﻿using Area23.At.Framework.Core.Cqr.Msg;
+using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
+using CqrContact = Area23.At.Framework.Core.Cqr.Msg.CContact;
 
 namespace Area23.At.Framework.Core.CqrXs.CqrMsg
 {

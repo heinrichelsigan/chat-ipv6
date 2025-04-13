@@ -169,8 +169,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         {
             if (Encrypt(serverKey))
             {
-                this.SerializedMsg = JsonConvert.SerializeObject(this);
-                return this.SerializedMsg;
+                string serializedJson = ToJson();
+                return serializedJson;
             }
             throw new CqrException($"EncryptToJson(string severKey failed");
         }
@@ -269,10 +269,16 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         public virtual string ToBase64() => Convert.ToBase64String(Data);
 
         /// <summary>
-        /// Serialize <see cref="CqrFile"/> to Json Stting
+        /// Serialize <see cref="CFile"/> to Json Stting
         /// </summary>
-        /// <returns></returns>
-        public override string ToJson() => JsonConvert.SerializeObject(this);
+        /// <returns>json serialized string</returns>
+        public override string ToJson()
+        {
+            this.SerializedMsg = "";
+            string jsonText = JsonConvert.SerializeObject(this);
+            this.SerializedMsg = jsonText;
+            return jsonText;
+        }
 
         /// <summary>
         /// Generic method to convert back from json string

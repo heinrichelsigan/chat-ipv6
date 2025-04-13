@@ -210,6 +210,7 @@
     <Content Include="Default.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="Util\CoolCrypt.aspx" />
     <Content Include="Util\ImageFontControl.ascx" />
     <Content Include="R.aspx" />
     <Content Include="res\img\1.png" />
@@ -263,6 +264,13 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="CoolCrypt.aspx.designer.cs">
+      <DependentUpon>CoolCrypt.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Util\CoolCrypt.aspx.cs">
+      <DependentUpon>CoolCrypt.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Util\CoolCrypt.aspx.designer.cs">
       <DependentUpon>CoolCrypt.aspx</DependentUpon>
     </Compile>
     <Compile Include="Util\CqrJdBasePage.cs">

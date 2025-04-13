@@ -1,9 +1,10 @@
 ﻿using Area23.At.Framework.Core.Cqr;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
+using Area23.At.Framework.Core.Cqr.Msg;
+using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 using System.Runtime;
+using System.Text;
 
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
@@ -77,6 +78,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         /// <returns>singelton <see cref="Settings.Instance"/></returns>
         public new static Settings? LoadSettings(string? jsonFileName = null, bool forceCreateNewJsonFile = true)
         {
+            
+
             string settingsJsonString = string.Empty;
             Settings? settings = null;
             jsonFileName = jsonFileName ?? LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE;
@@ -99,7 +102,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             {
                 _instance.Value.Contacts = settings.Contacts;
                 if (_instance.Value.Contacts == null || _instance.Value.Contacts.Count == 0)
-                    _instance.Value.Contacts = new List<CqrContact>(JsonContacts.LoadJsonContacts());
+                    _instance.Value.Contacts = new List<CContact>(JsonContacts.LoadJsonContacts());
                 _instance.Value.MyContact = settings.MyContact;
                 _instance.Value.FriendIPs = settings.FriendIPs;
                 _instance.Value.MyIPs = settings.MyIPs;
@@ -115,9 +118,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 foreach (string skey in settings.SecretKeysCrypted)
                 {
                     string sdec = "";
+                    CqrFacade facade = new CqrFacade(skey);
+                    CContent cContent = new CContent(skey, facade.PipeString, CType.Json, "");
                     try
                     {
-                        sdec = SelfCryptMsg.Decrypt(skey);
+                        cContent.Decrypt(skey);
+                        sdec = cContent._message;
                     }
                     catch (Exception exDec)
                     {
@@ -164,7 +170,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 {
                     if (!string.IsNullOrEmpty(plainKey))
                     {
-                        string ddec = (plainKey.Length < 12) ? SelfCryptMsg.Encrypt(plainKey) : plainKey;
+                        
+                        string ddec = Convert.ToBase64String(Encoding.UTF8.GetBytes(plainKey));
                         if (!settings.SecretKeysCrypted.Contains(ddec))
                             settings.SecretKeysCrypted.Add(ddec);
                     }
@@ -172,7 +179,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
 
                 try
                 {
-                    JsonContacts.SetContacts(new HashSet<CqrContact>(settings.Contacts));
+                    JsonContacts.SetContacts(new HashSet<CContact>(settings.Contacts));
                     string moveFile = LibPaths.SystemDirPath + DateTime.Now.ToString("yyyy-MM-dd_") + Constants.JSON_SETTINGS_FILE;
                     File.Move(jsonFileName, moveFile, true);
                     settings.SaveStamp = DateTime.Now;

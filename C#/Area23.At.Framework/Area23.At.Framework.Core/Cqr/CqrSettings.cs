@@ -1,4 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 using System;
@@ -27,9 +27,9 @@ namespace Area23.At.Framework.Core.Cqr
 
         public DateTime SaveStamp { get; set; }
 
-        public CqrContact MyContact { get; set; }
+        public CContact MyContact { get; set; }
 
-        public List<CqrContact> Contacts { get; set; }
+        public List<CContact> Contacts { get; set; }
 
         public List<string> FriendIPs { get; set; }
 
@@ -49,12 +49,12 @@ namespace Area23.At.Framework.Core.Cqr
         public CqrSettings()
         {
             TimeStamp = DateTime.Now;
-            Contacts = new List<CqrContact>();
+            Contacts = new List<CContact>();
             FriendIPs = new List<string>();
             MyIPs = new List<string>();
             Proxies = new List<string>();
             SecretKeys = new List<string>();
-            MyContact = new CqrContact();
+            MyContact = new CContact();
         }
 
 

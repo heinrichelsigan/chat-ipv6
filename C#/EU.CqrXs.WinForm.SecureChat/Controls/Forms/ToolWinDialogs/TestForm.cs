@@ -1,7 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
-using Area23.At.Framework.Core.Net.NameService;
+﻿using Area23.At.Framework.Core.Net.NameService;
 using Area23.At.Framework.Core.Net.WebHttp;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using System;
@@ -23,6 +20,8 @@ using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Cache;
 using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Cqr.Msg;
+using Area23.At.Framework.Core.Crypt.Hash;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -82,8 +81,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (!string.IsNullOrEmpty(myServerKey))
             {
                 this.textBoxSecKey.Text = myServerKey;
-                SrvMsg1 srvMsg1 = new SrvMsg1(myServerKey);
-                this.textBoxPipeHash.Text = srvMsg1.PipeString;
+                CqrFacade facade1 = new CqrFacade(myServerKey);
+                this.textBoxPipeHash.Text = facade1.PipeString;
             }
 
         }
@@ -149,8 +148,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 myServerKey = this.textBoxSecKey.Text;
                 AppHashTable.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);
-                SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
-                this.textBoxPipeHash.Text = srv1stMsg.PipeString;
+                CqrFacade facade2 = new CqrFacade(myServerKey);
+                this.textBoxPipeHash.Text = facade2.PipeString;
             }
         }
 
@@ -162,19 +161,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     myServerKey = this.textBoxSecKey.Text;
                     AppHashTable.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);
-                    SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
-                    this.textBoxPipeHash.Text = srv1stMsg.PipeString;
+                    CqrFacade facade = new CqrFacade(myServerKey);
+                    this.textBoxPipeHash.Text = facade.PipeString;
+
+                    CContent cc = new CContent(this.textBoxSource.Text, facade.PipeString, CType.Json, MD5Sum.HashString(this.textBoxSource.Text, ""));
 
                     if (!this.checkBoxDecrypt.Checked)
                     {
-                        string encrypted = srv1stMsg.CqrBaseMsg(this.textBoxSource.Text, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
+                        string encrypted = cc.EncryptToJson(myServerKey);
                         this.textBoxDestination.Text = encrypted;
                     }
                     else
                     {
                         string decrypted = string.Empty;
-                        MsgContent content = srv1stMsg.NCqrBaseMsg(this.textBoxSource.Text, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
-                        this.textBoxDestination.Text = content.Message;
+                        CContent? content = cc.DecryptFromJson(myServerKey, this.textBoxSource.Text);
+                        this.textBoxDestination.Text = content._message;
                     }
 
                 }
@@ -199,30 +200,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         private void buttonSend1stSrvMsg_Click(object sender, EventArgs e)
         {
-            CqrContact myContact = new CqrContact();
+            CContact myContact = new CContact();
             if (Entities.Settings.Singleton.MyContact != null)
             {
-                SrvMsg1 srvMsg1 = new SrvMsg1(myServerKey);
+                CqrFacade facade = new CqrFacade(myServerKey);
                 _serverIp = IPAddress.Parse(textBoxServerIp.Text);
-                myContact = new CqrContact(Entities.Settings.Singleton.MyContact, srvMsg1.PipeString);
+                myContact = new CContact(Entities.Settings.Singleton.MyContact, facade.PipeString);
                 myContact.ContactImage = null;
 
                 this.textBoxSource.Text = JsonConvert.SerializeObject(myContact);
-                
-                
-                string encrypted = srvMsg1.CqrSrvMsg1(myContact, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
 
-                this.textBoxDestination.Text = encrypted;
+                CContact? responseContact = facade.Test_Send1st_CqrSrvMsg1_Soap(myContact, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
 
-                string response = srvMsg1.Test_Send1st_CqrSrvMsg1_Soap(myContact, _serverIp, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
-                SrvMsg1 srvRetMsg1 = new SrvMsg1(this.textBoxSecKey.Text);
-                
-                this.textBoxDestination.Text = response;
+                if (responseContact != null) 
+                    this.textBoxDestination.Text = responseContact.SerializedMsg;
 
                 try
                 {
-                    CqrContact returnedContact = srvRetMsg1.NCqrSrvMsg1(response);
-                    this.textBoxSource.Text = JsonConvert.SerializeObject(returnedContact);
+                    this.textBoxSource.Text = JsonConvert.SerializeObject(textBoxDestination);
                 }
                 catch (Exception exRetMsg)
                 {

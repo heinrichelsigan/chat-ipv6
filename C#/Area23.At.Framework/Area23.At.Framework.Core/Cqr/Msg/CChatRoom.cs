@@ -75,6 +75,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         public override string ToJson()
         {
             // CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
+            this.SerializedMsg = "";
             string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
             this.SerializedMsg = jsonString;
             return jsonString;

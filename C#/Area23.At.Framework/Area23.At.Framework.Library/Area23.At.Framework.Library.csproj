@@ -166,8 +166,8 @@
   <ItemGroup>
     <Compile Include="Cache\AppHashDict.cs" />
     <Compile Include="Cache\RedIstatic.cs" />
-    <Compile Include="CqrXs\CqrMsg\CqrChatRoom.cs" />
     <Compile Include="Cqr\CqrFacade.cs" />
+    <Compile Include="Cqr\CqrService.cs" />
     <Compile Include="Cqr\Msg\CFile.cs" />
     <Compile Include="Cqr\Msg\CChatRoom.cs" />
     <Compile Include="Cqr\Msg\CContact.cs" />
@@ -186,21 +186,7 @@
     </Compile>
     <Compile Include="Util\Area23Log.cs" />
     <Compile Include="Cqr\CqrException.cs" />
-    <Compile Include="CqrXs\CqrJd\CqrService.cs" />
-    <Compile Include="CqrXs\CqrMsg\ClientSrvMsg.cs" />
-    <Compile Include="CqrXs\CqrMsg\CqrFile.cs" />
-    <Compile Include="CqrXs\CqrMsg\FullSrvMsg.cs" />
-    <Compile Include="CqrXs\CqrMsg\ICqrMessageable.cs" />
-    <Compile Include="CqrXs\CqrMsg\MsgEnum.cs" />
     <Compile Include="Cqr\CqrSettings.cs" />
-    <Compile Include="CqrXs\CqrSrv\SrvMsg1.cs" />
-    <Compile Include="CqrXs\CqrSrv\BaseMsg.cs" />
-    <Compile Include="CqrXs\CqrMsg\CqrContact.cs" />
-    <Compile Include="CqrXs\CqrMsg\CqrImage.cs" />
-    <Compile Include="CqrXs\CqrSrv\Peer2PeerMsg.cs" />
-    <Compile Include="CqrXs\CqrSrv\SrvMsg.cs" />
-    <Compile Include="CqrXs\CqrMsg\MimeAttachment.cs" />
-    <Compile Include="CqrXs\CqrMsg\MsgContent.cs" />
     <Compile Include="Crypt\Cipher\Asymmetric\Dsa.cs" />
     <Compile Include="Crypt\Cipher\Asymmetric\DH.cs" />
     <Compile Include="Crypt\Cipher\Asymmetric\Rsa.cs" />

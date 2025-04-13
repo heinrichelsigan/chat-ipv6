@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Area23.At.Framework.Library
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.CqrSrv.CqrJd", "EU.CqrXs.CqrSrv.CqrJd\EU.CqrXs.CqrSrv.CqrJd.csproj", "{8D7B72DC-8C3B-4763-A870-917C9FBE55AF}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "EU.CqrXs.CqrSrv.CqrJd.WCFService", "EU.CqrXs.CqrSrv.CqrJd.WCFService\", "{0228EB89-D1CA-4D75-A904-C153F425AB4B}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "EU.CqrXs.CqrSrv.CqrJd.WCFService(1)", "EU.CqrXs.CqrSrv.CqrJd.WCFService\", "{A34863C1-2634-41B2-870E-13E5FDD195E6}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.7.2"
 		ProjectReferences = "{4133904b-c57a-4f45-ad85-537aa97f765f}|Area23.At.Framework.Library.dll;"
@@ -43,10 +43,10 @@ Global
 		{8D7B72DC-8C3B-4763-A870-917C9FBE55AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D7B72DC-8C3B-4763-A870-917C9FBE55AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D7B72DC-8C3B-4763-A870-917C9FBE55AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0228EB89-D1CA-4D75-A904-C153F425AB4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0228EB89-D1CA-4D75-A904-C153F425AB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0228EB89-D1CA-4D75-A904-C153F425AB4B}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{0228EB89-D1CA-4D75-A904-C153F425AB4B}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{A34863C1-2634-41B2-870E-13E5FDD195E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A34863C1-2634-41B2-870E-13E5FDD195E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A34863C1-2634-41B2-870E-13E5FDD195E6}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{A34863C1-2634-41B2-870E-13E5FDD195E6}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

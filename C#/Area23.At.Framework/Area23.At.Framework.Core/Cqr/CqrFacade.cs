@@ -1,5 +1,4 @@
 ﻿using Area23.At.Framework.Core.Cqr.Msg;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
@@ -72,7 +71,7 @@ namespace Area23.At.Framework.Core.Cqr
         /// <param name="msgType"><see cref="MsgEnum">msgType</see> default with <see cref="MsgEnum.Json"/></param>
         /// <param name="encType"><see cref="EncodingType"/> default to <see cref="EncodingType.Base64"/></param>
         /// <returns></returns>
-        public string Send_CFile_Peer(CFile cFile, IPAddress peerIp, int serverPort = 7777, MsgEnum msgType = MsgEnum.Json, EncodingType encType = EncodingType.Base64)
+        public string Send_CFile_Peer(CFile cFile, IPAddress peerIp, int serverPort = 7777, CType msgType = CType.Json, EncodingType encType = EncodingType.Base64)
         {
             cFile._hash = PipeString;
             cFile.MsgType = CType.Json;
@@ -92,7 +91,7 @@ namespace Area23.At.Framework.Core.Cqr
         /// <param name="myContact"></param>
         /// <param name="encodingType"></param>
         /// <returns></returns>
-        public string Test_Send1st_CqrSrvMsg1_Soap(CContact myContact, EncodingType encodingType = EncodingType.Base64)
+        public CContact? Test_Send1st_CqrSrvMsg1_Soap(CContact myContact, EncodingType encodingType = EncodingType.Base64)
         {
 
             myContact._hash = PipeString;
@@ -104,7 +103,10 @@ namespace Area23.At.Framework.Core.Cqr
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
             string response = client.Send1StSrvMsg(encMsg);
 
-            return response;
+            CContact tmpContact = new CContact();
+            CContact? responseContact = tmpContact.DecryptFromJson(_key, response);
+
+            return responseContact;
         }
 
 
@@ -304,8 +306,9 @@ namespace Area23.At.Framework.Core.Cqr
                 throw;
             }
 
-            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>();
-            CSrvMsg<string> responseMsg = respTmpMsg.DecryptFromJson(_key, response);
+            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>() { _hash = cServerMsg._hash, SerializedMsg = response };
+            CSrvMsg<string> responseMsg = respTmpMsg.FromJson(response);
+            responseMsg = respTmpMsg.DecryptFromJson(_key, response);
 
 
             return responseMsg;

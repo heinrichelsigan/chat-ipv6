@@ -1,4 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Util;
@@ -386,9 +386,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
         /// <see cref="SetNameFilePath(string, string, bool)"/>
         /// </summary>
         /// <param name="cqrFile"></param>
-        public void SetCqrFileTextLink(CqrFile cqrFile)
+        public void SetCqrFileTextLink(CFile cqrFile)
         {            
-            string fullFilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.CqrFileName);
+            string fullFilePath = Path.Combine(LibPaths.AttachmentFilesDir, cqrFile.FileName);
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fullFilePath);
             byte[] fileBytes = cqrFile.Data;
                 // Area23.At.Framework.Core.Crypt.EnDeCoding.Base64.Decode(mimeAttachment.Base64Mime);

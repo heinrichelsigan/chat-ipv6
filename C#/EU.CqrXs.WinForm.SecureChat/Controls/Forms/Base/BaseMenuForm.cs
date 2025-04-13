@@ -1,5 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs;
+﻿using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Util;
@@ -15,6 +14,7 @@ using System.Windows.Forms;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Cqr.Msg;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -105,7 +105,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (items != null)
                 items.Clear();
 
-            foreach (CqrContact ct in Entities.Settings.Singleton.Contacts)
+            foreach (CContact ct in Entities.Settings.Singleton.Contacts)
             {
                 if (ct != null && !string.IsNullOrEmpty(ct.NameEmail))
                     AddItemToComboBox(contactCombo, ct.NameEmail);
@@ -187,7 +187,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             HashSet<string> exCnames = new HashSet<string>();
             HashSet<string> exCemails = new HashSet<string>();
-            foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
+            foreach (CContact c in Entities.Settings.Singleton.Contacts)
             {
                 if (!string.IsNullOrEmpty(c.Name) && !exCnames.Contains(c.Name))
                     exCnames.Add(c.Name);
@@ -267,7 +267,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                 {
                                     if (!string.IsNullOrEmpty(cemail) && !exCemails.Contains(cemail))
                                     {
-                                        CqrContact contact = new CqrContact()
+                                        CContact contact = new CContact()
                                         {
                                             ContactId = contactId++,
                                             Cuid = Guid.NewGuid(),
@@ -360,7 +360,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     {
                                         if (!string.IsNullOrEmpty(cemail))
                                         {
-                                            CqrContact contact = new CqrContact() { ContactId = contactId++, Cuid = Guid.NewGuid(), Name = cname, Email = cemail, Mobile = cmobile };
+                                            CContact contact = new CContact() { ContactId = contactId++, Cuid = Guid.NewGuid(), Name = cname, Email = cemail, Mobile = cmobile };
                                             Entities.Settings.Singleton.Contacts.Add(contact);
                                             if (string.IsNullOrEmpty(firstImport) && contactsImported == 0)
                                                 firstImport = contact.NameEmail;

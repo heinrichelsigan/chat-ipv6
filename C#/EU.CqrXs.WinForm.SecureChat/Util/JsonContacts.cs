@@ -1,4 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 using System;
@@ -14,7 +14,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
     public static class JsonContacts
     {
         static object _lock = new object();
-        static HashSet<CqrContact> _contacts;
+        static HashSet<CContact> _contacts;
         internal static string JsonContactsFileName { get => JsonHelper.JsonContactsFile; }
 
         static JsonContacts()
@@ -26,11 +26,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             catch { }
             if (_contacts == null || _contacts.Count == 0)
             {
-                _contacts = new HashSet<CqrContact>(Entities.Settings.Instance.Contacts);
+                _contacts = new HashSet<CContact>(Entities.Settings.Instance.Contacts);
             }
         }
 
-        internal static HashSet<CqrContact> LoadJsonContacts()
+        internal static HashSet<CContact> LoadJsonContacts()
         {
             lock (_lock)
             {
@@ -41,10 +41,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             lock (_lock)
             {
                 string jsonText = System.IO.File.ReadAllText(JsonContactsFileName);
-                _contacts = JsonConvert.DeserializeObject<HashSet<CqrContact>>(jsonText);
+                _contacts = JsonConvert.DeserializeObject<HashSet<CContact>>(jsonText);
             }
             if (_contacts == null || _contacts.Count == 0)
-                _contacts = new HashSet<CqrContact>();
+                _contacts = new HashSet<CContact>();
 
             //if (BaseWebService.UseApplicationState)
             //        HttpContext.Current.Application[Constants.JSON_CONTACTS] = _contacts;
@@ -57,7 +57,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             return _contacts;
         }
 
-        internal static void SaveJsonContacts(HashSet<CqrContact> contacts)
+        internal static void SaveJsonContacts(HashSet<CContact> contacts)
         {
 
             if (contacts != null && contacts.Count > 0 && contacts.Count > _contacts.Count)
@@ -81,7 +81,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
         }
 
 
-        internal static HashSet<CqrContact> GetContacts()
+        internal static HashSet<CContact> GetContacts()
         {
             bool loadJson = false;
 
@@ -106,14 +106,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             return _contacts;
         }
 
-        public static CqrContact FindContactByNameEmail(List<CqrContact> contacts, CqrContact searchContact)
+        public static CContact FindContactByNameEmail(List<CContact> contacts, CContact searchContact)
         {
-            CqrContact foundC = FindContactByNameEmail(contacts, searchContact.Name, searchContact.Email, searchContact.Mobile);
+            CContact foundC = FindContactByNameEmail(contacts, searchContact.Name, searchContact.Email, searchContact.Mobile);
             return foundC;
         }
         
 
-        public static CqrContact FindContactByNameEmail(List<CqrContact> contacts, string cName, string cEmail, string cMobile)
+        public static CContact FindContactByNameEmail(List<CContact> contacts, string cName, string cEmail, string cMobile)
         {
 
             if (!string.IsNullOrEmpty(cName) || !string.IsNullOrEmpty(cEmail))
@@ -121,7 +121,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
                 string cNameEmail = string.IsNullOrEmpty(cEmail) ? cName : $"{cName} <{cEmail}>";
                 string cPhone = cMobile ?? string.Empty;
 
-                foreach (CqrContact c in contacts)
+                foreach (CContact c in contacts)
                 {
                     if (c != null && !string.IsNullOrEmpty(c.NameEmail))
                     {

@@ -1,5 +1,5 @@
 ﻿using Area23.At.Framework.Core.Cache;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
+using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Static;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Properties;
@@ -73,7 +73,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 else if (_id > 0 && Entities.Settings.Singleton.Contacts.Count > 0)
                 {
-                    foreach (CqrContact contact in Entities.Settings.Singleton.Contacts)
+                    foreach (CContact contact in Entities.Settings.Singleton.Contacts)
                     {
                         if (!string.IsNullOrEmpty(contact.Name))
                             comboBoxName.Items.Add(contact.Name);
@@ -114,7 +114,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 if (!string.IsNullOrEmpty(currentSelectedName))
                 {
-                    foreach (CqrContact contact in Entities.Settings.Singleton.Contacts)
+                    foreach (CContact contact in Entities.Settings.Singleton.Contacts)
                     {
                         if (contact != null && contact.ContactId == currentId && currentId > 0)
                         {
@@ -123,7 +123,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             contact.Mobile = this.textBoxMobile.Text ?? string.Empty; //
                             contact.Address = this.textBoxAddress.Text ?? string.Empty;
                             if (pictureBoxImage.Image != null)
-                                contact.ContactImage = CqrImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString());
+                                contact.ContactImage = CImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString());
 
                             foundContact = true;
                             break;
@@ -133,14 +133,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         currentId = Entities.Settings.Singleton.Contacts.Count + 1;
                         Entities.Settings.Singleton.Contacts.Add(
-                            new CqrContact()
+                            new CContact()
                             {
                                 ContactId = currentId,
                                 Name = this.comboBoxName.Text ?? string.Empty,
                                 Email = this.textBoxEmail.Text ?? string.Empty,
                                 Mobile = this.textBoxMobile.Text ?? string.Empty,
                                 Address = this.textBoxAddress.Text ?? string.Empty,
-                                ContactImage = CqrImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString())
+                                ContactImage = CImage.FromDrawingImage(this.pictureBoxImage.Image, pictureBoxImage.Tag.ToString())
                             });
                     }
                 }
@@ -160,11 +160,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             if (_id == 0 && !string.IsNullOrEmpty(this.comboBoxName.Text))
             {
-                CqrImage? imgTest = null;
+                CImage? imgTest = null;
                 try
                 {
                     if (pictureBoxImage.Image != null)
-                        imgTest = CqrImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString());
+                        imgTest = CImage.FromDrawingImage(pictureBoxImage.Image, pictureBoxImage.Tag?.ToString());
                 }
                 catch (Exception exi)
                 {
@@ -173,7 +173,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 if (Settings.Singleton.MyContact == null)
                 {
-                    Settings.Singleton.MyContact = new CqrContact()
+                    Settings.Singleton.MyContact = new CContact()
                     {
                         ContactId = 0,
                         Name = this.comboBoxName.Text ?? string.Empty,
@@ -197,7 +197,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     if (imgTest != null)
                         Settings.Singleton.MyContact.ContactImage = imgTest;
                 }
-                AppHashTable.SetValue<CqrContact>(Constants.APP_MY_CONTACT, Settings.Singleton.MyContact);                
+                AppHashTable.SetValue<CContact>(Constants.APP_MY_CONTACT, Settings.Singleton.MyContact);                
                 Settings.Singleton.RegisterUser = this.checkBoxRegister.Checked;
                 Settings.SaveSettings(Entities.Settings.Singleton);
             }
@@ -214,7 +214,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             string? currentSelectedName = (comboBoxName.SelectedItem != null) ? comboBoxName.SelectedItem.ToString() : null;
             if (!string.IsNullOrEmpty(currentSelectedName))
             {
-                foreach (CqrContact contact in Entities.Settings.Singleton.Contacts)
+                foreach (CContact contact in Entities.Settings.Singleton.Contacts)
                 {
                     if (contact != null && !string.IsNullOrEmpty(contact.Name) && contact.Name.Equals(currentSelectedName))
                     {
@@ -249,7 +249,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             string? currentSelectedName = (comboBoxName.Text != null) ? comboBoxName.Text.ToString() : null;
             if (!string.IsNullOrEmpty(currentSelectedName))
             {
-                foreach (CqrContact contact in Entities.Settings.Singleton.Contacts)
+                foreach (CContact contact in Entities.Settings.Singleton.Contacts)
                 {
                     if (contact != null && !string.IsNullOrEmpty(contact.Name) && contact.Name.Equals(currentSelectedName, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -298,8 +298,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 if (File.Exists(FileOpenDialog.FileName))
                 {
-                    CqrContact? cqrContact = Entities.Settings.Singleton.Contacts.Where(c => c.ContactId == _id).ToList().FirstOrDefault();
-                    fileName = cqrContact?.Name?.Replace(" ", "");
+                    CContact? cContact = Entities.Settings.Singleton.Contacts.Where(c => c.ContactId == _id).ToList().FirstOrDefault();
+                    fileName = cContact?.Name?.Replace(" ", "");
                     fileName += ((string.IsNullOrEmpty(fileName)) ? _id : "") + Path.GetExtension(FileOpenDialog.FileName);
 
                     byte[] bitmapBytes = System.IO.File.ReadAllBytes(FileOpenDialog.FileName);

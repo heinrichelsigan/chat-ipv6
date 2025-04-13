@@ -1,7 +1,5 @@
 ﻿using Area23FwCore = Area23.At.Framework.Core;
 using Area23.At.Framework.Core.CqrXs;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
-using Area23.At.Framework.Core.CqrXs.CqrSrv;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Net.NameService;
@@ -26,6 +24,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 using Area23.At.Framework.Core.Cache;
 using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Cqr.Msg;
 // using static System.Net.Mime.MediaTypeNames;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
@@ -1728,7 +1727,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                         cbValue = (string.IsNullOrEmpty(appInputDialog2)) ? string.Empty : appInputDialog2;
                         if (!string.IsNullOrEmpty(cbValue))
                         {
-                            foreach (CqrContact c in Settings.Singleton.Contacts)
+                            foreach (CContact c in Settings.Singleton.Contacts)
                             {
                                 if (c.Name.Contains(cbValue) || c.NameEmail.Contains(cbValue, StringComparison.CurrentCultureIgnoreCase) || c.Email.Contains(cbValue, StringComparison.CurrentCultureIgnoreCase))
                                 {
@@ -1763,9 +1762,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         }
 
 
-        protected CqrFile? GetCqrFileFromPath(string filePath, string cryptPipe)
+        protected CFile? GetCFileFromPath(string filePath, string cryptPipe)
         {
-            CqrFile? cqrFile = null;
+            CFile? cfile = null;
             string md5 = Area23FwCore.Crypt.Hash.MD5Sum.Hash(filePath, true);
             string sha256 = Area23FwCore.Crypt.Hash.Sha256Sum.Hash(filePath, true);
 
@@ -1773,21 +1772,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             if (fi.Length > Constants.MAX_FILE_BYTE_BUFFEER)
             {
                 MessageBox.Show($"File size of {fi.Name} is {fi.Length} and exeeds {Constants.MAX_FILE_BYTE_BUFFEER} bytes.", "FileSize larger > 6MB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return cqrFile;
+                return cfile;
             }
 
             byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
             string fileNameOnly = Path.GetFileName(filePath);
             string mimeType = Area23FwCore.Static.MimeType.GetMimeType(fileBytes, fileNameOnly);
 
-            cqrFile = new CqrFile(fileNameOnly, mimeType, fileBytes, cryptPipe, md5, sha256, MsgEnum.Json, EncodingType.Base64);
-            return cqrFile;
+            cfile = new CFile(fileNameOnly, mimeType, fileBytes, cryptPipe, md5, sha256, CType.Json, EncodingType.Base64);
+            return cfile;
         }
 
-        public CqrFile? SendCqrFile(string filename, string secretKey, IPAddress partnerIpAddress)
+        public CFile? SendCFile(string filename, string secretKey, IPAddress partnerIpAddress)
         {
 
-            CqrFile? cfile = null;
+            CFile? cfile = null;
 
             if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
             {
@@ -1799,11 +1798,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
                 string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
                 
-                Peer2PeerMsg pmsg = new Peer2PeerMsg(secretKey);
-                cfile = new CqrFile(fileNameOnly, mimeType, fileBytes, pmsg.PipeString, md5, sha256);
-                var response = pmsg.Send_CqrFile(cfile, partnerIpAddress, Constants.CHAT_PORT, MsgEnum.Json, EncodingType.Base64);
+                CqrFacade facade = new CqrFacade(secretKey);
+                cfile = new CFile(fileNameOnly, mimeType, fileBytes, facade.PipeString, md5, sha256);
+                string response = facade.Send_CFile_Peer(cfile, partnerIpAddress, Constants.CHAT_PORT, CType.Json, EncodingType.Base64);
 
-                string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cfile.CqrFileName + Constants.BASE64_EXT);
+                string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cfile.FileName + Constants.BASE64_EXT);
                 File.WriteAllText(base64FilePath, cfile.ToBase64());
             }
 
@@ -2089,16 +2088,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
                 try
                 {
-                    SrvMsg srvMsgClose = new SrvMsg(CqrXsEuSrvKey, CqrXsEuSrvKey);
+                    CqrFacade closeFacade = new CqrFacade(CqrXsEuSrvKey);
 
-                    string chatRoomNr = Settings.Singleton.MyContact.ChatRoomNr ?? "";
+                    string chatRoomNr = Settings.Singleton.MyContact.CRoom.ChatRoomNr ?? "";
                     if (!string.IsNullOrEmpty(chatRoomNr))
                     {
-                        var cqrList = new List<CqrContact>();
-                        cqrList.Add(Settings.Singleton.MyContact);
-                        CqrContact[] cqrContacts = cqrList.ToArray();
-                        FullSrvMsg<string> fullSrvMsg = new FullSrvMsg<string>(Settings.Singleton.MyContact, cqrContacts, "", CqrXsEuSrvKey, chatRoomNr);
-                        var resp = srvMsgClose.Send_CloseChatRoom_Soap(fullSrvMsg, chatRoomNr);
+                        var cList = new List<CContact>();
+                        cList.Add(Settings.Singleton.MyContact);
+                        CContact[] cContacts = cList.ToArray();
+                        CSrvMsg<string> cSrvMsg = new CSrvMsg<string>(Settings.Singleton.MyContact, cContacts, "", CqrXsEuSrvKey, chatRoomNr);
+                        CSrvMsg<string> cResonse = closeFacade.Send_CloseChatRoom_Soap<string>(cSrvMsg, chatRoomNr, EncodingType.Base64);                        
                     }
                 }
                 catch (Exception closeSesionRoomExc)

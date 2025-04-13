@@ -1,4 +1,4 @@
-﻿using Area23.At.Framework.Core.CqrXs.CqrMsg;
+﻿using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
@@ -34,21 +34,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             }
         }
 
-        internal static CqrContact? FindContactOrCreateByNameEmail(string nameEmail, string chatRoomSession, string pipeText)
+        internal static CContact? FindContactOrCreateByNameEmail(string nameEmail, string chatRoomSession, string pipeText)
         {
-            CqrContact? friendContact = null, tmpContact = null;
-            foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
+            CContact? friendContact = null, tmpContact = null;
+            foreach (CContact c in Entities.Settings.Singleton.Contacts)
             {
                 if (!string.IsNullOrEmpty(nameEmail) && nameEmail.Length > 3)
                 {
                     if (c.NameEmail.Contains(nameEmail, StringComparison.InvariantCultureIgnoreCase) ||
                         c.Email.Contains(nameEmail, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        friendContact = new CqrContact(c, chatRoomSession, pipeText)
-                        {
-                            TicksLong = new List<long>(), // open chat rooms => new tick list  
-                            LastPushed = DateTime.Now
-                        };
+                        friendContact = new CContact(c, chatRoomSession, pipeText);
+                        friendContact.CRoom.TicksLong = new List<long>(); // open chat rooms => new tick list  
+                        friendContact.CRoom.LastPushed = DateTime.Now;
+                        
                         break;
                     }
                 }
@@ -61,14 +60,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
                     nameContact = nameEmail.Substring(0, nameEmail.IndexOf("@")).Replace("@", "").Replace(".", " ");
                 if (!Int32.TryParse(DateTime.Now.ToString("yyMMdd"), out int cId))
                     Int32.TryParse(DateTime.Now.ToString("Mdd"), out cId);
-                CqrImage? friendImg = null;
-                tmpContact = new CqrContact(cId, Guid.NewGuid(), nameContact, nameEmail, "", "", friendImg)
-                {
-                    TicksLong = new List<long>(), // open chat rooms => new tick list  
-                    LastPushed = DateTime.Now              
-                }; 
+                CImage? friendImg = null;
+                tmpContact = new CContact(cId, Guid.NewGuid(), nameContact, nameEmail, "", "", friendImg);
+                tmpContact.CRoom.TicksLong = new List<long>(); // open chat rooms => new tick list  
+                tmpContact.CRoom.LastPushed = DateTime.Now;
                     
-                friendContact = new CqrContact(tmpContact, chatRoomSession, pipeText);
+                friendContact = new CContact(tmpContact, chatRoomSession, pipeText);
                 
                 Settings.Singleton.Contacts.Add(friendContact);
                 Settings.SaveSettings();

@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
+using Area23.At.Framework.Library.Cqr;
+using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Net.WebHttp;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
@@ -37,8 +38,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
         protected internal string decrypted = string.Empty;
         protected internal object _lock = new object();
         protected internal string myServerKey = string.Empty;
-        protected internal HashSet<CqrContact> _contacts;
-        protected internal CqrContact myContact = null;
+        protected internal HashSet<CContact> _contacts;
+        protected internal CContact myContact = null;
         protected internal IPAddress clientIp;
 
 
@@ -78,7 +79,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             allStrng = string.Empty;
             myContact = null;
             if (Application[Constants.JSON_CONTACTS] != null)
-                _contacts = (HashSet<CqrContact>)(Application[Constants.JSON_CONTACTS]);
+                _contacts = (HashSet<CContact>)(Application[Constants.JSON_CONTACTS]);
             else
                 _contacts = LoadJsonContacts();
 
@@ -164,20 +165,20 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
 
 
-        protected virtual CqrContact FindContactByNameEmail(HashSet<CqrContact> cHashSet, CqrContact searchContact)
+        protected virtual CContact FindContactByNameEmail(HashSet<CContact> cHashSet, CContact searchContact)
         {
-            CqrContact cqrFoundContact = JsonContacts.FindContactByNameEmail(cHashSet, searchContact);
+            CContact cqrFoundContact = JsonContacts.FindContactByNameEmail(cHashSet, searchContact);
             return cqrFoundContact;
         }
 
 
 
-        protected virtual HashSet<CqrContact> LoadJsonContacts()
+        protected virtual HashSet<CContact> LoadJsonContacts()
         {
             return JsonContacts.LoadJsonContacts();
         }
 
-        protected virtual void SaveJsonContacts(HashSet<CqrContact> contacts)
+        protected virtual void SaveJsonContacts(HashSet<CContact> contacts)
         {
             JsonContacts.SaveJsonContacts(contacts);
         }

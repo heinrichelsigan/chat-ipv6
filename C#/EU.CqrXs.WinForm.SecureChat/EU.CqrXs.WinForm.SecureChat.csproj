@@ -60,7 +60,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Controls\Forms\TextChat.cs" />
+    <Compile Remove="Controls\Forms\TextChat.Designer.cs" />
     <Compile Remove="Entities\Contact.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Controls\Forms\TextChat.resx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -261,9 +267,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Controls\Forms\RichTextChat.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Controls\Forms\RichTextChat.cs" />
     <Compile Update="Controls\Forms\Base\BaseChatForm.cs" />
     <Compile Update="Controls\Forms\SecureChat.cs">
       <SubType>Form</SubType>

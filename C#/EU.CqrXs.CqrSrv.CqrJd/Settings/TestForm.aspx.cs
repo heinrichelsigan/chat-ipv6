@@ -1,7 +1,5 @@
 ﻿using Area23.At.Framework.Library.Cqr;
-using Area23.At.Framework.Library.CqrXs.CqrMsg;
-using Area23.At.Framework.Library.CqrXs.CqrSrv;
-using Area23.At.Framework.Library.CqrXs;
+using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library;
 using System;
 using System.Collections.Generic;
@@ -20,12 +18,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Settings
     public partial class TestForm : CqrJdBasePage
     {
 
+        protected CqrFacade facade;
+
         protected override void Page_Init(object sender, EventArgs e)
         {
             base.Page_Init(sender, e);
+            facade = new CqrFacade(myServerKey);
             if (!Page.IsPostBack)
             {
-
                 //this.TextBoxSource.Text = string.Empty;
                 //this.TextBoxEnDeCrypted.Text = string.Empty;
                 //this.TextBoxPipeHash.Text = string.Empty;
@@ -36,6 +36,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Settings
         protected override void Page_Load(object sender, EventArgs e)
         {
             base.Page_Load(sender, e);
+            facade = new CqrFacade(myServerKey);
 
             if (!Page.IsPostBack)
             {
@@ -58,26 +59,26 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Settings
                     myServerKey = Application["ServerKey"].ToString();
 
                 this.TextBoxKey.Text = myServerKey;
-                SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
+                facade = new CqrFacade(myServerKey);
 
+                CContent cMsg = new CContent(this.TextBoxSource.Text, facade.PipeString, CType.Json, "");
                 try
                 {
                     if (!string.IsNullOrEmpty(this.TextBoxKey.Text))
                     {
                         myServerKey = this.TextBoxKey.Text;
-                        Application["ServerKey"] = myServerKey;
-                        srv1stMsg = new SrvMsg1(myServerKey);
-                        this.TextBoxPipeHash.Text = srv1stMsg.PipeString;
+                        Application["ServerKey"] = myServerKey;                        
+                        this.TextBoxPipeHash.Text = facade.PipeString;
 
                         if (!this.CheckBoxDecrypt.Checked)
                         {
-                            string encrypted = srv1stMsg.CqrBaseMsg(this.TextBoxSource.Text);
+                            string encrypted = cMsg.EncryptToJson(myServerKey);
                             this.TextBoxEnDeCrypted.Text = encrypted;
                         }
                         else
                         {
                             string decrypted = string.Empty;
-                            MsgContent content = srv1stMsg.NCqrBaseMsg(this.TextBoxSource.Text);
+                            CContent content = cMsg.DecryptFromJson(myServerKey, this.TextBoxSource.Text);
                             this.TextBoxEnDeCrypted.Text = content.Message;
                         }
 
@@ -100,27 +101,27 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Settings
         protected void ButtonSubmit_Click(object sender, EventArgs e)
         {
             this.Title = "CqrJd Testform " + DateTime.Now.Ticks;
+            if (!string.IsNullOrEmpty(this.TextBoxKey.Text))
+            {
+                myServerKey = this.TextBoxKey.Text;
+                Application["ServerKey"] = myServerKey;
+                facade = new CqrFacade(myServerKey);
+                this.TextBoxPipeHash.Text = facade.PipeString;
+            }
+            CContent cMsg = new CContent(this.TextBoxSource.Text, facade.PipeString, CType.Json, "");
+
             try
             {
-                if (!string.IsNullOrEmpty(this.TextBoxKey.Text))
+                if (!this.CheckBoxDecrypt.Checked)
                 {
-                    myServerKey = this.TextBoxKey.Text;
-                    Application["ServerKey"] = myServerKey;
-                    SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
-                    this.TextBoxPipeHash.Text = srv1stMsg.PipeString;
-
-                    if (!this.CheckBoxDecrypt.Checked)
-                    {
-                        string encrypted = srv1stMsg.CqrBaseMsg(this.TextBoxSource.Text);
-                        this.TextBoxEnDeCrypted.Text = encrypted;
-                    }
-                    else
-                    {
-                        string decrypted = string.Empty;
-                        MsgContent content = srv1stMsg.NCqrBaseMsg(this.TextBoxSource.Text);
-                        this.TextBoxEnDeCrypted.Text = content.Message;
-                    }
-
+                    string encrypted = cMsg.EncryptToJson(myServerKey);
+                    this.TextBoxEnDeCrypted.Text = encrypted;
+                }
+                else
+                {
+                    string decrypted = string.Empty;
+                    CContent content = cMsg.DecryptFromJson(myServerKey, this.TextBoxSource.Text);
+                    this.TextBoxEnDeCrypted.Text = content.Message;
                 }
             }
             catch (Exception ex)
@@ -135,11 +136,10 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Settings
         {
             if (!string.IsNullOrEmpty(this.TextBoxKey.Text))
             {
-                myServerKey = this.TextBoxKey.Text;
-                myServerKey = this.TextBoxKey.Text;
+                myServerKey = this.TextBoxKey.Text;                
                 Application["ServerKey"] = myServerKey;
-                SrvMsg1 srv1stMsg = new SrvMsg1(myServerKey);
-                this.TextBoxPipeHash.Text = myServerKey;
+                facade = new CqrFacade(myServerKey);
+                this.TextBoxPipeHash.Text = facade.PipeString;
             }
         }
 

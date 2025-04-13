@@ -1,5 +1,4 @@
 ﻿using Area23.At.Framework.Core.Cqr.Msg;
-using Area23.At.Framework.Core.CqrXs.CqrMsg;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
@@ -169,9 +168,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 		{
 			if (Encrypt(serverKey))
 			{
-				this.SerializedMsg = JsonConvert.SerializeObject(this);
-				return this.SerializedMsg;
-			}
+                string serializedJson = ToJson();
+                return serializedJson;
+            }
 			throw new CqrException($"EncryptToJson(string severKey failed");
         }
 
@@ -181,7 +180,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 			{
 				string hash = EnDeCodeHelper.KeyToHex(serverKey);
 				SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-				this.Md5Hash = MD5Sum.HashString(_message);
+				this.Md5Hash = MD5Sum.HashString(_message, "");
 				_hash = symmPipe.PipeString;
 				byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(Message);
 
@@ -212,7 +211,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 			if (cc != null && Decrypt(serverKey))
 			{
                 cc._message = _message;
-                cc.CBytes = CBytes;
+				cc._hash = _hash;
+				cc.Md5Hash = Md5Hash;
+				cc.CBytes = CBytes;
+				cc.MsgType = MsgType;
+				cc.SerializedMsg = "";
+				cc.SerializedMsg = cc.ToJson();
 				return cc;
 			}
             throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
@@ -231,7 +235,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 while (decrypted[decrypted.Length - 1] == '\0')
                     decrypted = decrypted.Substring(0, decrypted.Length - 1);
 
-				string md5Hash = MD5Sum.HashString(decrypted);
+				string md5Hash = MD5Sum.HashString(decrypted, "");
 				if (!_hash.Equals(symmPipe.PipeString))
 					throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
 				if (!md5Hash.Equals(Md5Hash))
@@ -252,44 +256,58 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         #endregion EnDeCrypt+DeSerialize
 
 
-		#region serialization / deserialization
+        #region serialization / deserialization
 
-		public virtual string ToJson() => Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        /// <summary>
+        /// Serialize <see cref="CContent"/> to Json Stting
+        /// </summary>
+        /// <returns>json serialized string</returns>
+        public virtual string ToJson()
+        {
+            this.SerializedMsg = "";
+            string jsonText = JsonConvert.SerializeObject(this);
+            this.SerializedMsg = jsonText;
+            return jsonText;
+        }
 
-		public virtual T? FromJson<T>(string jsonText)
+        public virtual T? FromJson<T>(string jsonText)
+        {
+            if (string.IsNullOrEmpty(jsonText))
+                jsonText = SerializedMsg;
+
+            T? t = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonText);
+            if (t != null && t is CContent mc)
+            {
+                this.MsgType = CType.Json;
+                this.Md5Hash = mc.Md5Hash;
+                this._hash = mc.Hash;
+                this._message = mc._message;
+                this.CBytes = mc.CBytes;
+                this.SerializedMsg = jsonText;
+            }
+            return t;
+        }
+
+        public virtual string ToXml() => Utils.SerializeToXml<CContent>(this);
+
+		public virtual T FromXml<T>(string xmlText)
 		{
-			if (string.IsNullOrEmpty(jsonText))
-				jsonText = SerializedMsg;
-
-			T? t = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonText);
-			if (t != null && t is CContent mc)
+			T? cqrT = Utils.DeserializeFromXml<T>(xmlText);
+			if (cqrT is CContent mc)
 			{
-				this.MsgType = CType.Json;
+				this.SerializedMsg = xmlText;
+				this.MsgType = CType.Xml;
 				this.Md5Hash = mc.Md5Hash;
 				this._hash = mc.Hash;
 				this._message = mc._message;
 				this.CBytes = mc.CBytes;
-				// this.SerializedMsg = mc.SerializedMsg;
-			}
-			return t;
-		}
-
-		public virtual string ToXml() => Utils.SerializeToXml<CContent>(this);
-
-		public virtual T FromXml<T>(string xmlText)
-		{
-			T cqrT = Utils.DeserializeFromXml<T>(xmlText);
-			if (cqrT is CContent mc)
-			{
-				this._hash = mc._hash;
-				this.SerializedMsg = mc.SerializedMsg;
 				this._message = mc._message;
 			}
 
 			return cqrT;
 		}
 
-		public override string ToString()
+        public override string ToString()
 		{
 			string s = this.GetType().ToString() + "\n";
 			var fields = Utils.GetAllFields(this.GetType());
