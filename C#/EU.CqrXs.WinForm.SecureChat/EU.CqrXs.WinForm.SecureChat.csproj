@@ -265,7 +265,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Controls\Forms\Base\BaseChatForm.cs" />
-    <Compile Update="Controls\Forms\Peer2PeerChat.cs" />
     <Compile Update="Controls\Forms\SecureChat.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -286,6 +285,9 @@
     </Compile>
     <Compile Update="Controls\Forms\ToolWinDialogs\TransparentDialog.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\UserControls\AttachmentsControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Properties\de\Resources.Designer.cs">
       <DesignTime>True</DesignTime>

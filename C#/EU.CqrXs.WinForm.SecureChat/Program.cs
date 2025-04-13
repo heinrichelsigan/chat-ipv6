@@ -57,8 +57,6 @@ namespace EU.CqrXs.WinForm.SecureChat
                         // AppDomain.CurrentDomain.SetData(Constants.CQRXS_TEST_FORM, true);
                     if (arg.ToLower().Contains("fishonaes") || arg.ToLower().Contains("fish on aes"))
                         AppHashTable.SetValue<bool>(Constants.FISH_ON_AES_ENGINE, true);
-                    if (arg.ToLower().Contains("peer"))
-                        startFormSwitch = "peer";
                     if (arg.ToLower().Contains("rich"))
                         startFormSwitch = "rich";
                     if (arg.ToLower().Contains("secure"))
@@ -76,12 +74,7 @@ namespace EU.CqrXs.WinForm.SecureChat
             ApplicationConfiguration.Initialize();
 
             switch (startFormSwitch)
-            {
-                case "peer":
-                    Controls.Forms.Peer2PeerChat peer2PeerChat = new Controls.Forms.Peer2PeerChat();
-                    Application.Run(peer2PeerChat);
-                    break;
-                
+            {              
                 case "rich":                       
                     Controls.Forms.RichTextChat richTextChat = new Controls.Forms.RichTextChat();
                     Application.Run(richTextChat);

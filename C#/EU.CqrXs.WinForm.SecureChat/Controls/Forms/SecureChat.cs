@@ -133,7 +133,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonAttach.Click += new System.EventHandler(async (sender, e) => await ButtonAttach_Click(sender, e));
 
             MiniToolBox.CreateAttachDirectory();
-            this.DragNDropGroupBox.OnDragNDrop += OnDragNDrop;
             this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
             this.PeerServerSwitch.FireUpChanged += TooglePeerServer;
             this.SetProgressBar(this.StripProgressBar, 0);
@@ -147,8 +146,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private async void SecureChat_Load(object sender, EventArgs e)
         {
             bool? appFirstReg = AppHashTable.GetValue<bool>(Constants.APP_FIRST_REG);
-            bool send1stReg = (appFirstReg.HasValue && appFirstReg.Value);
-
+            bool send1stReg = (appFirstReg.HasValue) ? appFirstReg.Value : false;
+            if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null || 
+                    string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.NameEmail)) 
+                send1stReg = true;
 
             await BaseChatForm_Load(sender, e);
             bgWorkerMonitor.RunWorkerAsync();
@@ -163,7 +164,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             int progress = this.GetProgressBar(this.StripProgressBar);
             this.SetProgressBar(this.StripProgressBar, progress);
 
-            if (send1stReg || (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null))
+            if (send1stReg)
             {
                 send1stReg = true;
                 AppHashTable.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
@@ -307,9 +308,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetTextBoxText(this.TextBoxPipe, serverMessage.PipeString);            
             SetStatusText(StripStatusLabel, $"Changed secret key to {myServerKey} => secure pipe: {serverMessage.PipeString}");
 
-            if (this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
-                this.ComboBoxSecretKey.Items.Remove(this.ComboBoxSecretKey.Text);            
-            this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
+            if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
+                this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
 
             if (Entities.Settings.Singleton != null)
             {
