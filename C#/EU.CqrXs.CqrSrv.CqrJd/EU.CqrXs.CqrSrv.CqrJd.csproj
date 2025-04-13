@@ -329,7 +329,7 @@
     <Compile Include="Util\JsonContacts.cs" />
     <Compile Include="Util\JsonHelper.cs" />
     <Compile Include="Util\PersistMsgIn.cs" />
-    <Compile Include="Util\RedIs.cs" />
+    <Compile Include="Util\RedIS.cs" />
     <Compile Include="Util\U.aspx.cs">
       <DependentUpon>U.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

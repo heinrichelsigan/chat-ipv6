@@ -164,6 +164,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\AppHashDict.cs" />
     <Compile Include="Cache\RedIstatic.cs" />
     <Compile Include="CqrXs\CqrMsg\CqrChatRoom.cs" />
     <Compile Include="Crypt\Cipher\CipherPipe.cs" />

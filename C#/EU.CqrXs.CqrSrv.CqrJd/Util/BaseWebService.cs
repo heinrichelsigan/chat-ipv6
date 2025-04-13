@@ -85,7 +85,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
 
             if (PersistMsgInAmazonElasticCache)
             {
-                string status = RedIs.ConnMux.GetStatus();
+                string status = RedIS.ConnMux.GetStatus();
 
                 //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
                 //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -167,14 +167,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 try
                 {
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
-                    string status = RedIs.ConnMux.GetStatus();
+                    string status = RedIS.ConnMux.GetStatus();
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
 
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to set Dictionary<Guid, CqrContact> in cache."+ Environment.NewLine;
-                    RedIs.ValKey.SetKey<Dictionary<Guid, CqrContact>>("TestCache", dictCacheTest);                                        
+                    RedIS.ValKey.SetKey<Dictionary<Guid, CqrContact>>("TestCache", dictCacheTest);                                        
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache." + Environment.NewLine;
 
-                    Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)RedIs.ValKey.GetKey<Dictionary<Guid, CqrContact>>("TestCache");                   
+                    Dictionary<Guid, CqrContact> outdict = (Dictionary<Guid, CqrContact>)RedIS.ValKey.GetKey<Dictionary<Guid, CqrContact>>("TestCache");                   
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + Environment.NewLine;
                     foreach (CqrContact contact in outdict.Values)
                     {
@@ -525,7 +525,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             // Amazon Redis Valkey Cache
             if (PersistMsgInAmazonElasticCache)
             {
-                dict = (Dictionary<long, string>)RedIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
+                dict = (Dictionary<long, string>)RedIS.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
             }
 
             // TODO: implement filesystem 
@@ -569,7 +569,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 HttpContext.Current.Application[chatRoomNumber] = dict;
             if (BaseWebService.PersistMsgInAmazonElasticCache)
             {
-                RedIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
+                RedIS.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
             }
 
             return;

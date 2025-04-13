@@ -201,6 +201,13 @@ namespace Area23.At.Framework.Library.Static
         public const string STRING_NULL = null;
         public const string SNULL = "(null)";
 
+        public const string APP_CONCURRENT_DICT = "APP_CONCURRENT_DICT";
+        public const string APP_FIRST_REG = "APP_FIRST_REG";
+        public const string APP_TRANSPARENT_BADGE = "APP_TRANSPARENT_BADGE";
+        public const string APP_SERVER_KEY = "APP_SERVER_KEY";
+        public const string APP_INPUT_DIALOG = "APP_INPUT_DIALOG";
+        public const string APP_MY_CONTACT = "APP_MY_CONTACT";
+
         public const string AES_ENVIROMENT_KEY = "APP_ENCRYPTION_SECRET_KEY";
 
         public const string JSON_SAMPLE = @"{ 
