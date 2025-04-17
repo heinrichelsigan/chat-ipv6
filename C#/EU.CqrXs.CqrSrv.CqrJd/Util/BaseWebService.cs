@@ -252,10 +252,12 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
             else
             {
                 if (ccontact.Cuid == null || ccontact.Cuid == Guid.Empty)
-                    ccontact.Cuid = Guid.NewGuid();
-                _contacts.Add(ccontact);
-                foundCt = ccontact;
+                    ccontact.Cuid = Guid.NewGuid();                
+                foundCt = new CContact(ccontact, ccontact.CRoom.ChatRoomNr, ccontact._hash);
                 foundCt.ContactImage = null;
+                foundCt.CRoom.TicksLong = new List<long>();
+
+                _contacts.Add(foundCt);
 
             }
 
@@ -282,6 +284,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     toAddContact.Mobile = ccontact.Mobile;
                     toAddContact.ContactImage = null;
                     toAddContact.Cuid = (ccontact.Cuid != null && ccontact.Cuid != Guid.Empty) ? ccontact.Cuid : Guid.NewGuid();
+                    toAddContact.CRoom.TicksLong = new List<long>();
                     contacts.Add(toAddContact);
                 }
                 else
@@ -317,8 +320,15 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 }
             }
             if (foundCt)
+            {
                 if (chatRoomMsg.Recipients.Remove(toDelContact))
-                    chatRoomMsg.Recipients.Add(new CContact(contact, chatRoomNr, contact._hash));
+                {
+
+                    CContact cToAdd = new CContact(contact, chatRoomNr, contact._hash);
+                    cToAdd.CRoom.TicksLong = new List<long>();
+                    chatRoomMsg.Recipients.Add(cToAdd);
+                }
+            }
 
             JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
             // (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
@@ -337,8 +347,14 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                 }
             }
             if (foundCt)
+            {
                 if (_contacts.Remove(toDelContact))
-                    _contacts.Add(new CContact(contact, chatRoomNr, contact.Hash));
+                {
+                    CContact c2Add = new CContact(contact, chatRoomNr, contact.Hash);
+                    c2Add.CRoom.TicksLong = new List<long>();
+                    _contacts.Add(c2Add);
+                }
+            }
 
             JsonContacts.SaveJsonContacts(_contacts);
 

@@ -171,7 +171,8 @@ namespace EU.CqrXs.CqrSrv.CqrJd.Util
                     _hash = chatRoom.Hash,
                     Md5Hash = chatRoom.Md5Hash
                 };
-                cSrvMsg.Sender.CRoom = new CChatRoom(cSrvMsg.CRoom);
+                if (cSrvMsg.CRoom == null)
+                    cSrvMsg.Sender.CRoom = new CChatRoom(cSrvMsg.CRoom) { TicksLong = new List<long>() };
                 cSrvMsg.SerializedMsg = "";
 
                 string jsonCRoomFileName = GetJsonChatRoomFileName(chatRoomNumber);

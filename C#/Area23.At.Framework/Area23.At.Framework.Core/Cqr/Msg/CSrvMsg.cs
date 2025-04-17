@@ -120,6 +120,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Sender = null;
             Recipients = new HashSet<CContact>();
             TContent = null;
+            CBytes = null;
             CRoom = new CChatRoom();            
         }
 
@@ -130,9 +131,15 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 throw new CqrException("Can not deserialize null or empty serializedString.");
 
             if (msgArt == CType.Json)
+            {
                 deserializedSrvMsg = this.FromJson<CSrvMsg<TC>>(serializedString);
+                deserializedSrvMsg.MsgType = CType.Json;
+            }
             else if (msgArt == CType.Xml)
+            {
                 deserializedSrvMsg = this.FromXml<CSrvMsg<TC>>(serializedString);
+                deserializedSrvMsg.MsgType = CType.Xml;
+            }
 
             if (deserializedSrvMsg == null)
                 throw new CqrException("Can not deserialize serializedString to CSrvMsg<TC>.");
@@ -141,6 +148,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             this.Recipients = deserializedSrvMsg.Recipients;
             this.TContent = deserializedSrvMsg.TContent;
             this.CRoom = new CChatRoom(deserializedSrvMsg.CRoom);
+            this._hash = deserializedSrvMsg.Hash;
+            this._message = deserializedSrvMsg.Message;
+            this.CBytes = deserializedSrvMsg.CBytes;
+            this.Md5Hash = deserializedSrvMsg.Md5Hash;
         
         }
 
@@ -218,6 +229,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 _message = cSrvMsg.Message;
                 Md5Hash = cSrvMsg.Md5Hash;
                 SerializedMsg = cSrvMsg.SerializedMsg;
+                CBytes = cSrvMsg.CBytes;
+                MsgType = cSrvMsg.MsgType;
             }
         }
 
@@ -378,50 +391,50 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #region static_members
         
-            public static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized)
-            {
-                if (string.IsNullOrEmpty(serialized))
-                    throw new CqrException("static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized): serialized is null or empty.");
+        public static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized)
+        {
+            if (string.IsNullOrEmpty(serialized))
+                throw new CqrException("static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized): serialized is null or empty.");
 
-                CSrvMsg<TC> csrvmsg = new CSrvMsg<TC>(serialized, CType.Json);
-                csrvmsg = DecryptSrvMsg(serverKey, csrvmsg);
-                if (csrvmsg != null)
-                    return csrvmsg;
-                throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
+            CSrvMsg<TC> csrvmsg = new CSrvMsg<TC>(serialized, CType.Json);
+            csrvmsg = DecryptSrvMsg(serverKey, csrvmsg);
+            if (csrvmsg != null)
+                return csrvmsg;
+            throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
+        }
+
+        public static CSrvMsg<TC> DecryptSrvMsg(string serverKey, CSrvMsg<TC> cSrvMsg)
+        {
+            try
+            {
+                string hash = EnDeCodeHelper.KeyToHex(serverKey);
+                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
+
+                byte[] cipherBytes = cSrvMsg.CBytes;
+                byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
+                string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
+                while (decrypted[decrypted.Length - 1] == '\0')
+                    decrypted = decrypted.Substring(0, decrypted.Length - 1);
+
+                string md5Hash = MD5Sum.HashString(decrypted, "");
+                if (!cSrvMsg._hash.Equals(symmPipe.PipeString))
+                    throw new CqrException($"Hash: {cSrvMsg._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+                if (!md5Hash.Equals(cSrvMsg.Md5Hash))
+                    throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {cSrvMsg.Md5Hash}");
+
+                cSrvMsg._message = decrypted;
+                cSrvMsg.CBytes = null;
+            }
+            catch (Exception exCrypt)
+            {
+                CqrException.SetLastException(exCrypt);
+                throw;
             }
 
-            public static CSrvMsg<TC> DecryptSrvMsg(string serverKey, CSrvMsg<TC> cSrvMsg)
-            {
-                try
-                {
-                    string hash = EnDeCodeHelper.KeyToHex(serverKey);
-                    SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
+            return cSrvMsg;
+        }
 
-                    byte[] cipherBytes = cSrvMsg.CBytes;
-                    byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
-                    string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
-                    while (decrypted[decrypted.Length - 1] == '\0')
-                        decrypted = decrypted.Substring(0, decrypted.Length - 1);
-
-                    string md5Hash = MD5Sum.HashString(decrypted, "");
-                    if (!cSrvMsg._hash.Equals(symmPipe.PipeString))
-                        throw new CqrException($"Hash: {cSrvMsg._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
-                    if (!md5Hash.Equals(cSrvMsg.Md5Hash))
-                        throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {cSrvMsg.Md5Hash}");
-
-                    cSrvMsg._message = decrypted;
-                    cSrvMsg.CBytes = null;
-                }
-                catch (Exception exCrypt)
-                {
-                    CqrException.SetLastException(exCrypt);
-                    throw;
-                }
-
-                return cSrvMsg;
-            }
-
-            #endregion static_members
+        #endregion static_members
     
     }
 

@@ -138,9 +138,15 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         {
             this._hash = hash;
             Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
+            CBytes = c.CBytes;
+            Md5Hash = c.Md5Hash;
+            _message = c.Message;
+            MsgType = c.MsgType;
             CRoom = (c.CRoom == null)
                 ? new CChatRoom("", Guid.Empty, DateTime.MinValue, DateTime.MinValue)
-                : new CChatRoom(c.CRoom.ChatRoomNr, c.CRoom.ChatRuid, c.CRoom.LastPushed, c.CRoom.LastPushed) { TicksLong = c.CRoom.TicksLong };               
+                : new CChatRoom(c.CRoom.ChatRoomNr, c.CRoom.ChatRuid, c.CRoom.LastPushed, c.CRoom.LastPushed) { TicksLong = c.CRoom.TicksLong };
+            SerializedMsg = "";
+            SerializedMsg = this.ToJson();
         }
 
         public CContact(CContact c, string ChatRoomNr, string hash) : this(c, hash)
@@ -148,9 +154,15 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             _hash = hash;
             ContactImage = null;
             Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
+            CBytes = c.CBytes;
+            Md5Hash = c.Md5Hash;
+            _message = c.Message;
+            MsgType = c.MsgType;
             CRoom = (c.CRoom == null)
                 ? new CChatRoom("", Guid.Empty, DateTime.MinValue, DateTime.MinValue)
                 : new CChatRoom(c.CRoom.ChatRoomNr, c.CRoom.ChatRuid, c.CRoom.LastPushed, c.CRoom.LastPushed) { TicksLong = c.CRoom.TicksLong };
+            SerializedMsg = "";
+            SerializedMsg = this.ToJson();
         }
 
         public CContact(CContact c, string chatRoomNr, string hash, CImage cqrImage) : this(c, chatRoomNr, hash)
@@ -159,12 +171,15 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             ContactImage = cqrImage;
             ContactId = c.ContactId;
             Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
+            CBytes = c.CBytes;
+            Md5Hash = c.Md5Hash;
+            _message = c.Message;
+            MsgType = c.MsgType;
             CRoom = (c.CRoom == null)
                 ? new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MinValue, DateTime.MinValue)
                 : new CChatRoom(chatRoomNr, c.CRoom.ChatRuid, c.CRoom.LastPushed, c.CRoom.LastPushed) { TicksLong = c.CRoom.TicksLong };
-            
-            
-            // ClientIp = c.ClientIp ?? null;
+            SerializedMsg = "";
+            SerializedMsg = this.ToJson();
         }
 
         #endregion constructors

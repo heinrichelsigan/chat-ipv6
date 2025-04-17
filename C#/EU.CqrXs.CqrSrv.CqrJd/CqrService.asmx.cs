@@ -101,7 +101,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             InitMethod();
 
             _chatRoomNumber = "";
-            CSrvMsg<string> cSrvMsg, chatRSrvMsg = new CSrvMsg<string>() { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, chatRSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
             chatRSrvMsg = chatRSrvMsg.FromJson(cryptMsg);
 
             _responseString = "";
@@ -110,7 +110,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = chatRSrvMsg.DecryptFromJson(_serverKey, cryptMsg);    // decrypt FullSrvMsg<string>            
+                    cSrvMsg = chatRSrvMsg.DecryptFromJson(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>            
                     _contact = AddContact(cSrvMsg.Sender);                          // add contact from FullSrvMsg<string>   
                     chatRSrvMsg = InviteToChatRoom(cSrvMsg);                        // generate a FullSrvMsg<string> chatserver message by inviting                           
 
@@ -131,9 +131,9 @@ namespace EU.CqrXs.CqrSrv.CqrJd
         /// <summary>
         /// Polls a chat room for new messages
         /// </summary>
-        /// <param name="cryptMsg">encrypted <see cref="CSrvMsg<string>"/> with chat room number and last polled dates</param>
+        /// <param name="cryptMsg">encrypted <see cref="CSrvMsg{string}"/> with chat room number and last polled dates</param>
         /// <returns>
-        /// encrypted <see cref="CSrvMsg<string>"/> including chatroom number 
+        /// encrypted <see cref="CSrvMsg{string}"/> including chatroom number 
         /// with encrypted clientmsg with clientkey.
         /// Server doesn't know client key and always delivers encrypted encrypted messages
         /// Server can only read and decrypt outer envelope message encrypted with server key
@@ -147,7 +147,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             Dictionary<long, string> dict = new Dictionary<long, string>();
             bool isValid = false;
             
-            CSrvMsg<string> cSrvMsg, aSrvMsg =  new CSrvMsg<string>() { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg =  new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
 
             _responseString = "";
@@ -221,7 +221,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             bool isValid = false;
             Dictionary<long, string> dict;
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>() { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
 
             _responseString = ""; // set empty response string per default
@@ -287,7 +287,7 @@ namespace EU.CqrXs.CqrSrv.CqrJd
             InitMethod();
             bool isValid = false;
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>() { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
             List<CContact> _invited = new List<CContact>();
 

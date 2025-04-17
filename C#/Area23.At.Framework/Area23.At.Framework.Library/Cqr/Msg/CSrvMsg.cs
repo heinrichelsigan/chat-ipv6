@@ -266,6 +266,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 csrvmsg.TContent = TContent;
                 csrvmsg.Sender = Sender;
                 csrvmsg.Recipients = Recipients;
+                csrvmsg.CBytes = CBytes;
+                csrvmsg.MsgType = MsgType;
                 return csrvmsg;
             }
             throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
@@ -330,6 +332,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                     Md5Hash = cSrvMsg.Md5Hash;
                     _message = cSrvMsg._message;
                     SerializedMsg = jsonText;
+                    CBytes = cSrvMsg.CBytes;
+                    MsgType = cSrvMsg.MsgType;
                     
                     return cMsg;
                 }

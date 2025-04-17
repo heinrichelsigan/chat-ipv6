@@ -80,9 +80,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 					CContent c = GetMsgContentType(serializedString, out Type cqrType, CType.Json);
 					if (c != null)
 					{
-						SerializedMsg = c.SerializedMsg;
+						SerializedMsg = serializedString;
 						_hash = c._hash;
 						_message = c._message;
+						CBytes = c.CBytes;
+						MsgType = CType.Json;
 						Md5Hash = Crypt.Hash.MD5Sum.HashString(_message);
 					}
 					break;
@@ -91,10 +93,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 					CContent cXml = GetMsgContentType(serializedString, out Type cqType, msgArt);
 					if (cXml != null)
 					{
-						SerializedMsg = cXml.SerializedMsg;
+						SerializedMsg = serializedString;
 						_hash = cXml._hash;
-						_message = cXml._message;
-						Md5Hash = Crypt.Hash.MD5Sum.HashString(_message);
+                        CBytes = cXml.CBytes;
+                        _message = cXml._message;
+						MsgType = CType.Xml;
+                        Md5Hash = Crypt.Hash.MD5Sum.HashString(_message);
 					}
 					break;
 				case CType.None: //TODO
@@ -439,13 +443,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 				case CType.Json:
 					if (serString.IsValidJson())
 					{
-						//if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
-						//{
-						//    outType = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>);
-						//    return (ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
-						//        JsonConvert.DeserializeObject<ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>>(serString);
-						//}
-						if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
+                        //if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
+                        //{
+                        //    outType = typeof(ClientSrvMsg<CSrvMsg<string>, CSrvMsg<string>>);
+                        //    return (ClientSrvMsg<CSrvMsg<string>, CSrvMsg<string>>)
+                        //        JsonConvert.DeserializeObject<CSrvMsg<CSrvMsg<string>, CSrvMsg<string>>>(serString);
+                        //}
+                        if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
 						{
 							outType = typeof(CSrvMsg<string>);
 							return (CSrvMsg<string>)JsonConvert.DeserializeObject<CSrvMsg<string>>(serString);
@@ -476,13 +480,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 				case CType.Xml:
 					if (serString.IsValidXml())
 					{
-						//if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
-						//{
-						//    outType = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>);
-						//    return (ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
-						//        Utils.DeserializeFromXml<ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>>(serString);                            
-						//}
-						if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
+                        //if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
+                        //{
+                        //    outType = typeof(ClientSrvMsg<CSrvMsg<string>, CSrvMsg<string>>);
+                        //    return (ClientSrvMsg<CSrvMsg<string>, CSrvMsg<string>>)
+                        //        Utils.DeserializeFromXml<ClientSrvMsg<CSrvMsg<string>, CSrvMsg<string>>>(serString);                            
+                        //}
+                        if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
 						{
 							outType = typeof(CSrvMsg<string>);
 							return (CSrvMsg<string>)Utils.DeserializeFromXml<CSrvMsg<string>>(serString);

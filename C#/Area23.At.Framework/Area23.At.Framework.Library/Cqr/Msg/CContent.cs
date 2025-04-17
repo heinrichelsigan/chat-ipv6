@@ -59,6 +59,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 			SerializedMsg = string.Empty;
 			_hash = string.Empty;
 			Md5Hash = string.Empty;
+			CBytes = null;
 		}
 
 
@@ -81,9 +82,11 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 					CContent c = GetMsgContentType(serializedString, out Type cqrType, CType.Json);
 					if (c != null)
 					{
-						SerializedMsg = c.SerializedMsg;
+						SerializedMsg = serializedString;
 						_hash = c._hash;
 						_message = c._message;
+						MsgType = CType.Json;
+						CBytes = c.CBytes;
 						Md5Hash = Crypt.Hash.MD5Sum.HashString(_message);
 					}
 					break;
@@ -92,10 +95,12 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 					CContent cXml = GetMsgContentType(serializedString, out Type cqType, msgArt);
 					if (cXml != null)
 					{
-						SerializedMsg = cXml.SerializedMsg;
+						SerializedMsg = serializedString;
 						_hash = cXml._hash;
 						_message = cXml._message;
-						Md5Hash = Crypt.Hash.MD5Sum.HashString(_message);
+                        MsgType = CType.Json;
+                        CBytes = cXml.CBytes;
+                        Md5Hash = Crypt.Hash.MD5Sum.HashString(_message);
 					}
 					break;
 				case CType.None: //TODO
@@ -282,7 +287,12 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 			return t;
 		}
 
-		public virtual string ToXml() => Utils.SerializeToXml<CContent>(this);
+		public virtual string ToXml()
+		{
+            SerializedMsg = "";
+            SerializedMsg = Utils.SerializeToXml<CContent>(this);
+            return SerializedMsg;            
+		}
 
 		public virtual T FromXml<T>(string xmlText)
 		{
@@ -433,13 +443,13 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 				case CType.Json:
 					if (serString.IsValidJson())
 					{
-						//if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
-						//{
-						//    outType = typeof(ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>);
-						//    return (ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>)
-						//        JsonConvert.DeserializeObject<ClientSrvMsg<FullSrvMsg<string>, FullSrvMsg<string>>>(serString);
-						//}
-						if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
+                        //if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
+                        //{
+                        //    outType = typeof(ClientSrvMsg<CSrvMsg<string>, FullSrvMsg<string>>);
+                        //    return (ClientSrvMsg<CSrvMsg<string>, CSrvMsg<string>>)
+                        //        JsonConvert.DeserializeObject<ClientSrvMsg<CSrvMsg<string>, CSrvMsg<string>>>(serString);
+                        //}
+                        if (serString.Contains("Sender") && serString.Contains("Recipients") && serString.Contains("TContent"))
 						{
 							outType = typeof(CSrvMsg<string>);
 							return (CSrvMsg<string>)JsonConvert.DeserializeObject<CSrvMsg<string>>(serString);

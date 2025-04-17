@@ -549,6 +549,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
             }
 
+            if (Settings.Singleton.MyContact.CRoom != null)
+            {
+                Settings.Singleton.MyContact.CRoom.TicksLong = new List<long>();
+                Settings.Singleton.MyContact.CRoom.LastPushed = DateTime.MinValue;
+                Settings.Singleton.MyContact.CRoom.LastPolled = DateTime.MinValue;
+                Settings.SaveSettings();
+            }
+
             try
             {
                 SetTextBoxText(this.TextBoxSource, "");
@@ -737,6 +745,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
+            if (Settings.Singleton.MyContact.CRoom != null)
+            {
+                Settings.Singleton.MyContact.CRoom.TicksLong = new List<long>();
+                Settings.Singleton.MyContact.CRoom.LastPushed = DateTime.MinValue;
+                Settings.Singleton.MyContact.CRoom.LastPolled = DateTime.MinValue;
+                Settings.SaveSettings();
+            }
             CContact myContact = new CContact(Settings.Singleton.MyContact, sessionChatText, clientFacade.PipeString);
             myContact.CRoom.TicksLong = new List<long>();
             myContact.CRoom.LastPushed = DateTime.Now;
@@ -895,7 +910,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     string encrypted = msg.EncryptToJson(myServerKey);
 
                     // Server message to webservice with myContact, friendContact, chatRoomNr, 
-                    FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, chatRoomNr);
+                    CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, chatRoomNr);
                     
 
                     SetStatusText(StripStatusLabel, $"Starting send to {chatRoomNr} via server {ServerIpAddress} ...");
@@ -1051,7 +1066,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             encrypted = cfile.EncryptToJson(CqrXsEuSrvKey);
 
                             // generate session chat server msg with serverFacade.PipeString
-                            FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, chatRoomNr);
+                            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, chatRoomNr);
 
                             // Send to WebService
                             CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync<string>(fmsg, encrypted, EncodingType.Base64);
@@ -1516,11 +1531,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         friendContact.CRoom.ChatRoomNr = chatRoomNr;                        
 
                         string filename = ea.GenericTData;
-                        FullSrvMsg<string> fmsg = new FullSrvMsg<string>(myContact, friendContact, chatRoomNr, euFacade.PipeString, chatRoomNr);
-                        // FullSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
+                        CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, chatRoomNr, euFacade.PipeString, chatRoomNr);
+                        // CSrvMsg<string> cmsg = new CSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
                         // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
                         // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
-                        
+
                         string md5 = Area23.At.Framework.Core.Crypt.Hash.MD5Sum.Hash(filename, true);
                         string sha256 = Area23.At.Framework.Core.Crypt.Hash.Sha256Sum.Hash(filename, true);
 

@@ -19,6 +19,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 {
     public class CFile : CContent, IMsgAble
     {
+
         #region properties 
 
         public string FileName { get; set; }
@@ -297,6 +298,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                     this._message = mc.Message;
                     this.SerializedMsg = mc.SerializedMsg;
                     this.MsgType = mc.MsgType;
+                    this.Md5Hash = mc.Md5Hash;
+                    this.CBytes = mc.CBytes;
                 }
                 if (t is CFile cf)
                 {

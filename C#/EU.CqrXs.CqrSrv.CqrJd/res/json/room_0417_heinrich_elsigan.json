@@ -1,0 +1,106 @@
+{
+  "_hash": "6DgCXbFf",
+  "_message": "heinrich.elsigan@gmail.com",
+  "Sender": {
+    "_hash": "6AbDfC",
+    "_message": "",
+    "ContactId": 0,
+    "Cuid": "5cdd137c-b42a-44fa-8560-f213f2827368",
+    "Name": "Heinrich Elsigan",
+    "Email": "heinrich.elsigan@gmail.com",
+    "Mobile": "+436507527928",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "Heinrich Elsigan <heinrich.elsigan@gmail.com>",
+    "CRoom": {
+      "_hash": "",
+      "_message": "",
+      "ChatRuid": "e8f070ae-a73e-4621-82b7-f162f87ea378",
+      "ChatRoomNr": "room_0417_heinrich_elsigan.json",
+      "TicksLong": [
+        638804664687274290,
+        638804665222726749,
+        638804665774449790
+      ],
+      "LastPushed": "0001-01-01T00:00:00",
+      "LastPolled": "2025-04-17T06:01:08.727429+02:00",
+      "MsgType": 1,
+      "Hash": "",
+      "Message": "",
+      "SerializedMsg": "",
+      "Md5Hash": "",
+      "CBytes": null
+    },
+    "MsgType": 0,
+    "Message": "",
+    "SerializedMsg": "{\r\n  \"_hash\": \"6AbDfC\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"CRoom\": {\r\n    \"_hash\": \"\",\r\n    \"_message\": \"\",\r\n    \"ChatRuid\": \"9fbd3b52-bde9-47b0-8603-0b29019d6fe6\",\r\n    \"ChatRoomNr\": \"room_0417_heinrich_elsigan.json\",\r\n    \"TicksLong\": [],\r\n    \"LastPushed\": \"0001-01-01T00:00:00\",\r\n    \"LastPolled\": \"0001-01-01T00:00:00\",\r\n    \"MsgType\": 1,\r\n    \"Hash\": \"\",\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": null\r\n  },\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6AbDfC\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+    "Hash": "6AbDfC",
+    "Md5Hash": "",
+    "CBytes": null
+  },
+  "Recipients": [
+    {
+      "_hash": "6AbDfC",
+      "_message": "",
+      "ContactId": 20,
+      "Cuid": "f287a096-a1a3-44af-9a53-4e954f724fec",
+      "Name": "Igor Sekowski",
+      "Email": "pirx777@gmail.com",
+      "Mobile": "+4367762540360",
+      "Address": "",
+      "SecretKey": null,
+      "ContactImage": null,
+      "NameEmail": "Igor Sekowski <pirx777@gmail.com>",
+      "CRoom": {
+        "_hash": "",
+        "_message": "",
+        "ChatRuid": "e8f070ae-a73e-4621-82b7-f162f87ea378",
+        "ChatRoomNr": "room_0417_heinrich_elsigan.json",
+        "TicksLong": [
+          638804664687274290
+        ],
+        "LastPushed": "2025-04-17T06:01:08.727429+02:00",
+        "LastPolled": "2025-04-17T06:01:08.727429+02:00",
+        "MsgType": 1,
+        "Hash": "",
+        "Message": "",
+        "SerializedMsg": "",
+        "Md5Hash": "",
+        "CBytes": null
+      },
+      "MsgType": 0,
+      "Message": "",
+      "SerializedMsg": "{\r\n  \"_hash\": \"6AbDfC\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 20,\r\n  \"Cuid\": \"f287a096-a1a3-44af-9a53-4e954f724fec\",\r\n  \"Name\": \"Igor Sekowski\",\r\n  \"Email\": \"pirx777@gmail.com\",\r\n  \"Mobile\": \"+4367762540360\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Igor Sekowski <pirx777@gmail.com>\",\r\n  \"CRoom\": {\r\n    \"_hash\": \"\",\r\n    \"_message\": \"\",\r\n    \"ChatRuid\": \"7342b0d3-0907-4fd3-97f1-60ccde8dea80\",\r\n    \"ChatRoomNr\": \"\",\r\n    \"TicksLong\": [],\r\n    \"LastPushed\": \"0001-01-01T00:00:00\",\r\n    \"LastPolled\": \"0001-01-01T00:00:00\",\r\n    \"MsgType\": 1,\r\n    \"Hash\": \"\",\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": null\r\n  },\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6AbDfC\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+      "Hash": "6AbDfC",
+      "Md5Hash": "",
+      "CBytes": null
+    }
+  ],
+  "TContent": "",
+  "CRoom": {
+    "_hash": "",
+    "_message": "room_0417_heinrich_elsigan.json",
+    "ChatRuid": "e8f070ae-a73e-4621-82b7-f162f87ea378",
+    "ChatRoomNr": "room_0417_heinrich_elsigan.json",
+    "TicksLong": [
+      638804664687274290,
+      638804665222726749,
+      638804665774449790
+    ],
+    "LastPushed": "0001-01-01T00:00:00",
+    "LastPolled": "2025-04-17T06:01:08.727429+02:00",
+    "MsgType": 1,
+    "Hash": "",
+    "Message": "room_0417_heinrich_elsigan.json",
+    "SerializedMsg": "",
+    "Md5Hash": "",
+    "CBytes": null
+  },
+  "MsgType": 1,
+  "Message": "heinrich.elsigan@gmail.com",
+  "SerializedMsg": "",
+  "Hash": "6DgCXbFf",
+  "Md5Hash": "4aee208c30a54373af1e9f7a1df29f34",
+  "CBytes": null
+}

@@ -68,7 +68,7 @@
     "CBytes": null
   },
   {
-    "_hash": "6AgCFfDb",
+    "_hash": "6AbDfC",
     "_message": "",
     "ContactId": 0,
     "Cuid": "5cdd137c-b42a-44fa-8560-f213f2827368",
@@ -82,14 +82,11 @@
     "CRoom": {
       "_hash": "",
       "_message": "",
-      "ChatRuid": "791b17b0-1df9-4ddb-bd84-27962504a804",
-      "ChatRoomNr": "room_0416_heinrich_elsigan.json",
-      "TicksLong": [
-        638804104034663079,
-        638804104294800688
-      ],
+      "ChatRuid": "e8f070ae-a73e-4621-82b7-f162f87ea378",
+      "ChatRoomNr": "room_0417_heinrich_elsigan.json",
+      "TicksLong": [],
       "LastPushed": "0001-01-01T00:00:00",
-      "LastPolled": "2025-04-16T14:27:09.4800688",
+      "LastPolled": "2025-04-17T06:02:57.444979+02:00",
       "MsgType": 1,
       "Hash": "",
       "Message": "",
@@ -99,8 +96,8 @@
     },
     "MsgType": 0,
     "Message": "",
-    "SerializedMsg": "",
-    "Hash": "6AgCFfDb",
+    "SerializedMsg": "{\r\n  \"_hash\": \"6AbDfC\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"CRoom\": {\r\n    \"_hash\": \"\",\r\n    \"_message\": \"\",\r\n    \"ChatRuid\": \"e8f070ae-a73e-4621-82b7-f162f87ea378\",\r\n    \"ChatRoomNr\": \"room_0417_heinrich_elsigan.json\",\r\n    \"TicksLong\": [\r\n      638804664687274290,\r\n      638804665222726749\r\n    ],\r\n    \"LastPushed\": \"0001-01-01T00:00:00\",\r\n    \"LastPolled\": \"2025-04-17T06:02:57.444979+02:00\",\r\n    \"MsgType\": 1,\r\n    \"Hash\": \"\",\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": null\r\n  },\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6AbDfC\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+    "Hash": "6AbDfC",
     "Md5Hash": "",
     "CBytes": null
   },
