@@ -1701,7 +1701,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                         SetComboBoxBackColor(comboBox, Color.LightCyan);
                         InputDialog dialog = new InputDialog("secure key required", "enter secure symmetric key for en-/de-cryption", MessageBoxIcon.Warning);
                         dialog.ShowDialog();
-                        string? appInputDialog0 = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        string? appInputDialog0 = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                         cbValue = (string.IsNullOrEmpty(appInputDialog0)) ? string.Empty : appInputDialog0;
                         if (!string.IsNullOrEmpty(cbValue))                       
                             SetComboBoxText(comboBox, cbValue);
@@ -1712,7 +1712,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                         SetComboBoxBackColor(comboBox, Color.LightSkyBlue);
                         InputDialog dialogIp = new InputDialog("valid ip address required", "enter partner ip address for peer-2-peer chat", MessageBoxIcon.Warning);
                         dialogIp.ShowDialog();
-                        string? appInputDialog1 = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        string? appInputDialog1 = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                         cbValue = (string.IsNullOrEmpty(appInputDialog1)) ? string.Empty : appInputDialog1;
                         if ((!string.IsNullOrEmpty(cbValue)) && (IPAddress.TryParse(cbValue, out IPAddress ipParsed)))
                             SetComboBoxText(comboBox, ipParsed.ToString());
@@ -1723,7 +1723,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                         SetComboBoxBackColor(comboBox, Color.LightGreen);
                         InputDialog dialogContact = new InputDialog("contact / email required", "enter contact or email address for server chat", MessageBoxIcon.Warning);
                         dialogContact.ShowDialog();
-                        string? appInputDialog2 = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        string? appInputDialog2 = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                         cbValue = (string.IsNullOrEmpty(appInputDialog2)) ? string.Empty : appInputDialog2;
                         if (!string.IsNullOrEmpty(cbValue))
                         {
@@ -1969,11 +1969,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         protected internal void MenuHelpItemInfo_Click(object sender, EventArgs e)
         {
-            AppHashTable.SetValue<int>(Constants.APP_TRANSPARENT_BADGE, 0);
+            CacheHashDict.SetValue<int>(Constants.APP_TRANSPARENT_BADGE, 0);
             string infoText = $"{Dialog.AssemblyProduct} v{Dialog.AssemblyVersion}\n{Dialog.AssemblyCopyright} {Dialog.AssemblyCompany}";
             string titleText = $"{Dialog.AssemblyTitle} v{Dialog.AssemblyVersion}";
 
-            bool? testApp = AppHashTable.GetValue<bool>(Constants.CQRXS_TEST_FORM);
+            bool? testApp = CacheHashDict.GetValue<bool>(Constants.CQRXS_TEST_FORM);
             if (testApp.HasValue && testApp.Value)
             {
                 TestForm testForm = new TestForm();

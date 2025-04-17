@@ -141,7 +141,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private async void RichTextChat_Load(object sender, EventArgs e)
         {
-            bool? appFirstReg = AppHashTable.GetValue<bool>(Constants.APP_FIRST_REG);
+            bool? appFirstReg = CacheHashDict.GetValue<bool>(Constants.APP_FIRST_REG);
             bool send1stReg = (appFirstReg.HasValue) ? appFirstReg.Value : false;
             if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null ||
                     string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.NameEmail))
@@ -163,7 +163,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (send1stReg)
             {
                 send1stReg = true;
-                AppHashTable.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
+                CacheHashDict.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
                 // badge.Show();
                 await MenuContactsItemMyContact_Click(sender, e);
@@ -224,7 +224,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
             }
             send1stReg = false;
-            AppHashTable.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
+            CacheHashDict.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
 
             this.SetProgressBar(this.StripProgressBar, 100);
             SetStatusText(StripStatusLabel, "Secure Chat init done.");
@@ -871,7 +871,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                         dialog.ShowDialog();
-                        string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        string? appInputDialogChat = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                         chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
                     }
@@ -1018,7 +1018,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                         dialog.ShowDialog();
-                        string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        string? appInputDialogChat = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                         chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
                     }
@@ -1131,7 +1131,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                     dialog.ShowDialog();
-                    string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                    string? appInputDialogChat = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                     chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
                     SetTextBoxText(TextBoxChatSession, chatRoomNr);
                 }
@@ -1504,7 +1504,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         {
                             InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                             dialog.ShowDialog();
-                            string? appChatInputDialog = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                            string? appChatInputDialog = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                             chatRoomNr = (string.IsNullOrEmpty(appChatInputDialog)) ? string.Empty : appChatInputDialog;
                             string textSessionChatRoom = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : GetTextBoxText(TextBoxChatSession);
                             SetTextBoxText(TextBoxChatSession, textSessionChatRoom);

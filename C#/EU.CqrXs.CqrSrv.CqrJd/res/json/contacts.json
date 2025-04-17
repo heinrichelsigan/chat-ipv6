@@ -68,7 +68,7 @@
     "CBytes": null
   },
   {
-    "_hash": "6AbDfC",
+    "_hash": "6bfD",
     "_message": "",
     "ContactId": 0,
     "Cuid": "5cdd137c-b42a-44fa-8560-f213f2827368",
@@ -82,11 +82,11 @@
     "CRoom": {
       "_hash": "",
       "_message": "",
-      "ChatRuid": "0ccb445c-3ce7-4a21-bcb4-0ff4c7c49f44",
+      "ChatRuid": "eb8b3323-26f6-41c4-ab3c-5ab3d10c103c",
       "ChatRoomNr": "room_0417_heinrich_elsigan.json",
       "TicksLong": [],
       "LastPushed": "0001-01-01T00:00:00",
-      "LastPolled": "2025-04-17T06:10:10.3694049",
+      "LastPolled": "2025-04-17T22:45:12.9003855",
       "MsgType": 1,
       "Hash": "",
       "Message": "",
@@ -96,8 +96,8 @@
     },
     "MsgType": 0,
     "Message": "",
-    "SerializedMsg": "{\r\n  \"_hash\": \"6AbDfC\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"CRoom\": {\r\n    \"_hash\": \"\",\r\n    \"_message\": \"\",\r\n    \"ChatRuid\": \"0ccb445c-3ce7-4a21-bcb4-0ff4c7c49f44\",\r\n    \"ChatRoomNr\": \"room_0417_heinrich_elsigan.json\",\r\n    \"TicksLong\": [\r\n      638804669745937024,\r\n      638804669887750274,\r\n      638804670103694049\r\n    ],\r\n    \"LastPushed\": \"0001-01-01T00:00:00\",\r\n    \"LastPolled\": \"2025-04-17T06:10:10.3694049\",\r\n    \"MsgType\": 1,\r\n    \"Hash\": \"\",\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": null\r\n  },\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6AbDfC\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
-    "Hash": "6AbDfC",
+    "SerializedMsg": "{\r\n  \"_hash\": \"6bfD\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"CRoom\": {\r\n    \"_hash\": \"\",\r\n    \"_message\": \"\",\r\n    \"ChatRuid\": \"eb8b3323-26f6-41c4-ab3c-5ab3d10c103c\",\r\n    \"ChatRoomNr\": \"room_0417_heinrich_elsigan.json\",\r\n    \"TicksLong\": [\r\n      638805266818062516,\r\n      638805267129003855\r\n    ],\r\n    \"LastPushed\": \"0001-01-01T00:00:00\",\r\n    \"LastPolled\": \"2025-04-17T22:45:12.9003855\",\r\n    \"MsgType\": 1,\r\n    \"Hash\": \"\",\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": null\r\n  },\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bfD\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+    "Hash": "6bfD",
     "Md5Hash": "",
     "CBytes": null
   },

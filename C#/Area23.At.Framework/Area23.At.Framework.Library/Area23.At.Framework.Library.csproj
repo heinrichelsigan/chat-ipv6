@@ -164,7 +164,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cache\AppHashDict.cs" />
+    <Compile Include="Cache\CacheHashDict.cs" />
+    <Compile Include="Cache\CacheValue.cs" />
     <Compile Include="Cache\RedIstatic.cs" />
     <Compile Include="Cqr\CqrFacade.cs" />
     <Compile Include="Cqr\CqrService.cs" />

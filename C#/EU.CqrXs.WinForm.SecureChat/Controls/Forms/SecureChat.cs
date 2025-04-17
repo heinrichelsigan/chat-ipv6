@@ -146,7 +146,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// <param name="e">EventArgs e</param>
         private async void SecureChat_Load(object sender, EventArgs e)
         {
-            bool? appFirstReg = AppHashTable.GetValue<bool>(Constants.APP_FIRST_REG);
+            bool? appFirstReg = CacheHashDict.GetValue<bool>(Constants.APP_FIRST_REG);
             bool send1stReg = (appFirstReg.HasValue) ? appFirstReg.Value : false;
             if (Entities.Settings.LoadSettings() == null || Entities.Settings.Singleton == null || Entities.Settings.Singleton.MyContact == null || 
                     string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.NameEmail)) 
@@ -168,7 +168,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (send1stReg)
             {
                 send1stReg = true;
-                AppHashTable.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
+                CacheHashDict.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
                 // var badge = new TransparentBadge($"Error reading Settings from {LibPaths.SystemDirPath + Constants.JSON_SETTINGS_FILE}.");
                 // badge.Show();
                 await MenuContactsItemMyContact_Click(sender, e);
@@ -229,7 +229,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
             }
             send1stReg = false;
-            AppHashTable.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
+            CacheHashDict.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
 
             this.SetProgressBar(this.StripProgressBar, 100);
             SetStatusText(StripStatusLabel, "Secure Chat init done.");
@@ -247,6 +247,33 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
         #region thread save text and richtext box access       
+
+
+        /// <summary>
+        /// Gets hash from either <see cref="TextBoxPipe"/> thread safe or
+        /// construct a <see cref="CqrFacade"/> with secret key from <see cref="ComboBoxSecretKey" /> text value (thread safe)
+        /// and sets <see cref="CqrFacade.PipeString"/> as text in <see cref="TextBoxPipe"/>  (thread safe)
+        /// </summary>
+        /// <returns><see cref="CqrFacade.PipeString"/>  as hash for secret key</returns>
+        protected string GetHash()
+        {
+
+            string comboSecKeyTxt = GetComboBoxText(this.ComboBoxSecretKey);
+            CqrFacade hashFacade = new CqrFacade(comboSecKeyTxt);
+            string? pipeText = GetTextBoxText(this.TextBoxPipe);
+            if (!string.IsNullOrEmpty(pipeText))
+            {
+                if (hashFacade.PipeString.Equals(pipeText))
+                    return pipeText;
+            }
+
+            pipeText = hashFacade.PipeString;
+            SetTextBoxText(this.TextBoxPipe, hashFacade.PipeString);
+
+            return pipeText;
+
+        }
+
 
         /// <summary>
         /// Displays and formats lines in <see cref="RichTextBoxOneView" />
@@ -878,7 +905,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                         dialog.ShowDialog();
-                        string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        string? appInputDialogChat = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                         chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);                        
                     }
@@ -1025,7 +1052,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                         dialog.ShowDialog();
-                        string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                        string? appInputDialogChat = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                         chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
                     }
@@ -1063,7 +1090,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             System.IO.File.WriteAllText(base64FilePath, cfile.ToBase64());
 
                             // encrypt CFile with CqrXsEuSrvKey and json serialize it 
-                            encrypted = cfile.EncryptToJson(CqrXsEuSrvKey);
+                            encrypted = cfile.EncryptToJson(myServerKey);
 
                             // generate session chat server msg with serverFacade.PipeString
                             CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, chatRoomNr);
@@ -1138,7 +1165,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                     dialog.ShowDialog();
-                    string? appInputDialogChat = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                    string? appInputDialogChat = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                     chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
                     SetTextBoxText(TextBoxChatSession, chatRoomNr);
                 }
@@ -1511,7 +1538,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         {
                             InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                             dialog.ShowDialog();
-                            string? appChatInputDialog = AppHashTable.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                            string? appChatInputDialog = CacheHashDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
                             chatRoomNr = (string.IsNullOrEmpty(appChatInputDialog)) ? string.Empty : appChatInputDialog;
                             string textSessionChatRoom = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : GetTextBoxText(TextBoxChatSession);
                             SetTextBoxText(TextBoxChatSession, textSessionChatRoom);
@@ -2087,7 +2114,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #endregion MenuContacts
 
-
         #region SplitChatWindowLayout
 
         /// <summary>
@@ -2513,6 +2539,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #endregion network functionality
 
+
         #region MenuOptions
 
 
@@ -2568,107 +2595,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
         #endregion MenuOptions
-
-        #region LoadSaveChatContent
-
-        private void MenuFileItemOpen_Click(object sender, EventArgs e)
-        {
-            FileOpenDialog = DialogFileOpen;
-            FileOpenDialog.RestoreDirectory = true;
-            DialogResult result = FileOpenDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-
-
-        protected internal virtual void toolStripMenuItemSave_Click(object sender, EventArgs e)
-        {
-            SafeFileName();
-        }
-
-        protected virtual byte[] OpenCryptFileDialog(ref string loadDir)
-        {
-            if (FileOpenDialog == null)
-                FileOpenDialog = new OpenFileDialog();
-            byte[] fileBytes;
-            if (string.IsNullOrEmpty(loadDir))
-                loadDir = Environment.GetEnvironmentVariable("TEMP") ?? System.AppDomain.CurrentDomain.BaseDirectory;
-            if (loadDir != null)
-            {
-                FileOpenDialog.InitialDirectory = loadDir;
-                FileOpenDialog.RestoreDirectory = true;
-            }
-            DialogResult diaOpenRes = FileOpenDialog.ShowDialog();
-            if (diaOpenRes == DialogResult.OK || diaOpenRes == DialogResult.Yes)
-            {
-                if (!string.IsNullOrEmpty(FileOpenDialog.FileName) && File.Exists(FileOpenDialog.FileName))
-                {
-                    loadDir = Path.GetDirectoryName(FileOpenDialog.FileName) ?? System.AppDomain.CurrentDomain.BaseDirectory;
-                    fileBytes = File.ReadAllBytes(FileOpenDialog.FileName);
-                    return fileBytes;
-                }
-            }
-
-            fileBytes = new byte[0];
-            return fileBytes;
-        }
-
-        protected virtual string SafeFileName(string? filePath = "", byte[]? content = null)
-        {
-            string? saveDir = Environment.GetEnvironmentVariable("TEMP");
-            string ext = ".hex";
-            string fileName = DateTime.Now.Area23DateTimeWithSeconds() + ext;
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                fileName = System.IO.Path.GetFileName(filePath);
-                saveDir = System.IO.Path.GetDirectoryName(filePath);
-                ext = System.IO.Path.GetExtension(filePath);
-            }
-
-            if (saveDir != null)
-            {
-                FileSaveDialog.InitialDirectory = saveDir;
-                FileSaveDialog.RestoreDirectory = true;
-                FileSaveDialog.DefaultExt = ext;
-            }
-            FileSaveDialog.FileName = fileName;
-            DialogResult diaRes = FileSaveDialog.ShowDialog();
-            if (diaRes == DialogResult.OK || diaRes == DialogResult.Yes)
-            {
-                if (content != null && content.Length > 0)
-                    System.IO.File.WriteAllBytes(FileSaveDialog.FileName, content);
-
-                // var badge = new TransparentBadge($"File {fileName} saved to directory {saveDir}.");
-                // badge.Show();
-            }
-
-            return (FileSaveDialog != null && FileSaveDialog.FileName != null && File.Exists(FileSaveDialog.FileName)) ? FileSaveDialog.FileName : null;
-        }
-
-        #endregion LoadSaveChatContent
-
-
-        protected string GetHash()
-        {
-            
-            string comboSecKeyTxt = GetComboBoxText(this.ComboBoxSecretKey);
-            CqrFacade hashFacade = new CqrFacade(comboSecKeyTxt);
-            string? pipeText = GetTextBoxText(this.TextBoxPipe);
-            if (!string.IsNullOrEmpty(pipeText)) 
-            {
-                if (hashFacade.PipeString.Equals(pipeText))
-                    return pipeText;
-            }
-
-            pipeText = hashFacade.PipeString;
-            SetTextBoxText(this.TextBoxPipe, hashFacade.PipeString);
-
-            return pipeText;
-            
-        }
 
 
     }

@@ -69,13 +69,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             this.textBoxExternalIp.Text = ExternalIpAddress.ToString();
 
-            string? appServerKey = AppHashTable.GetValue<string>(Constants.APP_SERVER_KEY);
+            string? appServerKey = CacheHashDict.GetValue<string>(Constants.APP_SERVER_KEY);
             if (!string.IsNullOrEmpty(appServerKey))
                 myServerKey = (string)appServerKey;
             else
             {
                 myServerKey = ExternalIpAddress.ToString() + Constants.APP_NAME;
-                AppHashTable.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);                 
+                CacheHashDict.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);                 
             }
 
             if (!string.IsNullOrEmpty(myServerKey))
@@ -147,7 +147,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (!string.IsNullOrEmpty(this.textBoxSecKey.Text))
             {
                 myServerKey = this.textBoxSecKey.Text;
-                AppHashTable.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);
+                CacheHashDict.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);
                 CqrFacade facade2 = new CqrFacade(myServerKey);
                 this.textBoxPipeHash.Text = facade2.PipeString;
             }
@@ -160,7 +160,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (!string.IsNullOrEmpty(this.textBoxSecKey.Text))
                 {
                     myServerKey = this.textBoxSecKey.Text;
-                    AppHashTable.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);
+                    CacheHashDict.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);
                     CqrFacade facade = new CqrFacade(myServerKey);
                     this.textBoxPipeHash.Text = facade.PipeString;
 

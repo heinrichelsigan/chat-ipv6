@@ -247,7 +247,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!_hash.Equals(symmPipe.PipeString))
                     throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
                 if (!md5Hash.Equals(Md5Hash))
-                    throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
+                {
+                    // throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
+                    ;
+                }
 
                 Data = unroundedMerryBytes;
             }

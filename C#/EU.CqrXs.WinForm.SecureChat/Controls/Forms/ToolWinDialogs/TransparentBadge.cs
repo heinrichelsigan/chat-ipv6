@@ -27,11 +27,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         public TransparentBadge()
         {
             InitializeComponent();
-            int? iBadge = AppHashTable.GetValue<int>(Constants.APP_TRANSPARENT_BADGE);
+            int? iBadge = CacheHashDict.GetValue<int>(Constants.APP_TRANSPARENT_BADGE);
             if (iBadge.HasValue && iBadge.Value != 0)
                 i = (int)iBadge.Value;
             else
-                AppHashTable.SetValue<int>(Constants.APP_TRANSPARENT_BADGE, i);            
+                CacheHashDict.SetValue<int>(Constants.APP_TRANSPARENT_BADGE, i);            
         }
 
         public TransparentBadge(string text) : this()
@@ -160,7 +160,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         this.labelTitle.Font = badgeFont;
 
-                        AppHashTable.SetValue<int>(Constants.APP_TRANSPARENT_BADGE, j);
+                        CacheHashDict.SetValue<int>(Constants.APP_TRANSPARENT_BADGE, j);
                         y -= (j - i);
                         this.SetDesktopLocation(x, y);
                         Thread.Sleep(200);
