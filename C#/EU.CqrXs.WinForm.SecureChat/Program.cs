@@ -1,6 +1,7 @@
 using Area23.At.Framework.Core.Cache;
+// using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.Cqr;
-using Area23.At.Framework.Core.CqrXs;
+using Area23.At.Framework.Core.Cqr.SoapClient;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Win32Api;
 using System.Reflection;

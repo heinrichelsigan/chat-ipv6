@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.Xml.Serialization;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
 
 namespace Area23.At.Framework.Library.Cqr
 {
@@ -28,27 +29,28 @@ namespace Area23.At.Framework.Library.Cqr
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name = "CqrServiceSoap",
-          Namespace = "https://cqrjd.eu/cqrsrv/cqrjd/")]
+          Namespace = "https://srv.cqrxs.eu/v1.1/")]
     public partial class CqrService : System.Web.Services.Protocols.SoapHttpClientProtocol
     {
 
         /// <remarks/>
         public CqrService()
         {
-            this.Url = LibPaths.CqrServiceSoap;
+            his.Url = LibPaths.CqrServiceSoap;
+            // this.Url = "https://srv.cqrxs.eu/v1.1/CqrService.asmx";
         }
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://cqrjd.eu/cqrsrv/cqrjd/Send1StSrvMsg",
-              RequestNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
-              ResponseNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
+             "https://srv.cqrxs.eu/v1.1/Send1StSrvMsg",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.1/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.1/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string Send1StSrvMsg(string cryptMsg)
         {
             object[] results = this.Invoke("Send1StSrvMsg", new object[] {
-                        cryptMsg});
+                    cryptMsg});
             return ((string)(results[0]));
         }
 
@@ -57,7 +59,7 @@ namespace Area23.At.Framework.Library.Cqr
               callback, object asyncState)
         {
             return this.BeginInvoke("Send1StSrvMsg", new object[] {
-                        cryptMsg}, callback, asyncState);
+                    cryptMsg}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -69,15 +71,15 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomInvite",
-              RequestNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
-              ResponseNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
+             "https://srv.cqrxs.eu/v1.1/ChatRoomInvite",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.1/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.1/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ChatRoomInvite(string cryptMsg)
         {
             object[] results = this.Invoke("ChatRoomInvite", new object[] {
-                        cryptMsg});
+                    cryptMsg});
             return ((string)(results[0]));
         }
 
@@ -86,7 +88,7 @@ namespace Area23.At.Framework.Library.Cqr
               callback, object asyncState)
         {
             return this.BeginInvoke("ChatRoomInvite", new object[] {
-                        cryptMsg}, callback, asyncState);
+                    cryptMsg}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -98,15 +100,15 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomPoll",
-              RequestNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
-              ResponseNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
+             "https://srv.cqrxs.eu/v1.1/ChatRoomPoll",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.1/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.1/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ChatRoomPoll(string cryptMsg)
         {
             object[] results = this.Invoke("ChatRoomPoll", new object[] {
-                        cryptMsg});
+                    cryptMsg});
             return ((string)(results[0]));
         }
 
@@ -115,7 +117,7 @@ namespace Area23.At.Framework.Library.Cqr
               object asyncState)
         {
             return this.BeginInvoke("ChatRoomPoll", new object[] {
-                        cryptMsg}, callback, asyncState);
+                    cryptMsg}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -127,16 +129,16 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomPushMessage",
-              RequestNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
-              ResponseNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
+             "https://srv.cqrxs.eu/v1.1/ChatRoomPushMessage",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.1/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.1/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted)
         {
             object[] results = this.Invoke("ChatRoomPushMessage", new object[] {
-                        cryptMsg,
-                        chatRoomMembersCrypted});
+                    cryptMsg,
+                    chatRoomMembersCrypted});
             return ((string)(results[0]));
         }
 
@@ -145,8 +147,8 @@ namespace Area23.At.Framework.Library.Cqr
               chatRoomMembersCrypted, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("ChatRoomPushMessage", new object[] {
-                        cryptMsg,
-                        chatRoomMembersCrypted}, callback, asyncState);
+                    cryptMsg,
+                    chatRoomMembersCrypted}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -158,15 +160,15 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://cqrjd.eu/cqrsrv/cqrjd/ChatRoomClose",
-              RequestNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
-              ResponseNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
+             "https://srv.cqrxs.eu/v1.1/ChatRoomClose",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.1/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.1/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ChatRoomClose(string cryptMsg)
         {
             object[] results = this.Invoke("ChatRoomClose", new object[] {
-                        cryptMsg});
+                    cryptMsg});
             return ((string)(results[0]));
         }
 
@@ -175,7 +177,7 @@ namespace Area23.At.Framework.Library.Cqr
               callback, object asyncState)
         {
             return this.BeginInvoke("ChatRoomClose", new object[] {
-                        cryptMsg}, callback, asyncState);
+                    cryptMsg}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -187,9 +189,8 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://cqrjd.eu/cqrsrv/cqrjd/TestService",
-              RequestNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
-              ResponseNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
+             "https://srv.cqrxs.eu/v1.1/TestService", RequestNamespace = "https://srv.cqrxs.eu/v1.1/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.1/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string TestService()
@@ -214,9 +215,9 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://cqrjd.eu/cqrsrv/cqrjd/GetIPAddress",
-              RequestNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
-              ResponseNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
+             "https://srv.cqrxs.eu/v1.1/GetIPAddress",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.1/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.1/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string GetIPAddress()
@@ -241,9 +242,8 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://cqrjd.eu/cqrsrv/cqrjd/TestCache",
-              RequestNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
-              ResponseNamespace = "https://cqrjd.eu/cqrsrv/cqrjd/",
+             "https://srv.cqrxs.eu/v1.1/TestCache", RequestNamespace = "https://srv.cqrxs.eu/v1.1/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.1/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string TestCache()
@@ -264,6 +264,5 @@ namespace Area23.At.Framework.Library.Cqr
             object[] results = this.EndInvoke(asyncResult);
             return ((string)(results[0]));
         }
-        }
-
+    }
 }

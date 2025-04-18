@@ -1,5 +1,6 @@
 ﻿using Area23FwCore = Area23.At.Framework.Core;
-using Area23.At.Framework.Core.CqrXs;
+using Area23.At.Framework.Core.Cqr;
+// using Area23.At.Framework.Core.CqrXs;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Net.NameService;

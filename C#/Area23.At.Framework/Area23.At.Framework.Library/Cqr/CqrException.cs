@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,8 @@ namespace Area23.At.Framework.Library.Cqr
             CqrException lastButNotLeast = (CqrException)LastException;
             Previous = (lastButNotLeast != null) ? (CqrException)lastButNotLeast : null;
             AppDomain.CurrentDomain.SetData(Constants.LAST_EXCEPTION, this);
+
+            Area23Log.LogStatic("CqrException " + message, this, "");
         }
 
         public CqrException(string message, Exception innerException) : base(message, innerException)
@@ -35,6 +38,8 @@ namespace Area23.At.Framework.Library.Cqr
             CqrException lastButNotLeast = (CqrException)LastException;
             Previous = (lastButNotLeast != null) ? lastButNotLeast : null;
             AppDomain.CurrentDomain.SetData(Constants.LAST_EXCEPTION, this);
+
+            Area23Log.LogStatic("CqrException " + message, innerException, "");
         }
 
         public static void SetLastException(Exception exc)
@@ -49,6 +54,8 @@ namespace Area23.At.Framework.Library.Cqr
             cqrLastEx.Previous = (CqrException)LastException;
 
             AppDomain.CurrentDomain.SetData(Constants.LAST_EXCEPTION, cqrLastEx);
+
+            Area23Log.LogStatic("CqrException " + cqrLastEx.Message, cqrLastEx.InnerException ?? cqrLastEx, "");
         }
     }
 

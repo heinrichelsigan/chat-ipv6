@@ -1,4 +1,6 @@
-﻿using Area23.At.Framework.Core.CqrXs;
+﻿// using Area23.At.Framework.Core.CqrXs;
+using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Cqr.SoapClient;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Util;
