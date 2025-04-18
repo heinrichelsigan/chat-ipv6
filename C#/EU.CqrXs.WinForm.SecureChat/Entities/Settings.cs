@@ -5,6 +5,7 @@ using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 using System.Runtime;
 using System.Text;
+using System.Windows.Input;
 
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
@@ -118,11 +119,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 foreach (string skey in settings.SecretKeysCrypted)
                 {
                     string sdec = "";
-                    CqrFacade facade = new CqrFacade(skey);
-                    CContent cContent = new CContent(skey, facade.PipeString, CType.Json, "");
+                    CqrFacade facade = new CqrFacade(Constants.AES_KEY);
+
+                    CContent cContent = new CContent(skey, facade.PipeString, CType.Json, "") { CBytes = Base64.FromBase64(skey) };
                     try
                     {
-                        cContent.Decrypt(skey);
+                        cContent.Decrypt(Constants.AES_KEY);
                         sdec = cContent._message;
                     }
                     catch (Exception exDec)
@@ -170,10 +172,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 {
                     if (!string.IsNullOrEmpty(plainKey))
                     {
-                        
-                        string ddec = Convert.ToBase64String(Encoding.UTF8.GetBytes(plainKey));
-                        if (!settings.SecretKeysCrypted.Contains(ddec))
-                            settings.SecretKeysCrypted.Add(ddec);
+                        CqrFacade facade = new CqrFacade(Constants.AES_KEY);
+
+                        CContent cContent = new CContent(plainKey, facade.PipeString, CType.Json, "");
+                        if (cContent.Encrypt(Constants.AES_KEY))
+                        {
+                            string ddec = Base64.ToBase64(cContent.CBytes);
+                            if (!settings.SecretKeysCrypted.Contains(ddec))
+                                settings.SecretKeysCrypted.Add(ddec);
+                        }                        
                     }
                 }
 
