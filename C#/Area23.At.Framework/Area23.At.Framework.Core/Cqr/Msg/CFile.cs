@@ -191,6 +191,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
                 byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
                 CBytes = cqrbytes;
+                Data = new byte[0];
             }
             catch (Exception exCrypt)
             {
@@ -261,6 +262,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 }
 
                 Data = unroundedMerryBytes;
+                CBytes = null;
             }
             catch (Exception exCrypt)
             {

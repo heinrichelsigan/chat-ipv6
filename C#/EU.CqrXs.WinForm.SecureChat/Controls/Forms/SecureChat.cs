@@ -1200,7 +1200,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     if (rfmsg == null)
                     {
                         MessageBox.Show("Empty message or empty body", "Message from Service is null or body is empty!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
                     }
 
                     if (string.IsNullOrEmpty(rfmsg.TContent))
@@ -1369,13 +1368,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             encrypted = EnDeCodeHelper.GetString(area23EvArgs.GenericTData.BufferedData);
                     }
 
-
-                    CContent msgContent, msg = new CContent("", receiveFacade.PipeString, CType.Json, "");
+                    string msgInnerContent = (string)(encrypted);
+                    string friendMsg = "";
+                    CContent msgContent, msg = new CContent(msgInnerContent, CType.Json);
+                    CFile? msgFile, cReceivedFile;
+                    
                     try
                     {
-                        msgContent = msg.DecryptFromJson(myServerKey, ((string)(encrypted)));
-                        // serverMessage.NCqrClientMsgTC<string>((string)rfmsg.TContent);
-                    }                    
+                        if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
+                        msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
+                        {
+                            msgFile = new CFile(msgInnerContent, CType.Json);
+                            cReceivedFile = msgFile.DecryptFromJson(myServerKey, msgInnerContent);
+                            if (cReceivedFile != null)
+                            {
+                                SetAttachmentTextLink(cReceivedFile);
+                                friendMsg = cReceivedFile.GetFileNameContentLength() + Environment.NewLine;
+                                PlaySoundFromResource("sound_wind");
+                            }
+                        }
+                        else
+                        {
+                            msgContent = msg.DecryptFromJson(myServerKey, msgInnerContent);
+                            friendMsg = msgContent.Message + Environment.NewLine;
+                            PlaySoundFromResource("sound_push");
+                        }
+                    }                
                     catch (Exception exCrypt)
                     {
                         PlaySoundFromResource("sound_hammer");
@@ -1389,23 +1407,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIp)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         return;
-                    }
-                    string friendMsg = string.Empty;
-                    if (msgContent.IsCFile())
-                    {
-                        CFile? cfile = msgContent.ToCFile();
-                        if (cfile != null)
-                        {
-                            SetAttachmentTextLink(cfile);
-                            friendMsg = cfile.GetFileNameContentLength() + Environment.NewLine;
-                            PlaySoundFromResource("sound_wind");
-                        }
-                    }
-                    else
-                    {
-                        friendMsg = msgContent.Message + Environment.NewLine;
-                        PlaySoundFromResource("sound_push");
-                    }
+                    }                    
 
                     string appendDestMsg = chat.AddFriendMessage(friendMsg);
                     AppendText(TextBoxDestionation, appendDestMsg);
