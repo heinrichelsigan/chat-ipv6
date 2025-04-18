@@ -9,13 +9,13 @@
 
 using Area23.At.Framework.Core.Static;
 
-namespace Area23.At.Framework.Core.Cqr.Srv
+namespace Area23.At.Framework.Core.Cqr.WebSrv
 {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace="https://srv.cqrxs.eu/v1.1/", ConfigurationName="Area23.At.Framework.Core.Cqr.Srv.CqrServiceSoap")]
-    internal interface CqrServiceSoap
+    [System.ServiceModel.ServiceContractAttribute(Namespace="https://srv.cqrxs.eu/v1.1/", ConfigurationName="Area23.At.Framework.Core.Cqr.WebSrv.CqrServiceSoap")]
+    public interface CqrServiceSoap
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.1/Send1StSrvMsg", ReplyAction="*")]
@@ -76,13 +76,13 @@ namespace Area23.At.Framework.Core.Cqr.Srv
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    internal interface CqrServiceSoapChannel : Area23.At.Framework.Core.Cqr.Srv.CqrServiceSoap, System.ServiceModel.IClientChannel
+    public interface CqrServiceSoapChannel : Area23.At.Framework.Core.Cqr.WebSrv.CqrServiceSoap, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    internal partial class CqrServiceSoapClient : System.ServiceModel.ClientBase<Area23.At.Framework.Core.Cqr.Srv.CqrServiceSoap>, Area23.At.Framework.Core.Cqr.Srv.CqrServiceSoap
+    public partial class CqrServiceSoapClient : System.ServiceModel.ClientBase<Area23.At.Framework.Core.Cqr.WebSrv.CqrServiceSoap>, Area23.At.Framework.Core.Cqr.WebSrv.CqrServiceSoap
     {
         
         /// <summary>
@@ -203,6 +203,7 @@ namespace Area23.At.Framework.Core.Cqr.Srv
             return System.Threading.Tasks.Task.Factory.FromAsync(((System.ServiceModel.ICommunicationObject)(this)).BeginOpen(null, null), new System.Action<System.IAsyncResult>(((System.ServiceModel.ICommunicationObject)(this)).EndOpen));
         }
 
+
         private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(EndpointConfiguration endpointConfiguration)
         {
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap))
@@ -213,6 +214,10 @@ namespace Area23.At.Framework.Core.Cqr.Srv
                 System.ServiceModel.BasicHttpsBinding result = new System.ServiceModel.BasicHttpsBinding();
 #endif
                 result.MaxBufferSize = int.MaxValue;
+                result.SendTimeout = new TimeSpan(0, 4, 0);
+                result.ReceiveTimeout = new TimeSpan(0, 4, 0);
+                result.OpenTimeout = new TimeSpan(0, 4, 0);
+                result.CloseTimeout = new TimeSpan(0, 4, 0);
                 result.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
                 result.MaxReceivedMessageSize = int.MaxValue;
                 result.AllowCookies = true;

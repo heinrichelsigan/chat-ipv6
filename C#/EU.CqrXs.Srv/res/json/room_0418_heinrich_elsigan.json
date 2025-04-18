@@ -2,7 +2,7 @@
   "_hash": "6DgCXbFf",
   "_message": "heinrich.elsigan@gmail.com",
   "Sender": {
-    "_hash": "6bDC",
+    "_hash": "6bfDC",
     "_message": "",
     "ContactId": 0,
     "Cuid": "5cdd137c-b42a-44fa-8560-f213f2827368",
@@ -16,15 +16,13 @@
     "CRoom": {
       "_hash": "",
       "_message": "",
-      "ChatRuid": "9838950d-2a96-4011-b46f-b10ce1f3f921",
+      "ChatRuid": "c7d09d3a-d555-439a-ae39-7c9d97770413",
       "ChatRoomNr": "room_0418_heinrich_elsigan.json",
       "TicksLong": [
-        638805806841662408,
-        638805806954813585,
-        638805807613757070
+        638805896161292186
       ],
-      "LastPushed": "2025-04-18T13:46:01.375707",
-      "LastPolled": "2025-04-18T13:44:44.1662408+02:00",
+      "LastPushed": "2025-04-18T16:13:36.1292186+02:00",
+      "LastPolled": "2025-04-18T16:13:36.1292186+02:00",
       "MsgType": 1,
       "Hash": "",
       "Message": "",
@@ -34,34 +32,34 @@
     },
     "MsgType": 0,
     "Message": "",
-    "SerializedMsg": "{\r\n  \"_hash\": \"6bDC\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"CRoom\": {\r\n    \"_hash\": \"\",\r\n    \"_message\": \"\",\r\n    \"ChatRuid\": \"eb8b3323-26f6-41c4-ab3c-5ab3d10c103c\",\r\n    \"ChatRoomNr\": \"room_0417_heinrich_elsigan.json\",\r\n    \"TicksLong\": [],\r\n    \"LastPushed\": \"0001-01-01T00:00:00\",\r\n    \"LastPolled\": \"0001-01-01T00:00:00\",\r\n    \"MsgType\": 1,\r\n    \"Hash\": \"\",\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": null\r\n  },\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bDC\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
-    "Hash": "6bDC",
+    "SerializedMsg": "{\r\n  \"_hash\": \"6bfDC\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"CRoom\": {\r\n    \"_hash\": \"\",\r\n    \"_message\": \"\",\r\n    \"ChatRuid\": \"eb8b3323-26f6-41c4-ab3c-5ab3d10c103c\",\r\n    \"ChatRoomNr\": \"room_0417_heinrich_elsigan.json\",\r\n    \"TicksLong\": [],\r\n    \"LastPushed\": \"0001-01-01T00:00:00\",\r\n    \"LastPolled\": \"0001-01-01T00:00:00\",\r\n    \"MsgType\": 1,\r\n    \"Hash\": \"\",\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": null\r\n  },\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bfDC\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+    "Hash": "6bfDC",
     "Md5Hash": "",
     "CBytes": null
   },
   "Recipients": [
     {
-      "_hash": "6bDC",
+      "_hash": "6bfDC",
       "_message": "",
-      "ContactId": 8,
-      "Cuid": "bd0fa5ef-198c-4ec0-8a8e-9b0f059b979e",
-      "Name": "Andrea Krann",
-      "Email": "akrann@csc.com",
-      "Mobile": "+431207771518",
+      "ContactId": 1,
+      "Cuid": "1e856819-fe11-4db4-930b-bb1efaaaa803",
+      "Name": "Michael Wüst",
+      "Email": "mw60@gmx.at",
+      "Mobile": "+436642149550",
       "Address": "",
       "SecretKey": null,
       "ContactImage": null,
-      "NameEmail": "Andrea Krann <akrann@csc.com>",
+      "NameEmail": "Michael Wüst <mw60@gmx.at>",
       "CRoom": {
         "_hash": "",
         "_message": "",
-        "ChatRuid": "9838950d-2a96-4011-b46f-b10ce1f3f921",
+        "ChatRuid": "c7d09d3a-d555-439a-ae39-7c9d97770413",
         "ChatRoomNr": "room_0418_heinrich_elsigan.json",
         "TicksLong": [
-          638805806841662408
+          638805896161292186
         ],
-        "LastPushed": "2025-04-18T13:44:44.1662408+02:00",
-        "LastPolled": "2025-04-18T13:44:44.1662408+02:00",
+        "LastPushed": "2025-04-18T16:13:36.1292186+02:00",
+        "LastPolled": "2025-04-18T16:13:36.1292186+02:00",
         "MsgType": 1,
         "Hash": "",
         "Message": "",
@@ -71,25 +69,23 @@
       },
       "MsgType": 0,
       "Message": "",
-      "SerializedMsg": "{\r\n  \"_hash\": \"6bDC\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 8,\r\n  \"Cuid\": \"bd0fa5ef-198c-4ec0-8a8e-9b0f059b979e\",\r\n  \"Name\": \"Andrea Krann\",\r\n  \"Email\": \"akrann@csc.com\",\r\n  \"Mobile\": \"+431207771518\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Andrea Krann <akrann@csc.com>\",\r\n  \"CRoom\": {\r\n    \"_hash\": \"\",\r\n    \"_message\": \"\",\r\n    \"ChatRuid\": \"00c96e12-7b04-4287-9a0e-1e54a5ad0399\",\r\n    \"ChatRoomNr\": \"\",\r\n    \"TicksLong\": [],\r\n    \"LastPushed\": \"0001-01-01T00:00:00\",\r\n    \"LastPolled\": \"0001-01-01T00:00:00\",\r\n    \"MsgType\": 1,\r\n    \"Hash\": \"\",\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": null\r\n  },\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bDC\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
-      "Hash": "6bDC",
+      "SerializedMsg": "{\r\n  \"_hash\": \"6bfDC\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 1,\r\n  \"Cuid\": \"1e856819-fe11-4db4-930b-bb1efaaaa803\",\r\n  \"Name\": \"Michael Wüst\",\r\n  \"Email\": \"mw60@gmx.at\",\r\n  \"Mobile\": \"+436642149550\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Michael Wüst <mw60@gmx.at>\",\r\n  \"CRoom\": {\r\n    \"_hash\": \"\",\r\n    \"_message\": \"\",\r\n    \"ChatRuid\": \"df7552e9-214b-4a6f-83f6-bd5be7cf82ea\",\r\n    \"ChatRoomNr\": \"\",\r\n    \"TicksLong\": [],\r\n    \"LastPushed\": \"0001-01-01T00:00:00\",\r\n    \"LastPolled\": \"0001-01-01T00:00:00\",\r\n    \"MsgType\": 1,\r\n    \"Hash\": \"\",\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": null\r\n  },\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bfDC\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+      "Hash": "6bfDC",
       "Md5Hash": "",
       "CBytes": null
     }
   ],
-  "TContent": "",
+  "TContent": "heinrich.elsigan@gmail.com",
   "CRoom": {
     "_hash": "",
     "_message": "room_0418_heinrich_elsigan.json",
-    "ChatRuid": "9838950d-2a96-4011-b46f-b10ce1f3f921",
+    "ChatRuid": "c7d09d3a-d555-439a-ae39-7c9d97770413",
     "ChatRoomNr": "room_0418_heinrich_elsigan.json",
     "TicksLong": [
-      638805806841662408,
-      638805806954813585,
-      638805807613757070
+      638805896161292186
     ],
     "LastPushed": "0001-01-01T00:00:00",
-    "LastPolled": "2025-04-18T13:46:01.375707",
+    "LastPolled": "2025-04-18T16:13:36.1292186+02:00",
     "MsgType": 1,
     "Hash": "",
     "Message": "room_0418_heinrich_elsigan.json",

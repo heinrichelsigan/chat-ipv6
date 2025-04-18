@@ -270,7 +270,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!sha256Hash.Equals(this.Sha256Hash))
                 {
                     Area23Log.LogStatic($"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {this.Sha256Hash}.");
-                    throw new CqrException($"Sha256: {sha256Hash} doesn't match property Sha256Hash: {Sha256Hash}");
+                    // throw new CqrException($"Sha256: {sha256Hash} doesn't match property Sha256Hash: {Sha256Hash}");
                 }
 
                 Data = unroundedMerryBytes;

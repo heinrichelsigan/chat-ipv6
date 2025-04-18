@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("EU.CqrXs.Srv Chat WebService")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Heinrich Elsigan https://srv.cqrxs.eu/v1.1/CqrService.asmx")]
-[assembly: AssemblyProduct("\r\n[assembly: AssemblyDescription another chat queue")]
+[assembly: AssemblyProduct("EU.CqrXs.Srv just another crypt chat queue")]
 [assembly: AssemblyCopyright("Copyleft 2000-2040  © Copyright under MIT license")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

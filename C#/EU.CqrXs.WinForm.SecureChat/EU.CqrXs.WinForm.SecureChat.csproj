@@ -40,17 +40,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>8</WarningLevel>
     <DebugType>full</DebugType>
-    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>full</DebugType>
     <WarningLevel>4</WarningLevel>
-    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

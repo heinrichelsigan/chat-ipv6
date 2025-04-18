@@ -159,9 +159,12 @@ namespace EU.CqrXs.Srv.Util
         public T GetKey<T>(string redIsKey, CommandFlags flags = CommandFlags.None)
         {
             string jsonVal = Db.StringGet(redIsKey, flags);
-            var tValue = JsonConvert.DeserializeObject<T>(jsonVal);
-
-            return tValue;
+            T tval = default(T);
+            if (jsonVal != null)
+            {
+                tval = JsonConvert.DeserializeObject<T>(jsonVal);
+            }
+            return tval;
         }
 
         /// <summary>
