@@ -31,6 +31,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public string Sha256Hash { get; protected internal set; }
 
+        public long FileByteLen { get; protected internal set; }
+
         public EncodingType EnCodingType { get; internal set; }
 
 
@@ -58,6 +60,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             MsgType = CType.Json;
             Md5Hash = MD5Sum.Hash(Data, FileName);
             Sha256Hash = "";
+            FileByteLen = Data.LongLength;
             EnCodingType = EncodingType.Base64;
         }
 
@@ -73,6 +76,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = MimeType.GetMimeType(Data, FileName);
             _hash = hash;
             Md5Hash = MD5Sum.Hash(Data, FileName);
+            FileByteLen = Data.LongLength;
             Sha256Hash = "";
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
@@ -110,6 +114,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Data = System.IO.File.ReadAllBytes(fi.FullName);
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Md5Hash = MD5Sum.Hash(Data, FileName);
+            FileByteLen = Data.LongLength;
             Sha256Hash = "";
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
@@ -186,6 +191,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
                 this.Md5Hash = MD5Sum.Hash(this.Data, "");
                 this.Sha256Hash = Sha256Sum.Hash(this.Data, FileName);
+                this.FileByteLen = this.Data.LongLength;
                 _hash = symmPipe.PipeString;
                 byte[] msgBytes = Data;
 
@@ -249,6 +255,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, FileName);
                 if (!_hash.Equals(symmPipe.PipeString))
                     throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+
+                long decByteLen = unroundedMerryBytes.LongLength;
+                if (this.FileByteLen != decByteLen)
+                {
+                    Area23Log.LogStatic($"byte len of decrypted = {decByteLen} != FileByteLen {FileByteLen}.");
+                }
                 if (!md5Hash.Equals(Md5Hash))
                 {
                     ;

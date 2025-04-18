@@ -42,7 +42,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
 		public string Md5Hash { get; set; }
 
-
 		
 		public byte[] CBytes { get; set; }			
 
@@ -190,6 +189,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
 				byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
 				CBytes = cqrbytes;
+				_message = Base64.ToBase64(CBytes);
 			} 
 			catch (Exception exCrypt)
 			{
