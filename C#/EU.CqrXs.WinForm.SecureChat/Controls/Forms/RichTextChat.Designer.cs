@@ -163,7 +163,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuFileItemOpen.Text = "open chats";
             MenuFileItemOpen.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuFileItemOpen.ToolTipText = "imports saved chats from a file";
-            MenuFileItemOpen.Click += MenuFileItemOpen_Click;
             // 
             // MenuFileItemSave
             // 
@@ -179,7 +178,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuFileItemSave.Text = "save chats";
             MenuFileItemSave.TextImageRelation = TextImageRelation.TextAboveImage;
             MenuFileItemSave.ToolTipText = "saves chats on local harddisk not on server";
-            MenuFileItemSave.Click += toolStripMenuItemSave_Click;
             // 
             // MenuFileSeparatorExit
             // 
@@ -1074,6 +1072,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripSeparator toolStripSeparator3;
+
     }
 
 }

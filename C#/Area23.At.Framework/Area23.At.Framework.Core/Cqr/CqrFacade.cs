@@ -1,4 +1,7 @@
 ﻿using Area23.At.Framework.Core.Cqr.Msg;
+// using Area23.At.Framework.Core.Cqr.SoapClient;
+// using Area23.At.Framework.Core.CqrXs.CqrJd;
+using Area23.At.Framework.Core.Cqr.Srv;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
@@ -12,8 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Cqr.SoapClient;
-// using Area23.At.Framework.Core.CqrXs.CqrJd;
+
 
 namespace Area23.At.Framework.Core.Cqr
 {

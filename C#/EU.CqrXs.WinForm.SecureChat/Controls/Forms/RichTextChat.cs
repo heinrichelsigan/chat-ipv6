@@ -244,6 +244,33 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #region thread save text and richtext box access       
 
+
+        /// <summary>
+        /// Gets hash from either <see cref="TextBoxPipe"/> thread safe or
+        /// construct a <see cref="CqrFacade"/> with secret key from <see cref="ComboBoxSecretKey" /> text value (thread safe)
+        /// and sets <see cref="CqrFacade.PipeString"/> as text in <see cref="TextBoxPipe"/>  (thread safe)
+        /// </summary>
+        /// <returns><see cref="CqrFacade.PipeString"/>  as hash for secret key</returns>
+        protected string GetHash()
+        {
+
+            string comboSecKeyTxt = GetComboBoxText(this.ComboBoxSecretKey);
+            CqrFacade hashFacade = new CqrFacade(comboSecKeyTxt);
+            string? pipeText = GetTextBoxText(this.TextBoxPipe);
+            if (!string.IsNullOrEmpty(pipeText))
+            {
+                if (hashFacade.PipeString.Equals(pipeText))
+                    return pipeText;
+            }
+
+            pipeText = hashFacade.PipeString;
+            SetTextBoxText(this.TextBoxPipe, hashFacade.PipeString);
+
+            return pipeText;
+
+        }
+
+
         /// <summary>
         /// Displays and formats lines in <see cref="RichTextBoxOneView" />
         /// </summary>
@@ -496,34 +523,19 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                 return;
 
+            CqrFacade clientFacade = new CqrFacade(GetComboBoxText(this.ComboBoxSecretKey));
+            string sessionChatText = GetTextBoxText(this.TextBoxChatSession);
+
             bool foundContact = false;
-            CqrContact? friendContact = null;
-            string exContactMsg = "";
-            try
-            {
-
-                foreach (CqrContact c in Entities.Settings.Singleton.Contacts)
-                {
-                    if (c.NameEmail.Contains(contactNameEmail, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        foundContact = true;
-                        friendContact = c;
-                        break;
-                    }
-                }
-            }
-            catch (Exception exContact)
-            {
-                exContactMsg = exContact.Message;
-                foundContact = false;
-            }
-
+            CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, sessionChatText, clientFacade.PipeString);
+            if (friendContact != null && !string.IsNullOrEmpty(friendContact.NameEmail))
+                foundContact = true;
 
             if (!foundContact)
             {
                 SetComboBoxBackColor(ComboBoxContacts, Color.Violet);
                 PlaySoundFromResource("sound_warning");
-                MessageBox.Show($"Cannot parse Contact from string \"{ComboBoxContacts.Text}\": {exContactMsg}", "Please enter a valid contact address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Cannot parse Contact from \"ComboBoxContacts.Text\": {contactNameEmail}", "Please enter a valid contact address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
@@ -558,6 +570,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 MessageBox.Show($"Invalid or empty chat room.", "Please enter a valid chat room image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
+            }
+
+            if (Settings.Singleton.MyContact.CRoom != null)
+            {
+                Settings.Singleton.MyContact.CRoom.TicksLong = new List<long>();
+                Settings.Singleton.MyContact.CRoom.LastPushed = DateTime.MinValue;
+                Settings.Singleton.MyContact.CRoom.LastPolled = DateTime.MinValue;
+                Settings.SaveSettings();
             }
 
             try
@@ -742,20 +762,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             SetTextBoxText(TextBoxChatSession, sessionChatText);
 
-            CqrFacade cqrFacade = new CqrFacade(myServerKey);
+            CqrFacade serverFacade = new CqrFacade(CqrXsEuSrvKey);
+            CqrFacade clientFacade = new CqrFacade(myServerKey);
             string pipeText = GetTextBoxText(TextBoxPipe);
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
-            CContact myContact = new CContact(Settings.Singleton.MyContact, sessionChatText, cqrFacade.PipeString);
+            if (Settings.Singleton.MyContact.CRoom != null)
+            {
+                Settings.Singleton.MyContact.CRoom.TicksLong = new List<long>();
+                Settings.Singleton.MyContact.CRoom.LastPushed = DateTime.MinValue;
+                Settings.Singleton.MyContact.CRoom.LastPolled = DateTime.MinValue;
+                Settings.SaveSettings();
+            }
+            CContact myContact = new CContact(Settings.Singleton.MyContact, sessionChatText, clientFacade.PipeString);
             myContact.CRoom.TicksLong = new List<long>();
             myContact.CRoom.LastPushed = DateTime.Now;
 
 
-            CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, sessionChatText, cqrFacade.PipeString);
+            CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, sessionChatText, clientFacade.PipeString);
 
 
-            SetTextBoxText(this.TextBoxPipe, cqrFacade.PipeString);
+            SetTextBoxText(this.TextBoxPipe, clientFacade.PipeString);
             // this.TextBoxPipe.Text = serverMessage.PipeString;
             // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
             myContact._hash = GetHash();
@@ -763,14 +791,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 friendContact._hash = GetHash();
 
 
-            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, myContact.Email, cqrFacade.PipeString);
+            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, myContact.Email, serverFacade.PipeString);
             string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\n";
             SetTextBoxText(TextBoxSource, chat.AddMyMessage(myReqMsg));
 
 
             SetStatusText(StripStatusLabel, myReqMsg);
             // Send chat room invite via WebService
-            CSrvMsg<string>? rfmsg = await cqrFacade.Send_InitChatRoom_SoapAsync<string>(fmsg, EncodingType.Base64);
+            CSrvMsg<string>? rfmsg = await serverFacade.Send_InitChatRoom_SoapAsync<string>(fmsg, EncodingType.Base64);
 
             if (rfmsg == null || rfmsg.CRoom == null || string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
             {
@@ -778,12 +806,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return false;
             }
 
-            this.TextBoxChatSession.Text = rfmsg.CRoom.ChatRoomNr;
+            SetTextBoxText(TextBoxChatSession, rfmsg.CRoom.ChatRoomNr);
+
 
             if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
                 rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
             {
-                myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, clientFacade.PipeString, myContact.ContactImage);
                 Settings.Singleton.MyContact = myContact;
                 Settings.SaveSettings(Settings.Singleton);
                 //if (rfmsg.Recipients != null && rfmsg.Recipients.Count > 0)
@@ -831,7 +860,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
             }
 
-            CqrFacade cqrFacade = new CqrFacade(myServerKey);
+            CqrFacade clientFacade = new CqrFacade(myServerKey);
             try
             {
                 if (this.PeerSessionTriState == PeerSession3State.Peer2Peer)
@@ -847,7 +876,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
                         throw new InvalidDataException("Cannot parse IPAddress " + ipAddrString);
 
-                    string peerResponse = cqrFacade.Send_CContent_Peer(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+                    string peerResponse = clientFacade.Send_CContent_Peer(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
 
 
                     string userMsg = chat.AddMyMessage(unencrypted);
@@ -877,13 +906,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
                     }
 
-                    CqrFacade clientFacade = new CqrFacade(myServerKey);
+
                     CqrFacade serverFacade = new CqrFacade(CqrXsEuSrvKey);
 
                     string contactNameEmail = GetComboBoxText(this.ComboBoxContacts);
 
-                    CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, serverFacade.PipeString);
-                    CqrContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, serverFacade.PipeString);
+                    CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, clientFacade.PipeString);
+                    CqrContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, clientFacade.PipeString);
 
 
                     SetTextBoxText(this.TextBoxPipe, clientFacade.PipeString);
@@ -1043,12 +1072,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
 
 
-                    CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverFacade.PipeString, chatRoomNr);
-                    // CSrvMsg<string> cmsg = new CSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
-                    // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
-                    // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
-
-
+                    // get default file open choose dialog
                     FileOpenDialog = DialogFileOpen;
                     DialogResult result = FileOpenDialog.ShowDialog();
                     if ((result == DialogResult.OK || result == DialogResult.Yes) && File.Exists(FileOpenDialog.FileName))
@@ -1057,11 +1081,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         if (cfile != null && !string.IsNullOrEmpty(chatRoomNr))
                         {
-                            // pmsg.SendCqrPeerMsg(mimeAttach.MimeMsg, partnerIpAddress, EncodingType.Base64, Constants.CHAT_PORT);
-                            encrypted = cfile.EncryptToJson(CqrXsEuSrvKey);
-
+                            // save base64 transformed file under attachments
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cfile.FileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, cfile.ToBase64());
+
+                            // encrypt CFile with CqrXsEuSrvKey and json serialize it 
+                            encrypted = cfile.EncryptToJson(myServerKey);
+
+                            // generate session chat server msg with serverFacade.PipeString
+                            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, chatRoomNr);
 
                             // Send to WebService
                             CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync<string>(fmsg, encrypted, EncodingType.Base64);
@@ -1095,6 +1123,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 PlaySoundFromResource("sound_warning");
             }
         }
+
 
         /// <summary>
         /// MenuCommandsItemRefresh_Click refresh in session server mode from server
@@ -1138,8 +1167,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 string pipeText = GetTextBoxText(TextBoxPipe);
 
-                CContact myContact = new CContact(Settings.Singleton.MyContact, chatRoomNr, serverFacade.PipeString);
-                CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, serverFacade.PipeString);
+                CContact myContact = new CContact(Settings.Singleton.MyContact, chatRoomNr, clientFacade.PipeString);
+                CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, clientFacade.PipeString);
 
 
                 myContact._hash = GetHash();
@@ -1194,13 +1223,33 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     Settings.SaveSettings(Settings.Singleton);
                 }
 
-
                 string msgChatRoom = "ChatRoomNr: " + rfmsg.CRoom.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+                string friendMsg = "";
                 CContent msgContent;
+                CFile? msgFile, cReceivedFile;
+
+                string msgInnerContent = (string)(rfmsg.TContent);
                 try
                 {
-                    msgContent = msg.DecryptFromJson(myServerKey, ((string)(rfmsg.TContent)));
-                    // serverMessage.NCqrClientMsgTC<string>((string)rfmsg.TContent);
+
+                    if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
+                    msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
+                    {
+                        msgFile = new CFile(msgInnerContent, CType.Json);
+                        cReceivedFile = msgFile.DecryptFromJson(myServerKey, msgInnerContent);
+                        if (cReceivedFile != null)
+                        {
+                            SetAttachmentTextLink(cReceivedFile);
+                            friendMsg = cReceivedFile.GetFileNameContentLength() + Environment.NewLine;
+                            await PlaySoundFromResourcesAsync("sound_wind");
+                        }
+                    }
+                    else
+                    {
+                        msgContent = msg.DecryptFromJson(myServerKey, msgInnerContent);
+                        friendMsg = msgContent.Message + Environment.NewLine;
+                        await PlaySoundFromResourcesAsync("sound_push");
+                    }
                 }
                 catch (Exception exCrypt)
                 {
@@ -1214,25 +1263,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIp)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                    CqrException.SetLastException(exCrypt);
+                    SetStatusText(StripStatusLabel, $"Exception {exCrypt.Message} on receiving message from from server {ServerIpAddress} chat room {chatRoomNr}.");
                     return;
-                }
-                string friendMsg = string.Empty;
-                CFile? cReceivedFile = null;
-
-                if (msgContent.IsCFile())
-                {
-                    cReceivedFile = msgContent.ToCFile();
-                    if (cReceivedFile != null)
-                    {
-                        SetAttachmentTextLink(cReceivedFile);
-                        friendMsg = cReceivedFile.GetFileNameContentLength() + Environment.NewLine;
-                        await PlaySoundFromResourcesAsync("sound_wind");
-                    }
-                }
-                else
-                {
-                    friendMsg = msgContent.Message + Environment.NewLine;
-                    await PlaySoundFromResourcesAsync("sound_push");
                 }
 
                 string appendDestMsg = chat.AddFriendMessage(friendMsg);
@@ -1526,7 +1559,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         string filename = ea.GenericTData;
                         CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, chatRoomNr, euFacade.PipeString, chatRoomNr);
-                        // CSrvMsg<string> cmsg = new FullSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
+                        // CSrvMsg<string> cmsg = new CSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
                         // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
                         // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
 
@@ -2081,7 +2114,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #endregion MenuContacts
 
-
         #region SplitChatWindowLayout
 
         /// <summary>
@@ -2507,6 +2539,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #endregion network functionality
 
+
         #region MenuOptions
 
 
@@ -2562,107 +2595,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
         #endregion MenuOptions
-
-        #region LoadSaveChatContent
-
-        private void MenuFileItemOpen_Click(object sender, EventArgs e)
-        {
-            FileOpenDialog = DialogFileOpen;
-            FileOpenDialog.RestoreDirectory = true;
-            DialogResult result = FileOpenDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                MessageBox.Show($"FileName: {FileOpenDialog.FileName} init directory: {FileOpenDialog.InitialDirectory}", $"{Text} type {FileOpenDialog.GetType()}", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-
-
-        protected internal virtual void toolStripMenuItemSave_Click(object sender, EventArgs e)
-        {
-            SafeFileName();
-        }
-
-        protected virtual byte[] OpenCryptFileDialog(ref string loadDir)
-        {
-            if (FileOpenDialog == null)
-                FileOpenDialog = new OpenFileDialog();
-            byte[] fileBytes;
-            if (string.IsNullOrEmpty(loadDir))
-                loadDir = Environment.GetEnvironmentVariable("TEMP") ?? System.AppDomain.CurrentDomain.BaseDirectory;
-            if (loadDir != null)
-            {
-                FileOpenDialog.InitialDirectory = loadDir;
-                FileOpenDialog.RestoreDirectory = true;
-            }
-            DialogResult diaOpenRes = FileOpenDialog.ShowDialog();
-            if (diaOpenRes == DialogResult.OK || diaOpenRes == DialogResult.Yes)
-            {
-                if (!string.IsNullOrEmpty(FileOpenDialog.FileName) && File.Exists(FileOpenDialog.FileName))
-                {
-                    loadDir = Path.GetDirectoryName(FileOpenDialog.FileName) ?? System.AppDomain.CurrentDomain.BaseDirectory;
-                    fileBytes = File.ReadAllBytes(FileOpenDialog.FileName);
-                    return fileBytes;
-                }
-            }
-
-            fileBytes = new byte[0];
-            return fileBytes;
-        }
-
-        protected virtual string SafeFileName(string? filePath = "", byte[]? content = null)
-        {
-            string? saveDir = Environment.GetEnvironmentVariable("TEMP");
-            string ext = ".hex";
-            string fileName = DateTime.Now.Area23DateTimeWithSeconds() + ext;
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                fileName = System.IO.Path.GetFileName(filePath);
-                saveDir = System.IO.Path.GetDirectoryName(filePath);
-                ext = System.IO.Path.GetExtension(filePath);
-            }
-
-            if (saveDir != null)
-            {
-                FileSaveDialog.InitialDirectory = saveDir;
-                FileSaveDialog.RestoreDirectory = true;
-                FileSaveDialog.DefaultExt = ext;
-            }
-            FileSaveDialog.FileName = fileName;
-            DialogResult diaRes = FileSaveDialog.ShowDialog();
-            if (diaRes == DialogResult.OK || diaRes == DialogResult.Yes)
-            {
-                if (content != null && content.Length > 0)
-                    System.IO.File.WriteAllBytes(FileSaveDialog.FileName, content);
-
-                // var badge = new TransparentBadge($"File {fileName} saved to directory {saveDir}.");
-                // badge.Show();
-            }
-
-            return (FileSaveDialog != null && FileSaveDialog.FileName != null && File.Exists(FileSaveDialog.FileName)) ? FileSaveDialog.FileName : null;
-        }
-
-        #endregion LoadSaveChatContent
-
-
-        protected string GetHash()
-        {
-
-            string comboSecKeyTxt = GetComboBoxText(this.ComboBoxSecretKey);
-            CqrFacade hashFacade = new CqrFacade(comboSecKeyTxt);
-            string? pipeText = GetTextBoxText(this.TextBoxPipe);
-            if (!string.IsNullOrEmpty(pipeText))
-            {
-                if (hashFacade.PipeString.Equals(pipeText))
-                    return pipeText;
-            }
-
-            pipeText = hashFacade.PipeString;
-            SetTextBoxText(this.TextBoxPipe, hashFacade.PipeString);
-
-            return pipeText;
-
-        }
 
 
     }

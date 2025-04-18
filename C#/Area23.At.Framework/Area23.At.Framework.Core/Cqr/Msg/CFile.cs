@@ -3,6 +3,7 @@ using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.CryptoPro;
 using System;
@@ -184,7 +185,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
                 this.Md5Hash = MD5Sum.Hash(this.Data, "");
-                this.Sha256Hash = Sha256Sum.Hash(this.Data);
+                this.Sha256Hash = Sha256Sum.Hash(this.Data, FileName);
                 _hash = symmPipe.PipeString;
                 byte[] msgBytes = Data;
 
@@ -244,12 +245,19 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
 
                 string md5Hash = MD5Sum.Hash(unroundedMerryBytes, "");
+                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, FileName);
                 if (!_hash.Equals(symmPipe.PipeString))
                     throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
                 if (!md5Hash.Equals(Md5Hash))
                 {
-                    // throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
                     ;
+                    throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
+                    
+                }
+                if (!sha256Hash.Equals(this.Sha256Hash))
+                {
+                    Area23Log.LogStatic($"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {this.Sha256Hash}.");
+                    throw new CqrException($"Sha256: {sha256Hash} doesn't match property Sha256Hash: {Sha256Hash}");
                 }
 
                 Data = unroundedMerryBytes;

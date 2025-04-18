@@ -36,7 +36,7 @@ namespace Area23.At.Framework.Library.Cqr
         /// <remarks/>
         public CqrService()
         {
-            his.Url = LibPaths.CqrServiceSoap;
+            this.Url = LibPaths.CqrServiceSoap;
             // this.Url = "https://srv.cqrxs.eu/v1.1/CqrService.asmx";
         }
 

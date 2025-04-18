@@ -181,13 +181,13 @@ namespace EU.CqrXs.Srv
                                 polledPtr = pollKeys[1];
                                 firstPollClientMsg = dict[polledPtr];
                             }
-                            
-                            chatRoomMsg.TContent = firstPollClientMsg;
                                                         
-                            chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);                            
+                            chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);
 
                             UpdateContact(chatRoomMsg.Sender);
-                            chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomMsg.CRoom);                            
+                            chatRoomMsg = JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
+                            
+                            chatRoomMsg.TContent = firstPollClientMsg;
                         }
 
                     }
