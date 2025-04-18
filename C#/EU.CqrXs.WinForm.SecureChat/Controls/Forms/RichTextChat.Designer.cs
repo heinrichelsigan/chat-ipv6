@@ -1072,7 +1072,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripSeparator toolStripSeparator3;
-
     }
 
 }
