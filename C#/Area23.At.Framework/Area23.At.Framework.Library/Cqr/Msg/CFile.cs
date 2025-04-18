@@ -4,6 +4,7 @@ using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Crypt.Hash;
 using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.CryptoPro;
 using System;
@@ -27,6 +28,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         public byte[] Data { get; set; }
 
         public string Sha256Hash { get; set; }
+
+        public long FileByteLen { get; protected internal set; }
 
         public EncodingType EnCodingType { get; internal set; }
 
@@ -54,6 +57,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             _hash = hash;
             MsgType = CType.Json;
             Md5Hash = MD5Sum.Hash(Data, FileName);
+            FileByteLen = Data.LongLength;
             Sha256Hash = Sha256Sum.Hash(Data, FileName);
             EnCodingType = EncodingType.Base64;
         }
@@ -69,7 +73,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             Data = Convert.FromBase64String(base64);
             Base64Type = MimeType.GetMimeType(Data, FileName);
             _hash = hash;
-            Md5Hash = MD5Sum.Hash(Data, FileName);
+            Md5Hash = MD5Sum.Hash(Data, "");
+            FileByteLen = Data.LongLength;
             Sha256Hash = Sha256Sum.Hash(Data, FileName);
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
@@ -106,7 +111,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             FileName = fi.Name;            
             Data = File.ReadAllBytes(fi.FullName);
             Base64Type = MimeType.GetMimeType(Data, FileName);
-            Md5Hash = MD5Sum.Hash(Data, FileName);
+            Md5Hash = MD5Sum.Hash(Data, "");
+            FileByteLen = Data.LongLength;
             Sha256Hash = Sha256Sum.Hash(Data, FileName);
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
@@ -122,7 +128,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             FileName = Path.GetFileName(filePath);
             Data = File.ReadAllBytes(filePath);
             Base64Type = MimeType.GetMimeType(Data, FileName);
-            Md5Hash = MD5Sum.Hash(Data, FileName);
+            Md5Hash = MD5Sum.Hash(Data, "");
+            FileByteLen = Data.LongLength;
             Sha256Hash = Sha256Sum.Hash(Data, FileName);
             MsgType = msgArt;
             EnCodingType = EncodingType.Base64;
@@ -146,6 +153,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             Sha256Hash = cf.Sha256Hash;
             _hash = cf._hash;
             _message = cf._message;
+            FileByteLen = cf.FileByteLen;
             SerializedMsg = cf.SerializedMsg;
             EnCodingType = cf.EnCodingType;
             MsgType = cf.MsgType;
@@ -182,11 +190,14 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
                 this.Md5Hash = MD5Sum.Hash(this.Data, "");
+                this.Sha256Hash = Sha256Sum.Hash(this.Data, FileName);
+                this.FileByteLen = this.Data.LongLength;
                 _hash = symmPipe.PipeString;
                 byte[] msgBytes = Data;
 
                 byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
                 CBytes = cqrbytes;
+                Data = new byte[0];
             }
             catch (Exception exCrypt)
             {
@@ -215,9 +226,14 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 cf._message = _message;
                 cf.CBytes = CBytes;
                 cf.Data = Data;
+                cf.FileByteLen = FileByteLen;
                 cf.Md5Hash = Md5Hash;
+                cf.Sha256Hash = Sha256Hash;
                 cf._hash = _hash;
+                cf._message = _message;
                 cf.Base64Type = Base64Type;
+                cf.EnCodingType = EnCodingType;
+                cf.MsgType = MsgType;
                 return cf;
             }
             throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
@@ -235,12 +251,27 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
 
                 string md5Hash = MD5Sum.Hash(unroundedMerryBytes, "");
-                if (!_hash.Equals(symmPipe.PipeString))
-                    throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, FileName);
+
+                long decByteLen = unroundedMerryBytes.LongLength;
+                if (this.FileByteLen != decByteLen)
+                {
+                    Area23Log.LogStatic($"byte len of decrypted = {decByteLen} != FileByteLen {FileByteLen}.");
+                }
                 if (!md5Hash.Equals(Md5Hash))
+                {
+                    ;
                     throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
 
+                }
+                if (!sha256Hash.Equals(this.Sha256Hash))
+                {
+                    Area23Log.LogStatic($"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {this.Sha256Hash}.");
+                    throw new CqrException($"Sha256: {sha256Hash} doesn't match property Sha256Hash: {Sha256Hash}");
+                }
+
                 Data = unroundedMerryBytes;
+                CBytes = null;
             }
             catch (Exception exCrypt)
             {
