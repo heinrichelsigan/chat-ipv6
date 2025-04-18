@@ -16,6 +16,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.Services;
+using System.Web.Services.Description;
 
 namespace EU.CqrXs.Srv.Util
 {
@@ -158,6 +159,7 @@ namespace EU.CqrXs.Srv.Util
 
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Persistence in {PersistMsgIn.PersistMsg.ToString()}\n";
 
+            
             Dictionary<Guid, CContact> dictCacheTest = new Dictionary<Guid, CContact>();
             foreach (CContact c in _contacts)
             {
@@ -174,17 +176,36 @@ namespace EU.CqrXs.Srv.Util
                     string status = RedIS.ConnMux.GetStatus();
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
 
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to set Dictionary<Guid, CqrContact> in cache."+ Environment.NewLine;
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Executing RedIS.GetAllKeys()" + Environment.NewLine;
+                    
+                    HashSet<string> allKeys = RedIS.GetAllKeys();                    
+                    if (allKeys == null)
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
+                    else 
+                    {
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Count} keys" + Environment.NewLine;
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys.ToArray())} ]" + Environment.NewLine;                            
+                    }
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to set Dictionary<Guid, CqrContact> in cache." + "\r\n";
                     RedIS.ValKey.SetKey<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);                                        
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache." + Environment.NewLine;
 
                     Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedIS.ValKey.GetKey<Dictionary<Guid, CContact>>("TestCache");                   
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + Environment.NewLine;
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + "\r\n";
                     foreach (CContact contact in outdict.Values)
                     {
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Contact Cuid={contact.Cuid} NameEmail={contact.NameEmail} Mobile={contact.Mobile}" + Environment.NewLine;
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Contact Cuid={contact.Cuid} NameEmail={contact.NameEmail} Mobile={contact.Mobile}." + "\r\n";
                     }
-
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to delete key \"TestCache\":" + "\r\n";
+                    RedIS.ValKey.DeleteKey("TestCache");
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deleted key \"TestCache\"." + "\r\n";
+                }
+                catch (Exception ex2)
+                {
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+                }
+                try
+                {
                     List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}:Found {chatRooms.Count} chat room keys in cache." + Environment.NewLine;
                     foreach (string room in chatRooms)
@@ -244,8 +265,8 @@ namespace EU.CqrXs.Srv.Util
                     foundCt.Address = ccontact.Address;
                 if (ccontact.Mobile != null && ccontact.Mobile.Length > 1)
                     foundCt.Mobile = ccontact.Mobile;
-                if (ccontact.CRoom != null && !string.IsNullOrEmpty(ccontact.CRoom.ChatRoomNr))
-                    foundCt.CRoom = new CChatRoom(ccontact.CRoom);
+                if (ccontact._message != null && !string.IsNullOrEmpty(ccontact._message))
+                    foundCt._message = ccontact._message;
 
                 foundCt.ContactImage = null;
             }
@@ -253,9 +274,9 @@ namespace EU.CqrXs.Srv.Util
             {
                 if (ccontact.Cuid == null || ccontact.Cuid == Guid.Empty)
                     ccontact.Cuid = Guid.NewGuid();                
-                foundCt = new CContact(ccontact, ccontact.CRoom.ChatRoomNr, ccontact._hash);
+                foundCt = new CContact(ccontact, ccontact._message, ccontact._hash);
                 foundCt.ContactImage = null;
-                foundCt.CRoom.TicksLong = new List<long>();
+                foundCt._message = ccontact._message;
 
                 _contacts.Add(foundCt);
 
@@ -272,7 +293,7 @@ namespace EU.CqrXs.Srv.Util
             if (ccontact == null || string.IsNullOrEmpty(ccontact.Email))
                 return;
 
-            string chatRoomNr = (ccontact.CRoom != null && !string.IsNullOrEmpty(ccontact.CRoom.ChatRoomNr)) ? ccontact.CRoom.ChatRoomNr : "";
+            string chatRoomNr = (ccontact._message != null && !string.IsNullOrEmpty(ccontact._message)) ? ccontact._message : "";
             HashSet<CContact> contacts = new HashSet<CContact>();
 
             foreach (CContact ct in _contacts)
@@ -284,7 +305,7 @@ namespace EU.CqrXs.Srv.Util
                     toAddContact.Mobile = ccontact.Mobile;
                     toAddContact.ContactImage = null;
                     toAddContact.Cuid = (ccontact.Cuid != null && ccontact.Cuid != Guid.Empty) ? ccontact.Cuid : Guid.NewGuid();
-                    toAddContact.CRoom.TicksLong = new List<long>();
+                    toAddContact._message = chatRoomNr;
                     contacts.Add(toAddContact);
                 }
                 else
@@ -325,7 +346,7 @@ namespace EU.CqrXs.Srv.Util
                 {
 
                     CContact cToAdd = new CContact(contact, chatRoomNr, contact._hash);
-                    cToAdd.CRoom.TicksLong = new List<long>();
+                    cToAdd._message = chatRoomNr;
                     chatRoomMsg.Recipients.Add(cToAdd);
                 }
             }
@@ -351,7 +372,7 @@ namespace EU.CqrXs.Srv.Util
                 if (_contacts.Remove(toDelContact))
                 {
                     CContact c2Add = new CContact(contact, chatRoomNr, contact.Hash);
-                    c2Add.CRoom.TicksLong = new List<long>();
+                    c2Add._message = chatRoomNr;
                     _contacts.Add(c2Add);
                 }
             }
@@ -394,14 +415,14 @@ namespace EU.CqrXs.Srv.Util
 
             }
 
-            cSrvMsg.Sender.CRoom = new CChatRoom(cSrvMsg.CRoom) { TicksLong = dict.Keys.ToList() };
+            cSrvMsg._message = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
 
 
             bool addSender = true;
             foreach (CContact cr in cSrvMsg.Recipients)
             {
-                cr.CRoom = new CChatRoom(cSrvMsg.CRoom) { TicksLong = dict.Keys.ToList() };
-                
+                cr._message = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
+
                 _invited.Add(cr);
                 if ((!string.IsNullOrEmpty(cr.NameEmail) && cr.NameEmail == cSrvMsg.Sender.NameEmail) ||
                     (cr.Cuid != null && cr.Cuid != Guid.Empty && cr.Cuid == cSrvMsg.Sender.Cuid))
@@ -478,12 +499,11 @@ namespace EU.CqrXs.Srv.Util
         /// <param name="contact"><see cref="CContact"/> to modify</param>
         /// <param name="date"></param>
         /// <returns>modified <see cref="CContact"/></returns>
+        [Obsolete("CContact has no more chat room", true)]
         public CContact AddPollDate(CContact contact, DateTime date, bool pushed = false)
         {
             if (pushed)
-                contact.CRoom.LastPushed = date;
-            else
-                contact.CRoom.LastPolled = date;
+                contact.Md5Hash = date.ToLongDateString();
 
             return contact;
         }
@@ -501,17 +521,12 @@ namespace EU.CqrXs.Srv.Util
             if (pushed)
             {
                 chatRoomMsg.CRoom.LastPushed = date;
-                // TODO should we add tickindex, when pushing
-                chatRoomMsg.Sender.CRoom.LastPushed = date;
             }
             else
             {
                 chatRoomMsg.CRoom.LastPolled = date;
                 if (!chatRoomMsg.CRoom.TicksLong.Contains(tickIndex))
                     chatRoomMsg.CRoom.TicksLong.Add(tickIndex);
-                chatRoomMsg.Sender.CRoom.LastPushed = date;
-                if (!chatRoomMsg.Sender.CRoom.TicksLong.Contains(tickIndex))
-                    chatRoomMsg.Sender.CRoom.TicksLong.Add(tickIndex);                
             }
 
             return chatRoomMsg;
@@ -558,8 +573,7 @@ namespace EU.CqrXs.Srv.Util
             foreach (long tickIndex in dictKeys)
             {
                 // if (tickIndex > sender.LastPolled.Ticks)
-                if (!cSrvMsg.CRoom.TicksLong.Contains(tickIndex) &&
-                    !cSrvMsg.Sender.CRoom.TicksLong.Contains(tickIndex))
+                if (!cSrvMsg.CRoom.TicksLong.Contains(tickIndex))
                     pollKeys.Add(tickIndex);
             }
 

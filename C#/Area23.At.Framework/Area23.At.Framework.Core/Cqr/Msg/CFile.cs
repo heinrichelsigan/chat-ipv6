@@ -1,20 +1,10 @@
-﻿using Area23.At.Framework.Core.Cqr.Msg;
-using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.CryptoPro;
-using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
@@ -192,13 +182,15 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                this.Md5Hash = MD5Sum.Hash(this.Data, "");
-                this.Sha256Hash = Sha256Sum.Hash(this.Data, FileName);
-                this.FileByteLen = this.Data.LongLength;
                 _hash = symmPipe.PipeString;
-                byte[] msgBytes = Data;
+                Md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, _message), "");
+                Sha256Hash = Sha256Sum.Hash(this.Data, "");
+                FileByteLen = this.Data.LongLength;
+                
 
+                byte[] msgBytes = Data;
                 byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
+                
                 CBytes = cqrbytes;
                 Data = new byte[0];
             }
@@ -260,11 +252,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 byte[] cipherBytes = CBytes;
                 byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
 
-                string md5Hash = MD5Sum.Hash(unroundedMerryBytes, "");
-                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, FileName);
+
                 if (!_hash.Equals(symmPipe.PipeString))
                     throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
 
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, _message), "");
                 long decByteLen = unroundedMerryBytes.LongLength;
                 if (this.FileByteLen != decByteLen)
                 {
@@ -273,9 +265,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!md5Hash.Equals(Md5Hash))
                 {
                     ;
-                    throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
-                    
+                    throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");                    
                 }
+                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
                 if (!sha256Hash.Equals(this.Sha256Hash))
                 {
                     Area23Log.LogStatic($"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {this.Sha256Hash}.");
@@ -283,7 +275,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 }
 
                 Data = unroundedMerryBytes;
-                CBytes = null;
+                CBytes = new byte[0];
             }
             catch (Exception exCrypt)
             {
@@ -352,7 +344,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return t;
         }
 
-        public override string ToXml() => this.ToXml();
+        public virtual string ToXml()
+        {
+            SerializedMsg = "";
+            SerializedMsg = Utils.SerializeToXml<CContent>(this);
+            return SerializedMsg;
+        }
 
 
         public override T FromXml<T>(string xmlText)

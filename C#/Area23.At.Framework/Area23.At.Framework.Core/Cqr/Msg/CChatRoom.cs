@@ -23,13 +23,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public DateTime LastPolled { get; set; }
 
+        public List<string> InvitedEmails { get; set; }
+
         #region ICqrMessagable interface
 
-        public new CType MsgType => CType.Json;
+        // public new CType MsgType => CType.Json;
 
-        //public new string RawMessage { get => ToJson(); set; }
-
-        public new string Hash => _hash;
+        //public new string RawMessage { get => ToJson(); set; }        
 
         // public new string Md5Hash { get => MD5Sum.HashString(_message); set; }
 
@@ -37,13 +37,17 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public CChatRoom() : base()
         {
-            ChatRuid = Guid.NewGuid();
+            ChatRuid = Guid.Empty;
+            InvitedEmails = new List<string>();
             ChatRoomNr = "";
             _message = "";
             TicksLong = new List<long>();
             LastPushed = DateTime.MinValue;
             LastPolled = DateTime.MinValue;
             _hash = "";
+            Md5Hash = "";
+            MsgType = CType.None;
+            CBytes = new byte[0];
         }
 
 
@@ -53,10 +57,24 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             ChatRuid = (chatRuid == Guid.Empty) ? Guid.NewGuid() : chatRuid;
             lastPushed = LastPushed;
             LastPolled = lastPolled;
-            TicksLong = new List<long>();
+            TicksLong = new List<long>();            
         }
 
-
+        public CChatRoom(string chatRoomNr, Guid chatRuid, DateTime lastPushed, DateTime lastPolled, List<long> ticks, List<string> invited, string hash, string md5sum, byte[] bytes) : this()
+        {
+            ChatRoomNr = chatRoomNr;
+            ChatRuid = (chatRuid == Guid.Empty) ? Guid.NewGuid() : chatRuid;
+            lastPushed = LastPushed;
+            LastPolled = lastPolled;
+            TicksLong = new List<long>(ticks);
+            InvitedEmails = new List<string>(invited);
+            _hash = hash;
+            Md5Hash = md5sum;
+            CBytes = bytes;
+            MsgType = CType.Json;
+            SerializedMsg = "";
+            SerializedMsg = this.ToJson();
+        }
 
         public CChatRoom(CChatRoom chatRoom) : this()
         {
@@ -66,7 +84,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 ChatRuid = chatRoom.ChatRuid;
                 TicksLong = chatRoom.TicksLong;
                 LastPolled = chatRoom.LastPolled;
-                LastPushed = chatRoom.LastPushed; 
+                LastPushed = chatRoom.LastPushed;
+                InvitedEmails = chatRoom.InvitedEmails;
+                _hash = chatRoom._hash;
+                Md5Hash = chatRoom.Md5Hash;
+                MsgType = chatRoom.MsgType;
+                CBytes = chatRoom.CBytes;
+                SerializedMsg = "";
+                SerializedMsg = this.ToJson();
             }            
         }
 
@@ -96,9 +121,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                         TicksLong = chatRoom.TicksLong;
                         LastPushed = chatRoom.LastPushed;
                         LastPolled = chatRoom.LastPolled;
+                        InvitedEmails = chatRoom.InvitedEmails;
                         _message = chatRoom._message;
                         _hash = chatRoom._hash;
-
+                        Md5Hash = chatRoom.Md5Hash;
+                        MsgType = CType.Json;
+                        CBytes = chatRoom.CBytes;
+                        SerializedMsg = "";
+                        SerializedMsg = this.ToJson();
                         return (T)tt;
                     }
                 }
@@ -112,7 +142,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         }
 
-        public override string ToXml() => this.ToXml();
+        public override string ToXml()
+        {
+            SerializedMsg = "";
+            string xmlString = Utils.SerializeToXml<CChatRoom>(this);
+            SerializedMsg = xmlString;
+            return xmlString;
+        }
 
         public override T FromXml<T>(string xmlText)
         {
@@ -126,8 +162,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 LastPolled = chatRoom.LastPolled;
                 _message = chatRoom._message;
                 _hash = chatRoom._hash;
-
-
+                InvitedEmails = chatRoom.InvitedEmails;
+                _message = chatRoom._message;
+                _hash = chatRoom._hash;
+                Md5Hash = chatRoom.Md5Hash;
+                MsgType = CType.Xml;
+                CBytes = chatRoom.CBytes;
+                SerializedMsg = "";
+                SerializedMsg = this.ToXml();
                 return (T)cqrT;
             }
 

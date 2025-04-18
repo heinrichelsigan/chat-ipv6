@@ -1,6 +1,7 @@
 ﻿using Area23.At.Framework.Library.Cache;
 using Area23.At.Framework.Library.Cqr;
 using Area23.At.Framework.Library.Cqr.Msg;
+using Area23.At.Framework.Library.Net.IpSocket;
 using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using System;
@@ -9,9 +10,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using StackExchange.Redis;
-using Area23.At.Framework.Library.Cqr.Msg;
-using Area23.At.Framework.Library.Cqr;
-using Area23.At.Framework.Library.Net.IpSocket;
+
 
 /// <summary>
 /// Summary description for BaseService
@@ -113,8 +112,8 @@ public class BaseService
                 foundCt.Address = cContact.Address;
             if (cContact.Mobile != null && cContact.Mobile.Length > 1)
                 foundCt.Mobile = cContact.Mobile;
-            if (cContact.CRoom != null && !string.IsNullOrEmpty(cContact.CRoom.ChatRoomNr))
-                foundCt.CRoom = new CChatRoom(cContact.CRoom);            
+            //if (cContact.CRoom != null && !string.IsNullOrEmpty(cContact.CRoom.ChatRoomNr))
+            //    foundCt.CRoom = new CChatRoom(cContact.CRoom);            
 
             //if (cqrContact != null && cqrContact.ContactImage != null &&
             //    !string.IsNullOrEmpty(cqrContact.ContactImage.ImageFileName) &&
@@ -143,7 +142,7 @@ public class BaseService
         if (cContact == null || string.IsNullOrEmpty(cContact.Email))
             return;
         HashSet<CContact> contacts = new HashSet<CContact>();
-        string chatRoomNr = (cContact.CRoom != null && !string.IsNullOrEmpty(cContact.CRoom.ChatRoomNr)) ? cContact.CRoom.ChatRoomNr : _chatRoomNumber;
+        string chatRoomNr = (cContact._message != null && !string.IsNullOrEmpty(cContact._message)) ? cContact._message : _chatRoomNumber;
 
         foreach (CContact ct in _contacts)
         {
@@ -238,12 +237,12 @@ public class BaseService
         cSrvMsg.CRoom.TicksLong = dict.Keys.ToList();
 
 
-        cSrvMsg.Sender.CRoom = new CChatRoom(cSrvMsg.CRoom);        
+        cSrvMsg.Sender._message = ChatRoomNr;
         
         bool addSender = true;
         foreach (CContact cr in cSrvMsg.Recipients)
         {
-            cr.CRoom = new CChatRoom(cSrvMsg.CRoom);
+            cr._message = ChatRoomNr;
             _invited.Add(cr);
             
             if ((!string.IsNullOrEmpty(cr.NameEmail) && cr.NameEmail == cSrvMsg.Sender.NameEmail) ||
@@ -324,12 +323,14 @@ public class BaseService
     /// <param name="contact"><see cref="CContact"/> to modify</param>
     /// <param name="date"></param>
     /// <returns>modified <see cref="CContact"/></returns>
+    [Obsolete("No more chatroom in contact",true)]
     public CContact AddPollDate(CContact contact, DateTime date, bool pushed = false)
     {
         if (pushed)
-            contact.CRoom.LastPushed = date;
-        else
-            contact.CRoom.LastPolled = date;
+            contact.Md5Hash = date.ToString();
+            // contact.CRoom.LastPushed = date;
+        // else
+           // contact.CRoom.LastPolled = date;
 
         return contact;
     }
@@ -347,17 +348,12 @@ public class BaseService
         if (pushed)
         {
             chatRoomMsg.CRoom.LastPushed = date;
-            // TODO should we add tickindex, when pushing
-            chatRoomMsg.Sender.CRoom.LastPushed = date;
         }
         else
         {
             chatRoomMsg.CRoom.LastPolled = date;
             if (!chatRoomMsg.CRoom.TicksLong.Contains(tickIndex))
                 chatRoomMsg.CRoom.TicksLong.Add(tickIndex);
-            chatRoomMsg.Sender.CRoom.LastPushed = date;
-            if (!chatRoomMsg.Sender.CRoom.TicksLong.Contains(tickIndex))
-                chatRoomMsg.Sender.CRoom.TicksLong.Add(tickIndex);
         }
 
         return chatRoomMsg;
@@ -405,8 +401,7 @@ public class BaseService
         foreach (long tickIndex in dictKeys)
         {
             // if (tickIndex > sender.LastPolled.Ticks)
-            if (!cSrvMsg.CRoom.TicksLong.Contains(tickIndex) &&
-                !cSrvMsg.Sender.CRoom.TicksLong.Contains(tickIndex))
+            if (!cSrvMsg.CRoom.TicksLong.Contains(tickIndex))                
                 pollKeys.Add(tickIndex);
         }
 

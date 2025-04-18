@@ -572,11 +572,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
             }
 
-            if (Settings.Singleton.MyContact.CRoom != null)
+            if (Settings.Singleton.ChatRoom != null)
             {
-                Settings.Singleton.MyContact.CRoom.TicksLong = new List<long>();
-                Settings.Singleton.MyContact.CRoom.LastPushed = DateTime.MinValue;
-                Settings.Singleton.MyContact.CRoom.LastPolled = DateTime.MinValue;
+                Settings.Singleton.ChatRoom.TicksLong = new List<long>();
+                Settings.Singleton.ChatRoom.LastPushed = DateTime.MinValue;
+                Settings.Singleton.ChatRoom.LastPolled = DateTime.MinValue;
                 Settings.SaveSettings();
             }
 
@@ -757,8 +757,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetTextBoxText(this.TextBoxDestionation, "");
             SetRichText(this.RichTextBoxOneView, "");
 
-            string sessionChatText = (Settings.Singleton.MyContact.CRoom != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.CRoom.ChatRoomNr)) ?
-                Settings.Singleton.MyContact.CRoom.ChatRoomNr : GetTextBoxText(TextBoxChatSession);
+            string sessionChatText = (Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Settings.Singleton.ChatRoom.ChatRoomNr)) ?
+                Settings.Singleton.ChatRoom.ChatRoomNr : GetTextBoxText(TextBoxChatSession);
 
             SetTextBoxText(TextBoxChatSession, sessionChatText);
 
@@ -768,17 +768,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
-            if (Settings.Singleton.MyContact.CRoom != null)
+            if (Settings.Singleton.ChatRoom != null)
             {
-                Settings.Singleton.MyContact.CRoom.TicksLong = new List<long>();
-                Settings.Singleton.MyContact.CRoom.LastPushed = DateTime.MinValue;
-                Settings.Singleton.MyContact.CRoom.LastPolled = DateTime.MinValue;
+                Settings.Singleton.ChatRoom.TicksLong = new List<long>();
+                Settings.Singleton.ChatRoom.LastPushed = DateTime.MinValue;
+                Settings.Singleton.ChatRoom.LastPolled = DateTime.MinValue;
                 Settings.SaveSettings();
             }
             CContact myContact = new CContact(Settings.Singleton.MyContact, sessionChatText, clientFacade.PipeString);
-            myContact.CRoom.TicksLong = new List<long>();
-            myContact.CRoom.LastPushed = DateTime.Now;
-
+            myContact._message = sessionChatText;
 
             CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, sessionChatText, clientFacade.PipeString);
 
@@ -893,7 +891,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //     return ;
 
-                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.CRoom.ChatRoomNr;
+                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
                     if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
@@ -919,12 +917,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // this.TextBoxPipe.Text = serverMessage.PipeString;
                     // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                     myContact._hash = GetHash();
-                    myContact.CRoom.ChatRoomNr = chatRoomNr;
+                    myContact._message = chatRoomNr;
 
                     if (friendContact != null)
                     {
                         friendContact._hash = GetHash();
-                        friendContact.CRoom.ChatRoomNr = chatRoomNr;
+                        friendContact._message = chatRoomNr;
                     }
 
 
@@ -1040,7 +1038,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     //if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //    return;
 
-                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.CRoom.ChatRoomNr;
+                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
                     if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
@@ -1064,11 +1062,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // this.TextBoxPipe.Text = serverMessage.PipeString;
                     // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                     myContact._hash = GetHash();
-                    myContact.CRoom.ChatRoomNr = chatRoomNr;
+                    myContact._message = chatRoomNr;
                     if (friendContact != null)
                     {
                         friendContact._hash = GetHash();
-                        friendContact.CRoom.ChatRoomNr = chatRoomNr;
+                        friendContact._message = chatRoomNr;
                     }
 
 
@@ -1153,7 +1151,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     contactNameEmail = "";
                 //     return;
 
-                string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.CRoom.ChatRoomNr;
+                string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
                 if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                     SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
@@ -1172,12 +1170,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
                 myContact._hash = GetHash();
-                myContact.CRoom.ChatRoomNr = chatRoomNr;
+                myContact._message = chatRoomNr;
 
                 if (friendContact != null)
                 {
                     friendContact._hash = GetHash();
-                    friendContact.CRoom.ChatRoomNr = chatRoomNr;
+                    friendContact._message = chatRoomNr;
                 }
 
                 SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
@@ -1195,12 +1193,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     if (rfmsg == null)
                     {
                         MessageBox.Show("Empty message or empty body", "Message from Service is null or body is empty!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
                     }
 
                     if (string.IsNullOrEmpty(rfmsg.TContent))
                     {
-                        string msgCntn = $"Invitation from {rfmsg.Sender.NameEmail} to {rfmsg.Sender.CRoom.ChatRoomNr}";
+                        string msgCntn = $"Invitation from {rfmsg.Sender.NameEmail} to {rfmsg.CRoom.ChatRoomNr}";
                         msg = new CContent(msgCntn, clientFacade.PipeString, CType.Json, MD5Sum.HashString(msgCntn));
                         rfmsg.TContent = msg.EncryptToJson(myServerKey);
                     }
@@ -1214,10 +1211,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     else
                     {
-                        myContact = new CqrContact(Settings.Singleton.MyContact, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
-                        myContact.CRoom.LastPolled = rfmsg.Sender.CRoom.LastPolled;
-                        myContact.CRoom.LastPushed = rfmsg.Sender.CRoom.LastPushed;
-                        myContact.CRoom.TicksLong = new List<long>(rfmsg.CRoom.TicksLong);
+                        myContact = new CqrContact(Settings.Singleton.MyContact, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);                        
                     }
                     Settings.Singleton.MyContact = myContact;
                     Settings.SaveSettings(Settings.Singleton);
@@ -1364,12 +1358,31 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             encrypted = EnDeCodeHelper.GetString(area23EvArgs.GenericTData.BufferedData);
                     }
 
+                    string msgInnerContent = (string)(encrypted);
+                    string friendMsg = "";
+                    CContent msgContent, msg = new CContent(msgInnerContent, CType.Json);
+                    CFile? msgFile, cReceivedFile;
 
-                    CContent msgContent, msg = new CContent("", receiveFacade.PipeString, CType.Json, "");
                     try
                     {
-                        msgContent = msg.DecryptFromJson(myServerKey, ((string)(encrypted)));
-                        // serverMessage.NCqrClientMsgTC<string>((string)rfmsg.TContent);
+                        if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
+                        msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
+                        {
+                            msgFile = new CFile(msgInnerContent, CType.Json);
+                            cReceivedFile = msgFile.DecryptFromJson(myServerKey, msgInnerContent);
+                            if (cReceivedFile != null)
+                            {
+                                SetAttachmentTextLink(cReceivedFile);
+                                friendMsg = cReceivedFile.GetFileNameContentLength() + Environment.NewLine;
+                                PlaySoundFromResource("sound_wind");
+                            }
+                        }
+                        else
+                        {
+                            msgContent = msg.DecryptFromJson(myServerKey, msgInnerContent);
+                            friendMsg = msgContent.Message + Environment.NewLine;
+                            PlaySoundFromResource("sound_push");
+                        }
                     }
                     catch (Exception exCrypt)
                     {
@@ -1384,22 +1397,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIp)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         return;
-                    }
-                    string friendMsg = string.Empty;
-                    if (msgContent.IsCFile())
-                    {
-                        CFile? cfile = msgContent.ToCFile();
-                        if (cfile != null)
-                        {
-                            SetAttachmentTextLink(cfile);
-                            friendMsg = cfile.GetFileNameContentLength() + Environment.NewLine;
-                            PlaySoundFromResource("sound_wind");
-                        }
-                    }
-                    else
-                    {
-                        friendMsg = msgContent.Message + Environment.NewLine;
-                        PlaySoundFromResource("sound_push");
                     }
 
                     string appendDestMsg = chat.AddFriendMessage(friendMsg);
@@ -1530,7 +1527,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
                     {
 
-                        string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.CRoom.ChatRoomNr;
+                        string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
                         if (string.IsNullOrEmpty(TextBoxChatSession.Text))
                             TextBoxChatSession.Text = chatRoomNr;
 
@@ -1553,9 +1550,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         // this.TextBoxPipe.Text = serverMessage.PipeString;
                         // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                         myContact._hash = GetHash();
-                        myContact.CRoom.ChatRoomNr = chatRoomNr;
+                        myContact._message = chatRoomNr;
                         friendContact._hash = GetHash();
-                        friendContact.CRoom.ChatRoomNr = chatRoomNr;
+                        friendContact._message = chatRoomNr;
 
                         string filename = ea.GenericTData;
                         CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, chatRoomNr, euFacade.PipeString, chatRoomNr);
@@ -2595,7 +2592,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
         #endregion MenuOptions
-
 
     }
 

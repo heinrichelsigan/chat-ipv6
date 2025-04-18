@@ -189,13 +189,14 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                this.Md5Hash = MD5Sum.Hash(this.Data, "");
-                this.Sha256Hash = Sha256Sum.Hash(this.Data, FileName);
-                this.FileByteLen = this.Data.LongLength;
                 _hash = symmPipe.PipeString;
+                Md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, _message), "");
+                Sha256Hash = Sha256Sum.Hash(this.Data, "");
+                FileByteLen = this.Data.LongLength;
+                                
                 byte[] msgBytes = Data;
-
                 byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
+
                 CBytes = cqrbytes;
                 Data = new byte[0];
             }
@@ -250,9 +251,11 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 byte[] cipherBytes = CBytes;
                 byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
 
-                string md5Hash = MD5Sum.Hash(unroundedMerryBytes, "");
-                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, FileName);
 
+                if (!_hash.Equals(symmPipe.PipeString))
+                    throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, _message), "");
                 long decByteLen = unroundedMerryBytes.LongLength;
                 if (this.FileByteLen != decByteLen)
                 {
@@ -262,16 +265,16 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 {
                     ;
                     throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
-
                 }
+                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
                 if (!sha256Hash.Equals(this.Sha256Hash))
                 {
                     Area23Log.LogStatic($"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {this.Sha256Hash}.");
-                    throw new CqrException($"Sha256: {sha256Hash} doesn't match property Sha256Hash: {Sha256Hash}");
+                    // throw new CqrException($"Sha256: {sha256Hash} doesn't match property Sha256Hash: {Sha256Hash}");
                 }
 
                 Data = unroundedMerryBytes;
-                CBytes = null;
+                CBytes = new byte[0];
             }
             catch (Exception exCrypt)
             {
@@ -295,7 +298,13 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// Serialize <see cref="CqrFile"/> to Json Stting
         /// </summary>
         /// <returns></returns>
-        public override string ToJson() => JsonConvert.SerializeObject(this);
+        public override string ToJson()
+        {
+            this.SerializedMsg = "";
+            string jsonText = JsonConvert.SerializeObject(this);
+            this.SerializedMsg = jsonText;
+            return jsonText;
+        }
 
         /// <summary>
         /// Generic method to convert back from json string

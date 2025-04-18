@@ -41,15 +41,6 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public string NameEmail { get => string.IsNullOrEmpty(Email) ? Name : $"{Name} <{Email}>"; }
 
-        #region from server given properties
-
-        /// <summary>
-        /// CRoom ChatRoom property 
-        /// </summary>
-        public CChatRoom CRoom { get; set; }
-
-        
-        #endregion from server given properties
 
         #endregion properties
 
@@ -68,7 +59,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             Address = string.Empty;
             SecretKey = string.Empty;
             ContactImage = null;
-            CRoom = new CChatRoom("", Guid.Empty, DateTime.MinValue, DateTime.MinValue);           
+            CBytes = new byte[0];
         }
 
         public CContact(string cs, CType msgArt = CType.Json)
@@ -82,8 +73,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             Name = name;
             Email = email;
             Mobile = mobile;
-            Address = address;
-            CRoom = new CChatRoom("", Guid.Empty, DateTime.MinValue, DateTime.MinValue);            
+            Address = address;       
         }
 
         public CContact(Guid guid, string name, string email, string mobile, string address) : base()
@@ -92,10 +82,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             Name = name;
             Email = email;
             Mobile = mobile;
-            Address = address;
-
-            CRoom = new CChatRoom("", Guid.Empty, DateTime.MinValue, DateTime.MinValue);
-            // ClientIp = null;
+            Address = address;            
         }
 
         public CContact(int cid, string name, string email, string mobile, string address, CImage cqrImage)
@@ -136,56 +123,79 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             this._hash = hash;
         }
 
-        public CContact(CContact c, string hash)
-            : this(c.ContactId, c.Cuid, c.Name, c.Email, c.Mobile, c.Address, c.ContactImage, hash)
+        public CContact(CContact ccntct, string hash)
+            : this(ccntct.ContactId, ccntct.Cuid, ccntct.Name, ccntct.Email, ccntct.Mobile, ccntct.Address, ccntct.ContactImage, hash)
         {
+            CCopy(this, ccntct);
             this._hash = hash;
-            Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
-            CBytes = c.CBytes;
-            Md5Hash = c.Md5Hash;
-            _message = c.Message;
-            MsgType = c.MsgType;
-            CRoom = (c.CRoom == null)
-                ? new CChatRoom("", Guid.Empty, DateTime.MinValue, DateTime.MinValue)
-                : new CChatRoom(c.CRoom.ChatRoomNr, c.CRoom.ChatRuid, c.CRoom.LastPushed, c.CRoom.LastPushed) { TicksLong = c.CRoom.TicksLong };
             SerializedMsg = "";
             SerializedMsg = this.ToJson();
         }
 
-        public CContact(CContact c, string ChatRoomNr, string hash) : this(c, hash)
+        public CContact(CContact ccntct, string ChatRoomNr, string hash) : this(ccntct, hash)
         {
+            CCopy(this, ccntct);
             _hash = hash;
             ContactImage = null;
-            Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
-            CBytes = c.CBytes;
-            Md5Hash = c.Md5Hash;
-            _message = c.Message;
-            MsgType = c.MsgType;
-            CRoom = (c.CRoom == null)
-                ? new CChatRoom("", Guid.Empty, DateTime.MinValue, DateTime.MinValue)
-                : new CChatRoom(c.CRoom.ChatRoomNr, c.CRoom.ChatRuid, c.CRoom.LastPushed, c.CRoom.LastPushed) { TicksLong = c.CRoom.TicksLong };
+            Cuid = (ccntct.Cuid == Guid.Empty) ? Guid.NewGuid() : ccntct.Cuid;
+            _message = ChatRoomNr;
             SerializedMsg = "";
             SerializedMsg = this.ToJson();
         }
 
-        public CContact(CContact c, string chatRoomNr, string hash, CImage cqrImage) : this(c, chatRoomNr, hash)
+        public CContact(CContact ccntct)
         {
+            CCopy(this, ccntct);
+            Cuid = (ccntct.Cuid == Guid.Empty) ? Guid.NewGuid() : ccntct.Cuid;
+            SerializedMsg = "";
+            SerializedMsg = this.ToJson();
+        }
+
+        public CContact(CContact ccntct, string chatRoomNr, string hash, CImage cqrImage) : this(ccntct, chatRoomNr, hash)
+        {
+            CCopy(this, ccntct);
+            Cuid = (ccntct.Cuid == Guid.Empty) ? Guid.NewGuid() : ccntct.Cuid;
             _hash = hash;
             ContactImage = cqrImage;
-            ContactId = c.ContactId;
-            Cuid = (c.Cuid == Guid.Empty) ? Guid.NewGuid() : c.Cuid;
-            CBytes = c.CBytes;
-            Md5Hash = c.Md5Hash;
-            _message = c.Message;
-            MsgType = c.MsgType;
-            CRoom = (c.CRoom == null)
-                ? new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MinValue, DateTime.MinValue)
-                : new CChatRoom(chatRoomNr, c.CRoom.ChatRuid, c.CRoom.LastPushed, c.CRoom.LastPushed) { TicksLong = c.CRoom.TicksLong };
+            _message = chatRoomNr;
             SerializedMsg = "";
             SerializedMsg = this.ToJson();
         }
 
         #endregion constructors
+
+        public new CContact CCopy(CContact leftDest, CContact rightSrc)
+        {
+            if (rightSrc == null)
+                return null;
+            if (leftDest == null)
+                leftDest = new CContact(rightSrc);
+
+            base.CCopy((CContent)leftDest, (CContent)rightSrc);
+
+            leftDest._hash = rightSrc._hash;
+            leftDest._message = rightSrc._message;
+            leftDest.MsgType = rightSrc.MsgType;
+            leftDest.CBytes = rightSrc.CBytes;
+            leftDest.Md5Hash = rightSrc.Md5Hash;
+
+
+            leftDest.ContactId = rightSrc.ContactId;
+            leftDest.Cuid = rightSrc.Cuid;
+            leftDest.Name = rightSrc.Name;
+            leftDest.Email = rightSrc.Email;
+            leftDest.Mobile = rightSrc.Mobile;
+            leftDest.Address = rightSrc.Address;
+            leftDest.SecretKey = rightSrc.SecretKey;
+            leftDest.ContactImage = (rightSrc.ContactImage == null) ? null : new CImage(rightSrc.ContactImage.ToDrawingBitmap(), rightSrc.ContactImage.ImageFileName);
+
+            leftDest.SerializedMsg = "";
+            leftDest.SerializedMsg = leftDest.ToJson();
+
+            return leftDest;
+
+        }
+
 
         #region EnDeCrypt+DeSerialize
 
@@ -212,13 +222,14 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                this.Md5Hash = MD5Sum.HashString(_message);
                 _hash = symmPipe.PipeString;
+                Md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, _message), "");
 
                 byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(Message);
-
                 byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
+
                 CBytes = cqrbytes;
+                _message = Base64.ToBase64(CBytes);
             }
             catch (Exception exCrypt)
             {
@@ -241,20 +252,11 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 serialized = this.SerializedMsg;
 
             CContact contact = FromJson<CContact>(serialized);
-            if (contact != null && Decrypt(serverKey))
+            if (contact != null && contact.Decrypt(serverKey))
             {
-                contact._message = _message;
-                contact.CBytes = CBytes;
-                contact.Md5Hash = Md5Hash;
-                contact._hash = Hash;
-                contact.Cuid = Cuid;
-                contact.Email = Email;
-                contact.ContactId = ContactId;
-                contact.Address = Address;
-                contact.ContactImage = ContactImage;
-                contact.CRoom = new CChatRoom(CRoom);
-                contact.Mobile = Mobile;
-                contact.SerializedMsg = serialized;
+                contact.SerializedMsg = "";
+                contact.SerializedMsg = contact.ToJson();
+                CCopy(this, contact);
                 return contact;
             }
             throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed for CContact");
@@ -273,14 +275,15 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 while (decrypted[decrypted.Length - 1] == '\0')
                     decrypted = decrypted.Substring(0, decrypted.Length - 1);
 
-                string md5Hash = MD5Sum.HashString(decrypted);
+
                 if (!_hash.Equals(symmPipe.PipeString))
                     throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, decrypted), "");
                 if (!md5Hash.Equals(Md5Hash))
                     throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
 
                 _message = decrypted;
-                CBytes = null;
+                CBytes = new byte[0];
             }
             catch (Exception exCrypt)
             {
@@ -297,7 +300,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public override string ToJson()
         {
-            // CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
+            this.SerializedMsg = "";
             string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
             this.SerializedMsg = jsonString;
             return jsonString;
@@ -313,22 +316,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 {
                     if (contactJson != null && contactJson.ContactId > -1 && !string.IsNullOrEmpty(contactJson.Name))
                     {
-                        ContactId = contactJson.ContactId;
-                        Cuid = contactJson.Cuid;
-                        Name = contactJson.Name;
-                        Email = contactJson.Email;
-                        Mobile = contactJson.Mobile;
-                        Address = contactJson.Address;
-                        ContactImage = contactJson.ContactImage;
-
-                        CRoom = new CChatRoom(contactJson.CRoom);                        
-
-                        _message = contactJson._message;
-                        _hash = contactJson._hash;
-                        SerializedMsg = contactJson.SerializedMsg;
-                        MsgType = contactJson.MsgType;
-                        Md5Hash = contactJson.Md5Hash;
-
+                        CCopy(this, contactJson);
                         return (T)tt;
                     }
                 }
@@ -343,32 +331,23 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         }
 
 
-        public override string ToXml() => this.ToXml();
+        public override string ToXml()
+        {
+            SerializedMsg = "";
+            string xmlString = Utils.SerializeToXml<CContact>(this);
+            SerializedMsg = xmlString;
+            return xmlString;
+        }
 
         public override T FromXml<T>(string xmlText)
         {
             T cqrT = base.FromXml<T>(xmlText);
             if (cqrT is CContact cCnt)
             {
-                ContactId = cCnt.ContactId;
-                Cuid = cCnt.Cuid;
-                Name = cCnt.Name;
-                Email = cCnt.Email;
-                Mobile = cCnt.Mobile;
-                Address = cCnt.Address;
-                ContactImage = cCnt.ContactImage;
-
-                CRoom = new CChatRoom(cCnt.CRoom);
-
-                _message = cCnt._message;
-                _hash = cCnt._hash ?? string.Empty;
-                SerializedMsg = cCnt.SerializedMsg;
-                MsgType = cCnt.MsgType;
-                Md5Hash = cCnt.Md5Hash;
-
+                CCopy(this, cCnt);
             }
 
-            return cqrT;
+            return (T)cqrT;
 
         }
 
@@ -407,6 +386,5 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         }
 
         #endregion members
-
     }
 }

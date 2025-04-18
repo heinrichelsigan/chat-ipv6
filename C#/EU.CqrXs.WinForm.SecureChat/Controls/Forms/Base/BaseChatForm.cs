@@ -2091,7 +2091,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 {
                     CqrFacade closeFacade = new CqrFacade(CqrXsEuSrvKey);
 
-                    string chatRoomNr = Settings.Singleton.MyContact.CRoom.ChatRoomNr ?? "";
+                    string chatRoomNr = Settings.Singleton.ChatRoom.ChatRoomNr ?? "";
                     if (!string.IsNullOrEmpty(chatRoomNr))
                     {
                         var cList = new List<CContact>();
