@@ -58,7 +58,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = MimeType.GetMimeType(Data, FileName);
             _hash = hash;
             MsgType = CType.Json;
-            Md5Hash = MD5Sum.Hash(Data, FileName);
+            Md5Hash = MD5Sum.Hash(Data, "");
             Sha256Hash = "";
             FileByteLen = Data.LongLength;
             EnCodingType = EncodingType.Base64;
@@ -75,7 +75,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Data = Convert.FromBase64String(base64);
             Base64Type = MimeType.GetMimeType(Data, FileName);
             _hash = hash;
-            Md5Hash = MD5Sum.Hash(Data, FileName);
+            Md5Hash = MD5Sum.Hash(Data, "");
             FileByteLen = Data.LongLength;
             Sha256Hash = "";
             MsgType = CType.Json;
@@ -113,7 +113,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             FileName = fi.Name;            
             Data = System.IO.File.ReadAllBytes(fi.FullName);
             Base64Type = MimeType.GetMimeType(Data, FileName);
-            Md5Hash = MD5Sum.Hash(Data, FileName);
+            Md5Hash = MD5Sum.Hash(Data, "");
             FileByteLen = Data.LongLength;
             Sha256Hash = "";
             MsgType = CType.Json;
@@ -130,7 +130,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             FileName = Path.GetFileName(filePath);
             Data = System.IO.File.ReadAllBytes(filePath);
             Base64Type = MimeType.GetMimeType(Data, FileName);
-            Md5Hash = MD5Sum.Hash(Data, FileName);
+            Md5Hash = MD5Sum.Hash(Data, "");
             Sha256Hash = "";
             MsgType = msgArt;
             EnCodingType = EncodingType.Base64;
@@ -152,11 +152,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Data = cf.Data;
             Md5Hash = cf.Md5Hash;
             Sha256Hash = cf.Sha256Hash;
+            FileByteLen = cf.FileByteLen;
             _hash = cf._hash;
             _message = cf._message;
             SerializedMsg = cf.SerializedMsg;
             EnCodingType = cf.EnCodingType;
-            MsgType = cf.MsgType;
+            MsgType = cf.MsgType;            
+            CBytes = cf.CBytes;                        
+            Base64Type = cf.Base64Type;
         }
 
         #endregion ctors
@@ -230,6 +233,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                     cf.CBytes = CBytes;
                     cf.Data = Data;
                     cf.Md5Hash = Md5Hash;
+                    cf.Sha256Hash = Sha256Hash;
+                    cf.FileByteLen = FileByteLen;
+                    cf.FileName = FileName;
+                    cf.EnCodingType = EnCodingType;
+                    cf.MsgType = MsgType;
+                    cf.SerializedMsg = SerializedMsg;
                     cf._hash = _hash;
                     cf.Base64Type = Base64Type;
                     return cf;
