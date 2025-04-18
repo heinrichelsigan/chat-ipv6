@@ -29,7 +29,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public byte[] Data { get; set; }
 
-        public string Sha256Hash { get; set; }
+        public string Sha256Hash { get; protected internal set; }
 
         public EncodingType EnCodingType { get; internal set; }
 
@@ -57,7 +57,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             _hash = hash;
             MsgType = CType.Json;
             Md5Hash = MD5Sum.Hash(Data, FileName);
-            Sha256Hash = Sha256Sum.Hash(Data, FileName);
+            Sha256Hash = "";
             EnCodingType = EncodingType.Base64;
         }
 
@@ -73,7 +73,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = MimeType.GetMimeType(Data, FileName);
             _hash = hash;
             Md5Hash = MD5Sum.Hash(Data, FileName);
-            Sha256Hash = Sha256Sum.Hash(Data, FileName);
+            Sha256Hash = "";
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
         }
@@ -110,7 +110,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Data = System.IO.File.ReadAllBytes(fi.FullName);
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Md5Hash = MD5Sum.Hash(Data, FileName);
-            Sha256Hash = Sha256Sum.Hash(Data, FileName);
+            Sha256Hash = "";
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
             this._hash = hash;
@@ -126,7 +126,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Data = System.IO.File.ReadAllBytes(filePath);
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Md5Hash = MD5Sum.Hash(Data, FileName);
-            Sha256Hash = Sha256Sum.Hash(Data, FileName);
+            Sha256Hash = "";
             MsgType = msgArt;
             EnCodingType = EncodingType.Base64;
             this._hash = hash;
