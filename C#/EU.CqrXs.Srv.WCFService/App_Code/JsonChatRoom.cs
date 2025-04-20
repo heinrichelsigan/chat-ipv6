@@ -70,7 +70,7 @@ public class JsonChatRoom
     }
 
 
-    public CSrvMsg<string> SaveJsonChatRoom(CSrvMsg<string> CSrvMsg, CChatRoom chatRoom)
+    public CSrvMsg<string> SaveJsonChatRoom(CSrvMsg<string> cSrvMsg, CChatRoom chatRoom)
     {
         string jsonString = "";
         string chatRoomNumber = chatRoom.ChatRoomNr;
@@ -82,26 +82,26 @@ public class JsonChatRoom
             if (!JsonChatRoomNumber.EndsWith(".json"))
                 JsonChatRoomNumber += ".json";
 
-            CSrvMsg.CRoom = new CChatRoom(JsonChatRoomNumber, chatRoom.ChatRuid, chatRoom.LastPushed, chatRoom.LastPolled)
+            cSrvMsg.CRoom = new CChatRoom(JsonChatRoomNumber, chatRoom.ChatRuid, chatRoom.LastPushed, chatRoom.LastPolled)
             {
                 TicksLong = chatRoom.TicksLong,                
                 _message = JsonChatRoomNumber,
                 _hash = chatRoom.Hash,
                 Md5Hash = chatRoom.Md5Hash
             };
-            CSrvMsg.Sender.CRoom = new CChatRoom(CSrvMsg.CRoom);            
-            CSrvMsg.SerializedMsg = "";
-            CSrvMsg._message = "";
+            cSrvMsg.Sender._message = JsonChatRoomNumber;
+            cSrvMsg.SerializedMsg = "";
+            cSrvMsg._message = "";
 
             JsonSerializerSettings jsets = new JsonSerializerSettings();
             jsets.Formatting = Formatting.Indented;
-            jsonString = JsonConvert.SerializeObject(CSrvMsg, Formatting.Indented);
+            jsonString = JsonConvert.SerializeObject(cSrvMsg, Formatting.Indented);
             System.IO.File.WriteAllText(JsonChatRoomFileName, jsonString);
         }
 
-        CSrvMsg.SerializedMsg = jsonString;
+        cSrvMsg.SerializedMsg = jsonString;
 
-        return CSrvMsg;
+        return cSrvMsg;
     }
 
 
@@ -163,7 +163,7 @@ public class JsonChatRoom
                 _hash = chatRoom.Hash,
                 Md5Hash = chatRoom.Md5Hash
             };
-            cSrvMsg.Sender.CRoom = new CChatRoom(cSrvMsg.CRoom);
+            cSrvMsg.Sender._message = chatRoomNumber;
             cSrvMsg.SerializedMsg = "";
             cSrvMsg._message = chatRoomNumber;
 

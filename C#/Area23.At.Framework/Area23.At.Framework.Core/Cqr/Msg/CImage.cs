@@ -1,15 +1,11 @@
-﻿using Area23.At.Framework.Core.Cqr.Msg;
-using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Text;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
@@ -45,6 +41,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         [JsonIgnore]
         public string ImageBase64 { get; set; }
 
+        public string Sha256Hash { get; set; }
+
         #endregion properties
 
         #region constructors
@@ -59,6 +57,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             ImageMimeType = string.Empty;
             ImageBase64 = "";
             Md5Hash = "";
+            Sha256Hash = "";
+            CBytes = new byte[0];
         }
 
 
@@ -73,7 +73,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             ImageData = data;
             ImageMimeType = MimeType.GetMimeType(ImageData, ImageFileName);
             ImageBase64 = Convert.ToBase64String(ImageData, 0, ImageData.Length);
-            Md5Hash = MD5Sum.Hash(ImageData, ImageFileName);
+            Sha256Hash = Sha256Sum.Hash(ImageData, "");
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             ImageBase64 = base64Image;
             ImageData = Convert.FromBase64String(base64Image);
             ImageMimeType = MimeType.GetMimeType(ImageData, ImageFileName);
-            Md5Hash = MD5Sum.Hash(ImageData, ImageFileName);
+            Sha256Hash = Sha256Sum.Hash(ImageData, "");
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 ImageMimeType = cImage.ImageMimeType;
                 ImageData = cImage.ImageData;
                 ImageBase64 = cImage.ImageBase64;
-                Md5Hash = MD5Sum.Hash(ImageData, ImageFileName);
+                Sha256Hash = Sha256Sum.Hash(ImageData, "");
             }
         }
 
@@ -139,12 +139,15 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                this.Md5Hash = MD5Sum.Hash(this.ImageData, "");
                 _hash = symmPipe.PipeString;
+                Md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, _message), "");
+                Sha256Hash = Sha256Sum.Hash(this.ImageData, "");
+                
                 byte[] msgBytes = ImageData;
-
                 byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
+
                 CBytes = cqrbytes;
+                ImageData = new byte[0];
             }
             catch (Exception exCrypt)
             {
@@ -177,6 +180,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 ci.Md5Hash = Md5Hash;
                 ci._hash = _hash;
                 ci.ImageMimeType = ImageMimeType;
+                ci.Sha256Hash = Sha256Hash;
                 return (CImage)ci;
             }
             throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
@@ -194,13 +198,24 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 byte[] cipherBytes = CBytes;
                 byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
 
-                string md5Hash = MD5Sum.Hash(unroundedMerryBytes, "");
                 if (!_hash.Equals(symmPipe.PipeString))
                     throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, _message), "");                
                 if (!md5Hash.Equals(Md5Hash))
+                {
+                    ;
                     throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
+                }
+                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
+                if (!sha256Hash.Equals(this.Sha256Hash))
+                {
+                    Area23Log.LogStatic($"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {this.Sha256Hash}.");
+                    // throw new CqrException($"Sha256: {sha256Hash} doesn't match property Sha256Hash: {Sha256Hash}");
+                }
 
                 ImageData = unroundedMerryBytes;
+                CBytes = new byte[0];
             }
             catch (Exception exCrypt)
             {

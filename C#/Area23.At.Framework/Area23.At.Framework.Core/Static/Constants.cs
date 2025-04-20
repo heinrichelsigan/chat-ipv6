@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Configuration;
 using System.Text;
-using System.Web;
 
 namespace Area23.At.Framework.Core.Static
 {
@@ -13,6 +11,7 @@ namespace Area23.At.Framework.Core.Static
     {
 
         #region public const
+#pragma warning disable CA1707 // Identifiers should not contain underscores
 
         // const int number
         public const int BACKLOG = 8;
@@ -44,7 +43,7 @@ namespace Area23.At.Framework.Core.Static
         // constants string
         public const string APP_NAME = "Area23.At";
         public const string APP_DIR = "net";
-        public const string VERSION = "v2.25.411";
+        public const string VERSION = "v2.25.420";
         public const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         public const string VALKEY_CACHE_HOST_PORT_KEY = "ValkeyCacheHostPort";
 
@@ -77,7 +76,8 @@ namespace Area23.At.Framework.Core.Static
         public const string LONDON_CQRXS_EU = "uk.cqrxs.eu";
         public const string ZURICH_CQRXS_EU = "ch.cqrxs.eu";
 
-
+        public const string ALL_KEYS = "AllKeys";
+        public const string CHATROOMS = "ChatRooms";
         public const string CQRXS_URL = "https://cqrxs.eu/";
         public const string CQRXS_HELP_URL = "https://cqrxs.eu/help/";
         public const string DECRYPTED_TEXT_AREA = "<textarea cols = \"48\" rows=\"10\" name=\"TextBoxDecrypted\" id=\"TextBoxDecrypted\" title=\"TextBox Current Message\" ValidateRequestMode=\"Enabled\" style=\"width:480px;\" >";
@@ -372,7 +372,7 @@ PMsi2xTrUPC6pAERVgu7wz02ka3WPOdlxfoG0o9s/BwJmhi5EEBqGB4CriR8R8AY
 2sGnnAaPJgE8Iy2z08jS3rF9npK27A==
 -----END PRIVATE KEY-----";
 
-
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         #endregion public const
 
         #region public static readonly fields
@@ -489,9 +489,9 @@ PMsi2xTrUPC6pAERVgu7wz02ka3WPOdlxfoG0o9s/BwJmhi5EEBqGB4CriR8R8AY
                 return null;
             try
             {
-                if (ConfigurationManager.AppSettings[key] != null)
+                if (System.Configuration.ConfigurationManager.AppSettings[key] != null)
                 {
-                    return ConfigurationManager.AppSettings[key].ToString();
+                    return System.Configuration.ConfigurationManager.AppSettings[key].ToString();
                 }
             }
             catch { }

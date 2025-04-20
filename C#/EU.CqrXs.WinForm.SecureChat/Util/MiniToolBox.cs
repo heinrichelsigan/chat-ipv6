@@ -45,8 +45,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
                         c.Email.Contains(nameEmail, StringComparison.CurrentCultureIgnoreCase))
                     {
                         friendContact = new CContact(c, chatRoomSession, pipeText);
-                        friendContact.CRoom.TicksLong = new List<long>(); // open chat rooms => new tick list  
-                        friendContact.CRoom.LastPushed = DateTime.Now;
+                        friendContact._message = chatRoomSession;
                         
                         break;
                     }
@@ -62,8 +61,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
                     Int32.TryParse(DateTime.Now.ToString("Mdd"), out cId);
                 CImage? friendImg = null;
                 tmpContact = new CContact(cId, Guid.NewGuid(), nameContact, nameEmail, "", "", friendImg);
-                tmpContact.CRoom.TicksLong = new List<long>(); // open chat rooms => new tick list  
-                tmpContact.CRoom.LastPushed = DateTime.Now;
+                tmpContact._message = chatRoomSession;
                     
                 friendContact = new CContact(tmpContact, chatRoomSession, pipeText);
                 

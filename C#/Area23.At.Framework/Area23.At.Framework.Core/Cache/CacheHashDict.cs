@@ -1,5 +1,7 @@
-﻿using Area23.At.Framework.Core.Static;
+﻿using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Static;
 using System.Collections.Concurrent;
+using System.Windows.Input;
 
 namespace Area23.At.Framework.Core.Cache
 {
@@ -50,11 +52,27 @@ namespace Area23.At.Framework.Core.Cache
         /// <returns>generic cached value stored at key</returns>
         public static T? GetValue<T>(string ckey)
         {
-            if (AppDict.TryGetValue(ckey, out var cvalue))
+            if (AppDict.ContainsKey(ckey))
+            {
+                if (!AppDict.TryGetValue(ckey, out var cvalue))                    
+                    throw new CqrException($"{typeof(T)}? GetValue<{typeof(T)}>(string ckey = {ckey}) failed.",
+                        new InvalidOperationException($"ConcurrentDictionary<string, CacheValue>.TryGetValue(string = {ckey}, out {typeof(T)} cvalue failed."));               
                 return cvalue.GetValue<T>();
-            
+            }
+
             return default(T);
         }
+
+        /// <summary>
+        /// ContainsKey checks if application cache hash dict contains key
+        /// </summary>
+        /// <param name="ckey">key to check</param>
+        /// <returns>true, if <see cref="AppDict" /> <see cref="ConcurrentDictionary{string, CacheValue}"/> contains key ckey, otherwise false</returns>
+        public static bool ContainsKey(string ckey)
+        {
+            return (AppDict.ContainsKey(ckey));
+        }
+
 
 
         /// <summary>
@@ -63,23 +81,52 @@ namespace Area23.At.Framework.Core.Cache
         /// <typeparam name="T">generic type of cached value</typeparam>
         /// <param name="ckey">cache key</param>
         /// <param name="cvalue">generic value to stored with key in cache</param>
-        public static void SetValue<T>(string ckey, T cvalue)
+        /// <returns>true on succesfull add or succesfull update, false if add or update operation on <see cref="AppDict"/> failed</returns>
+        public static bool SetValue<T>(string ckey, T cvalue)
         {
+            bool success = false, addNotUpdate = true;
             CacheValue cacheValue = new CacheValue();
             cacheValue.SetValue<T>(cvalue);
 
             if (AppDict.ContainsKey(ckey))
-                _appDict.TryRemove(ckey, out var cacheOutValue);
-            
-            if (_appDict.TryAdd(ckey, cacheValue))
             {
-                AppDict = _appDict;
-                // AppDomain.CurrentDomain.SetData(Constants.APP_CONCURRENT_DICT, _appDict);
+                if (_appDict.TryGetValue(ckey, out var oldValue))
+                {
+                    success = _appDict.TryUpdate(ckey, cacheValue, oldValue);
+                    addNotUpdate = false;
+                }
+                else
+                    _appDict.TryRemove(ckey, out var cacheOutValue);
             }
-                       
+
+            if (addNotUpdate)
+                success = _appDict.TryAdd(ckey, cacheValue);
+                        
+            if (success)
+                AppDict = _appDict;                                                  
+
+            return success;                       
         }
 
-        
+
+        /// <summary>
+        /// DeleteKey delete key with corresponding <see cref="CacheValue"/> from <see cref="AppDict"/>
+        /// </summary>
+        /// <param name="ckey">corresponding key</param>
+        /// <returns>true, if <see cref="AppDict"/> contained key and delete key operation was successful, otherwise false</returns>
+        public static bool DeleteKey(string ckey)
+        {
+            bool success = false;
+
+            if (AppDict.ContainsKey(ckey))
+                success = _appDict.TryRemove(ckey, out var cacheOutValue);
+
+            if (success)
+                AppDict = _appDict;
+
+            return success;
+        }
+
     }
 
 }

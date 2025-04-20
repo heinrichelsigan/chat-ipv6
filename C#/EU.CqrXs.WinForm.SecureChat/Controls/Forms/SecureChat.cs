@@ -577,11 +577,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
             }
 
-            if (Settings.Singleton.MyContact.CRoom != null)
+            if (Settings.Singleton.ChatRoom != null)
             {
-                Settings.Singleton.MyContact.CRoom.TicksLong = new List<long>();
-                Settings.Singleton.MyContact.CRoom.LastPushed = DateTime.MinValue;
-                Settings.Singleton.MyContact.CRoom.LastPolled = DateTime.MinValue;
+                Settings.Singleton.ChatRoom.TicksLong = new List<long>();
+                Settings.Singleton.ChatRoom.LastPushed = DateTime.MinValue;
+                Settings.Singleton.ChatRoom.LastPolled = DateTime.MinValue;
                 Settings.SaveSettings();
             }
 
@@ -762,8 +762,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetTextBoxText(this.TextBoxDestionation, "");
             SetRichText(this.RichTextBoxOneView, "");
 
-            string sessionChatText = (Settings.Singleton.MyContact.CRoom != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.CRoom.ChatRoomNr)) ?
-                Settings.Singleton.MyContact.CRoom.ChatRoomNr : GetTextBoxText(TextBoxChatSession); 
+            string sessionChatText = (Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Settings.Singleton.ChatRoom.ChatRoomNr)) ?
+                Settings.Singleton.ChatRoom.ChatRoomNr : GetTextBoxText(TextBoxChatSession); 
 
             SetTextBoxText(TextBoxChatSession, sessionChatText);
 
@@ -773,16 +773,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
 
-            if (Settings.Singleton.MyContact.CRoom != null)
+            if (Settings.Singleton.ChatRoom != null)
             {
-                Settings.Singleton.MyContact.CRoom.TicksLong = new List<long>();
-                Settings.Singleton.MyContact.CRoom.LastPushed = DateTime.MinValue;
-                Settings.Singleton.MyContact.CRoom.LastPolled = DateTime.MinValue;
+                Settings.Singleton.ChatRoom.TicksLong = new List<long>();
+                Settings.Singleton.ChatRoom.LastPushed = DateTime.MinValue;
+                Settings.Singleton.ChatRoom.LastPolled = DateTime.MinValue;
                 Settings.SaveSettings();
-            }
+            }            
             CContact myContact = new CContact(Settings.Singleton.MyContact, sessionChatText, clientFacade.PipeString);
-            myContact.CRoom.TicksLong = new List<long>();
-            myContact.CRoom.LastPushed = DateTime.Now;
+            myContact._message = sessionChatText;
 
                        
             CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, sessionChatText, clientFacade.PipeString);
@@ -898,7 +897,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //     return ;
 
-                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.CRoom.ChatRoomNr;
+                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
                     if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
@@ -924,12 +923,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // this.TextBoxPipe.Text = serverMessage.PipeString;
                     // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                     myContact._hash = GetHash();
-                    myContact.CRoom.ChatRoomNr = chatRoomNr;
+                    myContact._message = chatRoomNr;
 
                     if (friendContact != null)
                     {
                         friendContact._hash = GetHash();
-                        friendContact.CRoom.ChatRoomNr = chatRoomNr;                       
+                        friendContact._message = chatRoomNr;                       
                     }
 
 
@@ -1045,7 +1044,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     //if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //    return;
 
-                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.CRoom.ChatRoomNr;
+                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
                     if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
@@ -1069,11 +1068,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // this.TextBoxPipe.Text = serverMessage.PipeString;
                     // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                     myContact._hash = GetHash();
-                    myContact.CRoom.ChatRoomNr = chatRoomNr;
+                    myContact._message = chatRoomNr;
                     if (friendContact != null)
                     {
                         friendContact._hash = GetHash();
-                        friendContact.CRoom.ChatRoomNr = chatRoomNr;
+                        friendContact._message = chatRoomNr;
                     }
                     
 
@@ -1158,7 +1157,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     contactNameEmail = "";
                 //     return;
 
-                string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.CRoom.ChatRoomNr;
+                string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
                 if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                     SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
@@ -1177,12 +1176,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
                 myContact._hash = GetHash();
-                myContact.CRoom.ChatRoomNr = chatRoomNr;
+                myContact._message = chatRoomNr;
 
                 if (friendContact != null)
                 {
                     friendContact._hash = GetHash();
-                    friendContact.CRoom.ChatRoomNr = chatRoomNr;
+                    friendContact._message = chatRoomNr;
                 }
 
                 SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
@@ -1204,7 +1203,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     if (string.IsNullOrEmpty(rfmsg.TContent))
                     {
-                        string msgCntn = $"Invitation from {rfmsg.Sender.NameEmail} to {rfmsg.Sender.CRoom.ChatRoomNr}";
+                        string msgCntn = $"Invitation from {rfmsg.Sender.NameEmail} to {rfmsg.CRoom.ChatRoomNr}";
                         msg = new CContent(msgCntn, clientFacade.PipeString, CType.Json, MD5Sum.HashString(msgCntn));
                         rfmsg.TContent = msg.EncryptToJson(myServerKey);
                     }
@@ -1218,10 +1217,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     else
                     {
-                        myContact = new CqrContact(Settings.Singleton.MyContact, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
-                        myContact.CRoom.LastPolled = rfmsg.Sender.CRoom.LastPolled;
-                        myContact.CRoom.LastPushed = rfmsg.Sender.CRoom.LastPushed;
-                        myContact.CRoom.TicksLong = new List<long>(rfmsg.CRoom.TicksLong);
+                        myContact = new CqrContact(Settings.Singleton.MyContact, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);                        
                     }
                     Settings.Singleton.MyContact = myContact;
                     Settings.SaveSettings(Settings.Singleton);
@@ -1537,7 +1533,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
                     {
 
-                        string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.MyContact.CRoom.ChatRoomNr;
+                        string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
                         if (string.IsNullOrEmpty(TextBoxChatSession.Text))
                             TextBoxChatSession.Text = chatRoomNr;
 
@@ -1560,9 +1556,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         // this.TextBoxPipe.Text = serverMessage.PipeString;
                         // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                         myContact._hash = GetHash();
-                        myContact.CRoom.ChatRoomNr = chatRoomNr;
-                        friendContact._hash = GetHash();
-                        friendContact.CRoom.ChatRoomNr = chatRoomNr;                        
+                        myContact._message = chatRoomNr;                        
+                        friendContact._message = chatRoomNr;                        
 
                         string filename = ea.GenericTData;
                         CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, chatRoomNr, euFacade.PipeString, chatRoomNr);
@@ -2395,7 +2390,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                                     clientIpAddress = addr;
                                     item.Checked = true;
-                                    SetStatusText(StripStatusLabel, $"Interface {clientIpAddress.AddressFamily.ToString()} {clientIpAddress.Address.ToString()} bound on listener socket.");
+                                    SetStatusText(StripStatusLabel, $"Interface {clientIpAddress.AddressFamily.ToString()} {clientIpAddress.ToString()} bound on listener socket.");
                                     SetProgressBar(StripProgressBar, pvalue);
                                     pvalue += 5;
                                     if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)

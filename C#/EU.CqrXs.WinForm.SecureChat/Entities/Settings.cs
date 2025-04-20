@@ -35,6 +35,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
 
         public List<string> SecretKeysCrypted { get; set; }
 
+        public CChatRoom? ChatRoom { get; set; }
+
         #endregion properties
 
         #region ctor Settings() Settings(DateTime timeStamp) => Load()
@@ -50,6 +52,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             ZipBeforeSend = false;
             OnlySecureFileTypes = false;
             RegisterUser = false;
+            ChatRoom = null;
         }
 
         public Settings(DateTime timeStamp) : this()
@@ -115,6 +118,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 _instance.Value.ZipBeforeSend = settings.ZipBeforeSend;
                 _instance.Value.OnlySecureFileTypes = settings.OnlySecureFileTypes;
                 _instance.Value.SecretKeysCrypted = new List<string>(settings.SecretKeysCrypted);
+                _instance.Value.ChatRoom = settings.ChatRoom;
                 _instance.Value.SecretKeys = new List<string>();
                 foreach (string skey in settings.SecretKeysCrypted)
                 {

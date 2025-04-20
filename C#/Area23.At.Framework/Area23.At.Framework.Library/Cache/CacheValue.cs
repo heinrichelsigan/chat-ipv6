@@ -49,7 +49,7 @@ namespace Area23.At.Framework.Library.Cache
         /// gets the <see cref="Type"/> of generic cached value
         /// </summary>
         /// <returns><see cref="Type"/> of generic value or null if cached value is <see cref="null"/></returns>
-        public Type GetType()
+        public new Type GetType()
         {
             return _Type;
         }

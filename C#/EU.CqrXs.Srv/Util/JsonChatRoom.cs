@@ -91,7 +91,7 @@ namespace EU.CqrXs.Srv.Util
                     _hash = chatRoom.Hash,
                     Md5Hash = chatRoom.Md5Hash
                 };
-                cSrvMsg.Sender.CRoom = new CChatRoom(cSrvMsg.CRoom);
+                cSrvMsg.Sender._message = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Sender._message;
                 cSrvMsg.SerializedMsg = "";
 
                 JsonSerializerSettings jsets = new JsonSerializerSettings();
@@ -171,8 +171,8 @@ namespace EU.CqrXs.Srv.Util
                     _hash = chatRoom.Hash,
                     Md5Hash = chatRoom.Md5Hash
                 };
-                if (cSrvMsg.CRoom == null)
-                    cSrvMsg.Sender.CRoom = new CChatRoom(cSrvMsg.CRoom) { TicksLong = new List<long>() };
+                if (cSrvMsg.CRoom == null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr))
+                    cSrvMsg.Sender._message = cSrvMsg.CRoom.ChatRoomNr;
                 cSrvMsg.SerializedMsg = "";
 
                 string jsonCRoomFileName = GetJsonChatRoomFileName(chatRoomNumber);
@@ -219,6 +219,34 @@ namespace EU.CqrXs.Srv.Util
             return cServerMessage;
         }
 
+        public static bool DeleteChatRoom(string chatRoomNr)
+        {
+            string jsonChatRoomFileName = GetJsonChatRoomFileName(chatRoomNr);
+
+            
+            DeleteJsonChatRoomFromCache(chatRoomNr);
+
+            lock (_lock)
+            {
+                if (System.IO.File.Exists(jsonChatRoomFileName)) // we need to create chatroom
+                {
+                    try
+                    {
+                        System.IO.File.Delete(jsonChatRoomFileName);
+                    }
+                    catch (Exception e)
+                    {
+                        Area23Log.LogStatic("Error deleting chat room " + e.Message);
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        #region static cache operations
+
         /// <summary>
         /// Loads a list of json chat rooms from fs
         /// </summary>
@@ -227,6 +255,7 @@ namespace EU.CqrXs.Srv.Util
         {
 
             List<string> chatRooms = new List<string>();
+            
             string[] csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
             string file = "";
             foreach (string filedir in csr)
@@ -235,7 +264,8 @@ namespace EU.CqrXs.Srv.Util
                 chatRooms.Add(file);
             }
 
-            SetJsonChatRoomsToCache(chatRooms);
+            // SetJsonChatRoomsToCache(chatRooms);
+
 
             return chatRooms;
         }
@@ -255,7 +285,7 @@ namespace EU.CqrXs.Srv.Util
             {
                 try
                 {
-                    RedIS.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
+                    chatRooms = RedIS.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
                     // string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
                     // chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
                 }
@@ -301,10 +331,22 @@ namespace EU.CqrXs.Srv.Util
         public static void DeleteJsonChatRoomFromCache(string chatRoom)
         {
             List<string> chatRooms = GetJsonChatRoomsFromCache();
-            if (chatRooms.Contains(chatRoom))
+            if (BaseWebService.PersistMsgInApplicationState)
+            {
+                if (HttpContext.Current.Application.AllKeys.Contains(chatRoom))
+                    HttpContext.Current.Application.Remove(chatRoom);
+            }
+            if (BaseWebService.PersistMsgInAmazonElasticCache)
+            {
+                RedIS.ValKey.DeleteKey(chatRoom, StackExchange.Redis.CommandFlags.FireAndForget);
+                // Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
+            }
+            if (chatRooms.Contains(chatRoom)) 
                 chatRooms.Remove(chatRoom);
             SetJsonChatRoomsToCache(chatRooms);
         }
+
+        #endregion static cache operations
 
         #endregion static members
 
