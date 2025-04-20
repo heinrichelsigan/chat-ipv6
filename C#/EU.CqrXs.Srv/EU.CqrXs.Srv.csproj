@@ -356,12 +356,12 @@
   <ItemGroup>
     <Content Include="log\README.MD" />
     <None Include="packages.config" />
-    <Content Include="res\out\urlshort.json" />
     <None Include="Properties\PublishProfiles\CqrXs.CqrJd_Release.pubxml" />
     <None Include="Properties\PublishProfiles\cqrxs.eu publish.pubxml" />
     <Content Include="res\json\urlshort.json" />
     <Content Include="res\json\contacts.json" />
     <None Include="Properties\PublishProfiles\CqrXs_Publish.pubxml" />
+    <Content Include="res\out\urlshort.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

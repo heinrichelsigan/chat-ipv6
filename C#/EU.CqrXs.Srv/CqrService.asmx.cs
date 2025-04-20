@@ -30,7 +30,7 @@ namespace EU.CqrXs.Srv
     /// <summary>
     /// CqrService offers a simple chat room service with strong encryption
     /// </summary>
-    [WebService(Namespace = "https://srv.cqrxs.eu/v1.0/")]
+    [WebService(Namespace = "https://srv.cqrxs.eu/v1.3/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [System.ComponentModel.ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 

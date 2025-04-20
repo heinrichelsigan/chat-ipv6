@@ -264,7 +264,7 @@ namespace EU.CqrXs.Srv.Util
                 chatRooms.Add(file);
             }
 
-            // SetJsonChatRoomsToCache(chatRooms);
+            SetJsonChatRoomsToCache(chatRooms);
 
 
             return chatRooms;
