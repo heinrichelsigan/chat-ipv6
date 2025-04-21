@@ -1,0 +1,69 @@
+{
+  "_hash": "6DgCXbFf",
+  "_message": "room_0421_heinrich_elsigan.json",
+  "Sender": {
+    "_hash": "6ADCF5bg",
+    "_message": "",
+    "ContactId": 0,
+    "Cuid": "5cdd137c-b42a-44fa-8560-f213f2827368",
+    "Name": "Heinrich Elsigan",
+    "Email": "heinrich.elsigan@gmail.com",
+    "Mobile": "+436507527928",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "Heinrich Elsigan <heinrich.elsigan@gmail.com>",
+    "MsgType": 0,
+    "Message": "",
+    "SerializedMsg": "{\r\n  \"_hash\": \"6ADCF5bg\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6ADCF5bg\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+    "Hash": "6ADCF5bg",
+    "Md5Hash": "",
+    "CBytes": null
+  },
+  "Recipients": [
+    {
+      "_hash": "6ADCF5bg",
+      "_message": "room_0421_heinrich_elsigan.json",
+      "ContactId": 1,
+      "Cuid": "1e856819-fe11-4db4-930b-bb1efaaaa803",
+      "Name": "Michael Wüst",
+      "Email": "mw60@gmx.at",
+      "Mobile": "+436642149550",
+      "Address": "",
+      "SecretKey": "",
+      "ContactImage": null,
+      "NameEmail": "Michael Wüst <mw60@gmx.at>",
+      "MsgType": 0,
+      "Message": "room_0421_heinrich_elsigan.json",
+      "SerializedMsg": "{\r\n  \"_hash\": \"6ADCF5bg\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 1,\r\n  \"Cuid\": \"1e856819-fe11-4db4-930b-bb1efaaaa803\",\r\n  \"Name\": \"Michael Wüst\",\r\n  \"Email\": \"mw60@gmx.at\",\r\n  \"Mobile\": \"+436642149550\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": \"\",\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Michael Wüst <mw60@gmx.at>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6ADCF5bg\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+      "Hash": "6ADCF5bg",
+      "Md5Hash": "",
+      "CBytes": null
+    }
+  ],
+  "TContent": "",
+  "CRoom": {
+    "_hash": "",
+    "_message": "room_0421_heinrich_elsigan.json",
+    "ChatRuid": "1fdb63c8-b1ec-40b0-8f61-ffae12cb10ca",
+    "ChatRoomNr": "room_0421_heinrich_elsigan.json",
+    "TicksLong": [
+      638808438773236263
+    ],
+    "LastPushed": "0001-01-01T00:00:00",
+    "LastPolled": "2025-04-21T14:51:17.3236263",
+    "InvitedEmails": [],
+    "MsgType": 0,
+    "Message": "room_0421_heinrich_elsigan.json",
+    "SerializedMsg": "",
+    "Hash": "",
+    "Md5Hash": "",
+    "CBytes": ""
+  },
+  "MsgType": 0,
+  "Message": "room_0421_heinrich_elsigan.json",
+  "SerializedMsg": "",
+  "Hash": "6DgCXbFf",
+  "Md5Hash": "ac0c47996f1c6c0fa086971f38f34c08",
+  "CBytes": ""
+}

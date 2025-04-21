@@ -181,54 +181,57 @@ namespace Area23.At.Framework.Library.Cqr
 
 
         /// <summary>
-        /// SendChatMsg_Soap{<typeparamref name="T"/>, <typeparamref name="TC"/>} 
+        /// SendChatMsg_Soap
         /// </summary>
-        /// <param name="cServerMsg"><see cref="CSrvMsg{T}"/>, containing char room number, sender and recipients</param>
-        /// <param name="cClientMsg">client encrypted messagem, that server can't decrypt, <see cref="CSrvMsg{TC}"/></param>fullClientMsgfullClientMsg
+        /// <param name="cServerMsg"><see cref="CSrvMsg{string}"/>, containing char room number, sender and recipients</param>
+        /// <param name="cClientMsg">client encrypted messagem, that server can't decrypt, <see cref="CSrvMsg{string}"/></param>fullClientMsgfullClientMsg
         /// <param name="clientKey">clientKey for partner msg encryption</param>
         /// <param name="encodingType"><see cref="EncodingType"/> default to <see cref="EncodingType.Base64"/></param>
         /// <returns><see cref="CSrvMsg{string}"/>, containing char room number, last polled date, updated sender and recipients</returns>
-        public CSrvMsg<string> SendChatMsg_Soap<T, TC>(CSrvMsg<T> cServerMsg, CSrvMsg<TC> cClientMsg, string clientKey = "", EncodingType encodingType = EncodingType.Base64)
-            where T : class
-            where TC : class
+        public CSrvMsg<string> SendChatMsg_Soap(CSrvMsg<string> cServerMsg, CSrvMsg<string> cClientMsg, string clientKey = "", EncodingType encodingType = EncodingType.Base64)
         {
-            cServerMsg._hash += _symmPipe.PipeString;
-            string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
             SymmCipherPipe clientPipe = new SymmCipherPipe(clientKey);
-            cClientMsg._hash += clientPipe.PipeString;
+            cClientMsg._hash = clientPipe.PipeString;
             string cryptClientMsg = cClientMsg.EncryptToJson(clientKey);
-            
+
+            cServerMsg.TContent = cryptClientMsg;
+            cServerMsg._message = cryptClientMsg;
+
+            cServerMsg._hash = _symmPipe.PipeString;
+            string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
+                        
             CqrService webService = new CqrService();
-            string response = webService.ChatRoomPushMessage(cryptSrvMsg, cryptClientMsg);
-            
-            CSrvMsg<string> responseTmpMsg = new CSrvMsg<string>();
-            CSrvMsg<string> responseMsg = responseTmpMsg.DecryptFromJson(_key, response);
+            string response = webService.ChatRoomPush(cryptSrvMsg);
+
+            CSrvMsg<string> responseMsg = CSrvMsg<string>.FromJsonDecrypt(_key, response);
 
             return responseMsg;
         }
 
 
         /// <summary>
-        /// SendChatMsg_Soap_Simple{<typeparamref name="TS"/>} send a simple push message to the server
+        /// SendChatMsg_Soap_Simple sends a simple push message to the server
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="fullServerMsg"><see cref="CSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="fullServerMsg"><see cref="CSrvMsg{string}"/>, containing char room number, sender and recipients</param>
         /// <param name="encryptedClientMsg">already encrypted client msg, that server can't read</param>
         /// <param name="srvIp"></param>
         /// <param name="encodingType"></param>
         /// <returns><see cref="CSrvMsg{string}"/>, containing char room number, last polled date, updated sender and recipients</returns>
-        public CSrvMsg<string> SendChatMsg_Soap_Simple<TS>(CSrvMsg<TS> cServerMsg, string encryptedClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
-           where TS : class
+        public CSrvMsg<string> SendChatMsg_Soap_Simple(CSrvMsg<string> cServerMsg, string encryptedClientMsg, IPAddress srvIp, EncodingType encodingType = EncodingType.Base64)
         {
-            cServerMsg._hash = _symmPipe.PipeString; 
+
+            cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg._message = encryptedClientMsg;
+            cServerMsg.TContent = encryptedClientMsg;
+
             string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
 
             CqrService webService = new CqrService();
-            string response = webService.ChatRoomPushMessage(cryptSrvMsg, encryptedClientMsg);
+            string response = webService.ChatRoomPush(cryptSrvMsg);
 
-            CSrvMsg<string> responseTmpMsg = new CSrvMsg<string>();
-            CSrvMsg<string> responseMsg = responseTmpMsg.DecryptFromJson(_key, response);
-
+            CSrvMsg<string> responseMsg = CSrvMsg<string>.FromJsonDecrypt(_key, response);
+            
             return responseMsg;
         }
 
@@ -337,15 +340,27 @@ namespace Area23.At.Framework.Library.Cqr
             where T : class
             where TC : class
         {
-            cServerMsg._hash += _symmPipe.PipeString;
-            string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
+            T t = default(T);
+            TC tc = default(TC);
+
+            cServerMsg._hash = _symmPipe.PipeString;
             SymmCipherPipe clientPipe = new SymmCipherPipe(clientKey);
-            cClientMsg._hash += clientPipe.PipeString;
+            cClientMsg._hash = clientPipe.PipeString;
             string cryptClientMsg = cClientMsg.EncryptToJson(clientKey);
+            
+            cServerMsg._message = cryptClientMsg;
+            if ((t is string ts) || typeof(T) == typeof(string))
+            {
+                ts = cryptClientMsg;
+                cServerMsg.TContent = t;
+            }
+            
+            string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
+            
 
             CqrService webService = new CqrService();
 
-            string response = await Task.Run(() => webService.ChatRoomPushMessage(cryptSrvMsg, cryptClientMsg));
+            string response = await Task.Run(() => webService.ChatRoomPush(cryptSrvMsg));
 
             CSrvMsg<string> responseTmpMsg = new CSrvMsg<string>();
             CSrvMsg<string> responseMsg = responseTmpMsg.DecryptFromJson(_key, response);
@@ -355,26 +370,27 @@ namespace Area23.At.Framework.Library.Cqr
 
 
         /// <summary>
-        /// SendChatMsg_Soap_Simple{<typeparamref name="TS"/>} send a simple push message to the server
+        /// SendChatMsg_Soap_Simple
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="fullServerMsg"><see cref="CSrvMsg{T}"/>, containing char room number, sender and recipients</param>
+        /// <param name="fullServerMsg"><see cref="CSrvMsg{string}"/>, containing char room number, sender and recipients</param>
         /// <param name="encryptedClientMsg">already encrypted client msg, that server can't read</param>
         /// <param name="encodingType"></param>
         /// <returns><see cref="Task{CSrvMsg{string}}"/>, containing char room number, last polled date, updated sender and recipients</returns>
-        public async Task<CSrvMsg<string>> SendChatMsg_Soap_SimpleAsync<TS>(CSrvMsg<TS> cServerMsg, string encryptedClientMsg, EncodingType encodingType = EncodingType.Base64)
-           where TS : class
+        public async Task<CSrvMsg<string>> SendChatMsg_Soap_SimpleAsync(CSrvMsg<string> cServerMsg, string encryptedClientMsg, EncodingType encodingType = EncodingType.Base64)
         {
             cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg.TContent = encryptedClientMsg;
+            cServerMsg._message = encryptedClientMsg; 
+
             string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
 
             CqrService webService = new CqrService();
 
-            string response = await Task.Run(() => webService.ChatRoomPushMessage(cryptSrvMsg, encryptedClientMsg));
+            string response = await Task.Run(() => webService.ChatRoomPush(cryptSrvMsg));
 
-
-            CSrvMsg<string> responseTmpMsg = new CSrvMsg<string>();
-            CSrvMsg<string> responseMsg = responseTmpMsg.DecryptFromJson(_key, response);
+            
+            CSrvMsg<string> responseMsg = CSrvMsg<string>.FromJsonDecrypt(_key, response);
 
             return responseMsg;
         }

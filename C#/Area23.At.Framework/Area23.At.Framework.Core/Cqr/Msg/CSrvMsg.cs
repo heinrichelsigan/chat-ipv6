@@ -2,12 +2,12 @@
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System.Text;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
-
 
     /// <summary>
     /// CSrvMsg
@@ -25,11 +25,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public TC TContent { get; set; }
 
-        #region chatroom properties
-        
         public CChatRoom CRoom { get; set; }
-
-        #endregion chatroom properties
 
         [Newtonsoft.Json.JsonIgnore]
         protected internal List<string> Emails
@@ -60,7 +56,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 return cuids.ToList();
             }
         }
-
 
         [Newtonsoft.Json.JsonIgnore]
         protected internal CContact Recipient
@@ -113,12 +108,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Recipients = new HashSet<CContact>();
             TContent = null;
             CBytes = null;
-            CRoom = new CChatRoom();            
+            CRoom = new CChatRoom();
         }
 
         public CSrvMsg(string serializedString, CType msgArt = CType.Json) : base()
         {
-            CSrvMsg<TC>? deserializedSrvMsg = null;
+            CSrvMsg<TC> deserializedSrvMsg = null;
             if (string.IsNullOrEmpty(serializedString))
                 throw new CqrException("Can not deserialize null or empty serializedString.");
 
@@ -135,7 +130,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
             if (deserializedSrvMsg == null)
                 throw new CqrException("Can not deserialize serializedString to CSrvMsg<TC>.");
-            
+
             this.Sender = deserializedSrvMsg.Sender;
             this.Recipients = deserializedSrvMsg.Recipients;
             this.TContent = deserializedSrvMsg.TContent;
@@ -177,7 +172,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 _message = tc.ToString();
             else
                 _message = JsonConvert.SerializeObject(tc);
-            string allMsg = this.ToJson();            
+            string allMsg = this.ToJson();
             SerializedMsg = allMsg;
         }
 
@@ -195,11 +190,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Recipients = new HashSet<CContact>(tos);
             TContent = tc;
             _hash = hash;
-            CRoom = new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MinValue, DateTime.MinValue);            
-            if (tc is string || tc is int || tc is long || tc is byte || tc is short || tc is uint || tc is ulong || tc is ushort || tc is sbyte || tc is float || tc is double) 
+            CRoom = new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MinValue, DateTime.MinValue);
+            if (tc is string || tc is int || tc is long || tc is byte || tc is short || tc is uint || tc is ulong || tc is ushort || tc is sbyte || tc is float || tc is double)
                 _message = tc.ToString();
             else
-                _message = JsonConvert.SerializeObject(tc);                    
+                _message = JsonConvert.SerializeObject(tc);
             string allMsg = this.ToJson();
             SerializedMsg = allMsg;
         }
@@ -213,21 +208,36 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         {
             if (cSrvMsg != null)
             {
-                Sender = cSrvMsg.Sender;
-                Recipients = cSrvMsg.Recipients;
-                TContent = cSrvMsg.TContent;
-                _hash = cSrvMsg.Hash;
-                CRoom = cSrvMsg.CRoom;
-                _message = cSrvMsg.Message;
-                Md5Hash = cSrvMsg.Md5Hash;
-                SerializedMsg = cSrvMsg.SerializedMsg;
-                CBytes = cSrvMsg.CBytes;
-                MsgType = cSrvMsg.MsgType;
+                CCopy(this, cSrvMsg);
             }
         }
 
 
         #endregion ctor
+
+        public new CSrvMsg<TC> CCopy(CSrvMsg<TC> leftDest, CSrvMsg<TC> rightSrc)
+        {
+            if (rightSrc == null)
+                return null;
+            if (leftDest == null)
+                leftDest = new CSrvMsg<TC>(rightSrc);
+
+            leftDest._hash = rightSrc._hash;
+            leftDest._message = rightSrc._message;
+            leftDest.MsgType = rightSrc.MsgType;
+            leftDest.CBytes = rightSrc.CBytes;
+            leftDest.Md5Hash = rightSrc.Md5Hash;
+
+            leftDest.Sender = rightSrc.Sender;
+            leftDest.Recipients = rightSrc.Recipients;
+            leftDest.TContent = rightSrc.TContent;
+            leftDest.CRoom = rightSrc.CRoom;
+
+            leftDest.SerializedMsg = "";
+            leftDest.SerializedMsg = leftDest.ToJson();
+
+            return leftDest;
+        }
 
         #region EnDeCrypt+DeSerialize
 
@@ -317,7 +327,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
                 while (decrypted[decrypted.Length - 1] == '\0')
                     decrypted = decrypted.Substring(0, decrypted.Length - 1);
-                
+
                 if (!_hash.Equals(symmPipe.PipeString))
                     throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
                 string md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, decrypted), "");
@@ -348,7 +358,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return jsonText;
         }
 
-        public new CSrvMsg<TC> FromJson(string jsonText) 
+        public new CSrvMsg<TC> FromJson(string jsonText)
         {
             CSrvMsg<TC> cMsg = JsonConvert.DeserializeObject<CSrvMsg<TC>>(jsonText);
             try
@@ -357,7 +367,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 {
                     if (cSrvMsg != null && !string.IsNullOrEmpty(cSrvMsg.SerializedMsg))
                     {
-                        Sender = cSrvMsg.Sender;                        
+                        Sender = cSrvMsg.Sender;
                         Recipients = cSrvMsg.Recipients;
                         TContent = cSrvMsg.TContent;
                         CRoom = new CChatRoom(cSrvMsg.CRoom);
@@ -386,9 +396,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return xmlString;
         }
 
-        public new T? FromXml<T>(string xmlText)
+        public new T FromXml<T>(string xmlText)
         {
-            T? cqrT = Utils.DeserializeFromXml<T>(xmlText);
+            T cqrT = Utils.DeserializeFromXml<T>(xmlText);
             if (cqrT is CSrvMsg<TC> cSrvMsg)
             {
                 this.SerializedMsg = xmlText;
@@ -400,7 +410,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 this.TContent = cSrvMsg.TContent;
                 this.CRoom = cSrvMsg.CRoom;
                 this.Sender = cSrvMsg.Sender;
-                this.Recipients = cSrvMsg.Recipients;                
+                this.Recipients = cSrvMsg.Recipients;
             }
 
             return cqrT;
@@ -410,9 +420,45 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #endregion members
 
+        #region static members ToJsonEncrypt EncryptSrvMsg FromJsonDecrypt DecryptSrvMsg
 
-        #region static_members
-        
+        /// <summary>
+        /// Serialize <see cref="CSrvMsg{TC}"/> to Json Stting
+        /// </summary>
+        /// <returns>json serialized string</returns>
+        public static string ToJsonEncrypt(string serverKey, CSrvMsg<TC> cSrvMsg)
+        {
+            if (EncryptSrvMsg(serverKey, ref cSrvMsg))
+            {
+                string serializedJson = cSrvMsg.ToJson();
+                return serializedJson;
+            }
+            throw new CqrException($"EncryptToJson(string severKey, CSrvMsg<TC> cSrvMsg) failed");
+        }
+
+        public static bool EncryptSrvMsg(string serverKey, ref CSrvMsg<TC> cSrvMsg)
+        {
+            try
+            {
+                string hash = EnDeCodeHelper.KeyToHex(serverKey);
+                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
+                cSrvMsg._hash = hash;
+                cSrvMsg.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cSrvMsg._message), "");
+
+                byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cSrvMsg.Message);
+                byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
+
+                cSrvMsg.CBytes = cqrbytes;
+                cSrvMsg._message = "";
+            }
+            catch (Exception exCrypt)
+            {
+                CqrException.SetLastException(exCrypt);
+                throw;
+            }
+            return true;
+        }
+
         public static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized)
         {
             if (string.IsNullOrEmpty(serialized))
@@ -439,10 +485,21 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                     decrypted = decrypted.Substring(0, decrypted.Length - 1);
 
                 if (!cSrvMsg._hash.Equals(symmPipe.PipeString))
-                    throw new CqrException($"Hash: {cSrvMsg._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
-                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, decrypted), "");
+                {
+                    string errMsg = $"Hash: {cSrvMsg._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}";
+                    Area23Log.LogStatic(errMsg);
+                    // throw new CqrException(errMsg);
+                    ;
+                }
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, cSrvMsg._hash, symmPipe.PipeString, decrypted), "");
                 if (!md5Hash.Equals(cSrvMsg.Md5Hash))
-                    throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {cSrvMsg.Md5Hash}");
+                {
+                    string md5ErrExcMsg = $"md5Hash: {md5Hash} doesn't match property Md5Hash: {cSrvMsg.Md5Hash}";
+                    Area23Log.LogStatic(md5ErrExcMsg);
+                    // throw new CqrException(md5ErrExcMsg);
+                    ;
+                }
+
 
                 cSrvMsg._message = decrypted;
                 cSrvMsg.CBytes = new byte[0];
@@ -456,9 +513,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return cSrvMsg;
         }
 
-        #endregion static_members
-    
-    }
+        #endregion static members ToJsonEncrypt EncryptSrvMsg FromJsonDecrypt DecryptSrvMsg
 
+    }
 
 }

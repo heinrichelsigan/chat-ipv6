@@ -1,7 +1,5 @@
-﻿// using Area23.At.Framework.Core.CqrXs;
-using Area23.At.Framework.Core.Cqr;
-// using Area23.At.Framework.Core.Cqr.Srv;
-using Area23.At.Framework.Core.Cqr.WebSrv;
+﻿using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Cqr.Srv;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;

@@ -943,7 +943,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     SetStatusText(StripStatusLabel, $"Starting send to {chatRoomNr} via server {ServerIpAddress} ...");
 
                     // Send msg to WebService
-                    CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync<string>(fmsg, encrypted, EncodingType.Base64);
+                    CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync(fmsg, encrypted, EncodingType.Base64);
 
                     if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
                         rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
@@ -1096,7 +1096,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, chatRoomNr);
 
                             // Send to WebService
-                            CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync<string>(fmsg, encrypted, EncodingType.Base64);
+                            CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync(fmsg, encrypted, EncodingType.Base64);
 
                             if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
                                 rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
@@ -1578,7 +1578,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         string encrypted = cfile.EncryptToJson(myServerKey);
 
                         // Send message to WebService
-                        CSrvMsg<string> rfmsg = ddFacade.SendChatMsg_Soap_Simple<string>(fmsg, encrypted, EncodingType.Base64);
+                        CSrvMsg<string> rfmsg = ddFacade.SendChatMsg_Soap_Simple(fmsg, encrypted, EncodingType.Base64);
                         
                         if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
                             rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))

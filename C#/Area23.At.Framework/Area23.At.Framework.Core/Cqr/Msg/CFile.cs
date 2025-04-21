@@ -8,6 +8,8 @@ using System.Text;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
+
+    [Serializable]
     public class CFile : CContent, IMsgAble
     {
 
@@ -40,7 +42,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             MsgType = CType.None;
         }
 
-
         public CFile(string fileName, byte[] data, string hash = "")
         {
             FileName = fileName;            
@@ -48,8 +49,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = MimeType.GetMimeType(Data, FileName);
             _hash = hash;
             MsgType = CType.Json;
-            Md5Hash = MD5Sum.Hash(Data, "");
-            Sha256Hash = "";
+            Md5Hash = "";
+            Sha256Hash = Sha256Sum.Hash(Data, "");
             FileByteLen = Data.LongLength;
             EnCodingType = EncodingType.Base64;
         }
@@ -65,9 +66,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Data = Convert.FromBase64String(base64);
             Base64Type = MimeType.GetMimeType(Data, FileName);
             _hash = hash;
-            Md5Hash = MD5Sum.Hash(Data, "");
+            Md5Hash = "";
             FileByteLen = Data.LongLength;
-            Sha256Hash = "";
+            Sha256Hash = Sha256Sum.Hash(Data, "");
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
         }
@@ -76,7 +77,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         {            
             Base64Type = mimeType;            
         }
-
 
         public CFile(string fileName, string mimeType, byte[] data, string hash, string sMd5 = "", string sSha256 = "")
              : this(fileName, mimeType, data, hash)
@@ -103,9 +103,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             FileName = fi.Name;            
             Data = System.IO.File.ReadAllBytes(fi.FullName);
             Base64Type = MimeType.GetMimeType(Data, FileName);
-            Md5Hash = MD5Sum.Hash(Data, "");
+            Md5Hash = "";
             FileByteLen = Data.LongLength;
-            Sha256Hash = "";
+            Sha256Hash = Sha256Sum.Hash(Data, "");
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
             this._hash = hash;
@@ -120,8 +120,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             FileName = Path.GetFileName(filePath);
             Data = System.IO.File.ReadAllBytes(filePath);
             Base64Type = MimeType.GetMimeType(Data, FileName);
-            Md5Hash = MD5Sum.Hash(Data, "");
-            Sha256Hash = "";
+            Md5Hash = "";
+            Sha256Hash = Sha256Sum.Hash(Data, "");
             MsgType = msgArt;
             EnCodingType = EncodingType.Base64;
             this._hash = hash;
@@ -137,23 +137,48 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         public CFile(string plainText, CType msgArt = CType.Json)
         {
             CFile cf = GetCFile(plainText, msgArt);
-            FileName = cf.FileName;
-            Base64Type = cf.Base64Type;
-            Data = cf.Data;
-            Md5Hash = cf.Md5Hash;
-            Sha256Hash = cf.Sha256Hash;
-            FileByteLen = cf.FileByteLen;
-            _hash = cf._hash;
-            _message = cf._message;
-            SerializedMsg = cf.SerializedMsg;
-            EnCodingType = cf.EnCodingType;
-            MsgType = cf.MsgType;            
-            CBytes = cf.CBytes;                        
-            Base64Type = cf.Base64Type;
+            CCopy(this, cf);
+        }
+
+
+        /// <summary>
+        /// CFile constructor with antoher <see cref="CFile"/> to clone
+        /// </summary>
+        /// <param name="cFile"><see cref="CFile"/> to clone</param>
+        public CFile(CFile cFile) : this()
+        {
+            if (cFile != null)
+                CCopy(this, cFile);
         }
 
         #endregion ctors
 
+
+        public new CFile? CCopy(CFile? leftDest, CFile? rightSrc)
+        {
+            if (rightSrc == null)
+                return null;
+            if (leftDest == null)
+                leftDest = new CFile(rightSrc);
+
+            leftDest._message = rightSrc._message;
+            leftDest._hash = rightSrc._hash;
+            leftDest.MsgType = rightSrc.MsgType;
+            leftDest.CBytes = rightSrc.CBytes;
+            leftDest.Md5Hash = rightSrc.Md5Hash;
+
+            leftDest.FileName = rightSrc.FileName;
+            leftDest.Base64Type = rightSrc.Base64Type;
+            leftDest.Data = rightSrc.Data;
+            leftDest.Sha256Hash = rightSrc.Sha256Hash;
+            leftDest.FileByteLen = rightSrc.FileByteLen;
+            leftDest.EnCodingType = rightSrc.EnCodingType;
+            leftDest.Base64Type = rightSrc.Base64Type;
+            leftDest.SerializedMsg = "";
+            leftDest.SerializedMsg = leftDest.ToJson();
+
+            return leftDest;
+        }
 
 
         #region EnDeCrypt+DeSerialize
@@ -167,43 +192,16 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public override string EncryptToJson(string serverKey)
         {
-            if (Encrypt(serverKey))
-            {
-                string serializedJson = ToJson();
-                return serializedJson;
-            }
-            throw new CqrException($"EncryptToJson(string severKey failed");
+            CFile cFile = new CFile(this);
+            string serializedJson = ToJsonEncrypt(serverKey, ref cFile);
+            if (string.IsNullOrEmpty(serializedJson))
+                throw new CqrException($"override string EncryptToJson(string serverKey) failed");
+
+            return serializedJson;
         }
 
 
-        public override bool Encrypt(string serverKey)
-        {
-            try
-            {
-                string hash = EnDeCodeHelper.KeyToHex(serverKey);
-                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                _hash = symmPipe.PipeString;
-                Md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, _message), "");
-                Sha256Hash = Sha256Sum.Hash(this.Data, "");
-                FileByteLen = this.Data.LongLength;
-                
-
-                byte[] msgBytes = Data;
-                byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
-                
-                CBytes = cqrbytes;
-                Data = new byte[0];
-            }
-            catch (Exception exCrypt)
-            {
-                CqrException.SetLastException(exCrypt);
-                return false;
-            }
-            return true;
-        }
-
-
-        public override CFile? DecryptFromJsonFromBytes(string serverKey, byte[] serializedBytes)
+        public new CFile? DecryptFromJsonFromBytes(string serverKey, byte[] serializedBytes)
         {
             string serialized = Encoding.UTF8.GetString(serializedBytes);
             CFile? cFile = DecryptFromJson(serverKey, serialized);
@@ -211,80 +209,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         }
 
 
-        public override CFile? DecryptFromJson(string serverKey, string serialized = "") 
+        public new CFile? DecryptFromJson(string serverKey, string serialized = "") 
         {
-            if (string.IsNullOrEmpty(serialized))
-                serialized = this.SerializedMsg;
+            CFile? cfile = FromJsonDecrypt(serverKey, serialized);
+            if (cfile == null)
+                throw new CqrException($"override File? DecryptFromJson(string serverKey, string serialized) failed");                
 
-            if (serialized.Contains("FileName") && serialized.Contains("Base64Type"))
-            {
-                CFile? cf = FromJson<CFile>(serialized);
-                if (cf != null && Decrypt(serverKey))
-                {
-                    cf._message = _message;
-                    cf.CBytes = CBytes;
-                    cf.Data = Data;
-                    cf.Md5Hash = Md5Hash;
-                    cf.Sha256Hash = Sha256Hash;
-                    cf.FileByteLen = FileByteLen;
-                    cf.FileName = FileName;
-                    cf.EnCodingType = EnCodingType;
-                    cf.MsgType = MsgType;
-                    cf.SerializedMsg = SerializedMsg;
-                    cf._hash = _hash;
-                    cf.Base64Type = Base64Type;
-                    return cf;
-                }
-            }
-                       
-
-            throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
+            return CCopy(this, cfile);            
         }
-
-
-        public override bool Decrypt(string serverKey)
-        {
-            try
-            {
-                string hash = EnDeCodeHelper.KeyToHex(serverKey);
-                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-
-                byte[] cipherBytes = CBytes;
-                byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
-
-
-                if (!_hash.Equals(symmPipe.PipeString))
-                    throw new CqrException($"Hash: {_hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
-
-                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, _hash, symmPipe.PipeString, _message), "");
-                long decByteLen = unroundedMerryBytes.LongLength;
-                if (this.FileByteLen != decByteLen)
-                {
-                    Area23Log.LogStatic($"byte len of decrypted = {decByteLen} != FileByteLen {FileByteLen}.");
-                }
-                if (!md5Hash.Equals(Md5Hash))
-                {
-                    ;
-                    throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");                    
-                }
-                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
-                if (!sha256Hash.Equals(this.Sha256Hash))
-                {
-                    Area23Log.LogStatic($"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {this.Sha256Hash}.");
-                    // throw new CqrException($"Sha256: {sha256Hash} doesn't match property Sha256Hash: {Sha256Hash}");
-                }
-
-                Data = unroundedMerryBytes;
-                CBytes = new byte[0];
-            }
-            catch (Exception exCrypt)
-            {
-                CqrException.SetLastException(exCrypt);
-                return false;
-            }
-            return true;
-        }
-
 
 
         #endregion EnDeCrypt+DeSerialize
@@ -318,33 +250,16 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             T t = JsonConvert.DeserializeObject<T>(jsonText);
             if (t != null)
             {
-                if (t is CContent mc)
-                {
-                    this._hash = mc.Hash;
-                    this._message = mc.Message;
-                    this.SerializedMsg = mc.SerializedMsg;
-                    this.MsgType = mc.MsgType;
-                    this.Md5Hash = mc.Md5Hash;
-                    this.CBytes = mc.CBytes;
-                }
                 if (t is CFile cf)
                 {
-                    FileName = cf.FileName;
-                    Base64Type = cf.Base64Type;
-                    Data = cf.Data;
-                    MsgType = CType.Json;
-                    Md5Hash = cf.Md5Hash;
-                    Sha256Hash = cf.Sha256Hash;
-                    _message = cf.Message;
-                    SerializedMsg = cf.SerializedMsg;
-                    _hash = cf._hash ?? string.Empty;
+                    CCopy(this, cf);
                 }
 
             }
             return t;
         }
 
-        public virtual string ToXml()
+        public override string ToXml()
         {
             SerializedMsg = "";
             SerializedMsg = Utils.SerializeToXml<CContent>(this);
@@ -358,19 +273,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             cqrT = base.FromXml<T>(xmlText);
             if (cqrT is CFile cf)
             {
-                this.Base64Type = cf.Base64Type;
-                this.Data = cf.Data;
-                this.Base64Type = cf.Base64Type;
-                this.EnCodingType = cf.EnCodingType;
-                this.Data = cf.Data;
-                MsgType = CType.Xml;
-                Md5Hash = cf.Md5Hash;
-                Sha256Hash = cf.Sha256Hash;
-                this._hash = cf._hash ?? string.Empty;
-                this._message = cf._message;
-                this.MsgType = cf.MsgType;
-                this.SerializedMsg = cf.SerializedMsg;
-
+                CCopy(this, cf);
             }
 
             return cqrT;
@@ -467,7 +370,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #region static members
 
-
+        #region static members SaveCqrFile LoadCqrFile GetByBase64Attachment
 
         public static void SaveCqrFile(CFile file, string directoryPath)
         {
@@ -480,7 +383,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return;
         }
 
-
         public static CFile LoadCqrFile(string filePath)
         {
             if (!System.IO.File.Exists(filePath))
@@ -492,7 +394,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             CFile cfile = new CFile(fileName, mimeType, data, "");
             return cfile;
         }
-
 
 
         internal static bool GetByBase64Attachment(string plainAttachment,
@@ -543,6 +444,125 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return isMimeAttachment;
 
         }
-        #endregion static members
+
+        #endregion static members SaveCqrFile LoadCqrFile GetByBase64Attachment
+
+
+        #region static members ToJsonEncrypt EncryptSrvMsg FromJsonDecrypt DecryptSrvMsg
+
+        /// <summary>
+        /// ToJsonEncrypt
+        /// </summary>
+        /// <param name="serverKey">server key to encrypt</param>
+        /// <param name="ccntct"><see cref="CContact"/> to encrypt and serialize</param>
+        /// <returns>a serialized <see cref="string" /> of encrypted <see cref="CContact"/></returns>
+        /// <exception cref="CqrException"></exception>
+        public static string ToJsonEncrypt(string serverKey, ref CFile cfile)
+        {
+            if (string.IsNullOrEmpty(serverKey) || cfile == null)
+                throw new CqrException($"static string ToJsonEncrypt(string serverKey, ref CFile cfile) failed: NULL reference!");
+
+            if (!EncryptSrvMsg(serverKey, ref cfile))
+                throw new CqrException($"static string ToJsonEncrypt(string serverKey, ref CFile cfile) failed.");
+
+            string serializedJson = cfile.ToJson();
+            return serializedJson;
+        }
+
+        public static bool EncryptSrvMsg(string serverKey, ref CFile cfile)
+        {
+            try
+            {
+                string hash = EnDeCodeHelper.KeyToHex(serverKey);
+                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
+                cfile._hash = hash;
+                cfile.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cfile._message), "");
+                cfile.Sha256Hash = Sha256Sum.Hash(cfile.Data, "");
+
+                byte[] msgBytes = cfile.Data;
+                byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
+
+                cfile.CBytes = cqrbytes;
+                cfile.Data = new byte[0];
+            }
+            catch (Exception exCrypt)
+            {
+                CqrException.SetLastException(exCrypt);
+                throw;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// FromJsonDecrypt
+        /// </summary>
+        /// <param name="serverKey">server key to decrypt</param>
+        /// <param name="serialized">serialized string of <see cref="CFile"/></param>
+        /// <returns>deserialized and decrypted <see cref="CFile"/></returns>
+        /// <exception cref="CqrException">thrown, 
+        /// when serialized string to decrypt and deserialize is either null or empty 
+        /// or <see cref="CFile"/> can't be decrypted and deserialized.
+        /// </exception>
+        public static CFile FromJsonDecrypt(string serverKey, string serialized)
+        {
+            if (string.IsNullOrEmpty(serialized))
+                throw new CqrException("static CFile FromJsonDecrypt(string serverKey, string serialized): serialized is null or empty.");
+
+            CFile cfile = new CFile(serialized, CType.Json);
+            cfile = DecryptSrvMsg(serverKey, ref cfile);
+            if (cfile == null)
+                throw new CqrException($"static CFile FromJsonDecrypt(string serverKey, string serialized) failed.");
+
+            return cfile;
+        }
+
+        public static CFile DecryptSrvMsg(string serverKey, ref CFile cfile)
+        {
+            try
+            {
+                string hash = EnDeCodeHelper.KeyToHex(serverKey);
+                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
+
+                byte[] cipherBytes = cfile.CBytes;
+                byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
+
+                if (!cfile._hash.Equals(symmPipe.PipeString))
+                    throw new CqrException($"Hash: {cfile._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, cfile._hash, symmPipe.PipeString, cfile._message), "");
+                if (!md5Hash.Equals(cfile.Md5Hash))
+                {
+                    string md5ErrMsg = $"md5Hash: {md5Hash} doesn't match property Md5Hash: {cfile.Md5Hash}";
+                    Area23Log.LogStatic(md5ErrMsg);
+                    // throw new CqrException(md5ErrMsg);
+                }
+                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
+                if (!sha256Hash.Equals(cfile.Sha256Hash))
+                {
+                    string sha256ErrMsg = $"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {cfile.Sha256Hash}.";
+                    Area23Log.LogStatic(sha256ErrMsg);
+                    // throw new CqrException(sha256ErrMsg);
+                }
+
+                cfile.Data = unroundedMerryBytes;
+                cfile.CBytes = new byte[0];
+
+            }
+            catch (Exception exCrypt)
+            {
+                CqrException.SetLastException(exCrypt);
+                throw;
+            }
+
+            return cfile;
+        }
+
+        #endregion static members ToJsonEncrypt EncryptSrvMsg FromJsonDecrypt DecryptSrvMsg
+
+
+        #endregion static members 
+
     }
+
 }
