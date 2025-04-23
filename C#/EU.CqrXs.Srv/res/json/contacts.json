@@ -38,7 +38,7 @@
     "CBytes": null
   },
   {
-    "_hash": "6ADCF5bg",
+    "_hash": "6ACFb5Dg",
     "_message": "",
     "ContactId": 0,
     "Cuid": "5cdd137c-b42a-44fa-8560-f213f2827368",
@@ -51,8 +51,8 @@
     "NameEmail": "Heinrich Elsigan <heinrich.elsigan@gmail.com>",
     "MsgType": 0,
     "Message": "",
-    "SerializedMsg": "{\r\n  \"_hash\": \"6ADCF5bg\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6ADCF5bg\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
-    "Hash": "6ADCF5bg",
+    "SerializedMsg": "{\r\n  \"_hash\": \"6ACFb5Dg\",\r\n  \"_message\": \"\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6ACFb5Dg\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+    "Hash": "6ACFb5Dg",
     "Md5Hash": "",
     "CBytes": null
   },

@@ -15,13 +15,11 @@ using EU.CqrXs.WinForm.SecureChat.Util;
 using Newtonsoft.Json.Linq;
 using CqrContact = Area23.At.Framework.Core.Cqr.Msg.CContact;
 
-// using Microsoft.VisualBasic;
 using System.ComponentModel;
 using System.Formats.Tar;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime;
-// using System.Runtime.InteropServices.JavaScript;
 using System.Threading.Tasks;
 using Area23.At.Framework.Core.Crypt.Hash;
 using System.Windows.Interop;
@@ -795,7 +793,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 friendContact._hash = GetHash();
             
 
-            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, myContact.Email, serverFacade.PipeString);
+            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, sessionChatText, serverFacade.PipeString);
             string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\n";
             SetTextBoxText(TextBoxSource, chat.AddMyMessage(myReqMsg));
 
@@ -813,17 +811,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetTextBoxText(TextBoxChatSession, rfmsg.CRoom.ChatRoomNr);
             
 
-            if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+            if (rfmsg != null)
             {
-                myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, clientFacade.PipeString, myContact.ContactImage);
-                Settings.Singleton.MyContact = myContact;
-                Settings.SaveSettings(Settings.Singleton);
-                //if (rfmsg.Recipients != null && rfmsg.Recipients.Count > 0)
-                //{
-                //    if (!string.IsNullOrEmpty(rfmsg.Recipients.ElementAt(0).NameEmail))
-                //        SetComboBoxText(this.ComboBoxContacts, rfmsg.Recipients.ElementAt(0).NameEmail);
-                //}
+                if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                    rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+            {
+                    if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                        rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                        Settings.Singleton.MyContact = myContact;
+                    }
+                    if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
+                    {
+                        SetTextBoxText(TextBoxChatSession, rfmsg.CRoom.ChatRoomNr);
+                        Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);                        
+                    }
+
+                    SetStatusText(StripStatusLabel, $"Successfully sended invite request, now saving results from chatroom...");
+                    Settings.SaveSettings(Settings.Singleton);
+                }
             }
 
             // TODO: Email zur Einladung
@@ -937,21 +944,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     string encrypted = msg.EncryptToJson(myServerKey);
 
                     // Server message to webservice with myContact, friendContact, chatRoomNr, 
-                    CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, chatRoomNr);
+                    CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, Settings.Singleton.ChatRoom);
                     
 
                     SetStatusText(StripStatusLabel, $"Starting send to {chatRoomNr} via server {ServerIpAddress} ...");
 
                     // Send msg to WebService
                     CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync(fmsg, encrypted, EncodingType.Base64);
-
-                    if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                        rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                    if (rfmsg != null)
                     {
-                        myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
-                        Settings.Singleton.MyContact = myContact;
+                        if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                            rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                            Settings.Singleton.MyContact = myContact;
+                        }
+                        if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
+                            Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
+
+                        SetStatusText(StripStatusLabel, $"Send server message, now saving results from chatroom...");
                         Settings.SaveSettings(Settings.Singleton);
                     }
+                   
 
                     // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                     // AppendText(TextBoxDestionation, chat.AddFriendMessage(msgChatRoom));
@@ -1086,23 +1100,31 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         if (cfile != null && !string.IsNullOrEmpty(chatRoomNr))
                         {
                             // save base64 transformed file under attachments
-                            string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cfile.FileName + Constants.BASE64_EXT);
-                            System.IO.File.WriteAllText(base64FilePath, cfile.ToBase64());
-
+                            // string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cfile.FileName + Constants.BASE64_EXT);
+                            // System.IO.File.WriteAllText(base64FilePath, cfile.ToBase64());
                             // encrypt CFile with CqrXsEuSrvKey and json serialize it 
                             encrypted = cfile.EncryptToJson(myServerKey);
+                            SetStatusText(StripStatusLabel, $"File {cfile.FileName} enrypted with client, now generating server message.");
 
                             // generate session chat server msg with serverFacade.PipeString
-                            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, chatRoomNr);
+                            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, encrypted, serverFacade.PipeString, Settings.Singleton.ChatRoom);
+                            SetStatusText(StripStatusLabel, $"Generated server message with encrypted file inside, prepating to send...");
 
                             // Send to WebService
                             CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync(fmsg, encrypted, EncodingType.Base64);
-
-                            if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                                rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                            
+                            if (rfmsg != null)
                             {
-                                myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
-                                Settings.Singleton.MyContact = myContact;
+                                if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                                    rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                                    Settings.Singleton.MyContact = myContact;
+                                }
+                                if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
+                                    Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
+
+                                SetStatusText(StripStatusLabel, $"Send server message with encrypted file inside, now saving results from chatroom...");
                                 Settings.SaveSettings(Settings.Singleton);
                             }
 
@@ -1194,35 +1216,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
                 CContent msg = new CContent("", clientFacade.PipeString, CType.Json, "");
-                if (rfmsg == null || string.IsNullOrEmpty(rfmsg.TContent))
+                if (rfmsg == null)
                 {
-                    if (rfmsg == null)
-                    {
-                        MessageBox.Show("Empty message or empty body", "Message from Service is null or body is empty!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-
+                    MessageBox.Show("Empty message or empty body", "Message from Service is null or body is empty!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else if (rfmsg != null)
+                {
                     if (string.IsNullOrEmpty(rfmsg.TContent))
                     {
                         string msgCntn = $"Invitation from {rfmsg.Sender.NameEmail} to {rfmsg.CRoom.ChatRoomNr}";
                         msg = new CContent(msgCntn, clientFacade.PipeString, CType.Json, MD5Sum.HashString(msgCntn));
                         rfmsg.TContent = msg.EncryptToJson(myServerKey);
                     }
-                }
 
-                if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail))
-                {
-                    if (rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                    if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                        rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        myContact = new CqrContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                        myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                        Settings.Singleton.MyContact = myContact;
                     }
-                    else
-                    {
-                        myContact = new CqrContact(Settings.Singleton.MyContact, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);                        
-                    }
-                    Settings.Singleton.MyContact = myContact;
+                    if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
+                        Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
+
+                    SetStatusText(StripStatusLabel, $"Successfully sended server message, now saving results from chatroom...");
                     Settings.SaveSettings(Settings.Singleton);
                 }
-
+                        
                 string msgChatRoom = "ChatRoomNr: " + rfmsg.CRoom.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                 string friendMsg = "";
                 CContent msgContent;
@@ -1549,44 +1568,48 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         string contactNameEmail = GetComboBoxText(ComboBoxContacts);
 
-                        CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, euFacade.PipeString);                        
+                        CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, euFacade.PipeString);
                         CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, euFacade.PipeString);
-                        
+
                         SetTextBoxText(this.TextBoxPipe, ddFacade.PipeString);
                         // this.TextBoxPipe.Text = serverMessage.PipeString;
                         // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                         myContact._hash = GetHash();
-                        myContact._message = chatRoomNr;                        
-                        friendContact._message = chatRoomNr;                        
+                        myContact._message = chatRoomNr;
+                        friendContact._message = chatRoomNr;
 
                         string filename = ea.GenericTData;
-                        CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, chatRoomNr, euFacade.PipeString, chatRoomNr);
-                        // CSrvMsg<string> cmsg = new CSrvMsg<string>(myContact, friendContact, unencrypted, serverMessage.ClientPipeString, chatRoomNr);
-                        // ClientSrvMsg<string, string> ccmsg = new ClientSrvMsg<string, string>(fmsg, cmsg, chatRoomNr, unencrypted);
-                        // string encrypted[] = serverMessage.CqrSrvMsg(fmsg, cmsg, EncodingType.Base64);
-
+                                                                        
                         string md5 = Area23.At.Framework.Core.Crypt.Hash.MD5Sum.Hash(filename, true);
                         string sha256 = Area23.At.Framework.Core.Crypt.Hash.Sha256Sum.Hash(filename, true);
-
                         byte[] fileBytes = File.ReadAllBytes(filename);
                         string fileNameOnly = Path.GetFileName(filename);
-
                         string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
 
                         CFile cfile = new CFile(fileNameOnly, mimeType, fileBytes, ddFacade.PipeString, md5, sha256);
-                        
-                        string encrypted = cfile.EncryptToJson(myServerKey);
+                        string encryptedFileMsg = cfile.EncryptToJson(myServerKey);
+                        SetStatusText(StripStatusLabel, $"File {cfile.FileName} enrypted with client, now generating server message.");
+
+                        CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, encryptedFileMsg, euFacade.PipeString, Settings.Singleton.ChatRoom);
+                        SetStatusText(StripStatusLabel, $"Generated server message with encrypted file inside, prepating to send...");
 
                         // Send message to WebService
-                        CSrvMsg<string> rfmsg = ddFacade.SendChatMsg_Soap_Simple(fmsg, encrypted, EncodingType.Base64);
-                        
-                        if (rfmsg != null && rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                            rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                        CSrvMsg<string> rfmsg = ddFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
+                        if (rfmsg != null)
                         {
-                            myContact = new CqrContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
-                            Settings.Singleton.MyContact = myContact;
+                            if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                                rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                                Settings.Singleton.MyContact = myContact;
+                            }
+                            if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
+                                Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
+
+                            SetStatusText(StripStatusLabel, $"Send server message, now saving results from chatroom...");
                             Settings.SaveSettings(Settings.Singleton);
                         }
+
 
                         // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                         // this.TextBoxDestionation.Text = msgChatRoom;
@@ -1595,7 +1618,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         Format_Lines_RichTextBox();
                         this.RichTextBoxChat.Text = string.Empty;
                         PlaySoundFromResource("sound_push");
-                        SetStatusText(StripStatusLabel, $"File {cfile.FileName} send to chatroom number {chatRoomNr} successfully!");
+                        SetStatusText(StripStatusLabel, $"File {cfile.FileName} successfully send to {chatRoomNr} !");
 
                     }
                 }

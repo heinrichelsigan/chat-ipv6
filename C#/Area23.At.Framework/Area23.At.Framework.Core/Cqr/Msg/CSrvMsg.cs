@@ -176,6 +176,30 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             SerializedMsg = allMsg;
         }
 
+        /// <summary>
+        /// Please always use this constuctor
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="to"></param>
+        /// <param name="tc"></param>
+        /// <param name="hash"></param>
+        public CSrvMsg(CContact sender, CContact to, TC tc, string hash, CChatRoom chatRoom) : base()
+        {
+            Sender = sender;
+            CContact[] tos = (to != null) ? new CContact[1] { to } : new CContact[0];
+            Recipients = new HashSet<CContact>(tos);
+            TContent = tc;
+            _hash = hash;
+            CRoom = new CChatRoom(chatRoom) { TicksLong = new List<long>(chatRoom.TicksLong) };
+            if (tc is string || tc is int || tc is long || tc is byte || tc is short || tc is uint || tc is ulong || tc is ushort || tc is sbyte || tc is float || tc is double)
+                _message = tc.ToString();
+            else
+                _message = JsonConvert.SerializeObject(tc);
+            string allMsg = this.ToJson();
+            SerializedMsg = allMsg;
+        }
+
+
 
         /// <summary>
         /// Please always use this constuctor
