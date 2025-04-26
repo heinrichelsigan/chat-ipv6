@@ -12,6 +12,7 @@ using EU.CqrXs.Srv.Util;
 using EU.CqrXs.Srv.Settings;
 using EU.CqrXs.Srv.Properties;
 using Area23.At.Framework.Library.Util;
+using Area23.At.Framework.Library.Static;
 
 namespace EU.CqrXs.Srv.Settings
 {
@@ -93,8 +94,8 @@ namespace EU.CqrXs.Srv.Settings
                 allStrng = tmpStrg + allStrng;
 
 
-                this.LiteralClientIp.Text = clientIp.ToString();
-                Area23Log.LogStatic("ClientIp: " + clientIp.ToString());
+                this.LiteralClientIp.Text = myServerKey.Replace(Constants.APP_NAME, "").ToString();
+                Area23Log.LogStatic("ClientIp: " + myServerKey.Replace(Constants.APP_NAME, "").ToString());
             }
         }
 

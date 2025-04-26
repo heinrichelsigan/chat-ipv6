@@ -52,8 +52,8 @@ namespace EU.CqrXs.Srv
             allStrng = tmpStrg + allStrng;
             
             
-            this.LiteralClientIp.Text = clientIp.ToString();
-            Area23Log.LogStatic("ClientIp: " + clientIp.ToString());
+            this.LiteralClientIp.Text = myServerKey.Replace(Constants.APP_NAME, "").ToString();
+            Area23Log.LogStatic("ClientIp: " + myServerKey.Replace(Constants.APP_NAME, "").ToString());
 
 
             if (!Page.IsPostBack)

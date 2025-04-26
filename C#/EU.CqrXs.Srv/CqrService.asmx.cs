@@ -157,8 +157,8 @@ namespace EU.CqrXs.Srv
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);              // decrypt FullSrvMsg<string>
-                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);           // decrypt FullSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);    // decrypt FullSrvMsg<string>
+                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);            // decrypt FullSrvMsg<string>
                     _contact = cSrvMsg.Sender;
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
 
@@ -181,7 +181,7 @@ namespace EU.CqrXs.Srv
                             {
                                 chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);
                                 polledPtr = pollKeys[1];
-                                firstPollClientMsg = dict[polledPtr];
+                                    firstPollClientMsg = dict[polledPtr];
                             }
                                                         
                             chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);
@@ -260,8 +260,8 @@ namespace EU.CqrXs.Srv
                         UpdateContact(_contact);
                         chatRoomMsg = JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
                         chatRoomMsg.CRoom.LastPushed = now;
-                        chatRoomMsg.Sender._message = _chatRoomNumber;                        
-
+                        chatRoomMsg.CRoom.TicksLong.Remove(now.Ticks);
+                        chatRoomMsg.Sender._message = _chatRoomNumber; 
                     }
                     else
                         chatRoomMsg.TContent = cSrvMsg.Sender.NameEmail + " has no permission for chat room " + _chatRoomNumber;

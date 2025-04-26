@@ -40,7 +40,7 @@ namespace EU.CqrXs.Srv.Util
         protected internal string myServerKey = string.Empty;
         protected internal HashSet<CContact> _contacts;
         protected internal CContact myContact = null;
-        protected internal IPAddress clientIp;
+        // protected internal IPAddress clientIp;
 
 
         public System.Globalization.CultureInfo Locale
@@ -74,8 +74,8 @@ namespace EU.CqrXs.Srv.Util
 
         protected virtual void Page_Init(object sender, EventArgs e)
         {
-            
-            myServerKey = string.Empty;
+
+            myServerKey = GetServerKey();
             allStrng = string.Empty;
             myContact = null;
             if (Application[Constants.JSON_CONTACTS] != null)
@@ -93,10 +93,11 @@ namespace EU.CqrXs.Srv.Util
                 Page_Init(sender, e); 
             }
             
-            clientIp = GetClientExternalIp();
-            myServerKey = clientIp.ToString();
-            allStrng = "UserHostAddress: " + myServerKey + Environment.NewLine;
-            myServerKey += Constants.APP_NAME;
+            
+            // clientIp = GetClientExternalIp();
+            myServerKey = GetServerKey();
+            allStrng = "UserHostAddress: " + myServerKey.Replace(Constants.APP_NAME, "") + Environment.NewLine;
+            // myServerKey += Constants.APP_NAME;
 
             if (Request.Headers["User-Agent"] != null)
                 tmpStrg = (string)Request.Headers["User-Agent"];
@@ -130,18 +131,63 @@ namespace EU.CqrXs.Srv.Util
 
 
 
+        protected string GetServerKey()
+        {
+            // _serverKey = Constants.AUTHOR_EMAIL;            
+
+            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
+            {
+                myServerKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
+            }
+            else
+                myServerKey = HttpContext.Current.Request.UserHostAddress;
+            myServerKey += Constants.APP_NAME;
+
+            return myServerKey;
+        }
 
         public virtual IPAddress GetClientExternalIp()
         {
-            string externalClientIp = Request.UserHostAddress;
-            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
+            string externalClientIp = (ConfigurationManager.AppSettings["ExternalClientIP"] != null) ?
+                (string)ConfigurationManager.AppSettings["ExternalClientIP"] : null;
+
+            string externalClientIpv4 = (ConfigurationManager.AppSettings["ExternalClientIPv4"] != null) ?
+               (string)ConfigurationManager.AppSettings["ExternalClientIPv4"] : null;
+
+            if (string.IsNullOrEmpty(externalClientIp))
+                externalClientIp = Request.UserHostAddress;
+
+            if (!IPAddress.TryParse(externalClientIp, out IPAddress clientIpAddr))
             {
-                externalClientIp = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
+                string reducedExternal = "";
+                foreach (char ch in externalClientIp) {
+                    if ((ch >= '0' && ch <= '9') ||
+                        (ch >= 'a' && ch <= 'f') ||
+                        (ch >= 'A' && ch <= 'F') ||
+                        (ch == '.' && ch == ':'))
+                    {
+                        reducedExternal += ch;
+                    }
+                }
+                externalClientIp = reducedExternal;
+                if (externalClientIp.Contains(":"))
+                {
+                    List<byte> bytes = new List<byte>();
+                    string[] segments = externalClientIp.Split(':');
+                    foreach (string segement in segments)
+                    {
+                        foreach (char c in segement)
+                        {
+                            byte b = Convert.ToByte(c);
+                            bytes.Add(b);
+                        }
+                    }
+                    clientIpAddr = new IPAddress(bytes.ToArray());
+                }
+                else 
+                    clientIpAddr = IPAddress.Parse(externalClientIpv4);                  
             }
-            else
-                externalClientIp = HttpContext.Current.Request.UserHostAddress;
-            
-            IPAddress clientIpAddr = IPAddress.Parse(externalClientIp);
+
             return clientIpAddr;
         }
 

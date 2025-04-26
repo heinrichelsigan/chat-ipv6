@@ -53,11 +53,20 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             CBytes = new byte[0];
         }
 
+        public CChatRoom(string chatRoomNr) : this()
+        {
+            ChatRoomNr = chatRoomNr;
+            ChatRuid = Guid.NewGuid();
+            LastPushed = DateTime.MinValue;
+            LastPolled = DateTime.MinValue;
+            TicksLong = new List<long>();
+        }
+
         public CChatRoom(string chatRoomNr, Guid chatRuid, DateTime lastPushed, DateTime lastPolled) : this()
         {
             ChatRoomNr = chatRoomNr;
             ChatRuid = (chatRuid == Guid.Empty) ? Guid.NewGuid() : chatRuid;
-            lastPushed = LastPushed;
+            LastPushed = lastPushed;
             LastPolled = lastPolled;
             TicksLong = new List<long>();
         }
@@ -66,7 +75,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         {
             ChatRoomNr = chatRoomNr;
             ChatRuid = (chatRuid == Guid.Empty) ? Guid.NewGuid() : chatRuid;
-            lastPushed = LastPushed;
+            LastPushed = lastPushed;
             LastPolled = lastPolled;
             TicksLong = new List<long>(ticks);
             InvitedEmails = new List<string>(invited);

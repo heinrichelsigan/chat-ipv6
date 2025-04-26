@@ -118,9 +118,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             InitializeComponent();
             TextBoxSource.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
             TextBoxDestionation.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
-            ComboBoxIp.Text = Constants.ENTER_IP;
-            ComboBoxContacts.Text = Constants.ENTER_CONTACT;
-            ComboBoxSecretKey.Text = Constants.ENTER_SECRET_KEY;
+            SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
+            SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
+            SetComboBoxText(ComboBoxSecretKey, Constants.ENTER_SECRET_KEY);
 
             MenuContactsItemMe.Click += new System.EventHandler(async (sender, e) => await MenuContactsItemMyContact_Click(sender, e)); ;
             MenuCommandsItemSend.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemSend_Click(sender, e));
@@ -161,8 +161,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             await PlaySoundFromResourcesAsync("sound_volatage");
             await SetupNetwork();
 
-            int progress = this.GetProgressBar(this.StripProgressBar);
-            this.SetProgressBar(this.StripProgressBar, progress);
+            int progress = GetProgressBar(StripProgressBar);
+            SetProgressBar(StripProgressBar, progress);
 
             if (send1stReg)
             {
@@ -172,8 +172,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 // badge.Show();
                 await MenuContactsItemMyContact_Click(sender, e);
                 
-                progress = this.GetProgressBar(this.StripProgressBar);
-                this.SetProgressBar(this.StripProgressBar, progress + 10);                               
+                progress = GetProgressBar(StripProgressBar);
+                SetProgressBar(StripProgressBar, progress + 10);                               
             }
             
             AddContactsToIpContact();
@@ -189,22 +189,22 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     if (bmp == null)
                         bmp = Properties.fr.Resources.DefaultF45;
                 }
-                this.PictureBoxYou.Image = bmp;
+                PictureBoxYou.Image = bmp; // TODO: Thread safe delegate
 
-                this.MenuOptionsItemClearAllOnClose.Checked = Settings.Singleton.ClearAllOnClose;
+                MenuOptionsItemClearAllOnClose.Checked = Settings.Singleton.ClearAllOnClose;  // TODO: Thread safe delegate
                 if (Settings.Singleton.OnlyPeer2PeerChat)
                 {
                     MenuOptionsItemOnlyPeer2PeerChat_Click("ctor", new EventArgs());
                 }
-                this.MenuOptionsItemCompress.Checked = Settings.Singleton.ZipBeforeSend;
-                this.MenuOptionsItemFileTypeSecure.Checked = Settings.Singleton.OnlySecureFileTypes;
+                MenuOptionsItemCompress.Checked = Settings.Singleton.ZipBeforeSend; // TODO: Thread safe delegate
+                MenuOptionsItemFileTypeSecure.Checked = Settings.Singleton.OnlySecureFileTypes; // TODO: Thread safe delegate
                 if (Settings.Singleton.SecretKeys != null && Settings.Singleton.SecretKeys.Count > 0)
                 {
                     string secLastKey = "";
                     foreach (string secKey in Settings.Singleton.SecretKeys)
                     {
                         secLastKey = secKey;
-                        this.ComboBoxSecretKey.Items.Add(secLastKey);
+                        this.ComboBoxSecretKey.Items.Add(secLastKey); // TODO: Thread safe delegate
                     }
                     // this.ComboBoxSecretKey.Text = string.IsNullOrEmpty(secLastKey) ? "" : secLastKey;
                     // SecretKey_Update(sender, e);
@@ -212,9 +212,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             }
 
-            progress = this.GetProgressBar(this.StripProgressBar);
+            progress = GetProgressBar(StripProgressBar);
             progress = (progress < 100) ? progress + 5 : 100;
-            this.SetProgressBar(this.StripProgressBar, progress);            
+            SetProgressBar(StripProgressBar, progress);            
 
             if (send1stReg && Settings.Singleton.RegisterUser)
             {
@@ -230,7 +230,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             send1stReg = false;
             CacheHashDict.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
 
-            this.SetProgressBar(this.StripProgressBar, 100);
+            SetProgressBar(StripProgressBar, 100);
             SetStatusText(StripStatusLabel, "Secure Chat init done.");
 
             System.Timers.Timer timerResetProgress = new System.Timers.Timer { Interval = 1000 };
@@ -257,9 +257,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         protected string GetHash()
         {
 
-            string comboSecKeyTxt = GetComboBoxText(this.ComboBoxSecretKey);
+            string comboSecKeyTxt = GetComboBoxText(ComboBoxSecretKey);
             CqrFacade hashFacade = new CqrFacade(comboSecKeyTxt);
-            string? pipeText = GetTextBoxText(this.TextBoxPipe);
+            string? pipeText = GetTextBoxText(TextBoxPipe);
             if (!string.IsNullOrEmpty(pipeText))
             {
                 if (hashFacade.PipeString.Equals(pipeText))
@@ -267,7 +267,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
 
             pipeText = hashFacade.PipeString;
-            SetTextBoxText(this.TextBoxPipe, hashFacade.PipeString);
+            SetTextBoxText(TextBoxPipe, hashFacade.PipeString);
 
             return pipeText;
 
@@ -332,11 +332,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
             
             CqrFacade facade = new CqrFacade(myServerKey);
-            SetTextBoxText(this.TextBoxPipe, facade.PipeString);            
+            SetTextBoxText(TextBoxPipe, facade.PipeString);            
             SetStatusText(StripStatusLabel, $"Changed secret key to {myServerKey} => secure pipe: {facade.PipeString}");
 
-            if (!this.ComboBoxSecretKey.Items.Contains(this.ComboBoxSecretKey.Text))
-                this.ComboBoxSecretKey.Items.Add(this.ComboBoxSecretKey.Text);
+            if (!this.ComboBoxSecretKey.Items.Contains(GetComboBoxText(ComboBoxSecretKey)))
+                this.ComboBoxSecretKey.Items.Add(GetComboBoxText(ComboBoxSecretKey));
 
             if (Entities.Settings.Singleton != null)
             {
@@ -378,7 +378,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
             CqrFacade facade = new CqrFacade(secretKey);            
-            SetTextBoxText(this.TextBoxPipe, facade.PipeString);
+            SetTextBoxText(TextBoxPipe, facade.PipeString);
         }
 
         /// <summary>
@@ -408,11 +408,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             try
             {
                 if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
-                    throw new InvalidOperationException($"IPAddress {this.ComboBoxIp.Text ?? string.Empty} is not parsable!");
+                    throw new InvalidOperationException($"IPAddress {GetComboBoxText(ComboBoxIp) ?? string.Empty} is not parsable!");
             }
             catch (Exception exIpContact)
             {
-                MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIp.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Cannot parse IpAddress from string \"{GetComboBoxText(ComboBoxIp)}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 SetComboBoxBackColor(ComboBoxIp, Color.Violet);
                 PlaySoundFromResource("sound_warning");
                 return;
@@ -487,7 +487,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exIpContact)
             {
-                MessageBox.Show($"Cannot parse IpAddress from string \"{ComboBoxIp.Text}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Cannot parse IpAddress from string \"{GetComboBoxText(ComboBoxIp)}\": {exIpContact.Message}", "Please enter a valid connectable ipv4 or ipv6 address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 SetComboBoxBackColor(ComboBoxIp, Color.Violet);
                 PlaySoundFromResource("sound_warning");
                 return;
@@ -568,8 +568,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             string? chatRoomTxt = GetTextBoxText(this.TextBoxChatSession);
 
             if (string.IsNullOrEmpty(chatRoomTxt) ||
-                !this.TextBoxChatSession.Text.StartsWith("room") ||
-                !this.TextBoxChatSession.Text.EndsWith(".json"))
+                !GetTextBoxText(TextBoxChatSession).StartsWith("room") ||
+                !GetTextBoxText(TextBoxChatSession).EndsWith(".json"))
             {
                 MessageBox.Show($"Invalid or empty chat room.", "Please enter a valid chat room image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -717,7 +717,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 string userMsg = chat.AddMyMessage(unencrypted);
                 AppendText(TextBoxSource, userMsg);
                 // Format_Lines_RichTextBox();
-                this.RichTextBoxChat.Text = string.Empty;
+                SetRichText(RichTextBoxChat, string.Empty);
+                // this.RichTextBoxChat.Text = string.Empty;
                 SetStatusText(StripStatusLabel, $"Send init to {partnerIpAddress} successfully");
                 ButtonCheck.Image = Properties.de.Resources.RemoteConnect;
             }
@@ -793,7 +794,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 friendContact._hash = GetHash();
             
 
-            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, sessionChatText, serverFacade.PipeString);
+            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, myContact.NameEmail, serverFacade.PipeString);
             string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\n";
             SetTextBoxText(TextBoxSource, chat.AddMyMessage(myReqMsg));
 
@@ -904,7 +905,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //     return ;
 
-                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
+                    string chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr)) 
+                        ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr 
+                        : GetTextBoxText(TextBoxChatSession) ?? "";
                     if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
@@ -916,17 +919,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);                        
                     }
-
                     
                     CqrFacade serverFacade = new CqrFacade(CqrXsEuSrvKey);
-
                     string contactNameEmail = GetComboBoxText(this.ComboBoxContacts);
 
                     CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, clientFacade.PipeString);
                     CqrContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, clientFacade.PipeString);
 
-         
-                    SetTextBoxText(this.TextBoxPipe, clientFacade.PipeString);
+                    if (Settings.Singleton.ChatRoom == null || !Settings.Singleton.ChatRoom.ChatRoomNr.Equals(chatRoomNr, StringComparison.CurrentCultureIgnoreCase))
+                        Settings.Singleton.ChatRoom = new CChatRoom(chatRoomNr);
+
+                    SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
                     // this.TextBoxPipe.Text = serverMessage.PipeString;
                     // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                     myContact._hash = GetHash();
@@ -974,7 +977,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
                     Format_Lines_RichTextBox();
-                    this.RichTextBoxChat.Text = string.Empty;
+                    SetRichText(RichTextBoxChat, string.Empty);
+                    // this.RichTextBoxChat.Text = string.Empty;
                     await PlaySoundFromResourcesAsync("sound_arrow");
                     SetStatusText(StripStatusLabel, $"Send to {chatRoomNr} via server {ServerIpAddress} successfully.");
 
@@ -1033,7 +1037,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         
                         CFile? cfile = GetCFileFromPath(FileOpenDialog.FileName, clientFacade.PipeString);
 
-                        if (cfile != null && !string.IsNullOrEmpty(this.ComboBoxIp.Text) && !this.ComboBoxIp.Text.Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
+                        
+                        if (cfile != null && !string.IsNullOrEmpty(GetComboBoxText(ComboBoxIp)) && !GetComboBoxText(ComboBoxIp).Equals(Constants.ENTER_IP, StringComparison.InvariantCultureIgnoreCase))
                         {
                             string partnerIpAddrStr = GetComboBoxText(this.ComboBoxIp);
                             partnerIpAddress = IPAddress.Parse(partnerIpAddrStr);
@@ -1046,7 +1051,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength());
                             AppendText(TextBoxSource, userMsg);
                             Format_Lines_RichTextBox();
-                            this.RichTextBoxChat.Text = string.Empty;
+                            SetRichText(RichTextBoxChat, string.Empty);
+                            // this.RichTextBoxChat.Text = string.Empty;
                             SetStatusText(StripStatusLabel, $"File {cfile.FileName} send to {partnerIpAddress} successfully!");
                         }
                         // otherwise send message to registered user via server
@@ -1058,7 +1064,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     //if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //    return;
 
-                    string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
+                    string chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr))
+                            ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr
+                            : GetTextBoxText(TextBoxChatSession) ?? "";
                     if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                         SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
@@ -1075,10 +1083,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     string contactNameEmail = GetComboBoxText(this.ComboBoxContacts);
 
                     CContact myContact = new CContact(Settings.Singleton.MyContact, chatRoomNr, serverFacade.PipeString);
-                    CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, serverFacade.PipeString);                    
+                    CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, serverFacade.PipeString);
 
+                    if (Settings.Singleton.ChatRoom == null || !Settings.Singleton.ChatRoom.ChatRoomNr.Equals(chatRoomNr, StringComparison.CurrentCultureIgnoreCase))
+                        Settings.Singleton.ChatRoom = new CChatRoom(chatRoomNr);
                     
-                    SetTextBoxText(this.TextBoxPipe, clientFacade.PipeString);
+                    SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
                     // this.TextBoxPipe.Text = serverMessage.PipeString;
                     // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                     myContact._hash = GetHash();
@@ -1131,7 +1141,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength());
                             AppendText(TextBoxSource, userMsg);
                             Format_Lines_RichTextBox();
-                            this.RichTextBoxChat.Text = string.Empty;
+                            SetRichText(RichTextBoxChat, string.Empty);
+                            // this.RichTextBoxChat.Text = string.Empty;
                             await PlaySoundFromResourcesAsync("sound_push");
                             SetStatusText(StripStatusLabel, $"File {cfile.FileName} send to {partnerIpAddress} successfully!");
 
@@ -1179,7 +1190,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     contactNameEmail = "";
                 //     return;
 
-                string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
+                string chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr))
+                    ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr
+                    : GetTextBoxText(TextBoxChatSession) ?? "";                
                 if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                     SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
@@ -1206,10 +1219,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     friendContact._message = chatRoomNr;
                 }
 
-                SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
+                SetTextBoxText(TextBoxPipe, clientFacade.PipeString);                
                 // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
 
-                CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverFacade.PipeString, chatRoomNr);
+                CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, chatRoomNr, serverFacade.PipeString, Settings.Singleton.ChatRoom);
 
                 // Receive Msg from WebSerive
                 CSrvMsg<string>? rfmsg = await serverFacade.ReceiveChatMsg_SoapAsync<string>(fmsg, EncodingType.Base64);
@@ -1551,12 +1564,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
                     {
+                        string chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr))
+                            ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr
+                            : GetTextBoxText(TextBoxChatSession) ?? "";
+                        if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
+                            SetTextBoxText(TextBoxChatSession, chatRoomNr);
 
-                        string chatRoomNr = GetTextBoxText(TextBoxChatSession) ?? Entities.Settings.Singleton.ChatRoom.ChatRoomNr;
-                        if (string.IsNullOrEmpty(TextBoxChatSession.Text))
-                            TextBoxChatSession.Text = chatRoomNr;
-
-                        if (string.IsNullOrEmpty(TextBoxChatSession.Text))
+                        if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
                         {
                             InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
                             dialog.ShowDialog();
@@ -1571,8 +1585,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, euFacade.PipeString);
                         CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, euFacade.PipeString);
 
-                        SetTextBoxText(this.TextBoxPipe, ddFacade.PipeString);
-                        // this.TextBoxPipe.Text = serverMessage.PipeString;
+                        SetTextBoxText(TextBoxPipe, ddFacade.PipeString);                        
                         // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                         myContact._hash = GetHash();
                         myContact._message = chatRoomNr;
@@ -1616,7 +1629,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength());
                         AppendText(TextBoxSource, userMsg);
                         Format_Lines_RichTextBox();
-                        this.RichTextBoxChat.Text = string.Empty;
+                        SetRichText(RichTextBoxChat, string.Empty);
                         PlaySoundFromResource("sound_push");
                         SetStatusText(StripStatusLabel, $"File {cfile.FileName} successfully send to {chatRoomNr} !");
 
@@ -1679,7 +1692,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         foreach (ToolStripMenuItem tsItem in MenuNetworkItemMyIps.DropDown.Items)
                         {
-                            if (tsItem.Text == clientIpAddress.AddressFamily + clientIpAddress.ToString())
+                            string menuItemText = "";
+                            try { menuItemText = tsItem.Text; } catch { menuItemText = GetMenuItemText(tsItem); }
+                            if (menuItemText == clientIpAddress.AddressFamily + clientIpAddress.ToString())
                             {
                                 newIpIem = tsItem;
                                 newAddr = clientIpAddress;
@@ -1721,7 +1736,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             {
                                 foreach (IPAddress addr in InterfaceIpAddresses)
                                 {
-                                    if (tsmItem.Text == addr.AddressFamily.ShortInfo() + addr.ToString())
+                                    string menuItemAText = "";
+                                    try { menuItemAText = tsmItem.Text; } catch { menuItemAText = GetMenuItemText(tsmItem); }
+                                    if (menuItemAText == addr.AddressFamily.ShortInfo() + addr.ToString())
                                     {
                                         newIpIem = tsmItem;
                                         newAddr = addr;
@@ -2356,13 +2373,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuItemExternalIp.BackColor = SystemColors.MenuBar;
             MenuItemExternalIp.Name = "MenuItemExternalIp";
             MenuItemExternalIp.Size = new Size(160, 22);
-            MenuItemExternalIp.Text = "External Ip's";
+            SetMenuItemText(MenuItemExternalIp, "External Ip's");
+            // MenuItemExternalIp.Text = "External Ip's";
             MenuItemExternalIp.Visible = true;
             MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
             MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { MenuItemExternalIp });
             MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
             MenuNetworkItemMyIps.Size = new Size(177, 22);
-            MenuNetworkItemMyIps.Text = "my ip's";
+            SetMenuItemText(MenuNetworkItemMyIps, "my ip's");
+            // MenuNetworkItemMyIps.Text = "my ip'sc;
 
             pvalue += 5;
             SetProgressBar(StripProgressBar, pvalue);
