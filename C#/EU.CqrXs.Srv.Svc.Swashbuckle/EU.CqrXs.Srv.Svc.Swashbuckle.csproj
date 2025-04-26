@@ -4,8 +4,8 @@
     <TargetFramework>net9.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>2.25.420</AssemblyVersion>
-    <FileVersion>2.25.420</FileVersion>
+    <AssemblyVersion>2.25.427</AssemblyVersion>
+    <FileVersion>2.25.427</FileVersion>
     <StartupObject>EU.CqrXs.Srv.Svc.Swashbuckle.Program</StartupObject>
   </PropertyGroup>
 
