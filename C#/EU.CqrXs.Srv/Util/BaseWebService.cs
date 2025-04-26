@@ -24,7 +24,7 @@ namespace EU.CqrXs.Srv.Util
     /// <summary>
     /// BaseWebService
     /// </summary>
-    [WebService(Namespace = "https://srv.cqrxs.eu/v1.1/")]
+    [WebService(Namespace = "https://srv.cqrxs.eu/v1.3/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     public class BaseWebService : WebService
     {
