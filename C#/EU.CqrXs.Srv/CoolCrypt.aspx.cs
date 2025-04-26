@@ -281,6 +281,7 @@ namespace EU.CqrXs.Srv
                 {
                     switch (ztype)
                     {
+                        case ZipType.Zip: encryptBytes = WinZip.Zip(inBytes); break;
                         case ZipType.GZip: encryptBytes = GZ.GZipBytes(inBytes); break;
                         case ZipType.BZip2: encryptBytes = BZip2.BZip(inBytes); break;
                         case ZipType.None:
@@ -407,8 +408,10 @@ namespace EU.CqrXs.Srv
                 {
                     switch (ztype)
                     {
+                        case ZipType.Zip: decryptedBytes = WinZip.UnZip(cipherBytes); break;
                         case ZipType.GZip: decryptedBytes = GZ.GUnZipBytes(cipherBytes); break;
-                        case ZipType.BZip2: decryptedBytes = BZip2.BUnZip(cipherBytes); break;                        case ZipType.None:
+                        case ZipType.BZip2: decryptedBytes = BZip2.BUnZip(cipherBytes); break;
+                        case ZipType.None:
                         default: decryptedBytes = cipherBytes; break;
                     }
                 }
@@ -530,12 +533,14 @@ namespace EU.CqrXs.Srv
                         {
                             switch (ztype)
                             {
+                                case ZipType.Zip: zopt = ".zip"; outBytes = WinZip.Zip(inBytes); break;
                                 case ZipType.GZip: zopt = ".gz"; outBytes = GZ.GZipBytes(inBytes); break;
                                 case ZipType.BZip2: zopt = ".bz2"; outBytes = BZip2.BZip(inBytes); break;
                                 case ZipType.None:
                                 default: break;
                             }
                             strFileName += zopt;
+                            Array.Copy(outBytes, 0, inBytes, 0, outBytes.Length);
                         }
 
                         foreach (string algo in algos)
@@ -651,6 +656,7 @@ namespace EU.CqrXs.Srv
                         {
                             switch (ztype)
                             {
+                                case ZipType.Zip: outBytes = WinZip.UnZip(inBytes); break;
                                 case ZipType.GZip: outBytes = GZ.GUnZipBytes(inBytes); break;
                                 case ZipType.BZip2: outBytes = BZip2.BUnZip(inBytes); break;
                                 case ZipType.None:
