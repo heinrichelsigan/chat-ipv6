@@ -38,7 +38,7 @@
     "CBytes": null
   },
   {
-    "_hash": "6ADCF5bg",
+    "_hash": "6AFDCf5",
     "_message": "room_0426_heinrich_elsigan.json",
     "ContactId": 0,
     "Cuid": "5cdd137c-b42a-44fa-8560-f213f2827368",
@@ -51,8 +51,8 @@
     "NameEmail": "Heinrich Elsigan <heinrich.elsigan@gmail.com>",
     "MsgType": 0,
     "Message": "room_0426_heinrich_elsigan.json",
-    "SerializedMsg": "{\r\n  \"_hash\": \"6ADCF5bg\",\r\n  \"_message\": \"room_0426_heinrich_elsigan.json\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"room_0426_heinrich_elsigan.json\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6ADCF5bg\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
-    "Hash": "6ADCF5bg",
+    "SerializedMsg": "{\r\n  \"_hash\": \"6AFDCf5\",\r\n  \"_message\": \"room_0426_heinrich_elsigan.json\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Heinrich Elsigan\",\r\n  \"Email\": \"heinrich.elsigan@gmail.com\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Heinrich Elsigan <heinrich.elsigan@gmail.com>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"room_0426_heinrich_elsigan.json\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6AFDCf5\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+    "Hash": "6AFDCf5",
     "Md5Hash": "",
     "CBytes": null
   },
@@ -91,6 +91,25 @@
     "Message": "",
     "SerializedMsg": "",
     "Hash": "6CDgAbXs",
+    "Md5Hash": "",
+    "CBytes": null
+  },
+  {
+    "_hash": "6AFDCf5",
+    "_message": "room_0426_heinrich_elsigan.json",
+    "ContactId": 0,
+    "Cuid": "5cdd137c-b42a-44fa-8560-f213f2827368",
+    "Name": "Henriette Nagisle",
+    "Email": "henriette@area23.at",
+    "Mobile": "+436507527928",
+    "Address": "",
+    "SecretKey": null,
+    "ContactImage": null,
+    "NameEmail": "Henriette Nagisle <henriette@area23.at>",
+    "MsgType": 0,
+    "Message": "room_0426_heinrich_elsigan.json",
+    "SerializedMsg": "{\r\n  \"_hash\": \"6AFDCf5\",\r\n  \"_message\": \"room_0426_heinrich_elsigan.json\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"5cdd137c-b42a-44fa-8560-f213f2827368\",\r\n  \"Name\": \"Henriette Nagisle\",\r\n  \"Email\": \"henriette@area23.at\",\r\n  \"Mobile\": \"+436507527928\",\r\n  \"Address\": \"\",\r\n  \"SecretKey\": null,\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Henriette Nagisle <henriette@area23.at>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"room_0426_heinrich_elsigan.json\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6AFDCf5\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": null\r\n}",
+    "Hash": "6AFDCf5",
     "Md5Hash": "",
     "CBytes": null
   }

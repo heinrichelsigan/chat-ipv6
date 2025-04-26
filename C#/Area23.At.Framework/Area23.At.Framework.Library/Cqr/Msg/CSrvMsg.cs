@@ -411,7 +411,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                cSrvMsg._hash = hash;
+                cSrvMsg._hash = symmPipe.PipeString;
                 cSrvMsg.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cSrvMsg._message), "");
 
                 byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cSrvMsg.Message);

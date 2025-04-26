@@ -3,10 +3,7 @@ using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Area23.At.Framework.Core.Crypt.Cipher
 {
@@ -190,7 +187,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     encryptBytes = Serpent.Encrypt(inBytes);
                     break;
                 case CipherEnum.ZenMatrix:
-                    encryptBytes = (new ZenMatrix(secretKey, hash, false)).Encrypt(inBytes);
+                    encryptBytes = (new ZenMatrix(secretKey, hash, true)).Encrypt(inBytes);
                     break;
                 case CipherEnum.ZenMatrix2:
                     encryptBytes = (new ZenMatrix2(secretKey, hash, false)).Encrypt(inBytes);
@@ -263,7 +260,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     decryptBytes = Asymmetric.Rsa.Decrypt(cipherBytes);
                     break;
                 case CipherEnum.ZenMatrix:
-                    decryptBytes = (new ZenMatrix(secretKey, hash, false)).Decrypt(cipherBytes);
+                    decryptBytes = (new ZenMatrix(secretKey, hash, true)).Decrypt(cipherBytes);
                     break;
                 case CipherEnum.ZenMatrix2:
                     decryptBytes = (new ZenMatrix2(secretKey, hash, false)).Decrypt(cipherBytes);

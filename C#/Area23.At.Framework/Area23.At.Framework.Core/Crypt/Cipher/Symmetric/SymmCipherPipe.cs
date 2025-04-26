@@ -4,7 +4,6 @@ using Area23.At.Framework.Core.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 
 namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
@@ -175,7 +174,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     encryptBytes = Serpent.Encrypt(inBytes);
                     break;
                 case SymmCipherEnum.ZenMatrix:
-                    encryptBytes = (new ZenMatrix(secretKey, hash, false)).Encrypt(inBytes);
+                    encryptBytes = (new ZenMatrix(secretKey, hash, true)).Encrypt(inBytes);
                     break;
                 case SymmCipherEnum.Aes:
                 case SymmCipherEnum.BlowFish:
@@ -223,7 +222,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     decryptBytes = Serpent.Decrypt(cipherBytes);
                     break;
                 case SymmCipherEnum.ZenMatrix:
-                    decryptBytes = (new ZenMatrix(secretKey, hash, false)).Decrypt(cipherBytes);
+                    decryptBytes = (new ZenMatrix(secretKey, hash, true)).Decrypt(cipherBytes);
                     break;
                 case SymmCipherEnum.Aes:
                 case SymmCipherEnum.BlowFish:

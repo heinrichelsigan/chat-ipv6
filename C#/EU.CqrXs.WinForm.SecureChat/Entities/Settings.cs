@@ -4,8 +4,6 @@ using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 using System.Runtime;
-using System.Text;
-using System.Windows.Input;
 
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {

@@ -203,7 +203,6 @@ namespace Area23.At.Framework.Core.Cqr.Srv
             return System.Threading.Tasks.Task.Factory.FromAsync(((System.ServiceModel.ICommunicationObject)(this)).BeginOpen(null, null), new System.Action<System.IAsyncResult>(((System.ServiceModel.ICommunicationObject)(this)).EndOpen));
         }
 
-
         private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(EndpointConfiguration endpointConfiguration)
         {
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap))
@@ -289,5 +288,4 @@ namespace Area23.At.Framework.Core.Cqr.Srv
         }
 
     }
-
 }

@@ -402,7 +402,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                ccntct._hash = hash;
+                ccntct._hash = symmPipe.PipeString;
                 ccntct.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, ccntct._message), "");
 
                 byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(ccntct.Message);

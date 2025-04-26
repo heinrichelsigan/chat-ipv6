@@ -134,6 +134,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             MsgType = msgArt;
             EnCodingType = EncodingType.Base64;
             this._hash = hash;
+            FileByteLen = Data.LongLength;
 
         }
 
@@ -180,7 +181,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             leftDest.Base64Type = rightSrc.Base64Type;
             leftDest.Data = rightSrc.Data;
             leftDest.Sha256Hash = rightSrc.Sha256Hash;
-            leftDest.FileByteLen = rightSrc.FileByteLen;
+            leftDest.FileByteLen = Math.Max(rightSrc.FileByteLen, rightSrc.Data.LongLength);
             leftDest.EnCodingType = rightSrc.EnCodingType;
             leftDest.Base64Type = rightSrc.Base64Type;
             leftDest.SerializedMsg = "";
@@ -484,7 +485,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                cfile._hash = hash;
+                cfile._hash = symmPipe.PipeString;
                 cfile.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cfile._message), "");
                 cfile.Sha256Hash = Sha256Sum.Hash(cfile.Data, "");
 

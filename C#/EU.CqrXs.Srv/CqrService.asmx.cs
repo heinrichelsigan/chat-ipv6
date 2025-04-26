@@ -75,10 +75,10 @@ namespace EU.CqrXs.Srv
 
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
-                if (PersistMsgInApplicationState)
-                    HttpContext.Current.Application["lastdecrypted"] = _decrypted;
-                if (PersistMsgInAmazonElasticCache)
-                    RedIS.ValKey.SetString("lastdecrypted", _decrypted);                
+                //if (PersistMsgInApplicationState)
+                //    HttpContext.Current.Application["lastdecrypted"] = _decrypted;
+                //if (PersistMsgInAmazonElasticCache)
+                //    RedIS.ValKey.SetString("lastdecrypted", _decrypted);                
 
                 CContact foundCt = AddContact(_contact);
                 _responseString = foundCt.EncryptToJson(_serverKey);
@@ -87,6 +87,7 @@ namespace EU.CqrXs.Srv
             Area23Log.LogStatic($"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
             return _responseString;
         }
+
 
         /// <summary>
         /// Invites to a chat romm 
@@ -110,12 +111,12 @@ namespace EU.CqrXs.Srv
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);
-                    cSrvMsg = chatRSrvMsg.DecryptFromJson(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>            
-                    _contact = AddContact(cSrvMsg.Sender);                          // add contact from FullSrvMsg<string>   
-                    chatRSrvMsg = InviteToChatRoom(cSrvMsg);                        // generate a FullSrvMsg<string> chatserver message by inviting                           
+                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>
+                    cSrvMsg = chatRSrvMsg.DecryptFromJson(_serverKey, cryptMsg);        // decrypt CSrvMsg<string>
+                    _contact = AddContact(cSrvMsg.Sender);                              // add contact from FullSrvMsg<string>   
+                    chatRSrvMsg = InviteToChatRoom(cSrvMsg);                            // generate a FullSrvMsg<string> chatserver message by inviting                           
 
-                    _responseString = chatRSrvMsg.EncryptToJson(_serverKey);        // crypt chatRSrvMsg with _serverKey and serialize as json
+                    _responseString = chatRSrvMsg.EncryptToJson(_serverKey);            // crypt chatRSrvMsg with _serverKey and serialize as json
                 }
             }
             catch (Exception ex)
@@ -157,14 +158,15 @@ namespace EU.CqrXs.Srv
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);    // decrypt FullSrvMsg<string>
-                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);            // decrypt FullSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
+                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);                // decrypt FullSrvMsg<string>
                     _contact = cSrvMsg.Sender;
-                    _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
+                    _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg._message;
 
                     CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
                     isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);
                     chatRoomMsg.TContent = string.Empty;
+                    chatRoomMsg._message = _chatRoomNumber;
 
                     if (isValid)
                     {
@@ -184,11 +186,11 @@ namespace EU.CqrXs.Srv
                                     firstPollClientMsg = dict[polledPtr];
                             }
                                                         
-                            chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);
+                            chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);                            
 
                             UpdateContact(chatRoomMsg.Sender);
                             chatRoomMsg = JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
-                            
+
                             chatRoomMsg.TContent = firstPollClientMsg;
                         }
 
@@ -234,34 +236,36 @@ namespace EU.CqrXs.Srv
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);
-                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);
+                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);            // decrypt FullSrvMsg<string>
+                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);                    // decrypt FullSrvMsg<string>
                     _contact = cSrvMsg.Sender;
-                    _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
-                    chatRoomMembersCrypted = cSrvMsg.TContent;
+                    _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) 
+                        ? cSrvMsg.CRoom.ChatRoomNr : "";                                        // get chat room number
+                    chatRoomMembersCrypted = cSrvMsg.TContent;                                  // set chatRoomMembersCrypted to cSrvMsg.TContent
 
                     Area23Log.LogStatic($"string chatRoomMembersCrypted = cSrvMsg.TContent; \r\n\tchatRoomMembersCrypted len = {chatRoomMembersCrypted.Length}.\n");
-                    chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);                    
+                    chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);          // Load json chat room from file system json file                  
 
-                    isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);
-                    if (isValid)
+                    isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);   // Check sender's permission to access chat room (must be creator or invited)
+                    if (isValid)    
                     {
-                        DateTime now = DateTime.Now;
+                        DateTime now = DateTime.Now;                                            // Determine DateTime.Now
 
-                        dict = GetCachedMessageDict(_chatRoomNumber);
+                        dict = GetCachedMessageDict(_chatRoomNumber);                           // Get chatroom message dictionary out of cache
 
-                        dict.Add(now.Ticks, chatRoomMembersCrypted);
+                        dict.Add(now.Ticks, chatRoomMembersCrypted);                            // Add new entry to cached chatroom message dictionary with DateTime.Now
                         chatRoomMsg.CRoom.TicksLong.Add(now.Ticks);
                         chatRoomMsg.CRoom.LastPushed = now;
-                        chatRoomMsg.TContent = ""; // set string empty, if no message
+                        SetCachedMessageDict(_chatRoomNumber, dict);                            // Saves chatroom msg dict back to cache (Amazon valkey or ApplicationState)
 
-                        SetCachedMessageDict(_chatRoomNumber, dict);
-
-                        UpdateContact(_contact);
-                        chatRoomMsg = JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
+                        UpdateContact(_contact);        
+                        chatRoomMsg.TContent = "";                                              // set TContent empty, because we don't want a same huge response as request                                             
+                        chatRoomMsg = JsonChatRoom.SaveChatRoom(
+                            chatRoomMsg, chatRoomMsg.CRoom);                                    // saves chat room back to json file
+                        
                         chatRoomMsg.CRoom.LastPushed = now;
-                        chatRoomMsg.CRoom.TicksLong.Remove(now.Ticks);
-                        chatRoomMsg.Sender._message = _chatRoomNumber; 
+                        chatRoomMsg.CRoom.TicksLong.Remove(now.Ticks);                          // TODO: Delete later, with that, you get your own message in sended queue
+                        chatRoomMsg.Sender._message = _chatRoomNumber;                          
                     }
                     else
                         chatRoomMsg.TContent = cSrvMsg.Sender.NameEmail + " has no permission for chat room " + _chatRoomNumber;
@@ -302,7 +306,8 @@ namespace EU.CqrXs.Srv
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);
+                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);
+                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);                    // decrypt FullSrvMsg<string>
                     _contact = AddContact(cSrvMsg.Sender);
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
                     
