@@ -90,7 +90,7 @@ namespace EU.CqrXs.Srv.Util
 
             if (PersistMsgInAmazonElasticCache)
             {
-                string status = RedIS.ConnMux.GetStatus();
+                string status = RedIs.ConnMux.GetStatus();
 
                 //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
                 //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -173,12 +173,12 @@ namespace EU.CqrXs.Srv.Util
                 try
                 {
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
-                    string status = RedIS.ConnMux.GetStatus();
+                    string status = RedIs.ConnMux.GetStatus();
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
 
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Executing RedIS.GetAllKeys()" + Environment.NewLine;
                     
-                    HashSet<string> allKeys = RedIS.GetAllKeys();                    
+                    HashSet<string> allKeys = RedIs.GetAllKeys();                    
                     if (allKeys == null)
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
                     else 
@@ -187,17 +187,17 @@ namespace EU.CqrXs.Srv.Util
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys.ToArray())} ]" + Environment.NewLine;                            
                     }
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to set Dictionary<Guid, CqrContact> in cache." + "\r\n";
-                    RedIS.ValKey.SetKey<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);                                        
+                    RedIs.ValKey.SetKey<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);                                        
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache." + Environment.NewLine;
 
-                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedIS.ValKey.GetKey<Dictionary<Guid, CContact>>("TestCache");                   
+                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedIs.ValKey.GetKey<Dictionary<Guid, CContact>>("TestCache");                   
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + "\r\n";
                     foreach (CContact contact in outdict.Values)
                     {
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Contact Cuid={contact.Cuid} NameEmail={contact.NameEmail} Mobile={contact.Mobile}." + "\r\n";
                     }
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to delete key \"TestCache\":" + "\r\n";
-                    RedIS.ValKey.DeleteKey("TestCache");
+                    RedIs.ValKey.DeleteKey("TestCache");
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deleted key \"TestCache\"." + "\r\n";
                 }
                 catch (Exception ex2)
@@ -549,7 +549,7 @@ namespace EU.CqrXs.Srv.Util
             // Amazon Redis Valkey Cache
             if (PersistMsgInAmazonElasticCache)
             {
-                dict = (Dictionary<long, string>)RedIS.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
+                dict = (Dictionary<long, string>)RedIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
             }
 
             // TODO: implement filesystem 
@@ -593,7 +593,7 @@ namespace EU.CqrXs.Srv.Util
                 HttpContext.Current.Application[chatRoomNumber] = dict;
             if (BaseWebService.PersistMsgInAmazonElasticCache)
             {
-                RedIS.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
+                RedIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
             }
 
             return;

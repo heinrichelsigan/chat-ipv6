@@ -51,8 +51,8 @@ namespace EU.CqrXs.Srv
 
             if (PersistMsgInApplicationState)
                 HttpContext.Current.Application["lastmsg"] = cryptMsg;
-            if (PersistMsgInAmazonElasticCache)                
-                RedIS.ValKey.SetString("lastmsg", cryptMsg);
+            if (PersistMsgInAmazonElasticCache)
+                RedIs.ValKey.SetString("lastmsg", cryptMsg);
 
             CContact cContact = new CContact() { _hash = cqrFacade.PipeString };
 

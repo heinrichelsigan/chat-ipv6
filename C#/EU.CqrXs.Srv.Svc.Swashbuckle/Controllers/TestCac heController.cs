@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Cache;
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 {
@@ -50,19 +51,19 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                     dictCacheTest.Add(c.Cuid, c);
             }
             testReport += $"{GetDateNow()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
-            if (PersistMsgInAmazonElasticCache)
+            if (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache)
             {
                 try
                 {
                     testReport += $"{GetDateNow()}: Ready to connect to {System.Configuration.ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
-                    string status = RedIS.ConnMux.GetStatus();
+                    string status = RedIs.ConnMux.GetStatus();
                     testReport += $"{GetDateNow()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
 
                     testReport += $"{GetDateNow()}: Preparing to set Dictionary<Guid, CqrContact> in cache." + Environment.NewLine;
-                    RedIS.ValKey.SetKey<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
+                    RedIs.ValKey.SetKey<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
                     testReport += $"{GetDateNow()}: Added serialized json string to cache." + Environment.NewLine;
 
-                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedIS.ValKey.GetKey<Dictionary<Guid, CContact>>("TestCache");
+                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedIs.ValKey.GetKey<Dictionary<Guid, CContact>>("TestCache");
                     testReport += $"{GetDateNow()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + Environment.NewLine;
                     foreach (CContact contact in outdict.Values)
                     {

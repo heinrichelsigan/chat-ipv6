@@ -116,7 +116,7 @@ namespace EU.CqrXs.Srv.Util
         /// <param name="when"></param>
         /// <param name="flags"></param>
         public void SetString(string redIsKey, string redIsString, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
-        {            
+        {
             lock (_lock)
             {
                 var allRedIsKeys = GetAllKeys();
@@ -174,7 +174,7 @@ namespace EU.CqrXs.Srv.Util
         /// <param name="flags"><see cref="CommandFlags.FireAndForget"/> as default</param>
         public void DeleteKey(string redIsKey, CommandFlags flags = CommandFlags.FireAndForget)
         {
-                      
+
             lock (_lock)
             {
                 var allRedIsKeys = GetAllKeys();

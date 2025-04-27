@@ -26,7 +26,7 @@ public class REdIs
     {
         get
         {
-            return RedIstatic.Db;
+            return RediStatic.Db;
         }
     }
 
@@ -34,7 +34,7 @@ public class REdIs
     {
         get
         {
-            return RedIstatic.ConnMux;
+            return RediStatic.ConnMux;
         }
     }
 
@@ -57,7 +57,7 @@ public class REdIs
     /// <returns>(<see cref="string"/>) value for key redIsKey</returns>
     public string GetString(string redIsKey, CommandFlags flags = CommandFlags.None)
     {
-        string redIsString = RedIstatic.GetString(redIsKey, flags);
+        string redIsString = RediStatic.GetString(redIsKey, flags);
         return redIsString;
     }
 
@@ -72,7 +72,7 @@ public class REdIs
     /// <param name="flags"></param>
     public void SetString(string redIsKey, string redIsString, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
     {
-        RedIstatic.SetString(redIsKey, redIsString, expiry, keepTtl, when, flags);
+        RediStatic.SetString(redIsKey, redIsString, expiry, keepTtl, when, flags);
     }
 
 
@@ -88,7 +88,7 @@ public class REdIs
     /// <param name="flags"></param>
     public void SetKey<T>(string redIsKey, T tValue, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
     {
-        RedIstatic.SetKey<T>(redIsKey, tValue, expiry, keepTtl, when, flags);         
+        RediStatic.SetKey<T>(redIsKey, tValue, expiry, keepTtl, when, flags);         
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ public class REdIs
     /// <returns></returns>
     public T GetKey<T>(string redIsKey, CommandFlags flags = CommandFlags.None)
     {
-        var tValue = RedIstatic.GetKey<T>(redIsKey, flags);        
+        var tValue = RediStatic.GetKey<T>(redIsKey, flags);        
         return tValue;
     }
 
@@ -111,7 +111,7 @@ public class REdIs
     /// <param name="flags"><see cref="CommandFlags.FireAndForget"/> as default</param>
     public void DeleteKey(string redIsKey, CommandFlags flags = CommandFlags.FireAndForget)
     {
-        RedIstatic.DeleteKey(redIsKey, flags);
+        RediStatic.DeleteKey(redIsKey, flags);
     }
 
 

@@ -164,9 +164,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\ApplicationContextCache.cs" />
+    <Compile Include="Cache\MemCacheDict.cs" />
     <Compile Include="Cache\CacheHashDict.cs" />
+    <Compile Include="Cache\AppDomainCache.cs" />
     <Compile Include="Cache\CacheValue.cs" />
-    <Compile Include="Cache\RedIstatic.cs" />
+    <Compile Include="Cache\RedIs.cs" />
+    <Compile Include="Cache\RediStatic.cs" />
     <Compile Include="Cqr\CqrFacade.cs" />
     <Compile Include="Cqr\CqrService.cs" />
     <Compile Include="Cqr\Msg\CFile.cs" />

@@ -14,7 +14,7 @@ namespace Area23.At.Framework.Library.Cache
     /// <summary>
     /// RedIstatic static AWS elastic valkey cache singelton connector
     /// </summary>
-    public static class RedIstatic
+    public static class RediStatic
     {
 
 
@@ -59,7 +59,7 @@ namespace Area23.At.Framework.Library.Cache
         /// <summary>
         /// static ctor for static class RedIstatic 
         /// </summary>
-        static RedIstatic()
+        static RediStatic()
         {
             endpoint = Constants.VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
             if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] != null)

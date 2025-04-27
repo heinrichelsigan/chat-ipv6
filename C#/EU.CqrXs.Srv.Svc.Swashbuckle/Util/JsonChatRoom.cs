@@ -112,16 +112,23 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         {
             JsonChatRoomNumber = chatRoomNr;
 
-            if (CqrSrvControllerBase.PersistMsgInApplicationState)
+            switch (PersistMsgIn.PersistMsg)
             {
-                if (CacheHashDict.ContainsKey(chatRoomNr))
-                    CacheHashDict.DeleteKey(chatRoomNr);
+                case PersistType.AmazonElasticCache:
+                    RedIs.ValKey.DeleteKey(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
+                    break;
+                case PersistType.ApplicationState:
+                case PersistType.JsonFile:
+                    if (CacheHashDict.CacheDict.ContainsKey(chatRoomNr))
+                        CacheHashDict.CacheDict.RemoveKey(chatRoomNr);
+                    break;
+                case PersistType.AppDomainData:
+                default:
+                    if (AppDomainCacheDict.CacheDict.ContainsKey(chatRoomNr))
+                        AppDomainCacheDict.CacheDict.RemoveKey(chatRoomNr);
+                    break;
             }
-            if (CqrSrvControllerBase.PersistMsgInAmazonElasticCache)
-            {
-                RedIS.ValKey.DeleteKey(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
-                // Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
-            }
+            
             DeleteJsonChatRoomFromCache(JsonChatRoomNumber);
 
             lock (_lock)
@@ -258,20 +265,28 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         public static List<string> GetJsonChatRoomsFromCache()
         {
             List<string> chatRooms = new List<string>();
-            if (CqrSrvControllerBase.PersistMsgInApplicationState)
-                chatRooms = (List<string>)CacheHashDict.GetValue<List<string>>(Constants.CHATROOMS);
-            if (CqrSrvControllerBase.PersistMsgInAmazonElasticCache)
+
+            try
             {
-                try
+                switch (PersistMsgIn.PersistMsg)
                 {
-                    chatRooms = (List<string>)RedIS.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
-                    // string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
-                    // chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
+                    case PersistType.AmazonElasticCache:
+                        chatRooms = (List<string>)RedIs.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
+                        break;
+                    case PersistType.ApplicationState:
+                    case PersistType.JsonFile:
+                        chatRooms = (List<string>)CacheHashDict.CacheDict.GetValue<List<string>>(Constants.CHATROOMS);
+                        break;
+                    case PersistType.AppDomainData:
+                    default:
+                        chatRooms = (List<string>)AppDomainCacheDict.CacheDict.GetValue<List<string>>(Constants.CHATROOMS);
+                        break;
                 }
-                catch (Exception exLoadFromCache)
-                {
-                    Area23Log.LogStatic("Failed to load chatrooms from cache", exLoadFromCache, "");
-                }
+            }
+            catch (Exception exLoadFromCache)
+            {
+                Area23Log.LogStatic("Failed to load chatrooms from cache", exLoadFromCache, "");
+                chatRooms = new List<string>();
             }
 
             if (chatRooms == null || chatRooms.Count < 1)
@@ -282,7 +297,6 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
             }
 
             return chatRooms;
-
         }
 
         /// <summary>
@@ -312,12 +326,19 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// <param name="chatRooms"><see cref="List{string}">list of chat rooms</see></param>
         public static void SetJsonChatRoomsToCache(List<string> chatRooms)
         {
-            if (CqrSrvControllerBase.PersistMsgInApplicationState)
-                CacheHashDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
-
-            if (CqrSrvControllerBase.PersistMsgInAmazonElasticCache)
+            switch (PersistMsgIn.PersistMsg)
             {
-                RedIS.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);
+                case PersistType.JsonFile:
+                case PersistType.ApplicationState:
+                    CacheHashDict.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
+                    break;
+                case PersistType.AmazonElasticCache:
+                    RedIs.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);
+                    break;                                
+                case PersistType.AppDomainData:
+                default:
+                    AppDomainCacheDict.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
+                    break;                    
             }
         }
 
@@ -334,15 +355,21 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
             List<string> chatRooms = GetJsonChatRoomsFromCache();
             if (chatRooms.Contains(chatRoom))
             {
-                if (CqrSrvControllerBase.PersistMsgInApplicationState)
-                {
-                    if (CacheHashDict.ContainsKey(chatRoom))
-                        CacheHashDict.DeleteKey(chatRoom);
-                }
-                if (CqrSrvControllerBase.PersistMsgInAmazonElasticCache)
-                {
-                    RedIS.ValKey.DeleteKey(chatRoom, StackExchange.Redis.CommandFlags.FireAndForget);
-                    // Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
+                switch (PersistMsgIn.PersistMsg)
+                {                    
+                    case PersistType.ApplicationState:
+                    case PersistType.JsonFile:
+                        if (CacheHashDict.CacheDict.ContainsKey(chatRoom))
+                            CacheHashDict.CacheDict.RemoveKey(chatRoom);
+                        break;
+                    case PersistType.AmazonElasticCache:
+                        RedIs.ValKey.DeleteKey(chatRoom, StackExchange.Redis.CommandFlags.FireAndForget);
+                        break;
+                    case PersistType.AppDomainData:
+                    default:
+                        if (AppDomainCacheDict.CacheDict.ContainsKey(chatRoom))
+                            AppDomainCacheDict.CacheDict.RemoveKey(chatRoom);
+                        break;
                 }
                 chatRooms.Remove(chatRoom);
             }

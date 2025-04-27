@@ -36,32 +36,32 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         // protected internal string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         // protected internal StackExchange.Redis.IDatabase db;
 
-        /// <summary>
-        /// Persist encrypted messages in chat rooms in application state
-        /// use this option only for testing, because you will you get soon an out of memory error
-        /// </summary>
-        public static bool PersistMsgInApplicationState
-        {
-            get => (PersistMsgIn.PersistMsg == PersistType.ApplicationState);
-        }
+        ///// <summary>
+        ///// Persist encrypted messages in chat rooms in application state
+        ///// use this option only for testing, because you will you get soon an out of memory error
+        ///// </summary>
+        //public static bool PersistMsgInApplicationState
+        //{
+        //    get => (PersistMsgIn.PersistMsg == PersistType.ApplicationState);
+        //}
 
-        /// <summary>
-        /// Use Amazon elastic cache to persist encrypted messages in chat rooms
-        /// Fast option, but expensive, when we have a lot of huge size messages
-        /// </summary>
-        public static bool PersistMsgInAmazonElasticCache
-        {
-            get => (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache);
-        }
+        ///// <summary>
+        ///// Use Amazon elastic cache to persist encrypted messages in chat rooms
+        ///// Fast option, but expensive, when we have a lot of huge size messages
+        ///// </summary>
+        //public static bool PersistMsgInAmazonElasticCache
+        //{
+        //    get => (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache);
+        //}
 
-        /// <summary>
-        /// Use file system to encrypted messages in chat rooms
-        /// Fast option, but expensive, when we have a lot of huge size messages
-        /// </summary>
-        public static bool PersistMsgInFileSystem
-        {
-            get => (PersistMsgIn.PersistMsg == PersistType.FileSystem);
-        }
+        ///// <summary>
+        ///// Use file system to encrypted messages in chat rooms
+        ///// Fast option, but expensive, when we have a lot of huge size messages
+        ///// </summary>
+        //public static bool PersistMsgInJsonFile
+        //{
+        //    get => (PersistMsgIn.PersistMsg == PersistType.JsonFile);
+        //}
 
         /// <summary>
         /// BaseWebService
@@ -80,9 +80,9 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             _responseString = string.Empty;
 
 
-            if (PersistMsgInAmazonElasticCache)
+            if (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache)
             {
-                string status = RedIS.ConnMux.GetStatus();
+                string status = RedIs.ConnMux.GetStatus();
 
                 //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
                 //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -95,9 +95,9 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         public static void InitMethod()
         {
 
-            if (PersistMsgInAmazonElasticCache)
+            if (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache)
             {
-                string status = RedIS.ConnMux.GetStatus();
+                string status = RedIs.ConnMux.GetStatus();
 
                 //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
                 //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -415,15 +415,21 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             Dictionary<long, string> dict = new Dictionary<long, string>();
 
             // ApplicationState as Cache
-            if (PersistMsgInApplicationState && (CacheHashDict.GetValue<Dictionary<long, string>>(chatRoomNumber) != null))
-                dict = (Dictionary<long, string>)CacheHashDict.GetValue<Dictionary<long, string>>(chatRoomNumber);
-
-            // Amazon Redis Valkey Cache
-            if (PersistMsgInAmazonElasticCache)
+            switch (PersistMsgIn.PersistMsg)
             {
-                dict = (Dictionary<long, string>)RedIS.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
-            }
-
+                case PersistType.AmazonElasticCache:
+                    dict = (Dictionary<long, string>)RedIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
+                    break;
+                case PersistType.ApplicationState:
+                case PersistType.JsonFile:
+                    dict = (Dictionary<long, string>)CacheHashDict.CacheDict.GetValue<Dictionary<long, string>>(chatRoomNumber);
+                    break;
+                case PersistType.AppDomainData:
+                default:
+                    dict = (Dictionary<long, string>)AppDomainCacheDict.CacheDict.GetValue<Dictionary<long, string>>(chatRoomNumber);
+                    break;
+            }            
+                           
             // TODO: implement filesystem 
 
             return dict;
@@ -462,13 +468,21 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         [HttpGet]
         public static void SetCachedMessageDict(string chatRoomNumber, Dictionary<long, string> dict)
         {
-
-            if (CqrSrvControllerBase.PersistMsgInApplicationState)
-                CacheHashDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);                 
-            if (CqrSrvControllerBase.PersistMsgInAmazonElasticCache)
+            // ApplicationState as Cache
+            switch (PersistMsgIn.PersistMsg)
             {
-                RedIS.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
-            }
+                case PersistType.AmazonElasticCache:
+                    RedIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
+                    break;
+                case PersistType.ApplicationState:
+                case PersistType.JsonFile:
+                    CacheHashDict.CacheDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
+                    break;
+                case PersistType.AppDomainData:
+                default:
+                    AppDomainCacheDict.CacheDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
+                    break;
+            }            
 
             return;
         }

@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Library.Static;
+﻿using Area23.At.Framework.Library.Cqr;
+using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
@@ -10,12 +11,15 @@ using System.Web;
 
 namespace Area23.At.Framework.Library.Cache
 {
+
     /// <summary>
-    /// Redis AWS elastic valkey cache singelton connector
+    /// RedIs AWS elastic valkey cache singelton connector
     /// </summary>
     public class RedIs
     {
         private static readonly Lazy<RedIs> _instance = new Lazy<RedIs>(() => new RedIs());
+
+        private static readonly object _lock = new object();
 
         ConnectionMultiplexer connMux;
         ConfigurationOptions options;
@@ -25,7 +29,7 @@ namespace Area23.At.Framework.Library.Cache
         public static RedIs ValKey => _instance.Value;
 
         private static HashSet<string> _allKeys = new HashSet<string>();
-        public static string[] AllKeys { get => _allKeys.ToArray(); }
+        public static string[] AllKeys { get => GetAllKeys().ToArray(); }
 
         public static string EndPoint
         {
@@ -44,6 +48,7 @@ namespace Area23.At.Framework.Library.Cache
             {
                 if (_instance.Value.db == null)
                     _instance.Value.db = ConnMux.GetDatabase();
+
                 return _instance.Value.db;
             }
         }
@@ -85,12 +90,7 @@ namespace Area23.At.Framework.Library.Cache
             if (db == null)
                 db = connMux.GetDatabase();
 
-
-            var keys = GetKey<string[]>("AllKeys");
-            if (keys != null && keys.Length > 0)
-                _allKeys = new HashSet<string>(keys);
         }
-
 
 
         /// <summary>
@@ -116,14 +116,19 @@ namespace Area23.At.Framework.Library.Cache
         /// <param name="flags"></param>
         public void SetString(string redIsKey, string redIsString, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
-            Db.StringSet(redIsKey, redIsString, expiry, keepTtl, when, flags);
-            if (!_allKeys.Contains(redIsKey))
+            lock (_lock)
             {
-                _allKeys.Add(redIsKey);
-                string jsonVal = JsonConvert.SerializeObject(AllKeys);
-                Db.StringSet("AllKeys", jsonVal, null, false, When.Always, CommandFlags.None);
-            }
+                var allRedIsKeys = GetAllKeys();
+                Db.StringSet(redIsKey, redIsString, expiry, when, flags);
 
+                if (!allRedIsKeys.Contains(redIsKey))
+                {
+                    allRedIsKeys.Add(redIsKey);
+                    string jsonVal = JsonConvert.SerializeObject(AllKeys);
+                    Db.StringSet(Constants.ALL_KEYS, jsonVal, null, keepTtl, When.Always, CommandFlags.None);
+                    _allKeys = allRedIsKeys;
+                }
+            }
         }
 
 
@@ -152,10 +157,13 @@ namespace Area23.At.Framework.Library.Cache
         /// <returns></returns>
         public T GetKey<T>(string redIsKey, CommandFlags flags = CommandFlags.None)
         {
-            string jsonVal = Db.StringGet(redIsKey, flags); 
-            var tValue = JsonConvert.DeserializeObject<T>(jsonVal);
-
-            return tValue;
+            string jsonVal = Db.StringGet(redIsKey, flags);
+            T tval = default(T);
+            if (jsonVal != null)
+            {
+                tval = JsonConvert.DeserializeObject<T>(jsonVal);
+            }
+            return tval;
         }
 
         /// <summary>
@@ -165,16 +173,66 @@ namespace Area23.At.Framework.Library.Cache
         /// <param name="flags"><see cref="CommandFlags.FireAndForget"/> as default</param>
         public void DeleteKey(string redIsKey, CommandFlags flags = CommandFlags.FireAndForget)
         {
-            Db.StringGetDelete(redIsKey, flags);
-            if (!_allKeys.Contains(redIsKey))
+
+            lock (_lock)
             {
-                _allKeys.Remove(redIsKey);
-                string jsonVal = JsonConvert.SerializeObject(AllKeys);
-                Db.StringSet("AllKeys", jsonVal, null, false, When.Always, flags);
+                var allRedIsKeys = GetAllKeys();
+                if (allRedIsKeys.Contains(redIsKey))
+                {
+                    allRedIsKeys.Remove(redIsKey);
+                    string jsonVal = JsonConvert.SerializeObject(allRedIsKeys.ToArray());
+                    Db.StringSet("AllKeys", jsonVal, null, false, When.Always, flags);
+                    _allKeys = allRedIsKeys;
+                }
+                try
+                {
+                    TimeSpan span = new TimeSpan(0, 0, 1);
+                    Db.StringGetDelete(redIsKey, flags);
+                }
+                catch (Exception ex)
+                {
+                    CqrException.SetLastException(ex);
+                }
             }
         }
 
 
+        /// <summary>
+        /// ContainsKey check if <see cref="Constants.ALL_KEYS">AllKeys</see> key contains element redIsKey
+        /// </summary>
+        /// <param name="redIsKey">redIsKey to search</param>
+        /// <returns>true, if cache contains key, otherwise false</returns>
+        public bool ContainsKey(string redIsKey)
+        {
+            if (GetAllKeys().Contains(redIsKey))
+            {
+                string redIsString = Db.StringGet(redIsKey, CommandFlags.None);
+                if (!string.IsNullOrEmpty(redIsString))
+                    return true;
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// GetAllKeys returns <see cref="HashSet{string}"/></string> <see cref="_allKeys"/>
+        /// </summary>
+        /// <returns>returns <see cref="HashSet{string}"/></string> <see cref="_allKeys"/></returns>
+        public static HashSet<string> GetAllKeys()
+        {
+            if (_allKeys == null || _allKeys.Count == 0)
+            {
+                string jsonVal = Db.StringGet(Constants.ALL_KEYS, CommandFlags.None);
+                string[] keys = (jsonVal != null) ? JsonConvert.DeserializeObject<string[]>(jsonVal) : new string[0];
+                if (keys != null && keys.Length > 0)
+                    _allKeys = new HashSet<string>(keys);
+            }
+
+            return _allKeys;
+        }
+
     }
+
 
 }

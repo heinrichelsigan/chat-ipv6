@@ -54,10 +54,10 @@ namespace EU.CqrXs.WinForm.SecureChat
                         (arg.ToLower().Contains("no") || arg.ToLower().Contains("false")))
                         Constants.DirCreate = false;
                     if (arg.ToLower().Contains("test"))
-                        CacheHashDict.SetValue<bool>(Constants.CQRXS_TEST_FORM, true);
+                        CacheHashDict.CacheDict.SetValue<bool>(Constants.CQRXS_TEST_FORM, true);
                         // AppDomain.CurrentDomain.SetData(Constants.CQRXS_TEST_FORM, true);
                     if (arg.ToLower().Contains("fishonaes") || arg.ToLower().Contains("fish on aes"))
-                        CacheHashDict.SetValue<bool>(Constants.FISH_ON_AES_ENGINE, true);
+                        CacheHashDict.CacheDict.SetValue<bool>(Constants.FISH_ON_AES_ENGINE, true);
                     if (arg.ToLower().Contains("rich"))
                         startFormSwitch = "rich";
                     if (arg.ToLower().Contains("secure"))
@@ -65,7 +65,7 @@ namespace EU.CqrXs.WinForm.SecureChat
                 }
             }
 
-            CacheHashDict.SetValue<bool>(Constants.APP_FIRST_REG, firstRegistration);
+            CacheHashDict.CacheDict.SetValue<bool>(Constants.APP_FIRST_REG, firstRegistration);
 
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.

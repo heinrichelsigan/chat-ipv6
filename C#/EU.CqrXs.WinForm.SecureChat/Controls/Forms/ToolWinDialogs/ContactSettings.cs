@@ -36,7 +36,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             if (Settings.Singleton != null)
                 this.checkBoxRegister.Checked = Settings.Singleton.RegisterUser;
-            firstReg = CacheHashDict.GetValue<bool>(Constants.APP_FIRST_REG);
+            firstReg = CacheHashDict.CacheDict.GetValue<bool>(Constants.APP_FIRST_REG);
             if (!firstReg)
                 this.checkBoxRegister.Enabled = false;
 
@@ -197,7 +197,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     if (imgTest != null)
                         Settings.Singleton.MyContact.ContactImage = imgTest;
                 }
-                CacheHashDict.SetValue<CContact>(Constants.APP_MY_CONTACT, Settings.Singleton.MyContact);                
+                CacheHashDict.CacheDict.SetValue<CContact>(Constants.APP_MY_CONTACT, Settings.Singleton.MyContact);                
                 Settings.Singleton.RegisterUser = this.checkBoxRegister.Checked;
                 Settings.SaveSettings(Entities.Settings.Singleton);
             }

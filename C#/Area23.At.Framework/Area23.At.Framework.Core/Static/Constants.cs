@@ -139,6 +139,7 @@ namespace Area23.At.Framework.Core.Static
 
         public const string UTF8_JSON = "utf8symol.json";
         public const string JSON_SAVE_FILE = "urlshort.json";
+        public const string JSON_APPDICT_FILE = "appdict.json";
         public const string JSON_CONTACTS_FILE = "contacts.json";
         public const string JSON_CONTACTS = "contacts";
         public const string JSON_CONTACTS_SELECTED = "contacts_selected";

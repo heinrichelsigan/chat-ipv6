@@ -14,9 +14,10 @@ namespace EU.CqrXs.Srv.Util
     public enum PersistType
     {
         None = 0,
-        ApplicationState = 1,
+        AppDomainData = 1,
         AmazonElasticCache = 2,
-        FileSystem = 3
+        JsonFile = 3,
+        ApplicationState = 4
         // ReddisCache = 3,
     }
 
