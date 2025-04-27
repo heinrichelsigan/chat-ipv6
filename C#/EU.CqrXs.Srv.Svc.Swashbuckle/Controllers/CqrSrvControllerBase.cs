@@ -418,7 +418,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             switch (PersistMsgIn.PersistMsg)
             {
                 case PersistType.AmazonElasticCache:
-                    dict = (Dictionary<long, string>)RedIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
+                    dict = (Dictionary<long, string>)RedIs.ValKey.GetValue<Dictionary<long, string>>(chatRoomNumber);
                     break;
                 case PersistType.ApplicationState:
                 case PersistType.JsonFile:
@@ -472,7 +472,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             switch (PersistMsgIn.PersistMsg)
             {
                 case PersistType.AmazonElasticCache:
-                    RedIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
+                    RedIs.ValKey.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
                     break;
                 case PersistType.ApplicationState:
                 case PersistType.JsonFile:

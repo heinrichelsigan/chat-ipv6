@@ -60,10 +60,10 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                     testReport += $"{GetDateNow()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
 
                     testReport += $"{GetDateNow()}: Preparing to set Dictionary<Guid, CqrContact> in cache." + Environment.NewLine;
-                    RedIs.ValKey.SetKey<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
+                    RedIs.ValKey.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
                     testReport += $"{GetDateNow()}: Added serialized json string to cache." + Environment.NewLine;
 
-                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedIs.ValKey.GetKey<Dictionary<Guid, CContact>>("TestCache");
+                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedIs.ValKey.GetValue<Dictionary<Guid, CContact>>("TestCache");
                     testReport += $"{GetDateNow()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + Environment.NewLine;
                     foreach (CContact contact in outdict.Values)
                     {

@@ -71,7 +71,7 @@ namespace Area23.At.Framework.Core.Cache
                         break;
                     case "AmazonElasticCache":
                         // TODO: Redis
-                        _instance = new Lazy<MemCacheDict>(() => new AppDomainCacheDict());
+                        _instance = new Lazy<MemCacheDict>(() => new RedIs());
                         break;
                     case "AppDomainData":
                     default:

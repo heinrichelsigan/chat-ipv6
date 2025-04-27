@@ -115,7 +115,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
             switch (PersistMsgIn.PersistMsg)
             {
                 case PersistType.AmazonElasticCache:
-                    RedIs.ValKey.DeleteKey(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
+                    RedIs.ValKey.RemoveKey(JsonChatRoomNumber);
                     break;
                 case PersistType.ApplicationState:
                 case PersistType.JsonFile:
@@ -271,7 +271,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                 switch (PersistMsgIn.PersistMsg)
                 {
                     case PersistType.AmazonElasticCache:
-                        chatRooms = (List<string>)RedIs.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
+                        chatRooms = (List<string>)RedIs.ValKey.GetValue<List<string>>(Constants.CHATROOMS);
                         break;
                     case PersistType.ApplicationState:
                     case PersistType.JsonFile:
@@ -333,7 +333,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                     CacheHashDict.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
                     break;
                 case PersistType.AmazonElasticCache:
-                    RedIs.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);
+                    RedIs.ValKey.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
                     break;                                
                 case PersistType.AppDomainData:
                 default:
@@ -363,7 +363,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                             CacheHashDict.CacheDict.RemoveKey(chatRoom);
                         break;
                     case PersistType.AmazonElasticCache:
-                        RedIs.ValKey.DeleteKey(chatRoom, StackExchange.Redis.CommandFlags.FireAndForget);
+                        RedIs.ValKey.RemoveKey(chatRoom);
                         break;
                     case PersistType.AppDomainData:
                     default:
