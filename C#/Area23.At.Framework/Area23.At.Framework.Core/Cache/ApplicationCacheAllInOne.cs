@@ -375,7 +375,11 @@ namespace Area23.At.Framework.Core.Cache
                 _appCache = (ConcurrentDictionary<string, CacheTypVal>)AppDomain.CurrentDomain.GetData(APP_CONCURRENT_DICT);
                 if (_appCache == null)
                 {
-                    _appCache = new ConcurrentDictionary<string, CacheTypVal>();
+                    lock (_lock)
+                    {
+                        _appCache = new ConcurrentDictionary<string, CacheTypVal>();
+                        AppDomain.CurrentDomain.SetData(APP_CONCURRENT_DICT, _appCache);
+                    }
                 }
 
                 return _appCache;
