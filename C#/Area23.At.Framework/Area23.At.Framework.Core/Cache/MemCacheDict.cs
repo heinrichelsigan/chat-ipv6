@@ -56,7 +56,9 @@ namespace Area23.At.Framework.Core.Cache
         public virtual string[] AllKeys { get => AppDict.Keys.ToArray(); }
 
 
-
+        /// <summary>
+        /// static ctor
+        /// </summary>
         static MemCacheDict()
         {
             if (ConfigurationManager.AppSettings["PersistMsgIn"] != null)
@@ -64,7 +66,6 @@ namespace Area23.At.Framework.Core.Cache
                 string persistMsgIn = (string)ConfigurationManager.AppSettings["PersistMsgIn"];
                 switch (persistMsgIn)
                 {
-
                     case "ApplicationState":
                     case "JsonFile":
                         _instance = new Lazy<MemCacheDict>(() => new CacheHashDict());

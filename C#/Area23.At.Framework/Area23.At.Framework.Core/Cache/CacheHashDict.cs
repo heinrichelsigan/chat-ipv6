@@ -4,7 +4,6 @@ using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Text;
-using System.Windows.Input;
 
 namespace Area23.At.Framework.Core.Cache
 {

@@ -1,13 +1,4 @@
-﻿using Area23.At.Framework.Core.Static;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Area23.At.Framework.Core.Cache
+﻿namespace Area23.At.Framework.Core.Cache
 {
 
     /// <summary>

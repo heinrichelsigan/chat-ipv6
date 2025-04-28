@@ -1,17 +1,8 @@
-﻿using Area23.At.Framework.Core.Static;
+﻿using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json.Nodes;
-using Area23.At.Framework.Core.Cqr;
-using Newtonsoft.Json.Linq;
-using static ICSharpCode.SharpZipLib.Zip.ExtendedUnixData;
-using System.Windows.Input;
 
 namespace Area23.At.Framework.Core.Cache
 {
