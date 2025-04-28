@@ -98,6 +98,8 @@ namespace Area23.At.Framework.Core.Cache
         protected internal static readonly Lazy<MemCache> _instance;
         public static MemCache CacheDict => _instance.Value;
 
+        public static readonly string CacheVariant = "MemCache";
+
         /// <summary>
         /// private <see cref="ConcurrentDictionary{string, CacheTypeValue}"/>
         /// </summary>
@@ -139,33 +141,31 @@ namespace Area23.At.Framework.Core.Cache
         /// </summary>
         static MemCache()
         {
+            string persistMsgIn = "Redis";
+
             if (ConfigurationManager.AppSettings["PersistMsgIn"] != null)
             {
-                string persistMsgIn = (string)ConfigurationManager.AppSettings["PersistMsgIn"];
-                switch (persistMsgIn)
-                {
-                    case "ApplicationState":
-                    case "JsonFile":
-                        _instance = new Lazy<MemCache>(() => new JsonCache());
-                        break;
-                    case "AmazonElasticCache":
-                        // TODO: Redis
-                        _instance = new Lazy<MemCache>(() => new RedisCache());
-                        break;
-                    case "AppDomainData":
-                        _instance = new Lazy<MemCache>(() => new AppDomainCache());
-                        break;
-                    default:
-                        _instance = new Lazy<MemCache>(() => new AppDomainCache());
-                        break;
-                }
+                persistMsgIn = (string)ConfigurationManager.AppSettings["PersistMsgIn"];
             }
-            else
+
+            switch (persistMsgIn)
             {
-                // _instance = new Lazy<MemCache>(() => new RedisCache());
-                // _instance = new Lazy<MemCache>(() => new JsonCache());
-                _instance = new Lazy<MemCache>(() => new AppDomainCache());
-            }
+                case "JsonFile":
+                    CacheVariant = "JsonFile";
+                    _instance = new Lazy<MemCache>(() => new JsonCache());
+                    break;
+                case "Redis":
+                    // TODO: Redis
+                    CacheVariant = "Redis";
+                    _instance = new Lazy<MemCache>(() => new RedisCache());
+                    break;
+                case "ApplicationState":
+                case "AppDomain":
+                default:
+                    CacheVariant = "AppDomain";
+                    _instance = new Lazy<MemCache>(() => new AppDomainCache());
+                    break;
+            }           
         }
 
 
@@ -413,8 +413,7 @@ namespace Area23.At.Framework.Core.Cache
         const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         const string VALKEY_CACHE_APP_KEY = "RedisValkeyCache";
         const string ALL_KEYS = "AllKeys";
-
-        private static readonly object _lock = new object();
+       
 
         ConnectionMultiplexer connMux;
         ConfigurationOptions options;
@@ -426,14 +425,16 @@ namespace Area23.At.Framework.Core.Cache
         private static HashSet<string> _allKeys = new HashSet<string>();
         public override string[] AllKeys { get => GetAllKeys().ToArray(); }
 
+        private static string _endPoint = VALKEY_CACHE_HOST_PORT;
         public static string EndPoint
         {
             get
-            {
-                ((RedisCache)(_instance.Value)).endpoint = VALKEY_CACHE_HOST_PORT; // v              
+            {                            
                 if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY] != null)
-                    ((RedisCache)(_instance.Value)).endpoint = (string)ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY];
-                return ((RedisCache)(_instance.Value)).endpoint;
+                    _endPoint = (string)ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY];
+                if (string.IsNullOrEmpty(_endPoint))
+                    _endPoint = VALKEY_CACHE_HOST_PORT; // back to default
+                return _endPoint;
             }
         }
 
@@ -692,11 +693,34 @@ namespace Area23.At.Framework.Core.Cache
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Testing caches");
-            Task[] taskArray = new Task[512];
-            for (int i = 0; i < 512; i++)
+
+            RunTasks(512);
+            RunSerial(512);
+
+
+            Console.WriteLine($"\nPress any key to continue...\n");
+            Console.ReadKey();
+
+        }
+
+        static void RunTasks(int numberOfTasks)
+        {
+            string parallelCache = MemCache.CacheVariant;
+            Console.WriteLine($"RunTasks(int numberOfTasks = {numberOfTasks}) cache = {parallelCache}.");
+            DateTime now = DateTime.Now;
+            if (numberOfTasks <= 0)
+                numberOfTasks = 16;
+            if ((numberOfTasks % 4) != 0)
+                numberOfTasks += (4 - (numberOfTasks % 4));
+
+            int quater = numberOfTasks / 4;
+            int half = numberOfTasks / 2;
+            int threequater = quater + half;
+
+            Task[] taskArray = new Task[numberOfTasks];
+            for (int i = 0; i < numberOfTasks; i++)
             {
-                if (i < 128 || (i >= 256 && i < 384))
+                if (i < quater || (i >= half && i < threequater))
                 {
                     taskArray[i] = Task.Factory.StartNew((object obj) =>
                     {
@@ -706,11 +730,11 @@ namespace Area23.At.Framework.Core.Cache
 
                         data.CThreadId = Thread.CurrentThread.ManagedThreadId;
                         MemCache.CacheDict.SetValue<CacheData>(data.CKey, data);
-                        Console.WriteLine($"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.");
+                        // Console.WriteLine($"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.");
                     },
                     new CacheData(i % 16));
                 }
-                else if ((i >= 128 && i < 256) || i >= 384)
+                else if ((i >= quater && i < half) || i >= threequater)
                 {
                     taskArray[i] = Task.Factory.StartNew((object obj) =>
                     {
@@ -719,20 +743,59 @@ namespace Area23.At.Framework.Core.Cache
                             strkey = "Key_" + (i % 16).ToString();
 
                         CacheData data = MemCache.CacheDict.GetValue<CacheData>(strkey);
-                        Console.WriteLine($"Task get cache key #{strkey} => {data.CValue} created at {data.CTime} original thread {data.CThreadId} on current thread #{Thread.CurrentThread.ManagedThreadId}.");
+                        // Console.WriteLine($"Task get cache key #{strkey} => {data.CValue} created at {data.CTime} original thread {data.CThreadId} on current thread #{Thread.CurrentThread.ManagedThreadId}.");
                     },
                     new StringBuilder(string.Concat("Key_", (i % 16).ToString())).ToString());
                 }
             }
 
             Task.WaitAll(taskArray);
-            Console.WriteLine("\n\nPress any key to continue...\n");
-            Console.ReadKey();
+
+            TimeSpan ts = DateTime.Now.Subtract(now);
+            Console.WriteLine($"\nFinished {numberOfTasks} parallel tasks in {ts.Minutes:d2}:{ts.Seconds:d2}.{ts.Milliseconds:d3}\n");
+        }
+
+        static void RunSerial(int iterationsCount)
+        {
+            string serialSache = MemCache.CacheVariant;
+            Console.WriteLine($"RunSerial(int iterationsCount = {iterationsCount}) cache = {serialSache}.");
+
+            if (iterationsCount <= 0)
+                iterationsCount = 16;
+            if ((iterationsCount % 4) != 0)
+                iterationsCount += (4 - (iterationsCount % 4));
+            int quater = iterationsCount / 4;
+            int half = iterationsCount / 2;
+            int threequater = quater + half;
+
+            DateTime now = DateTime.Now;
+            for (int i = 0; i < iterationsCount; i++)
+            {
+                if (i < quater || (i >= half && i < threequater))
+                {
+                    CacheData data = new CacheData(i % 32);
+                    data.CThreadId = Thread.CurrentThread.ManagedThreadId;
+                    MemCache.CacheDict.SetValue<CacheData>(data.CKey, data);
+                    // Console.WriteLine($"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.");
+                }
+                else if ((i >= quater && i < half) || i >= threequater)
+                {
+                    string strkey = "Key_" + (i % 32).ToString();
+                    CacheData cacheData = MemCache.CacheDict.GetValue<CacheData>(strkey);
+                    // Console.WriteLine($"Task get cache key #{strkey} => {cacheData.CValue} created at {cacheData.CTime} original thread {cacheData.CThreadId} on current thread #{Thread.CurrentThread.ManagedThreadId}.");
+                }
+            }
+
             // var tasks = new List<Task>(taskArray);            
             // Parallel.ForEach(tasks, task => { task.Start(); });
             //Task.WhenAll(tasks).ContinueWith(done => { Console.WriteLine("done"); });
+
+            TimeSpan ts = DateTime.Now.Subtract(now);
+            Console.WriteLine($"\nFinished {iterationsCount} iterations in {ts.Minutes:d2}:{ts.Seconds:d2}.{ts.Milliseconds:d3}\n");
+
         }
 
     }
+
 
 }
