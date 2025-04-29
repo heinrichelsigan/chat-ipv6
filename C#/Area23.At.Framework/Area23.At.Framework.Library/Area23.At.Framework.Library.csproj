@@ -165,11 +165,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cache\ApplicationContextCache.cs" />
-    <Compile Include="Cache\MemCacheDict.cs" />
-    <Compile Include="Cache\CacheHashDict.cs" />
+    <Compile Include="Cache\JsonFileCache.cs" />
+    <Compile Include="Cache\MemoryCache.cs" />
     <Compile Include="Cache\AppDomainCache.cs" />
     <Compile Include="Cache\CacheValue.cs" />
-    <Compile Include="Cache\RedIs.cs" />
+    <Compile Include="Cache\PersistInCache.cs" />
+    <Compile Include="Cache\RedisCache.cs" />
     <Compile Include="Cache\RediStatic.cs" />
     <Compile Include="Cqr\CqrFacade.cs" />
     <Compile Include="Cqr\CqrService.cs" />

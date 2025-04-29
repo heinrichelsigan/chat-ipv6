@@ -15,7 +15,7 @@ namespace Area23.At.Framework.Library.Cache
     /// <summary>
     /// CacheHashDict an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheValue}"/> serialized with json    
     /// </summary>
-    public class CacheHashDict : MemCacheDict
+    public class CacheHashDict : MemoryCache
     {
 
         const int INIT_SEM_COUNT = 1;

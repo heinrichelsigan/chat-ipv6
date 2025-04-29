@@ -41,7 +41,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 
             testReport += $"{GetDateNow()}: InitMethod() completed.\n";
 
-            testReport += $"{GetDateNow()}: Persistence in {PersistMsgIn.PersistMsg.ToString()}\n";
+            testReport += $"{GetDateNow()}: Persistence in {PersistInCache.CacheType.ToString()}\n";
 
             Dictionary<Guid, CContact> dictCacheTest = new Dictionary<Guid, CContact>();
             foreach (CContact c in _contacts)
@@ -51,19 +51,19 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                     dictCacheTest.Add(c.Cuid, c);
             }
             testReport += $"{GetDateNow()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
-            if (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache)
+            if (PersistInCache.CacheType == PersistType.Redis)
             {
                 try
                 {
                     testReport += $"{GetDateNow()}: Ready to connect to {System.Configuration.ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
-                    string status = RedIs.ConnMux.GetStatus();
+                    string status = RedisCache.ConnMux.GetStatus();
                     testReport += $"{GetDateNow()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
 
                     testReport += $"{GetDateNow()}: Preparing to set Dictionary<Guid, CqrContact> in cache." + Environment.NewLine;
-                    RedIs.ValKey.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
+                    RedisCache.ValKey.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
                     testReport += $"{GetDateNow()}: Added serialized json string to cache." + Environment.NewLine;
 
-                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedIs.ValKey.GetValue<Dictionary<Guid, CContact>>("TestCache");
+                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedisCache.ValKey.GetValue<Dictionary<Guid, CContact>>("TestCache");
                     testReport += $"{GetDateNow()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + Environment.NewLine;
                     foreach (CContact contact in outdict.Values)
                     {

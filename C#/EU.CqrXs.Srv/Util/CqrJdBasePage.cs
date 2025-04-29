@@ -86,6 +86,46 @@ namespace EU.CqrXs.Srv.Util
             initState = 0x2;
         }
 
+        protected virtual bool AuthHtPasswd(string user, string passwd)
+        {
+
+            bool authTypeBasic = false, authBasicProviderFile = false;
+            string authFile = "", requireUser = "";
+            string phyAppPath = Request.PhysicalApplicationPath;
+            if (!Directory.Exists(phyAppPath))
+                return false;
+
+            string htAccessFile = Path.Combine(phyAppPath, ".htaccess");
+            if (!File.Exists(htAccessFile))
+                return true;
+
+            List<string> lines = File.ReadLines(htAccessFile).ToList();
+            foreach (string line in lines)
+            {
+                if (line.StartsWith("AuthType Basic", StringComparison.CurrentCultureIgnoreCase))
+                    authTypeBasic = true;
+                if (line.StartsWith("AuthBasicProvider file", StringComparison.CurrentCultureIgnoreCase))
+                    authBasicProviderFile = true;
+                if (line.StartsWith("AuthUserFile ", StringComparison.CurrentCultureIgnoreCase))
+                    authFile = line.Replace("AuthUserFile ", "").Replace("\"", "");
+                if (line.StartsWith("Require user ", StringComparison.CurrentCultureIgnoreCase))
+                    requireUser = line.Replace("Require user ", "");
+            }
+
+            if (!string.IsNullOrEmpty(requireUser) && !user.Equals(requireUser, StringComparison.CurrentCultureIgnoreCase))
+                return false;
+
+            if (!string.IsNullOrEmpty(authFile) && File.Exists(authFile))
+            {
+                string passedthrough = ProcessCmd.Execute("htpasswd", $" -b -v {authFile} {user} {passwd} ");
+                if (!passedthrough.Contains($"Password for user {user} correct."))
+                    return false;
+            }
+
+            return true;
+
+        }
+
         protected virtual void Page_Load(object sender, EventArgs e)
         {
             if (initState < 0x2 || _contacts == null) 

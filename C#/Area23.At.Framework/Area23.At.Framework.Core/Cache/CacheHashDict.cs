@@ -11,7 +11,7 @@ namespace Area23.At.Framework.Core.Cache
     /// <summary>
     /// CacheHashDict an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheValue}"/> serialized with json    
     /// </summary>
-    public class CacheHashDict : MemCacheDict
+    public class CacheHashDict : MemoryCache
     {
 
         //protected internal static readonly Lazy<MemCacheDict> _instance = new Lazy<MemCacheDict>(() => new CacheHashDict());

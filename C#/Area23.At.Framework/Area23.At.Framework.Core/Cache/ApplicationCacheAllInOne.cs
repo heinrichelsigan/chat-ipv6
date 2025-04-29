@@ -19,11 +19,12 @@ namespace Area23.At.Framework.Core.Cache
     /// setting cache value via <see cref="CacheTypVal(object, Type)"/> ctor is obsolete.
     /// Use <see cref="GetValue{T}"/> to get the cached value
     /// </summary>
+    [Serializable]
     public class CacheTypVal
     {
 
-        protected internal object? _Value { get; set; }
-        protected internal Type? _Type { get; set; }
+        public object? _Value { get; protected internal set; }
+        public Type? _Type { get; protected internal set; }
 
         /// <summary>
         /// Empty default ctor
@@ -131,6 +132,21 @@ namespace Area23.At.Framework.Core.Cache
             }
         }
 
+        public object? this[string ckey]
+        {
+            get => (AppCache.ContainsKey(ckey) && AppCache.TryGetValue(ckey, out CacheTypVal? cvalue)) ? cvalue._Value : null;
+            set
+            {
+                object? ovalue = value;
+                Type? otype = value?.GetType();
+                if (AppCache.ContainsKey(ckey) && AppCache.TryGetValue(ckey, out CacheTypVal oldValue))
+                    _appCache.TryRemove(ckey, out oldValue);
+
+                _appCache.TryAdd(ckey, new CacheTypVal(ovalue, otype));
+                AppCache = _appCache;
+            }
+        }
+
         /// <summary>
         /// Get all keys from <see cref="AppCache"/> which is implemented as a <see cref="ConcurrentDictionary{string, CacheTypVal}"/>
         /// </summary>
@@ -141,7 +157,7 @@ namespace Area23.At.Framework.Core.Cache
         /// </summary>
         static MemCache()
         {
-            string persistMsgIn = "Redis";
+            string persistMsgIn = "JsonFile";
 
             if (ConfigurationManager.AppSettings["PersistMsgIn"] != null)
             {
@@ -157,15 +173,15 @@ namespace Area23.At.Framework.Core.Cache
                 case "Redis":
                     // TODO: Redis
                     CacheVariant = "Redis";
-                    _instance = new Lazy<MemCache>(() => new RedisCache());
+                    _instance = new Lazy<MemCache>(() => new RedIsCache());
                     break;
                 case "ApplicationState":
                 case "AppDomain":
                 default:
                     CacheVariant = "AppDomain";
-                    _instance = new Lazy<MemCache>(() => new AppDomainCache());
+                    _instance = new Lazy<MemCache>(() => new AppCurrentDomainCache());
                     break;
-            }           
+            }
         }
 
 
@@ -254,6 +270,7 @@ namespace Area23.At.Framework.Core.Cache
     }
 
 
+
     /// <summary>
     /// JsonCache an application cache implemented with <see cref="ConcurrentDictionary{string, CacheTypVal}"/> serialized with json    
     /// </summary>
@@ -275,7 +292,7 @@ namespace Area23.At.Framework.Core.Cache
         {
             Formatting = Formatting.Indented,
             MaxDepth = 16,
-            NullValueHandling = NullValueHandling.Include,
+            // NullValueHandling = NullValueHandling.Include,
             MissingMemberHandling = MissingMemberHandling.Ignore,
             ObjectCreationHandling = ObjectCreationHandling.Auto,
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
@@ -360,9 +377,9 @@ namespace Area23.At.Framework.Core.Cache
 
 
     /// <summary>
-    /// JsonCache an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheTypVal}"/>
+    /// AppCurrentDomainCache an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheTypVal}"/>
     /// </summary>
-    public class AppDomainCache : MemCache
+    public class AppCurrentDomainCache : MemCache
     {
 
         /// <summary>
@@ -397,7 +414,7 @@ namespace Area23.At.Framework.Core.Cache
             }
         }
 
-        public AppDomainCache()
+        public AppCurrentDomainCache()
         {
             if (AppCache == null) ;
         }
@@ -407,13 +424,13 @@ namespace Area23.At.Framework.Core.Cache
     /// <summary>
     /// RedisCache AWS elastic valkey cache singelton connector
     /// </summary>
-    public class RedisCache : MemCache
+    public class RedIsCache : MemCache
     {
 
         const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         const string VALKEY_CACHE_APP_KEY = "RedisValkeyCache";
         const string ALL_KEYS = "AllKeys";
-       
+
 
         ConnectionMultiplexer connMux;
         ConfigurationOptions options;
@@ -429,7 +446,7 @@ namespace Area23.At.Framework.Core.Cache
         public static string EndPoint
         {
             get
-            {                            
+            {
                 if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY] != null)
                     _endPoint = (string)ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY];
                 if (string.IsNullOrEmpty(_endPoint))
@@ -442,10 +459,10 @@ namespace Area23.At.Framework.Core.Cache
         {
             get
             {
-                if (((RedisCache)(_instance.Value)).db == null)
-                    ((RedisCache)(_instance.Value)).db = ConnMux.GetDatabase();
+                if (((RedIsCache)(_instance.Value)).db == null)
+                    ((RedIsCache)(_instance.Value)).db = ConnMux.GetDatabase();
 
-                return ((RedisCache)(_instance.Value)).db;
+                return ((RedIsCache)(_instance.Value)).db;
             }
         }
 
@@ -453,17 +470,17 @@ namespace Area23.At.Framework.Core.Cache
         {
             get
             {
-                if (((RedisCache)(_instance.Value)).connMux == null)
+                if (((RedIsCache)(_instance.Value)).connMux == null)
                 {
-                    if (((RedisCache)(_instance.Value)).options == null)
-                        ((RedisCache)(_instance.Value)).options = new ConfigurationOptions
+                    if (((RedIsCache)(_instance.Value)).options == null)
+                        ((RedIsCache)(_instance.Value)).options = new ConfigurationOptions
                         {
                             EndPoints = { EndPoint },
                             Ssl = true
                         };
-                    ((RedisCache)(_instance.Value)).connMux = ConnectionMultiplexer.Connect(((RedisCache)(_instance.Value)).options);
+                    ((RedIsCache)(_instance.Value)).connMux = ConnectionMultiplexer.Connect(((RedIsCache)(_instance.Value)).options);
                 }
-                return ((RedisCache)(_instance.Value)).connMux;
+                return ((RedIsCache)(_instance.Value)).connMux;
             }
         }
 
@@ -471,7 +488,7 @@ namespace Area23.At.Framework.Core.Cache
         /// <summary>
         /// default parameterless constructor for RedisCacheValKey cache singleton
         /// </summary>
-        public RedisCache()
+        public RedIsCache()
         {
             endpoint = VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
             if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY] != null)
@@ -693,17 +710,14 @@ namespace Area23.At.Framework.Core.Cache
     {
         static void Main(string[] args)
         {
-
-            RunTasks(512);
-            RunSerial(512);
-
+            RunTasks(256);
+            RunSerial(256);
 
             Console.WriteLine($"\nPress any key to continue...\n");
             Console.ReadKey();
-
         }
 
-        static void RunTasks(int numberOfTasks)
+        static void RunTasks(int numberOfTasks, short maxKexs = 16)
         {
             string parallelCache = MemCache.CacheVariant;
             Console.WriteLine($"RunTasks(int numberOfTasks = {numberOfTasks}) cache = {parallelCache}.");
@@ -724,38 +738,44 @@ namespace Area23.At.Framework.Core.Cache
                 {
                     taskArray[i] = Task.Factory.StartNew((object obj) =>
                     {
+                        string ckey = string.Concat("Key_", (i % maxKexs).ToString());
                         CacheData data = obj as CacheData;
                         if (data == null)
-                            data = new CacheData(i % 16);
+                            data = new CacheData(ckey, Thread.CurrentThread.ManagedThreadId);
 
                         data.CThreadId = Thread.CurrentThread.ManagedThreadId;
-                        MemCache.CacheDict.SetValue<CacheData>(data.CKey, data);
+                        MemCache.CacheDict.SetValue<CacheData>(ckey, data);
                         // Console.WriteLine($"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.");
                     },
-                    new CacheData(i % 16));
+                    new CacheData("Key_" + (i % maxKexs).ToString()));
                 }
                 else if ((i >= quater && i < half) || i >= threequater)
                 {
                     taskArray[i] = Task.Factory.StartNew((object obj) =>
                     {
+                        string ckey = string.Concat("Key_", (i % maxKexs).ToString());
                         string strkey = obj as string;
                         if (string.IsNullOrEmpty(strkey))
-                            strkey = "Key_" + (i % 16).ToString();
+                            strkey = ckey;
 
-                        CacheData data = MemCache.CacheDict.GetValue<CacheData>(strkey);
+                        CacheData data = (CacheData)MemCache.CacheDict[strkey];
                         // Console.WriteLine($"Task get cache key #{strkey} => {data.CValue} created at {data.CTime} original thread {data.CThreadId} on current thread #{Thread.CurrentThread.ManagedThreadId}.");
                     },
-                    new StringBuilder(string.Concat("Key_", (i % 16).ToString())).ToString());
+                    new StringBuilder(string.Concat("Key_", (i % maxKexs).ToString())).ToString());
                 }
             }
 
             Task.WaitAll(taskArray);
 
             TimeSpan ts = DateTime.Now.Subtract(now);
-            Console.WriteLine($"\nFinished {numberOfTasks} parallel tasks in {ts.Minutes:d2}:{ts.Seconds:d2}.{ts.Milliseconds:d3}\n");
+            double doublePerSecond = numberOfTasks / ts.TotalSeconds;
+            if (numberOfTasks > ts.TotalSeconds)
+                doublePerSecond = (1000000 * numberOfTasks) / ts.TotalMicroseconds;
+            ulong perSecond = (ulong)doublePerSecond;
+            Console.WriteLine($"Finished {numberOfTasks} parallel tasks in {ts.Minutes:d2}:{ts.Seconds:d2}.{ts.Milliseconds:d3}.{ts.Microseconds:d3}\n\t{perSecond} tasks per second.\n");
         }
 
-        static void RunSerial(int iterationsCount)
+        static void RunSerial(int iterationsCount, short maxKexs = 16)
         {
             string serialSache = MemCache.CacheVariant;
             Console.WriteLine($"RunSerial(int iterationsCount = {iterationsCount}) cache = {serialSache}.");
@@ -773,15 +793,15 @@ namespace Area23.At.Framework.Core.Cache
             {
                 if (i < quater || (i >= half && i < threequater))
                 {
-                    CacheData data = new CacheData(i % 32);
-                    data.CThreadId = Thread.CurrentThread.ManagedThreadId;
-                    MemCache.CacheDict.SetValue<CacheData>(data.CKey, data);
+                    string ckey = string.Concat("Key_", (i % maxKexs).ToString());
+                    CacheData data = new CacheData(ckey, Thread.CurrentThread.ManagedThreadId);
+                    MemCache.CacheDict.SetValue<CacheData>(ckey, data);
                     // Console.WriteLine($"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.");
                 }
                 else if ((i >= quater && i < half) || i >= threequater)
                 {
-                    string strkey = "Key_" + (i % 32).ToString();
-                    CacheData cacheData = MemCache.CacheDict.GetValue<CacheData>(strkey);
+                    string strkey = "Key_" + (i % maxKexs).ToString();
+                    CacheData cacheData = (CacheData)MemCache.CacheDict[strkey];
                     // Console.WriteLine($"Task get cache key #{strkey} => {cacheData.CValue} created at {cacheData.CTime} original thread {cacheData.CThreadId} on current thread #{Thread.CurrentThread.ManagedThreadId}.");
                 }
             }
@@ -791,11 +811,14 @@ namespace Area23.At.Framework.Core.Cache
             //Task.WhenAll(tasks).ContinueWith(done => { Console.WriteLine("done"); });
 
             TimeSpan ts = DateTime.Now.Subtract(now);
-            Console.WriteLine($"\nFinished {iterationsCount} iterations in {ts.Minutes:d2}:{ts.Seconds:d2}.{ts.Milliseconds:d3}\n");
+            double doublePerSecond = iterationsCount / ts.TotalSeconds;
+            if (iterationsCount > ts.TotalSeconds)
+                doublePerSecond = (1000000 * iterationsCount) / ts.TotalMicroseconds;
+            ulong perSecond = (ulong)doublePerSecond;
+            Console.WriteLine($"Finished {iterationsCount} iterations in {ts.Minutes:d2}:{ts.Seconds:d2}.{ts.Milliseconds:d3}.{ts.Microseconds:d3}\n\t{perSecond} iterations per second.\n");
 
         }
 
     }
-
 
 }

@@ -35,19 +35,19 @@ public class BaseService
     /// Persist encrypted messages in chat rooms in application state
     /// use this option only for testing, because you will you get soon an out of memory error
     /// </summary>
-    public static bool PersistMsgInApplicationState { get { return (PersistMsgIn.PersistMsg == PersistType.ApplicationState); } }
+    public static bool PersistMsgInApplicationState { get { return (PersistInCache.CacheType == PersistType.ApplicationState); } }
 
     /// <summary>
     /// Use Amazon elastic cache to persist encrypted messages in chat rooms
     /// Fast option, but expensive, when we have a lot of huge size messages
     /// </summary>
-    public static bool PersistMsgInAmazonElasticCache { get { return (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache); } }
+    public static bool PersistMsgInAmazonElasticCache { get { return (PersistInCache.CacheType == PersistType.Redis); } }
 
     /// <summary>
     /// Use file system to encrypted messages in chat rooms
     /// Fast option, but expensive, when we have a lot of huge size messages
     /// </summary>
-    public static bool PersistMsgInFileSystem { get { return (PersistMsgIn.PersistMsg == PersistType.FileSystem); } }
+    public static bool PersistMsgInFileSystem { get { return (PersistInCache.CacheType == PersistType.JsonFile); } }
 
 
     public BaseService() 
@@ -69,8 +69,8 @@ public class BaseService
 
 
         if (PersistMsgInAmazonElasticCache)
-        {            
-            string status = REdIs.ConnMux.GetStatus();
+        {
+            string status = RedisCache.ConnMux.GetStatus();
 
             //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
             //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -368,22 +368,10 @@ public class BaseService
     public static Dictionary<long, string> GetCachedMessageDict(string chatRoomNumber)
     {
         Dictionary<long, string> dict = new Dictionary<long, string>();
-
-        // ApplicationState as Cache
-        if (PersistMsgInApplicationState && (HttpContext.Current.Application[chatRoomNumber] != null))
-            dict = (Dictionary<long, string>)HttpContext.Current.Application[chatRoomNumber];
-
-        // Amazon Redis Valkey Cache
-        if (PersistMsgInAmazonElasticCache)
-        {
-            dict = (Dictionary<long, string>)REdIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
-                
-        }
-
-        // TODO: implement filesystem 
+        
+        dict = (Dictionary<long, string>)MemoryCache.CacheDict.GetValue<Dictionary<long, string>>(chatRoomNumber);
 
         return dict;
-
     }
 
     /// <summary>
@@ -417,13 +405,7 @@ public class BaseService
     public static void SetCachedMessageDict(string chatRoomNumber, Dictionary<long, string> dict)
     {
 
-        if (BaseService.PersistMsgInApplicationState)
-            HttpContext.Current.Application[chatRoomNumber] = dict;
-        if (BaseService.PersistMsgInAmazonElasticCache)
-        {
-            REdIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
-        }
-
+        MemoryCache.CacheDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
         return;
     }
 

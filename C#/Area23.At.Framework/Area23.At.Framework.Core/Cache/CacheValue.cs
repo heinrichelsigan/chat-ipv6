@@ -8,12 +8,13 @@
     /// setting cache value via <see cref="CacheValue(object, Type)"/> ctor is obsolete.
     /// Use <see cref="GetValue{T}"/> to get the cached value
     /// </summary>
+    [Serializable]
     public class CacheValue
     {
         
-        protected internal object? _Value { get; set; }
+        public object? _Value { get; protected internal set; }
 
-        protected internal Type? _Type { get; set; }
+        protected internal Type? _Type { get; protected internal set; }
 
 
         /// <summary>

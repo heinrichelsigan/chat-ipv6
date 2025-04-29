@@ -43,32 +43,6 @@ namespace EU.CqrXs.Srv.Util
         // protected internal string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         // protected internal StackExchange.Redis.IDatabase db;
 
-        /// <summary>
-        /// Persist encrypted messages in chat rooms in application state
-        /// use this option only for testing, because you will you get soon an out of memory error
-        /// </summary>
-        public static bool PersistMsgInApplicationState
-        {
-            get => (PersistMsgIn.PersistMsg == PersistType.ApplicationState);
-        }
-
-        /// <summary>
-        /// Use Amazon elastic cache to persist encrypted messages in chat rooms
-        /// Fast option, but expensive, when we have a lot of huge size messages
-        /// </summary>
-        public static bool PersistMsgInAmazonElasticCache
-        {
-            get => (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache);
-        }
-
-        /// <summary>
-        /// Use file system to encrypted messages in chat rooms
-        /// Fast option, but expensive, when we have a lot of huge size messages
-        /// </summary>
-        public static bool PersistMsgInFileSystem
-        {
-            get => (PersistMsgIn.PersistMsg == PersistType.FileSystem);
-        }
 
         /// <summary>
         /// BaseWebService
@@ -88,9 +62,9 @@ namespace EU.CqrXs.Srv.Util
             _contact = null;
 
 
-            if (PersistMsgInAmazonElasticCache)
+            if (PersistInCache.CacheType == PersistType.Redis)
             {
-                string status = RedIs.ConnMux.GetStatus();
+                string status = RedisCache.ConnMux.GetStatus();
 
                 //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
                 //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -157,7 +131,7 @@ namespace EU.CqrXs.Srv.Util
 
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: InitMethod() completed.\n";
 
-            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Persistence in {PersistMsgIn.PersistMsg.ToString()}\n";
+            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Persistence in {PersistInCache.CacheType.ToString()}\n";
 
             
             Dictionary<Guid, CContact> dictCacheTest = new Dictionary<Guid, CContact>();
@@ -168,36 +142,36 @@ namespace EU.CqrXs.Srv.Util
                     dictCacheTest.Add(c.Cuid, c);
             }
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
-            if (PersistMsgInAmazonElasticCache)
+            if (PersistInCache.CacheType == PersistType.Redis)
             {
                 try
                 {
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
-                    string status = RedIs.ConnMux.GetStatus();
+                    string status = RedisCache.ConnMux.GetStatus();
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
 
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Executing RedIS.GetAllKeys()" + Environment.NewLine;
-                    
-                    HashSet<string> allKeys = RedIs.GetAllKeys();                    
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Getting MemoryCache.CacheDict.AllKeys" + Environment.NewLine;
+
+                    string[] allKeys = MemoryCache.CacheDict.AllKeys;
                     if (allKeys == null)
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
                     else 
                     {
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Count} keys" + Environment.NewLine;
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys.ToArray())} ]" + Environment.NewLine;                            
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Length} keys" + Environment.NewLine;
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys)} ]" + Environment.NewLine;                            
                     }
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to set Dictionary<Guid, CqrContact> in cache." + "\r\n";
-                    RedIs.ValKey.SetKey<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);                                        
+                    MemoryCache.CacheDict.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);                                        
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache." + Environment.NewLine;
 
-                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)RedIs.ValKey.GetKey<Dictionary<Guid, CContact>>("TestCache");                   
+                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)MemoryCache.CacheDict.GetValue<Dictionary<Guid, CContact>>("TestCache");                   
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + "\r\n";
                     foreach (CContact contact in outdict.Values)
                     {
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Contact Cuid={contact.Cuid} NameEmail={contact.NameEmail} Mobile={contact.Mobile}." + "\r\n";
                     }
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to delete key \"TestCache\":" + "\r\n";
-                    RedIs.ValKey.DeleteKey("TestCache");
+                    MemoryCache.CacheDict.RemoveKey("TestCache");
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deleted key \"TestCache\"." + "\r\n";
                 }
                 catch (Exception ex2)
@@ -542,16 +516,8 @@ namespace EU.CqrXs.Srv.Util
         {
             Dictionary<long, string> dict = new Dictionary<long, string>();
 
-            // ApplicationState as Cache
-            if (PersistMsgInApplicationState && (HttpContext.Current.Application[chatRoomNumber] != null))
-                dict = (Dictionary<long, string>)HttpContext.Current.Application[chatRoomNumber];
-
-            // Amazon Redis Valkey Cache
-            if (PersistMsgInAmazonElasticCache)
-            {
-                dict = (Dictionary<long, string>)RedIs.ValKey.GetKey<Dictionary<long, string>>(chatRoomNumber);
-            }
-
+            dict = (Dictionary<long, string>)MemoryCache.CacheDict.GetValue<Dictionary<long, string>>(chatRoomNumber);
+            
             // TODO: implement filesystem 
 
             return dict;
@@ -588,14 +554,8 @@ namespace EU.CqrXs.Srv.Util
         /// <param name="dict">the mesage dictionary for chat room </param>
         public static void SetCachedMessageDict(string chatRoomNumber, Dictionary<long, string> dict)
         {
-
-            if (BaseWebService.PersistMsgInApplicationState)
-                HttpContext.Current.Application[chatRoomNumber] = dict;
-            if (BaseWebService.PersistMsgInAmazonElasticCache)
-            {
-                RedIs.ValKey.SetKey<Dictionary<long, string>>(chatRoomNumber, dict);
-            }
-
+            MemoryCache.CacheDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
+            
             return;
         }
 

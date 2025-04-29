@@ -80,9 +80,9 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             _responseString = string.Empty;
 
 
-            if (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache)
+            if (PersistInCache.CacheType == PersistType.Redis)
             {
-                string status = RedIs.ConnMux.GetStatus();
+                string status = RedisCache.ConnMux.GetStatus();
 
                 //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
                 //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -95,9 +95,9 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         public static void InitMethod()
         {
 
-            if (PersistMsgIn.PersistMsg == PersistType.AmazonElasticCache)
+            if (PersistInCache.CacheType == PersistType.Redis)
             {
-                string status = RedIs.ConnMux.GetStatus();
+                string status = RedisCache.ConnMux.GetStatus();
 
                 //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
                 //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
@@ -414,21 +414,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         {
             Dictionary<long, string> dict = new Dictionary<long, string>();
 
-            // ApplicationState as Cache
-            switch (PersistMsgIn.PersistMsg)
-            {
-                case PersistType.AmazonElasticCache:
-                    dict = (Dictionary<long, string>)RedIs.ValKey.GetValue<Dictionary<long, string>>(chatRoomNumber);
-                    break;
-                case PersistType.ApplicationState:
-                case PersistType.JsonFile:
-                    dict = (Dictionary<long, string>)CacheHashDict.CacheDict.GetValue<Dictionary<long, string>>(chatRoomNumber);
-                    break;
-                case PersistType.AppDomainData:
-                default:
-                    dict = (Dictionary<long, string>)AppDomainCacheDict.CacheDict.GetValue<Dictionary<long, string>>(chatRoomNumber);
-                    break;
-            }            
+            dict = (Dictionary<long, string>)MemoryCache.CacheDict.GetValue<Dictionary<long, string>>(chatRoomNumber);              
                            
             // TODO: implement filesystem 
 
@@ -468,21 +454,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         [HttpGet]
         public static void SetCachedMessageDict(string chatRoomNumber, Dictionary<long, string> dict)
         {
-            // ApplicationState as Cache
-            switch (PersistMsgIn.PersistMsg)
-            {
-                case PersistType.AmazonElasticCache:
-                    RedIs.ValKey.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
-                    break;
-                case PersistType.ApplicationState:
-                case PersistType.JsonFile:
-                    CacheHashDict.CacheDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
-                    break;
-                case PersistType.AppDomainData:
-                default:
-                    AppDomainCacheDict.CacheDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
-                    break;
-            }            
+            MemoryCache.CacheDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);                
 
             return;
         }

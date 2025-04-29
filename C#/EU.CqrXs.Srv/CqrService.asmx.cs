@@ -49,10 +49,7 @@ namespace EU.CqrXs.Srv
             Area23Log.LogStatic($"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
 
-            if (PersistMsgInApplicationState)
-                HttpContext.Current.Application["lastmsg"] = cryptMsg;
-            if (PersistMsgInAmazonElasticCache)
-                RedIs.ValKey.SetString("lastmsg", cryptMsg);
+            MemoryCache.CacheDict.SetValue<string>("lastmsg", cryptMsg);
 
             CContact cContact = new CContact() { _hash = cqrFacade.PipeString };
 
@@ -75,10 +72,7 @@ namespace EU.CqrXs.Srv
 
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
-                //if (PersistMsgInApplicationState)
-                //    HttpContext.Current.Application["lastdecrypted"] = _decrypted;
-                //if (PersistMsgInAmazonElasticCache)
-                //    RedIS.ValKey.SetString("lastdecrypted", _decrypted);                
+                // MemoryCache.CacheDict.SetValue<string>("lastdecrypted", _decrypted);                     
 
                 CContact foundCt = AddContact(_contact);
                 _responseString = foundCt.EncryptToJson(_serverKey);

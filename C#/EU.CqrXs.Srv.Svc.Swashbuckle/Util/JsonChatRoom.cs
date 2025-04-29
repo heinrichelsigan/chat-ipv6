@@ -112,22 +112,8 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         {
             JsonChatRoomNumber = chatRoomNr;
 
-            switch (PersistMsgIn.PersistMsg)
-            {
-                case PersistType.AmazonElasticCache:
-                    RedIs.ValKey.RemoveKey(JsonChatRoomNumber);
-                    break;
-                case PersistType.ApplicationState:
-                case PersistType.JsonFile:
-                    if (CacheHashDict.CacheDict.ContainsKey(chatRoomNr))
-                        CacheHashDict.CacheDict.RemoveKey(chatRoomNr);
-                    break;
-                case PersistType.AppDomainData:
-                default:
-                    if (AppDomainCacheDict.CacheDict.ContainsKey(chatRoomNr))
-                        AppDomainCacheDict.CacheDict.RemoveKey(chatRoomNr);
-                    break;
-            }
+            if (MemoryCache.CacheDict.ContainsKey(chatRoomNr))
+                MemoryCache.CacheDict.RemoveKey(chatRoomNr);
             
             DeleteJsonChatRoomFromCache(JsonChatRoomNumber);
 
@@ -268,20 +254,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
 
             try
             {
-                switch (PersistMsgIn.PersistMsg)
-                {
-                    case PersistType.AmazonElasticCache:
-                        chatRooms = (List<string>)RedIs.ValKey.GetValue<List<string>>(Constants.CHATROOMS);
-                        break;
-                    case PersistType.ApplicationState:
-                    case PersistType.JsonFile:
-                        chatRooms = (List<string>)CacheHashDict.CacheDict.GetValue<List<string>>(Constants.CHATROOMS);
-                        break;
-                    case PersistType.AppDomainData:
-                    default:
-                        chatRooms = (List<string>)AppDomainCacheDict.CacheDict.GetValue<List<string>>(Constants.CHATROOMS);
-                        break;
-                }
+                chatRooms = (List<string>)MemoryCache.CacheDict.GetValue<List<string>>(Constants.CHATROOMS);
             }
             catch (Exception exLoadFromCache)
             {
@@ -326,20 +299,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// <param name="chatRooms"><see cref="List{string}">list of chat rooms</see></param>
         public static void SetJsonChatRoomsToCache(List<string> chatRooms)
         {
-            switch (PersistMsgIn.PersistMsg)
-            {
-                case PersistType.JsonFile:
-                case PersistType.ApplicationState:
-                    CacheHashDict.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
-                    break;
-                case PersistType.AmazonElasticCache:
-                    RedIs.ValKey.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
-                    break;                                
-                case PersistType.AppDomainData:
-                default:
-                    AppDomainCacheDict.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
-                    break;                    
-            }
+            MemoryCache.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
         }
 
         public static void AddJsonChatRoomToCache(string chatRoom)
@@ -355,22 +315,8 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
             List<string> chatRooms = GetJsonChatRoomsFromCache();
             if (chatRooms.Contains(chatRoom))
             {
-                switch (PersistMsgIn.PersistMsg)
-                {                    
-                    case PersistType.ApplicationState:
-                    case PersistType.JsonFile:
-                        if (CacheHashDict.CacheDict.ContainsKey(chatRoom))
-                            CacheHashDict.CacheDict.RemoveKey(chatRoom);
-                        break;
-                    case PersistType.AmazonElasticCache:
-                        RedIs.ValKey.RemoveKey(chatRoom);
-                        break;
-                    case PersistType.AppDomainData:
-                    default:
-                        if (AppDomainCacheDict.CacheDict.ContainsKey(chatRoom))
-                            AppDomainCacheDict.CacheDict.RemoveKey(chatRoom);
-                        break;
-                }
+                if (MemoryCache.CacheDict.ContainsKey(chatRoom))
+                    MemoryCache.CacheDict.RemoveKey(chatRoom);
                 chatRooms.Remove(chatRoom);
             }
             SetJsonChatRoomsToCache(chatRooms);

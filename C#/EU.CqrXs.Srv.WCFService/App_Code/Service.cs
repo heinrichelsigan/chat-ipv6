@@ -33,10 +33,7 @@ public class Service : BaseService, IService
         Area23Log.LogStatic("Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
         InitMethod();
 
-        if (PersistMsgInApplicationState)
-            HttpContext.Current.Application["lastmsg"] = cryptMsg;
-        if (PersistMsgInAmazonElasticCache)
-            REdIs.ValKey.SetString("lastmsg", cryptMsg);
+        MemoryCache.CacheDict.SetValue<string>("lastmsg", cryptMsg);
         
         CContact aContact = new CContact() { _hash = cqrFacade.PipeString };
 
@@ -59,10 +56,7 @@ public class Service : BaseService, IService
 
         if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
         {
-            if (PersistMsgInApplicationState)
-                HttpContext.Current.Application["lastdecrypted"] = _decrypted;
-            if (PersistMsgInAmazonElasticCache)
-                REdIs.ValKey.SetString("lastdecrypted", _decrypted);
+            MemoryCache.CacheDict.SetValue<string>("lastdecrypted", _decrypted);
 
             CContact foundCt = AddContact(_contact);
             _responseString = foundCt.EncryptToJson(_serverKey);
@@ -336,7 +330,7 @@ public class Service : BaseService, IService
 
         testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": InitMethod() completed.\n";
 
-        testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Persistence in " + PersistMsgIn.PersistMsg.ToString() + "\n";
+        testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Persistence in " + PersistInCache.CacheType.ToString() + "\n";
 
         Dictionary<Guid, CContact> dictCacheTest = new Dictionary<Guid, CContact>();
         foreach (CContact c in _contacts)
@@ -352,14 +346,14 @@ public class Service : BaseService, IService
             {
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Ready to connect to " + 
                     ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] + "\n";
-                string status = REdIs.ConnMux.GetStatus();
+                string status = RedisCache.ConnMux.GetStatus();
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": ConnectionMulitplexer.Status = " + status + Environment.NewLine;
 
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Preparing to set Dictionary<Guid, CContact> in cache." + Environment.NewLine;
-                REdIs.ValKey.SetKey<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
+                MemoryCache.CacheDict.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added serialized json string to cache." + Environment.NewLine;
 
-                Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)REdIs.ValKey.GetKey<Dictionary<Guid, CContact>>("TestCache");
+                Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)MemoryCache.CacheDict.GetValue<Dictionary<Guid, CContact>>("TestCache");
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Got Dictionary<Guid, CContact> from cache with " + 
                     outdict.Keys.Count + " keys." + Environment.NewLine;
                 foreach (CContact contact in outdict.Values)

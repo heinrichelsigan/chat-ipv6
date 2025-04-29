@@ -111,17 +111,10 @@ namespace EU.CqrXs.Srv.Util
         {
             JsonChatRoomNumber = chatRoomNr;
 
-            if (BaseWebService.PersistMsgInApplicationState)
-            {
-                if (HttpContext.Current.Application.AllKeys.Contains(JsonChatRoomNumber))
-                    HttpContext.Current.Application.Remove(JsonChatRoomNumber);
-            }
-            if (BaseWebService.PersistMsgInAmazonElasticCache)
-            {
-                RedIs.ValKey.DeleteKey(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
-                // Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
-            }
-            DeleteJsonChatRoomFromCache(JsonChatRoomNumber);
+            if (MemoryCache.CacheDict.ContainsKey(chatRoomNr))
+                MemoryCache.CacheDict.RemoveKey(chatRoomNr);
+
+            DeleteJsonChatRoomFromCache(chatRoomNr);
 
             lock (_lock)
             {
@@ -279,21 +272,16 @@ namespace EU.CqrXs.Srv.Util
         public static List<string> GetJsonChatRoomsFromCache()
         {
             List<string> chatRooms = new List<string>();
-            if (BaseWebService.PersistMsgInApplicationState)
-                chatRooms = (List<string>)HttpContext.Current.Application[Constants.CHATROOMS];
-            if (BaseWebService.PersistMsgInAmazonElasticCache)
+
+            try
             {
-                try
-                {
-                    chatRooms = RedIs.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
-                    // string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
-                    // chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
-                }
-                catch (Exception exLoadFromCache)
-                {
-                    Area23Log.LogStatic("Failed to load chatrooms from cache", exLoadFromCache, "");
-                }
+                chatRooms = (List<string>)MemoryCache.CacheDict.GetValue<List<string>>(Constants.CHATROOMS);
             }
+            catch (Exception exLoadFromCache)
+            {
+                Area23Log.LogStatic("Failed to load chatrooms from cache", exLoadFromCache, "");
+            }
+
 
             if (chatRooms == null || chatRooms.Count < 1)
             {
@@ -312,12 +300,7 @@ namespace EU.CqrXs.Srv.Util
         /// <param name="chatRooms"><see cref="List{string}">list of chat rooms</see></param>
         public static void SetJsonChatRoomsToCache(List<string> chatRooms)
         {
-            if (BaseWebService.PersistMsgInApplicationState)
-                HttpContext.Current.Application[Constants.CHATROOMS] = chatRooms;
-            if (BaseWebService.PersistMsgInAmazonElasticCache)
-            {
-                RedIs.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);
-            }
+            MemoryCache.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
         }
 
         public static void AddJsonChatRoomToCache(string chatRoom)
@@ -331,18 +314,13 @@ namespace EU.CqrXs.Srv.Util
         public static void DeleteJsonChatRoomFromCache(string chatRoom)
         {
             List<string> chatRooms = GetJsonChatRoomsFromCache();
-            if (BaseWebService.PersistMsgInApplicationState)
-            {
-                if (HttpContext.Current.Application.AllKeys.Contains(chatRoom))
-                    HttpContext.Current.Application.Remove(chatRoom);
-            }
-            if (BaseWebService.PersistMsgInAmazonElasticCache)
-            {
-                RedIs.ValKey.DeleteKey(chatRoom, StackExchange.Redis.CommandFlags.FireAndForget);
-                // Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
-            }
+            
+            if (MemoryCache.CacheDict.ContainsKey(chatRoom))
+                MemoryCache.CacheDict.RemoveKey(chatRoom);
+
             if (chatRooms.Contains(chatRoom)) 
                 chatRooms.Remove(chatRoom);
+
             SetJsonChatRoomsToCache(chatRooms);
         }
 

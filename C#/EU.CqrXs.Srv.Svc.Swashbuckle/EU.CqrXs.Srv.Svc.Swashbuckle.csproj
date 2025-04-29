@@ -15,6 +15,7 @@
     <Compile Remove="Logging\EnablerLog.cs" />
     <Compile Remove="Logging\Extensions.cs" />
     <Compile Remove="Logging\Paths.cs" />
+    <Compile Remove="Util\PersistMsgIn.cs" />
     <Compile Remove="Util\RedIS.cs" />
   </ItemGroup>
 

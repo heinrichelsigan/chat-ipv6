@@ -1,12 +1,7 @@
-﻿using Area23.At.Framework.Library.Static;
-using System;
+﻿using Area23.At.Framework.Core.Static;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Area23.At.Framework.Library.Cache
+namespace Area23.At.Framework.Core.Cache
 {
 
     /// <summary>
@@ -51,7 +46,6 @@ namespace Area23.At.Framework.Library.Cache
         {
             if (AppDict == null) ;
         }
-
     }
 
 }

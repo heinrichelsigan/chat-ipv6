@@ -8,32 +8,36 @@ namespace Area23.At.Framework.Core.Cache
 {
 
     /// <summary>
-    /// RedIs AWS elastic valkey cache singelton connector
+    /// RedisCache AWS elastic valkey cache singelton connector
     /// </summary>
-    public class RedIs : MemCacheDict
+    public class RedisCache : MemoryCache
     {
-        // private static readonly new Lazy<MemCacheDict> _instance = new Lazy<MemCacheDict>(() => new RedIs());
 
-        private static readonly object _lock = new object();
+        const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
+        const string VALKEY_CACHE_APP_KEY = "RedisValkeyCache";
+        const string ALL_KEYS = "AllKeys";
+
 
         ConnectionMultiplexer connMux;
         ConfigurationOptions options;
         string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         StackExchange.Redis.IDatabase db;
 
-        public static MemCacheDict ValKey => _instance.Value;
+        public static MemoryCache ValKey => _instance.Value;
 
         private static HashSet<string> _allKeys = new HashSet<string>();
         public override string[] AllKeys { get => GetAllKeys().ToArray(); }
 
+        private static string _endPoint = VALKEY_CACHE_HOST_PORT;
         public static string EndPoint
         {
             get
             {
-                ((RedIs)(_instance.Value)).endpoint = Constants.VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";                
-                if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] != null)
-                    ((RedIs)(_instance.Value)).endpoint = (string)ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY];
-                return ((RedIs)(_instance.Value)).endpoint;
+                if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY] != null)
+                    _endPoint = (string)ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY];
+                if (string.IsNullOrEmpty(_endPoint))
+                    _endPoint = VALKEY_CACHE_HOST_PORT; // back to default
+                return _endPoint;
             }
         }
 
@@ -41,10 +45,10 @@ namespace Area23.At.Framework.Core.Cache
         {
             get
             {
-                if (((RedIs)(_instance.Value)).db == null)
-                    ((RedIs)(_instance.Value)).db = ConnMux.GetDatabase();
+                if (((RedisCache)(_instance.Value)).db == null)
+                    ((RedisCache)(_instance.Value)).db = ConnMux.GetDatabase();
 
-                return ((RedIs)(_instance.Value)).db;
+                return ((RedisCache)(_instance.Value)).db;
             }
         }
 
@@ -52,29 +56,29 @@ namespace Area23.At.Framework.Core.Cache
         {
             get
             {
-                if (((RedIs)(_instance.Value)).connMux == null)
+                if (((RedisCache)(_instance.Value)).connMux == null)
                 {
-                    if (((RedIs)(_instance.Value)).options == null)
-                        ((RedIs)(_instance.Value)).options = new ConfigurationOptions
+                    if (((RedisCache)(_instance.Value)).options == null)
+                        ((RedisCache)(_instance.Value)).options = new ConfigurationOptions
                         {
                             EndPoints = { EndPoint },
                             Ssl = true
                         };
-                    ((RedIs)(_instance.Value)).connMux = ConnectionMultiplexer.Connect(((RedIs)(_instance.Value)).options);
+                    ((RedisCache)(_instance.Value)).connMux = ConnectionMultiplexer.Connect(((RedisCache)(_instance.Value)).options);
                 }
-                return ((RedIs)(_instance.Value)).connMux;
+                return ((RedisCache)(_instance.Value)).connMux;
             }
         }
 
 
         /// <summary>
-        /// default parameterless constructor for RedIsValKey cache singleton 
+        /// default parameterless constructor for RedisCacheValKey cache singleton
         /// </summary>
-        public RedIs()
+        public RedisCache()
         {
-            endpoint = Constants.VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
-            if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] != null)
-                endpoint = (string)ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY];
+            endpoint = VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
+            if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY] != null)
+                endpoint = (string)ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY];
             options = new ConfigurationOptions
             {
                 EndPoints = { endpoint },
@@ -84,20 +88,18 @@ namespace Area23.At.Framework.Core.Cache
                 connMux = ConnectionMultiplexer.Connect(options);
             if (db == null)
                 db = connMux.GetDatabase();
-
         }
 
 
         /// <summary>
-        /// GetString gets a string value by redis key
+        /// GetString gets a string value by RedisCache key
         /// </summary>
         /// <param name="redIsKey">key</param>
         /// <param name="flags"><see cref="CommandFlags"/></param>
         /// <returns>(<see cref="string"/>) value for key redIsKey</returns>
         public string GetString(string redIsKey, CommandFlags flags = CommandFlags.None)
         {
-            string redIsString = Db.StringGet(redIsKey, flags);
-            return redIsString;
+            return Db.StringGet(redIsKey, flags);
         }
 
         /// <summary>
@@ -121,7 +123,7 @@ namespace Area23.At.Framework.Core.Cache
                 {
                     allRedIsKeys.Add(redIsKey);
                     string jsonVal = JsonConvert.SerializeObject(AllKeys);
-                    success = Db.StringSet(Constants.ALL_KEYS, jsonVal, null, keepTtl, When.Always, CommandFlags.None);
+                    success = Db.StringSet(ALL_KEYS, jsonVal, null, keepTtl, When.Always, CommandFlags.None);
                     _allKeys = allRedIsKeys;
                 }
             }
@@ -146,7 +148,6 @@ namespace Area23.At.Framework.Core.Cache
             bool success = SetString(ckey, jsonVal, expiry, keepTtl, when, flags);
 
             return success;
-            // return base.SetValue(ckey, tvalue);
         }
 
         /// <summary>
@@ -164,12 +165,9 @@ namespace Area23.At.Framework.Core.Cache
             {
                 tval = JsonConvert.DeserializeObject<T>(jsonVal);
             }
-            
-            return tval;
-            // return base.GetValue<T>(ckey);
-        }
 
-        
+            return tval;
+        }
 
         /// <summary>
         /// DeleteKey delete entry referenced at key
@@ -196,14 +194,13 @@ namespace Area23.At.Framework.Core.Cache
                 }
                 catch (Exception ex)
                 {
-                    CqrException.SetLastException(ex);
+                    Console.Error.WriteLine($"Exception {ex.GetType()}: {ex.Message}\r\n\t{ex}");
                     return false;
                 }
             }
 
             return true;
         }
-
 
         /// <summary>
         /// ContainsKey check if <see cref="Constants.ALL_KEYS">AllKeys</see> key contains element redIsKey
@@ -222,7 +219,6 @@ namespace Area23.At.Framework.Core.Cache
             return false;
         }
 
-
         /// <summary>
         /// GetAllKeys returns <see cref="HashSet{string}"/></string> <see cref="_allKeys"/>
         /// </summary>
@@ -231,7 +227,7 @@ namespace Area23.At.Framework.Core.Cache
         {
             if (_allKeys == null || _allKeys.Count == 0)
             {
-                string jsonVal = Db.StringGet(Constants.ALL_KEYS, CommandFlags.None);
+                string jsonVal = Db.StringGet(ALL_KEYS, CommandFlags.None);
                 string[] keys = (jsonVal != null) ? JsonConvert.DeserializeObject<string[]>(jsonVal) : new string[0];
                 if (keys != null && keys.Length > 0)
                     _allKeys = new HashSet<string>(keys);
@@ -239,7 +235,6 @@ namespace Area23.At.Framework.Core.Cache
 
             return _allKeys;
         }
-
     }
 
 }

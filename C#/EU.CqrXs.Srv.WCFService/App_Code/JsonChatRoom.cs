@@ -108,17 +108,8 @@ public class JsonChatRoom
     public bool DeleteJsonChatRoom(string ChatRoomNr)
     {
         JsonChatRoomNumber = ChatRoomNr;
+        MemoryCache.CacheDict.RemoveKey(JsonChatRoomNumber);
 
-        if (BaseService.PersistMsgInApplicationState)
-        {
-            if (HttpContext.Current.Application.AllKeys.Contains(JsonChatRoomNumber))
-                HttpContext.Current.Application.Remove(JsonChatRoomNumber);
-        }
-        if (BaseService.PersistMsgInAmazonElasticCache)
-        {
-            REdIs.ValKey.DeleteKey(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
-            // Db.StringGetDelete(JsonChatRoomNumber, StackExchange.Redis.CommandFlags.FireAndForget);
-        }
         DeleteJsonChatRoomFromCache(JsonChatRoomNumber);
 
         lock (_lock)
@@ -236,20 +227,14 @@ public class JsonChatRoom
     public static List<string> GetJsonChatRoomsFromCache()
     {
         List<string> chatRooms = new List<string>();
-        if (BaseService.PersistMsgInApplicationState)
-            chatRooms = (List<string>)HttpContext.Current.Application[Constants.CHATROOMS];
-        if (BaseService.PersistMsgInAmazonElasticCache)
+
+        try
         {
-            try
-            {
-                REdIs.ValKey.GetKey<List<string>>(Constants.CHATROOMS);
-                // string chatRoomsJson = RedIs.Db.StringGet(Constants.CHATROOMS);
-                // chatRooms = JsonConvert.DeserializeObject<List<string>>(chatRoomsJson);
-            }
-            catch (Exception exLoadFromCache)
-            {
-                Area23Log.LogStatic("Failed to load chatrooms from cache", exLoadFromCache, "");
-            }
+            chatRooms = MemoryCache.CacheDict.GetValue<List<string>>(Constants.CHATROOMS);
+        }
+        catch (Exception exLoadFromCache)
+        {
+            Area23Log.LogStatic("Failed to load chatrooms from cache", exLoadFromCache, "");
         }
 
         if (chatRooms == null || chatRooms.Count < 1)
@@ -269,12 +254,7 @@ public class JsonChatRoom
     /// <param name="chatRooms"><see cref="List{string}">list of chat rooms</see></param>
     public static void SetJsonChatRoomsToCache(List<string> chatRooms)
     {
-        if (BaseService.PersistMsgInApplicationState)
-            HttpContext.Current.Application[Constants.CHATROOMS] = chatRooms;
-        if (BaseService.PersistMsgInAmazonElasticCache)
-        {
-            REdIs.ValKey.SetKey<List<string>>(Constants.CHATROOMS, chatRooms);            
-        }
+        MemoryCache.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
     }
 
     public static void AddJsonChatRoomToCache(string chatRoom)

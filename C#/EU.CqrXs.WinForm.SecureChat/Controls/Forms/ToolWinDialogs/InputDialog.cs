@@ -93,7 +93,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             string? seckey = this.TextBoxSecureKey.Text;
             if (!string.IsNullOrEmpty(seckey) && !string.IsNullOrWhiteSpace(seckey))
             {
-                CacheHashDict.CacheDict.SetValue<string>(Constants.APP_INPUT_DIALOG, seckey);
+                MemoryCache.CacheDict.SetValue<string>(Constants.APP_INPUT_DIALOG, seckey);
                 this.labelX.Enabled = true;
                 this.labelX.ForeColor = Color.Black;
                 this.labelX.Font = new Font("Lucida Sans Unicode", 11F, FontStyle.Bold);
@@ -109,7 +109,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             else
             {
-                CacheHashDict.CacheDict.SetValue<string>(Constants.APP_INPUT_DIALOG, null);                
+                MemoryCache.CacheDict.SetValue<string>(Constants.APP_INPUT_DIALOG, null);                
                 this.labelX.ForeColor = Color.Gray;
                 this.labelX.BackColor = SystemColors.InactiveCaption;
                 this.panelHeader.BackColor = SystemColors.InactiveCaption;
@@ -144,7 +144,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             else if (!string.IsNullOrEmpty(seckey) && !string.IsNullOrWhiteSpace(seckey) && buttonOK.Enabled && labelX.Enabled)
             {
-                CacheHashDict.CacheDict.SetValue<string>(Constants.APP_INPUT_DIALOG, seckey);
+                MemoryCache.CacheDict.SetValue<string>(Constants.APP_INPUT_DIALOG, seckey);
                 this.Close();
             }
         }

@@ -13,7 +13,7 @@ namespace Area23.At.Framework.Library.Cache
     /// <summary>
     /// CacheHashDict an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheValue}"/> saved in <see cref="HttpApplicationState"/>
     /// </summary>
-    public class ApplicationContextCache : MemCacheDict
+    public class ApplicationContextCache : MemoryCache
     {
 
         /// <summary>
