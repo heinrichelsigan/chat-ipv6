@@ -16,6 +16,9 @@ namespace Area23.At.Framework.Library.Cache
     public class ApplicationStateCache : MemoryCache
     {
 
+        protected internal static readonly object _smartLock = new object();
+        
+
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="HttpApplicationState"/>
         /// </summary>
@@ -23,13 +26,12 @@ namespace Area23.At.Framework.Library.Cache
         {
             get
             {
-                lock (_lock)
+                lock (_smartLock)
                 {
-                    _appDict = (ConcurrentDictionary<string, CacheValue>)HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT];
-                }
-                if (_appDict == null)
-                {
-                    lock (_lock)
+                    if (HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] != null)
+                        _appDict = (ConcurrentDictionary<string, CacheValue>)HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT];
+                
+                    if (_appDict == null)
                     {
                         _appDict = new ConcurrentDictionary<string, CacheValue>();
                         HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] = _appDict;
@@ -40,9 +42,9 @@ namespace Area23.At.Framework.Library.Cache
             }
             set
             {
-                if (value != null && value.Count > 0)
+                lock (_smartLock)
                 {
-                    lock (_lock)
+                    if (value != null && value.Count > 0)
                     {
                         _appDict = value;
                         HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] = _appDict;

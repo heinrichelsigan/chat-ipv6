@@ -22,7 +22,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="422e7239-4f04-4cd7-8161-8180d94b6f03" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/ApplicationContextCache.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/ApplicationContextCache.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Settings/CacheTest.aspx" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Settings/CacheTest.aspx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Settings/CacheTest.aspx.designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Settings/CacheTest.aspx.designer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Web;
 using System.Web.UI.WebControls;
-using System.Windows.Input;
 
 namespace EU.CqrXs.Srv.Settings
 {
@@ -19,14 +18,35 @@ namespace EU.CqrXs.Srv.Settings
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            BuildTests();
+            if (!IsPostBack)
+                OnInit(e);
             BuildSettingsTable();
-            BuildTableRuntime();
+            PerformTests();
+        }
 
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            if (!Page.IsPostBack)
+            {
+                try
+                {
+                    DivTest0.InnerHtml = string.Empty;
+                    DivTest1.InnerHtml = string.Empty;
+                    DivTest2.InnerHtml = string.Empty;
+                    string log0 = "Log test from " + Request.UserHostAddress + " " + Request.UserAgent + " " + Request.ClientCertificate.Issuer.ToString();
+                    Area23Log.LogStatic(log0);
+                    DivTest0.InnerHtml += $"<p>{DateTime.Now.Area23DateTimeWithMillis()}: {log0} -> LogStatic to {SLog.LogFile}  successfull!</p>";
+                }
+                catch (Exception exStart)
+                {
+                    DivTest1.InnerHtml += $"<p>Exception ${exStart.GetType()} {exStart.Message}</p><pre>\n{exStart.ToString()}</pre>";
+                }
+            }
         }
 
         protected void BuildSettingsTable()
-        {
+        {            
             Dictionary<string, string> settings = new Dictionary<string, string>();
             try
             {
@@ -52,35 +72,54 @@ namespace EU.CqrXs.Srv.Settings
             }
             try
             {
-                settings.Add("PersistType.AppDomain Parallel", RunTasks(PersistType.AppDomain, 64));               
-                settings.Add("PersistType.AppDomain Serial", RunSerial(PersistType.AppDomain, 64));            
-                settings.Add("PersistType.ApplicationState Parallel", RunTasks(PersistType.ApplicationState, 64));
-                settings.Add("PersistType.ApplicationState Serial", RunSerial(PersistType.ApplicationState, 64));
-            }
-            catch (Exception ex0)
-            {
-                DivTest0.InnerHtml = $"<p>Exception ${ex0.GetType()} {ex0.Message}</p><pre>\n{ex0.ToString()}</pre>";
-            }
-            try
-            {
-                settings.Add("PersistType.JsonFile Parallel", RunTasks(PersistType.JsonFile, 64));
-                settings.Add("PersistType.JsonFile Serial", RunSerial(PersistType.JsonFile, 64));
+                long lenSess = 0;
+                settings.Add("SesionID", HttpContext.Current.Session.SessionID.ToString());
+                settings.Add("Session state all items count ", HttpContext.Current.Session.Keys.Count.ToString());
+                for (int i = 0; i < HttpContext.Current.Session.Count; i++)
+                {
+                    string skey = HttpContext.Current.Session.Keys[i].ToString();
+                    string sv = HttpContext.Current.Session[skey].ToString();
+                    lenSess += sv.Length;
+                    settings.Add(skey, sv);
+                }
+                settings.Add("Session state all items size ", lenSess.ToString());
+
+                long lenApp = 0;
+                settings.Add("Application state all items count ", HttpContext.Current.Application.AllKeys.Length.ToString());
+                foreach (string akey in HttpContext.Current.Application.AllKeys)
+                {
+                    string av = HttpContext.Current.Application[akey].ToString();
+                    lenApp += av.Length;
+                    settings.Add(akey, av);
+                }
+                settings.Add("Application state all items size ", lenApp.ToString());
+
+                settings.Add("Headers count", HttpContext.Current.Request.Headers.AllKeys.Length.ToString());
+                foreach (string hkey in HttpContext.Current.Request.Headers.Keys)
+                {
+                    string hval = HttpContext.Current.Request.Headers[hkey].ToString();
+                    settings.Add(hkey, hval);
+                }
+
+                settings.Add("Cookies count ", HttpContext.Current.Request.Cookies.AllKeys.Length.ToString());
+                foreach (string ckey in HttpContext.Current.Request.Cookies.AllKeys)
+                {
+                    string cval = HttpContext.Current.Request.Cookies[ckey].ToString();
+                    settings.Add(ckey, cval);
+                }
+
+                settings.Add("AppSettings keys count ", ConfigurationManager.AppSettings.AllKeys.Length.ToString());
+                foreach (string appSetKey in ConfigurationManager.AppSettings.AllKeys)
+                {
+                    string appSetVal = ConfigurationManager.AppSettings[appSetKey].ToString();
+                    settings.Add(appSetKey, appSetVal);
+                }
             }
             catch (Exception ex1)
             {
-                DivTest1.InnerHtml = $"<p>Exception ${ex1.GetType()} {ex1.Message}</p><pre>\n{ex1.ToString()}</pre>";
+                DivTest0.InnerHtml += $"<p>Exception ${ex1.GetType()} {ex1.Message}</p><pre>\n{ex1.ToString()}</pre>";
             }
-            try
-            {
-
-                settings.Add("PersistType.Redis Parallel", RunTasks(PersistType.Redis, 64));
-                settings.Add("PersistType.Redis Serial", RunSerial(PersistType.Redis, 64));
-            }
-            catch (Exception ex2)
-            {
-                DivTest2.InnerHtml = $"<p>Exception ${ex2.GetType()} {ex2.Message}</p><pre>\n{ex2.ToString()}</pre>";
-            }
-
+            
             try
             {
                 foreach (string key in settings.Keys)
@@ -97,95 +136,58 @@ namespace EU.CqrXs.Srv.Settings
             }
             catch (Exception ex3)
             {
-                DivTest2.InnerHtml += $"<p>Exception ${ex3.GetType()} {ex3.Message}</p><pre>\n{ex3.ToString()}</pre>";
+                DivTest1.InnerHtml += $"<p>Exception ${ex3.GetType()} {ex3.Message}</p><pre>\n{ex3.ToString()}</pre>";
             }
 
         }
 
 
-        protected void BuildTableRuntime()
+        protected void PerformTests(PersistType persistType = PersistType.AppDomain, int iterations = 128, bool parallel = true, bool serial = true)
         {
 
-            Dictionary<string, string> rtSettings = new Dictionary<string, string>();
+            Dictionary<string, string> cachTests = new Dictionary<string, string>();
 
-            long lenSess = 0;
-            rtSettings.Add("SesionID", HttpContext.Current.Session.SessionID.ToString());
-            rtSettings.Add("Session state all items count ", HttpContext.Current.Session.Keys.Count.ToString());
-            for (int i = 0; i < HttpContext.Current.Session.Count; i++)
+            try
             {
-                string skey = HttpContext.Current.Session.Keys[i].ToString();
-                string sv = HttpContext.Current.Session[skey].ToString();
-                lenSess += sv.Length;
-                rtSettings.Add(skey, sv);
+                if (serial)
+                    cachTests.Add($" Serial  {persistType.ToString()}/{iterations}", RunSerial(persistType, iterations));
             }
-            rtSettings.Add("Session state all items size ", lenSess.ToString());
-
-            long lenApp = 0;
-            rtSettings.Add("Application state all items count ", HttpContext.Current.Application.AllKeys.Length.ToString());
-            foreach (string akey in HttpContext.Current.Application.AllKeys)
+            catch (Exception exSerial)
             {
-                string av = HttpContext.Current.Application[akey].ToString();
-                lenApp += av.Length;
-                rtSettings.Add(akey, av);
+                DivTest2.InnerHtml += $"<p>Exception ${exSerial.GetType()} {exSerial.Message}</p><pre>\n{exSerial.ToString()}</pre>";
             }
-            rtSettings.Add("Application state all items size ", lenApp.ToString());
-
-            rtSettings.Add("Headers count", HttpContext.Current.Request.Headers.AllKeys.Length.ToString());
-            foreach (string hkey in HttpContext.Current.Request.Headers.Keys)
-            {
-                string hval = HttpContext.Current.Request.Headers[hkey].ToString();
-                rtSettings.Add(hkey, hval);
+            try { 
+                if (parallel)
+                    cachTests.Add($"Parallel {persistType.ToString()}/{iterations}", RunTasks(persistType, iterations));
+                cachTests.Add("PersistType.AppDomain Serial", RunSerial(PersistType.AppDomain, 64));
             }
-
-            rtSettings.Add("Cookies count ", HttpContext.Current.Request.Cookies.AllKeys.Length.ToString());
-            foreach (string ckey in HttpContext.Current.Request.Cookies.AllKeys)
+            catch (Exception exParallel)
             {
-                string cval = HttpContext.Current.Request.Cookies[ckey].ToString();
-                rtSettings.Add(ckey, cval);
+                DivTest2.InnerHtml += $"<p>Exception ${exParallel.GetType()} {exParallel.Message}</p><pre>\n{exParallel.ToString()}</pre>";
             }
+            
 
-            rtSettings.Add("AppSettings keys count ", ConfigurationManager.AppSettings.AllKeys.Length.ToString());
-            foreach (string appSetKey in ConfigurationManager.AppSettings.AllKeys)
+            foreach (string rtKey in cachTests.Keys)
             {
-                string appSetVal = ConfigurationManager.AppSettings[appSetKey].ToString();
-                rtSettings.Add(appSetKey, appSetVal);
-            }
-
-            foreach (string rtKey in rtSettings.Keys)
-            {
-                TableRow row = new TableRow();
-                TableCell cellName = new TableCell();
-                cellName.Text = rtKey.ToString();
-                TableCell cellValue = new TableCell();
-                cellValue.Text = rtSettings[rtKey].ToString();
-                row.Cells.Add(cellName);
-                row.Cells.Add(cellValue);
-                TableRuntime.Rows.Add(row);
+                try
+                {
+                    TableRow row = new TableRow();
+                    TableCell cellName = new TableCell();
+                    cellName.Text = rtKey.ToString();
+                    TableCell cellValue = new TableCell();
+                    cellValue.Text = cachTests[rtKey].ToString();
+                    row.Cells.Add(cellName);
+                    row.Cells.Add(cellValue);
+                    TableRuntime.Rows.Add(row);
+                }
+                catch (Exception exTableRow)
+                {
+                    DivTest2.InnerHtml += $"<p>Exception ${exTableRow.GetType()} {exTableRow.Message}</p><pre>\n{exTableRow.ToString()}</pre>";
+                }
             }
         }
 
 
-        protected void BuildTests()
-        {
-            try
-            {
-                Area23Log.LogStatic("Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
-                DivTest1.InnerHtml = $"<p>{DateTime.Now.Area23DateTimeWithMillis()} LogStatic to {SLog.LogFile} successfull!</p>";
-            }
-            catch (Exception ex1)
-            {
-                DivTest1.InnerHtml = $"<p>Exception ${ex1.GetType()} {ex1.Message}</p><pre>\n{ex1.ToString()}</pre>";
-            }
-            try
-            {
-                Area23Log.LogStatic("Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
-                DivTest2.InnerHtml = $"<p>{DateTime.Now.Area23DateTimeWithMillis()} Logger.Log to {SLog.LogFile} successfull!</p>";
-            }
-            catch (Exception ex2)
-            {
-                DivTest1.InnerHtml = $"<p>Exception ${ex2.GetType()} {ex2.Message}</p><pre>\n{ex2.ToString()}</pre>";
-            }
-        }
               
 
         static string RunTasks(PersistType persitVariant, int numberOfTasks, short maxKexs = 16)
@@ -250,7 +252,7 @@ namespace EU.CqrXs.Srv.Settings
                         if (string.IsNullOrEmpty(strkey))
                             strkey = ckey;
 
-                        CacheData data = (CacheData)MemoryCache.CacheDict[strkey];
+                        CacheData data = (CacheData)MemoryCache.CacheDict.GetValue<CacheData>(strkey);
                         // Console.WriteLine($"Task get cache key #{strkey} => {data.CValue} created at {data.CTime} original thread {data.CThreadId} on current thread #{Thread.CurrentThread.ManagedThreadId}.");
                     },
                     new StringBuilder(string.Concat("Key_", (i % maxKexs).ToString())).ToString());
@@ -334,6 +336,21 @@ namespace EU.CqrXs.Srv.Settings
 
         }
 
+        protected void Button_TestCache_Click(object sender, EventArgs e)
+        {
+            bool parallel = false, serial = false;
+            if (!Enum.TryParse<PersistType>(this.DropDownList_CacheVariant.SelectedValue, out PersistType persistType))
+                persistType = PersistType.AppDomain;
+            if (!Int32.TryParse(this.DropDownList_Iterations.SelectedValue, out int iterations))
+                iterations = 128;
+            foreach (ListItem item in CheckBoxList_TestType.Items)
+            {
+                parallel = (item.Text == "Parallel" && item.Selected);
+                serial = (item.Text == "Serial" && item.Selected);
+            }
+            if (serial || parallel)
+                PerformTests(persistType, iterations, parallel, serial);
+        }
     }
 
 }
