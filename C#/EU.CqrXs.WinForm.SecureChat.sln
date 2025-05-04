@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Area23.At.Framework.Core", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.WinForm.SecureChat", "EU.CqrXs.WinForm.SecureChat\EU.CqrXs.WinForm.SecureChat.csproj", "{262E0374-0337-4A0A-9E67-D50297476977}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.Console", "EU.CqrXs.Console\EU.CqrXs.Console.csproj", "{68BE0E85-391D-45FF-8F13-ED5C8D53BDB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.Console.Core", "EU.CqrXs.Console\Core\EU.CqrXs.Console.Core.csproj", "{68BE0E85-391D-45FF-8F13-ED5C8D53BDB8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.Srv.Svc.Swashbuckle", "EU.CqrXs.Srv.Svc.Swashbuckle\EU.CqrXs.Srv.Svc.Swashbuckle.csproj", "{7B9DFC8C-D8D2-21C1-48D7-6991A0182E87}"
 EndProject

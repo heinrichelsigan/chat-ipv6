@@ -210,6 +210,7 @@
     <Content Include="Default.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="Settings\CacheTest.aspx" />
     <Content Include="Util\CoolCrypt.aspx" />
     <Content Include="Util\ImageFontControl.ascx" />
     <Content Include="R.aspx" />
@@ -256,6 +257,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Settings\CacheTest.aspx.cs">
+      <DependentUpon>CacheTest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Settings\CacheTest.aspx.designer.cs">
+      <DependentUpon>CacheTest.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Util\BaseWebService.cs">
       <SubType>Component</SubType>
     </Compile>

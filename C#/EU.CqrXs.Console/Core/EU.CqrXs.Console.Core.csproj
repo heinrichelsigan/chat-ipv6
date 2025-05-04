@@ -9,17 +9,17 @@
 	<IsAotCompatible>True</IsAotCompatible>
     <InvariantGlobalization>True</InvariantGlobalization>
 	<StripSymbols>False</StripSymbols>
-    <StartupObject>EU.CqrXs.Console.Program</StartupObject>
+    <StartupObject>EU.CqrXs.Console.Core.Program</StartupObject>
     <ApplicationIcon>SatIcon.ico</ApplicationIcon>
     <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
     <PublishTrimmed>True</PublishTrimmed>
-    <Title>EU.CqrXs.Console</Title>
-    <Description>EU.CqrXs.Console</Description>
+    <Title>EU.CqrXs.Core.Console</Title>
+    <Description>EU.CqrXs.Core.Console</Description>
     <Copyright>Copyright © 2000-2040 Copyleft https://cqrxs.eu</Copyright>
     <PackageProjectUrl>https://cqrxs.eu/download/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
-    <AssemblyVersion>2.25.427</AssemblyVersion>
-    <FileVersion>2.25.427</FileVersion>
+    <AssemblyVersion>2.25.501</AssemblyVersion>
+    <FileVersion>2.25.501</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

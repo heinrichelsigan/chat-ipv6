@@ -9,7 +9,7 @@ using Area23.At.Framework.Core.Zfx;
 using System.Text;
 
 
-namespace EU.CqrXs.Console
+namespace EU.CqrXs.Console.Core
 {
     /// <summary>
     /// OptEnum different option types

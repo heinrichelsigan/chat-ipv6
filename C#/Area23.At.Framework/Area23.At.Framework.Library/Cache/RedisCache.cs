@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Web;
 
 namespace Area23.At.Framework.Library.Cache
@@ -21,7 +22,7 @@ namespace Area23.At.Framework.Library.Cache
         const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         const string VALKEY_CACHE_APP_KEY = "RedisValkeyCache";
         const string ALL_KEYS = "AllKeys";
-
+        protected internal static object _redIsLock = new object();
 
         ConnectionMultiplexer connMux;
         ConfigurationOptions options;
@@ -79,7 +80,7 @@ namespace Area23.At.Framework.Library.Cache
         /// <summary>
         /// default parameterless constructor for RedisCacheValKey cache singleton
         /// </summary>
-        public RedisCache()
+        public RedisCache(PersistType cacheType = PersistType.Redis) 
         {
             endpoint = VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
             if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY] != null)
@@ -87,9 +88,13 @@ namespace Area23.At.Framework.Library.Cache
             options = new ConfigurationOptions
             {
                 EndPoints = { endpoint },
-                Ssl = true
+                AbortOnConnectFail = false,
+                Ssl = true,
+                ConnectTimeout = 6000,
+                AsyncTimeout = 6000,
+                SyncTimeout = 9000
             };
-            if (connMux == null)
+            // if (connMux == null)
                 connMux = ConnectionMultiplexer.Connect(options);
             if (db == null)
                 db = connMux.GetDatabase();
@@ -119,7 +124,7 @@ namespace Area23.At.Framework.Library.Cache
         public bool SetString(string redIsKey, string redIsString, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             bool success = false;
-            lock (_lock)
+            lock (_redIsLock)
             {
                 var allRedIsKeys = GetAllKeys();
                 success = Db.StringSet(redIsKey, redIsString, expiry, when, flags);
@@ -145,7 +150,7 @@ namespace Area23.At.Framework.Library.Cache
         /// <returns>success on true</returns>
         public override bool SetValue<T>(string ckey, T tvalue)
         {
-            TimeSpan? expiry = null;
+            TimeSpan? expiry = new TimeSpan(1, 1, 1, 1);
             bool keepTtl = false;
             When when = When.Always;
             CommandFlags flags = CommandFlags.None;
@@ -182,7 +187,7 @@ namespace Area23.At.Framework.Library.Cache
         public override bool RemoveKey(string redIsKey)
         {
             CommandFlags flags = CommandFlags.FireAndForget;
-            lock (_lock)
+            lock (_redIsLock)
             {
                 var allRedIsKeys = GetAllKeys();
                 if (allRedIsKeys.Contains(redIsKey))

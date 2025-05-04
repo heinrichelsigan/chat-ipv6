@@ -14,13 +14,14 @@ namespace Area23.At.Framework.Library.Cache
     /// CacheHashDict an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheValue}"/> saved in memory only at runtime
     /// derive from <see cref="MemoryCache"/> and implement your own cache by implementing a new variant for property <see cref="AppDict"/>
     /// </summary>
-    public abstract class MemoryCache
+    public class MemoryCache
     {
 
         public const string APP_CONCURRENT_DICT = "APP_CONCURRENT_DICT";
         protected internal static readonly object _lock = new object();
+        protected internal static readonly object _outerlock = new object();
 
-        protected internal static readonly Lazy<MemoryCache> _instance;
+        protected internal static Lazy<MemoryCache> _instance;
 
         public static MemoryCache CacheDict => _instance.Value;
 
@@ -28,9 +29,9 @@ namespace Area23.At.Framework.Library.Cache
         /// <summary>
         /// private <see cref="ConcurrentDictionary{string, CacheValue}"/> 
         /// </summary>
-        protected internal static ConcurrentDictionary<string, CacheValue> _appDict = new ConcurrentDictionary<string, CacheValue>();
+        protected ConcurrentDictionary<string, CacheValue> _appDict = new ConcurrentDictionary<string, CacheValue>();
 
-        protected internal static readonly string CacheVariant = "MemoryCache";
+        public static string CacheVariant = "MemoryCache";
 
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
@@ -70,10 +71,16 @@ namespace Area23.At.Framework.Library.Cache
             {
                 object ovalue = value;
                 Type otype = value.GetType();
-                if (AppDict.ContainsKey(ckey) && AppDict.TryGetValue(ckey, out CacheValue oldValue))
-                    AppDict.TryRemove(ckey, out oldValue);
+                lock (_outerlock)
+                {
 
-                AppDict.TryAdd(ckey, new CacheValue(ovalue, otype));
+                    if (AppDict.ContainsKey(ckey) && AppDict.TryGetValue(ckey, out CacheValue oldValue))
+                        AppDict.TryRemove(ckey, out oldValue);
+
+                    AppDict.TryAdd(ckey, new CacheValue(ovalue, otype));
+
+                    AppDict = _appDict;
+                }
             }
         }
 
@@ -101,22 +108,44 @@ namespace Area23.At.Framework.Library.Cache
                     // TODO: Redis                   
                     _instance = new Lazy<MemoryCache>(() => new RedisCache());
                     break;
-                case PersistType.AppDomain:
                 case PersistType.ApplicationState:
+                    _instance = new Lazy<MemoryCache>(() => new ApplicationStateCache());
+                    break;
+                case PersistType.AppDomain:
                 default:
                     _instance = new Lazy<MemoryCache>(() => new AppDomainCache());
                     break;
             }
+
         }
 
 
-        /// <summary>
-        /// Static constructor
-        /// </summary>
-        public MemoryCache()
-        {
-            _appDict = new ConcurrentDictionary<string, CacheValue>();
-        }
+        ///// <summary>
+        ///// Dynamic ctor
+        ///// </summary>
+        //public MemoryCache(PersistType cacheType)
+        //{
+        //    _appDict = new ConcurrentDictionary<string, CacheValue>();
+        //    CacheVariant = cacheType.ToString();
+
+        //    switch (cacheType)
+        //    {
+        //        case PersistType.JsonFile:
+        //            _instance = new Lazy<MemoryCache>(() => new JsonFileCache());
+        //            break;
+        //        case PersistType.Redis:
+        //            // TODO: Redis                   
+        //            _instance = new Lazy<MemoryCache>(() => new RedisCache());
+        //            break;
+        //        case PersistType.ApplicationState:
+        //            _instance = new Lazy<MemoryCache>(() => new ApplicationStateCache());
+        //            break;
+        //        case PersistType.AppDomain:
+        //        default:
+        //            _instance = new Lazy<MemoryCache>(() => new AppDomainCache());
+        //            break;
+        //    }
+        //}
 
         /// <summary>
         /// Gets a value from <see cref="ConcurrentDictionary{string, CacheValue}"/> stored <see cref="System.AppDomain.CurrentDomain"/>
@@ -126,7 +155,11 @@ namespace Area23.At.Framework.Library.Cache
         /// <returns>generic cached value stored at key</returns>
         public virtual T GetValue<T>(string ckey)
         {
-            T tvalue = (AppDict.ContainsKey(ckey) && AppDict.TryGetValue(ckey, out var cvalue)) ? cvalue.GetValue<T>() : default(T);
+            T tvalue = default(T);
+            lock (_outerlock)
+            {
+                tvalue = (AppDict.ContainsKey(ckey) && AppDict.TryGetValue(ckey, out var cvalue)) ? cvalue.GetValue<T>() : default(T);
+            }
 
             return tvalue;
         }
@@ -148,17 +181,20 @@ namespace Area23.At.Framework.Library.Cache
             CacheValue cvalue = new CacheValue();
             cvalue.SetValue<T>(tvalue);
 
-            if (!AppDict.ContainsKey(ckey))
-                addedOrUpdated = AppDict.TryAdd(ckey, cvalue);
-            else if (AppDict.TryGetValue(ckey, out CacheValue oldValue))
-                addedOrUpdated = _appDict.TryUpdate(ckey, cvalue, oldValue);
+            lock (_outerlock)
+            {
+                if (!AppDict.ContainsKey(ckey))
+                    addedOrUpdated = AppDict.TryAdd(ckey, cvalue);
+                else if (AppDict.TryGetValue(ckey, out CacheValue oldValue))
+                    addedOrUpdated = _appDict.TryUpdate(ckey, cvalue, oldValue);
 
-            // MAYBE SHORTER BUT NOBODY CAN QUICK READ AND UNDERSTAND THIS
-            // addedOrUpdated = (!AppCache.ContainsKey(ckey)) ? AppCache.TryAdd(ckey, cvalue) :
-            //    (AppCache.TryGetValue(ckey, out CacheValue oldValue)) ? _appCache.TryUpdate(ckey, cvalue, oldValue) : false;
+                // MAYBE SHORTER BUT NOBODY CAN QUICK READ AND UNDERSTAND THIS
+                // addedOrUpdated = (!AppCache.ContainsKey(ckey)) ? AppCache.TryAdd(ckey, cvalue) :
+                //    (AppCache.TryGetValue(ckey, out CacheValue oldValue)) ? _appCache.TryUpdate(ckey, cvalue, oldValue) : false;
 
-            if (addedOrUpdated)
-                AppDict = _appDict;  // saves the modified ConcurrentDictionary{string, CacheValue} back to AppDomain
+                if (addedOrUpdated)
+                    AppDict = _appDict;  // saves the modified ConcurrentDictionary{string, CacheValue} back to AppDomain
+            }
 
             return addedOrUpdated;
         }
@@ -185,10 +221,12 @@ namespace Area23.At.Framework.Library.Cache
             if (string.IsNullOrEmpty(ckey))
                 return success;
 
-            if ((success = !AppDict.ContainsKey(ckey)) == false)
-                if ((success = AppDict.TryRemove(ckey, out CacheValue cvalue)) == true)
-                    AppDict = _appDict; // saves the modified ConcurrentDictionary{string, CacheValue} back to AppDomain
-
+            lock (_outerlock)
+            {
+                if ((success = !AppDict.ContainsKey(ckey)) == false)
+                    if ((success = AppDict.TryRemove(ckey, out CacheValue cvalue)) == true)
+                        AppDict = _appDict; // saves the modified ConcurrentDictionary{string, CacheValue} back to AppDomain
+            }
             return success;
         }
 

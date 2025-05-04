@@ -22,41 +22,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="422e7239-4f04-4cd7-8161-8180d94b6f03" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Core/Area23.At.Framework.Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Core/Area23.At.Framework.Core.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Core/Cache/AppDomainCacheDict.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Core/Cache/ApplicationCacheAllInOne.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Core/Cache/ApplicationCacheAllInOne.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Core/Cache/CacheHashDict.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Core/Cache/CacheHashDict.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Core/Cache/MemCacheDict.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Core/Cache/RedIs.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Area23.At.Framework.Library.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Area23.At.Framework.Library.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/AppDomainCache.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/AppDomainCache.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/ApplicationContextCache.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/ApplicationContextCache.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/CacheHashDict.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/CacheHashDict.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/MemCacheDict.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/Area23.At.Framework/Area23.At.Framework.Library/Cache/RedIs.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.Svc.Swashbuckle/Controllers/CqrSrvControllerBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.Svc.Swashbuckle/Controllers/CqrSrvControllerBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.Svc.Swashbuckle/Controllers/TestCac heController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.Svc.Swashbuckle/Controllers/TestCac heController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.Svc.Swashbuckle/EU.CqrXs.Srv.Svc.Swashbuckle.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.Svc.Swashbuckle/EU.CqrXs.Srv.Svc.Swashbuckle.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.Svc.Swashbuckle/Util/JsonChatRoom.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.Svc.Swashbuckle/Util/JsonChatRoom.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.WCFService/App_Code/BaseService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.WCFService/App_Code/BaseService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.WCFService/App_Code/JsonChatRoom.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.WCFService/App_Code/JsonChatRoom.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.WCFService/App_Code/PersistMsgIn.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.WCFService/App_Code/RedIs.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.WCFService/App_Code/Service.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv.WCFService/App_Code/Service.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/CqrService.asmx.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/CqrService.asmx.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/EU.CqrXs.Srv.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/EU.CqrXs.Srv.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Util/BaseWebService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Util/BaseWebService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Util/JsonChatRoom.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Util/JsonChatRoom.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Web.config" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.Srv/Web.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/Base/BaseChatForm.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/Base/BaseChatForm.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/RichTextChat.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/RichTextChat.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/SecureChat.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/SecureChat.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/ToolWinDialogs/ContactSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/ToolWinDialogs/ContactSettings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/ToolWinDialogs/InputDialog.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/ToolWinDialogs/InputDialog.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/ToolWinDialogs/TestForm.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/ToolWinDialogs/TestForm.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/ToolWinDialogs/TransparentBadge.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Controls/Forms/ToolWinDialogs/TransparentBadge.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../C#/EU.CqrXs.WinForm.SecureChat/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

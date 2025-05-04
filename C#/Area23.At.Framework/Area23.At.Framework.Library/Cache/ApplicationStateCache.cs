@@ -5,30 +5,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Area23.At.Framework.Library.Cache
 {
 
     /// <summary>
-    /// AppDomainCache an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheValue}"/>
+    /// CacheHashDict an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheValue}"/> saved in <see cref="HttpApplicationState"/>
     /// </summary>
-    public class AppDomainCache : MemoryCache
+    public class ApplicationStateCache : MemoryCache
     {
 
         /// <summary>
-        /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
+        /// public property get accessor for <see cref="_appDict"/> stored in <see cref="HttpApplicationState"/>
         /// </summary>
         protected override ConcurrentDictionary<string, CacheValue> AppDict
         {
             get
             {
-                _appDict = (ConcurrentDictionary<string, CacheValue>)AppDomain.CurrentDomain.GetData(APP_CONCURRENT_DICT);
+                lock (_lock)
+                {
+                    _appDict = (ConcurrentDictionary<string, CacheValue>)HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT];
+                }
                 if (_appDict == null)
                 {
                     lock (_lock)
                     {
                         _appDict = new ConcurrentDictionary<string, CacheValue>();
-                        AppDomain.CurrentDomain.SetData(APP_CONCURRENT_DICT, _appDict);
+                        HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] = _appDict;
                     }
                 }
 
@@ -41,15 +45,16 @@ namespace Area23.At.Framework.Library.Cache
                     lock (_lock)
                     {
                         _appDict = value;
-                        AppDomain.CurrentDomain.SetData(APP_CONCURRENT_DICT, _appDict);
+                        HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] = _appDict;
                     }
                 }
             }
         }
 
-        public AppDomainCache(PersistType cacheType = PersistType.AppDomain)
+
+        public ApplicationStateCache(PersistType cacheType = PersistType.ApplicationState) 
         {
-            if (AppDict == null) ;
+                
         }
 
     }
