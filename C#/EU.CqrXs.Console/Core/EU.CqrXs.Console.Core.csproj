@@ -54,7 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
+    <ProjectReference Include="..\..\Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
   </ItemGroup>
 
 </Project>

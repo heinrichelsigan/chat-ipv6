@@ -54,6 +54,7 @@ namespace EU.CqrXs.Srv.Settings
                 settings.Add("AppPath", LibPaths.AppPath);
                 settings.Add("BaseAppPath", LibPaths.BaseAppPath);
                 settings.Add("ResAppPath", LibPaths.ResAppPath);
+
                 settings.Add("CssAppPath", LibPaths.CssAppPath);
                 settings.Add("OutAppPath", LibPaths.OutAppPath);
                 settings.Add("SystemDirPath", LibPaths.SystemDirPath);

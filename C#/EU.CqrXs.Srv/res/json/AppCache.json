@@ -20,68 +20,71 @@
     "_Value": null,
     "_Type": null
   },
-  "Key_13": {
+  "ChatRooms": {
     "$id": "6",
-    "_Value": null,
-    "_Type": null
+    "_Value": [
+      "room_0426_heinrich_elsigan.json",
+      "room_0426_henriette.json"
+    ],
+    "_Type": "System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
   },
-  "Key_10": {
+  "Key_13": {
     "$id": "7",
     "_Value": null,
     "_Type": null
   },
-  "Key_15": {
+  "Key_10": {
     "$id": "8",
-    "_Value": {
-      "CKey": "Key_15",
-      "CValue": "6TkZVXSQTgvZviiyEToX1/m8Jn53+6ozpB/VV98EuzeafVxpNzc9CqJlqNjaMhMPYCcDRbUyve6O5bBUu/cr1Q==",
-      "CThreadId": 42,
-      "CTime": "2025-05-04T21:11:00.0965053+02:00"
-    },
-    "_Type": "Area23.At.Framework.Library.Cache.CacheData, Area23.At.Framework.Library, Version=2.25.427.0, Culture=neutral, PublicKeyToken=null"
+    "_Value": null,
+    "_Type": null
   },
-  "Key_12": {
+  "Key_15": {
     "$id": "9",
     "_Value": null,
     "_Type": null
   },
-  "Key_7": {
+  "Key_12": {
     "$id": "10",
     "_Value": null,
     "_Type": null
   },
-  "Key_6": {
+  "Key_7": {
     "$id": "11",
     "_Value": null,
     "_Type": null
   },
-  "Key_5": {
+  "Key_6": {
     "$id": "12",
     "_Value": null,
     "_Type": null
   },
-  "Key_4": {
+  "Key_5": {
     "$id": "13",
     "_Value": null,
     "_Type": null
   },
-  "Key_3": {
+  "Key_4": {
     "$id": "14",
     "_Value": null,
     "_Type": null
   },
-  "Key_2": {
+  "Key_3": {
     "$id": "15",
     "_Value": null,
     "_Type": null
   },
-  "Key_1": {
+  "Key_2": {
     "$id": "16",
     "_Value": null,
     "_Type": null
   },
-  "Key_0": {
+  "Key_1": {
     "$id": "17",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_0": {
+    "$id": "18",
     "_Value": null,
     "_Type": null
   }

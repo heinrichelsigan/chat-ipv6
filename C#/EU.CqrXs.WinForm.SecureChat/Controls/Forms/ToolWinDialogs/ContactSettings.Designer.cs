@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Windows;
+using System.Windows.Forms;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -71,7 +72,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             tableLayoutPanel.Controls.Add(checkBoxRegister, 1, 5);
             tableLayoutPanel.Dock = DockStyle.Fill;
             tableLayoutPanel.Font = new Font("Lucida Sans Unicode", 10F);
-            tableLayoutPanel.Location = new Point(2, 2);
+            tableLayoutPanel.Location = new System.Drawing.Point(2, 2);
             tableLayoutPanel.Margin = new Padding(2, 1, 2, 1);
             tableLayoutPanel.Name = "tableLayoutPanel";
             tableLayoutPanel.RowCount = 5;
@@ -81,18 +82,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
-            tableLayoutPanel.Size = new Size(536, 336);
+            tableLayoutPanel.Size = new System.Drawing.Size(536, 336);
             tableLayoutPanel.TabIndex = 0;
             // 
             // logoPictureBox
             // 
             logoPictureBox.Dock = DockStyle.Fill;
             logoPictureBox.Image = (Image)resources.GetObject("logoPictureBox.Image");
-            logoPictureBox.Location = new Point(3, 2);
+            logoPictureBox.Location = new System.Drawing.Point(3, 2);
             logoPictureBox.Margin = new Padding(3, 2, 3, 2);
             logoPictureBox.Name = "logoPictureBox";
             tableLayoutPanel.SetRowSpan(logoPictureBox, 6);
-            logoPictureBox.Size = new Size(154, 332);
+            logoPictureBox.Size = new System.Drawing.Size(154, 332);
             logoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             logoPictureBox.TabIndex = 25;
             logoPictureBox.TabStop = false;
@@ -100,11 +101,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // labelName
             // 
             labelName.Dock = DockStyle.Fill;
-            labelName.Location = new Point(167, 0);
+            labelName.Location = new System.Drawing.Point(167, 0);
             labelName.Margin = new Padding(7, 0, 4, 0);
-            labelName.MaximumSize = new Size(0, 20);
+            labelName.MaximumSize = new System.Drawing.Size(0, 20);
             labelName.Name = "labelName";
-            labelName.Size = new Size(96, 20);
+            labelName.Size = new System.Drawing.Size(96, 20);
             labelName.TabIndex = 26;
             labelName.Text = "Name";
             labelName.TextAlign = ContentAlignment.MiddleLeft;
@@ -112,11 +113,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // labelEmail
             // 
             labelEmail.Dock = DockStyle.Fill;
-            labelEmail.Location = new Point(167, 33);
+            labelEmail.Location = new System.Drawing.Point(167, 33);
             labelEmail.Margin = new Padding(7, 0, 4, 0);
-            labelEmail.MaximumSize = new Size(0, 20);
+            labelEmail.MaximumSize = new System.Drawing.Size(0, 20);
             labelEmail.Name = "labelEmail";
-            labelEmail.Size = new Size(96, 20);
+            labelEmail.Size = new System.Drawing.Size(96, 20);
             labelEmail.TabIndex = 27;
             labelEmail.Text = "Email";
             labelEmail.TextAlign = ContentAlignment.MiddleLeft;
@@ -124,11 +125,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // labelMobile
             // 
             labelMobile.Dock = DockStyle.Fill;
-            labelMobile.Location = new Point(167, 66);
+            labelMobile.Location = new System.Drawing.Point(167, 66);
             labelMobile.Margin = new Padding(7, 0, 4, 0);
-            labelMobile.MaximumSize = new Size(0, 20);
+            labelMobile.MaximumSize = new System.Drawing.Size(0, 20);
             labelMobile.Name = "labelMobile";
-            labelMobile.Size = new Size(96, 20);
+            labelMobile.Size = new System.Drawing.Size(96, 20);
             labelMobile.TabIndex = 28;
             labelMobile.Text = "Mobile";
             labelMobile.TextAlign = ContentAlignment.MiddleLeft;
@@ -136,11 +137,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // labelAddress
             // 
             labelAddress.Dock = DockStyle.Fill;
-            labelAddress.Location = new Point(167, 99);
+            labelAddress.Location = new System.Drawing.Point(167, 99);
             labelAddress.Margin = new Padding(7, 0, 4, 0);
-            labelAddress.MaximumSize = new Size(0, 20);
+            labelAddress.MaximumSize = new System.Drawing.Size(0, 20);
             labelAddress.Name = "labelAddress";
-            labelAddress.Size = new Size(96, 20);
+            labelAddress.Size = new System.Drawing.Size(96, 20);
             labelAddress.TabIndex = 29;
             labelAddress.Text = "Address";
             labelAddress.TextAlign = ContentAlignment.MiddleLeft;
@@ -148,11 +149,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // labelPicture
             // 
             labelPicture.Dock = DockStyle.Fill;
-            labelPicture.Location = new Point(167, 132);
+            labelPicture.Location = new System.Drawing.Point(167, 132);
             labelPicture.Margin = new Padding(7, 0, 4, 0);
-            labelPicture.MaximumSize = new Size(0, 20);
+            labelPicture.MaximumSize = new System.Drawing.Size(0, 20);
             labelPicture.Name = "labelPicture";
-            labelPicture.Size = new Size(96, 20);
+            labelPicture.Size = new System.Drawing.Size(96, 20);
             labelPicture.TabIndex = 31;
             labelPicture.Text = "Picture";
             labelPicture.TextAlign = ContentAlignment.MiddleLeft;
@@ -161,10 +162,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             comboBoxName.Dock = DockStyle.Fill;
             comboBoxName.FormattingEnabled = true;
-            comboBoxName.Location = new Point(269, 2);
+            comboBoxName.Location = new System.Drawing.Point(269, 2);
             comboBoxName.Margin = new Padding(2);
             comboBoxName.Name = "comboBoxName";
-            comboBoxName.Size = new Size(265, 24);
+            comboBoxName.Size = new System.Drawing.Size(265, 24);
             comboBoxName.TabIndex = 20;
             comboBoxName.SelectedIndexChanged += comboBoxName_SelectedIndexChanged;
             comboBoxName.TextUpdate += comboBoxName_TextUpdate;
@@ -172,28 +173,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // textBoxEmail
             // 
             textBoxEmail.Dock = DockStyle.Fill;
-            textBoxEmail.Location = new Point(269, 35);
+            textBoxEmail.Location = new System.Drawing.Point(269, 35);
             textBoxEmail.Margin = new Padding(2);
             textBoxEmail.Name = "textBoxEmail";
-            textBoxEmail.Size = new Size(265, 28);
+            textBoxEmail.Size = new System.Drawing.Size(265, 28);
             textBoxEmail.TabIndex = 21;
             // 
             // textBoxMobile
             // 
             textBoxMobile.Dock = DockStyle.Fill;
-            textBoxMobile.Location = new Point(269, 68);
+            textBoxMobile.Location = new System.Drawing.Point(269, 68);
             textBoxMobile.Margin = new Padding(2);
             textBoxMobile.Name = "textBoxMobile";
-            textBoxMobile.Size = new Size(265, 28);
+            textBoxMobile.Size = new System.Drawing.Size(265, 28);
             textBoxMobile.TabIndex = 22;
             // 
             // textBoxAddress
             // 
             textBoxAddress.Dock = DockStyle.Fill;
-            textBoxAddress.Location = new Point(269, 101);
+            textBoxAddress.Location = new System.Drawing.Point(269, 101);
             textBoxAddress.Margin = new Padding(2);
             textBoxAddress.Name = "textBoxAddress";
-            textBoxAddress.Size = new Size(265, 28);
+            textBoxAddress.Size = new System.Drawing.Size(265, 28);
             textBoxAddress.TabIndex = 23;
             // 
             // pictureBoxImage
@@ -202,10 +203,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             pictureBoxImage.BackgroundImage = Properties.fr.Resources.ClickToUploadBackground;
             pictureBoxImage.BackgroundImageLayout = ImageLayout.Center;
             pictureBoxImage.BorderStyle = BorderStyle.FixedSingle;
-            pictureBoxImage.Location = new Point(269, 134);
+            pictureBoxImage.Location = new System.Drawing.Point(269, 134);
             pictureBoxImage.Margin = new Padding(2);
             pictureBoxImage.Name = "pictureBoxImage";
-            pictureBoxImage.Size = new Size(265, 164);
+            pictureBoxImage.Size = new System.Drawing.Size(265, 164);
             pictureBoxImage.SizeMode = PictureBoxSizeMode.CenterImage;
             pictureBoxImage.TabIndex = 3;
             pictureBoxImage.TabStop = false;
@@ -215,10 +216,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             okButton.DialogResult = DialogResult.Cancel;
-            okButton.Location = new Point(445, 310);
+            okButton.Location = new System.Drawing.Point(445, 310);
             okButton.Margin = new Padding(3, 2, 3, 2);
             okButton.Name = "okButton";
-            okButton.Size = new Size(88, 24);
+            okButton.Size = new System.Drawing.Size(88, 24);
             okButton.TabIndex = 32;
             okButton.Text = "&OK";
             // 
@@ -226,9 +227,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             checkBoxRegister.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             checkBoxRegister.AutoSize = true;
-            checkBoxRegister.Location = new Point(181, 303);
+            checkBoxRegister.Location = new System.Drawing.Point(181, 303);
             checkBoxRegister.Name = "checkBoxRegister";
-            checkBoxRegister.Size = new Size(83, 30);
+            checkBoxRegister.Size = new System.Drawing.Size(83, 30);
             checkBoxRegister.TabIndex = 33;
             checkBoxRegister.Text = "Register";
             checkBoxRegister.UseVisualStyleBackColor = true;
@@ -240,8 +241,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // ContactSettings
             // 
             AcceptButton = okButton;
-            BackColor = SystemColors.Window;
-            ClientSize = new Size(540, 340);
+            BackColor = System.Drawing.SystemColors.Window;
+            ClientSize = new System.Drawing.Size(540, 340);
             Controls.Add(tableLayoutPanel);
             Name = "ContactSettings";
             Text = "ContactSettings";

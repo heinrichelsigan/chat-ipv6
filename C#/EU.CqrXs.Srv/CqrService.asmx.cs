@@ -57,7 +57,7 @@ namespace EU.CqrXs.Srv
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    _contact = cContact.DecryptFromJson(_serverKey, cryptMsg);
+                    _contact = cContact.FromJson<CContact>(cryptMsg);
                     _decrypted = _contact.ToJson();
                     Area23Log.LogStatic($"Contact decrypted successfully: {_decrypted}\n");
                 }

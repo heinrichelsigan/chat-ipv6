@@ -27,11 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
+    <Folder Include="Documents\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Documents\" />
+    <ProjectReference Include="..\Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,10 +11,10 @@
     [Serializable]
     public class CacheValue
     {
-        
-        public object? _Value { get; protected internal set; }
 
-        protected internal Type? _Type { get; protected internal set; }
+        protected internal object? _Value { get; set; }
+
+        protected internal Type? _Type { get;  set; }
 
 
         /// <summary>
