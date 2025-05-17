@@ -26,14 +26,7 @@ public class NetworkAddresses {
 	public static void getConnectedAddress() {
 		Socket s;
 		try {
-			s = new Socket("18.100.254.167", 80);
-			System.out.println(s.getLocalAddress().getHostAddress());
-			s.close();
-			return;
-		} catch (Exception ex) { 
-		}
-		try {
-			s = new Socket("15.188.56.225", 80);
+			s = new Socket("18.101.101.108", 80);
 			System.out.println(s.getLocalAddress().getHostAddress());
 			s.close();
 			return;
@@ -64,7 +57,7 @@ public class NetworkAddresses {
      }
 
 
-    static Set<InetAddress> getNetworkInterfaces() throws SocketException {
+    public static Set<InetAddress> getNetworkInterfaces() throws SocketException {
             
         Set<InetAddress> myAddrs = new HashSet<InetAddress>();
         Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces(); 

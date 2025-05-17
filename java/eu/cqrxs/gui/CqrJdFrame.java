@@ -14,6 +14,8 @@ import javax.swing.*;
 import java.net.http.*;
 import java.net.*;
 import java.lang.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.time.Duration;
 
 
@@ -101,7 +103,23 @@ public class CqrJdFrame extends JFrame
 		menuIPAddrs_menuMyIps.setActionCommand("MyIPs");
 		menuIPAddrs_menuMyIps.setMnemonic((int)'M');
 		menuIPAddrs.add(menuIPAddrs_menuMyIps);
-		
+	    
+        HashSet<InetAddress> myAddrs;
+        try {
+            myAddrs = new HashSet<InetAddress>(eu.cqrxs.fw.net.NetworkAddresses.getNetworkInterfaces());
+            for (InetAddress inetAddr : myAddrs) {
+                menuIPAddrs_menuMyAnIp = new JMenuItem();
+                String sip = (String)inetAddr.toString();
+                menuIPAddrs_menuMyAnIp.setText(sip);
+                menuIPAddrs_menuMyAnIp.setActionCommand(sip);
+                menuIPAddrs_menuMyIps.add(menuIPAddrs_menuMyAnIp);
+            }
+        } catch (SocketException sockEx) {
+            System.err.println(sockEx.toString());
+        }
+
+
+
 		menuIPAddrs_menuFriendIps = new JMenu();
 		menuIPAddrs_menuFriendIps.setText("Friend IP's");
 		menuIPAddrs_menuFriendIps.setActionCommand("FriendIPs");
@@ -292,6 +310,7 @@ public class CqrJdFrame extends JFrame
 	JMenuItem menuView_item1View;
 	JMenu menuIPAddrs;
 	JMenu menuIPAddrs_menuMyIps;
+	JMenuItem menuIPAddrs_menuMyAnIp;
 	JMenu menuIPAddrs_menuFriendIps;
 	JMenu menuIPAddrs_menuProxies;
 	JMenuItem menuIPAddrs_itemIPv6Secure;
