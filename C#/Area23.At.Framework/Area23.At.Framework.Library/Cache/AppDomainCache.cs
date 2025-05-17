@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,6 +15,10 @@ namespace Area23.At.Framework.Library.Cache
     /// </summary>
     public class AppDomainCache : MemoryCache
     {
+        protected internal static readonly object _smartLock = new object();
+
+        public static new string CacheVariant = "AppDomainCache";
+        public override string CacheType => "AppDomainCache";
 
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
@@ -22,13 +27,24 @@ namespace Area23.At.Framework.Library.Cache
         {
             get
             {
-                _appDict = (ConcurrentDictionary<string, CacheValue>)AppDomain.CurrentDomain.GetData(APP_CONCURRENT_DICT);
-                if (_appDict == null)
+                lock (_smartLock)
                 {
-                    lock (_lock)
+                    try
                     {
-                        _appDict = new ConcurrentDictionary<string, CacheValue>();
-                        AppDomain.CurrentDomain.SetData(APP_CONCURRENT_DICT, _appDict);
+                        _appDict = (ConcurrentDictionary<string, CacheValue>)AppDomain.CurrentDomain.GetData(APP_CONCURRENT_DICT);
+                    }
+                    catch (Exception appDomDictEx)
+                    {
+                        Area23Log.LogStatic(appDomDictEx);
+                    }
+
+                    if (_appDict == null)
+                    {
+                        lock (_lock)
+                        {                        
+                            _appDict = new ConcurrentDictionary<string, CacheValue>();
+                            AppDomain.CurrentDomain.SetData(APP_CONCURRENT_DICT, _appDict);
+                        }
                     }
                 }
 
@@ -36,12 +52,15 @@ namespace Area23.At.Framework.Library.Cache
             }
             set
             {
-                if (value != null && value.Count > 0)
+                lock (_smartLock)
                 {
-                    lock (_lock)
+                    if (value != null && value.Count > 0)
                     {
-                        _appDict = value;
-                        AppDomain.CurrentDomain.SetData(APP_CONCURRENT_DICT, _appDict);
+                        lock (_lock)
+                        {
+                            _appDict = value;
+                            AppDomain.CurrentDomain.SetData(APP_CONCURRENT_DICT, _appDict);
+                        }
                     }
                 }
             }

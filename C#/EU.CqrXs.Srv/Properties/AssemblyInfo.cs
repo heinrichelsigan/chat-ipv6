@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die
 // Assemblyinformationen zu ändern.
 [assembly: AssemblyTitle("EU.CqrXs.Srv")]
-[assembly: AssemblyDescription("EU.CqrXs.Srv Chat WebService")]
+[assembly: AssemblyDescription("EU.CqrXs.Srv Chat WebService ARMx64")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Heinrich Elsigan https://srv.cqrxs.eu/v1.1/CqrService.asmx")]
-[assembly: AssemblyProduct("EU.CqrXs.Srv just another crypt chat queue")]
+[assembly: AssemblyCompany("Heinrich Elsigan https://srv.cqrxs.eu/v1.3/CqrService.asmx")]
+[assembly: AssemblyProduct("https://srv.cqrxs.eu/v1.3/CqrService.asmx")]
 [assembly: AssemblyCopyright("Copyleft 2000-2040  © Copyright under MIT license")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // Sie können alle Werte angeben oder die standardmäßigen Revisions- und Buildnummern 
 // übernehmen, indem Sie "*" wie folgt verwenden:
-[assembly: AssemblyVersion("2.25.427.0")]
-[assembly: AssemblyFileVersion("2.25.427.0")]
+[assembly: AssemblyVersion("2.25.517.0")]
+[assembly: AssemblyFileVersion("2.25.517.0")]

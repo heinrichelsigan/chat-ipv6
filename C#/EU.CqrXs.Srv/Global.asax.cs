@@ -19,7 +19,15 @@ namespace EU.CqrXs.Srv
         protected void Application_Start(object sender, EventArgs e)
         {
             HashSet<CContact> contacts = JsonContacts.GetContacts();
-            List<string> chatRooms = JsonChatRoom.ChatRoomNumbersFromFs();
+            List<string> chatRooms = new List<string>();
+            try
+            {
+                chatRooms = JsonChatRoom.ChatRoomNumbersFromFs();
+            }
+            catch (Exception exChatRoomsFrom) 
+            {
+                Area23Log.LogStatic("Global.asax: Application_Start(sender, e):", exChatRoomsFrom, "");
+            }
             Area23Log.LogStatic($"Application_Start: Loaded {contacts?.Count} contacts and {chatRooms?.Count} chat rooms.");                      
         }
 

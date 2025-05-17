@@ -17,7 +17,9 @@ namespace Area23.At.Framework.Library.Cache
     {
 
         protected internal static readonly object _smartLock = new object();
-        
+
+        public static new string CacheVariant = "ApplicationStateCache";
+        public override string CacheType => "ApplicationStateCache";
 
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="HttpApplicationState"/>
@@ -26,12 +28,26 @@ namespace Area23.At.Framework.Library.Cache
         {
             get
             {
-                lock (_smartLock)
+                if (HttpContext.Current != null && HttpContext.Current.Application != null &&
+                    HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] != null)
                 {
-                    if (HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] != null)
-                        _appDict = (ConcurrentDictionary<string, CacheValue>)HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT];
-                
-                    if (_appDict == null)
+                    lock (_smartLock)
+                    {
+                        try
+                        {
+                            _appDict = (ConcurrentDictionary<string, CacheValue>)HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT];
+                        }
+                        catch (Exception ex)
+                        {
+                            Area23.At.Framework.Library.Util.Area23Log.LogStatic(ex);
+                        }
+                    }
+                }
+
+
+                if (_appDict == null)
+                {
+                    lock (_smartLock)
                     {
                         _appDict = new ConcurrentDictionary<string, CacheValue>();
                         HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] = _appDict;
@@ -47,18 +63,18 @@ namespace Area23.At.Framework.Library.Cache
                     if (value != null && value.Count > 0)
                     {
                         _appDict = value;
-                        HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] = _appDict;
+                        if (HttpContext.Current != null && HttpContext.Current.Application != null)
+                            HttpContext.Current.Application[Constants.APP_CONCURRENT_DICT] = _appDict;
                     }
                 }
             }
         }
 
 
-        public ApplicationStateCache(PersistType cacheType = PersistType.ApplicationState) 
+        public ApplicationStateCache(PersistType cacheType = PersistType.ApplicationState)
         {
-                
+
         }
 
     }
-
 }

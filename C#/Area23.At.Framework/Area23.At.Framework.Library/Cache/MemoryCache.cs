@@ -33,6 +33,8 @@ namespace Area23.At.Framework.Library.Cache
 
         public static string CacheVariant = "MemoryCache";
 
+        public virtual string CacheType { get => CacheVariant; }
+
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
         /// </summary>
@@ -120,32 +122,36 @@ namespace Area23.At.Framework.Library.Cache
         }
 
 
-        ///// <summary>
-        ///// Dynamic ctor
-        ///// </summary>
-        //public MemoryCache(PersistType cacheType)
+        /// <summary>
+        /// public ctor
+        /// </summary>
+        //public MemoryCache(PersistType cacheType = PersistType.AppDomain)
         //{
-        //    _appDict = new ConcurrentDictionary<string, CacheValue>();
-        //    CacheVariant = cacheType.ToString();
 
         //    switch (cacheType)
         //    {
         //        case PersistType.JsonFile:
-        //            _instance = new Lazy<MemoryCache>(() => new JsonFileCache());
+        //            if (!_instance.IsValueCreated || _instance.Value == null || !_instance.Value.CacheType.Equals("JsonFileCache", StringComparison.CurrentCultureIgnoreCase))
+        //                _instance = new Lazy<MemoryCache>(() => new JsonFileCache());
         //            break;
         //        case PersistType.Redis:
-        //            // TODO: Redis                   
-        //            _instance = new Lazy<MemoryCache>(() => new RedisCache());
+        //            // TODO: Redis                    
+        //            if (!_instance.IsValueCreated || _instance.Value == null || !_instance.Value.CacheType.Equals("RedisCache", StringComparison.CurrentCultureIgnoreCase))
+        //                _instance = new Lazy<MemoryCache>(() => new RedisCache());
         //            break;
         //        case PersistType.ApplicationState:
-        //            _instance = new Lazy<MemoryCache>(() => new ApplicationStateCache());
+        //            if (!_instance.IsValueCreated || _instance.Value == null || !_instance.Value.CacheType.Equals("ApplicationStateCache", StringComparison.CurrentCultureIgnoreCase))
+        //                _instance = new Lazy<MemoryCache>(() => new ApplicationStateCache());
         //            break;
         //        case PersistType.AppDomain:
         //        default:
-        //            _instance = new Lazy<MemoryCache>(() => new AppDomainCache());
+        //            if (!_instance.IsValueCreated || _instance.Value == null || !_instance.Value.CacheType.Equals("AppDomainCache", StringComparison.CurrentCultureIgnoreCase))                        
+        //                _instance = new Lazy<MemoryCache>(() => new AppDomainCache());
         //            break;
         //    }
+
         //}
+
 
         /// <summary>
         /// Gets a value from <see cref="ConcurrentDictionary{string, CacheValue}"/> stored <see cref="System.AppDomain.CurrentDomain"/>

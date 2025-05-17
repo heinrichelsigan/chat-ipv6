@@ -29,6 +29,9 @@ namespace Area23.At.Framework.Library.Cache
         readonly static string JsonFullDirPath = LibPaths.SystemDirJsonPath; // Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "TEMP");
         readonly static string JsonFullFilePath = Path.Combine(JsonFullDirPath, JSON_APPCACHE_FILE);
 
+        public static new string CacheVariant = "JsonFileCache";
+        public override string CacheType => "JsonFileCache";
+
         protected static SemaphoreSlim ReadWriteSemaphore = new SemaphoreSlim(INIT_SEM_COUNT, MAX_SEM_COUNT);
 
         protected static JsonSerializerSettings JsonSettings = new JsonSerializerSettings()
@@ -120,9 +123,9 @@ namespace Area23.At.Framework.Library.Cache
         }
 
 
-        public JsonFileCache(PersistType cacheType = PersistType.JsonFile) 
+        public JsonFileCache(PersistType cacheType = PersistType.JsonFile)
         {
-            
+
         }
 
     }

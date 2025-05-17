@@ -32,7 +32,15 @@ namespace EU.CqrXs.Srv.Util
 
         static JsonChatRoom()
         {
-            _chatRooms = new HashSet<string>(ChatRoomNumbersFromFs());
+            List<string> jsonChatRooms = new List<string>();
+            try
+            {
+                jsonChatRooms = ChatRoomNumbersFromFs();
+            } catch (Exception exCtor)
+            {
+                Area23Log.LogStatic("static JsonChatRoom()", exCtor, "");
+            }
+            _chatRooms = new HashSet<string>(jsonChatRooms);
         }
 
         public JsonChatRoom()
@@ -124,9 +132,9 @@ namespace EU.CqrXs.Srv.Util
                     {
                         System.IO.File.Delete(JsonChatRoomFileName);
                     }
-                    catch (Exception e)
+                    catch (Exception exDelJson)
                     {
-                        Area23Log.LogStatic("Error deleting chat room " + e.Message);
+                        Area23Log.LogStatic($"DeleteJsonChatRoom(string chatRoomNr = {chatRoomNr}): Error deleting chat room ", exDelJson, "");
                         return false;
                     }
                 }
@@ -227,9 +235,9 @@ namespace EU.CqrXs.Srv.Util
                     {
                         System.IO.File.Delete(jsonChatRoomFileName);
                     }
-                    catch (Exception e)
+                    catch (Exception exDelChatRoomFromFs)
                     {
-                        Area23Log.LogStatic("Error deleting chat room " + e.Message);
+                        Area23Log.LogStatic($"DeleteChatRoom(string chatRoomNr = {chatRoomNr}): Error deleting chat room ", exDelChatRoomFromFs, "");
                         return false;
                     }
                 }
@@ -248,13 +256,21 @@ namespace EU.CqrXs.Srv.Util
         {
 
             List<string> chatRooms = new List<string>();
-            
-            string[] csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
-            string file = "";
-            foreach (string filedir in csr)
+            string[] csr = new string[0];
+
+            try
             {
-                file = Path.GetFileName(filedir);
-                chatRooms.Add(file);
+                csr = Directory.GetFiles(LibPaths.SystemDirJsonPath, "room*.json");
+                string file = "";
+                foreach (string filedir in csr)
+                {
+                    file = Path.GetFileName(filedir);
+                    chatRooms.Add(file);
+                }
+            }
+            catch (Exception exChatRoomFs)
+            {
+                Area23Log.LogStatic("ChatRoomNumbersFromFs()", exChatRoomFs, "");
             }
 
             SetJsonChatRoomsToCache(chatRooms);
@@ -279,7 +295,7 @@ namespace EU.CqrXs.Srv.Util
             }
             catch (Exception exLoadFromCache)
             {
-                Area23Log.LogStatic("Failed to load chatrooms from cache", exLoadFromCache, "");
+                Area23Log.LogStatic("GetJsonChatRoomsFromCache(): Failed to load chatrooms from cache", exLoadFromCache, "");
             }
 
 
