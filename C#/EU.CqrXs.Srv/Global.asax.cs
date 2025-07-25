@@ -66,7 +66,7 @@ namespace EU.CqrXs.Srv
             Area23Log.LogStatic($"Application_Error: sender  {sender?.GetType()} {sender?.ToString()} EventArgs {e?.GetType()} {e?.ToString()}");
 
             CqrException appException = new CqrException(
-                string.Format("[0}: {1} thrown with path {2}", ex.GetType(), ex.Message, path), 
+                string.Format("{0}: {1} thrown with path {2}", ex.GetType(), ex.Message, path), 
                 ex);
             
             
