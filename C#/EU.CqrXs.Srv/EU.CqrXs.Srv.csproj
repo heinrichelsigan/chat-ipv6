@@ -367,7 +367,6 @@
     <Content Include="res\json\urlshort.json" />
     <Content Include="res\json\contacts.json" />
     <None Include="Properties\PublishProfiles\CqrXs_Publish.pubxml" />
-    <Content Include="res\out\urlshort.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -377,6 +376,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="res\out\" />
     <Folder Include="res\tmp\" />
   </ItemGroup>
   <ItemGroup>

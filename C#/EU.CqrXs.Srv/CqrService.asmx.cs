@@ -352,6 +352,12 @@ namespace EU.CqrXs.Srv
         }
 
 
+        [WebMethod]
+        public override string ResetCache()
+        {
+            return base.ResetCache();
+        }
+
     }
 
 

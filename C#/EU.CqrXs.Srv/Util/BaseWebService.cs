@@ -205,6 +205,77 @@ namespace EU.CqrXs.Srv.Util
             return testReport;
         }
 
+
+        [WebMethod]
+        public virtual string ResetCache()
+        {
+            string testReport = $"{DateTime.Now.Area23DateTimeMilliseconds()}:ResetCache() started.\n";
+            try
+            {
+                InitMethod();
+            }
+            catch (Exception ex1)
+            {
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex1.GetType()}: {ex1.Message}\n\t{ex1}\n";
+            }
+
+            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: InitMethod() completed.\n";
+
+            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Persistence in {PersistInCache.CacheType.ToString()}\n";
+
+            if (PersistInCache.CacheType == PersistType.Redis)
+            {
+                try
+                {
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
+                    string status = RedisCache.ConnMux.GetStatus();
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
+
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Getting MemoryCache.CacheDict.AllKeys" + Environment.NewLine;
+
+                    string[] allKeys = MemoryCache.CacheDict.AllKeys;
+                    HashSet<string> newKeys = new HashSet<string>();
+                    if (allKeys == null)
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
+                    else
+                    {
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Length} keys" + Environment.NewLine;
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys)} ]" + Environment.NewLine;
+                    }
+                    foreach (string aKey in allKeys)
+                    {
+                        if (aKey.Equals("AllKeys", StringComparison.CurrentCultureIgnoreCase) || aKey.Equals("ChatRooms", StringComparison.CurrentCultureIgnoreCase) ||
+                            (aKey.StartsWith("room", StringComparison.CurrentCultureIgnoreCase) && aKey.EndsWith(".json", StringComparison.CurrentCultureIgnoreCase)))
+                        {
+                            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Keeping key \"" + aKey + "\":" + "\r\n";
+                        }
+                        else
+                        {
+                            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to delete key \"" + aKey + "\":" + "\r\n";
+                            MemoryCache.CacheDict.RemoveKey(aKey);
+                            newKeys.Add(aKey);
+                        }
+                    }
+                    allKeys = MemoryCache.CacheDict.AllKeys;
+                    newKeys = new HashSet<string>();
+                    if (allKeys == null)
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
+                    else
+                    {
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Length} keys" + Environment.NewLine;
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys)} ]" + Environment.NewLine;
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+                }
+            }
+            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}:ResetCache() finished.\n";
+
+            return testReport;
+        }
+
         protected string GetServerKey()
         {
             // _serverKey = Constants.AUTHOR_EMAIL;            
