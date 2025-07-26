@@ -285,10 +285,12 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         {
             try
             {
+                if (CBytes == null || CBytes.Length == 0)
+                    return true;
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
 
-                byte[] cipherBytes = CBytes;
+                byte[] cipherBytes = CBytes;                
                 byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
                 string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
                 while (decrypted[decrypted.Length - 1] == '\0')

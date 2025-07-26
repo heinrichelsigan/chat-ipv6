@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Security;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
 
 // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IService" in both code and config file together.
-[ServiceContract]
+[ServiceContract(Namespace = "https://srv.cqrxs.eu/svc", Name = "CqrXs Service", ProtectionLevel = ProtectionLevel.None)]
 public interface IService
 {
 
@@ -53,7 +54,7 @@ public interface IService
 }
 
 // Use a data contract as illustrated in the sample below to add composite types to service operations.
-[DataContract]
+[DataContract(Name = "CompositeType", Namespace = "https://srv.cqrxs.eu/svc/")]
 public class CompositeType
 {
 	bool boolValue = true;
