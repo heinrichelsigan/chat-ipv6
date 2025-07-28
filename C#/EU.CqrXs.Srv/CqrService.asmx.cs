@@ -22,6 +22,7 @@ using System.Net;
 using Newtonsoft.Json;
 using System.Net.NetworkInformation;
 using Area23.At.Framework.Library.Cache;
+using System.Net.Http.Headers;
 
 
 namespace EU.CqrXs.Srv
@@ -165,21 +166,20 @@ namespace EU.CqrXs.Srv
                     if (isValid)
                     {
                         dict = GetCachedMessageDict(_chatRoomNumber);
-
-                        List<long> pollKeys = GetNewMessageIndices(dict.Keys.ToList(), cSrvMsg);
+                        List<long> longKeyList = (dict == null || dict.Count < 1) ? new List<long>() : dict.Keys.ToList();
+                        List<long> pollKeys = GetNewMessageIndices(longKeyList, cSrvMsg);
                         
                         long polledPtr = -1;
-                        if (pollKeys.Count > 0)
+                        if (dict != null && dict.Count > 0 && pollKeys != null && pollKeys.Count > 0)
                         {
                             polledPtr = pollKeys[0];
-                            string firstPollClientMsg = dict[polledPtr];
+                            string firstPollClientMsg = dict[polledPtr] ?? "";
                             if (string.IsNullOrEmpty(firstPollClientMsg) && pollKeys.Count > 1)
                             {
                                 chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);
                                 polledPtr = pollKeys[1];
-                                    firstPollClientMsg = dict[polledPtr];
+                                firstPollClientMsg = dict[polledPtr] ?? "";
                             }
-                                                        
                             chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);                            
 
                             UpdateContact(chatRoomMsg.Sender);

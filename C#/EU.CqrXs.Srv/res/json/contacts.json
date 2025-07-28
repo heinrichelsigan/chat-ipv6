@@ -134,7 +134,7 @@
   },
   {
     "_hash": "6bICDgFf",
-    "_message": "room_0717_pirx777.json",
+    "_message": "XdxS+kWbj9Oc5eXXRLcHQIud3nxC6mG+mUQvn+Ex2N4o4OQVfdsvjDmaVFfBk66bFljRTURQujSmzv4YLW4HvlTjPeSuB9Lh4uBUfMJrzkqRPCHXmsAQW7BpXDbJ9mqBd23goiWbvaeMioNRc5QdAII1EpXRe2FpDbACmchomBSuc56xkuvKwmkvABLA17Hs45S1CofZUtAgXNaOmKX1h75BSgf11p7RmD9yBb2ITrA13xocl1suV3kGt6HLf/dTFZXi73X2f0Uc87qFxBjdc6kWarJLH4/9DtkqOeVyAQu1WwYyq649St0uUEGmR+Ja",
     "ContactId": 0,
     "Cuid": "f76516ac-3805-4898-b90a-3d4140bff203",
     "Name": "Igor Sekowski",
@@ -145,8 +145,8 @@
     "ContactImage": null,
     "NameEmail": "Igor Sekowski <pirx777@gmail.com>",
     "MsgType": 0,
-    "Message": "room_0717_pirx777.json",
-    "SerializedMsg": "{\r\n  \"_hash\": \"6bICDgFf\",\r\n  \"_message\": \"room_0717_pirx777.json\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"f76516ac-3805-4898-b90a-3d4140bff203\",\r\n  \"Name\": \"Igor Sekowski\",\r\n  \"Email\": \"pirx777@gmail.com\",\r\n  \"Mobile\": \"+43 677 62540360\",\r\n  \"Address\": \"Breitenfurter Straße 292/7/2, 1230 Wien\",\r\n  \"SecretKey\": \"\",\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Igor Sekowski <pirx777@gmail.com>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"room_0717_pirx777.json\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bICDgFf\",\r\n  \"Md5Hash\": \"0cb5a3e64640b654908992664fa2f3ec\",\r\n  \"CBytes\": \"\"\r\n}",
+    "Message": "XdxS+kWbj9Oc5eXXRLcHQIud3nxC6mG+mUQvn+Ex2N4o4OQVfdsvjDmaVFfBk66bFljRTURQujSmzv4YLW4HvlTjPeSuB9Lh4uBUfMJrzkqRPCHXmsAQW7BpXDbJ9mqBd23goiWbvaeMioNRc5QdAII1EpXRe2FpDbACmchomBSuc56xkuvKwmkvABLA17Hs45S1CofZUtAgXNaOmKX1h75BSgf11p7RmD9yBb2ITrA13xocl1suV3kGt6HLf/dTFZXi73X2f0Uc87qFxBjdc6kWarJLH4/9DtkqOeVyAQu1WwYyq649St0uUEGmR+Ja",
+    "SerializedMsg": "{\r\n  \"_hash\": \"6bICDgFf\",\r\n  \"_message\": \"XdxS+kWbj9Oc5eXXRLcHQIud3nxC6mG+mUQvn+Ex2N4o4OQVfdsvjDmaVFfBk66bFljRTURQujSmzv4YLW4HvlTjPeSuB9Lh4uBUfMJrzkqRPCHXmsAQW7BpXDbJ9mqBd23goiWbvaeMioNRc5QdAII1EpXRe2FpDbACmchomBSuc56xkuvKwmkvABLA17Hs45S1CofZUtAgXNaOmKX1h75BSgf11p7RmD9yBb2ITrA13xocl1suV3kGt6HLf/dTFZXi73X2f0Uc87qFxBjdc6kWarJLH4/9DtkqOeVyAQu1WwYyq649St0uUEGmR+Ja\",\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"f76516ac-3805-4898-b90a-3d4140bff203\",\r\n  \"Name\": \"Igor Sekowski\",\r\n  \"Email\": \"pirx777@gmail.com\",\r\n  \"Mobile\": \"+43 677 62540360\",\r\n  \"Address\": \"Breitenfurter Straße 292/7/2, 1230 Wien\",\r\n  \"SecretKey\": \"\",\r\n  \"ContactImage\": null,\r\n  \"NameEmail\": \"Igor Sekowski <pirx777@gmail.com>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"XdxS+kWbj9Oc5eXXRLcHQIud3nxC6mG+mUQvn+Ex2N4o4OQVfdsvjDmaVFfBk66bFljRTURQujSmzv4YLW4HvlTjPeSuB9Lh4uBUfMJrzkqRPCHXmsAQW7BpXDbJ9mqBd23goiWbvaeMioNRc5QdAII1EpXRe2FpDbACmchomBSuc56xkuvKwmkvABLA17Hs45S1CofZUtAgXNaOmKX1h75BSgf11p7RmD9yBb2ITrA13xocl1suV3kGt6HLf/dTFZXi73X2f0Uc87qFxBjdc6kWarJLH4/9DtkqOeVyAQu1WwYyq649St0uUEGmR+Ja\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bICDgFf\",\r\n  \"Md5Hash\": \"0cb5a3e64640b654908992664fa2f3ec\",\r\n  \"CBytes\": \"\"\r\n}",
     "Hash": "6bICDgFf",
     "Md5Hash": "0cb5a3e64640b654908992664fa2f3ec",
     "CBytes": ""
