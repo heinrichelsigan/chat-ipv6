@@ -47,13 +47,17 @@
             labelPipeHash = new Label();
             textBoxSource = new TextBox();
             textBoxPipeHash = new TextBox();
-            panel1 = new Panel();
+            panelInput = new Panel();
+            panelButtons = new Panel();
+            buttonClear = new Button();
+            buttonSend1stSrvMsg = new Button();
+            buttonSubmit = new Button();
+            button_Base64Dec = new Button();
+            button_Base64Enc = new Button();
             groupBoxOutPut = new GroupBox();
             textBoxDestination = new TextBox();
-            buttonClear = new Button();
-            buttonSubmit = new Button();
-            buttonSend1stSrvMsg = new Button();
-            panel1.SuspendLayout();
+            panelInput.SuspendLayout();
+            panelButtons.SuspendLayout();
             groupBoxOutPut.SuspendLayout();
             SuspendLayout();
             // 
@@ -82,7 +86,7 @@
             labelExternalClientIp.Location = new Point(12, 52);
             labelExternalClientIp.Margin = new Padding(2, 0, 2, 0);
             labelExternalClientIp.Name = "labelExternalClientIp";
-            labelExternalClientIp.Size = new Size(65, 15);
+            labelExternalClientIp.Size = new Size(64, 15);
             labelExternalClientIp.TabIndex = 6;
             labelExternalClientIp.Text = "External Ip:";
             // 
@@ -150,23 +154,93 @@
             textBoxPipeHash.Size = new Size(171, 23);
             textBoxPipeHash.TabIndex = 13;
             // 
-            // panel1
+            // panelInput
             // 
-            panel1.Controls.Add(textBoxServerIp);
-            panel1.Controls.Add(textBoxPipeHash);
-            panel1.Controls.Add(checkBoxDecrypt);
-            panel1.Controls.Add(textBoxSource);
-            panel1.Controls.Add(labelServerIp);
-            panel1.Controls.Add(labelPipeHash);
-            panel1.Controls.Add(labelExternalClientIp);
-            panel1.Controls.Add(textBoxSecKey);
-            panel1.Controls.Add(textBoxExternalIp);
-            panel1.Controls.Add(labelSecKey);
-            panel1.Location = new Point(0, 0);
-            panel1.Margin = new Padding(2);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(360, 260);
-            panel1.TabIndex = 14;
+            panelInput.Controls.Add(textBoxServerIp);
+            panelInput.Controls.Add(textBoxPipeHash);
+            panelInput.Controls.Add(checkBoxDecrypt);
+            panelInput.Controls.Add(textBoxSource);
+            panelInput.Controls.Add(labelServerIp);
+            panelInput.Controls.Add(labelPipeHash);
+            panelInput.Controls.Add(labelExternalClientIp);
+            panelInput.Controls.Add(textBoxSecKey);
+            panelInput.Controls.Add(textBoxExternalIp);
+            panelInput.Controls.Add(labelSecKey);
+            panelInput.Location = new Point(0, 0);
+            panelInput.Margin = new Padding(2);
+            panelInput.Padding = new Padding(0);
+            panelInput.Name = "panelInput";
+            panelInput.Size = new Size(360, 260);
+            panelInput.TabIndex = 14;
+            // 
+            // panelButtons
+            // 
+            panelButtons.Controls.Add(buttonClear);
+            panelButtons.Controls.Add(buttonSend1stSrvMsg);
+            panelButtons.Controls.Add(buttonSubmit);
+            panelButtons.Controls.Add(button_Base64Dec);
+            panelButtons.Controls.Add(button_Base64Enc);
+            panelButtons.Location = new Point(362, 0);
+            panelButtons.Margin = new Padding(2);
+            panelButtons.Padding = new Padding(0);
+            panelButtons.Name = "panelButtons";
+            panelButtons.Size = new Size(108, 476);
+            panelButtons.TabIndex = 20;            
+            // 
+            // buttonSend1stSrvMsg
+            // 
+            buttonSend1stSrvMsg.Location = new Point(16, 11);
+            buttonSend1stSrvMsg.Margin = new Padding(2);
+            buttonSend1stSrvMsg.Name = "buttonSend1stSrvMsg";
+            buttonSend1stSrvMsg.Size = new Size(75, 23);
+            buttonSend1stSrvMsg.TabIndex = 21;
+            buttonSend1stSrvMsg.Text = "1st SrvMsg";
+            buttonSend1stSrvMsg.UseVisualStyleBackColor = true;
+            buttonSend1stSrvMsg.Click += buttonSend1stSrvMsg_Click;
+            // 
+            // button_Base64Enc
+            // 
+            button_Base64Enc.Location = new Point(16, 155);
+            button_Base64Enc.Margin = new Padding(2);
+            button_Base64Enc.Name = "button_Base64Enc";
+            button_Base64Enc.Size = new Size(75, 23);
+            button_Base64Enc.TabIndex = 22;
+            button_Base64Enc.Text = "Base64Enc";
+            button_Base64Enc.UseVisualStyleBackColor = true;
+            button_Base64Enc.Click += button_Base64Enc_Click;
+            // 
+            // button_Base64Dec
+            // 
+            button_Base64Dec.Location = new Point(16, 190);
+            button_Base64Dec.Margin = new Padding(2);
+            button_Base64Dec.Name = "button_Base64Dec";
+            button_Base64Dec.Size = new Size(75, 23);
+            button_Base64Dec.TabIndex = 23;
+            button_Base64Dec.Text = "Base64Dec";
+            button_Base64Dec.UseVisualStyleBackColor = true;
+            button_Base64Dec.Click += button_Base64Dec_Click;
+            // 
+            // buttonSubmit
+            // 
+            buttonSubmit.Location = new Point(16, 225);
+            buttonSubmit.Margin = new Padding(2);
+            buttonSubmit.Name = "buttonSubmit";
+            buttonSubmit.Size = new Size(75, 23);
+            buttonSubmit.TabIndex = 24;
+            buttonSubmit.Text = "Submit";
+            buttonSubmit.UseVisualStyleBackColor = true;
+            buttonSubmit.Click += buttonSubmit_Click;
+            // 
+            // buttonClear
+            // 
+            buttonClear.Location = new Point(16, 425);
+            buttonClear.Margin = new Padding(2);
+            buttonClear.Name = "buttonClear";
+            buttonClear.Size = new Size(75, 23);
+            buttonClear.TabIndex = 25;
+            buttonClear.Text = "Clear";
+            buttonClear.UseVisualStyleBackColor = true;
+            buttonClear.Click += buttonClear_Click;
             // 
             // groupBoxOutPut
             // 
@@ -175,7 +249,7 @@
             groupBoxOutPut.Margin = new Padding(2);
             groupBoxOutPut.Name = "groupBoxOutPut";
             groupBoxOutPut.Padding = new Padding(2);
-            groupBoxOutPut.Size = new Size(360, 192);
+            groupBoxOutPut.Size = new Size(360, 199);
             groupBoxOutPut.TabIndex = 15;
             groupBoxOutPut.TabStop = false;
             groupBoxOutPut.Text = "Output";
@@ -187,56 +261,22 @@
             textBoxDestination.Multiline = true;
             textBoxDestination.Name = "textBoxDestination";
             textBoxDestination.ReadOnly = true;
-            textBoxDestination.Size = new Size(329, 156);
-            textBoxDestination.TabIndex = 13;
-            // 
-            // buttonClear
-            // 
-            buttonClear.Location = new Point(14, 466);
-            buttonClear.Margin = new Padding(2);
-            buttonClear.Name = "buttonClear";
-            buttonClear.Size = new Size(75, 23);
-            buttonClear.TabIndex = 16;
-            buttonClear.Text = "Clear";
-            buttonClear.UseVisualStyleBackColor = true;
-            buttonClear.Click += buttonClear_Click;
-            // 
-            // buttonSubmit
-            // 
-            buttonSubmit.Location = new Point(268, 466);
-            buttonSubmit.Margin = new Padding(2);
-            buttonSubmit.Name = "buttonSubmit";
-            buttonSubmit.Size = new Size(75, 23);
-            buttonSubmit.TabIndex = 17;
-            buttonSubmit.Text = "Submit";
-            buttonSubmit.UseVisualStyleBackColor = true;
-            buttonSubmit.Click += buttonSubmit_Click;
-            // 
-            // buttonSend1stSrvMsg
-            // 
-            buttonSend1stSrvMsg.Location = new Point(104, 466);
-            buttonSend1stSrvMsg.Margin = new Padding(2);
-            buttonSend1stSrvMsg.Name = "buttonSend1stSrvMsg";
-            buttonSend1stSrvMsg.Size = new Size(150, 23);
-            buttonSend1stSrvMsg.TabIndex = 18;
-            buttonSend1stSrvMsg.Text = "Send 1st SrvMsg";
-            buttonSend1stSrvMsg.UseVisualStyleBackColor = true;
-            buttonSend1stSrvMsg.Click += buttonSend1stSrvMsg_Click;
+            textBoxDestination.Size = new Size(329, 166);
+            textBoxDestination.TabIndex = 16;
             // 
             // TestForm
             // 
-            ClientSize = new Size(361, 498);
-            Controls.Add(buttonSend1stSrvMsg);
-            Controls.Add(buttonSubmit);
-            Controls.Add(buttonClear);
+            ClientSize = new Size(480, 480);
+            Controls.Add(panelButtons);
             Controls.Add(groupBoxOutPut);
-            Controls.Add(panel1);
-            MinimumSize = new Size(361, 498);
+            Controls.Add(panelInput);
+            MinimumSize = new Size(480, 480);
             Name = "TestForm";
             Text = "En-/Decrypt TestForm";
             FormClosing += TestForm_FormClosing;
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            panelInput.ResumeLayout(false);
+            panelInput.PerformLayout();
+            panelButtons.ResumeLayout(false);
             groupBoxOutPut.ResumeLayout(false);
             groupBoxOutPut.PerformLayout();
             ResumeLayout(false);
@@ -255,12 +295,16 @@
         private Label labelPipeHash;
         private TextBox textBoxSource;
         private TextBox textBoxPipeHash;
-        private Panel panel1;
+        private Panel panelInput;
+        private Panel panelButtons;
         private GroupBox groupBoxOutPut;
         private TextBox textBoxDestination;
-        private Button buttonClear;
-        private Button buttonSubmit;
+        private TextBox textBox1;
         private Button buttonSend1stSrvMsg;
+        private Button button_Base64Enc;
+        private Button button_Base64Dec;
+        private Button buttonSubmit;
+        private Button buttonClear;
     }
 
 }

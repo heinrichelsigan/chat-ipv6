@@ -22,6 +22,7 @@ using Area23.At.Framework.Core.Cache;
 using Area23.At.Framework.Core.Cqr;
 using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Crypt.Hash;
+using Area23.At.Framework.Core.Crypt.EnDeCoding;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -75,7 +76,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             else
             {
                 myServerKey = ExternalIpAddress.ToString() + Constants.APP_NAME;
-                MemoryCache.CacheDict.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);                 
+                MemoryCache.CacheDict.SetValue<string>(Constants.APP_SERVER_KEY, myServerKey);
             }
 
             if (!string.IsNullOrEmpty(myServerKey))
@@ -212,7 +213,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 CContact? responseContact = facade.Test_Send1st_CqrSrvMsg1_Soap(myContact, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
 
-                if (responseContact != null) 
+                if (responseContact != null)
                     this.textBoxDestination.Text = responseContact.SerializedMsg;
 
                 try
@@ -223,8 +224,26 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     this.textBoxSource.Text = $"Exception {exRetMsg.GetType()} {exRetMsg.Message}\n+{exRetMsg.ToString()}";
                 }
-                
+
             }
+        }
+
+        private void button_Base64Enc_Click(object sender, EventArgs e)
+        {
+            byte[] sourceBytes = System.Text.Encoding.UTF8.GetBytes(textBoxSource.Text);
+            this.textBoxDestination.Text = Base64.ToBase64(sourceBytes);
+        }
+
+        private void button_Base64Dec_Click(object sender, EventArgs e)
+        {
+            string source = textBoxSource.Text;
+            if (!Base64.IsValidBase64(source, out string error))
+            {
+                this.textBoxDestination.Text = "Error decoding base64\n" + error;
+                return;
+            }
+
+            this.textBoxDestination.Text = EnDeCodeHelper.GetStringFromBytesTrimNulls(Base64.FromBase64(source));
         }
     }
 }

@@ -54,7 +54,7 @@ namespace EU.CqrXs.Srv.Util
 
         public virtual void InitMethod()
         {
-            _contacts = GetContacts();
+            _contacts = JsonContacts.GetContacts(true);
             GetServerKey();
             cqrFacade = new CqrFacade(_serverKey);
             _decrypted = string.Empty;
@@ -291,139 +291,16 @@ namespace EU.CqrXs.Srv.Util
             return _serverKey;
         }
 
-        internal HashSet<CContact> GetContacts()
-        {
-            _contacts = JsonContacts.GetContacts();
-            return _contacts;
-        }
 
         internal CContact AddContact(CContact ccontact)
         {
-            _contacts = JsonContacts.GetContacts();
-            CContact foundCt = JsonContacts.FindContactByNameEmail(_contacts, ccontact);
-            if (foundCt != null)
-            {
-                foundCt.ContactId = ccontact.ContactId;
-                if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty)
-                    foundCt.Cuid = Guid.NewGuid();
-                if (!string.IsNullOrEmpty(ccontact.Address))
-                    foundCt.Address = ccontact.Address;
-                if (ccontact.Mobile != null && ccontact.Mobile.Length > 1)
-                    foundCt.Mobile = ccontact.Mobile;
-                if (ccontact._message != null && !string.IsNullOrEmpty(ccontact._message))
-                    foundCt._message = ccontact._message;
-
-                foundCt.ContactImage = null;
-            }
-            else
-            {
-                if (ccontact.Cuid == null || ccontact.Cuid == Guid.Empty)
-                    ccontact.Cuid = Guid.NewGuid();                
-                foundCt = new CContact(ccontact, ccontact._message, ccontact._hash);
-                foundCt.ContactImage = null;
-                foundCt._message = ccontact._message;
-
-                _contacts.Add(foundCt);
-
-            }
-
-            UpdateContact(foundCt);
-
+            CContact foundCt = JsonContacts.AddContact(ccontact);
             return foundCt;
         }
 
         internal void UpdateContact(CContact ccontact)
         {
-            CContact toAddContact = null;
-            if (ccontact == null || string.IsNullOrEmpty(ccontact.Email))
-                return;
-
-            string chatRoomNr = (ccontact._message != null && !string.IsNullOrEmpty(ccontact._message)) ? ccontact._message : "";
-            HashSet<CContact> contacts = new HashSet<CContact>();
-
-            foreach (CContact ct in _contacts)
-            {
-                if ((ct.Cuid == ccontact.Cuid && ct.Email.Equals(ccontact.Email, StringComparison.CurrentCultureIgnoreCase) ||
-                    ct.NameEmail.Equals(ccontact.NameEmail, StringComparison.CurrentCultureIgnoreCase)))
-                {
-                    toAddContact = new CContact(ccontact, chatRoomNr, ccontact.Hash);
-                    toAddContact.Mobile = ccontact.Mobile;
-                    toAddContact.ContactImage = null;
-                    toAddContact.Cuid = (ccontact.Cuid != null && ccontact.Cuid != Guid.Empty) ? ccontact.Cuid : Guid.NewGuid();
-                    toAddContact._message = chatRoomNr;
-                    contacts.Add(toAddContact);
-                }
-                else
-                    contacts.Add(ct);
-            }
-            _contacts = contacts;
-            JsonContacts.SaveJsonContacts(_contacts);
-        }
-
-        internal void UpdateContacts(CContact contact, CSrvMsg<string> chatRoomMsg, string chatRoomNr)
-        {
-            bool foundCt = false;
-            CContact toDelContact = null;
-            if (contact == null || string.IsNullOrEmpty(contact.Email))
-                return;
-
-            if ((chatRoomMsg.Sender.Cuid == contact.Cuid && chatRoomMsg.Sender.Email.Equals(contact.Email, StringComparison.CurrentCultureIgnoreCase)) ||
-                (chatRoomMsg.Sender.NameEmail.Equals(contact.NameEmail, StringComparison.CurrentCultureIgnoreCase)))
-            {
-                chatRoomMsg.Sender = new CContact(contact, chatRoomNr, contact.Hash);
-            }
-            for (int i = 0; i < chatRoomMsg.Recipients.Count; i++)
-            {
-                if ((chatRoomMsg.Recipients.ElementAt(i).Cuid == contact.Cuid &&
-                        chatRoomMsg.Recipients.ElementAt(i).Name.Equals(contact.Name, StringComparison.CurrentCultureIgnoreCase)) ||
-                    (chatRoomMsg.Recipients.ElementAt(i).Cuid == contact.Cuid &&
-                        chatRoomMsg.Recipients.ElementAt(i).Email.Equals(contact.Email, StringComparison.CurrentCultureIgnoreCase)) ||
-                    chatRoomMsg.Recipients.ElementAt(i).NameEmail.Equals(contact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    toDelContact = chatRoomMsg.Recipients.ElementAt(i);
-                    foundCt = true;
-                    break;
-                }
-            }
-            if (foundCt)
-            {
-                if (chatRoomMsg.Recipients.Remove(toDelContact))
-                {
-
-                    CContact cToAdd = new CContact(contact, chatRoomNr, contact._hash);
-                    cToAdd._message = chatRoomNr;
-                    chatRoomMsg.Recipients.Add(cToAdd);
-                }
-            }
-
-            JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
-            // (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
-
-            foundCt = false;
-            GetContacts();
-            for (int j = 0; j < _contacts.Count; j++)
-            {
-                if ((_contacts.ElementAt(j).Cuid == contact.Cuid) &&
-                    (_contacts.ElementAt(j).Name.Equals(contact.Name) ||
-                        _contacts.ElementAt(j).NameEmail.Equals(contact.NameEmail)))
-                {
-                    toDelContact = _contacts.ElementAt(j);
-                    foundCt = true;
-                    break;
-                }
-            }
-            if (foundCt)
-            {
-                if (_contacts.Remove(toDelContact))
-                {
-                    CContact c2Add = new CContact(contact, chatRoomNr, contact.Hash);
-                    c2Add._message = chatRoomNr;
-                    _contacts.Add(c2Add);
-                }
-            }
-
-            JsonContacts.SaveJsonContacts(_contacts);
-
+            JsonContacts.UpdateContact(ccontact);
         }
 
         /// <summary>
@@ -439,10 +316,10 @@ namespace EU.CqrXs.Srv.Util
 
             string restMail = cSrvMsg.Sender.Email.Contains("@") ? (cSrvMsg.Sender.Email.Substring(0, cSrvMsg.Sender.Email.IndexOf("@"))) : cSrvMsg.Sender.Email.Trim();
             restMail = restMail.Replace("@", "_").Replace(".", "_");
-            if (string.IsNullOrEmpty(chatRoomNr))
+            
+            if (!string.IsNullOrEmpty(restMail))
                 chatRoomNr = String.Format("room_{0:MMdd}_{1}.json", DateTime.Now, restMail);
-
-            if (string.IsNullOrEmpty(chatRoomNr))
+            else
                 chatRoomNr = $"room_{DateTime.Now:MMddHHmm}.json";
 
             Dictionary<long, string> dict = new Dictionary<long, string>();
@@ -456,8 +333,10 @@ namespace EU.CqrXs.Srv.Util
                 cSrvMsg.CRoom.ChatRuid = (cSrvMsg.CRoom.ChatRuid == Guid.Empty) ? Guid.NewGuid() : cSrvMsg.CRoom.ChatRuid;
                 cSrvMsg.CRoom.LastPolled = now;
                 cSrvMsg.CRoom.LastPushed = now;
-                cSrvMsg.CRoom.TicksLong = dict.Keys.ToList();
-
+                if (cSrvMsg.CRoom.TicksLong == null || cSrvMsg.CRoom.TicksLong.Count == 0)
+                    cSrvMsg.CRoom.TicksLong = dict.Keys.ToList();
+                else
+                    cSrvMsg.CRoom.TicksLong.Add(now.Ticks);
             }
 
             cSrvMsg._message = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";

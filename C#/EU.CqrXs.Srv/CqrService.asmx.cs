@@ -252,7 +252,7 @@ namespace EU.CqrXs.Srv
                         chatRoomMsg.CRoom.LastPushed = now;
                         SetCachedMessageDict(_chatRoomNumber, dict);                            // Saves chatroom msg dict back to cache (Amazon valkey or ApplicationState)
 
-                        UpdateContact(_contact);        
+                        // UpdateContact(_contact);        
                         chatRoomMsg.TContent = "";                                              // set TContent empty, because we don't want a same huge response as request                                             
                         chatRoomMsg = JsonChatRoom.SaveChatRoom(
                             chatRoomMsg, chatRoomMsg.CRoom);                                    // saves chat room back to json file

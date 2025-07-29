@@ -203,7 +203,7 @@ namespace EU.CqrXs.Srv.Util
 
             CSrvMsg<string> cServerMessage = null;
             string jsonText = null;
-            if (!System.IO.File.Exists(jsonCRoomFileName)) // we need to create chatroom
+            if (!System.IO.File.Exists(jsonCRoomFileName)) // we need to a create chatroom
             {
                 CChatRoom chatRoom = cSrvMsgIn.CRoom ?? new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MaxValue, DateTime.MaxValue);
                 chatRoom.ChatRoomNr = chatRoomNr;
