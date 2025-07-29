@@ -10,8 +10,8 @@
     <Copyright>Copyleft © 2000-2040</Copyright>
     <PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
-    <AssemblyVersion>2.25.513</AssemblyVersion>
-    <FileVersion>2.25.513</FileVersion>
+    <AssemblyVersion>2.25.730</AssemblyVersion>
+    <FileVersion>2.25.730</FileVersion>
 	<IsTrimmable>true</IsTrimmable>
 	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
 	<PlatformTarget>AnyCPU</PlatformTarget>
@@ -26,13 +26,13 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>7</WarningLevel>
-    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
     <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <WarningLevel>7</WarningLevel>
-    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
     <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
   </PropertyGroup>
 

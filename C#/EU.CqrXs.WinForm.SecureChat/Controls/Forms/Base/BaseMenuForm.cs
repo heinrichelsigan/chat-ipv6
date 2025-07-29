@@ -1,6 +1,9 @@
 ﻿using Area23.At.Framework.Core.Cqr;
 using Area23.At.Framework.Core.Cqr.Srv;
-using Area23.At.Framework.Core.Util;    
+using Area23.At.Framework.Core.Cqr.Msg;
+using Area23.At.Framework.Core.Util;
+using Area23.At.Framework.Core.Static;
+using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using System;
@@ -12,10 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
-using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Cqr;
-using Area23.At.Framework.Core.Cqr.Msg;
+
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {

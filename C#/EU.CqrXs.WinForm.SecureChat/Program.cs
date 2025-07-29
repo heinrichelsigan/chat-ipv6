@@ -22,7 +22,7 @@ namespace EU.CqrXs.WinForm.SecureChat
         static internal bool firstRegistration = false;
 
 
-        internal static Mutex PMutec { get => _mutex; }
+        internal static Mutex? PMutec { get => _mutex; }
 
         /// <summary>
         ///  The main entry point for the application.
@@ -32,7 +32,7 @@ namespace EU.CqrXs.WinForm.SecureChat
         {
             if (_mutex == null)
                 _mutex = new Mutex(true, progName);
-
+            
             if (!_mutex.WaitOne(1000, false))
             {                
                 NativeWrapper.Kernel32.AttachConsole(NativeWrapper.Kernel32.ATTACH_PARENT_PROCESS);

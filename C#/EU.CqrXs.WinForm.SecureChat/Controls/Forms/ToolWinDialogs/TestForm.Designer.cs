@@ -298,8 +298,7 @@
         private Panel panelInput;
         private Panel panelButtons;
         private GroupBox groupBoxOutPut;
-        private TextBox textBoxDestination;
-        private TextBox textBox1;
+        private TextBox textBoxDestination;        
         private Button buttonSend1stSrvMsg;
         private Button button_Base64Enc;
         private Button button_Base64Dec;

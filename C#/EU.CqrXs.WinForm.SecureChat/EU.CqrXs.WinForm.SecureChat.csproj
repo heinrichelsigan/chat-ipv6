@@ -10,8 +10,8 @@
     <StartupObject>EU.CqrXs.WinForm.SecureChat.Program</StartupObject>
     <RootNamespace>EU.CqrXs.WinForm.SecureChat</RootNamespace>
 	<ApplicationIcon>RemoteConnectedIcon.ico</ApplicationIcon>
-	<AssemblyVersion>2.25.729</AssemblyVersion>
-    <FileVersion>2.25.729</FileVersion>
+	<AssemblyVersion>2.25.730</AssemblyVersion>
+    <FileVersion>2.25.730</FileVersion>
     <ErrorReport>send</ErrorReport>
     <Title>SecureChat</Title>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>		
@@ -33,20 +33,21 @@
 	<PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
 	<NuGetAuditMode>all</NuGetAuditMode>
 	<NuGetAuditLevel>low</NuGetAuditLevel>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<!-- PublishTrimmed>True</PublishTrimmed -->
 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>8</WarningLevel>
-    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
     <IsAotCompatible>True</IsAotCompatible>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
     <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
     <WarningLevel>4</WarningLevel>
     <IsAotCompatible>True</IsAotCompatible>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
@@ -260,6 +261,13 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="S:\chat-ipv6\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

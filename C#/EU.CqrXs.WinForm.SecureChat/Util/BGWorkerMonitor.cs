@@ -36,7 +36,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
 
         public bool IsRunning { get => bgwStarted && bgwRunning && bgwProgress > 0 && bgwProgress < 100; }
 
-        public int ThreadId { get => (bgwThreadId > 0) ? bgwThreadId : Environment.CurrentManagedThreadId; }
+        public int ThreadId { get => (bgwThreadId > 0) ? bgwThreadId : GetCurrentThreadId(); }
 
         public static int ProcessId { get => Thread.GetCurrentProcessorId(); }
 
@@ -56,7 +56,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             bgwStartTime = DateTime.Now;
             bgwLastWorkTime = DateTime.Today;
             bgwStarted = true;
-
+            bgwStatus = string.Empty;
             DoWork += new DoWorkEventHandler(BgWorkerMonitor_DoWork);
             RunWorkerCompleted += new RunWorkerCompletedEventHandler(BgWorkerMonitor_RunWorkerCompleted);
             ProgressChanged += new ProgressChangedEventHandler(BgWorkerMonitor_ProgressChanged);
@@ -162,7 +162,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
         }
 
 
-        protected int GetCurrentThreadId()
+        internal int GetCurrentThreadId()
         {
             try
             {
@@ -180,6 +180,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
 
             return bgwThreadId;
         }
+        
 
     }
 }

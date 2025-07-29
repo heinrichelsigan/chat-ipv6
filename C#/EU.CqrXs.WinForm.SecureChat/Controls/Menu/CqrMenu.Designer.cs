@@ -542,6 +542,5 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Menu
         internal ToolStripMenuItem MenuHelpItemViewHelp;
         internal ToolStripMenuItem MenuHelpItemInfo;
         internal ToolStripMenuItem MenuHelpItemAbout;
-        internal ToolStripStatusLabel StripStatusLabel;
     }
 }
