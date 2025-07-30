@@ -38,6 +38,7 @@ namespace EU.CqrXs.Srv.Util
         /// <returns><see cref="HashSet{CqrContact}"/></returns>
         internal static HashSet<CContact> LoadJsonContacts()
         {
+            HashSet<CContact> deserializedContacts = new HashSet<CContact>(), contacts = new HashSet<CContact>();
             lock (_lock)
             {
                 if (!System.IO.File.Exists(JsonContactsFileName))
@@ -47,10 +48,22 @@ namespace EU.CqrXs.Srv.Util
             lock (_lock)
             {
                 string jsonText = System.IO.File.ReadAllText(JsonContactsFileName);
-                _contacts = JsonConvert.DeserializeObject<HashSet<CContact>>(jsonText);
+                deserializedContacts = JsonConvert.DeserializeObject<HashSet<CContact>>(jsonText);
             }
-            if (_contacts == null || _contacts.Count == 0)
-                _contacts = new HashSet<CContact>();
+            if (deserializedContacts != null && deserializedContacts.Count > 0)
+            {
+                foreach (CContact deContact in deserializedContacts)
+                {
+                    deContact.SerializedMsg = string.Empty;
+                    string serializedMsg = JsonConvert.SerializeObject(deContact);
+                    deContact.SerializedMsg = serializedMsg;
+                    contacts.Add(deContact);
+                }
+            }
+            if (contacts != null)
+            {
+                _contacts = contacts;
+            }
 
             //if (BaseWebService.UseApplicationState)
             //        HttpContext.Current.Application[Constants.JSON_CONTACTS] = _contacts;
@@ -72,11 +85,20 @@ namespace EU.CqrXs.Srv.Util
             _contacts = _contacts ?? new HashSet<CContact>();
             if (contacts != null && contacts.Count > 0 && contacts.Count > _contacts.Count)
                 _contacts = contacts;
+            HashSet<CContact> serializingContacts = new HashSet<CContact>();
+            foreach (CContact cContact in _contacts)
+            {
+                if (cContact != null && !string.IsNullOrEmpty(cContact.NameEmail))
+                {
+                    cContact.SerializedMsg = string.Empty;
+                    serializingContacts.Add(cContact);
+                }
+            }
             JsonSerializerSettings jsets = new JsonSerializerSettings();
             jsets.Formatting = Formatting.Indented;
             lock (_lock)
             {
-                string jsonString = JsonConvert.SerializeObject(contacts, Formatting.Indented);
+                string jsonString = JsonConvert.SerializeObject(serializingContacts, Formatting.Indented);
                 System.IO.File.WriteAllText(JsonContactsFileName, jsonString);
             }
 

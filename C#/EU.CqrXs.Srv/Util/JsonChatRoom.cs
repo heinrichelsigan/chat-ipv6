@@ -13,7 +13,6 @@ using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using System.Web;
 
-
 namespace EU.CqrXs.Srv.Util
 {
     /// <summary>
@@ -22,21 +21,26 @@ namespace EU.CqrXs.Srv.Util
     public class JsonChatRoom
     {
 
+        #region fields
         static object _lock = new object();
         static HashSet<string> _chatRooms;
-
         private string _jsonChatRoomNumber;
+        #endregion fields
+        #region properties
         public string JsonChatRoomNumber { get { return _jsonChatRoomNumber; } set { _jsonChatRoomNumber = value; } }
 
         internal string JsonChatRoomFileName { get { return LibPaths.SystemDirJsonPath + JsonChatRoomNumber; } }
+        #endregion properties
 
+        #region ctors
         static JsonChatRoom()
         {
             List<string> jsonChatRooms = new List<string>();
             try
             {
                 jsonChatRooms = ChatRoomNumbersFromFs();
-            } catch (Exception exCtor)
+            } 
+            catch (Exception exCtor)
             {
                 Area23Log.LogStatic("static JsonChatRoom()", exCtor, "");
             }
@@ -55,10 +59,11 @@ namespace EU.CqrXs.Srv.Util
             if (string.IsNullOrEmpty(jsonChatRoomNumber))
                 jsonChatRoomNumber = "room_unknown_" + System.DateTime.Now.Area23DateTimeWithMillis() + ".json";
 
-            JsonChatRoomNumber = (jsonChatRoomNumber.Equals(".json")) ? jsonChatRoomNumber : jsonChatRoomNumber + ".json";
+            JsonChatRoomNumber = (jsonChatRoomNumber.EndsWith(".json", StringComparison.CurrentCultureIgnoreCase)) ? jsonChatRoomNumber : jsonChatRoomNumber + ".json";
         }
+        #endregion ctors
 
-
+        #region instance members
         public CSrvMsg<string> LoadJsonChatRoom(CSrvMsg<string> cSrvMsgIn, string chatRoomNr)
         {
             JsonChatRoomNumber = chatRoomNr;
@@ -74,11 +79,9 @@ namespace EU.CqrXs.Srv.Util
                 jsonText = System.IO.File.ReadAllText(JsonChatRoomFileName);
                 cServerMessage = JsonConvert.DeserializeObject<CSrvMsg<string>>(jsonText);
             }
-            cServerMessage._message = jsonText;
 
-            return cServerMessage;
+            return SerializeCSrvMsg(cServerMessage, out string serJsonString);
         }
-
 
         public CSrvMsg<string> SaveJsonChatRoom(CSrvMsg<string> cSrvMsg, CChatRoom chatRoom)
         {
@@ -89,7 +92,7 @@ namespace EU.CqrXs.Srv.Util
                 if (!chatRoomNumber.Equals(this.JsonChatRoomNumber))
                     JsonChatRoomNumber = chatRoomNumber;
 
-                if (!JsonChatRoomNumber.EndsWith(".json"))
+                if (!JsonChatRoomNumber.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase))
                     JsonChatRoomNumber += ".json";
 
                 cSrvMsg.CRoom = new CChatRoom(JsonChatRoomNumber, chatRoom.ChatRuid, chatRoom.LastPushed, chatRoom.LastPolled)
@@ -100,12 +103,14 @@ namespace EU.CqrXs.Srv.Util
                     Md5Hash = chatRoom.Md5Hash
                 };
                 cSrvMsg.Sender._message = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Sender._message;
-                cSrvMsg.SerializedMsg = "";
+                // cSrvMsg.SerializedMsg = "";
 
-                JsonSerializerSettings jsets = new JsonSerializerSettings();
-                jsets.Formatting = Formatting.Indented;
-                jsets.MaxDepth = 16;
-                jsonString = JsonConvert.SerializeObject(cSrvMsg, Formatting.Indented);
+                SerializeCSrvMsg(cSrvMsg, out jsonString);
+
+                //JsonSerializerSettings jsets = new JsonSerializerSettings();
+                //jsets.Formatting = Formatting.Indented;
+                //jsets.MaxDepth = 16;
+                //jsonString = JsonConvert.SerializeObject(cSrvMsg, Formatting.Indented);
                 System.IO.File.WriteAllText(JsonChatRoomFileName, jsonString);
             }
 
@@ -113,7 +118,6 @@ namespace EU.CqrXs.Srv.Util
 
             return cSrvMsg;
         }
-
 
         public bool DeleteJsonChatRoom(string chatRoomNr)
         {
@@ -142,8 +146,25 @@ namespace EU.CqrXs.Srv.Util
 
             return true;
         }
+        #endregion instance members
 
         #region static members
+
+        public static CSrvMsg<string> SerializeCSrvMsg(CSrvMsg<string> cSrvMsg, out string serializedJsonString)
+        {
+            serializedJsonString = string.Empty;
+            if (cSrvMsg != null)
+            {
+                cSrvMsg.SerializedMsg = string.Empty;
+                JsonSerializerSettings jsets = new JsonSerializerSettings();
+                jsets.Formatting = Formatting.Indented;
+                jsets.MaxDepth = 16;
+                serializedJsonString = JsonConvert.SerializeObject(cSrvMsg, Formatting.Indented);
+            }
+
+            cSrvMsg.SerializedMsg = serializedJsonString;
+            return cSrvMsg;
+        }
 
         public static string GetJsonChatRoomFileName(string jsonChatRoomNr)
         {
@@ -174,13 +195,14 @@ namespace EU.CqrXs.Srv.Util
                 };
                 if (cSrvMsg.CRoom == null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr))
                     cSrvMsg.Sender._message = cSrvMsg.CRoom.ChatRoomNr;
-                cSrvMsg.SerializedMsg = "";
+                // cSrvMsg.SerializedMsg = "";
 
                 string jsonCRoomFileName = GetJsonChatRoomFileName(chatRoomNumber);
-                JsonSerializerSettings jsets = new JsonSerializerSettings();
-                jsets.Formatting = Formatting.Indented;
-                jsets.MaxDepth = 16;
-                jsonString = JsonConvert.SerializeObject(cSrvMsg, Formatting.Indented);
+                SerializeCSrvMsg(cSrvMsg, out jsonString);
+                //JsonSerializerSettings jsets = new JsonSerializerSettings();
+                //jsets.Formatting = Formatting.Indented;
+                //jsets.MaxDepth = 16;
+                //jsonString = JsonConvert.SerializeObject(cSrvMsg, Formatting.Indented);
                 System.IO.File.WriteAllText(jsonCRoomFileName, jsonString);
             }
 
@@ -205,7 +227,7 @@ namespace EU.CqrXs.Srv.Util
             string jsonText = null;
             if (!System.IO.File.Exists(jsonCRoomFileName)) // we need to a create chatroom
             {
-                CChatRoom chatRoom = cSrvMsgIn.CRoom ?? new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MaxValue, DateTime.MaxValue);
+                CChatRoom chatRoom = cSrvMsgIn.CRoom ?? new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MinValue, DateTime.MinValue);
                 chatRoom.ChatRoomNr = chatRoomNr;
                 SaveChatRoom(cSrvMsgIn, chatRoom);
             }
@@ -214,10 +236,9 @@ namespace EU.CqrXs.Srv.Util
             {
                 jsonText = System.IO.File.ReadAllText(jsonCRoomFileName);
                 cServerMessage = JsonConvert.DeserializeObject<CSrvMsg<string>>(jsonText);
-                cServerMessage.SerializedMsg = jsonText;
-            }            
+            }
 
-            return cServerMessage;
+            return SerializeCSrvMsg(cServerMessage, out string serJsonString);
         }
 
         public static bool DeleteChatRoom(string chatRoomNr)

@@ -17,7 +17,6 @@ using System.Windows.Threading;
 namespace EU.CqrXs.Console.Net48
 {
 
-
     internal class Program
     {
         static void Main(string[] args)

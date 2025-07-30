@@ -21,6 +21,7 @@ using System.Net.Sockets;
 using System.Runtime;
 using System.Threading.Tasks;
 using Area23.At.Framework.Core.Crypt.Hash;
+using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -508,7 +509,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         #region ComboBoxContacts FocusLeave SelectedIndexChanged
 
-
         private void ComboBoxContacts_FocusLeave(object sender, EventArgs e)
         {
             if (!GetComboBoxEnabled(ComboBoxContacts))
@@ -542,95 +542,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetComboBoxBackColor(ComboBoxContacts, Color.White);
             SetStatusText(StripStatusLabel, $"{contactNameEmail} selected. Click Invite to request new chatroom.");
 
-        }
-
-        /// <summary>
-        /// ButtonVisitChatRoom_Click visits a chat room
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal async Task ButtonVisitChatRoom_Click(object sender, EventArgs e)
-        {
-            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
-            {
-                SetStatusText(StripStatusLabel, "Nothing to send!");
-                return;
-            }
-
-            if (this.PeerSessionTriState == PeerSession3State.Peer2Peer || this.PeerSessionTriState == PeerSession3State.None) 
-            {
-                MessageBox.Show($"You must set chat mode to server session to visit a chat room.", $"SessionTriState is {this.PeerSessionTriState.ToString()}, expected: ChatServer", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            
-            string? chatRoomTxt = GetTextBoxText(this.TextBoxChatSession);
-
-            if (string.IsNullOrEmpty(chatRoomTxt) ||
-                !GetTextBoxText(TextBoxChatSession).StartsWith("room") ||
-                !GetTextBoxText(TextBoxChatSession).EndsWith(".json"))
-            {
-                MessageBox.Show($"Invalid or empty chat room.", "Please enter a valid chat room image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (Settings.Singleton.ChatRoom != null)
-            {
-                Settings.Singleton.ChatRoom.TicksLong = new List<long>();
-                Settings.Singleton.ChatRoom.LastPushed = DateTime.MinValue;
-                Settings.Singleton.ChatRoom.LastPolled = DateTime.MinValue;
-                Settings.SaveSettings();
-            }
-
-            try
-            {
-                SetTextBoxText(this.TextBoxSource, "");
-                SetTextBoxText(this.TextBoxDestionation, "");
-                SetRichText(this.RichTextBoxOneView, "");
-                await MenuCommandsItemRefresh_Click(sender, e);
-                ButtonCheck.Image = Properties.Resources.SatLink;
-                await PlaySoundFromResourcesAsync("sound_push");
-            }
-            catch (Exception exi)
-            {
-                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
-                SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
-                await PlaySoundFromResourcesAsync("sound_hammer");
-            }
-
-        }
-
-
-        /// <summary>
-        /// Invites a selected contact to chat room, request a new chatroom
-        /// </summary>
-        /// <param name="sender">object sender</param>
-        /// <param name="e">ÊventArgs e</param>
-        internal async Task ButtonInviteChatRoom_Click(object sender, EventArgs e)
-        {
-            if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
-                return;
-
-            bool sendInit = false;
-            try
-            {
-                sendInit = await SendInvite_ToChatRoom();
-            }
-            catch (Exception exi)
-            {
-                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
-                sendInit = false;
-                SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
-            }
-
-            if (sendInit)
-            {
-                ButtonCheck.Image = Properties.Resources.SatLink;
-                await PlaySoundFromResourcesAsync("sound_laser");
-            }
-            else
-            {
-                ButtonCheck.Image = Properties.Resources.CableWireCut;
-                await PlaySoundFromResourcesAsync("sound_warning");
-            }
         }
 
         #endregion ComboBoxContacts FocusLeave SelectedIndexChanged
@@ -1206,7 +1117,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 CContact myContact = new CContact(Settings.Singleton.MyContact, chatRoomNr, clientFacade.PipeString);
                 CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, clientFacade.PipeString);
 
-
                 myContact._hash = GetHash();
                 myContact._message = chatRoomNr;
 
@@ -1240,11 +1150,29 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
 
                     if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                        rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                        (rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase) ||
+                         rfmsg.Sender.Email.Equals(myContact.Email, StringComparison.CurrentCultureIgnoreCase) ||
+                         (rfmsg.Sender.Name.Length > 5 && rfmsg.Sender.Name.Equals(myContact.Name, StringComparison.CurrentCultureIgnoreCase))))
                     {
-                        myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                        CImage myCImg = (myContact.ContactImage != null) ? myContact.ContactImage : 
+                            CImage.FromDrawingImage(EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF48, "F48");
+                        myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myCImg);
                         Settings.Singleton.MyContact = myContact;
                     }
+                    else
+                    {
+                        CImage friendCImg = CImage.FromDrawingImage(EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF42, "F42");
+                        CContact invitor = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, friendCImg);
+                        CContact? friendC = MiniToolBox.FindContactOrCreateByNameEmail(invitor.NameEmail, chatRoomNr, clientFacade.PipeString);
+                        string contactChatRoom = GetComboBoxText(this.ComboBoxContacts);
+                        if (friendC != null && (string.IsNullOrEmpty(contactChatRoom) || contactChatRoom.Equals(Constants.ENTER_CONTACT, StringComparison.CurrentCultureIgnoreCase)))
+                        {
+                            contactChatRoom = (string.IsNullOrEmpty(friendC.NameEmail)) ? friendC.NameEmail : friendC.Email;
+                            if (!string.IsNullOrEmpty(contactChatRoom))
+                                SetComboBoxText(this.ComboBoxContacts, contactChatRoom);
+                        }
+                    }
+
                     if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
                         Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
 
@@ -1338,9 +1266,100 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         internal async Task ButtonSend_Click(object sender, EventArgs e) => await this.MenuCommandsItemSend_Click(sender, e);
 
-
         #endregion MenuCommands MenuSend MenuAttach MenuRefresh MenuClear incl. Buttons
 
+        #region ButtonVisitChatRoom_Click ButtonInviteChatRoom_Click
+
+        /// <summary>
+        /// ButtonVisitChatRoom_Click visits a chat room
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal async Task ButtonVisitChatRoom_Click(object sender, EventArgs e)
+        {
+            if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
+            {
+                SetStatusText(StripStatusLabel, "Nothing to send!");
+                return;
+            }
+
+            if (this.PeerSessionTriState == PeerSession3State.Peer2Peer || this.PeerSessionTriState == PeerSession3State.None)
+            {
+                MessageBox.Show($"You must set chat mode to server session to visit a chat room.", $"SessionTriState is {this.PeerSessionTriState.ToString()}, expected: ChatServer", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            string? chatRoomTxt = GetTextBoxText(this.TextBoxChatSession);
+
+            if (string.IsNullOrEmpty(chatRoomTxt) ||
+                !GetTextBoxText(TextBoxChatSession).StartsWith("room") ||
+                !GetTextBoxText(TextBoxChatSession).EndsWith(".json"))
+            {
+                MessageBox.Show($"Invalid or empty chat room.", "Please enter a valid chat room image", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (Settings.Singleton.ChatRoom == null)
+            {
+                Settings.Singleton.ChatRoom = new CChatRoom(chatRoomTxt);
+            }
+            Settings.Singleton.ChatRoom.TicksLong = new List<long>();
+            Settings.Singleton.ChatRoom.LastPushed = DateTime.MinValue;
+            Settings.Singleton.ChatRoom.LastPolled = DateTime.MinValue;
+            Settings.SaveSettings();
+
+            try
+            {
+                SetTextBoxText(this.TextBoxSource, "");
+                SetTextBoxText(this.TextBoxDestionation, "");
+                SetRichText(this.RichTextBoxOneView, "");
+                await MenuCommandsItemRefresh_Click(sender, e);
+                ButtonCheck.Image = Properties.Resources.SatLink;
+                await PlaySoundFromResourcesAsync("sound_push");
+            }
+            catch (Exception exi)
+            {
+                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
+                await PlaySoundFromResourcesAsync("sound_hammer");
+            }
+
+        }
+
+        /// <summary>
+        /// Invites a selected contact to chat room, request a new chatroom
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">ÊventArgs e</param>
+        internal async Task ButtonInviteChatRoom_Click(object sender, EventArgs e)
+        {
+            if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
+                return;
+
+            bool sendInit = false;
+            try
+            {
+                sendInit = await SendInvite_ToChatRoom();
+            }
+            catch (Exception exi)
+            {
+                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                sendInit = false;
+                SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
+            }
+
+            if (sendInit)
+            {
+                ButtonCheck.Image = Properties.Resources.SatLink;
+                await PlaySoundFromResourcesAsync("sound_laser");
+            }
+            else
+            {
+                ButtonCheck.Image = Properties.Resources.CableWireCut;
+                await PlaySoundFromResourcesAsync("sound_warning");
+            }
+        }
+
+        #endregion ButtonVisitChatRoom_Click ButtonInviteChatRoom_Click
 
         #region OnClientReceive OnDragNDrop TooglePeerServer OnDragNDrop delegate jump back invocation target members
 
