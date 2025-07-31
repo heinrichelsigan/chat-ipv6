@@ -135,7 +135,7 @@ public class Service : BaseService, IService
                 _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
 
                 CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
-                isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);
+                cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid);
                 chatRoomMsg.TContent = string.Empty;
 
                 if (isValid)
@@ -161,7 +161,7 @@ public class Service : BaseService, IService
                         chatRoomMsg = AddLastDate(chatRoomMsg, polledPtr, false);
 
                         UpdateContact(chatRoomMsg.Sender);
-                        chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
+                        chatRoomMsg = JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
                     }
 
                 }
@@ -209,7 +209,7 @@ public class Service : BaseService, IService
                 chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
                 chatRoomMsg.TContent = ""; // set string empty, if no message
 
-                isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);
+                cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid);
                 if (isValid)
                 {
                     DateTime now = DateTime.Now;
@@ -223,7 +223,7 @@ public class Service : BaseService, IService
                     SetCachedMessageDict(_chatRoomNumber, dict);                    
 
                     UpdateContact(_contact);
-                    chatRoomMsg = (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
+                    chatRoomMsg = JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
                     chatRoomMsg.Sender._message = _chatRoomNumber;
 
                 }
@@ -264,13 +264,12 @@ public class Service : BaseService, IService
             {
                 cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);
                 _contact = AddContact(cSrvMsg.Sender);
-                _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
-                JsonChatRoom jsonChatRoom = new JsonChatRoom(_chatRoomNumber);
+                _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";                
                 CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
-                isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);
+                cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid, true);
                 if (isValid)
                 {
-                    jsonChatRoom.DeleteJsonChatRoom(_chatRoomNumber);
+                    JsonChatRoom.DeleteChatRoom(_chatRoomNumber);
                 }
 
                 _responseString = chatRoomMsg.EncryptToJson(_serverKey);

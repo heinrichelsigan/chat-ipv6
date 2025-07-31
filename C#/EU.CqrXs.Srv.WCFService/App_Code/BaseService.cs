@@ -159,7 +159,7 @@ public class BaseService
         chatRSrvMsg._hash = cSrvMsg._hash;       
         chatRSrvMsg.MsgType = CType.Json;
 
-        chatRSrvMsg = (new JsonChatRoom(ChatRoomNr)).SaveJsonChatRoom(chatRSrvMsg, cSrvMsg.CRoom);
+        chatRSrvMsg = JsonChatRoom.SaveChatRoom(chatRSrvMsg, cSrvMsg.CRoom);
         _chatRoomNumber = chatRSrvMsg.CRoom.ChatRoomNr;
         JsonChatRoom.AddJsonChatRoomToCache(_chatRoomNumber);
 
@@ -183,34 +183,12 @@ public class BaseService
     /// <param name="ChatRoomNr"><see cref="string"/> chat room number of chat room</param>
     /// <param name="isClosingRequest">default false, only on close, where only creator can close chat room</param>
     /// <returns>true, if person is allowed to push or receive msg from / to chat room</returns>        
+    [Obsolete("CheckPermission moved directly to static class JsonChatRoom", true)]
     public bool ChatRoomCheckPermission(CSrvMsg<string> cSrvMsg, CSrvMsg<string> chatRoomMsg, string chatRoomNr, bool isClosingRequest = false)
     {
-
         bool isValid = false;
-        if (chatRoomNr.Equals(chatRoomMsg.CRoom.ChatRoomNr))
-        {
-            if ((cSrvMsg.Sender.NameEmail == chatRoomMsg.Sender.NameEmail) ||
-                (!string.IsNullOrEmpty(cSrvMsg.Sender.Email) && cSrvMsg.Sender.Email == chatRoomMsg.Sender.Email))
-            {
-                _contact = chatRoomMsg.Sender;
-                isValid = true;
-                return isValid;
-            }
-            if (!isClosingRequest)
-            {
-                foreach (CContact c in chatRoomMsg.Recipients)
-                {
-                    if (cSrvMsg.Sender.NameEmail == c.NameEmail ||
-                        cSrvMsg.Sender.Email == c.Email)
-                    {
-                        _contact = c;
-                        isValid = true;
-                        return isValid;
-                    }
-                }
-            }
-        }
-
+        cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, chatRoomNr, out isValid, isClosingRequest);
+        
         return isValid;
     }
 
@@ -222,7 +200,7 @@ public class BaseService
     /// <param name="contact"><see cref="CContact"/> to modify</param>
     /// <param name="date"></param>
     /// <returns>modified <see cref="CContact"/></returns>
-    [Obsolete("No more chatroom in contact",true)]
+    [Obsolete("No more chatroom in contact", true)]
     public CContact AddPollDate(CContact contact, DateTime date, bool pushed = false)
     {
         if (pushed)

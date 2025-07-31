@@ -370,52 +370,6 @@ namespace EU.CqrXs.Srv.Util
         }
 
         /// <summary>
-        /// ChatRoomCheckPermission
-        /// Validates, if a user has permission to poll or to push messages in the chat room by the following steps:
-        /// 1. chat room number in encrypted, now decrypted msg from webservice must be ident with chat room number from json file
-        /// 2. sender email from  encrypted, now decrypted msg from webservice must much
-        /// 2.a. either creator invitor of chat room
-        /// 2.b. on of the invited persons in invitation
-        /// </summary>
-        /// <param name="cSrvMsg"><see cref="CSrvMsg{string}"/> decoded from <see cref="CqrService.CqrService"/> Webservice</param>
-        /// <param name="chatRoomMsg"><see cref="CSrvMsg{string}"/> generated from chat room json</param>
-        /// <param name="chatRoomNr"><see cref="string"/> chat room number of chat room</param>
-        /// <param name="isClosingRequest">default false, only on close, where only creator can close chat room</param>
-        /// <returns>true, if person is allowed to push or receive msg from / to chat room</returns>        
-        public bool ChatRoomCheckPermission(CSrvMsg<string> cSrvMsg, CSrvMsg<string> chatRoomMsg, string chatRoomNr, bool isClosingRequest = false)
-        {
-
-            bool isValid = false;
-            if (chatRoomNr.Equals(chatRoomMsg.CRoom.ChatRoomNr))
-            {
-                if ((cSrvMsg.Sender.NameEmail == chatRoomMsg.Sender.NameEmail) ||
-                    (!string.IsNullOrEmpty(cSrvMsg.Sender.Email) && cSrvMsg.Sender.Email.Equals(chatRoomMsg.Sender.Email, StringComparison.CurrentCultureIgnoreCase)))
-                {
-                    _contact = chatRoomMsg.Sender;
-                    isValid = true;
-                    return isValid;
-                }
-                if (!isClosingRequest)
-                {
-                    foreach (CContact c in chatRoomMsg.Recipients)
-                    {
-                        if (cSrvMsg.Sender.NameEmail == c.NameEmail ||
-                            cSrvMsg.Sender.NameEmail.Equals(c.NameEmail, StringComparison.CurrentCultureIgnoreCase) ||
-                            cSrvMsg.Sender.Email.Equals(c.Email, StringComparison.CurrentCultureIgnoreCase) ||
-                            (cSrvMsg.Sender.Name.Equals(c.Name, StringComparison.CurrentCultureIgnoreCase) && cSrvMsg.Sender.Cuid == c.Cuid))
-                        {
-                            _contact = c;
-                            isValid = true;
-                            return isValid;
-                        }
-                    }
-                }
-            }
-
-            return isValid;
-        }
-
-        /// <summary>
         /// Add LastPolled to contact and also to <see cref="CContact.PolledMsgDates"/>
         /// reduces <see cref="CContact.PolledMsgDates"/>, if contact wears a to huge amount of polling history
         /// TODO: implement ring buffer here

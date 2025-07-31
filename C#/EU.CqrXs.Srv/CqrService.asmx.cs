@@ -159,9 +159,7 @@ namespace EU.CqrXs.Srv
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg._message;
 
                     CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
-                    isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);
-                    chatRoomMsg.TContent = string.Empty;
-                    chatRoomMsg._message = _chatRoomNumber;
+                    chatRoomMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid);
 
                     if (isValid)
                     {
@@ -239,8 +237,8 @@ namespace EU.CqrXs.Srv
 
                     Area23Log.LogStatic($"string chatRoomMembersCrypted = cSrvMsg.TContent; \r\n\tchatRoomMembersCrypted len = {chatRoomMembersCrypted.Length}.\n");
                     chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);          // Load json chat room from file system json file                  
-
-                    isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber);   // Check sender's permission to access chat room (must be creator or invited)
+                                                                                                // Check sender's permission to access chat room (must be creator or invited)
+                    cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid);   
                     if (isValid)    
                     {
                         DateTime now = DateTime.Now;                                            // Determine DateTime.Now
@@ -306,7 +304,7 @@ namespace EU.CqrXs.Srv
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
                     
                     CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
-                    isValid = ChatRoomCheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, true);
+                    cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid, true);
                     if (isValid)
                     {
                         if (JsonChatRoom.DeleteChatRoom(_chatRoomNumber))
