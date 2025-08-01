@@ -3,6 +3,7 @@ package cqrxs.eu.fw.crypt.endecoding;
 import java.util.Scanner;
 
 public class UI {
+
     public static void main(String[] args) {
         var scanner = new Scanner(System.in);
         while (true) {
@@ -10,14 +11,13 @@ public class UI {
             var str = scanner.nextLine();
             System.out.print("Enter string: ");
             switch (str) {
+                case "0":
                 case "1":
-                    System.out.println(new UuEncoder().encode(scanner.nextLine()));
+                    System.out.println(new UuCoder().encode(scanner.nextLine()));
                     break;
                 case "2":
-                    System.out.println(new XxEncoder().encode(scanner.nextLine()));
-                    break;
                 case "3":
-                    System.out.println(new Base64Encoder().encode(scanner.nextLine()));
+                    System.out.println(new Base64Coder().encode(scanner.nextLine()));
                     break;
                 default:
                     scanner.close();
