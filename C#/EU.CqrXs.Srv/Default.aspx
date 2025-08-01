@@ -28,7 +28,7 @@
                 </span>
             </div>
             <hr />
-            <div>
+            <div id="DivTestForm" runat="server" visible="false" style="visibility:hidden">
                 <asp:TextBox ID="TextBoxEncrypted" runat="server" TextMode="MultiLine" MaxLength="65536" Rows="10" Columns="48" ValidateRequestMode="Enabled" ToolTip="TextBox Current Message" Text="" Width="480px"></asp:TextBox>
                 <br />
                 <asp:TextBox ID="TextBoxDecrypted" runat="server" TextMode="MultiLine" MaxLength="65536" Rows="10" Columns="48" ValidateRequestMode="Enabled" ToolTip="TextBox Current Message" Text="" Width="480px"></asp:TextBox>
@@ -38,11 +38,11 @@
                 <asp:Button ID="ButtonSubmit" runat="server" Text="Submit" ToolTip="Submit" OnClick="ButtonSubmit_Click" />
             </div>
             <hr />
-            <pre id="preOut" runat="server" style="font-size:small; width: 640px; height: 180px; max-height: 192px; border-block-color: palevioletred;">
+            <pre id="preOut" runat="server" visible="false" style="font-size:small; width: 640px; height: 180px; max-height: 192px; border-block-color: palevioletred;">
 
             </pre>
             <hr />
-            <pre id="preLast" runat="server" style="font-size:small; width: 800px; height: 240px; max-height: 320px; border-block-color: blue;">
+            <pre id="preLast" runat="server" visible="false" style="font-size:small; width: 800px; height: 240px; max-height: 320px; border-block-color: blue;">
 
             </pre>
         </div>

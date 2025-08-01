@@ -628,7 +628,7 @@ namespace EU.CqrXs.Srv.Util
 
                         ZipType ztype = ZipType.None;
                         string zcmd = (Constants.UNIX) ? "zipunzip.sh" : (Constants.WIN32) ? "zipunzip.bat" : "";
-                        string zopt = " ";
+                        // string zopt = " ";
                         if (Enum.TryParse<ZipType>(DropDownList_Zip.SelectedValue, out ztype))
                         {
                             switch (ztype)

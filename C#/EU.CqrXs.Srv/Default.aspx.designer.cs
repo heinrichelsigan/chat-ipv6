@@ -69,6 +69,15 @@ namespace EU.CqrXs.Srv
         protected global::System.Web.UI.WebControls.Literal LiteralFromClient;
 
         /// <summary>
+        /// DivTestForm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl DivTestForm;
+
+        /// <summary>
         /// TextBoxEncrypted control.
         /// </summary>
         /// <remarks>
