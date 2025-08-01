@@ -109,17 +109,27 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #endregion Properties
 
         /// <summary>
-        /// Ctor
+        /// Parameterless constructor of <see cref="SecureChat">SecureChat  Windows Form</see> (extends <see cref="BaseChatForm"/>)
+        /// 1. calls InitializeComponents in SecureChat.designer.cs file
+        /// 2. sets up constant definitions / limitations
+        /// 3. initializes async event handlers for several interactive gui elements 
+        /// 4. initializes network client socket <see cref="ClientSocket_DataReceived"/> callback in instance variable <see cref="clientSocket_DataReceived"/>
+        ///    initializes <see cref="EventHandler{Area23EventArgs{ReceiveData}}  instance variable <see cref="receivedDataEventHandler"/> with delegate variable <see cref="clientSocket_DataReceived"/>
+        /// 5. Creates (if they not already exist) sub directories for attached files via <see cref="MiniToolBox.CreateAttachDirectory()"/>
+        /// 6. Initializes synchronous EventHandler for DragNDrop at <see cref="LinkedLabelsBox"/>
+        ///    Initializes synchronous EventHandler for change chat mode peer2peer - server session switch bar in <see cref="PeerServerSwitch"/>
+        /// 7. Last but not least sets <see cref="StripProgressBar"/> to initial value 0
         /// </summary>
         public SecureChat() : base()
         {
             InitializeComponent();
+            
             TextBoxSource.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
             TextBoxDestionation.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
             SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
             SetComboBoxText(ComboBoxContacts, Constants.ENTER_CONTACT);
             SetComboBoxText(ComboBoxSecretKey, Constants.ENTER_SECRET_KEY);
-
+            
             MenuContactsItemMe.Click += new System.EventHandler(async (sender, e) => await MenuContactsItemMyContact_Click(sender, e)); ;
             MenuCommandsItemSend.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemSend_Click(sender, e));
             MenuCommandsItemAttach.Click += new System.EventHandler(async (sender, e) => await MenuCommandsItemAttach_Click(sender, e));
@@ -129,6 +139,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             buttonVisitChatRoom.Click += new System.EventHandler(async (sender, e) => await ButtonVisitChatRoom_Click(sender, e));
             ButtonSend.Click += new System.EventHandler(async (sender, e) => await ButtonSend_Click(sender, e));
             ButtonAttach.Click += new System.EventHandler(async (sender, e) => await ButtonAttach_Click(sender, e));
+
+            clientSocket_DataReceived = delegate (object sender, Area23EventArgs<ReceiveData> eventReceived) { OnClientReceive(sender, eventReceived); };
+            receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
 
             MiniToolBox.CreateAttachDirectory();
             this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
@@ -1144,9 +1157,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     if (string.IsNullOrEmpty(rfmsg.TContent))
                     {
-                        string msgCntn = $"Invitation from {rfmsg.Sender.NameEmail} to {rfmsg.CRoom.ChatRoomNr}";
-                        msg = new CContent(msgCntn, clientFacade.PipeString, CType.Json, MD5Sum.HashString(msgCntn));
-                        rfmsg.TContent = msg.EncryptToJson(myServerKey);
+                        rfmsg.TContent = rfmsg.CRoom.ChatRoomNr; ;
                     }
 
                     if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
@@ -1209,9 +1220,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 string msgInnerContent = (string)(rfmsg.TContent);
                 try
                 {
-
-                    if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
-                    msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
+                    if (msgInnerContent.Equals(chatRoomNr, StringComparison.CurrentCultureIgnoreCase) ||
+                        msgInnerContent.EndsWith(chatRoomNr, StringComparison.CurrentCultureIgnoreCase) ||
+                        msgInnerContent.StartsWith(chatRoomNr.Replace(".json", ""), StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        await PlaySoundFromResourcesAsync("sound_ups");
+                    }
+                    else if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
+                        msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
                     {
                         msgFile = new CFile(msgInnerContent, CType.Json);
                         cReceivedFile = msgFile.DecryptFromJson(myServerKey, msgInnerContent);
@@ -1823,11 +1839,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     }
 
                                     Thread.Sleep(Constants.CLOSING_TIMEOUT);
-                                    clientSocket_DataReceived =
-                                                delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
-                                                {
-                                                    OnClientReceive(sender, eventReceived);
-                                                };
+                                    clientSocket_DataReceived = delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                    { 
+                                        OnClientReceive(sender, eventReceived); 
+                                    };
                                     receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
                                     ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                                     SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
@@ -2383,7 +2398,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             this.SetProgressBar(this.StripProgressBar, progress + 25);
             SetStatusText(StripStatusLabel, $"Setup Network complete, saving settings!");
-        }
+        }        
 
         internal async Task<List<IPAddress>> SetupAllNetworkInterfacesAndConnectedIpAddresses(List<IPAddress> addresses, int pvalue = 0)
         {
@@ -2475,11 +2490,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                                         SetMenuItemChecked(this.MenuNetworkItemIPv6Secure, true);
                                     // this.MenuNetworkItemIPv6Secure.Checked = true;
-                                    clientSocket_DataReceived =
-                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
-                                        {
-                                            OnClientReceive(sender, eventReceived);
-                                        };
+                                    clientSocket_DataReceived = delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                    {
+                                        OnClientReceive(sender, eventReceived);
+                                    };
                                     receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
                                     ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                                 }
@@ -2505,6 +2519,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             return myIpList;
 
         }
+
 
         /// <summary>
         /// IPAdressSelected Delegate is invoked, 
@@ -2551,11 +2566,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
 
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
-                        clientSocket_DataReceived =
-                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
-                                        {
-                                            OnClientReceive(sender, eventReceived);
-                                        };
+                        clientSocket_DataReceived = delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                        {
+                            OnClientReceive(sender, eventReceived);
+                        };
                         receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
                         ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                         SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");

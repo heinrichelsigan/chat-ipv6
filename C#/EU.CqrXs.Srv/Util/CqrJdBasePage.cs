@@ -115,14 +115,14 @@ namespace EU.CqrXs.Srv.Util
 
             if (!Directory.Exists(directoryPath)) 
             {
-                Area23Log.LogStatic("return false! \tdirectory " + directoryPath + " does not exist!");
+                Area23Log.LogStatic("return false! \tdirectory " + directoryPath + " does not exist!\n");
                 return false;
             }
 
             htAccessFile = Path.Combine(directoryPath, ".htaccess");
             if (!File.Exists(htAccessFile))
             {
-                Area23Log.LogStatic("return true; \t.htaccess file " + htAccessFile + " does not exist!");
+                Area23Log.LogStatic("return true; \t.htaccess file " + htAccessFile + " does not exist!\n");
                 return true;
             }
             
@@ -142,31 +142,45 @@ namespace EU.CqrXs.Srv.Util
 
             if (!authTypeBasic && !authBasicProviderFile)
             {
-                Area23Log.LogStatic("return false! \tauthTypeBasic = " + authTypeBasic + "; authBasicProviderFile = " + authBasicProviderFile + ";");
+                Area23Log.LogStatic("return false! \tauthTypeBasic = " + authTypeBasic + "; authBasicProviderFile = " + authBasicProviderFile + ";\n");
                 return false;
             }
 
             if (!string.IsNullOrEmpty(requireUser) && !user.Equals(requireUser, StringComparison.CurrentCultureIgnoreCase))
             {
-                Area23Log.LogStatic("return false! \trequireUser = " + requireUser + " NOT EQUALS user = " + user + "!");
+                Area23Log.LogStatic("return false! \trequireUser = " + requireUser + " NOT EQUALS user = " + user + "!\n");
                 return false;
             }
 
 
             if (!string.IsNullOrEmpty(authFile) && File.Exists(authFile))
             {
-                string passedthrough = ProcessCmd.Execute("htpasswd", String.Format(" -b -v {0} {1} {2} ", authFile, user, passwd));
+                string consoleOut = "", consoleError = "";
+                string passedthrough = ProcessCmd.ExecuteWithOutAndErr(
+                    "htpasswd", 
+                    String.Format(" -b -v {0} {1} {2} ", authFile, user, passwd), 
+                    out consoleOut, 
+                    out consoleError, 
+                    false);
+
                 Area23Log.LogStatic("passedthrough = \t$(htpasswd" + String.Format(" -b -v {0} {1} {2})", authFile, user, passwd));
                 Area23Log.LogStatic("passedthrough = \t" + passedthrough);
-                if (!passedthrough.Contains(string.Format("Password for user {0} correct.", user)))
+                string userMatch = string.Format("Password for user {0} correct.", user);
+                if (passedthrough.EndsWith(userMatch, StringComparison.CurrentCultureIgnoreCase) ||
+                    passedthrough.Contains(userMatch))
                 {
-                    Area23Log.LogStatic("return false! \tnot matching: \"" + string.Format("Password for user {0} correct.", user) + "\".");
+                    Area23Log.LogStatic("return true; \t[" + passedthrough + "] matches {" + userMatch + "}.\n");
+                    return true;
+                }
+                else
+                {
+                    Area23Log.LogStatic("return false! \t[" + passedthrough + "] not matching {" + userMatch + "}.\n");
                     return false;
                 }
                     
             }
 
-            Area23Log.LogStatic("return true; \tfall through.");
+            Area23Log.LogStatic("return true; \tfall through.\n");
             return true;
         }
 

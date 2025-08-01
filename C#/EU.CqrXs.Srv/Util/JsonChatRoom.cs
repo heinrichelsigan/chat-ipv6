@@ -191,9 +191,7 @@ namespace EU.CqrXs.Srv.Util
         public static string GetJsonChatRoomFullPath(string jsonChatRoomNr)
         {
             string fullPath = Path.Combine(LibPaths.SystemDirJsonPath, jsonChatRoomNr);
-            if (!File.Exists(fullPath))
-                throw new FileNotFoundException(string.Format("sJsonChatRoom for name {0} file {1} doesn't exist!", jsonChatRoomNr, fullPath));
-
+            
             return fullPath;
         }
 
