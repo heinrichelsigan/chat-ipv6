@@ -1158,6 +1158,27 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             CImage.FromDrawingImage(EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF48, "F48");
                         myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myCImg);
                         Settings.Singleton.MyContact = myContact;
+                        
+                        if (rfmsg.Recipients != null && rfmsg.Recipients.Count > 0)
+                        {
+                            CImage friendCImg = CImage.FromDrawingImage(EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF42, "F42");
+                            CContact friendCtc = rfmsg.Recipients.ElementAt(0);
+                            if (friendContact!=null && friendCtc.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                if (rfmsg.Recipients.Count > 1)
+                                    friendCtc = rfmsg.Recipients.ElementAt(1);
+                            }
+
+                            CContact partner = new CContact(friendCtc, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, friendCImg);
+                            CContact? friendC = MiniToolBox.FindContactOrCreateByNameEmail(partner.NameEmail, chatRoomNr, clientFacade.PipeString);
+                            string contactChatRoom = GetComboBoxText(this.ComboBoxContacts);
+                            if (friendC != null && (string.IsNullOrEmpty(contactChatRoom) || contactChatRoom.Equals(Constants.ENTER_CONTACT, StringComparison.CurrentCultureIgnoreCase)))
+                            {
+                                contactChatRoom = (!string.IsNullOrEmpty(friendC.NameEmail)) ? friendC.NameEmail : friendC.Email;
+                                if (!string.IsNullOrEmpty(contactChatRoom))
+                                    SetComboBoxText(this.ComboBoxContacts, contactChatRoom);
+                            }
+                        }
                     }
                     else
                     {

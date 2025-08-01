@@ -182,7 +182,24 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             leftDest.Mobile = rightSrc.Mobile;
             leftDest.Address = rightSrc.Address;
             leftDest.SecretKey = rightSrc.SecretKey;
-            leftDest.ContactImage = (rightSrc.ContactImage == null) ? null : new CImage(rightSrc.ContactImage.ToDrawingBitmap(), rightSrc.ContactImage.ImageFileName);
+            try
+            {
+                leftDest.ContactImage = rightSrc.ContactImage;
+            }
+            catch (Exception exImg)
+            {
+            }
+            CImage? contactImage = rightSrc.ContactImage;
+            if (contactImage != null)
+            {
+                try
+                {
+                    leftDest.ContactImage = new CImage(contactImage.ToDrawingBitmap(), contactImage.ImageFileName);
+                }
+                catch (Exception exImg)
+                {                   
+                }
+            }
             
             leftDest.SerializedMsg = "";
             leftDest.SerializedMsg = leftDest.ToJson();

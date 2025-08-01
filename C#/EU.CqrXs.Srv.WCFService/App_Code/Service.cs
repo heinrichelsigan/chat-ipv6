@@ -136,7 +136,6 @@ public class Service : BaseService, IService
 
                 CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
                 cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid);
-                chatRoomMsg.TContent = string.Empty;
 
                 if (isValid)
                 {
@@ -207,9 +206,8 @@ public class Service : BaseService, IService
                 _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
 
                 chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
-                chatRoomMsg.TContent = ""; // set string empty, if no message
-
                 cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid);
+
                 if (isValid)
                 {
                     DateTime now = DateTime.Now;
@@ -267,6 +265,7 @@ public class Service : BaseService, IService
                 _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";                
                 CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
                 cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid, true);
+
                 if (isValid)
                 {
                     JsonChatRoom.DeleteChatRoom(_chatRoomNumber);

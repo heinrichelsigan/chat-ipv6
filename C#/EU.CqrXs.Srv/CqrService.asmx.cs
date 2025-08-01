@@ -236,9 +236,10 @@ namespace EU.CqrXs.Srv
                     chatRoomMembersCrypted = cSrvMsg.TContent;                                  // set chatRoomMembersCrypted to cSrvMsg.TContent
 
                     Area23Log.LogStatic($"string chatRoomMembersCrypted = cSrvMsg.TContent; \r\n\tchatRoomMembersCrypted len = {chatRoomMembersCrypted.Length}.\n");
-                    chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);          // Load json chat room from file system json file                  
-                                                                                                // Check sender's permission to access chat room (must be creator or invited)
-                    cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid);   
+                    chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);          // Load json chat room from file system json file                                                                                                                  
+                    cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg,                // Check sender's permission to access chat room (must be creator or invited)
+                        _chatRoomNumber, out isValid);   
+
                     if (isValid)    
                     {
                         DateTime now = DateTime.Now;                                            // Determine DateTime.Now
@@ -305,6 +306,7 @@ namespace EU.CqrXs.Srv
                     
                     CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
                     cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid, true);
+
                     if (isValid)
                     {
                         if (JsonChatRoom.DeleteChatRoom(_chatRoomNumber))

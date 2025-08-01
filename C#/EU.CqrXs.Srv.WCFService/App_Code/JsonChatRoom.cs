@@ -187,9 +187,10 @@ public static class JsonChatRoom
     public static string GetJsonChatRoomFullPath(string jsonChatRoomNr)
     {
         string fullPath = Path.Combine(LibPaths.SystemDirJsonPath, jsonChatRoomNr);
-        if (!File.Exists(fullPath))
-            throw new FileNotFoundException(string.Format("sJsonChatRoom for name {0} file {1} doesn't exist!", jsonChatRoomNr, fullPath));
-
+        if (!File.Exists(fullPath) && !Directory.Exists(LibPaths.SystemDirJsonPath))
+        {
+            throw new FileNotFoundException(string.Format("JsonChatRoom for name {0} file {1} doesn't exist in dir {2}.", jsonChatRoomNr, fullPath, LibPaths.SystemDirJsonPath));
+        }
         return fullPath;
     }
 
@@ -210,9 +211,10 @@ public static class JsonChatRoom
     public static CSrvMsg<string> CheckPermission(CSrvMsg<string> cSrvMsg, CSrvMsg<string> chatRoomMsg, string chatRoomNr, out bool isValid, bool isClosingRequest = false)
     {
         isValid = false;
+        chatRoomMsg.TContent = string.Empty;
+
         if (chatRoomNr.Equals(chatRoomMsg.CRoom.ChatRoomNr, StringComparison.CurrentCultureIgnoreCase)) // validate chat number
-        {
-            chatRoomMsg.TContent = string.Empty;
+        {            
             chatRoomMsg._message = chatRoomNr;
 
             if ((!string.IsNullOrEmpty(cSrvMsg.Sender.Email) && cSrvMsg.Sender.Email.Equals(chatRoomMsg.Sender.Email, StringComparison.CurrentCultureIgnoreCase)) ||
