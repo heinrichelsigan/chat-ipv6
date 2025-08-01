@@ -86,16 +86,37 @@ namespace EU.CqrXs.Srv.Util
             initState = 0x2;
         }
 
+
+        /// <summary>
+        /// AuthHtPasswd - authenticates a user against .htpasswd in apache2
+        /// </summary>
+        /// <param name="user"><see cref="string"/> username</param>
+        /// <param name="passwd"><see cref="string"/>password</param>
+        /// <returns>true on successful authentificaton, otherwise false</returns>
         protected virtual bool AuthHtPasswd(string user, string passwd)
         {
 
             bool authTypeBasic = false, authBasicProviderFile = false;
-            string authFile = "", requireUser = "";
-            string phyAppPath = Request.PhysicalApplicationPath;
-            if (!Directory.Exists(phyAppPath))
+            string directoryPath = "", htAccessFile = "", authFile = "", requireUser = "";
+            
+            string phyAppPath = Request.PhysicalPath;
+            DirectoryInfo dirInfo;
+            int lastPathSeperator = -1;
+            
+            if ((phyAppPath.Contains(Path.DirectorySeparatorChar)) &&
+                ((lastPathSeperator = phyAppPath.LastIndexOf(Path.DirectorySeparatorChar)) > 0))
+                    directoryPath = phyAppPath.Substring(0, lastPathSeperator);
+            
+            if (string.IsNullOrEmpty(directoryPath))
+            {
+                dirInfo = Directory.GetParent(phyAppPath);
+                directoryPath = dirInfo.FullName;
+            }
+
+            if (!Directory.Exists(directoryPath))
                 return false;
 
-            string htAccessFile = Path.Combine(phyAppPath, ".htaccess");
+            htAccessFile = Path.Combine(directoryPath, ".htaccess");
             if (!File.Exists(htAccessFile))
                 return true;
 
@@ -112,8 +133,12 @@ namespace EU.CqrXs.Srv.Util
                     requireUser = line.Replace("Require user ", "");
             }
 
+            if (!authTypeBasic && !authBasicProviderFile) 
+                return false;
+
             if (!string.IsNullOrEmpty(requireUser) && !user.Equals(requireUser, StringComparison.CurrentCultureIgnoreCase))
                 return false;
+
 
             if (!string.IsNullOrEmpty(authFile) && File.Exists(authFile))
             {
@@ -123,7 +148,6 @@ namespace EU.CqrXs.Srv.Util
             }
 
             return true;
-
         }
 
         protected virtual void Page_Load(object sender, EventArgs e)

@@ -211,6 +211,7 @@
     <Content Include="Error.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Settings\CacheTest.aspx" />
+    <Content Include="Settings\TestLogin.aspx" />
     <Content Include="Util\CoolCrypt.aspx" />
     <Content Include="Util\ImageFontControl.ascx" />
     <Content Include="R.aspx" />
@@ -263,6 +264,13 @@
     </Compile>
     <Compile Include="Settings\CacheTest.aspx.designer.cs">
       <DependentUpon>CacheTest.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\TestLogin.aspx.cs">
+      <DependentUpon>TestLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Settings\TestLogin.aspx.designer.cs">
+      <DependentUpon>TestLogin.aspx</DependentUpon>
     </Compile>
     <Compile Include="Util\BaseWebService.cs">
       <SubType>Component</SubType>
@@ -339,7 +347,6 @@
     <Compile Include="Settings\TestForm.aspx.designer.cs">
       <DependentUpon>TestForm.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Util\GlobalAppSettings.cs" />
     <Compile Include="Util\HostLogHelper.cs" />
     <Compile Include="Util\JsonChatRoom.cs" />
     <Compile Include="Util\JsonContacts.cs" />
