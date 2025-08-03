@@ -55,9 +55,9 @@ namespace Area23.At.Framework.Library.Static
         {
             string logMsg = string.Empty;
 
-            if (string.IsNullOrEmpty(LogFile) || !CheckedToday || !File.Exists(LogFile))
+            lock (_outerLock)
             {
-                lock (_outerLock)
+                if (string.IsNullOrEmpty(LogFile) || !CheckedToday || !File.Exists(LogFile))
                 {
                     LogFile = (!string.IsNullOrEmpty(appName)) ? LibPaths.GetLogFilePath(appName) : LibPaths.LogFileSystemPath;
 
@@ -77,10 +77,7 @@ namespace Area23.At.Framework.Library.Static
                         }
                     }
                 }
-            }
 
-            lock (_outerLock)
-            {
                 string logFile1 = "";
                 logMsg = DateTime.Now.Area23DateTimeWithSeconds() + " \t" + msg ?? string.Empty + "\n";
                 try
@@ -100,7 +97,7 @@ namespace Area23.At.Framework.Library.Static
                     logFile1 = (string.IsNullOrEmpty(LogFile)) ? LibPaths.LogFileSystemPath : LogFile;
                     logFile1 = logFile1.Replace(".log", "_1.log");
                 }
-            
+
                 if (!string.IsNullOrEmpty(logFile1))
                 {
                     try
@@ -119,6 +116,7 @@ namespace Area23.At.Framework.Library.Static
                     }
                 }
             }
+        
         }
 
 

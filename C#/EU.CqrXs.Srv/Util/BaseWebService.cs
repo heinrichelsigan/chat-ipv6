@@ -291,23 +291,11 @@ namespace EU.CqrXs.Srv.Util
             return _serverKey;
         }
 
-
-        internal CContact AddContact(CContact ccontact)
-        {
-            CContact foundCt = JsonContacts.AddContact(ccontact);
-            return foundCt;
-        }
-
-        internal void UpdateContact(CContact ccontact)
-        {
-            JsonContacts.UpdateContact(ccontact);
-        }
-
         /// <summary>
         /// Generates a chat room with a new ChatRoomNr, containing sender and recpients
         /// </summary>
         /// <param name="cSrvMsg"><see cref="CSrvMsg{string}"/></param>
-        /// <returns><see cref="FullSrvMsg{string}"/></returns>
+        /// <returns><see cref="CSrvMsg{string}"/></returns>
         internal CSrvMsg<string> InviteToChatRoom(CSrvMsg<string> cSrvMsg)
         {
             string chatRoomNr = string.Empty;

@@ -60,7 +60,7 @@ public class BaseService
 
     public virtual void InitMethod()
     {
-        _contacts = GetContacts();
+        _contacts = JsonContacts.GetContacts();
         GetServerKey();
         cqrFacade = new CqrFacade(_serverKey);
         _decrypted = string.Empty;
@@ -93,57 +93,51 @@ public class BaseService
         return _serverKey;
     }
 
-    internal HashSet<CContact> GetContacts()
-    {
-        _contacts = JsonContacts.GetContacts();
-        return _contacts;
-    }
-
-    internal CContact AddContact(CContact cContact)
-    {
-        _contacts = JsonContacts.GetContacts();
-        CContact foundCt = JsonContacts.AddContact(cContact);        
-        return foundCt;
-    }
-
-    internal void UpdateContact(CContact cContact)
-    {
-        JsonContacts.UpdateContact(cContact);
-    }
-
     /// <summary>
     /// Generates a chat room with a new ChatRoomNr, containing sender and recpients
     /// </summary>
-    /// <param name="CSrvMsg"><see cref="CSrvMsg{string}"/></param>
+    /// <param name="cSrvMsg"><see cref="CSrvMsg{string}"/></param>
     /// <returns><see cref="CSrvMsg{string}"/></returns>
     internal CSrvMsg<string> InviteToChatRoom(CSrvMsg<string> cSrvMsg)
     {
-        string ChatRoomNr = string.Empty;
+        string chatRoomNr = string.Empty;
         DateTime now = DateTime.Now; // now1 = now.AddMilliseconds(10);
         List<CContact> _invited = new List<CContact>();
 
-        if (string.IsNullOrEmpty(ChatRoomNr))
-            ChatRoomNr = String.Format("room_{0:MMddHH}_{1}.json", DateTime.Now,
-                cSrvMsg.Sender.Email.Replace("@", "_").Replace(".", "_"));
+        string restMail = cSrvMsg.Sender.Email.Contains("@") ? (cSrvMsg.Sender.Email.Substring(0, cSrvMsg.Sender.Email.IndexOf("@"))) : cSrvMsg.Sender.Email.Trim();
+        restMail = restMail.Replace("@", "_").Replace(".", "_");
 
-        if (string.IsNullOrEmpty(ChatRoomNr))
-            ChatRoomNr = String.Format("room_{0}_0.json", DateTime.Now.ToString("MMddHHmm"));
+        if (!string.IsNullOrEmpty(restMail))
+            chatRoomNr = String.Format("room_{0:MMdd}_{1}.json", DateTime.Now, restMail);
+        else
+            chatRoomNr = String.Format("room_{0:MMddHHmm}.json", DateTime.Now);
 
         Dictionary<long, string> dict = new Dictionary<long, string>();
         dict.Add(now.Ticks, "");
 
-        cSrvMsg.CRoom = new CChatRoom(ChatRoomNr, Guid.NewGuid(), now, now);
-        cSrvMsg.CRoom.TicksLong = dict.Keys.ToList();
+        if (cSrvMsg.CRoom == null)
+            cSrvMsg.CRoom = new CChatRoom(chatRoomNr, Guid.NewGuid(), now, now) { TicksLong = dict.Keys.ToList() };
+        else
+        {
+            cSrvMsg.CRoom.ChatRoomNr = chatRoomNr;
+            cSrvMsg.CRoom.ChatRuid = (cSrvMsg.CRoom.ChatRuid == Guid.Empty) ? Guid.NewGuid() : cSrvMsg.CRoom.ChatRuid;
+            cSrvMsg.CRoom.LastPolled = now;
+            cSrvMsg.CRoom.LastPushed = now;
+            if (cSrvMsg.CRoom.TicksLong == null || cSrvMsg.CRoom.TicksLong.Count == 0)
+                cSrvMsg.CRoom.TicksLong = dict.Keys.ToList();
+            else
+                cSrvMsg.CRoom.TicksLong.Add(now.Ticks);
+        }
+
+        cSrvMsg._message = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
 
 
-        cSrvMsg.Sender._message = ChatRoomNr;
-        
         bool addSender = true;
         foreach (CContact cr in cSrvMsg.Recipients)
         {
-            cr._message = ChatRoomNr;
+            cr._message = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
+
             _invited.Add(cr);
-            
             if ((!string.IsNullOrEmpty(cr.NameEmail) && cr.NameEmail == cSrvMsg.Sender.NameEmail) ||
                 (cr.Cuid != null && cr.Cuid != Guid.Empty && cr.Cuid == cSrvMsg.Sender.Cuid))
                 addSender = false;
@@ -151,24 +145,20 @@ public class BaseService
         if (addSender)
             _invited.Add(cSrvMsg.Sender);
 
-        SetCachedMessageDict(ChatRoomNr, dict);
+        SetCachedMessageDict(chatRoomNr, dict);
 
-        CSrvMsg<string> chatRSrvMsg = new CSrvMsg<string>();
-        chatRSrvMsg.Sender = new CContact(cSrvMsg.Sender, cSrvMsg.CRoom.ChatRoomNr, cSrvMsg._hash);
-        chatRSrvMsg.Recipients = new HashSet<CContact>(_invited);
-        chatRSrvMsg._hash = cSrvMsg._hash;       
-        chatRSrvMsg.MsgType = CType.Json;
 
-        chatRSrvMsg = JsonChatRoom.SaveChatRoom(chatRSrvMsg, cSrvMsg.CRoom);
-        _chatRoomNumber = chatRSrvMsg.CRoom.ChatRoomNr;
+        CSrvMsg<string> cChatRSrvMsg = JsonChatRoom.SaveChatRoom(cSrvMsg, cSrvMsg.CRoom);
+        _chatRoomNumber = cChatRSrvMsg.CRoom.ChatRoomNr;
+        cChatRSrvMsg._message = _chatRoomNumber;
         JsonChatRoom.AddJsonChatRoomToCache(_chatRoomNumber);
 
         // serialize chat room in msg later then saving
-        chatRSrvMsg._message = _chatRoomNumber;
-        chatRSrvMsg.SerializedMsg = chatRSrvMsg.ToJson();
+        cChatRSrvMsg.SerializedMsg = cChatRSrvMsg.ToJson();
 
-        return chatRSrvMsg;
+        return cChatRSrvMsg;
     }
+
 
     /// <summary>
     /// ChatRoomCheckPermission

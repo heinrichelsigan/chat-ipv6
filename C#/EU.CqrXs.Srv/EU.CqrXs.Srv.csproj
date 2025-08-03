@@ -350,7 +350,6 @@
     <Compile Include="Util\HostLogHelper.cs" />
     <Compile Include="Util\JsonChatRoom.cs" />
     <Compile Include="Util\JsonContacts.cs" />
-    <Compile Include="Util\JsonHelper.cs" />
     <Compile Include="Util\U.aspx.cs">
       <DependentUpon>U.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

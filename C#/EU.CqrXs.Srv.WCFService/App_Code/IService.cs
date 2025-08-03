@@ -24,7 +24,7 @@ public interface IService
 
 
 	[OperationContract]
-	string ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted);
+	string ChatRoomPush(string cryptMsg);
 
 
 	[OperationContract]
@@ -43,34 +43,34 @@ public interface IService
 	string TestCache();
 
 
-    [OperationContract]
-	string GetData(int value);
+    //[OperationContract]
+    //string GetData(int value);
 
 
-	[OperationContract]
-	CompositeType GetDataUsingDataContract(CompositeType composite);
+    //[OperationContract]
+    //CompositeType GetDataUsingDataContract(CompositeType composite);
 
-	// TODO: Add your service operations here
+    // TODO: Add your service operations here
 }
 
-// Use a data contract as illustrated in the sample below to add composite types to service operations.
-[DataContract(Name = "CompositeType", Namespace = "https://srv.cqrxs.eu/svc/")]
-public class CompositeType
-{
-	bool boolValue = true;
-	string stringValue = "Hello ";
+//// Use a data contract as illustrated in the sample below to add composite types to service operations.
+//[DataContract(Name = "CompositeType", Namespace = "https://srv.cqrxs.eu/svc/")]
+//public class CompositeType
+//{
+//	bool boolValue = true;
+//	string stringValue = "Hello ";
 
-	[DataMember]
-	public bool BoolValue
-	{
-		get { return boolValue; }
-		set { boolValue = value; }
-	}
+//	[DataMember]
+//	public bool BoolValue
+//	{
+//		get { return boolValue; }
+//		set { boolValue = value; }
+//	}
 
-	[DataMember]
-	public string StringValue
-	{
-		get { return stringValue; }
-		set { stringValue = value; }
-	}
-}
+//	[DataMember]
+//	public string StringValue
+//	{
+//		get { return stringValue; }
+//		set { stringValue = value; }
+//	}
+//}
