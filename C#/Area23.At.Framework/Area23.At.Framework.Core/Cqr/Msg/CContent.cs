@@ -406,7 +406,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 			if (this is CFile cf && string.IsNullOrEmpty(cf.FileName) && cf.Data != null)
 				return true;
 
-			if ((SerializedMsg.IsValidJson() && SerializedMsg.Contains("FileName") && SerializedMsg.Contains("Base64Type")) ||
+			if (string.IsNullOrEmpty(SerializedMsg))
+			{
+				if (MsgType == null || MsgType == CType.Json || MsgType == CType.Json)
+					SerializedMsg = this.ToJson();
+				else if (MsgType == CType.Xml)
+					SerializedMsg = this.ToXml();
+			}
+            if ((SerializedMsg.IsValidJson() && SerializedMsg.Contains("FileName") && SerializedMsg.Contains("Base64Type")) ||
 				(SerializedMsg.IsValidXml() && SerializedMsg.Contains("FileName") && SerializedMsg.Contains("Base64Type")))
 				return true;
 
@@ -419,7 +426,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 			if (this is CFile cf && string.IsNullOrEmpty(cf.FileName) && cf.Data != null)
 				return cf;
 
-			if (SerializedMsg.IsValidJson() && SerializedMsg.Contains("FileName") && SerializedMsg.Contains("Base64Type"))
+            if (string.IsNullOrEmpty(SerializedMsg))
+            {
+                if (MsgType == null || MsgType == CType.Json || MsgType == CType.Json)
+                    SerializedMsg = this.ToJson();
+                else if (MsgType == CType.Xml)
+                    SerializedMsg = this.ToXml();
+            }
+            if (SerializedMsg.IsValidJson() && SerializedMsg.Contains("FileName") && SerializedMsg.Contains("Base64Type"))
 				return (CFile)JsonConvert.DeserializeObject<CFile>(SerializedMsg);
 			else if (SerializedMsg.IsValidXml() && SerializedMsg.Contains("CqrFileName") && SerializedMsg.Contains("Base64Type"))
 				return (CFile)Static.Utils.DeserializeFromXml<CFile>(SerializedMsg);
