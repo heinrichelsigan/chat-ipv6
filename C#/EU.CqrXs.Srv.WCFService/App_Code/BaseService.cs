@@ -68,14 +68,14 @@ public class BaseService
         _contact = null;
 
 
-        if (PersistMsgInAmazonElasticCache)
-        {
-            string status = RedisCache.ConnMux.GetStatus();
+        // if (PersistMsgInAmazonElasticCache)
+        // {
+            // string status = RedisCache.ConnMux.GetStatus();
 
             //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
             //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
             //memClient = new MemcachedClient(config);
-        }
+        // }
     }
 
     protected string GetServerKey()

@@ -8,8 +8,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("EU.CqrXs.Service")]
 [assembly: AssemblyDescription("EU.CqrXs.Service Chat WebService ARMx64")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Heinrich Elsigan https://srv.cqrxs.eu/v1.3/CqrService.asmx")]
-[assembly: AssemblyProduct("https://srv.cqrxs.eu/v1.3/CqrService.asmx")]
+[assembly: AssemblyCompany("Heinrich Elsigan https://srv.cqrxs.eu/v1.2/CqrService.asmx")]
+[assembly: AssemblyProduct("https://srv.cqrxs.eu/v1.2/CqrService.asmx")]
 [assembly: AssemblyCopyright("Copyleft 2000-2040  © Copyright under MIT license")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // Sie können alle Werte angeben oder die standardmäßigen Revisions- und Buildnummern 
 // übernehmen, indem Sie "*" wie folgt verwenden:
-[assembly: AssemblyVersion("2.25.801.0")]
-[assembly: AssemblyFileVersion("2.25.801.0")]
+[assembly: AssemblyVersion("2.25.804.0")]
+[assembly: AssemblyFileVersion("2.25.804.0")]
