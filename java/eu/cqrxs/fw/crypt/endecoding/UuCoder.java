@@ -18,7 +18,7 @@ public class UuCoder extends EnDeCoder {
     public UuCoder() {
     }
 
-    public byte[] decodeBytes(String uuEncString) {
+    public byte[] decodeString(String uuEncString) {
         UUDecoder uud = new UUDecoder();
         /*
             uud.mode = 664;

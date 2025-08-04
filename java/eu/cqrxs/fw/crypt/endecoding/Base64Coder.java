@@ -16,7 +16,7 @@ public class Base64Coder extends EnDeCoder  {
         return encodedString;
     }
 
-    public byte[] decodeBytes(String encodedString) {
+    public byte[] decodeString(String encodedString) {
         byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
         return decodedBytes;
     }

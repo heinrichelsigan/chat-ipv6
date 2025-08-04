@@ -10,13 +10,14 @@ import eu.cqrxs.gui.CqrJDialog;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
+import java.io.File;
+import java.lang.*;
 import java.net.http.*;
 import java.net.*;
-import java.lang.*;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
-import java.time.Duration;
+import javax.swing.*;
 
 
 public class CqrJdFrame extends JFrame
@@ -78,7 +79,7 @@ public class CqrJdFrame extends JFrame
 		menuView_itemTopBottom.setText("Top-Bottom");
 		menuView_itemTopBottom.setActionCommand("TopBottom");
 		menuView_itemTopBottom.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Event.CTRL_MASK));
-		menuView_itemTopBottom.setMnemonic((int)'C');
+		menuView_itemTopBottom.setMnemonic((int)'T');
 		menuView.add(menuView_itemTopBottom);
 		
 		
@@ -87,21 +88,20 @@ public class CqrJdFrame extends JFrame
 		menuView_item1View.setText("1-View");
 		menuView_item1View.setActionCommand("1View");
 		menuView_item1View.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, Event.CTRL_MASK));
-		menuView_item1View.setMnemonic((int)'P');
+		menuView_item1View.setMnemonic((int)'1');
 		menuView.add(menuView_item1View);
 		
 		
 		menuIPAddrs = new JMenu();
-		menuIPAddrs.setText("IP Addresses");
-		menuIPAddrs.setActionCommand("IPAddrs");
-		menuIPAddrs.setMnemonic((int)'I');
+		menuIPAddrs.setText("Network");
+		menuIPAddrs.setActionCommand("Network");
+		menuIPAddrs.setMnemonic((int)'N');
 		jBar.add(menuIPAddrs);
-		
 		
 		menuIPAddrs_menuMyIps = new JMenu();
 		menuIPAddrs_menuMyIps.setText("My IP's");
 		menuIPAddrs_menuMyIps.setActionCommand("MyIPs");
-		menuIPAddrs_menuMyIps.setMnemonic((int)'M');
+		// menuIPAddrs_menuMyIps.setMnemonic((int)'M');
 		menuIPAddrs.add(menuIPAddrs_menuMyIps);
 	    
         HashSet<InetAddress> myAddrs;
@@ -164,7 +164,7 @@ public class CqrJdFrame extends JFrame
 		menuChat_itemClear.setHorizontalTextPosition(SwingConstants.RIGHT);
 		menuChat_itemClear.setText("Clear");
 		menuChat_itemClear.setActionCommand("Clear");
-		menuChat_itemClear.setMnemonic((int)'C');
+		// menuChat_itemClear.setMnemonic((int)'C');
 		menuChat.add(menuChat_itemClear);
 		
 		
@@ -213,7 +213,7 @@ public class CqrJdFrame extends JFrame
 		menuHelp_itemAbout = new JMenuItem();
 		menuHelp_itemAbout.setHorizontalTextPosition(SwingConstants.RIGHT);
 		menuHelp_itemAbout.setText("About...");
-		menuHelp_itemAbout.setActionCommand("About...");
+		menuHelp_itemAbout.setActionCommand("About");
 		menuHelp_itemAbout.setMnemonic((int)'A');
 		menuHelp.add(menuHelp_itemAbout);
 		
@@ -503,8 +503,15 @@ public class CqrJdFrame extends JFrame
 	public void about(ActionEvent event) {
 	
 		jTextAreaSource.append("About menu clicked, event: " + event + "\n");
-		try {
-			cqrJDialog = new CqrJDialog("cqrxs-eu.jpg");
+		
+        try {
+            if (new File("eu/cqrxs/gui/cqrxs-eu.jpg").isFile())
+			    cqrJDialog = new CqrJDialog("eu/cqrxs/gui/cqrxs-eu.jpg");
+            else if (new File("cqrxs-eu.jpg").isFile()) 
+			    cqrJDialog = new CqrJDialog("cqrxs-eu.jpg");
+            else
+                cqrJDialog = new CqrJDialog();
+
 			cqrJDialog.showDialog(cqrJdFrame);
 		} catch (Exception exIO) {
 		}

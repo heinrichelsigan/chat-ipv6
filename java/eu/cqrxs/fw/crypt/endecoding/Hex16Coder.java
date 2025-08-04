@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-/// <summary>
-/// RawString hexadecimal byte encoding / decoding
-/// </summary>
-public class Base16Coder extends EnDeCoder  {
+/*
+ * Hex16Coder 
+ */
+public class Hex16Coder extends EnDeCoder  {
 
 	public static String VALID_CHARS = "0123456789ABCDEF";
 
@@ -28,7 +28,7 @@ public class Base16Coder extends EnDeCoder  {
 			throw new ArgumentNullException("inBytes", "public static string ToHex(byte[] inBytes == NULL)");
 
 		String hexString = new String(inBytes);
-		return hexString; 
+		return hexString;
 	}
 
 
@@ -51,9 +51,9 @@ public class Base16Coder extends EnDeCoder  {
 	{
 		bool valid = true;
 		error = "";
-		foreach (Char ch in inString)
+		foreach (Char ch : inString)
 		{
-			if (!VALID_CHARS.ToArray().Contains(ch))
+			if (!VALID_CHARS.contains(ch))
 			{
 				error += ch;
 				valid = false;
