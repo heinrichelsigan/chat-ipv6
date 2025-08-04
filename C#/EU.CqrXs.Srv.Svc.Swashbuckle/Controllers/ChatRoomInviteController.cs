@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Cqr;
+using EU.CqrXs.Srv.Svc.Swashbuckle.Util;
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 {
@@ -39,7 +40,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>            
-                    _contact = AddContact(cSrvMsg.Sender);                              // add contact from FullSrvMsg<string>   
+                    _contact = JsonContacts.AddContact(cSrvMsg.Sender);                 // add contact from FullSrvMsg<string>   
                     cSrvMsg = InviteToChatRoom(cSrvMsg);                                // generate a FullSrvMsg<string> chatserver message by inviting                           
 
                     _responseString = cSrvMsg.EncryptToJson(_serverKey);                // crypt chatRSrvMsg with _serverKey and serialize as json

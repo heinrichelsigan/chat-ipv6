@@ -53,7 +53,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {               
-                CContact foundCt = AddContact(_contact);
+                CContact foundCt = JsonContacts.AddContact(_contact);
                 _responseString = foundCt.EncryptToJson(_serverKey);
             }
 

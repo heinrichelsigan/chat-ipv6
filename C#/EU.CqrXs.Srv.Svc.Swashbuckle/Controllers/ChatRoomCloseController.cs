@@ -38,18 +38,22 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg); 
-                    _contact = AddContact(cSrvMsg.Sender);
+                    _contact = JsonContacts.AddContact(cSrvMsg.Sender);
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
-                    cSrvMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
-                    isValid = ChatRoomCheckPermission(cSrvMsg, _chatRoomNumber, true);
+
+                    CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
+                    cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid, true);
+
                     if (isValid)
                     {
-                        JsonChatRoom.DeleteChatRoom(_chatRoomNumber);
-                        cSrvMsg.CRoom = null;
-                        cSrvMsg.Sender._message = "";
+                        if (JsonChatRoom.DeleteChatRoom(_chatRoomNumber))
+                        {
+                            chatRoomMsg.CRoom = null;
+                            chatRoomMsg.Sender._message = "";
+                        }
                     }
 
-                    _responseString = cSrvMsg.EncryptToJson(_serverKey);
+                    _responseString = chatRoomMsg.EncryptToJson(_serverKey);
 
                 }
             }
