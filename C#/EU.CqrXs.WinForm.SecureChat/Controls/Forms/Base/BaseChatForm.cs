@@ -109,7 +109,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 LastExternalTime = DateTime.Now;
                 try
                 {
-                    _externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx");
+                    _externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://ipv4.cqrxs.eu/net/R.aspx");
                 }
                 catch (Exception exNoInet)
                 {
@@ -132,7 +132,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 try
                 {
                     LastExternalTimeV6 = DateTime.Now;
-                    _externalIPAddressV6 = WebClientRequest.ExternalClientIpFromServer("https://ipv6.cqrxs.eu/cqrsrv/cqrjd/R.aspx");
+                    _externalIPAddressV6 = WebClientRequest.ExternalClientIpFromServer("https://ipv6.cqrxs.eu/net/R.aspx");
                 }
                 catch (Exception noIPv6Ex)
                 {

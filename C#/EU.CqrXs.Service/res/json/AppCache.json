@@ -1,0 +1,91 @@
+﻿{
+  "$id": "1",
+  "Key_9": {
+    "$id": "2",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_8": {
+    "$id": "3",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_14": {
+    "$id": "4",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_11": {
+    "$id": "5",
+    "_Value": null,
+    "_Type": null
+  },
+  "ChatRooms": {
+    "$id": "6",
+    "_Value": [
+      "room_0426_heinrich_elsigan.json",
+      "room_0426_henriette.json"
+    ],
+    "_Type": "System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+  },
+  "Key_13": {
+    "$id": "7",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_10": {
+    "$id": "8",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_15": {
+    "$id": "9",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_12": {
+    "$id": "10",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_7": {
+    "$id": "11",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_6": {
+    "$id": "12",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_5": {
+    "$id": "13",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_4": {
+    "$id": "14",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_3": {
+    "$id": "15",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_2": {
+    "$id": "16",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_1": {
+    "$id": "17",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_0": {
+    "$id": "18",
+    "_Value": null,
+    "_Type": null
+  }
+}

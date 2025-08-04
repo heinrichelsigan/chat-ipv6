@@ -42,7 +42,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
 
                 LastExternalTime = DateTime.Now;
-                _externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx");
+                _externalIPAddress = WebClientRequest.ExternalClientIpFromServer("https://ipv4.cqrxs.eu/net/R.aspx");
                 return _externalIPAddress;
             }
         }

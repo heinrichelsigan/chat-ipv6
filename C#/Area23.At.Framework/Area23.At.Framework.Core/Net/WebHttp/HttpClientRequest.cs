@@ -108,14 +108,14 @@ namespace Area23.At.Framework.Core.Net.WebHttp
             return res.IsSuccessStatusCode;
         }
 
-        public static async Task<HttpResponseMessage> GetClientBodyFromArea23(bool area23 = false, string urlR = "https://cqrxs.eu/cqrsrv/cqrjd/R.aspx")
+        public static async Task<HttpResponseMessage> GetClientBodyFromArea23(bool area23 = false, string urlR = "https://cqrxs.eu/net/R.aspx")
         {
             string url = (area23) ? "https://area23.at/net/R.aspx" : urlR;
             return await GetClientIpByUrl(url);
         }
 
 
-        public static IPAddress? GetClientIP(string urlR = "https://cqrxs.eu/cqrsrv/cqrjd/R.aspx")
+        public static IPAddress? GetClientIP(string urlR = "https://cqrxs.eu/net/R.aspx")
         {
             string myIp = GetClientBodyFromArea23(true).Result.ToString();
             if (myIp.Contains("<body>"))
