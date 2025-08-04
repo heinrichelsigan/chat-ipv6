@@ -71,13 +71,14 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 
         //    return _serverKey;
         //}
-        
+
 
         /// <summary>
         /// Generates a chat room with a new ChatRoomNr, containing sender and recpients
         /// </summary>
         /// <param name="cSrvMsg"><see cref="CSrvMsg{string}"/></param>
         /// <returns><see cref="CSrvMsg{string}"/></returns>
+        [HttpGet]
         internal CSrvMsg<string> InviteToChatRoom(CSrvMsg<string> cSrvMsg)
         {
             string chatRoomNr = string.Empty;
@@ -140,71 +141,30 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         }
 
 
-        /// <summary>
-        /// ChatRoomCheckPermission
-        /// Validates, if a user has permission to poll or to push messages in the chat room by the following steps:
-        /// 1. chat room number in encrypted, now decrypted msg from webservice must be ident with chat room number from json file
-        /// 2. sender email from  encrypted, now decrypted msg from webservice must much
-        /// 2.a. either creator invitor of chat room
-        /// 2.b. on of the invited persons in invitation
-        /// </summary>
-        /// <param name="CSrvMsg"><see cref="CSrvMsg{string}"/> decoded from <see cref="CqrService.CqrService"/> Webservice</param>
-        /// <param name="chatRoomMsg"><see cref="CSrvMsg{string}"/> generated from chat room json</param>
-        /// <param name="ChatRoomNr"><see cref="string"/> chat room number of chat room</param>
-        /// <param name="isClosingRequest">default false, only on close, where only creator can close chat room</param>
-        /// <returns>true, if person is allowed to push or receive msg from / to chat room</returns>        
-        [Obsolete("CheckPermission moved directly to static class JsonChatRoom", true)]
-        public bool ChatRoomCheckPermission(CSrvMsg<string> cSrvMsg, CSrvMsg<string> chatRoomMsg, string chatRoomNr, bool isClosingRequest = false)
-        {
-            bool isValid = false;
-            cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, chatRoomNr, out isValid, isClosingRequest);
 
-            return isValid;
-        }
+        ///// <summary>
+        ///// AddLastDate adds lastPolled or lastPushed date and tickIndex to TicksLong
+        ///// </summary>
+        ///// <param name="chatRoomMsg"><see cref="CSrvMsg{string}"/> chat room msg to be returned to chat client app</param>
+        ///// <param name="tickIndex">tick long index</param>
+        ///// <param name="pushed">false for poolled, true for pushed</param>
+        ///// <returns><see cref="CSrvMsg{string}"/></returns>
+        //public CSrvMsg<string> AddLastDate(CSrvMsg<string> chatRoomMsg, long tickIndex, bool pushed = false)
+        //{
+        //    DateTime date = new DateTime(tickIndex);
+        //    if (pushed)
+        //    {
+        //        chatRoomMsg.CRoom.LastPushed = date;
+        //    }
+        //    else
+        //    {
+        //        chatRoomMsg.CRoom.LastPolled = date;
+        //        if (!chatRoomMsg.CRoom.TicksLong.Contains(tickIndex))
+        //            chatRoomMsg.CRoom.TicksLong.Add(tickIndex);
+        //    }
 
-        /// <summary>
-        /// Add LastPolled to contact and also to <see cref="CqrContact.PolledMsgDates"/>
-        /// reduces <see cref="CqrContact.PolledMsgDates"/>, if contact wears a to huge amount of polling history
-        /// TODO: implement ring buffer here
-        /// </summary>
-        /// <param name="contact"><see cref="CContact"/> to modify</param>
-        /// <param name="date"></param>
-        /// <returns>modified <see cref="CContact"/></returns>
-        [Obsolete("No more chatroom in contact", true)]
-        public CContact AddPollDate(CContact contact, DateTime date, bool pushed = false)
-        {
-            if (pushed)
-                contact.Md5Hash = date.ToString();
-            // contact.CRoom.LastPushed = date;
-            // else
-            // contact.CRoom.LastPolled = date;
-
-            return contact;
-        }
-
-        /// <summary>
-        /// AddLastDate adds lastPolled or lastPushed date and tickIndex to TicksLong
-        /// </summary>
-        /// <param name="chatRoomMsg"><see cref="CSrvMsg{string}"/> chat room msg to be returned to chat client app</param>
-        /// <param name="tickIndex">tick long index</param>
-        /// <param name="pushed">false for poolled, true for pushed</param>
-        /// <returns><see cref="CSrvMsg{string}"/></returns>
-        public CSrvMsg<string> AddLastDate(CSrvMsg<string> chatRoomMsg, long tickIndex, bool pushed = false)
-        {
-            DateTime date = new DateTime(tickIndex);
-            if (pushed)
-            {
-                chatRoomMsg.CRoom.LastPushed = date;
-            }
-            else
-            {
-                chatRoomMsg.CRoom.LastPolled = date;
-                if (!chatRoomMsg.CRoom.TicksLong.Contains(tickIndex))
-                    chatRoomMsg.CRoom.TicksLong.Add(tickIndex);
-            }
-
-            return chatRoomMsg;
-        }
+        //    return chatRoomMsg;
+        //}
 
         /// <summary>
         /// GetCachedMessageDict returns one chat room message dictionary
@@ -212,6 +172,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         /// </summary>
         /// <param name="chatRoomNumber">json chat room number</param>
         /// <returns>one chat room message dictionary</returns>
+        [HttpGet]
         public static Dictionary<long, string> GetCachedMessageDict(string chatRoomNumber)
         {
             Dictionary<long, string> dict = new Dictionary<long, string>();
@@ -229,6 +190,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         /// <param name="dictKeys"><see cref="DateTime.Ticks"/> as index key of chat room message dictionary</param>
         /// <param name="cSrvMsg"><see cref=CSrvMsg{string}"/></param>
         /// <returns><see cref="List{long}">key indices of messages, that are new and not already polled</see></returns>
+        [HttpGet]
         public static List<long> GetNewMessageIndices(List<long> dictKeys, CSrvMsg<string> cSrvMsg)
         {
 
@@ -249,6 +211,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         /// </summary>
         /// <param name="chatRoomNumber">json chat room number</param>
         /// <param name="dict">the mesage dictionary for chat room </param>
+        [HttpGet]
         public static void SetCachedMessageDict(string chatRoomNumber, Dictionary<long, string> dict)
         {
 

@@ -23,7 +23,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             _logger = logger;
         }
 
-        [HttpGet("TestService")]
+        [HttpGet(Name = "TestService")]
         public string Get()
         {
             Area23Log.LogStatic($"TestServiceController.Get() started.\n");

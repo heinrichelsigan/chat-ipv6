@@ -25,7 +25,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public TC TContent { get; set; }
 
-        public CChatRoom CRoom { get; set; }
+        public CChatRoom? CRoom { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
         protected internal List<string> Emails

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.Remoting;
 using System.Web;
 using EU.CqrXs.Srv.Svc.Swashbuckle.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
@@ -60,6 +61,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// <param name="cSrvMsgIn"><see cref="CSrvMsg{TC}"/></param>
         /// <param name="chatRoomNr">chatRoomNr</param>
         /// <returns>><see cref="CSrvMsg{TC}"/></returns>
+        [HttpGet]
         public static CSrvMsg<string> LoadChatRoom(CSrvMsg<string> cSrvMsgIn, string chatRoomNr)
         {
             string jsonCRoomFileName = GetJsonChatRoomFullPath(chatRoomNr);
@@ -89,6 +91,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// <param name="cSrvMsg"><see cref="CSrvMsg<string>"/></param>
         /// <param name="chatRoom"><see cref="CChatRoom"/></param>
         /// <returns></returns>
+        [HttpGet]
         public static CSrvMsg<string> SaveChatRoom(CSrvMsg<string> cSrvMsg, CChatRoom chatRoom)
         {
             string jsonString = "";
@@ -126,6 +129,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// </summary>
         /// <param name="chatRoomNr">chat room number</param>
         /// <returns></returns>
+        [HttpGet]
         public static bool DeleteChatRoom(string chatRoomNr)
         {
             string jsonChatRoomFileName = GetJsonChatRoomFullPath(chatRoomNr);
@@ -190,6 +194,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// </summary>
         /// <param name="jsonChatRoomNr">name or number of chat room</param>
         /// <returns></returns>
+        [HttpGet]
         public static string GetJsonChatRoomFullPath(string jsonChatRoomNr)
         {
             string fullPath = Path.Combine(LibPaths.SystemDirJsonPath, jsonChatRoomNr);
@@ -198,6 +203,36 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                 throw new FileNotFoundException(string.Format("JsonChatRoom for name {0} file {1} doesn't exist in dir {2}.", jsonChatRoomNr, fullPath, LibPaths.SystemDirJsonPath));
             }
             return fullPath;
+        }
+
+        [HttpGet]
+        public static CSrvMsg<string> CheckChatRoomClosePermission(CSrvMsg<string> cSrvMsg)
+        {
+            bool isValid = false;
+            string chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
+            CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, chatRoomNumber);            
+
+            if (chatRoomNumber.Equals(chatRoomMsg.CRoom.ChatRoomNr, StringComparison.CurrentCultureIgnoreCase)) // validate chat number
+            {
+                chatRoomMsg._message = chatRoomNumber;
+
+                if ((!string.IsNullOrEmpty(cSrvMsg.Sender.Email) && cSrvMsg.Sender.Email.Equals(chatRoomMsg.Sender.Email, StringComparison.CurrentCultureIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(cSrvMsg.Sender.NameEmail) && cSrvMsg.Sender.NameEmail.Equals(chatRoomMsg.Sender.NameEmail, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    isValid = true;                    
+                }  
+            }
+
+            if (isValid)
+            {
+                if (JsonChatRoom.DeleteChatRoom(chatRoomNumber))
+                {
+                    cSrvMsg.CRoom = null;
+                    cSrvMsg.Sender._message = "";
+                }
+            }
+
+            return cSrvMsg;
         }
 
         /// <summary>
@@ -213,7 +248,8 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// <param name="chatRoomNr"><see cref="string"/> chat room number of chat room</param>
         /// <param name="isValid"><see cref="bool"/>true, if person is allowed to push or receive msg from / to chat room</param>
         /// <param name="isClosingRequest"><see cref="bool"/>default false, true when closing and deleting chat room</param>
-        /// <returns>modified chatRoomMsg <see cref="CSrvMsg{string}"/></returns>            
+        /// <returns>modified chatRoomMsg <see cref="CSrvMsg{string}"/></returns>      
+        [HttpGet]
         public static CSrvMsg<string> CheckPermission(CSrvMsg<string> cSrvMsg, CSrvMsg<string> chatRoomMsg, string chatRoomNr, out bool isValid, bool isClosingRequest = false)
         {
             isValid = false;
@@ -254,6 +290,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// Loads a list of json chat rooms from fs
         /// </summary>
         /// <returns><see cref="List{string}"/></returns>
+        [HttpGet]
         public static List<string> ChatRoomNumbersFromFs()
         {
 
@@ -287,6 +324,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// and stores it either in ApplicationState in proc or in redis elastic cache
         /// </summary>
         /// <returns><see cref="List{string}<">List of chat room names / keys</see></returns>
+        [HttpGet]
         public static List<string> GetJsonChatRoomsFromCache()
         {
             List<string> chatRooms = new List<string>();
@@ -316,6 +354,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// SetJsonChatRoomsToCache persist list of chat rooms of 
         /// </summary>
         /// <param name="chatRooms"><see cref="List{string}">list of chat rooms</see></param>
+        [HttpGet]
         public static void SetJsonChatRoomsToCache(List<string> chatRooms)
         {
             MemoryCache.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
@@ -325,6 +364,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// AddJsonChatRoomToCache adds chatRoomName to cache variable ChatRooms, which contains all chat room names 
         /// </summary>
         /// <param name="chatRoomNr">name of chat room to add to ChatRooms array in cache</param>
+        [HttpGet]
         public static void AddJsonChatRoomToCache(string chatRoomNr)
         {
             List<string> chatRooms = GetJsonChatRoomsFromCache();
@@ -342,6 +382,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// - sets cache key ChatRooms without the deleted chatroom name back to cachg
         /// </summary>
         /// <param name="chatRoomNr">chatroom name</param>
+        [HttpGet]
         public static void DeleteJsonChatRoomFromCache(string chatRoomNr)
         {
             List<string> chatRooms = GetJsonChatRoomsFromCache();

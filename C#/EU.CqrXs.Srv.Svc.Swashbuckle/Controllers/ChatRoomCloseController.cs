@@ -20,16 +20,18 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         {
             _logger = logger;
         }
-
+        
         [HttpGet("ChatRoomClose")]
         public string Get(string cryptMsg)
         {
             Area23Log.LogStatic($"ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  {cryptMsg.Length}.\n");
-            InitMethod();
-            bool isValid = false;
+            InitMethod();            
+            _chatRoomNumber = "";
 
-            CSrvMsg<string>? cSrvMsg = null;                     
-            List<CContact> _invited = new List<CContact>();
+            
+            CSrvMsg<string>? cSrvMsg;
+
+            // List<CContact> _invited = new List<CContact>();
 
             _responseString = "";
 
@@ -40,20 +42,10 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                     cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg); 
                     _contact = JsonContacts.AddContact(cSrvMsg.Sender);
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
-
-                    CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
-                    cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out isValid, true);
-
-                    if (isValid)
-                    {
-                        if (JsonChatRoom.DeleteChatRoom(_chatRoomNumber))
-                        {
-                            chatRoomMsg.CRoom = null;
-                            chatRoomMsg.Sender._message = "";
-                        }
-                    }
-
-                    _responseString = chatRoomMsg.EncryptToJson(_serverKey);
+                    
+                    cSrvMsg = JsonChatRoom.CheckChatRoomClosePermission(cSrvMsg);
+                    
+                    _responseString = cSrvMsg.EncryptToJson(_serverKey);
 
                 }
             }
