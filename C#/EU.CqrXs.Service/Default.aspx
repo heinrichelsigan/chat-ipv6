@@ -6,7 +6,7 @@
 <head runat="server">
     <title>CqrService v1.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta id="metaRefreshId"  runat="server" http-equiv="refresh"  content="20; url=https://srv.cqrxs.eu/v1.2/CqrService.asmx" />    
+    <meta id="metaRefreshId"  runat="server" http-equiv="refresh"  content="8; url=https://srv.cqrxs.eu/v1.2/CqrService.asmx" />    
 </head>
 <body>
     <form id="form1" runat="server">

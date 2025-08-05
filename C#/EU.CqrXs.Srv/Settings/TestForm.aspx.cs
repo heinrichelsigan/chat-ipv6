@@ -43,17 +43,17 @@ namespace EU.CqrXs.Srv.Settings
             {
                 tmpStrg = string.Empty;
 
-                if (ConfigurationManager.AppSettings["ServerIPv4"] != null)
+                if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V4] != null)
                 {
-                    LiteralServerIPv4.Text = (string)ConfigurationManager.AppSettings["ServerIPv4"];
-                    Area23Log.LogStatic("ServerIPv4: " + LiteralServerIPv4.Text);
-                    tmpStrg += "ServerIPv4: " + (string)ConfigurationManager.AppSettings["ServerIPv4"] + Environment.NewLine;
+                    LiteralServerIPv4.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V4];
+                    Area23Log.LogStatic(Constants.SERVER_IP_V4 + ": " + LiteralServerIPv4.Text);
+                    tmpStrg += Constants.SERVER_IP_V4 + ": " + (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V4] + Environment.NewLine;
                 }
-                if (ConfigurationManager.AppSettings["ServerIPv6"] != null)
+                if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V6] != null)
                 {
-                    this.LiteralServerIPv6.Text = (string)ConfigurationManager.AppSettings["ServerIPv6"];
-                    Area23Log.LogStatic("ServerIPv6: " + LiteralServerIPv6.Text);
-                    tmpStrg += "ServerIPv6: " + (string)ConfigurationManager.AppSettings["ServerIPv6"] + Environment.NewLine + allStrng;
+                    this.LiteralServerIPv6.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V6];
+                    Area23Log.LogStatic(Constants.SERVER_IP_V6 + ": " + LiteralServerIPv6.Text);
+                    tmpStrg += Constants.SERVER_IP_V6 + ": " + (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V6] + Environment.NewLine + allStrng;
                 }
 
                 if (Application["ServerKey"] != null)

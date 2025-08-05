@@ -4,9 +4,19 @@
     <TargetFramework>net9.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>2.25.729</AssemblyVersion>
-    <FileVersion>2.25.729</FileVersion>
-    <StartupObject>EU.CqrXs.Srv.Svc.Swashbuckle.Program</StartupObject>   
+    <AssemblyVersion>2.25.805</AssemblyVersion>
+    <FileVersion>2.25.805</FileVersion>
+    <StartupObject>EU.CqrXs.Srv.Svc.Swashbuckle.Program</StartupObject>
+    <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
+    <PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>   
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

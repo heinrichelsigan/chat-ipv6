@@ -34,11 +34,19 @@ namespace Area23.At.Framework.Library.Static
 
         public const string APP_NAME = "Area23.At";
         public const string APP_DIR = "net";
-        public const string VERSION = "v2.25.411";
+        public const string VERSION = "v2.25.805";
         public const string VALKEY_CACHE_HOST = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com";
         public const int VALKEY_CACHE_PORT = 6379;
         public const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         public const string VALKEY_CACHE_HOST_PORT_KEY = "ValkeyCacheHostPort";
+        public const string EXTERNAL_CLIENT_IP = "ExternalClientIP";
+        public const string EXTERNAL_CLIENT_IP_V4 = "ExternalClientIPv4";
+        public const string SERVER_IP_V4 = "ServerIPv4";
+        public const string SERVER_IP_V6 = "ServerIPv6";
+        public const string CQR_SERVICE_SOAP = "CqrServiceSoap";
+        public const string CQR_SERVICE_SOAP12 = "CqrServiceSoap12";
+        public const string CQR_SRV_SOAP = "CqrSrvSoap";
+        public const string CQR_SRV_SOAP12 = "CqrSrvSoap12";
 
         public const string AREA23_URL = "https://area23.at";
         public const string APP_PATH = "https://area23.at/net/";
@@ -128,6 +136,10 @@ namespace Area23.At.Framework.Library.Static
         public const string APP_INPUT_DIALOG = "APP_INPUT_DIALOG";
         public const string APP_MY_CONTACT = "APP_MY_CONTACT";
 
+        public const string APP_DIR_PATH_WIN = "AppDirPathWin";
+        public const string BASE_APP_PATH_WIN = "BaseAppPathWin";
+        public const string APP_DIR_PATH_UNIX = "AppDirPathUnix";
+        public const string BASE_APP_PATH_UNIX = "BaseAppPathUnix";
         public const string BIN_DIR = "bin";
         public const string CALC_DIR = "Calc";
         public const string CSS_DIR = "css";

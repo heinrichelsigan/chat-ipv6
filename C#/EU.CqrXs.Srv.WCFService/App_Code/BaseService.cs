@@ -82,9 +82,9 @@ public class BaseService
     {
         // _serverKey = Constants.AUTHOR_EMAIL;            
 
-        if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
+        if (ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP] != null)
         {
-            _serverKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
+            _serverKey = (string)ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP];
         }
         else
             _serverKey = HttpContext.Current.Request.UserHostAddress;

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Threading;
+using Area23.At.Framework.Core.Static;
 
 namespace Area23.At.Framework.Core.Cache
 {
@@ -159,9 +160,9 @@ namespace Area23.At.Framework.Core.Cache
         {
             string persistMsgIn = "JsonFile";
 
-            if (ConfigurationManager.AppSettings["PersistMsgIn"] != null)
+            if (ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN] != null)
             {
-                persistMsgIn = (string)ConfigurationManager.AppSettings["PersistMsgIn"];
+                persistMsgIn = (string)ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN];
             }
 
             switch (persistMsgIn)

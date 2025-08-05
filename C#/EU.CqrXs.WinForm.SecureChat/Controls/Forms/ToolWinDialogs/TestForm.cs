@@ -57,16 +57,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             base.OnLoad(e);
             this.ClientSize = new Size(361, 498);
-            if (ConfigurationManager.AppSettings["ServerIPv4"] != null)
+            if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V4] != null)
             {
-                this.textBoxServerIp.Text = (string)ConfigurationManager.AppSettings["ServerIPv4"];
+                this.textBoxServerIp.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V4];
                 _serverIp = IPAddress.Parse(textBoxServerIp.Text);
-                SLog.Log("ServerIPv4: " + textBoxServerIp.Text);
+                SLog.Log(string.Format("{0}: {1}", Constants.SERVER_IP_V4, textBoxServerIp.Text));
             }
-            if (ConfigurationManager.AppSettings["ServerIPv6"] != null)
+            if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V6] != null)
             {
-                //this.textBoxServerIp6.Text = (string)ConfigurationManager.AppSettings["ServerIPv6"];
-                //SLog.Log("ServerIPv6: " + textBoxServerIp6.Text);
+                this.textBoxServerIp6.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V6];
+                SLog.Log(string.Format("{0}: {1}", Constants.SERVER_IP_V6, textBoxServerIp6.Text));
             }
             this.textBoxExternalIp.Text = ExternalIpAddress.ToString();
 

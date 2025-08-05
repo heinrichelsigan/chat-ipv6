@@ -12,8 +12,8 @@
     <NoWin32Manifest>true</NoWin32Manifest>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-    <AssemblyVersion>2.25.801</AssemblyVersion>
-    <FileVersion>2.25.801</FileVersion>
+    <AssemblyVersion>2.25.805</AssemblyVersion>
+    <FileVersion>2.25.805</FileVersion>
     <AnalysisLevel>latest-minimum</AnalysisLevel>
     <ApplicationIcon>SatIcon.ico</ApplicationIcon>	               
   </PropertyGroup>

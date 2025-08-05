@@ -352,51 +352,56 @@ public class Service : BaseService, IService
                 dictCacheTest.Add(c.Cuid, c);
         }
         testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added " + dictCacheTest.Count + " count contacts to Dictionary<Guid, CqrContact>...\n";
-        if (PersistMsgInAmazonElasticCache)
+
+        try
         {
-            try
+            if (PersistInCache.CacheType == PersistType.Redis)
             {
-                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Ready to connect to " + 
-                    ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] + "\n";
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Ready to connect to " +
+                ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] + "\n";
                 string status = RedisCache.ConnMux.GetStatus();
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": ConnectionMulitplexer.Status = " + status + Environment.NewLine;
-
-                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Preparing to set Dictionary<Guid, CContact> in cache." + Environment.NewLine;
-                MemoryCache.CacheDict.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
-                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added serialized json string to cache." + Environment.NewLine;
-
-                Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)MemoryCache.CacheDict.GetValue<Dictionary<Guid, CContact>>("TestCache");
-                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Got Dictionary<Guid, CContact> from cache with " + 
-                    outdict.Keys.Count + " keys." + Environment.NewLine;
-                foreach (CContact contact in outdict.Values)
-                {
-                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Contact Cuid=" + contact.Cuid + " NameEmail=" +
-                        contact.NameEmail + " Mobile=" + contact.Mobile + Environment.NewLine;
-                }
-
-                List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
-                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Found " + chatRooms.Count + " chat room keys in cache." + Environment.NewLine;
-                foreach (string room in chatRooms)
-                {
-                    try
-                    {
-                        Dictionary<long, string> dicTest = GetCachedMessageDict(room);
-                        testReport += DateTime.Now.Area23DateTimeMilliseconds() +": chat room " + room + " with keys " + dicTest.Keys.Count + ": messages." + Environment.NewLine;
-                    }
-                    catch (Exception exChatRoom)
-                    {                        
-                        string exMsg = "loading chat room " + room + " failed. Exception: " + exChatRoom.Message + "." + Environment.NewLine;
-                        testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": " + exMsg;
-                        Area23Log.LogStatic(exMsg, exChatRoom, "");
-                    }
-                }
             }
-            catch (Exception ex2)
+
+            testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Preparing to set Dictionary<Guid, CContact> in cache." + Environment.NewLine;
+            MemoryCache.CacheDict.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
+            testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Added serialized json string to cache." + Environment.NewLine;
+
+            Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)MemoryCache.CacheDict.GetValue<Dictionary<Guid, CContact>>("TestCache");
+            testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Got Dictionary<Guid, CContact> from cache with " +
+                outdict.Keys.Count + " keys." + Environment.NewLine;
+            foreach (CContact contact in outdict.Values)
             {
-                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Exception " +
-                    ex2.GetType() + ": " + ex2.Message + "\n\t" + ex2.ToString() + "\n";
+                testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Contact Cuid=" + contact.Cuid + " NameEmail=" +
+                    contact.NameEmail + " Mobile=" + contact.Mobile + Environment.NewLine;
+            }
+            testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Preparing to delete key \"TestCache\":" + "\r\n";
+            MemoryCache.CacheDict.RemoveKey("TestCache");
+            testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Deleted key \"TestCache\"." + "\r\n";
+
+            List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
+            testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Found " + chatRooms.Count + " chat room keys in cache." + Environment.NewLine;
+            foreach (string room in chatRooms)
+            {
+                try
+                {
+                    Dictionary<long, string> dicTest = GetCachedMessageDict(room);
+                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": chat room " + room + " with keys " + dicTest.Keys.Count + ": messages." + Environment.NewLine;
+                }
+                catch (Exception exChatRoom)
+                {
+                    string exMsg = "loading chat room " + room + " failed. Exception: " + exChatRoom.Message + "." + Environment.NewLine;
+                    testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": " + exMsg;
+                    Area23Log.LogStatic(exMsg, exChatRoom, "");
+                }
             }
         }
+        catch (Exception ex2)
+        {
+            testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Exception " +
+                ex2.GetType() + ": " + ex2.Message + "\n\t" + ex2.ToString() + "\n";
+        }
+        
 
         return testReport;
     }

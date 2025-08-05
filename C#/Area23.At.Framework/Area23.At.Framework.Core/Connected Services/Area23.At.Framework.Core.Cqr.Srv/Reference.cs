@@ -227,8 +227,8 @@ namespace Area23.At.Framework.Core.Cqr.Srv
 #endif
                 return result;
             }
-            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12) || endpointConfiguration == EndpointConfiguration.CqrServiceSoapv4 ||
-                endpointConfiguration == EndpointConfiguration.CqrServiceSoapv6)
+            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12) || endpointConfiguration == EndpointConfiguration.CqrServiceSoap ||
+                endpointConfiguration == EndpointConfiguration.CqrServiceSoapV6)
             {
                 System.ServiceModel.Channels.CustomBinding result = new System.ServiceModel.Channels.CustomBinding();
                 System.ServiceModel.Channels.TextMessageEncodingBindingElement textBindingElement = new System.ServiceModel.Channels.TextMessageEncodingBindingElement();
@@ -257,19 +257,15 @@ namespace Area23.At.Framework.Core.Cqr.Srv
         {
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap))
             {
-                return new System.ServiceModel.EndpointAddress(LibPaths.CqrServiceSoap);
+                return new System.ServiceModel.EndpointAddress(LibPaths.CqrSrvSoap);
             }
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12))
             {
-                return new System.ServiceModel.EndpointAddress(LibPaths.CqrServiceSoap12);
-            }
-            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoapv4))
+                return new System.ServiceModel.EndpointAddress(LibPaths.CqrSrvSoap12);
+            }            
+            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoapV6))
             {
-                return new System.ServiceModel.EndpointAddress(LibPaths.CqrServiceSoapv4);
-            }
-            if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap12))
-            {
-                return new System.ServiceModel.EndpointAddress(LibPaths.CqrServiceSoap12);
+                return new System.ServiceModel.EndpointAddress(LibPaths.CqrSrvSoapV6);
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
@@ -281,9 +277,7 @@ namespace Area23.At.Framework.Core.Cqr.Srv
 
             CqrServiceSoap12,
 
-            CqrServiceSoapv4,
-
-            CqrServiceSoapv6,
+            CqrServiceSoapV6
 
         }
 

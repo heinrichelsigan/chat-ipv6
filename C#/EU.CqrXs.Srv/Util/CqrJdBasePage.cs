@@ -233,9 +233,9 @@ namespace EU.CqrXs.Srv.Util
         {
             // _serverKey = Constants.AUTHOR_EMAIL;            
 
-            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
+            if (ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP] != null)
             {
-                myServerKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
+                myServerKey = (string)ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP];
             }
             else
                 myServerKey = HttpContext.Current.Request.UserHostAddress;
@@ -246,11 +246,11 @@ namespace EU.CqrXs.Srv.Util
 
         public virtual IPAddress GetClientExternalIp()
         {
-            string externalClientIp = (ConfigurationManager.AppSettings["ExternalClientIP"] != null) ?
-                (string)ConfigurationManager.AppSettings["ExternalClientIP"] : null;
+            string externalClientIp = (ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP] != null) ?
+                (string)ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP] : null;
 
-            string externalClientIpv4 = (ConfigurationManager.AppSettings["ExternalClientIPv4"] != null) ?
-               (string)ConfigurationManager.AppSettings["ExternalClientIPv4"] : null;
+            string externalClientIpv4 = (ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP_V4] != null) ?
+               (string)ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP_V4] : null;
 
             if (string.IsNullOrEmpty(externalClientIp))
                 externalClientIp = Request.UserHostAddress;

@@ -30,18 +30,11 @@ namespace EU.CqrXs.Srv.Util
     {
 
         protected internal static HashSet<CContact> _contacts;
+
+        protected internal bool _isValid = false;
+        protected internal string _serverKey = "", _responseString = "", _chatRoomNumber = "", _decrypted = "";
         protected internal CContact _contact;
-        protected internal CqrFacade cqrFacade;
-        // protected internal string _literalServerIPv4, _literalServerIPv6;
-        protected internal string _serverKey = string.Empty;
-        protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
-        protected internal string _responseString = string.Empty;
-        protected internal string _chatRoomNumber = string.Empty;
-        // protected internal ConnectionMultiplexer redis;
-        // protected internal ConfigurationOptions options;
-        protected internal static bool useAWSCache = false, useAppState = true;
-        // protected internal string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
-        // protected internal StackExchange.Redis.IDatabase db;
+        protected internal CqrFacade _cqrFacade;
 
 
         /// <summary>
@@ -49,28 +42,29 @@ namespace EU.CqrXs.Srv.Util
         /// </summary>
         public BaseWebService()
         {
+            _contacts = new HashSet<CContact>();
             InitMethod();
         }
 
+
+        /// <summary>
+        /// InitMethod inits all global service variables
+        /// </summary>
         public virtual void InitMethod()
         {
             _contacts = JsonContacts.GetContacts(true);
-            GetServerKey();
-            cqrFacade = new CqrFacade(_serverKey);
-            _decrypted = string.Empty;
-            _responseString = string.Empty;
             _contact = null;
+            _isValid = false;
 
+            _serverKey = GetServerKey();            
+            _decrypted = "";
+            _responseString = "";
+            _chatRoomNumber = "";
 
-            if (PersistInCache.CacheType == PersistType.Redis)
-            {
-                string status = RedisCache.ConnMux.GetStatus();
-
-                //config = new ElastiCacheClusterConfig("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
-                //// ClusterConfigSettings clusterConfig = new ClusterConfigSettings("cachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com", 11211);
-                //memClient = new MemcachedClient(config);
-            }
+            _cqrFacade = new CqrFacade(_serverKey);
+            
         }
+
 
         [WebMethod]
         public virtual string TestService()
@@ -133,7 +127,7 @@ namespace EU.CqrXs.Srv.Util
 
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Persistence in {PersistInCache.CacheType.ToString()}\n";
 
-            
+
             Dictionary<Guid, CContact> dictCacheTest = new Dictionary<Guid, CContact>();
             foreach (CContact c in _contacts)
             {
@@ -142,65 +136,66 @@ namespace EU.CqrXs.Srv.Util
                     dictCacheTest.Add(c.Cuid, c);
             }
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
-            if (PersistInCache.CacheType == PersistType.Redis)
+            try
             {
-                try
+                if (PersistInCache.CacheType == PersistType.Redis)
                 {
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
                     string status = RedisCache.ConnMux.GetStatus();
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
-
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Getting MemoryCache.CacheDict.AllKeys" + Environment.NewLine;
-
-                    string[] allKeys = MemoryCache.CacheDict.AllKeys;
-                    if (allKeys == null)
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
-                    else 
-                    {
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Length} keys" + Environment.NewLine;
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys)} ]" + Environment.NewLine;                            
-                    }
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to set Dictionary<Guid, CqrContact> in cache." + "\r\n";
-                    MemoryCache.CacheDict.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);                                        
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache." + Environment.NewLine;
-
-                    Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)MemoryCache.CacheDict.GetValue<Dictionary<Guid, CContact>>("TestCache");                   
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + "\r\n";
-                    foreach (CContact contact in outdict.Values)
-                    {
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Contact Cuid={contact.Cuid} NameEmail={contact.NameEmail} Mobile={contact.Mobile}." + "\r\n";
-                    }
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to delete key \"TestCache\":" + "\r\n";
-                    MemoryCache.CacheDict.RemoveKey("TestCache");
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deleted key \"TestCache\"." + "\r\n";
                 }
-                catch (Exception ex2)
+
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Getting MemoryCache.CacheDict.AllKeys" + Environment.NewLine;
+
+                string[] allKeys = MemoryCache.CacheDict.AllKeys;
+                if (allKeys == null)
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
+                else
                 {
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Length} keys" + Environment.NewLine;
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys)} ]" + Environment.NewLine;
                 }
-                try
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to set Dictionary<Guid, CqrContact> in cache." + "\r\n";
+                MemoryCache.CacheDict.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added serialized json string to cache." + Environment.NewLine;
+
+                Dictionary<Guid, CContact> outdict = (Dictionary<Guid, CContact>)MemoryCache.CacheDict.GetValue<Dictionary<Guid, CContact>>("TestCache");
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got Dictionary<Guid, CqrContact> from cache with {outdict.Keys.Count} keys." + "\r\n";
+                foreach (CContact contact in outdict.Values)
                 {
-                    List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}:Found {chatRooms.Count} chat room keys in cache." + Environment.NewLine;
-                    foreach (string room in chatRooms)
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Contact Cuid={contact.Cuid} NameEmail={contact.NameEmail} Mobile={contact.Mobile}." + "\r\n";
+                }
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to delete key \"TestCache\":" + "\r\n";
+                MemoryCache.CacheDict.RemoveKey("TestCache");
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Deleted key \"TestCache\"." + "\r\n";
+            }
+            catch (Exception ex2)
+            {
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+            }
+            try
+            {
+                List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}:Found {chatRooms.Count} chat room keys in cache." + Environment.NewLine;
+                foreach (string room in chatRooms)
+                {
+                    try
                     {
-                        try
-                        {
-                            Dictionary<long, string> dicTest = GetCachedMessageDict(room);
-                            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: chat room {room} with keys {dicTest.Keys.Count} messages." + Environment.NewLine;
-                        }
-                        catch (Exception exChatRoom)
-                        {
-                            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: loading chat room {room} failed. Exception: {exChatRoom.Message}." + Environment.NewLine;
-                            Area23Log.LogStatic($"Loading chat room {room} failed. ", exChatRoom, "");
-                        }
+                        Dictionary<long, string> dicTest = GetCachedMessageDict(room);
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: chat room {room} with keys {dicTest.Keys.Count} messages." + Environment.NewLine;
                     }
-                }
-                catch (Exception ex2)
-                {
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+                    catch (Exception exChatRoom)
+                    {
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: loading chat room {room} failed. Exception: {exChatRoom.Message}." + Environment.NewLine;
+                        Area23Log.LogStatic($"Loading chat room {room} failed. ", exChatRoom, "");
+                    }
                 }
             }
+            catch (Exception ex2)
+            {
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+            }
+
 
             return testReport;
         }
@@ -223,54 +218,55 @@ namespace EU.CqrXs.Srv.Util
 
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Persistence in {PersistInCache.CacheType.ToString()}\n";
 
-            if (PersistInCache.CacheType == PersistType.Redis)
+            try
             {
-                try
+                if (PersistInCache.CacheType == PersistType.Redis)
                 {
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
                     string status = RedisCache.ConnMux.GetStatus();
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
+                }
 
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Getting MemoryCache.CacheDict.AllKeys" + Environment.NewLine;
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Getting MemoryCache.CacheDict.AllKeys" + Environment.NewLine;
 
-                    string[] allKeys = MemoryCache.CacheDict.AllKeys;
-                    HashSet<string> newKeys = new HashSet<string>();
-                    if (allKeys == null)
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
+                string[] allKeys = MemoryCache.CacheDict.AllKeys;
+                HashSet<string> newKeys = new HashSet<string>();
+                if (allKeys == null)
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
+                else
+                {
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Length} keys" + Environment.NewLine;
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys)} ]" + Environment.NewLine;
+                }
+                foreach (string aKey in allKeys)
+                {
+                    if (aKey.Equals("AllKeys", StringComparison.CurrentCultureIgnoreCase) || aKey.Equals("ChatRooms", StringComparison.CurrentCultureIgnoreCase) ||
+                        (aKey.StartsWith("room", StringComparison.CurrentCultureIgnoreCase) && aKey.EndsWith(".json", StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Keeping key \"" + aKey + "\":" + "\r\n";
+                    }
                     else
                     {
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Length} keys" + Environment.NewLine;
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys)} ]" + Environment.NewLine;
-                    }
-                    foreach (string aKey in allKeys)
-                    {
-                        if (aKey.Equals("AllKeys", StringComparison.CurrentCultureIgnoreCase) || aKey.Equals("ChatRooms", StringComparison.CurrentCultureIgnoreCase) ||
-                            (aKey.StartsWith("room", StringComparison.CurrentCultureIgnoreCase) && aKey.EndsWith(".json", StringComparison.CurrentCultureIgnoreCase)))
-                        {
-                            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Keeping key \"" + aKey + "\":" + "\r\n";
-                        }
-                        else
-                        {
-                            testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to delete key \"" + aKey + "\":" + "\r\n";
-                            MemoryCache.CacheDict.RemoveKey(aKey);
-                            newKeys.Add(aKey);
-                        }
-                    }
-                    allKeys = MemoryCache.CacheDict.AllKeys;
-                    newKeys = new HashSet<string>();
-                    if (allKeys == null)
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
-                    else
-                    {
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Length} keys" + Environment.NewLine;
-                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys)} ]" + Environment.NewLine;
+                        testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to delete key \"" + aKey + "\":" + "\r\n";
+                        MemoryCache.CacheDict.RemoveKey(aKey);
+                        newKeys.Add(aKey);
                     }
                 }
-                catch (Exception ex2)
+                allKeys = MemoryCache.CacheDict.AllKeys;
+                newKeys = new HashSet<string>();
+                if (allKeys == null)
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
+                else
                 {
-                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null {allKeys.Length} keys" + Environment.NewLine;
+                    testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: AllKeys = [ {string.Join(" ,", allKeys)} ]" + Environment.NewLine;
                 }
             }
+            catch (Exception ex2)
+            {
+                testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex2.GetType()}: {ex2.Message}\n\t{ex2}\n";
+            }
+
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}:ResetCache() finished.\n";
 
             return testReport;
@@ -278,17 +274,16 @@ namespace EU.CqrXs.Srv.Util
 
         protected string GetServerKey()
         {
-            // _serverKey = Constants.AUTHOR_EMAIL;            
+            string serverKey = string.Empty;
 
-            if (ConfigurationManager.AppSettings["ExternalClientIP"] != null)
-            {
-                _serverKey = (string)ConfigurationManager.AppSettings["ExternalClientIP"];
-            }                
+            if (ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP] != null)
+                serverKey = (string)ConfigurationManager.AppSettings[Constants.EXTERNAL_CLIENT_IP];             
             else
-                _serverKey = HttpContext.Current.Request.UserHostAddress;
-            _serverKey += Constants.APP_NAME;
+                serverKey = HttpContext.Current.Request.UserHostAddress;
 
-            return _serverKey;
+            serverKey += Constants.APP_NAME;
+
+            return serverKey;
         }
 
         /// <summary>
