@@ -272,7 +272,8 @@ namespace EU.CqrXs.Srv.Settings
                     memoryCache = (MemoryCache)appDomainCache;
                     break;
             }
-            string parallelCache = MemoryCache.CacheVariant;
+            string parallelCache = memoryCache.CacheType;
+
             s += $"RunTasks(int numberOfTasks = {numberOfTasks}) cache = {parallelCache}.\n";
             DateTime now = DateTime.Now;
             if (numberOfTasks <= 0)
@@ -308,7 +309,7 @@ namespace EU.CqrXs.Srv.Settings
 
 
                         data.CThreadId = Thread.CurrentThread.ManagedThreadId;
-                        MemoryCache.CacheDict.SetValue<CacheData>(ckey, data);
+                        memoryCache.SetValue<CacheData>(ckey, data);
                         s += $"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.\n";
                     },
                     new CacheData("Key_" + (i % maxKexs).ToString()));
@@ -322,7 +323,7 @@ namespace EU.CqrXs.Srv.Settings
                         if (string.IsNullOrEmpty(strkey))
                             strkey = ckey;
 
-                        CacheData data = (CacheData)MemoryCache.CacheDict.GetValue<CacheData>(strkey);
+                        CacheData data = (CacheData)memoryCache.GetValue<CacheData>(strkey);
                         if (data == null)
                             s += $"Task get cache key #{strkey} => (nil)";
                         else
@@ -368,7 +369,7 @@ namespace EU.CqrXs.Srv.Settings
                     memoryCache = (MemoryCache)appDomainCache;
                     break;
             }
-            string serialSache = MemoryCache.CacheVariant;
+            string serialSache = memoryCache.CacheType;
             s += $"RunSerial(int iterationsCount = {iterationsCount}) cache = {serialSache}.\n";
 
             if (iterationsCount <= 0)
@@ -386,13 +387,13 @@ namespace EU.CqrXs.Srv.Settings
                 {
                     string ckey = string.Concat("Key_", (i % maxKexs).ToString());
                     CacheData data = new CacheData(ckey, Thread.CurrentThread.ManagedThreadId);
-                    MemoryCache.CacheDict.SetValue<CacheData>(ckey, data);
+                    memoryCache.SetValue<CacheData>(ckey, data);
                     s += $"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.\n";
                 }
                 else if ((i >= quater && i < half) || i >= threequater)
                 {
                     string strkey = "Key_" + (i % maxKexs).ToString();
-                    CacheData cacheData = (CacheData)MemoryCache.CacheDict[strkey];
+                    CacheData cacheData = (CacheData)memoryCache[strkey];
                     if (cacheData == null)
                         s += $"Task get cache key #{strkey} => (nil)\n";
                     else

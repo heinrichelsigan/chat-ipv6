@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Core.Static;
 using System.Collections.Concurrent;
+using System.Security.AccessControl;
 
 namespace Area23.At.Framework.Core.Cache
 {
@@ -42,9 +43,9 @@ namespace Area23.At.Framework.Core.Cache
             }
         }
 
-        public AppDomainCache()
+        public AppDomainCache(PersistType cacheType = PersistType.AppDomain)
         {
-            if (AppDict == null) ;
+            _persistType = cacheType;
         }
     }
 

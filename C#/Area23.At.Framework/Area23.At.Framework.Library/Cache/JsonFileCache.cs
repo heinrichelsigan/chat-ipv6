@@ -124,8 +124,8 @@ namespace Area23.At.Framework.Library.Cache
 
 
         public JsonFileCache(PersistType cacheType = PersistType.JsonFile)
-        {
-
+        {            
+            _persistType = cacheType;            
         }
 
     }

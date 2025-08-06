@@ -1,10 +1,6 @@
-﻿using Area23.At.Framework.Library.Static;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Library.Cache
 {
@@ -17,23 +13,23 @@ namespace Area23.At.Framework.Library.Cache
     public class MemoryCache
     {
 
-        public const string APP_CONCURRENT_DICT = "APP_CONCURRENT_DICT";
+        public const string APP_CONCURRENT_DICT = "APP_CONCURRENT_DICT";        
         protected internal static readonly object _lock = new object();
         protected internal static readonly object _outerlock = new object();
 
-        protected internal static Lazy<MemoryCache> _instance;
+        public static string CacheVariant = "MemoryCache";
+        
+        protected internal PersistType _persistType;        
+        public virtual string CacheType { get => _persistType.ToString(); }
 
+        protected internal static Lazy<MemoryCache> _instance;       
         public static MemoryCache CacheDict => _instance.Value;
 
 
         /// <summary>
         /// private <see cref="ConcurrentDictionary{string, CacheValue}"/> 
         /// </summary>
-        protected ConcurrentDictionary<string, CacheValue> _appDict = new ConcurrentDictionary<string, CacheValue>();
-
-        public static string CacheVariant = "MemoryCache";
-
-        public virtual string CacheType { get => CacheVariant; }
+        protected ConcurrentDictionary<string, CacheValue> _appDict = new ConcurrentDictionary<string, CacheValue>();        
 
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
@@ -97,9 +93,7 @@ namespace Area23.At.Framework.Library.Cache
         /// </summary>
         static MemoryCache()
         {
-
             PersistType cacheType = PersistInCache.CacheType;
-            CacheVariant = cacheType.ToString();
 
             switch (cacheType)
             {
@@ -119,8 +113,11 @@ namespace Area23.At.Framework.Library.Cache
                     break;
             }
 
+            _instance.Value._persistType = PersistInCache.CacheType;
+            CacheVariant = _instance.Value._persistType.ToString();
         }
 
+        
 
         /// <summary>
         /// public ctor

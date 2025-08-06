@@ -67,8 +67,8 @@ namespace Area23.At.Framework.Library.Cache
         }
 
         public AppDomainCache(PersistType cacheType = PersistType.AppDomain)
-        {
-            if (AppDict == null) ;
+        {            
+            _persistType = cacheType;
         }
 
     }

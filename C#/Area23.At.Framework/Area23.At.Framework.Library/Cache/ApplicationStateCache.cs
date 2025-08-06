@@ -73,7 +73,7 @@ namespace Area23.At.Framework.Library.Cache
 
         public ApplicationStateCache(PersistType cacheType = PersistType.ApplicationState)
         {
-
+            _persistType = cacheType;
         }
 
     }

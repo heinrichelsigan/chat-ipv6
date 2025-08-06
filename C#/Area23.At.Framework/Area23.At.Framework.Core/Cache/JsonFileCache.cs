@@ -115,6 +115,18 @@ namespace Area23.At.Framework.Core.Cache
                 }
             }
         }
+
+
+        /// <summary>
+        /// ctor for JsonFileCache
+        /// </summary>
+        /// <param name="cacheType"></param>
+        public JsonFileCache(PersistType cacheType = PersistType.JsonFile)
+        {
+            _persistType = cacheType;
+        }
+
+
     }
 
 

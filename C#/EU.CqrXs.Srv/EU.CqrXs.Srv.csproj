@@ -32,6 +32,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PreferNativeArm64>true</PreferNativeArm64>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -373,6 +374,7 @@
     <Content Include="res\json\urlshort.json" />
     <Content Include="res\json\contacts.json" />
     <None Include="Properties\PublishProfiles\CqrXs_Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\EU.CqrXs.Srv_%28arm%29.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

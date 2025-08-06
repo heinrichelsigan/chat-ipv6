@@ -17,21 +17,24 @@ namespace Area23.At.Framework.Core.Cache
     /// </summary>
     public abstract class MemoryCache
     {
-        
+
         public const string APP_CONCURRENT_DICT = "APP_CONCURRENT_DICT";
-        protected internal static readonly Lock _lock = new Lock();
+        protected internal static readonly object _lock = new object();
+        protected internal static readonly object _outerlock = new object();
 
-        protected internal static readonly Lazy<MemoryCache> _instance;
+        public static string CacheVariant = "MemoryCache";
 
-        public static MemoryCache CacheDict  => _instance.Value;
-        
+        protected internal PersistType _persistType;
+        public virtual string CacheType { get => _persistType.ToString(); }
+
+        protected internal static Lazy<MemoryCache> _instance;
+        public static MemoryCache CacheDict => _instance.Value;
+
 
         /// <summary>
         /// private <see cref="ConcurrentDictionary{string, CacheValue}"/> 
         /// </summary>
-        protected internal static ConcurrentDictionary<string, CacheValue> _appDict = new ConcurrentDictionary<string, CacheValue>();
-
-        protected internal static readonly string CacheVariant = "MemoryCache";
+        protected internal static ConcurrentDictionary<string, CacheValue> _appDict = new ConcurrentDictionary<string, CacheValue>();4
 
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
@@ -82,9 +85,7 @@ namespace Area23.At.Framework.Core.Cache
         /// </summary>
         static MemoryCache()
         {
-
-            PersistType cacheType = PersistInCache.CacheType;
-            CacheVariant = cacheType.ToString();
+            PersistType cacheType = PersistInCache.CacheType;            
 
             switch (cacheType)
             {
@@ -101,6 +102,9 @@ namespace Area23.At.Framework.Core.Cache
                     _instance = new Lazy<MemoryCache>(() => new AppDomainCache());
                     break;
             }
+
+            _instance.Value._persistType = cacheType;
+            CacheVariant = cacheType.ToString();
         }
 
 

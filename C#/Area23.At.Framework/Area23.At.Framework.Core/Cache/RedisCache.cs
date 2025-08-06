@@ -72,10 +72,12 @@ namespace Area23.At.Framework.Core.Cache
 
 
         /// <summary>
-        /// default parameterless constructor for RedisCacheValKey cache singleton
+        /// default constructor for RedisCacheValKey cache singleton
         /// </summary>
-        public RedisCache()
+        public RedisCache(PersistType cacheType = PersistType.Redis)
         {
+            _persistType = cacheType;
+
             endpoint = VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
             if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY] != null)
                 endpoint = (string)ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY];
