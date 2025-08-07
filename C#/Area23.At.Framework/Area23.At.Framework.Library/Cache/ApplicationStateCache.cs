@@ -57,6 +57,7 @@ namespace Area23.At.Framework.Library.Cache
                 return _appDict;
             }
             set
+        public override void SaveDictionaryToCache(ConcurrentDictionary<string, CacheValue> cacheDict)
             {
                 lock (_smartLock)
                 {
