@@ -34,7 +34,7 @@ namespace Area23.At.Framework.Core.Cache
         /// <summary>
         /// private <see cref="ConcurrentDictionary{string, CacheValue}"/> 
         /// </summary>
-        protected internal static ConcurrentDictionary<string, CacheValue> _appDict = new ConcurrentDictionary<string, CacheValue>();4
+        protected internal static ConcurrentDictionary<string, CacheValue> _appDict = new ConcurrentDictionary<string, CacheValue>();
 
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>

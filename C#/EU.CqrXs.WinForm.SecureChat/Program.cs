@@ -99,8 +99,8 @@ namespace EU.CqrXs.WinForm.SecureChat
         /// <param name="mutex"></param>
         internal static void ReleaseCloseDisposeMutex(Mutex? mutex)
         {
-            Exception? ex = null;            
-            
+            Exception? ex = null;
+
             if (mutex != null)
             {
                 var safeWaitHandle = mutex.GetSafeWaitHandle();
@@ -124,16 +124,15 @@ namespace EU.CqrXs.WinForm.SecureChat
                         ex = new CqrException("Closing Mutex failed", exClose);
                         CqrException.SetLastException(ex);
                     }
-                    try
-                    {
-                        mutex.Dispose();
-                    }
-                    catch (Exception exDispose)
-                    {
-                        ex = new CqrException("Disposing Mutex failed", exDispose);
-                        CqrException.SetLastException(ex);
-                    }
-
+                }
+                try
+                {
+                    mutex.Dispose();
+                }
+                catch (Exception exDispose)
+                {
+                    ex = new CqrException("Disposing Mutex failed", exDispose);
+                    CqrException.SetLastException(ex);
                 }
             }
             try

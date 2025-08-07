@@ -13,9 +13,13 @@ namespace Area23.At.Framework.Library.Cache
     public class MemoryCache
     {
 
-        public const string APP_CONCURRENT_DICT = "APP_CONCURRENT_DICT";        
-        protected internal static readonly object _lock = new object();
-        protected internal static readonly object _outerlock = new object();
+        public const string APP_CONCURRENT_DICT = "APP_CONCURRENT_DICT";
+        public const int CACHE_READ_UPDATE_INTERVAL = 120;
+        protected internal static readonly object _lock = new object(), _outerlock = new object();
+
+        protected internal DateTime _lastCacheRW = DateTime.Now;
+
+        protected internal TimeSpan _timePassedSinceLastRW = TimeSpan.Zero;
 
         public static string CacheVariant = "MemoryCache";
         
@@ -36,24 +40,8 @@ namespace Area23.At.Framework.Library.Cache
         /// </summary>
         protected virtual ConcurrentDictionary<string, CacheValue> AppDict
         {
-            get
-            {
-                // _appDict =  (ConcurrentDictionary<string, CacheValue>) get it where to get it
-                if (_appDict == null)
-                {
-                    _appDict = new ConcurrentDictionary<string, CacheValue>();
-                    // where to set it _appDict
-                }
-                return _appDict;
-            }
-            set
-            {
-                if (value != null && value.Count > 0)
-                    _appDict = value;
-
-                // if (_appDict != null && _appDict.Count > 0)
-                //      set it where to set it _appDict
-            }
+            get => LoadDictionaryCache();           // get, where to get it (_appDict from cache)
+            set => SaveDictionaryToCache(value);    // set it where to set it (value to _appDict to cache)
         }
 
 
@@ -117,7 +105,36 @@ namespace Area23.At.Framework.Library.Cache
             CacheVariant = _instance.Value._persistType.ToString();
         }
 
-        
+
+        /// <summary>
+        /// get, where to get it (_appDict from cache)
+        /// </summary>
+        /// <param name="repeatLoadingPeriodically">if true, _appDict will be repeatedly loaded from cache <see cref="CACHE_READ_UPDATE_INTERVAL" /> in seconds</param>
+        /// <returns><see cref="ConcurrentDictionary{string, CacheValue}"/> _appDict</returns>
+        public virtual ConcurrentDictionary<string, CacheValue> LoadDictionaryCache(bool repeatLoadingPeriodically = false)
+        {            
+            
+            if (_appDict == null || _appDict.Count == 0)
+            {
+                _timePassedSinceLastRW = DateTime.Now.Subtract(_lastCacheRW);
+                _lastCacheRW = DateTime.Now;
+                _appDict = new ConcurrentDictionary<string, CacheValue>();
+                // where to set it _appDict
+            }
+
+            return _appDict;
+        }
+
+        /// <summary>
+        /// set where to set <see cref="ConcurrentDictionary{string, CacheValue}">it</see>  
+        /// (value to _appDict to cache)
+        /// </summary>
+        /// <param name="cacheDict"><see cref="ConcurrentDictionary{string, CacheValue}"/></param>
+        public virtual void SaveDictionaryToCache(ConcurrentDictionary<string,CacheValue> cacheDict)
+        {
+            if (cacheDict != null) //  && value.Count > 0
+                _appDict = cacheDict;
+        }
 
         /// <summary>
         /// public ctor
@@ -150,18 +167,59 @@ namespace Area23.At.Framework.Library.Cache
         //}
 
 
+        #region virtual cache operations on _appDict methods
+
         /// <summary>
         /// Gets a value from <see cref="ConcurrentDictionary{string, CacheValue}"/> stored <see cref="System.AppDomain.CurrentDomain"/>
         /// </summary>
         /// <typeparam name="T">generic type of cached value</typeparam>
         /// <param name="ckey">cache key</param>
         /// <returns>generic cached value stored at key</returns>
-        public virtual T GetValue<T>(string ckey)
+        public virtual T GetValue<T>(string ckey) 
         {
-            T tvalue = default(T);
             lock (_outerlock)
             {
-                tvalue = (AppDict.ContainsKey(ckey) && AppDict.TryGetValue(ckey, out var cvalue)) ? cvalue.GetValue<T>() : default(T);
+                T tvalue = default(T);
+
+                if (!string.IsNullOrEmpty(ckey)) 
+                {
+                    _appDict = AppDict;
+                    lock (_lock)
+                    {
+                        if (_appDict.ContainsKey(ckey) && _appDict.TryGetValue(ckey, out var cvalue))
+                        {
+                            if (cvalue != null)
+                            {
+                                tvalue = cvalue.GetValue<T>();                                
+                            }
+                        } 
+                    }
+                }
+
+                return tvalue;
+            }
+            
+        }
+
+        public virtual Nullable<T> GetNullableValue<T>(string ckey) where T : struct
+        {
+            T tvalue = default(T);
+
+            if (!string.IsNullOrEmpty(ckey))
+            {
+                lock (_lock)
+                {
+
+                    if (_appDict.ContainsKey(ckey) && _appDict.TryGetValue(ckey, out var cvalue))
+                    {
+                        if (cvalue != null)
+                        {
+                            var nilvalue = cvalue.GetNullableValue<T>();
+                            if (nilvalue != null && nilvalue.HasValue)
+                                tvalue = nilvalue.Value;
+                        }
+                    }
+                }
             }
 
             return tvalue;
@@ -176,30 +234,35 @@ namespace Area23.At.Framework.Library.Cache
         /// <returns>true, if add or updated succeeded, otherwise false</returns>
         public virtual bool SetValue<T>(string ckey, T tvalue)
         {
-            bool addedOrUpdated = false;
-
-            if (string.IsNullOrEmpty(ckey) || tvalue == null)
-                return addedOrUpdated;
-
-            CacheValue cvalue = new CacheValue();
-            cvalue.SetValue<T>(tvalue);
-
             lock (_outerlock)
             {
-                if (!AppDict.ContainsKey(ckey))
-                    addedOrUpdated = AppDict.TryAdd(ckey, cvalue);
-                else if (AppDict.TryGetValue(ckey, out CacheValue oldValue))
-                    addedOrUpdated = _appDict.TryUpdate(ckey, cvalue, oldValue);
+                bool addedOrUpdated = false;
 
-                // MAYBE SHORTER BUT NOBODY CAN QUICK READ AND UNDERSTAND THIS
-                // addedOrUpdated = (!AppCache.ContainsKey(ckey)) ? AppCache.TryAdd(ckey, cvalue) :
-                //    (AppCache.TryGetValue(ckey, out CacheValue oldValue)) ? _appCache.TryUpdate(ckey, cvalue, oldValue) : false;
+                if (string.IsNullOrEmpty(ckey) || tvalue == null)
+                    return addedOrUpdated;
 
-                if (addedOrUpdated)
-                    AppDict = _appDict;  // saves the modified ConcurrentDictionary{string, CacheValue} back to AppDomain
+                CacheValue cvalue = new CacheValue();
+                cvalue.SetValue<T>(tvalue);
+
+                _appDict = LoadDictionaryCache(true);
+
+                lock (_lock)
+                {                    
+                    if (!_appDict.ContainsKey(ckey))
+                        addedOrUpdated = _appDict.TryAdd(ckey, cvalue);
+                    else if (_appDict.TryGetValue(ckey, out CacheValue oldValue))
+                        addedOrUpdated = _appDict.TryUpdate(ckey, cvalue, oldValue);
+
+                    // MAYBE SHORTER BUT NOBODY CAN QUICK READ AND UNDERSTAND THIS
+                    // addedOrUpdated = (!AppCache.ContainsKey(ckey)) ? AppCache.TryAdd(ckey, cvalue) :
+                    //    (AppCache.TryGetValue(ckey, out CacheValue oldValue)) ? _appCache.TryUpdate(ckey, cvalue, oldValue) : false;
+
+                    if (addedOrUpdated) // saves the modified ConcurrentDictionary{string, CacheValue} back to AppDomain
+                        SaveDictionaryToCache(_appDict);                        
+                }
+
+                return addedOrUpdated;
             }
-
-            return addedOrUpdated;
         }
 
         /// <summary>
@@ -220,18 +283,27 @@ namespace Area23.At.Framework.Library.Cache
         /// false if ckey is <see cref="null"/> or <see cref="string.Empty"/> or removing ckey from <see cref="ConcurrentDictionary{string, CacheValue}"/> failed.</returns>
         public virtual bool RemoveKey(string ckey)
         {
-            bool success = false;
-            if (string.IsNullOrEmpty(ckey))
-                return success;
-
             lock (_outerlock)
             {
-                if ((success = !AppDict.ContainsKey(ckey)) == false)
-                    if ((success = AppDict.TryRemove(ckey, out CacheValue cvalue)) == true)
-                        AppDict = _appDict; // saves the modified ConcurrentDictionary{string, CacheValue} back to AppDomain
+                bool success = false;
+                if (string.IsNullOrEmpty(ckey))
+                    return success;
+
+                _appDict = AppDict;
+
+                lock (_lock)
+                {                    
+                    if ((success = !_appDict.ContainsKey(ckey)) == false)
+                        if ((success = _appDict.TryRemove(ckey, out CacheValue cvalue)) == true)
+                            SaveDictionaryToCache(_appDict);  // saves the modified ConcurrentDictionary{string, CacheValue} back to AppDomain
+                }
+
+                return success;
             }
-            return success;
         }
+
+
+        #endregion virtual cache operations on _appDict methods
 
     }
 

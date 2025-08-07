@@ -167,6 +167,7 @@
   <ItemGroup>
     <Compile Include="Cache\ApplicationStateCache.cs" />
     <Compile Include="Cache\CacheData.cs" />
+    <Compile Include="Cache\MutalExclusion.cs" />
     <Compile Include="Cache\JsonFileCache.cs" />
     <Compile Include="Cache\MemoryCache.cs" />
     <Compile Include="Cache\AppDomainCache.cs" />
