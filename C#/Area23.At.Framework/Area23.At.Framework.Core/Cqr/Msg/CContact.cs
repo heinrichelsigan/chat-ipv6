@@ -382,6 +382,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         {
             List<object> oList = new List<object>();
             oList.Add(ContactId);
+            oList.Add(Cuid);
             oList.Add(Name);
             oList.Add(Email);
             oList.Add(Mobile);

@@ -5,7 +5,6 @@ using System.Linq;
 namespace Area23.At.Framework.Library.Cache
 {
 
-
     /// <summary>
     /// CacheHashDict an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheValue}"/> saved in memory only at runtime
     /// derive from <see cref="MemoryCache"/> and implement your own cache by implementing a new variant for property <see cref="AppDict"/>

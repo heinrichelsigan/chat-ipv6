@@ -12,9 +12,9 @@
     public class CacheValue
     {
 
-        protected internal object? _Value { get; set; }
+        public object _Value { get; protected internal set; }
 
-        protected internal Type? _Type { get;  set; }
+        public Type _Type { get; protected internal set; }
 
 
         /// <summary>
@@ -44,9 +44,24 @@
         /// gets the <see cref="Type"/> of generic cached value
         /// </summary>
         /// <returns><see cref="Type"/> of generic value or null if cached value is <see cref="null"/></returns>
-        public Type? GetType()
+        public new Type GetType()
         {
             return _Type;
+        }
+
+
+        /// <summary>
+        /// Get a value from cache
+        /// </summary>
+        /// <typeparam name="T">generic type of value passed by typeparameter</typeparam>
+        /// <returns>generic T value</returns>
+        /// <exception cref="InvalidOperationException">thrown, when cached value isn't of typeof(T)</exception>
+        internal T GetValue<T>()
+        {
+            if (_Type != null && _Value != null && typeof(T) == _Type)
+                return (T)_Value;
+            else
+                return default(T);
         }
 
         /// <summary>
@@ -55,15 +70,28 @@
         /// <typeparam name="T">generic type of value passed by typeparameter</typeparam>
         /// <returns>generic T value</returns>
         /// <exception cref="InvalidOperationException">thrown, when cached value isn't of typeof(T)</exception>
-        public T? GetValue<T>()
+        public T? GetNullableValue<T>() where T : struct
         {
-            T? tvalue;
-            if (typeof(T) == _Type)
-                tvalue = (T?)_Value;
-            else
-                throw new InvalidOperationException($"typeof(T) = {typeof(T)} while _type = {_Type}");
+            T tvalue = default(T);
+            T? tNullValue = null;
 
-            return tvalue ?? default(T);
+            if (_Type == null || _Value == null)
+            {
+                tvalue = default(T);
+                tNullValue = null;
+            }
+            else
+            {
+                if (typeof(T) == _Type)
+                {
+                    tNullValue = new Nullable<T>((T)_Value);
+                    tvalue = tNullValue.GetValueOrDefault();
+                }
+                else
+                    throw new InvalidOperationException($"typeof(T) = {typeof(T)} while _type = {_Type}");
+            }
+
+            return tNullValue;
         }
 
         /// <summary>

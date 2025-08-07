@@ -1,16 +1,13 @@
-﻿using Area23.At.Framework.Library.Cqr;
-using Microsoft.Win32.SafeHandles;
+﻿using Area23.At.Framework.Core.Cqr;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace Area23.At.Framework.Library.Cache
+namespace Area23.At.Framework.Core.Cache
 {
-
-    internal static class MutalExclusion 
+    internal static class MutalExclusion
     {
 
         const string CACHE_MUTEX_NAME = "CacheMutalExclusion";
@@ -114,7 +111,7 @@ namespace Area23.At.Framework.Library.Cache
 
             return;
         }
-       
+
 
     }
 

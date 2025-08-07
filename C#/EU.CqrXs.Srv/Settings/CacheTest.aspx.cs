@@ -445,6 +445,7 @@ namespace EU.CqrXs.Srv.Settings
             if (serial || parallel)
                 PerformTests(persistType, iterations, parallel, serial);
         }
+    
     }
 
 }

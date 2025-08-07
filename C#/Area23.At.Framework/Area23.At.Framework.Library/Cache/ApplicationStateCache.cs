@@ -24,7 +24,6 @@ namespace Area23.At.Framework.Library.Cache
         public override string CacheType => "ApplicationStateCache";
 
 
-
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
         /// </summary>
@@ -103,4 +102,5 @@ namespace Area23.At.Framework.Library.Cache
         }
 
     }
+
 }
