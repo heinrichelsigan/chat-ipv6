@@ -111,6 +111,25 @@ namespace EU.CqrXs.Srv.Util
         }
 
         [WebMethod]
+        public virtual string GetKey(string key)
+        {
+            string vlKey = "";
+            string testReport = $"{DateTime.Now.Area23DateTimeMilliseconds()}: GetKey({key}) => ";
+            try
+            {
+                InitMethod();
+                vlKey = MemoryCache.CacheDict.GetString(key);
+                testReport += vlKey;
+            }
+            catch (Exception ex1)
+            {
+                testReport += $"\n{DateTime.Now.Area23DateTimeMilliseconds()}: Exception {ex1.GetType()}: {ex1.Message}\n\t{ex1}\n";
+            }            
+
+            return string.IsNullOrEmpty(vlKey) ? testReport : vlKey;
+        }
+
+        [WebMethod]
         public virtual string TestCache()
         {
             string testReport = $"{DateTime.Now.Area23DateTimeMilliseconds()}:TestCache() started.\n";
@@ -138,10 +157,10 @@ namespace EU.CqrXs.Srv.Util
             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Added {dictCacheTest.Count} count contacts to Dictionary<Guid, CqrContact>...\n";
             try
             {
-                if (PersistInCache.CacheType == PersistType.Redis)
+                if (PersistInCache.CacheType == PersistType.RedisValkey)
                 {
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
-                    string status = RedisCache.ConnMux.GetStatus();
+                    string status = RedisValkeyCache.ValKeyInstance.Status;
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
                 }
 
@@ -220,10 +239,10 @@ namespace EU.CqrXs.Srv.Util
 
             try
             {
-                if (PersistInCache.CacheType == PersistType.Redis)
+                if (PersistInCache.CacheType == PersistType.RedisValkey)
                 {
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Ready to connect to {ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY]}\n";
-                    string status = RedisCache.ConnMux.GetStatus();
+                    string status = RedisValkeyCache.ValKeyInstance.Status;
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
                 }
 

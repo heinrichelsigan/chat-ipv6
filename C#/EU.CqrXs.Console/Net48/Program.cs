@@ -50,15 +50,15 @@ namespace EU.CqrXs.Console.Net48
                     taskArray[i] = Task.Factory.StartNew((object obj) =>
                     {
                         string ckey = string.Concat("Key_", (i % maxKexs).ToString());
-                        CacheData data = obj as CacheData;
+                        CacheTestData data = obj as CacheTestData;
                         if (data == null)
-                            data = new CacheData(ckey, Thread.CurrentThread.ManagedThreadId);
+                            data = new CacheTestData(ckey, Thread.CurrentThread.ManagedThreadId);
 
                         data.CThreadId = Thread.CurrentThread.ManagedThreadId;
-                        MemoryCache.CacheDict.SetValue<CacheData>(ckey, data);
+                        MemoryCache.CacheDict.SetValue<CacheTestData>(ckey, data);
                         // Console.WriteLine($"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.");
                     },
-                    new CacheData("Key_" + (i % maxKexs).ToString()));
+                    new CacheTestData("Key_" + (i % maxKexs).ToString()));
                 }
                 else if ((i >= quater && i < half) || i >= threequater)
                 {
@@ -69,7 +69,7 @@ namespace EU.CqrXs.Console.Net48
                         if (string.IsNullOrEmpty(strkey))
                             strkey = ckey;
 
-                        CacheData data = (CacheData)MemoryCache.CacheDict[strkey];
+                        CacheTestData data = (CacheTestData)MemoryCache.CacheDict.GetValue<CacheTestData>(ckey);
                         // Console.WriteLine($"Task get cache key #{strkey} => {data.CValue} created at {data.CTime} original thread {data.CThreadId} on current thread #{Thread.CurrentThread.ManagedThreadId}.");
                     },
                     new StringBuilder(string.Concat("Key_", (i % maxKexs).ToString())).ToString());
@@ -105,14 +105,14 @@ namespace EU.CqrXs.Console.Net48
                 if (i < quater || (i >= half && i < threequater))
                 {
                     string ckey = string.Concat("Key_", (i % maxKexs).ToString());
-                    CacheData data = new CacheData(ckey, Thread.CurrentThread.ManagedThreadId);
-                    MemoryCache.CacheDict.SetValue<CacheData>(ckey, data);
+                    CacheTestData data = new CacheTestData(ckey, Thread.CurrentThread.ManagedThreadId);
+                    MemoryCache.CacheDict.SetValue<CacheTestData>(ckey, data);
                     // Console.WriteLine($"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.");
                 }
                 else if ((i >= quater && i < half) || i >= threequater)
                 {
                     string strkey = "Key_" + (i % maxKexs).ToString();
-                    CacheData cacheData = (CacheData)MemoryCache.CacheDict[strkey];
+                    CacheTestData cacheData = (CacheTestData)MemoryCache.CacheDict.GetValue<CacheTestData>(strkey);
                     // Console.WriteLine($"Task get cache key #{strkey} => {cacheData.CValue} created at {cacheData.CTime} original thread {cacheData.CThreadId} on current thread #{Thread.CurrentThread.ManagedThreadId}.");
                 }
             }

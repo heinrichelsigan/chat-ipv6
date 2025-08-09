@@ -1,5 +1,4 @@
-﻿using StackExchange.Redis;
-using Area23.At.Framework.Library;
+﻿using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.Cqr;
 using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
@@ -31,7 +30,7 @@ namespace EU.CqrXs.Srv
     /// <summary>
     /// CqrService offers a simple chat room service with strong encryption
     /// </summary>
-    [WebService(Namespace = "https://srv.cqrxs.eu/v1.3/")]
+    [WebService(Namespace = "https://srv.cqrxs.eu/v1.6/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [System.ComponentModel.ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
@@ -341,6 +340,11 @@ namespace EU.CqrXs.Srv
             return base.TestCache();
         }
 
+        [WebMethod]
+        public override string GetKey(string key)
+        {
+            return base.GetKey(key);
+        }
 
         [WebMethod]
         public override string ResetCache()

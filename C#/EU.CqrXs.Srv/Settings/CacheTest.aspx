@@ -15,7 +15,8 @@
                     <asp:ListItem Enabled="true"  Selected="True" Text="AppDomain" Value="AppDomain" />
                     <asp:ListItem Enabled="true" Selected="False" Text="ApplicationState" Value="ApplicationState" />
                     <asp:ListItem Enabled="true" Selected="False" Text="JsonFile" Value="JsonFile" />
-                    <asp:ListItem Enabled="true" Selected="False" Text="Redis" Value="Redis" />
+                    <asp:ListItem Enabled="true" Selected="False" Text="RedisValkey" Value="RedisValkey" />
+                    <asp:ListItem Enabled="true" Selected="False" Text="RedisMS" Value="RedisMS" />
                 </asp:DropDownList>
                 <asp:Literal ID="Literal_Iterations" runat="server" ClientIDMode="Static" Text="iterations:" />
                 <asp:DropDownList ID="DropDownList_Iterations" runat="server" ClientIDMode="Static">
@@ -55,11 +56,11 @@
                 </asp:Table>                
             </div>
             <hr />
-            <div id="DivTest0" runat="server" style="background-color: floralwhite; border-width: 1; border-style: dashed">
+            <div id="DivTest0" runat="server" style="background-color: floralwhite; border-width: 1px; border-style: dashed">
             </div>
-            <div id="DivTest1" runat="server" style="background-color: lightcyan; border-width: 1; border-style: dashed">
+            <div id="DivTest1" runat="server" style="background-color: lightcyan; border-width: 1px; border-style: dashed">
             </div>
-            <div id="DivTest2" runat="server" style="background-color: lightgray; border-width: 1; border-style: dashed">
+            <div id="DivTest2" runat="server" style="background-color: lightgray; border-width: 1px; border-style: dashed">
             </div>
         </div>
     </form>

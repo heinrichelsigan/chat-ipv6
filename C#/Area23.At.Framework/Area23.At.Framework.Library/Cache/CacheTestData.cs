@@ -1,22 +1,15 @@
-﻿using Area23.At.Framework.Library.Static;
-using Area23.At.Framework.Library.Util;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Library.Cache
 {
 
     [Serializable]
-    public class CacheData
+    public class CacheTestData
     {
-        static readonly byte[] buffer = new byte[4096];
+        static byte[] buffer = new byte[16384];
         static Random random = new Random((DateTime.Now.Millisecond + 1) * (DateTime.Now.Second + 1));
+        
         [JsonIgnore]
         protected internal int CIndex { get; set; }
         public string CKey { get; set; }
@@ -24,12 +17,12 @@ namespace Area23.At.Framework.Library.Cache
         public int CThreadId { get; set; }
         public DateTime CTime { get; set; }
 
-        static CacheData()
+        static CacheTestData()
         {
             random.NextBytes(buffer);
         }
 
-        public CacheData()
+        public CacheTestData()
         {
             CIndex = 0;
             CValue = string.Empty;
@@ -38,7 +31,7 @@ namespace Area23.At.Framework.Library.Cache
             CThreadId = -1;
         }
 
-        public CacheData(string ckey) : this()
+        public CacheTestData(string ckey) : this()
         {
             CKey = ckey;
             CIndex = Int32.Parse(ckey.Replace("Key_", ""));
@@ -46,22 +39,27 @@ namespace Area23.At.Framework.Library.Cache
             CTime = DateTime.Now;
         }
 
-        public CacheData(string ckey, int cThreadId) : this(ckey)
+        public CacheTestData(string ckey, int cThreadId) : this(ckey)
         {
             CThreadId = cThreadId;
         }
 
-        public CacheData(int cThreadId) : this(string.Concat("Key_", cThreadId))
+        public CacheTestData(int cThreadId) : this(string.Concat("Key_", cThreadId))
         {
             CThreadId = cThreadId;
         }
 
 
-        internal string GetRandomString(int ix)
+        internal string GetRandomString(int idx, int size = 64, bool newRandom = true)
         {
-            byte[] restBytes = new byte[64];
-            Array.Copy(buffer, ix, restBytes, 0, 64);
-            return Convert.ToBase64String(restBytes, 0, 64);
+            if (newRandom) 
+                random.NextBytes(buffer);
+
+            int byteLen = ((idx + size) > buffer.Length) ? buffer.Length - idx : size;
+            byte[] restBytes = new byte[byteLen];
+            
+            Array.Copy(buffer, idx, restBytes, 0, byteLen);
+            return Convert.ToBase64String(restBytes, 0, byteLen);
         }
 
     }

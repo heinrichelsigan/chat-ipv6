@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
-using StackExchange.Redis;
 
 
 /// <summary>
@@ -25,31 +24,9 @@ public class BaseService
     protected internal string _decrypted = string.Empty, _encrypted = string.Empty;
     protected internal string _responseString = string.Empty;
     protected internal string _chatRoomNumber = string.Empty;
-    // protected internal ConnectionMultiplexer redis;
-    // protected internal ConfigurationOptions options;
     protected internal static bool useAWSCache = false, useAppState = true;
-    // protected internal string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
-    // protected internal StackExchange.Redis.IDatabase db;
-
-    /// <summary>
-    /// Persist encrypted messages in chat rooms in application state
-    /// use this option only for testing, because you will you get soon an out of memory error
-    /// </summary>
-    public static bool PersistMsgInApplicationState { get { return (PersistInCache.CacheType == PersistType.ApplicationState); } }
-
-    /// <summary>
-    /// Use Amazon elastic cache to persist encrypted messages in chat rooms
-    /// Fast option, but expensive, when we have a lot of huge size messages
-    /// </summary>
-    public static bool PersistMsgInAmazonElasticCache { get { return (PersistInCache.CacheType == PersistType.Redis); } }
-
-    /// <summary>
-    /// Use file system to encrypted messages in chat rooms
-    /// Fast option, but expensive, when we have a lot of huge size messages
-    /// </summary>
-    public static bool PersistMsgInFileSystem { get { return (PersistInCache.CacheType == PersistType.JsonFile); } }
-
-
+    // protected internal string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";   
+   
     public BaseService() 
     {
         //

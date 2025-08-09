@@ -422,7 +422,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
             if (string.IsNullOrEmpty(SerializedMsg))
             {
-                if (MsgType == null || MsgType == CType.Json || MsgType == CType.Json)
+                if (MsgType == null || MsgType == CType.None || MsgType == CType.Json)
                     SerializedMsg = this.ToJson();
                 else if (MsgType == CType.Xml)
                     SerializedMsg = this.ToXml();
@@ -442,7 +442,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
             if (string.IsNullOrEmpty(SerializedMsg))
             {
-                if (MsgType == null || MsgType == CType.Json || MsgType == CType.Json)
+                if (MsgType == null || MsgType == CType.None || MsgType == CType.Json)
                     SerializedMsg = this.ToJson();
                 else if (MsgType == CType.Xml)
                     SerializedMsg = this.ToXml();

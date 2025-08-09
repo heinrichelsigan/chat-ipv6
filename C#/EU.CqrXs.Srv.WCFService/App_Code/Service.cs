@@ -355,11 +355,11 @@ public class Service : BaseService, IService
 
         try
         {
-            if (PersistInCache.CacheType == PersistType.Redis)
+            if (PersistInCache.CacheType == PersistType.RedisValkey)
             {
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": Ready to connect to " +
                 ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY] + "\n";
-                string status = RedisCache.ConnMux.GetStatus();
+                string status = RedisValkeyCache.ValKeyInstance.Status;
                 testReport += DateTime.Now.Area23DateTimeMilliseconds() + ": ConnectionMulitplexer.Status = " + status + Environment.NewLine;
             }
 

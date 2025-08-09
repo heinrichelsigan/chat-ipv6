@@ -31,8 +31,8 @@ namespace EU.CqrXs.Srv.Settings
                 persistType = PersistType.ApplicationState;
             if (persistString.StartsWith("JsonFile"))
                 persistType = PersistType.JsonFile;
-            if (persistString.StartsWith("Redis"))
-                persistType = PersistType.Redis;
+            if (persistString.StartsWith("RedisValkey"))
+                persistType = PersistType.RedisValkey;
 
 
             if (!Int32.TryParse(this.DropDownList_Iterations.SelectedValue, out iterations))
@@ -262,8 +262,8 @@ namespace EU.CqrXs.Srv.Settings
                     ApplicationStateCache appStateCache = new ApplicationStateCache(persitVariant);
                     memoryCache = (MemoryCache)appStateCache;
                     break;
-                case PersistType.Redis:
-                    RedisCache redisCache = new RedisCache(persitVariant);
+                case PersistType.RedisValkey:
+                    RedisValkeyCache redisCache = new RedisValkeyCache(persitVariant);
                     memoryCache = (MemoryCache)redisCache;
                     break;
                 case PersistType.AppDomain:
@@ -293,26 +293,26 @@ namespace EU.CqrXs.Srv.Settings
                     taskArray[i] = Task.Factory.StartNew((object obj) =>
                     {
                         string ckey = string.Concat("Key_", (i % maxKexs).ToString());
-                        CacheData data = null;
+                        CacheTestData data = null;
                         try
                         {
-                            data = obj as CacheData;
+                            data = obj as CacheTestData;
                             if (data == null)
-                                data = new CacheData(ckey, Thread.CurrentThread.ManagedThreadId);
+                                data = new CacheTestData(ckey, Thread.CurrentThread.ManagedThreadId);
                         }
                         catch (Exception exCastData)
                         {
                             Area23Log.LogStatic(exCastData);
                         }
                         if (data == null) 
-                            data = new CacheData() { CKey = ckey, CThreadId = Thread.CurrentThread.ManagedThreadId, CTime = DateTime.Now };
+                            data = new CacheTestData() { CKey = ckey, CThreadId = Thread.CurrentThread.ManagedThreadId, CTime = DateTime.Now };
 
 
                         data.CThreadId = Thread.CurrentThread.ManagedThreadId;
-                        memoryCache.SetValue<CacheData>(ckey, data);
+                        memoryCache.SetValue<CacheTestData>(ckey, data);
                         s += $"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.\n";
                     },
-                    new CacheData("Key_" + (i % maxKexs).ToString()));
+                    new CacheTestData("Key_" + (i % maxKexs).ToString()));
                 }
                 else if ((i >= quater && i < half) || i >= threequater)
                 {
@@ -323,7 +323,7 @@ namespace EU.CqrXs.Srv.Settings
                         if (string.IsNullOrEmpty(strkey))
                             strkey = ckey;
 
-                        CacheData data = (CacheData)memoryCache.GetValue<CacheData>(strkey);
+                        CacheTestData data = (CacheTestData)memoryCache.GetValue<CacheTestData>(strkey);
                         if (data == null)
                             s += $"Task get cache key #{strkey} => (nil)";
                         else
@@ -359,9 +359,13 @@ namespace EU.CqrXs.Srv.Settings
                     ApplicationStateCache appStateCache = new ApplicationStateCache(persitVariant);
                     memoryCache = (MemoryCache)appStateCache;
                     break;
-                case PersistType.Redis:
-                    RedisCache redisCache = new RedisCache(persitVariant);
+                case PersistType.RedisValkey:
+                    RedisValkeyCache redisCache = new RedisValkeyCache(persitVariant);
                     memoryCache = (MemoryCache)redisCache;
+                    break;
+                case PersistType.RedisMS:
+                    RedisMSCache redisMSCache = new RedisMSCache(persitVariant);
+                    memoryCache = (MemoryCache)redisMSCache;
                     break;
                 case PersistType.AppDomain:
                 default:
@@ -386,14 +390,14 @@ namespace EU.CqrXs.Srv.Settings
                 if (i < quater || (i >= half && i < threequater))
                 {
                     string ckey = string.Concat("Key_", (i % maxKexs).ToString());
-                    CacheData data = new CacheData(ckey, Thread.CurrentThread.ManagedThreadId);
-                    memoryCache.SetValue<CacheData>(ckey, data);
+                    CacheTestData data = new CacheTestData(ckey, Thread.CurrentThread.ManagedThreadId);
+                    memoryCache.SetValue<CacheTestData>(ckey, data);
                     s += $"Task set cache key #{data.CKey} created at {data.CTime} on thread #{data.CThreadId}.\n";
                 }
                 else if ((i >= quater && i < half) || i >= threequater)
                 {
                     string strkey = "Key_" + (i % maxKexs).ToString();
-                    CacheData cacheData = (CacheData)memoryCache[strkey];
+                    CacheTestData cacheData = (CacheTestData)memoryCache.GetValue<CacheTestData>(strkey);
                     if (cacheData == null)
                         s += $"Task get cache key #{strkey} => (nil)\n";
                     else
@@ -429,10 +433,11 @@ namespace EU.CqrXs.Srv.Settings
                 persistType = PersistType.ApplicationState;
             if (persistString.StartsWith("JsonFile"))
                 persistType = PersistType.JsonFile;
-            if (persistString.StartsWith("Redis"))
-                persistType = PersistType.Redis;
+            if (persistString.StartsWith("RedisValkey"))
+                persistType = PersistType.RedisValkey;
+            if (persistString.StartsWith("RedisMS"))
+                persistType = PersistType.RedisMS ;
 
-            
             if (!Int32.TryParse(this.DropDownList_Iterations.SelectedValue, out iterations))
                 iterations = 128;
             foreach (ListItem item in CheckBoxList_TestType.Items)

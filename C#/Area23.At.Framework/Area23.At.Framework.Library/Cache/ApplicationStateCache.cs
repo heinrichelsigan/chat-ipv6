@@ -1,12 +1,6 @@
-﻿using Area23.At.Framework.Library.Cqr;
-using Area23.At.Framework.Library.Static;
-using Newtonsoft.Json.Linq;
+﻿using Area23.At.Framework.Library.Static;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Area23.At.Framework.Library.Cache
@@ -21,8 +15,6 @@ namespace Area23.At.Framework.Library.Cache
         protected internal static readonly object _smartLock = new object();
 
         public static new string CacheVariant = "ApplicationStateCache";
-        public override string CacheType => "ApplicationStateCache";
-
 
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
@@ -96,9 +88,11 @@ namespace Area23.At.Framework.Library.Cache
         }
 
 
-        public ApplicationStateCache(PersistType cacheType = PersistType.ApplicationState)
+        public ApplicationStateCache() : this(PersistType.ApplicationState) { }
+
+        public ApplicationStateCache(PersistType cacheType)
         {
-            _persistType = cacheType;
+            _persistType = (cacheType == PersistType.ApplicationState) ? cacheType : PersistType.ApplicationState;
         }
 
     }
