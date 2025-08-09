@@ -101,10 +101,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxSecretKey = new ComboBox();
             RichTextBoxChat = new RichTextBox();
             PanelDestination = new Panel();
-            PeerServerSwitch = new Panels.PeerServerSwitchPanel(components);
+            DragnDropBoxFiles = new EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox(components);
+            PeerServerSwitch = new EU.CqrXs.WinForm.SecureChat.Controls.Panels.PeerServerSwitchPanel(components);
             ButtonSend = new Button();
             ButtonAttach = new Button();
-            LinkedLabelsBox = new GroupBoxes.LinkLabelsBox(components);
+            LinkedLabelsBox = new EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox(components);
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
@@ -219,7 +220,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemSend.BackColor = SystemColors.MenuBar;
             MenuCommandsItemSend.Name = "MenuCommandsItemSend";
             MenuCommandsItemSend.ShortcutKeys = Keys.Control | Keys.S;
-            MenuCommandsItemSend.Size = new Size(180, 22);
+            MenuCommandsItemSend.Size = new Size(178, 22);
             MenuCommandsItemSend.Text = "send";
             MenuCommandsItemSend.ToolTipText = "sends a message";
             // 
@@ -228,7 +229,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemAttach.BackColor = SystemColors.MenuBar;
             MenuCommandsItemAttach.Name = "MenuCommandsItemAttach";
             MenuCommandsItemAttach.ShortcutKeys = Keys.Control | Keys.A;
-            MenuCommandsItemAttach.Size = new Size(180, 22);
+            MenuCommandsItemAttach.Size = new Size(178, 22);
             MenuCommandsItemAttach.Text = "attach";
             MenuCommandsItemAttach.ToolTipText = "attaches file to send; in prototype only  file extension image audio and video is supported";
             // 
@@ -236,14 +237,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             MenuCommandsSeperator.BackColor = SystemColors.MenuBar;
             MenuCommandsSeperator.Name = "MenuCommandsSeperator";
-            MenuCommandsSeperator.Size = new Size(177, 6);
+            MenuCommandsSeperator.Size = new Size(175, 6);
             // 
             // MenuCommandsItemRefresh
             // 
             MenuCommandsItemRefresh.BackColor = SystemColors.MenuBar;
             MenuCommandsItemRefresh.Name = "MenuCommandsItemRefresh";
             MenuCommandsItemRefresh.ShortcutKeys = Keys.Control | Keys.R;
-            MenuCommandsItemRefresh.Size = new Size(180, 22);
+            MenuCommandsItemRefresh.Size = new Size(178, 22);
             MenuCommandsItemRefresh.Text = "refresh";
             MenuCommandsItemRefresh.ToolTipText = "refreshes, when the terminal is flushed";
             // 
@@ -252,7 +253,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuCommandsItemClear.BackColor = SystemColors.MenuBar;
             MenuCommandsItemClear.Name = "MenuCommandsItemClear";
             MenuCommandsItemClear.ShortcutKeys = Keys.Control | Keys.Delete;
-            MenuCommandsItemClear.Size = new Size(180, 22);
+            MenuCommandsItemClear.Size = new Size(178, 22);
             MenuCommandsItemClear.Text = "clear";
             MenuCommandsItemClear.ToolTipText = "clears completey all chat windows";
             // 
@@ -341,14 +342,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuNetworkItemMyIps.BackColor = SystemColors.MenuBar;
             MenuNetworkItemMyIps.DropDownItems.AddRange(new ToolStripItem[] { MenuItemExternalIp });
             MenuNetworkItemMyIps.Name = "MenuNetworkItemMyIps";
-            MenuNetworkItemMyIps.Size = new Size(180, 22);
+            MenuNetworkItemMyIps.Size = new Size(177, 22);
             MenuNetworkItemMyIps.Text = "my ip's";
             // 
             // MenuItemExternalIp
             // 
             MenuItemExternalIp.BackColor = SystemColors.MenuBar;
             MenuItemExternalIp.Name = "MenuItemExternalIp";
-            MenuItemExternalIp.Size = new Size(180, 22);
+            MenuItemExternalIp.Size = new Size(160, 22);
             MenuItemExternalIp.Text = "External Ip's";
             // 
             // MenuItemFriendIp
@@ -356,7 +357,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuItemFriendIp.BackColor = SystemColors.MenuBar;
             MenuItemFriendIp.DropDownItems.AddRange(new ToolStripItem[] { MenuNetworkComboBoxFriendIp });
             MenuItemFriendIp.Name = "MenuItemFriendIp";
-            MenuItemFriendIp.Size = new Size(180, 22);
+            MenuItemFriendIp.Size = new Size(177, 22);
             MenuItemFriendIp.Text = "friend ip's";
             MenuItemFriendIp.ToolTipText = "You can enter here directly friend ip's, if your connection is free of SNAT/DNAT";
             // 
@@ -370,7 +371,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             MenuNetworkItemProxyServers.BackColor = SystemColors.MenuBar;
             MenuNetworkItemProxyServers.Name = "MenuNetworkItemProxyServers";
-            MenuNetworkItemProxyServers.Size = new Size(180, 22);
+            MenuNetworkItemProxyServers.Size = new Size(177, 22);
             MenuNetworkItemProxyServers.Text = "proxies";
             MenuNetworkItemProxyServers.ToolTipText = "proxies are needed mainly to connect to people, where no endpoint to endpoint ip connection is possible";
             // 
@@ -379,14 +380,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             MenuNetworkSeparatorIp.BackColor = SystemColors.MenuBar;
             MenuNetworkSeparatorIp.ForeColor = SystemColors.ActiveBorder;
             MenuNetworkSeparatorIp.Name = "MenuNetworkSeparatorIp";
-            MenuNetworkSeparatorIp.Size = new Size(177, 6);
+            MenuNetworkSeparatorIp.Size = new Size(174, 6);
             // 
             // MenuNetworkItemIPv6Secure
             // 
             MenuNetworkItemIPv6Secure.BackColor = SystemColors.MenuBar;
             MenuNetworkItemIPv6Secure.Name = "MenuNetworkItemIPv6Secure";
             MenuNetworkItemIPv6Secure.ShortcutKeys = Keys.Control | Keys.D6;
-            MenuNetworkItemIPv6Secure.Size = new Size(180, 22);
+            MenuNetworkItemIPv6Secure.Size = new Size(177, 22);
             MenuNetworkItemIPv6Secure.Text = "ip6 cqr";
             MenuNetworkItemIPv6Secure.ToolTipText = "you can check it only, when you have an ipv6 address and you want to chat only to partners, where ip6 connect is possible";
             // 
@@ -845,6 +846,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // PanelDestination
             // 
             PanelDestination.BackColor = SystemColors.ActiveCaption;
+            PanelDestination.Controls.Add(DragnDropBoxFiles);
             PanelDestination.Controls.Add(PeerServerSwitch);
             PanelDestination.Controls.Add(ButtonSend);
             PanelDestination.Controls.Add(ButtonAttach);
@@ -856,6 +858,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelDestination.Name = "PanelDestination";
             PanelDestination.Size = new Size(168, 663);
             PanelDestination.TabIndex = 70;
+            // 
+            // DragnDropBoxFiles
+            // 
+            DragnDropBoxFiles.AllowDrop = true;
+            DragnDropBoxFiles.BackColor = SystemColors.ControlLightLight;
+            DragnDropBoxFiles.Font = new Font("Lucida Sans Unicode", 8.5F);
+            DragnDropBoxFiles.Location = new Point(4, 537);
+            DragnDropBoxFiles.Margin = new Padding(1);
+            DragnDropBoxFiles.Name = "DragnDropBoxFiles";
+            DragnDropBoxFiles.Padding = new Padding(1);
+            DragnDropBoxFiles.Size = new Size(160, 94);
+            DragnDropBoxFiles.TabIndex = 81;
+            DragnDropBoxFiles.TabStop = false;
+            DragnDropBoxFiles.Text = "DragnDropBoxFiles";            
             // 
             // PeerServerSwitch
             // 
@@ -872,7 +888,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // ButtonSend
             // 
             ButtonSend.Font = new Font("Lucida Sans Unicode", 9F);
-            ButtonSend.Location = new Point(8, 633);
+            ButtonSend.Location = new Point(4, 633);
             ButtonSend.Margin = new Padding(1);
             ButtonSend.Name = "ButtonSend";
             ButtonSend.Padding = new Padding(1);
@@ -902,7 +918,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             LinkedLabelsBox.Margin = new Padding(0);
             LinkedLabelsBox.Name = "LinkedLabelsBox";
             LinkedLabelsBox.Padding = new Padding(0);
-            LinkedLabelsBox.Size = new Size(160, 400);
+            LinkedLabelsBox.Size = new Size(160, 307);
             LinkedLabelsBox.TabIndex = 83;
             LinkedLabelsBox.TabStop = false;
             LinkedLabelsBox.Text = "Attachments";
@@ -1069,6 +1085,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripSeparator toolStripSeparator3;
+        private GroupBoxes.DragNDropBox DragnDropBoxFiles;
     }
 
 }

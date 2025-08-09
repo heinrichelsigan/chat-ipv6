@@ -46,12 +46,7 @@
             this.Size = new Size(144, 112);
             this.TabIndex = 81;
             this.TabStop = false;
-            this.Text = "Drag and Drop Area";
-            DragDrop += DragNDropBox_DragDrop;
-            DragEnter += DragNDropBox_DragEnter;
-            DragLeave += DragNDropBox_DragLeave;
-            MouseEnter += DragNDropBox_MouseEnter;
-            MouseLeave += DragNDropBox_MouseLeave;
+            this.Text = "Drag and Drop Area";            
             ResumeLayout(false);
             PerformLayout();
         }

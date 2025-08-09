@@ -24,7 +24,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
     /// <summary>
-    /// RichTextChat main form
+    /// SecureChat main form
     /// </summary>
     public partial class RichTextChat : BaseChatForm
     {
@@ -106,11 +106,21 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         #endregion Properties
 
         /// <summary>
-        /// Ctor
+        /// Parameterless constructor of <see cref="RichTextChat">RichTextChat  Windows Form</see> (extends <see cref="BaseChatForm"/>)
+        /// 1. calls InitializeComponents in RichTextChat.designer.cs file
+        /// 2. sets up constant definitions / limitations
+        /// 3. initializes async event handlers for several interactive gui elements 
+        /// 4. initializes network client socket <see cref="ClientSocket_DataReceived"/> callback in instance variable <see cref="clientSocket_DataReceived"/>
+        ///    initializes <see cref="EventHandler{Area23EventArgs{ReceiveData}}  instance variable <see cref="receivedDataEventHandler"/> with delegate variable <see cref="clientSocket_DataReceived"/>
+        /// 5. Creates (if they not already exist) sub directories for attached files via <see cref="MiniToolBox.CreateAttachDirectory()"/>
+        /// 6. Initializes synchronous EventHandler for DragNDrop at <see cref="LinkedLabelsBox"/>
+        ///    Initializes synchronous EventHandler for change chat mode peer2peer - server session switch bar in <see cref="PeerServerSwitch"/>
+        /// 7. Last but not least sets <see cref="StripProgressBar"/> to initial value 0
         /// </summary>
         public RichTextChat() : base()
         {
             InitializeComponent();
+
             TextBoxSource.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
             TextBoxDestionation.MaxLength = Constants.SOCKET_BYTE_BUFFEER;
             SetComboBoxText(ComboBoxIp, Constants.ENTER_IP);
@@ -127,8 +137,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonSend.Click += new System.EventHandler(async (sender, e) => await ButtonSend_Click(sender, e));
             ButtonAttach.Click += new System.EventHandler(async (sender, e) => await ButtonAttach_Click(sender, e));
 
+            clientSocket_DataReceived = delegate (object sender, Area23EventArgs<ReceiveData> eventReceived) { OnClientReceive(sender, eventReceived); };
+            receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
+
             MiniToolBox.CreateAttachDirectory();
             this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
+            this.DragnDropBoxFiles.OnDragNDrop += OnDragNDrop;
             this.PeerServerSwitch.FireUpChanged += TooglePeerServer;
             this.SetProgressBar(this.StripProgressBar, 0);
         }
@@ -253,16 +267,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
 
             string comboSecKeyTxt = GetComboBoxText(ComboBoxSecretKey);
-            CqrFacade hashFacade = new CqrFacade(comboSecKeyTxt);
+            CqrFacade clientFacade = new CqrFacade(comboSecKeyTxt);
             string? pipeText = GetTextBoxText(TextBoxPipe);
             if (!string.IsNullOrEmpty(pipeText))
             {
-                if (hashFacade.PipeString.Equals(pipeText))
+                if (clientFacade.PipeString.Equals(pipeText))
                     return pipeText;
             }
 
-            pipeText = hashFacade.PipeString;
-            SetTextBoxText(TextBoxPipe, hashFacade.PipeString);
+            pipeText = clientFacade.PipeString;
+            SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
 
             return pipeText;
 
@@ -326,9 +340,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
                 return;
 
-            CqrFacade facade = new CqrFacade(myServerKey);
-            SetTextBoxText(TextBoxPipe, facade.PipeString);
-            SetStatusText(StripStatusLabel, $"Changed secret key to {myServerKey} => secure pipe: {facade.PipeString}");
+            CqrFacade clientFacade = new CqrFacade(myServerKey);
+            SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
+            SetStatusText(StripStatusLabel, $"Changed secret key to {myServerKey} => secure pipe: {clientFacade.PipeString}");
 
             if (!this.ComboBoxSecretKey.Items.Contains(GetComboBoxText(ComboBoxSecretKey)))
                 this.ComboBoxSecretKey.Items.Add(GetComboBoxText(ComboBoxSecretKey));
@@ -372,8 +386,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 return;
             }
             this.ComboBoxSecretKey.BackColor = Color.White;
-            CqrFacade facade = new CqrFacade(secretKey);
-            SetTextBoxText(TextBoxPipe, facade.PipeString);
+            CqrFacade clientFacade = new CqrFacade(secretKey);
+            SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
         }
 
         /// <summary>
@@ -559,8 +573,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             myServerKey = CqrXsEuSrvKey;
 
 
-            CqrFacade facade = new CqrFacade(CqrXsEuSrvKey);
-            SetTextBoxText(TextBoxPipe, facade.PipeString);
+            CqrFacade serverFacade = new CqrFacade(CqrXsEuSrvKey);
+            SetTextBoxText(TextBoxPipe, serverFacade.PipeString);
             // this.TextBoxPipe.Text = srv1stMsg.PipeString;
 
             Thread.Sleep(32);
@@ -571,7 +585,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             CContact myContact = Entities.Settings.Singleton.MyContact;
 
-            CContact? returnContact = facade.SendFirstSrvMsg_Soap(myContact, EncodingType.Base64);
+            CContact? returnContact = serverFacade.SendFirstSrvMsg_Soap(myContact, EncodingType.Base64);
 
             barProgress = (barProgress <= 95) ? barProgress + 5 : 100;
             this.SetProgressBar(this.StripProgressBar, barProgress);
@@ -610,14 +624,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if ((ipAddrString = GetComboBoxMustHaveText(ref ComboBoxIp)) == null)
                 return false;
 
-            CqrFacade cqrFacade = new CqrFacade(myServerKey);
+            CqrFacade clientFacade = new CqrFacade(myServerKey);
             string unencrypted = "Init: " + clientIpAddress?.ToString() + " " + Entities.Settings.Singleton.MyContact.NameEmail;
             try
             {
                 if (!IPAddress.TryParse(ipAddrString, out partnerIpAddress))
                     throw new InvalidDataException("Cannot parse " + ipAddrString + " to IPAddress!");
 
-                string peerResponse = cqrFacade.Send_CContent_Peer(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
+                string peerResponse = clientFacade.Send_CContent_Peer(unencrypted, partnerIpAddress, Constants.CHAT_PORT, EncodingType.Base64);
 
                 string userMsg = chat.AddMyMessage(unencrypted);
                 AppendText(TextBoxSource, userMsg);
@@ -987,8 +1001,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     CqrFacade serverFacade = new CqrFacade(CqrXsEuSrvKey);
                     string contactNameEmail = GetComboBoxText(this.ComboBoxContacts);
 
-                    CContact myContact = new CContact(Settings.Singleton.MyContact, chatRoomNr, serverFacade.PipeString);
-                    CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, serverFacade.PipeString);
+                    CContact myContact = new CContact(Settings.Singleton.MyContact, chatRoomNr, clientFacade.PipeString);
+                    CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, clientFacade.PipeString);
 
                     if (Settings.Singleton.ChatRoom == null || !Settings.Singleton.ChatRoom.ChatRoomNr.Equals(chatRoomNr, StringComparison.CurrentCultureIgnoreCase))
                         Settings.Singleton.ChatRoom = new CChatRoom(chatRoomNr);
@@ -1141,9 +1155,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 {
                     if (string.IsNullOrEmpty(rfmsg.TContent))
                     {
-                        string msgCntn = $"Invitation from {rfmsg.Sender.NameEmail} to {rfmsg.CRoom.ChatRoomNr}";
-                        msg = new CContent(msgCntn, clientFacade.PipeString, CType.Json, MD5Sum.HashString(msgCntn));
-                        rfmsg.TContent = msg.EncryptToJson(myServerKey);
+                        rfmsg.TContent = rfmsg.CRoom.ChatRoomNr; ;
                     }
 
                     if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
@@ -1206,9 +1218,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 string msgInnerContent = (string)(rfmsg.TContent);
                 try
                 {
-
-                    if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
-                    msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
+                    if (msgInnerContent.Equals(chatRoomNr, StringComparison.CurrentCultureIgnoreCase) ||
+                        msgInnerContent.EndsWith(chatRoomNr, StringComparison.CurrentCultureIgnoreCase) ||
+                        msgInnerContent.StartsWith(chatRoomNr.Replace(".json", ""), StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        await PlaySoundFromResourcesAsync("sound_ups");
+                    }
+                    else if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
+                        msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
                     {
                         msgFile = new CFile(msgInnerContent, CType.Json);
                         cReceivedFile = msgFile.DecryptFromJson(myServerKey, msgInnerContent);
@@ -1397,7 +1414,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (PeerSessionTriState != PeerSession3State.Peer2Peer)
                 Task.Run((async () => await TooglePeerSessionServerTriState(0, false)));
 
-            CqrFacade receiveFacade = new CqrFacade(myServerKey);
+            CqrFacade clientFacade = new CqrFacade(myServerKey);
 
             if (sender != null)
             {
@@ -1568,8 +1585,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 if (chat == null)
                     chat = new Chat(0);
 
-                CqrFacade ddFacade = new CqrFacade(myServerKey);
-                CqrFacade euFacade = new CqrFacade(CqrXsEuSrvKey);
+                myServerKey = GetComboBoxText(this.ComboBoxSecretKey);
+                CqrFacade clientFacade = new CqrFacade(myServerKey);
+                CqrFacade serverFacade = new CqrFacade(CqrXsEuSrvKey);
 
                 if (ea.GenericTData != null && File.Exists(ea.GenericTData))
                 {
@@ -1616,10 +1634,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         string contactNameEmail = GetComboBoxText(ComboBoxContacts);
 
-                        CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, euFacade.PipeString);
-                        CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, euFacade.PipeString);
+                        CqrContact myContact = new CqrContact(Settings.Singleton.MyContact, chatRoomNr, clientFacade.PipeString);
+                        CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, clientFacade.PipeString);
 
-                        SetTextBoxText(TextBoxPipe, ddFacade.PipeString);
+                        SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
                         // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
                         myContact._hash = GetHash();
                         myContact._message = chatRoomNr;
@@ -1633,15 +1651,15 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         string fileNameOnly = Path.GetFileName(filename);
                         string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
 
-                        CFile cfile = new CFile(fileNameOnly, mimeType, fileBytes, ddFacade.PipeString, md5, sha256);
+                        CFile cfile = new CFile(fileNameOnly, mimeType, fileBytes, clientFacade.PipeString, md5, sha256);
                         string encryptedFileMsg = cfile.EncryptToJson(myServerKey);
-                        SetStatusText(StripStatusLabel, $"File {cfile.FileName} enrypted with client, now generating server message.");
+                        SetStatusText(StripStatusLabel, $"File {cfile.FileName} encrypted with client, now generating server message.");
 
-                        CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, encryptedFileMsg, euFacade.PipeString, Settings.Singleton.ChatRoom);
+                        CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, encryptedFileMsg, serverFacade.PipeString, Settings.Singleton.ChatRoom);
                         SetStatusText(StripStatusLabel, $"Generated server message with encrypted file inside, prepating to send...");
 
                         // Send message to WebService
-                        CSrvMsg<string> rfmsg = ddFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
+                        CSrvMsg<string> rfmsg = serverFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
                         if (rfmsg != null)
                         {
                             if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
@@ -1651,9 +1669,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                 Settings.Singleton.MyContact = myContact;
                             }
                             if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
+                            {
                                 Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
+                                chatRoomNr = Settings.Singleton.ChatRoom.ChatRoomNr;
+                            }
 
-                            SetStatusText(StripStatusLabel, $"Send server message, now saving results from chatroom...");
+                            SetStatusText(StripStatusLabel, $"Encrypted file {cfile.FileName} and sended it to chat room {chatRoomNr}...");
                             Settings.SaveSettings(Settings.Singleton);
                         }
 
@@ -1820,11 +1841,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     }
 
                                     Thread.Sleep(Constants.CLOSING_TIMEOUT);
-                                    clientSocket_DataReceived =
-                                                delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
-                                                {
-                                                    OnClientReceive(sender, eventReceived);
-                                                };
+                                    clientSocket_DataReceived = delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                    {
+                                        OnClientReceive(sender, eventReceived);
+                                    };
                                     receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
                                     ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                                     SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
@@ -2472,11 +2492,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     if (addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                                         SetMenuItemChecked(this.MenuNetworkItemIPv6Secure, true);
                                     // this.MenuNetworkItemIPv6Secure.Checked = true;
-                                    clientSocket_DataReceived =
-                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
-                                        {
-                                            OnClientReceive(sender, eventReceived);
-                                        };
+                                    clientSocket_DataReceived = delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                                    {
+                                        OnClientReceive(sender, eventReceived);
+                                    };
                                     receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
                                     ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                                 }
@@ -2502,6 +2521,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             return myIpList;
 
         }
+
 
         /// <summary>
         /// IPAdressSelected Delegate is invoked, 
@@ -2548,11 +2568,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
 
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
-                        clientSocket_DataReceived =
-                                        delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
-                                        {
-                                            OnClientReceive(sender, eventReceived);
-                                        };
+                        clientSocket_DataReceived = delegate (object sender, Area23EventArgs<ReceiveData> eventReceived)
+                        {
+                            OnClientReceive(sender, eventReceived);
+                        };
                         receivedDataEventHandler = new EventHandler<Area23EventArgs<ReceiveData>>(clientSocket_DataReceived);
                         ipSockListener = new Area23.At.Framework.Core.Net.IpSocket.Listener(clientIpAddress, receivedDataEventHandler);
                         SetStatusText(StripStatusLabel, $"Listening on  {clientIpAddress.AddressFamily.ShortInfo()} {clientIpAddress.ToString()}:{Constants.CHAT_PORT}");
