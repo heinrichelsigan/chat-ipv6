@@ -1,5 +1,7 @@
-﻿using Area23.At.Framework.Library.Util;
+﻿using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -71,8 +73,6 @@ namespace Area23.At.Framework.Library.Static
 
             return consoleOutput;
         }
-
-
         public static string ExecuteWithOutAndErr(string filepath, string arguments, out string consoleOutput, out string consoleError, bool useShellExecute = false)
         {
             string workingDir = "", args = (!string.IsNullOrEmpty(arguments)) ? arguments : "";
@@ -115,7 +115,7 @@ namespace Area23.At.Framework.Library.Static
 
             Area23Log.LogStatic(String.Format("ProcessCmd.Execute(filepath = {0}, args = {1}, useShellExecute = {2}) finished successfull, console msg: {3}\n",
                 filepath, args, useShellExecute, consoleOutErr));
-            
+
             return consoleOutErr;
         }
 

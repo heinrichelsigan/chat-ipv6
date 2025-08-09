@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Windows.Documents;
 
 // https://github.com/DataDink/Bumpkit/blob/master/BumpKit/BumpKit/GifEncoder.cs
 
@@ -45,7 +48,7 @@ namespace Area23.At.Framework.Library.Util
 
         private bool _isFirstImage = true;
         private bool _isFinished = false;
-        private int? _repeatCount;
+        private Nullable<int> _repeatCount;
         TimeSpan _frameDelay;
         private List<byte> _byteList;
         
@@ -71,7 +74,7 @@ namespace Area23.At.Framework.Library.Util
         /// <param name="stream">The stream that will be written to.</param>
         /// <param name="width">Sets the width for this gif or null to use the first frame's width.</param>
         /// <param name="height">Sets the height for this gif or null to use the first frame's height.</param>
-        public GifEncoder(Image img, int? repeatCount = null, TimeSpan? frameDelay = null)
+        public GifEncoder(Image img, Nullable<int> repeatCount = null, TimeSpan? frameDelay = null)
         {
             _byteList = new List<byte>();            
             _repeatCount = repeatCount;

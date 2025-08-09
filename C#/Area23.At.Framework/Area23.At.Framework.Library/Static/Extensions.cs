@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Library.Util;
+﻿using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -9,8 +10,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace Area23.At.Framework.Library.Static
 {
@@ -98,7 +101,7 @@ namespace Area23.At.Framework.Library.Static
         /// <returns>formatted date time <see cref="string"/> </returns>
         public static string Area23DateTimeWithMillis(this DateTime dateTime)
         {
-            string formatted = String.Format("{0:yyyy-MM-dd_HH:mm:ss.fff}", dateTime);
+            string formatted = String.Format("{0:yyyy-MM-dd_HH.mm.ss.fff}", dateTime);
             // return formatted;
             return formatted;
         }

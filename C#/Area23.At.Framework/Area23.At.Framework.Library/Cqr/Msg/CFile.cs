@@ -134,7 +134,6 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             MsgType = msgArt;
             EnCodingType = EncodingType.Base64;
             this._hash = hash;
-            FileByteLen = Data.LongLength;
 
         }
 
@@ -181,7 +180,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             leftDest.Base64Type = rightSrc.Base64Type;
             leftDest.Data = rightSrc.Data;
             leftDest.Sha256Hash = rightSrc.Sha256Hash;
-            leftDest.FileByteLen = Math.Max(rightSrc.FileByteLen, rightSrc.Data.LongLength);
+            leftDest.FileByteLen = rightSrc.FileByteLen;
             leftDest.EnCodingType = rightSrc.EnCodingType;
             leftDest.Base64Type = rightSrc.Base64Type;
             leftDest.SerializedMsg = "";
@@ -485,7 +484,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                cfile._hash = symmPipe.PipeString;
+                cfile._hash = hash;
                 cfile.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cfile._message), "");
                 cfile.Sha256Hash = Sha256Sum.Hash(cfile.Data, "");
 
@@ -537,13 +536,15 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 byte[] cipherBytes = cfile.CBytes;
                 byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
 
-            
+                if (!cfile._hash.Equals(symmPipe.PipeString))
+                    throw new CqrException($"Hash: {cfile._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+
                 string md5Hash = MD5Sum.HashString(String.Concat(serverKey, cfile._hash, symmPipe.PipeString, cfile._message), "");
-                if (!md5Hash.Equals(cfile.Md5Hash) && !cfile._hash.Equals(symmPipe.PipeString))
+                if (!md5Hash.Equals(cfile.Md5Hash))
                 {
-                    string md5ErrMsg = $"Hash: {cfile._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}; md5Hash: {md5Hash} doesn't match property Md5Hash: {cfile.Md5Hash}";
+                    string md5ErrMsg = $"md5Hash: {md5Hash} doesn't match property Md5Hash: {cfile.Md5Hash}";
                     Area23Log.LogStatic(md5ErrMsg);
-                    throw new CqrException(md5ErrMsg);
+                    // throw new CqrException(md5ErrMsg);
                 }
                 string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
                 if (!sha256Hash.Equals(cfile.Sha256Hash))

@@ -1,8 +1,13 @@
-﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
-using Area23.At.Framework.Library.Static;
-using System;
+﻿using System;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Area23.At.Framework.Library.Crypt.EnDeCoding;
+using Area23.At.Framework.Library.Util;
+using Area23.At.Framework.Library.Static;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 {

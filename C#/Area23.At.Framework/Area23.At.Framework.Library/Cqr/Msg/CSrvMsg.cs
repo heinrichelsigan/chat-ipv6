@@ -285,12 +285,10 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         {
             try
             {
-                if (CBytes == null || CBytes.Length == 0)
-                    return true;
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
 
-                byte[] cipherBytes = CBytes;                
+                byte[] cipherBytes = CBytes;
                 byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
                 string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
                 while (decrypted[decrypted.Length - 1] == '\0')
@@ -413,7 +411,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                cSrvMsg._hash = symmPipe.PipeString;
+                cSrvMsg._hash = hash;
                 cSrvMsg.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cSrvMsg._message), "");
 
                 byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(cSrvMsg.Message);

@@ -34,7 +34,7 @@ namespace Area23.At.Framework.Library.Static
 
         public const string APP_NAME = "Area23.At";
         public const string APP_DIR = "net";
-        public const string VERSION = "v2.25.805";
+        public const string VERSION = "v2.25.411";
         public const string VALKEY_CACHE_HOST = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com";
         public const int VALKEY_CACHE_PORT = 6379;
         public const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
@@ -47,6 +47,7 @@ namespace Area23.At.Framework.Library.Static
         public const string CQR_SERVICE_SOAP12 = "CqrServiceSoap12";
         public const string CQR_SRV_SOAP = "CqrSrvSoap";
         public const string CQR_SRV_SOAP12 = "CqrSrvSoap12";
+
 
         public const string AREA23_URL = "https://area23.at";
         public const string APP_PATH = "https://area23.at/net/";
@@ -140,6 +141,7 @@ namespace Area23.At.Framework.Library.Static
         public const string BASE_APP_PATH_WIN = "BaseAppPathWin";
         public const string APP_DIR_PATH_UNIX = "AppDirPathUnix";
         public const string BASE_APP_PATH_UNIX = "BaseAppPathUnix";
+
         public const string BIN_DIR = "bin";
         public const string CALC_DIR = "Calc";
         public const string CSS_DIR = "css";
@@ -152,7 +154,7 @@ namespace Area23.At.Framework.Library.Static
         public const string JSON_DIR = "json";
         public const string LOG_DIR = "log";
         public const string LOG_EXT = ".log";
-        public const string LOG_EXCEPTION_STATIC ="LogExceptionStatic"; 
+        public const string LOG_EXCEPTION_STATIC = "LogExceptionStatic";
         public const string OUT_DIR = "out";        
         public const string QR_DIR = "Qr";
         public const string RES_DIR = "res";
@@ -180,7 +182,6 @@ namespace Area23.At.Framework.Library.Static
         
         public const string UTF8_JSON = "utf8symol.json";
         public const string JSON_SAVE_FILE = "urlshort.json";
-        public const string JSON_APPDICT_FILE = "appdict.json";
         public const string JSON_CONTACTS = "contacts";
         public const string JSON_CONTACTS_FILE = "contacts.json";
         public const string JSON_SETTINGS_FILE = "settings.json";        

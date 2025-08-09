@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
@@ -56,7 +57,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         }
 
         /// <summary>
-        /// RijndaelGenWithKey - Generate new <see cref="Rijndael"/> with secret key
+        /// RijndaelGenWithKey - Generate new <see cref="Rfc3211Wrap"/> with secret key
         /// </summary>
         /// <param name="secretKey">key param for encryption</param>
         /// <param name="usrHash">user key hash</param>

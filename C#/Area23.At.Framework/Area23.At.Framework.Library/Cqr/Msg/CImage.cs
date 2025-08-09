@@ -531,7 +531,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                cimg._hash = symmPipe.PipeString;
+                cimg._hash = hash;
                 cimg.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cimg._message), "");
                 cimg.Sha256Hash = Sha256Sum.Hash(cimg.ImageData, "");
 

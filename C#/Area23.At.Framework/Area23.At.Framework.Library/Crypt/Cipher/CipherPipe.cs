@@ -1,9 +1,14 @@
 ﻿using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Static;
+using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher
 {
@@ -147,7 +152,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
         /// CipherPipe ctor with only key
         /// </summary>
         /// <param name="key"></param>
-        public CipherPipe(string key = "heinrich.elsigan@area23.at") : this(key, EnDeCodeHelper.KeyToHex(key)) 
+        public CipherPipe(string key = "heinrich.elsigan@area23.at") : this(key, EnDeCodeHelper.KeyToHex(key))
         {
             cipherKey = key;
         }
@@ -176,6 +181,10 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                     RC564.RC564GenWithKey(secretKey, hash, true);
                     encryptBytes = RC564.Encrypt(inBytes);
                     break;
+                case CipherEnum.Rfc3211:
+                    Rfc3211Wrap.Rfc3211WrapGenWithKey(secretKey, hash, true);
+                    encryptBytes = Rfc3211Wrap.Encrypt(inBytes);
+                    break;
                 case CipherEnum.Rsa:
                     var keyPair = Asymmetric.Rsa.RsaGenWithKey(Constants.RSA_PUB, Constants.RSA_PRV);
                     string privKey = keyPair.Private.ToString();
@@ -194,7 +203,6 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                 case CipherEnum.Aes:
                 case CipherEnum.AesLight:
                 case CipherEnum.Aria:
-                case CipherEnum.Rijndael:
                 case CipherEnum.BlowFish:
                 case CipherEnum.Camellia:
                 case CipherEnum.Cast5:
@@ -252,6 +260,10 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                     RC564.RC564GenWithKey(secretKey, hash, true);
                     decryptBytes = RC564.Decrypt(cipherBytes);
                     break;
+                case CipherEnum.Rfc3211:
+                    Rfc3211Wrap.Rfc3211WrapGenWithKey(secretKey, hash, false);
+                    decryptBytes = Rfc3211Wrap.Decrypt(cipherBytes);
+                    break;
                 case CipherEnum.Rsa:
                     Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair keyPair = Asymmetric.Rsa.RsaGenWithKey(Constants.RSA_PUB, Constants.RSA_PRV);
                     string privKey = keyPair.Private.ToString();
@@ -266,7 +278,6 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                 case CipherEnum.Aes:
                 case CipherEnum.AesLight:
                 case CipherEnum.Aria:
-                case CipherEnum.Rijndael:
                 case CipherEnum.BlowFish:
                 case CipherEnum.Camellia:
                 case CipherEnum.Cast5:
@@ -322,7 +333,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
 #endif
             if (InPipe == null || InPipe.Length == 0)
                 Array.Copy(inBytes, 0, encryptedBytes, 0, inBytes.Length);
-            else 
+            else
                 foreach (CipherEnum cipher in InPipe)
                 {
                     encryptedBytes = EncryptBytesFast(inBytes, cipher, cipherKey, cipherHash);
@@ -367,6 +378,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
 
             return cipherBytes;
         }
+
 
     }
 

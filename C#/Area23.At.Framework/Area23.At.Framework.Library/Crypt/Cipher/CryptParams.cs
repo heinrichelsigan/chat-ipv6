@@ -2,6 +2,11 @@
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher
 {
@@ -58,9 +63,14 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
             switch (Cipher)
             {
                 case CipherEnum.Aes:
-                case CipherEnum.Rijndael:
                     Size = 256;
                     KeyLen = 32;
+                    Mode = "ECB";
+                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.AesEngine();
+                    break;
+                case CipherEnum.Rfc3211:
+                    Size = 128;
+                    KeyLen = 16;
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.AesEngine();
                     break;
@@ -183,7 +193,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                     KeyLen = 32;
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.RC6Engine();
-                    break;
+                    break;                
                 case CipherEnum.Seed:
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.SeedEngine();
                     Size = 128;
