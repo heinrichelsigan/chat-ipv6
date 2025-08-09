@@ -73,6 +73,7 @@ namespace Area23.At.Framework.Library.Static
 
             return consoleOutput;
         }
+
         public static string ExecuteWithOutAndErr(string filepath, string arguments, out string consoleOutput, out string consoleError, bool useShellExecute = false)
         {
             string workingDir = "", args = (!string.IsNullOrEmpty(arguments)) ? arguments : "";

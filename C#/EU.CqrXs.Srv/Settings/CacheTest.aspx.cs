@@ -32,6 +32,8 @@ namespace EU.CqrXs.Srv.Settings
                 persistType = PersistType.JsonFile;
             if (persistString.StartsWith("RedisValkey"))
                 persistType = PersistType.RedisValkey;
+            if (persistString.StartsWith("RedisMS"))
+                persistType = PersistType.RedisMS;
 
 
             if (!Int32.TryParse(this.DropDownList_Iterations.SelectedValue, out iterations))
@@ -264,6 +266,10 @@ namespace EU.CqrXs.Srv.Settings
                 case PersistType.RedisValkey:
                     RedisValkeyCache redisCache = new RedisValkeyCache(persitVariant);
                     memoryCache = (MemoryCache)redisCache;
+                    break;
+                case PersistType.RedisMS:
+                    RedisMSCache redisMSCache = new RedisMSCache(persitVariant);
+                    memoryCache = (MemoryCache)redisMSCache;
                     break;
                 case PersistType.AppDomain:
                 default:
