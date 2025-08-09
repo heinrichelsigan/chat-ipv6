@@ -26,13 +26,29 @@ namespace Area23.At.Framework.Core.Cache
 
         protected internal TimeSpan _timePassedSinceLastRW = TimeSpan.Zero;
 
+        protected internal static HashSet<string> _allKeys = new HashSet<string>();
+
         public static string CacheVariant = "MemoryCache";
+
+        protected internal static bool _onceCreated = false;
 
         protected internal PersistType _persistType;
         public virtual string CacheType { get => _persistType.ToString(); }
 
         protected internal static Lazy<MemoryCache> _instance;
-        public static MemoryCache CacheDict => _instance.Value;
+        public static MemoryCache CacheDict
+        {
+            get
+            {
+                if (_instance == null && !_onceCreated)
+                {
+                    PersistType cacheType = PersistInCache.CacheType;
+                    CreateInstance(cacheType);
+                }
+
+                return _instance.Value;
+            }
+        }
 
 
         /// <summary>
@@ -55,61 +71,60 @@ namespace Area23.At.Framework.Core.Cache
         /// </summary>
         /// <param name="ckey">key to lookup</param>
         /// <returns>object or null, thou must cast object</returns>
-        public object this[string ckey]
+        public string this[string ckey]
         {
-            get => (AppDict.ContainsKey(ckey) && AppDict.TryGetValue(ckey, out CacheValue cvalue)) ? cvalue._Value : null;
-            set
-            {
-                object ovalue = value;
-                Type otype = value.GetType();
-                lock (_outerlock)
-                {
-
-                    if (AppDict.ContainsKey(ckey) && AppDict.TryGetValue(ckey, out CacheValue oldValue))
-                        AppDict.TryRemove(ckey, out oldValue);
-
-                    AppDict.TryAdd(ckey, new CacheValue(ovalue, otype));
-
-                    AppDict = _appDict;
-                }
-            }
+            get => GetString(ckey);
+            set => SetString(ckey, value);
         }
 
         /// <summary>
         /// Get all keys from <see cref="AppDict"/> which is implemented as a <see cref="ConcurrentDictionary{string, CacheValue}"/>
         /// </summary>
-        public virtual string[] AllKeys { get => AppDict.Keys.ToArray(); }
+        public virtual string[] AllKeys { get => GetAllKeys().ToArray(); }
 
 
         /// <summary>
-        /// static ctor
+        /// ctor
         /// </summary>
         static MemoryCache()
         {
-            PersistType cacheType = PersistInCache.CacheType;
-
-            switch (cacheType)
-            {
-                case PersistType.JsonFile:
-                    _instance = new Lazy<MemoryCache>(() => new JsonFileCache());
-                    break;
-                case PersistType.Redis:
-                    // TODO: Redis                   
-                    _instance = new Lazy<MemoryCache>(() => new RedisCache());
-                    break;                
-                case PersistType.AppDomain:
-                    _instance = new Lazy<MemoryCache>(() => new AppDomainCache());
-                    break;
-                case PersistType.ApplicationState:
-                default:
-                    _instance = new Lazy<MemoryCache>(() => new MemoryCache());
-                    break;                    
-            }
-
-            _instance.Value._persistType = PersistInCache.CacheType;
-            CacheVariant = _instance.Value._persistType.ToString();
+            var persistType = PersistInCache.CacheType;
+            CreateInstance(persistType);
         }
 
+
+        public MemoryCache()
+        {
+            _persistType = PersistInCache.CacheType;
+        }
+
+        protected internal static void CreateInstance(PersistType cacheType)
+        {
+            lock (_lock)
+            {
+                switch (cacheType)
+                {
+                    case PersistType.JsonFile:
+                        _instance = new Lazy<MemoryCache>(() => new JsonFileCache());
+                        break;
+                    case PersistType.RedisValkey:
+                        _instance = new Lazy<MemoryCache>(() => new RedisValkeyCache());
+                        break;
+                    case PersistType.RedisMS:
+                        _instance = new Lazy<MemoryCache>(() => new RedisMSCache());
+                        break;
+                    case PersistType.AppDomain:
+                    case PersistType.ApplicationState:
+                    default:
+                        _instance = new Lazy<MemoryCache>(() => new AppDomainCache());
+                        break;
+                }
+
+                _onceCreated = true;
+                CacheVariant = cacheType.ToString();
+            }
+
+        }
 
         /// <summary>
         /// get, where to get it (_appDict from cache)
@@ -174,6 +189,26 @@ namespace Area23.At.Framework.Core.Cache
 
         #region virtual cache operations on _appDict methods
 
+        public virtual string GetString(string ckey)
+        {
+            string valString = "";
+
+            if (!string.IsNullOrEmpty(ckey))
+            {
+                _appDict = AppDict;
+                lock (_lock)
+                {
+                    if (_appDict.ContainsKey(ckey) && _appDict.TryGetValue(ckey, out var cvalue))
+                    {
+                        if (cvalue != null)
+                            valString = cvalue.ToString();
+                    }
+                }
+            }
+
+            return valString;
+        }
+
         /// <summary>
         /// Gets a value from <see cref="ConcurrentDictionary{string, CacheValue}"/> stored <see cref="System.AppDomain.CurrentDomain"/>
         /// </summary>
@@ -208,26 +243,54 @@ namespace Area23.At.Framework.Core.Cache
 
         public virtual Nullable<T> GetNullableValue<T>(string ckey) where T : struct
         {
-            T tvalue = default(T);
+            Nullable<T> nullableT = null;
 
             if (!string.IsNullOrEmpty(ckey))
             {
                 lock (_lock)
                 {
-
                     if (_appDict.ContainsKey(ckey) && _appDict.TryGetValue(ckey, out var cvalue))
                     {
                         if (cvalue != null)
-                        {
-                            var nilvalue = cvalue.GetNullableValue<T>();
-                            if (nilvalue != null && nilvalue.HasValue)
-                                tvalue = nilvalue.Value;
-                        }
+                            nullableT = cvalue.GetNullableValue<T>();
                     }
                 }
             }
 
-            return tvalue;
+            return nullableT;
+        }
+
+        public virtual bool SetString(string ckey, string svalue)
+        {
+            lock (_outerlock)
+            {
+                bool addedOrUpdated = false;
+
+                if (string.IsNullOrEmpty(ckey) || svalue == null)
+                    return addedOrUpdated;
+
+                CacheValue cvalue = new CacheValue();
+                cvalue.SetValue<string>(svalue);
+
+                _appDict = LoadDictionaryCache(true);
+
+                lock (_lock)
+                {
+                    if (!_appDict.ContainsKey(ckey))
+                        addedOrUpdated = _appDict.TryAdd(ckey, cvalue);
+                    else if (_appDict.TryGetValue(ckey, out CacheValue oldValue))
+                        addedOrUpdated = _appDict.TryUpdate(ckey, cvalue, oldValue);
+
+                    // MAYBE SHORTER BUT NOBODY CAN QUICK READ AND UNDERSTAND THIS
+                    // addedOrUpdated = (!AppCache.ContainsKey(ckey)) ? AppCache.TryAdd(ckey, cvalue) :
+                    //    (AppCache.TryGetValue(ckey, out CacheValue oldValue)) ? _appCache.TryUpdate(ckey, cvalue, oldValue) : false;
+
+                    if (addedOrUpdated) // saves the modified ConcurrentDictionary{string, CacheValue} back to AppDomain
+                        SaveDictionaryToCache(_appDict);
+                }
+
+                return addedOrUpdated;
+            }
         }
 
         /// <summary>
@@ -305,6 +368,12 @@ namespace Area23.At.Framework.Core.Cache
 
                 return success;
             }
+        }
+
+        public virtual HashSet<string> GetAllKeys()
+        {
+            _allKeys = new HashSet<string>(AppDict.Keys.ToArray());
+            return _allKeys;
         }
 
 

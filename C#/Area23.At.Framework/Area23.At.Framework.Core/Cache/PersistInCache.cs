@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Core.Cache
 {
-
     /// <summary>
     /// enum persist type
     /// </summary>
@@ -16,14 +15,14 @@ namespace Area23.At.Framework.Core.Cache
     {
         None = 0,
         AppDomain = 1,
-        Redis = 2,
+        RedisValkey = 2,
         JsonFile = 3,
-        ApplicationState = 4
-        // ReddisCache = 3,
+        ApplicationState = 4,
+        RedisMS = 5
     }
 
     /// <summary>
-    /// PersistMsgIn 
+    /// PersistInCache is a static class, which loads persistence type from Web.Config or App.Config 
     /// </summary>
     public static class PersistInCache
     {
@@ -33,18 +32,18 @@ namespace Area23.At.Framework.Core.Cache
         /// <summary>
         /// returns where message is persisted
         /// </summary>
-        public static PersistType CacheType
-        {
-            get => _cacheType;
-        }
+        public static PersistType CacheType { get => _cacheType; }
 
+        /// <summary>
+        /// static ctor
+        /// </summary>
         static PersistInCache()
         {
-            string persistSet = "";
+            string persistWhere = "";
             if (ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN] != null)
-                persistSet = (string)ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN].ToString();
+                persistWhere = (string)ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN].ToString();
 
-            if (!Enum.TryParse<PersistType>(persistSet, out _cacheType))
+            if (!Enum.TryParse<PersistType>(persistWhere, out _cacheType))
                 _cacheType = PersistType.AppDomain;
         }
     }

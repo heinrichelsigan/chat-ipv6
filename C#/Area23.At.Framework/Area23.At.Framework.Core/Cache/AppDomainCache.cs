@@ -14,7 +14,6 @@ namespace Area23.At.Framework.Core.Cache
         protected internal static readonly object _smartLock = new object();
 
         public static new string CacheVariant = "AppDomainCache";
-        public override string CacheType => "AppDomainCache";
 
         /// <summary>
         /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
@@ -88,10 +87,11 @@ namespace Area23.At.Framework.Core.Cache
             }
         }
 
+        public AppDomainCache() : this(PersistType.AppDomain) { }
 
-        public AppDomainCache(PersistType cacheType = PersistType.AppDomain)
+        public AppDomainCache(PersistType cacheType)
         {
-            _persistType = cacheType;
+            _persistType = (cacheType == PersistType.AppDomain) ? cacheType : PersistType.AppDomain;
         }
 
     }
