@@ -48,7 +48,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
         internal async Task DragNDropBox_DragEnter(object sender, DragEventArgs e)
         {
             string[] files = new string[0];
-            Task<object> dragEnterRunTask = (Task<object>)await Task<object>.Run<object>(() =>
+            await Task.Run(() =>
             {
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (files != null)
@@ -56,7 +56,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     e.Effect = DragDropEffects.Copy;
                 }
 
-                return e.Effect;
+                return ;
             });
             
         }
@@ -64,7 +64,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
         internal async Task DragNDropBox_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = new string[0];
-            Task<object> dragDropRunTask = (Task<object>)await Task<object>.Run<object>(() =>
+            await Task.Run(() =>
             {
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (files != null)
@@ -96,7 +96,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     CqrException.SetLastException(new CqrException(Name + " DragNDropBox_DragDrop => files  == null"));
                 }
 
-                return e;
+                return ;
             });
         }
 
@@ -109,7 +109,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 if (e != null && e.Effect != null && e.Data != null)
                     o = (object)e.Data;
                     
-                return o; 
+                // return o; 
             });
         }
 
