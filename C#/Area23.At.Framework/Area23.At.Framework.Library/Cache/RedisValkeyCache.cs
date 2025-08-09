@@ -1,14 +1,10 @@
-﻿using Area23.At.Framework.Library.Cqr;
-using Area23.At.Framework.Library.Static;
+﻿using Area23.At.Framework.Library.Static;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Web;
 
 namespace Area23.At.Framework.Library.Cache
 {

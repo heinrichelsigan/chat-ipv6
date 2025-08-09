@@ -3,7 +3,6 @@ using Area23.At.Framework.Library.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Area23.At.Framework.Library.Crypt.EnDeCoding

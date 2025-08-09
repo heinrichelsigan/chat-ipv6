@@ -4,9 +4,6 @@ using Area23.At.Framework.Library.Static;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher
 {

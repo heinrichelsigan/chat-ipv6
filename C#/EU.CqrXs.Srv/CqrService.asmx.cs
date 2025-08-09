@@ -1,27 +1,12 @@
-﻿using Area23.At.Framework.Library;
+﻿using Area23.At.Framework.Library.Cache;
 using Area23.At.Framework.Library.Cqr;
 using Area23.At.Framework.Library.Cqr.Msg;
-using Area23.At.Framework.Library.Crypt.EnDeCoding;
-using Area23.At.Framework.Library.Net.IpSocket;
-using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using EU.CqrXs.Srv.Util;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics.Contracts;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Web;
 using System.Web.Services;
-using System.Net;
-using Newtonsoft.Json;
-using System.Net.NetworkInformation;
-using Area23.At.Framework.Library.Cache;
-using System.Net.Http.Headers;
 
 
 namespace EU.CqrXs.Srv

@@ -1,33 +1,20 @@
-﻿using Area23.At;
-using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Crypt.Cipher;
+﻿using Area23.At.Framework.Library.Crypt.Cipher;
 using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Crypt.Hash;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using Area23.At.Framework.Library.Zfx;
+using EU.CqrXs.Srv.Util;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using System.Web;
-using System.Web.Caching;
-using System.Web.DynamicData;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Windows.Shapes;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Net.WebRequestMethods;
 
-namespace EU.CqrXs.Srv.Util
+namespace EU.CqrXs.Srv.Settings
 {
 
     /// <summary>

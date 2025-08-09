@@ -1,13 +1,8 @@
-﻿using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Cqr;
-using Area23.At.Framework.Library.Cqr.Msg;
-using Area23.At.Framework.Library.Static;
+﻿using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using EU.CqrXs.Srv.Util;
 using System;
 using System.Configuration;
-using System.Text;
-using System.Web.UI;
 
 namespace EU.CqrXs.Srv
 {

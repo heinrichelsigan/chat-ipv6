@@ -1,8 +1,5 @@
-﻿using Area23.At.Framework.Library.Static;
-using Area23.At.Framework.Library.Util;
-using NLog.Targets;
+﻿using Area23.At.Framework.Library.Util;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;

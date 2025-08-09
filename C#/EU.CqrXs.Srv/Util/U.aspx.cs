@@ -1,16 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Windows.Media;
-using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Util;
 
 namespace EU.CqrXs.Srv.Util
 {

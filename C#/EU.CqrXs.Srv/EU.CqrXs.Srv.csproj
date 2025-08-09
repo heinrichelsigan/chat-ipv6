@@ -205,14 +205,13 @@
     <Content Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
     <Content Include="res\img\--1.png" />
     <Content Include="res\img\0.png" />
-    <Content Include="CoolCrypt.aspx" />
     <Content Include="CqrService.asmx" />
     <Content Include="Default.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Settings\CacheTest.aspx" />
     <Content Include="Settings\TestLogin.aspx" />
-    <Content Include="Util\CoolCrypt.aspx" />
+    <Content Include="Settings\CoolCrypt.aspx" />
     <Content Include="Util\ImageFontControl.ascx" />
     <Content Include="R.aspx" />
     <Content Include="res\img\1.png" />
@@ -275,18 +274,11 @@
     <Compile Include="Util\BaseWebService.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CoolCrypt.aspx.cs">
+    <Compile Include="Settings\CoolCrypt.aspx.cs">
       <DependentUpon>CoolCrypt.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CoolCrypt.aspx.designer.cs">
-      <DependentUpon>CoolCrypt.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Util\CoolCrypt.aspx.cs">
-      <DependentUpon>CoolCrypt.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Util\CoolCrypt.aspx.designer.cs">
+    <Compile Include="Settings\CoolCrypt.aspx.designer.cs">
       <DependentUpon>CoolCrypt.aspx</DependentUpon>
     </Compile>
     <Compile Include="Util\CqrJdBasePage.cs">
@@ -347,7 +339,6 @@
     <Compile Include="Settings\TestForm.aspx.designer.cs">
       <DependentUpon>TestForm.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Util\HostLogHelper.cs" />
     <Compile Include="Util\JsonChatRoom.cs" />
     <Compile Include="Util\JsonContacts.cs" />
     <Compile Include="Util\U.aspx.cs">

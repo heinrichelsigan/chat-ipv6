@@ -1,8 +1,6 @@
-﻿using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Static;
+﻿using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using System;
-using System.Net.Http;
 using System.Web;
 
 namespace EU.CqrXs.Srv.Util

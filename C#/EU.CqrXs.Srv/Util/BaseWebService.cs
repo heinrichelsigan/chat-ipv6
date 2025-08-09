@@ -1,22 +1,16 @@
 ﻿using Area23.At.Framework.Library.Cache;
 using Area23.At.Framework.Library.Cqr;
 using Area23.At.Framework.Library.Cqr.Msg;
-using Area23.At.Framework.Library.Net.WebHttp;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.Services;
-using System.Web.Services.Description;
 
 namespace EU.CqrXs.Srv.Util
 {

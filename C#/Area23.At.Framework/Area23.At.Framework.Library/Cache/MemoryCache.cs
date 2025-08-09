@@ -2,8 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Windows.Documents;
 
 namespace Area23.At.Framework.Library.Cache
 {
@@ -83,37 +81,46 @@ namespace Area23.At.Framework.Library.Cache
         /// <summary>
         /// ctor
         /// </summary>
-        public MemoryCache()
+        static MemoryCache()
         {
-            _persistType = PersistInCache.CacheType;
-            CreateInstance(_persistType);                        
+            var persistType = PersistInCache.CacheType;
+            CreateInstance(persistType);                        
         }
 
 
+        public MemoryCache()
+        {
+            _persistType = PersistInCache.CacheType;
+        }
+
         protected internal static void CreateInstance(PersistType cacheType)
         {
-            switch (cacheType)
+            lock (_lock)
             {
-                case PersistType.JsonFile:
-                    _instance = new Lazy<MemoryCache>(() => new JsonFileCache());
-                    break;
-                case PersistType.RedisValkey:
-                    _instance = new Lazy<MemoryCache>(() => new RedisValkeyCache());
-                    break;
-                case PersistType.RedisMS:
-                    _instance = new Lazy<MemoryCache>(() => new RedisMSCache());
-                    break;
-                case PersistType.ApplicationState:
-                    _instance = new Lazy<MemoryCache>(() => new ApplicationStateCache());
-                    break;
-                case PersistType.AppDomain:
-                default:
-                    _instance = new Lazy<MemoryCache>(() => new AppDomainCache());
-                    break;
+                switch (cacheType)
+                {
+                    case PersistType.JsonFile:
+                        _instance = new Lazy<MemoryCache>(() => new JsonFileCache());
+                        break;
+                    case PersistType.RedisValkey:
+                        _instance = new Lazy<MemoryCache>(() => new RedisValkeyCache());
+                        break;
+                    case PersistType.RedisMS:
+                        _instance = new Lazy<MemoryCache>(() => new RedisMSCache());
+                        break;
+                    case PersistType.ApplicationState:
+                        _instance = new Lazy<MemoryCache>(() => new ApplicationStateCache());
+                        break;
+                    case PersistType.AppDomain:
+                    default:
+                        _instance = new Lazy<MemoryCache>(() => new AppDomainCache());
+                        break;
+                }
+                
+                _onceCreated = true;
+                CacheVariant = cacheType.ToString();
             }
-
-            CacheVariant = cacheType.ToString();
-            _onceCreated = true;
+            
         }
 
         /// <summary>

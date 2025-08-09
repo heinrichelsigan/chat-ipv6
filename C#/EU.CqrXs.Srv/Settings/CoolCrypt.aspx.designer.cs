@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EU.CqrXs.Srv.Util
+namespace EU.CqrXs.Srv.Settings
 {
 
 

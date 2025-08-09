@@ -1,0 +1,158 @@
+﻿{
+  "$id": "1",
+  "Key_9": {
+    "$id": "2",
+    "_Value": {
+      "CKey": "Key_8",
+      "CValue": "bXqvRrcWdBStUmQMwTbGQtaSYbUL/4oobWOx7d7REu5GT/c1Ccmz/5s1dwM7TMIZ/EfWMqUI0m7wh9hTZIc22w==",
+      "CThreadId": 32,
+      "CTime": "2025-08-09T03:23:57.301821+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_8": {
+    "$id": "3",
+    "_Value": {
+      "CKey": "Key_7",
+      "CValue": "5w4ACH0VCZlTCFPTWSgd2iCBU4jq4C8rBk/o8Zq2eihQ20YBPKuyb/bAEv3+Nb1UF2tCcBB+Vwfe1AEuLBf/nA==",
+      "CThreadId": 28,
+      "CTime": "2025-08-09T03:23:57.301821+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_14": {
+    "$id": "4",
+    "_Value": {
+      "CKey": "Key_13",
+      "CValue": "Dz3wD7rWiUGmgsS6yIxXPyubyhe7bv+8PINNa9mrcu50OeGxnTGUiLFlp70Kkt4S8RE6xiqSjaA9M9I2iR5o+w==",
+      "CThreadId": 5,
+      "CTime": "2025-08-09T03:23:57.3028209+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_11": {
+    "$id": "5",
+    "_Value": {
+      "CKey": "Key_10",
+      "CValue": "oldq7dGBvcGRTT2m24e1lfy+jdFD52TM5YE92T20UyQX2aiqEi2Qhb7qGsy31rdaUthNypywibvznQhQQ+SE3A==",
+      "CThreadId": 34,
+      "CTime": "2025-08-09T03:23:57.301821+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_13": {
+    "$id": "6",
+    "_Value": {
+      "CKey": "Key_12",
+      "CValue": "ZShgvHqRLzWFze4PXhF5v/h9PlghJUYyIso+WquNo1scSbmyrBLCe2QFoZA/NTUyRvke+GzLakDhLZqwUtWK9w==",
+      "CThreadId": 53,
+      "CTime": "2025-08-09T03:23:57.301821+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_10": {
+    "$id": "7",
+    "_Value": {
+      "CKey": "Key_9",
+      "CValue": "PNPCxTG6aSu8d6NYPGsVrc8lkBFf4QReJC+/44/9hCoRr425cJu8wTm5bssIGiaPL0tT2wNahVvOZKAC+4Wbvw==",
+      "CThreadId": 33,
+      "CTime": "2025-08-09T03:23:57.301821+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_15": {
+    "$id": "8",
+    "_Value": {
+      "CKey": "Key_14",
+      "CValue": "Gsi/boCxdTVsY/EFdEpGcsJA/LXBo+LG1g3+K1dqhdJzR1/wuZPDoGtogRRnOHXEr9qS2l16UHbm+ZdzskreAQ==",
+      "CThreadId": 23,
+      "CTime": "2025-08-09T03:23:57.3028209+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_12": {
+    "$id": "9",
+    "_Value": {
+      "CKey": "Key_11",
+      "CValue": "e1CaIkXFFkmDGE/7OEMIszUk9thZEOyWINgv/F+6bGsGHkZp+nUuOYB0pAfLl/VBil3UWLIn9GtkBAJslRnpyQ==",
+      "CThreadId": 35,
+      "CTime": "2025-08-09T03:23:57.301821+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_7": {
+    "$id": "10",
+    "_Value": {
+      "CKey": "Key_6",
+      "CValue": "YiJUYP2CSUl4BC+8iQwA1VMnTeZ0qkPgbpczC9RNfWrebL2BSBU7hafmee5/qYhhBLwyDO86mrfec/JlTj10Kw==",
+      "CThreadId": 31,
+      "CTime": "2025-08-09T03:23:57.3008224+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_6": {
+    "$id": "11",
+    "_Value": null,
+    "_Type": null
+  },
+  "Key_5": {
+    "$id": "12",
+    "_Value": {
+      "CKey": "Key_4",
+      "CValue": "fe9Ac0gxijURR+AmHcsImFrosNXFN8elq9JrVS7lBy+gBr57y7l63SYEHkp9wBmaOv+SkkrnukYnmsh1xTQHLA==",
+      "CThreadId": 29,
+      "CTime": "2025-08-09T03:23:57.2998254+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_4": {
+    "$id": "13",
+    "_Value": {
+      "CKey": "Key_3",
+      "CValue": "VyVvhL+1CJ2ZqJkquU1IS1yErGEFn0Ewj4uXOdoZaswg0jWNIs39FpoPtS3kz8raOsoKK+tpBLjkP/UzHs/Cfw==",
+      "CThreadId": 25,
+      "CTime": "2025-08-09T03:23:57.2998254+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_3": {
+    "$id": "14",
+    "_Value": {
+      "CKey": "Key_2",
+      "CValue": "+DfLVyvxdDpjXfnfY9zuGeSPm68fwp7tXoWPSZqNqay92aikTpF7NHWoozqGBPDwRErCbPyOzDWY3vmmYSqg1Q==",
+      "CThreadId": 26,
+      "CTime": "2025-08-09T03:23:57.2998254+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_2": {
+    "$id": "15",
+    "_Value": {
+      "CKey": "Key_1",
+      "CValue": "hYbxscErG33UtiyDF3Ysn1KfjMs4evHRL+FE3Oj/gAyCWtz3tzXJVUKfHih5cYCnru//U4UoNAuUH4Lg5z6V1A==",
+      "CThreadId": 24,
+      "CTime": "2025-08-09T03:23:57.2988278+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_1": {
+    "$id": "16",
+    "_Value": {
+      "CKey": "Key_0",
+      "CValue": "9rQPF5SoD1RppG1q9x7RX0QSjxcbQhzS4JxbZ8cZRAw8OqgAO0uRZNYNnIoCxToVIMri/sXKmbOXPDf3TaeNUA==",
+      "CThreadId": 22,
+      "CTime": "2025-08-09T03:23:57.2988278+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "Key_0": {
+    "$id": "17",
+    "_Value": {
+      "CKey": "Key_13",
+      "CValue": "kgAU3HPMlQczoQ7eP0bJ0ius7j2vuqclLmjIDGASVMdFF+ERe17t1JvdwFV65zFK7WCFDb/oQ9dY760LA4mmIQ==",
+      "CThreadId": 30,
+      "CTime": "2025-08-09T03:23:57.3128142+02:00"
+    },
+    "_Type": "Area23.At.Framework.Library.Cache.CacheTestData, Area23.At.Framework.Library, Version=2.25.809.0, Culture=neutral, PublicKeyToken=null"
+  }
+}

@@ -1,5 +1,4 @@
 ﻿using Area23.At.Framework.Library.Cqr;
-using Area23.At.Framework.Library.Cqr.Msg;
 using System.Net;
 
 namespace Area23.At.Framework.Core.Net.WebHttp
