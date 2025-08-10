@@ -147,6 +147,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (files != null && files.Length > 0)
                 {
+                    e.Effect = System.Windows.Forms.DragDropEffects.Copy;
+
                     string textSet = Path.GetFileName(files[0]);
                     if (string.IsNullOrEmpty(textSet))
                         textSet = files[0].Substring(files[0].Length - 8);
@@ -156,8 +158,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     await Task.Run(() =>
                     {
                         lopmsg = "Effect = " + e.Effect + " files.length =  " + files.Length + " file[1].Name = " + files[0].ToString();
-                        e.Effect = System.Windows.Forms.DragDropEffects.Copy;
-
+                        Area23Log.LogStatic(lopmsg);
                     });
                 }
             }
@@ -214,17 +215,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (files != null && files.Length > 0)
                 {
+                    e.Effect = System.Windows.Forms.DragDropEffects.Copy;
+
+                    string textSet = Path.GetFileName(files[0]);
+                    if (string.IsNullOrEmpty(textSet))
+                        textSet = files[0].Substring(files[0].Length - 8);
+                    textSet += " " + e.Effect;
+                    SetCtrlText(textSet);
+
                     DateTime now = DateTime.UtcNow;
                     foreach (string file in files)
                     {
-                        string textSet = Path.GetFileName(files[0]);
-                        if (string.IsNullOrEmpty(textSet))
-                            textSet = files[0].Substring(files[0].Length - 8);
-                        textSet += " " + e.Effect;
-                        SetCtrlText(textSet);
-
-                        e.Effect = System.Windows.Forms.DragDropEffects.Copy;
-
                         try
                         {
                             if (OnDragNDrop != null)
@@ -269,20 +270,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (files != null && files.Length > 0)
                 {
-                    e.Effect = System.Windows.Forms.DragDropEffects.Copy;
+                    // e.Effect = (e.EffectSystem.Windows.Forms.DragDropEffects.Copy;
 
-                    string textSet = Path.GetFileName(files[0]);
-                    if (string.IsNullOrEmpty(textSet))
-                        textSet = files[0].Substring(files[0].Length - 8);
-                    textSet += " DragOver: " + e.Effect;
-                    SetCtrlText(textSet);
+                    //string textSet = Path.GetFileName(files[0]);
+                    //if (string.IsNullOrEmpty(textSet))
+                    //    textSet = files[0].Substring(files[0].Length - 8);
+                    //textSet += " DragOver: " + e.Effect;
+                    //SetCtrlText(textSet);
 
                     // DoDragDrop(e.Data, DragDropEffects.Copy);
 
                     await Task.Run(() =>
                     {
                         lopmsg = "Effect = " + e.Effect + " files.length =  " + files.Length + " file[1].Name = " + files[0].ToString();
-                        Area23Log.LogStatic(lopmsg);                   
+                        // Area23Log.LogStatic(lopmsg);                   
                     });                    
                 }
             }
