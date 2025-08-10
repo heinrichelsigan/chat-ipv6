@@ -4,8 +4,8 @@
     <TargetFramework>net9.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>2.25.805</AssemblyVersion>
-    <FileVersion>2.25.805</FileVersion>
+    <AssemblyVersion>2.25.811</AssemblyVersion>
+    <FileVersion>2.25.811</FileVersion>
     <StartupObject>EU.CqrXs.Srv.Svc.Swashbuckle.Program</StartupObject>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
     <PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>   

@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using Area23.At.Framework.Core.Crypt.Hash;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using System;
-using Windows.Devices.AllJoyn;
+
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {

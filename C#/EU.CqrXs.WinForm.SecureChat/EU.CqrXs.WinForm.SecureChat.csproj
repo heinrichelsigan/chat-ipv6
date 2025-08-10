@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-	<TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
+	<TargetFramework>net9.0-windows7.0</TargetFramework>
 	<UseWindowsForms>True</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -10,8 +10,8 @@
     <StartupObject>EU.CqrXs.WinForm.SecureChat.Program</StartupObject>
     <RootNamespace>EU.CqrXs.WinForm.SecureChat</RootNamespace>
 	<ApplicationIcon>RemoteConnectedIcon.ico</ApplicationIcon>
-	<AssemblyVersion>2.25.809</AssemblyVersion>
-    <FileVersion>2.25.809</FileVersion>
+	<AssemblyVersion>2.25.811</AssemblyVersion>
+    <FileVersion>2.25.811</FileVersion>
     <ErrorReport>send</ErrorReport>
     <Title>SecureChat</Title>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>		
