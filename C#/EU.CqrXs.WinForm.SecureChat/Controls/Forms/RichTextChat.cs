@@ -68,7 +68,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         return _serverIpAddress;
                     }
-                    Area23Log.LogStatic("Exception on getting server ip address via dns", exDns, "");
+                    
+                    Area23Log.Logger.LogOriginMsgEx("RichTextChat", "Exception on getting server ip address via dns", exDns);
                     throw;
                 }
                 foreach (IPAddress ip in list)
@@ -1353,7 +1354,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exi)
             {
-                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                Area23Log.Logger.Log($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
                 SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
                 await PlaySoundFromResourcesAsync("sound_hammer");
             }
@@ -1377,7 +1378,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exi)
             {
-                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                Area23Log.Logger.Log($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
                 sendInit = false;
                 SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
             }
@@ -1521,7 +1522,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exTriState)
                     {
-                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
+                        Area23Log.Logger.LogOriginMsgEx("RichTextChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
                     }
                     await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
@@ -1539,7 +1540,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exTriState)
                     {
-                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
+                        Area23Log.Logger.LogOriginMsgEx("RichTextChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
                     }
                     break;
                 case 1:
@@ -1555,7 +1556,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exTriState)
                     {
-                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
+                        Area23Log.Logger.LogOriginMsgEx("RichTextChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
                     }
                     await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
@@ -1781,7 +1782,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // && !ipSockListener.ServerSocket.Blocking)
                     {
                         if (ipSockListener.ServerEndPoint != null)
-                            Area23Log.LogStatic($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
+                            Area23Log.Logger.Log($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
                     }
                     else // Rebind Server Socket
                     {

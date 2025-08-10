@@ -118,11 +118,11 @@ namespace Area23.At.Framework.Core.Net.IpSocket
 
             uint bytesAvailable = BitConverter.ToUInt32(outValue, 0);
             string a0 = $"server has {bytesAvailable} bytes pending.";
-            Area23Log.LogStatic(a0);
+            Area23Log.Logger.LogOriginMsg("Listener", a0);
             Console.Write(a0);
             string a1 = "Available property says {s.Available}.";
             Console.WriteLine(a1);
-            Area23Log.LogStatic(a1);
+            Area23Log.Logger.LogOriginMsg("Listener", a1);
 
             return;
         }

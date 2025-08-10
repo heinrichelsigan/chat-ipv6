@@ -511,7 +511,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!cSrvMsg._hash.Equals(symmPipe.PipeString))
                 {
                     string errMsg = $"Hash: {cSrvMsg._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}";
-                    Area23Log.LogStatic(errMsg);
+                    Area23Log.Logger.LogOriginMsg("CSrvMsg<T>", (errMsg));
                     // throw new CqrException(errMsg);
                     ;
                 }
@@ -519,7 +519,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!md5Hash.Equals(cSrvMsg.Md5Hash))
                 {
                     string md5ErrExcMsg = $"md5Hash: {md5Hash} doesn't match property Md5Hash: {cSrvMsg.Md5Hash}";
-                    Area23Log.LogStatic(md5ErrExcMsg);
+                    Area23Log.Logger.LogOriginMsg("CSrvMsg<T>", md5ErrExcMsg);
                     // throw new CqrException(md5ErrExcMsg);
                     ;
                 }

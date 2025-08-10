@@ -24,7 +24,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         [HttpGet("ChatRoomClose")]
         public string Get(string cryptMsg)
         {
-            Area23Log.LogStatic($"ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  {cryptMsg.Length}.\n");
+            Area23Log.Logger.LogOriginMsg("ChatRoomCloseController", $"ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  {cryptMsg.Length}.\n");
             InitMethod();            
             _chatRoomNumber = "";
 
@@ -52,10 +52,10 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
+                Area23Log.Logger.LogOriginMsgEx("ChatRoomCloseController", "Exception " + ex.GetType() + " Get(string)", ex);
             }
 
-            Area23Log.LogStatic($"ChatRoomClose(string cryptMsg) finished. deleted chat room ChatRoomNr =  {_chatRoomNumber}.\n");
+            Area23Log.Logger.LogOriginMsg("ChatRoomCloseController", $"ChatRoomClose(string cryptMsg) finished. deleted chat room ChatRoomNr =  {_chatRoomNumber}.\n");
 
             return _responseString;
 

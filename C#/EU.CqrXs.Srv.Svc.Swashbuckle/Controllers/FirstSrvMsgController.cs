@@ -28,7 +28,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         [HttpGet(Name = "Send1StSrvMsg")]
         public string Get(string cryptMsg)
         {
-            Area23Log.LogStatic($"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
+            Area23Log.Logger.LogOriginMsg("FirstSrvMsgController", $"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
 
 
@@ -40,13 +40,13 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                 {
                     _contact = cContact.DecryptFromJson(_serverKey, cryptMsg);
                     _decrypted = _contact.ToJson();
-                    Area23Log.LogStatic($"Contact decrypted successfully: {_decrypted}\n");
+                    Area23Log.Logger.LogOriginMsg("FirstSrvMsgController", $"Contact decrypted successfully: {_decrypted}\n");
                 }
             }
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic($"Exception {ex.GetType()} when decrypting contact: {ex.Message}\n\t{ex.ToString()}\n");
+                Area23Log.Logger.LogOriginMsgEx("FirstSrvMsgController", $"Exception {ex.GetType()} when decrypting contact.", ex);
             }
 
             _responseString = _contact.EncryptToJson(_serverKey);
@@ -57,7 +57,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                 _responseString = foundCt.EncryptToJson(_serverKey);
             }
 
-            Area23Log.LogStatic($"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
+            Area23Log.Logger.LogOriginMsg("FirstSrvMsgController", $"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
             return _responseString;
         }
 

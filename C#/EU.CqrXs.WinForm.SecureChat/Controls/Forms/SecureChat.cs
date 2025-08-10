@@ -72,7 +72,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         return _serverIpAddress;
                     }
-                    Area23Log.LogStatic("Exception on getting server ip address via dns", exDns, "");
+                    Area23Log.Logger.LogOriginMsgEx("SecureChat", "Exception on getting server ip address via dns", exDns);
                     throw;
                 }
                 foreach (IPAddress ip in list)
@@ -1365,7 +1365,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exi)
             {
-                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                Area23Log.Logger.Log($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
                 SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
                 await PlaySoundFromResourcesAsync("sound_hammer");
             }
@@ -1389,7 +1389,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exi)
             {
-                Area23Log.LogStatic($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                Area23Log.Logger.Log($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
                 sendInit = false;
                 SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
             }
@@ -1533,7 +1533,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exTriState)
                     {
-                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
+                        Area23Log.Logger.LogOriginMsgEx("SecureChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
                     }
                     await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
@@ -1551,7 +1551,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exTriState)
                     {
-                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
+                        Area23Log.Logger.LogOriginMsgEx("SecureChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
                     }
                     break;
                 case 1:
@@ -1567,7 +1567,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exTriState)
                     {
-                        Area23Log.LogStatic($"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState, "");
+                        Area23Log.Logger.LogOriginMsgEx("SecureChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
                     }
                     await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
@@ -1793,7 +1793,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // && !ipSockListener.ServerSocket.Blocking)
                     {
                         if (ipSockListener.ServerEndPoint != null)
-                            Area23Log.LogStatic($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
+                            Area23Log.Logger.Log($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
                     }
                     else // Rebind Server Socket
                     {
@@ -2708,24 +2708,24 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         internal async Task DragnDropBoxFiles_DragEnter(object sender, DragEventArgs e)
         {
-            await DragnDropBoxFiles.DragNDropBox_DragEnter(sender, e);
+            await DragnDropBoxFiles.DragEnterAsync(sender, e);
         }
 
         internal async Task DragnDropBoxFiles_DragOver(object sender, DragEventArgs e)
         {
-            await DragnDropBoxFiles.DragNDropBox_DragOver(sender, e);
-        }
-
-
-        internal async Task DragnDropBoxFiles_DragLeave(object sender, EventArgs e)
-        {
-            await DragnDropBoxFiles.DragNDropBox_DragLeave(sender, e);
+            await DragnDropBoxFiles.DragOverAsync(sender, e);
         }
 
         internal async Task DragnDropBoxFiles_DragDrop(object sender, DragEventArgs e)
         {
-            await  DragnDropBoxFiles.DragNDropBox_DragDropAsync(sender, e);
+            await DragnDropBoxFiles.DragDropAsync(sender, e);
         }
+
+        internal async Task DragnDropBoxFiles_DragLeave(object sender, EventArgs e)
+        {
+            await DragnDropBoxFiles.DragLeaveAsync(sender, e);
+        }
+
     }
 
 }

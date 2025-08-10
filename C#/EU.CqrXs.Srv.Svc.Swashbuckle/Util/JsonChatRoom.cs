@@ -14,6 +14,7 @@ using System.Runtime.Remoting;
 using System.Web;
 using EU.CqrXs.Srv.Svc.Swashbuckle.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
@@ -45,7 +46,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
             }
             catch (Exception exCtor)
             {
-                Area23Log.LogStatic("static JsonChatRoom()", exCtor, "");
+                Area23Log.Logger.LogOriginMsgEx("JsonChatRoom" , "static JsonChatRoom()", exCtor);
             }
             _chatRooms = new HashSet<string>(jsonChatRooms);
             _jsonChatRoomNumber = System.DateTime.Now.ToString();
@@ -146,7 +147,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                     }
                     catch (Exception exDelChatRoomFromFs)
                     {
-                        Area23Log.LogStatic(String.Format("DeleteChatRoom(string chatRoomNr = {0}): Error deleting chat room ", chatRoomNr), exDelChatRoomFromFs, "");
+                        Area23Log.Logger.LogOriginMsgEx("JsonChatRoom", $"DeleteChatRoom(string chatRoomNr = {chatRoomNr}): Error deleting chat room,", exDelChatRoomFromFs);
                         return false;
                     }
                 }
@@ -309,7 +310,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
             }
             catch (Exception exChatRoomFs)
             {
-                Area23Log.LogStatic("ChatRoomNumbersFromFs()", exChatRoomFs, "");
+                Area23Log.Logger.LogOriginMsgEx("JsonChatRoom", "ChatRoomNumbersFromFs()", exChatRoomFs);
             }
 
             SetJsonChatRoomsToCache(chatRooms);
@@ -335,7 +336,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
             }
             catch (Exception exLoadFromCache)
             {
-                Area23Log.LogStatic("GetJsonChatRoomsFromCache(): Failed to load chatrooms from cache", exLoadFromCache, "");
+                Area23Log.Logger.LogOriginMsgEx("JsonChatRoom", "GetJsonChatRoomsFromCache(): Failed to load chatrooms from cache.", exLoadFromCache);
             }
 
 

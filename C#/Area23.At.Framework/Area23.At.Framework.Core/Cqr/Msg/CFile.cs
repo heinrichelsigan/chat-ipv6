@@ -536,14 +536,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!md5Hash.Equals(cfile.Md5Hash) && !cfile._hash.Equals(symmPipe.PipeString))
                 {
                     string md5ErrMsg = $"Hash: {cfile._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}; md5Hash: {md5Hash} doesn't match property Md5Hash: {cfile.Md5Hash}";
-                    Area23Log.LogStatic(md5ErrMsg);
+                    Area23Log.Logger.LogOriginMsg("CFile", md5ErrMsg);
                     // throw new CqrException(md5ErrMsg);
                 }
                 string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
                 if (!sha256Hash.Equals(cfile.Sha256Hash))
                 {
                     string sha256ErrMsg = $"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {cfile.Sha256Hash}.";
-                    Area23Log.LogStatic(sha256ErrMsg);
+                    Area23Log.Logger.LogOriginMsg("CFile", sha256ErrMsg);
                     // throw new CqrException(sha256ErrMsg);
                 }
 

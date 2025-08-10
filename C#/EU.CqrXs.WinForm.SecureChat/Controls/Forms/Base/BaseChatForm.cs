@@ -113,7 +113,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exNoInet)
                 {
-                    Area23Log.LogStatic("No external ip address", exNoInet, "");
+                    Area23Log.Logger.LogOriginMsgEx("BaseChatForm", "No external ip address", exNoInet);
                     _externalIPAddress = IPAddress.Parse("0.0.0.0");
                 }
                 return _externalIPAddress;
@@ -1854,8 +1854,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                         cqrXsEuIpList.Add(srvPIp);
                     if (IPAddress.TryParse(srvIp6, out srvPIp6))
                         cqrXsEuIpList.Add(srvPIp6);
-                
-                    Area23Log.LogStatic("Exception on getting server ip address via dns", exDns, "");
+
+                    Area23Log.Logger.LogOriginMsgEx("BaseChatForm", "Exception on getting server ip address via dns", exDns);
                 }
 
                 foreach (IPAddress euIp in cqrXsEuIpList)

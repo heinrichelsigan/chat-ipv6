@@ -160,7 +160,7 @@ namespace Area23.At.Framework.Core.Cqr
             }
             catch (Exception exSoap)
             {
-                Area23Log.LogStatic($"Exception {exSoap.GetType()}: {exSoap.Message}\n\t{exSoap}\n");
+                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"Send_InitChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
                 throw;
             }
 
@@ -187,7 +187,7 @@ namespace Area23.At.Framework.Core.Cqr
             }
             catch (Exception exSoap)
             {
-                Area23Log.LogStatic($"Exception {exSoap.GetType()}: {exSoap.Message}\n\t{exSoap}\n");
+                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"Send_CloseChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
                 throw;
             }
 
@@ -305,7 +305,7 @@ namespace Area23.At.Framework.Core.Cqr
             }
             catch (Exception exSoap)
             {
-                Area23Log.LogStatic($"Exception {exSoap.GetType()}: {exSoap.Message}\n\t{exSoap}\n");
+                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"Send_InitChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
                 throw;
             }
 
@@ -332,7 +332,7 @@ namespace Area23.At.Framework.Core.Cqr
             }
             catch (Exception exSoap)
             {
-                Area23Log.LogStatic($"Exception {exSoap.GetType()}: {exSoap.Message}\n\t{exSoap}\n");
+                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"Send_InitChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
                 throw;
             }
 

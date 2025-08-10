@@ -28,7 +28,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         [HttpGet("TestCacheController")]
         public string Get()
         {
-            Area23Log.LogStatic($"TestCacheController.Get() started.\n");
+            Area23Log.Logger.LogOriginMsg("TestCacheController", $"TestCacheController.Get() started.\n");
 
             string testReport = DateTime.Now.Area23DateTimeWithMillis() + ": TestCache() started.\n";
             try
@@ -89,14 +89,15 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                     {
                         string exMsg = "loading chat room " + room + " failed. Exception: " + exChatRoom.Message + "." + Environment.NewLine;
                         testReport += DateTime.Now.Area23DateTimeWithMillis() + ": " + exMsg;
-                        Area23Log.LogStatic(exMsg, exChatRoom, "");
+                        Area23Log.Logger.LogOriginMsgEx("TestCacheController", $"loading chat room {room} failed. Exception {exChatRoom.GetType()}.", exChatRoom);
                     }
                 }
             }
             catch (Exception ex2)
             {
-                testReport += DateTime.Now.Area23DateTimeWithMillis() + ": Exception " +
-                    ex2.GetType() + ": " + ex2.Message + "\n\t" + ex2.ToString() + "\n";
+                string ex2Msg = "Exception " + ex2.GetType() + ": " + ex2.Message + "\n\t" + ex2.ToString() + "\n";
+                Area23Log.Logger.LogOriginMsgEx("TestCacheController", "Exception " + ex2.GetType(), ex2);
+                testReport += DateTime.Now.Area23DateTimeWithMillis() + ": " + ex2Msg;
             }
             
 
