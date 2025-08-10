@@ -18,6 +18,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 
         internal delegate string GetGroupBoxTextCallback(GroupBox groupBox);
         internal delegate string SetGroupBoxTextCallback(GroupBox groupBox, string text);
+        internal delegate string SetCtrlTextCallback(string text);
 
         internal string GetGroupBoxText(System.Windows.Forms.GroupBox groupBox)
         {
@@ -74,6 +75,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
             }
         }
 
+
+        internal void SetCtrlText(string text)
+        {
+            string textToSet = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+            if (InvokeRequired)
+            {
+                SetCtrlTextCallback setCtrlTextDelegate = delegate (string setText)
+                {
+                    return (this != null && this.Name != null && !string.IsNullOrEmpty(setText)) ? this.Text : string.Empty;
+                };
+                try
+                {
+                    Invoke(setCtrlTextDelegate, new object[] { textToSet });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetCtrlText text: \"{textToSet}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (this != null && this.Name != null && textToSet != null)
+                    this.Text = textToSet;
+            }
+        }
+
         #endregion Eventhandler and delegate callbacks
 
         #region constructors
@@ -112,24 +139,28 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 
         internal async Task DragNDropBox_DragEnter(object sender, DragEventArgs e)
         {
-            string logmsg = string.Empty;
-            
+            string lopmsg = string.Empty;
+
             string[] files = new string[1];
 
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(typeof(string[])))
+            if (e != null && e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(typeof(string[])))
             {
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (files != null && files.Length > 0)
-                {
+                {                   
                     await Task.Run(() =>
                     {
-                        logmsg = "Effect = " + e.Effect + " files.length =  " + files.Length + " file[1].Name = " + files[0].ToString();
+                        lopmsg = "Effect = " + e.Effect + " files.length =  " + files.Length + " file[1].Name = " + files[0].ToString();
                         e.Effect = System.Windows.Forms.DragDropEffects.Copy;
-                        SetGroupBoxText(this, Path.GetFileName(files[0]) + " " + e.Effect);
+
+                        string textSet = Path.GetFileName(files[0]);
+                        if (string.IsNullOrEmpty(textSet))
+                            textSet = files[0].Substring(files[0].Length - 8);
+                        textSet += " " + e.Effect;
+                        SetCtrlText(textSet);                       
                     });
                 }
-            }                       
-            
+            }
         }
 
         internal void DragNDropBox_DragDrop(object sender, DragEventArgs e)
@@ -234,11 +265,16 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     {
                         lopmsg = "Effect = " + e.Effect + " files.length =  " + files.Length + " file[1].Name = " + files[0].ToString();
                         e.Effect = System.Windows.Forms.DragDropEffects.Copy;
-                        
-                        DoDragDrop(e.Data, DragDropEffects.Copy);
 
-                        SetGroupBoxText(this, Path.GetFileName(files[0]) + " " + e.Effect);
+                        string textSet = Path.GetFileName(files[0]);
+                        if (string.IsNullOrEmpty(textSet))
+                            textSet = files[0].Substring(files[0].Length - 8);
+                        textSet += " " + e.Effect;
+                        SetCtrlText(textSet);                        
+
                     });
+
+                    DoDragDrop(e.Data, DragDropEffects.Copy);
                 }
             }
         }
