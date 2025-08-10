@@ -836,20 +836,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //     return ;
 
-                    string chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr))
-                        ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr
-                        : GetTextBoxText(TextBoxChatSession) ?? "";
-                    if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
-                        SetTextBoxText(TextBoxChatSession, chatRoomNr);
-
-                    if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
-                    {
-                        InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
-                        dialog.ShowDialog();
-                        string? appInputDialogChat = MemoryCache.CacheDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
-                        chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
-                        SetTextBoxText(TextBoxChatSession, chatRoomNr);
-                    }
+                    string chatRoomNr = GetValidChatRoomNr();
 
                     CqrFacade serverFacade = new CqrFacade(CqrXsEuSrvKey);
                     string contactNameEmail = GetComboBoxText(this.ComboBoxContacts);
@@ -947,7 +934,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             try
             {
-
                 myServerKey = GetComboBoxText(this.ComboBoxSecretKey);
                 CqrFacade clientFacade = new CqrFacade(myServerKey);
 
@@ -995,20 +981,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     //if ((contactNameEmail = GetComboBoxMustHaveText(ref ComboBoxContacts)) == null)
                     //    return;
 
-                    string chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr))
-                            ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr
-                            : GetTextBoxText(TextBoxChatSession) ?? "";
-                    if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
-                        SetTextBoxText(TextBoxChatSession, chatRoomNr);
-
-                    if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
-                    {
-                        InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
-                        dialog.ShowDialog();
-                        string? appInputDialogChat = MemoryCache.CacheDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
-                        chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
-                        SetTextBoxText(TextBoxChatSession, chatRoomNr);
-                    }
+                    string chatRoomNr = GetValidChatRoomNr();
 
                     CqrFacade serverFacade = new CqrFacade(CqrXsEuSrvKey);
                     string contactNameEmail = GetComboBoxText(this.ComboBoxContacts);
@@ -1029,7 +1002,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         friendContact._hash = GetHash();
                         friendContact._message = chatRoomNr;
                     }
-
 
                     // get default file open choose dialog
                     FileOpenDialog = DialogFileOpen;
@@ -1093,6 +1065,39 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
 
+        internal string  GetValidChatRoomNr()
+        {
+            string chatRoomNr = GetTextBoxText(TextBoxChatSession);
+            if (string.IsNullOrEmpty(chatRoomNr))
+            {
+                chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr))
+                    ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr
+                    : "";
+
+                if (!string.IsNullOrEmpty(chatRoomNr))
+                    SetTextBoxText(TextBoxChatSession, chatRoomNr);
+            }
+
+            if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
+            {
+                InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
+                dialog.ShowDialog();
+                string? appInputDialogChat = MemoryCache.CacheDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
+                chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
+                SetTextBoxText(TextBoxChatSession, chatRoomNr);
+            }
+
+            if (Entities.Settings.Singleton.ChatRoom == null || 
+                !Entities.Settings.Singleton.ChatRoom.ChatRoomNr.Equals(chatRoomNr, StringComparison.CurrentCultureIgnoreCase))
+            {
+                Entities.Settings.Singleton.ChatRoom = new CChatRoom(chatRoomNr);
+                Entities.Settings.Save();
+            }
+
+            return chatRoomNr;
+        }
+
+
         /// <summary>
         /// MenuCommandsItemRefresh_Click refresh in session server mode from server
         /// </summary>
@@ -1121,20 +1126,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     contactNameEmail = "";
                 //     return;
 
-                string chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr))
-                    ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr
-                    : GetTextBoxText(TextBoxChatSession) ?? "";
-                if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
-                    SetTextBoxText(TextBoxChatSession, chatRoomNr);
+                string chatRoomNr = GetValidChatRoomNr();
 
-                if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
-                {
-                    InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
-                    dialog.ShowDialog();
-                    string? appInputDialogChat = MemoryCache.CacheDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
-                    chatRoomNr = (!string.IsNullOrEmpty(appInputDialogChat)) ? appInputDialogChat : GetTextBoxText(TextBoxChatSession);
-                    SetTextBoxText(TextBoxChatSession, chatRoomNr);
-                }
                 string pipeText = GetTextBoxText(TextBoxPipe);
 
                 CContact myContact = new CContact(Settings.Singleton.MyContact, chatRoomNr, clientFacade.PipeString);
@@ -1349,6 +1342,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 Settings.Singleton.ChatRoom = new CChatRoom(chatRoomTxt);
             }
+            // TODO: Delete lt later
             Settings.Singleton.ChatRoom.TicksLong = new List<long>();
             Settings.Singleton.ChatRoom.LastPushed = DateTime.MinValue;
             Settings.Singleton.ChatRoom.LastPolled = DateTime.MinValue;
@@ -1628,21 +1622,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     else if (this.PeerSessionTriState == PeerSession3State.ChatServer)
                     {
-                        string chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr))
-                            ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr
-                            : GetTextBoxText(TextBoxChatSession) ?? "";
-                        if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
-                            SetTextBoxText(TextBoxChatSession, chatRoomNr);
-
-                        if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
-                        {
-                            InputDialog dialog = new InputDialog("ChatRoomNr required", "Please enter a valid chat room number or register a new chatroom.", MessageBoxIcon.Warning);
-                            dialog.ShowDialog();
-                            string? appChatInputDialog = MemoryCache.CacheDict.GetValue<string>(Constants.APP_INPUT_DIALOG);
-                            chatRoomNr = (string.IsNullOrEmpty(appChatInputDialog)) ? string.Empty : appChatInputDialog;
-                            string textSessionChatRoom = (!string.IsNullOrEmpty(chatRoomNr)) ? chatRoomNr : GetTextBoxText(TextBoxChatSession);
-                            SetTextBoxText(TextBoxChatSession, textSessionChatRoom);
-                        }
+                        string chatRoomNr = GetValidChatRoomNr();
 
                         string contactNameEmail = GetComboBoxText(ComboBoxContacts);
 
@@ -1655,51 +1635,48 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         myContact._message = chatRoomNr;
                         friendContact._message = chatRoomNr;
 
-                        string filename = ea.GenericTData;
+                        CFile? cfile = GetCFileFromPath(fi.FullName, clientFacade.PipeString);
 
-                        string md5 = Area23.At.Framework.Core.Crypt.Hash.MD5Sum.Hash(filename, true);
-                        string sha256 = Area23.At.Framework.Core.Crypt.Hash.Sha256Sum.Hash(filename, true);
-                        byte[] fileBytes = File.ReadAllBytes(filename);
-                        string fileNameOnly = Path.GetFileName(filename);
-                        string mimeType = MimeType.GetMimeType(fileBytes, fileNameOnly);
-
-                        CFile cfile = new CFile(fileNameOnly, mimeType, fileBytes, clientFacade.PipeString, md5, sha256);
-                        string encryptedFileMsg = cfile.EncryptToJson(myServerKey);
-                        SetStatusText(StripStatusLabel, $"File {cfile.FileName} encrypted with client, now generating server message.");
-
-                        CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, encryptedFileMsg, serverFacade.PipeString, Settings.Singleton.ChatRoom);
-                        SetStatusText(StripStatusLabel, $"Generated server message with encrypted file inside, prepating to send...");
-
-                        // Send message to WebService
-                        CSrvMsg<string> rfmsg = serverFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
-                        if (rfmsg != null)
+                        if (cfile != null && !string.IsNullOrEmpty(chatRoomNr))
                         {
-                            if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                                rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                            string encryptedFileMsg = cfile?.EncryptToJson(myServerKey);
+                            SetStatusText(StripStatusLabel, $"File {cfile?.FileName} encrypted with client, now generating server message.");
+
+                            CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact, encryptedFileMsg, serverFacade.PipeString, Settings.Singleton.ChatRoom);
+                            SetStatusText(StripStatusLabel, $"Generated server message with encrypted file inside, prepating to send...");
+
+                            // Send message to WebService
+                            CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
+                            if (rfmsg != null)
                             {
-                                myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
-                                Settings.Singleton.MyContact = myContact;
-                            }
-                            if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
-                            {
-                                Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
-                                chatRoomNr = Settings.Singleton.ChatRoom.ChatRoomNr;
+                                if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
+                                    rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
+                                    Settings.Singleton.MyContact = myContact;
+                                }
+                                if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
+                                {
+                                    Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
+                                    chatRoomNr = Settings.Singleton.ChatRoom.ChatRoomNr;
+                                }
+
+                                SetStatusText(StripStatusLabel, $"Encrypted file {cfile.FileName} and sended it to chat room {chatRoomNr}...");
+                                Settings.SaveSettings(Settings.Singleton);
                             }
 
-                            SetStatusText(StripStatusLabel, $"Encrypted file {cfile.FileName} and sended it to chat room {chatRoomNr}...");
-                            Settings.SaveSettings(Settings.Singleton);
+
+                            // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
+                            // this.TextBoxDestionation.Text = msgChatRoom;
+                            string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength());
+                            AppendText(TextBoxSource, userMsg);
+                            Format_Lines_RichTextBox();
+                            SetRichText(RichTextBoxChat, string.Empty);
+                            PlaySoundFromResource("sound_push");
+                            SetStatusText(StripStatusLabel, $"File {cfile.FileName} successfully send to {chatRoomNr} !");
+
+                            await MenuCommandsItemRefresh_Click(sender, e);
                         }
-
-
-                        // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
-                        // this.TextBoxDestionation.Text = msgChatRoom;
-                        string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength());
-                        AppendText(TextBoxSource, userMsg);
-                        Format_Lines_RichTextBox();
-                        SetRichText(RichTextBoxChat, string.Empty);
-                        PlaySoundFromResource("sound_push");
-                        SetStatusText(StripStatusLabel, $"File {cfile.FileName} successfully send to {chatRoomNr} !");
-
                     }
                 }
             }

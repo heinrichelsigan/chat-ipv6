@@ -13,7 +13,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
         protected internal static DragDropEffects _dragDropEffect = System.Windows.Forms.DragDropEffects.None;
         internal static HashSet<string>  HashFiles = new HashSet<string>();
         static bool fileUploaded = false;
-        static Lock _fileUploadLock = new Lock();
+        static Lock _fileUploadLock = new Lock(), _fileLock = new Lock();
 
         #region eventhandler delegate callbacks
 
@@ -132,8 +132,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                         string textSet = Path.GetFileName(files[0]) ?? files[0] ?? "";                       
                         textSet += " DragEnter: " + _dragDropEffect;
                         SetCtrlText(textSet);
-
-                        e.Effect = DragDropEffects.All;
                     }
                 }
             }
@@ -162,7 +160,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
             }
         }
 
-
         internal void DragNDropBox_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = new string[1];            
@@ -183,34 +180,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                         SetCtrlText(textSet);
                     }
 
-                    foreach (string file in files)
-                    {
-                        try
-                        {
-                            if (OnDragNDrop != null)
-                            {
-                                textSet = "Uploading " + Path.GetFileName(file) ?? file ?? "";                                
-                                SetCtrlText(textSet);
-
-                                EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
-                                Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
-                                handler?.Invoke(this, area23EventArgs);
-
-                                fileUploaded = true;
-                            }
-
-                        }
-                        catch (Exception ex)
-                        {
-                            CqrException.SetLastException(ex);
-                        }
-                    }
+                    UpFireDraggedFiles();
                 }
             }
 
             if (fileUploaded)
                 HashFiles = new HashSet<string>();
-
 
             return;
 
@@ -218,34 +193,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 
         internal void DragNDropBox_DragLeave(object sender, EventArgs e)
         {
-            if (HashFiles != null && HashFiles.Count > 0)
-            {
-                lock (_fileUploadLock)
-                {
-                    foreach (string file in HashFiles)
-                    {
-                        try
-                        {
-                            if (OnDragNDrop != null)
-                            {
-                                string textSet = "Up firing " + Path.GetFileName(file) ?? file ?? "";
-                                SetCtrlText(textSet);
-
-                                EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
-                                Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
-                                handler?.Invoke(this, area23EventArgs);
-
-                                fileUploaded = true;
-                            }
-
-                        }
-                        catch (Exception ex)
-                        {
-                            CqrException.SetLastException(ex);
-                        }
-                    }
-                }
-            }
+            UpFireDraggedFiles();
 
             lock (_fileUploadLock)
             {
@@ -257,6 +205,43 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
         }
 
         #endregion Synchronous DragNDrop
+
+        internal void UpFireDraggedFiles()
+        {
+            lock (_fileUploadLock)
+            {
+                if (HashFiles != null && HashFiles.Count > 0 && !fileUploaded)
+                {
+                    lock (_fileLock)
+                    {
+                        fileUploaded = true;
+                        foreach (string file in HashFiles)
+                        {
+                            try
+                            {
+                                if (OnDragNDrop != null)
+                                {
+                                    string textSet = "Up firing " + Path.GetFileName(file) ?? file ?? "";
+                                    SetCtrlText(textSet);
+
+                                    EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
+                                    Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
+                                    handler?.Invoke(this, area23EventArgs);
+                                }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                CqrException.SetLastException(ex);
+                            }
+                        }
+
+                        HashFiles = new HashSet<string>();
+                        _dragDropEffect = DragDropEffects.None;
+                    }
+                }
+            }
+        }
 
         #region Async DragNDrop
 
