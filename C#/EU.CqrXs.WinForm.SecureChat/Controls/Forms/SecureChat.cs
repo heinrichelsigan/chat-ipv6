@@ -150,10 +150,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             
             this.DragnDropBoxFiles.AllowDrop = true;
             this.DragnDropBoxFiles.OnDragNDrop += OnDragNDrop;
-            this.DragnDropBoxFiles.DragLeave += new EventHandler(async (sender, e) => await DragnDropBoxFiles_DragLeave(sender, e));
-            this.DragnDropBoxFiles.DragDrop += new DragEventHandler(async (sender, e) => await DragnDropBoxFiles_DragDrop(sender, e));
-            this.DragnDropBoxFiles.DragEnter += new DragEventHandler(async (sender, e) => await DragnDropBoxFiles_DragEnter(sender, e));
-            this.DragnDropBoxFiles.DragOver += new DragEventHandler(async (sender, e) => await DragnDropBoxFiles_DragOver(sender, e));
+            // this.DragnDropBoxFiles.DragLeave += new EventHandler(async (sender, e) => await DragnDropBoxFiles_DragLeave(sender, e));
+            // this.DragnDropBoxFiles.DragDrop += new DragEventHandler(async (sender, e) => await DragnDropBoxFiles_DragDrop(sender, e));
+            // this.DragnDropBoxFiles.DragEnter += new DragEventHandler(async (sender, e) => await DragnDropBoxFiles_DragEnter(sender, e));
+            // this.DragnDropBoxFiles.DragOver += new DragEventHandler(async (sender, e) => await DragnDropBoxFiles_DragOver(sender, e));
 
             this.PeerServerSwitch.FireUpChanged += TooglePeerServer;
             this.SetProgressBar(this.StripProgressBar, 0);
@@ -2724,7 +2724,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         internal async Task DragnDropBoxFiles_DragDrop(object sender, DragEventArgs e)
         {
-            await  DragnDropBoxFiles.DragNDropBox_DragDrop(sender, e);
+            await  DragnDropBoxFiles.DragNDropBox_DragDropAsync(sender, e);
         }
     }
 

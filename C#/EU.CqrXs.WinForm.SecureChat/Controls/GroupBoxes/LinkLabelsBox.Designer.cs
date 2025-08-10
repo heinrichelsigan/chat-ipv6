@@ -37,8 +37,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
             LinkLabel4 = new LinkLabel();
             LinkLabel3 = new LinkLabel();
             LinkLabel2 = new LinkLabel();
-            LinkLabel1 = new LinkLabel();
-            toolTip1 = new ToolTip(components);
+            LinkLabel1 = new LinkLabel();            
             SuspendLayout();
             // 
             // LinkLabel8
@@ -143,13 +142,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
             LinkLabel1.TabIndex = 89;
             LinkLabel1.TabStop = true;
             LinkLabel1.Text = "LinkLabel1";
-            LinkLabel1.Visible = false;
-            // 
-            // toolTip1
-            // 
-            toolTip1.IsBalloon = true;
-            toolTip1.ToolTipIcon = ToolTipIcon.Info;
-            toolTip1.ToolTipTitle = "Drag'n Drop Files here or click on Attach";
+            LinkLabel1.Visible = false;            
             // 
             // LinkLabels
             //                         
@@ -176,8 +169,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
             DragDrop += LinkLabelsBox_DragDrop;
             DragEnter += LinkLabelsBox_DragEnter;
             DragLeave += LinkLabelsBox_DragLeave;
-            MouseEnter += LinkLabelsBox_MouseEnter;
-            MouseLeave += LinkLabelsBox_MouseLeave;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -191,8 +182,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
         private LinkLabel LinkLabel4;
         private LinkLabel LinkLabel3;
         private LinkLabel LinkLabel2;
-        private LinkLabel LinkLabel1;
-        private ToolTip toolTip1;
+        private LinkLabel LinkLabel1;       
     
     }
 

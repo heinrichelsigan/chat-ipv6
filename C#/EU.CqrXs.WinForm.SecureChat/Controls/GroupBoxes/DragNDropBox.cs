@@ -1,7 +1,9 @@
 ﻿using Area23.At.Framework.Core.Cqr;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Util;
+using Microsoft.VisualBasic.Logging;
 using System.ComponentModel;
+using WinRT;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 {
@@ -10,7 +12,69 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 
         DateTime lastShownToolTip = DateTime.Today;
 
-        public EventHandler<Area23EventArgs<string>>? OnDragNDrop;
+        #region Eventhandler and delegate callbacks
+
+        public EventHandler<Area23EventArgs<string>>? OnDragNDrop;        
+
+        internal delegate string GetGroupBoxTextCallback(GroupBox groupBox);
+        internal delegate string SetGroupBoxTextCallback(GroupBox groupBox, string text);
+
+        internal string GetGroupBoxText(System.Windows.Forms.GroupBox groupBox)
+        {
+            string textToGet = string.Empty;
+
+            if (groupBox.InvokeRequired)
+            {
+                GetGroupBoxTextCallback getTextDelegate = delegate (System.Windows.Forms.GroupBox gBox)
+                {
+                    return (gBox != null && gBox.Text != null) ? gBox.Text : string.Empty;
+                };
+                try
+                {
+                    object? oget = groupBox.Invoke(getTextDelegate, new object[] { groupBox });
+                    if (oget != null)
+                        textToGet = (string)oget;
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetGroupBoxText: \"{groupBox.Name}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (groupBox != null && groupBox.Text != null)
+                    textToGet = groupBox.Text;
+            }
+
+            return textToGet;
+        }
+
+        internal void SetGroupBoxText(System.Windows.Forms.GroupBox groupBox, string text)
+        {
+            string textToSet = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+            if (groupBox.InvokeRequired)
+            {
+                SetGroupBoxTextCallback setBoxTextDelegate = delegate (System.Windows.Forms.GroupBox gBox, string setText)
+                {
+                    return (gBox != null && gBox.Name != null && !string.IsNullOrEmpty(setText)) ? gBox.Text : string.Empty;
+                };
+                try
+                {
+                    groupBox.Invoke(setBoxTextDelegate, new object[] { groupBox, textToSet });
+                }
+                catch (System.Exception exDelegate)
+                {
+                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetGroupBoxText text: \"{textToSet}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (groupBox != null && groupBox.Name != null && textToSet != null)
+                    groupBox.Text = textToSet;
+            }
+        }
+
+        #endregion Eventhandler and delegate callbacks
 
         #region constructors
 
@@ -29,7 +93,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
             MiniToolBox.CreateAttachDirectory();
 
             DragEnter += new DragEventHandler(async (sender, e) => await DragNDropBox_DragEnter(sender, e));
-            DragDrop += new DragEventHandler(async (sender, e) => await DragNDropBox_DragDrop(sender, e));
+            DragDrop += DragNDropBox_DragDrop;
+            // DragDrop += new DragEventHandler(async (sender, e) => await DragNDropBox_DragDropAsync(sender, e));
             DragLeave += new EventHandler(async (sender, e) => await DragNDropBox_DragLeave(sender, e));
             DragOver += new DragEventHandler(async (sender, e) => await DragNDropBox_DragOver(sender, e));
             // MouseEnter += DragNDropBox_MouseEnter;
@@ -47,37 +112,43 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 
         internal async Task DragNDropBox_DragEnter(object sender, DragEventArgs e)
         {
-            string[] files = new string[0];
-            await Task.Run(() =>
+            string logmsg = string.Empty;
+            
+            string[] files = new string[1];
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(typeof(string[])))
             {
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (files != null)
+                if (files != null && files.Length > 0)
                 {
-                    e.Effect = DragDropEffects.Copy;
+                    await Task.Run(() =>
+                    {
+                        logmsg = "Effect = " + e.Effect + " files.length =  " + files.Length + " file[1].Name = " + files[0].ToString();
+                        e.Effect = System.Windows.Forms.DragDropEffects.Copy;
+                        SetGroupBoxText(this, Path.GetFileName(files[0]) + " " + e.Effect);
+                    });
                 }
-
-                return ;
-            });
+            }                       
             
         }
 
-        internal async Task DragNDropBox_DragDrop(object sender, DragEventArgs e)
+        internal void DragNDropBox_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = new string[0];
-            await Task.Run(() =>
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(typeof(string[])))
             {
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (files != null)
+                if (files != null && files.Length > 0)
                 {
                     DateTime now = DateTime.UtcNow;
-                    Text = "";
                     foreach (string file in files)
                     {
                         try
                         {
-                            Text += $"+{Path.GetFileName(file)}";
                             if (OnDragNDrop != null)
                             {
+                                SetGroupBoxText(this, Path.GetFileName(Path.GetFileName(file)) + " " + e.Effect);
+
                                 EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
                                 Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
                                 handler?.Invoke(this, area23EventArgs);
@@ -86,70 +157,103 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                         }
                         catch (Exception ex)
                         {
-                            Text = $"Exc:{ex.Message}";
+                            CqrException.SetLastException(ex);
+                            // Text = $"Exc:{ex.Message}";
+
                         }
-                        Text += " ";
                     }
                 }
-                else
-                {
-                    CqrException.SetLastException(new CqrException(Name + " DragNDropBox_DragDrop => files  == null"));
-                }
+            }
+            else
+            {
+                CqrException.SetLastException(new CqrException(Name + " DragNDropBox_DragDrop => files  == null"));
+            }
 
-                return ;
-            });
+            return;
+
+        }
+
+        internal async Task DragNDropBox_DragDropAsync(object sender, DragEventArgs e)
+        {
+            string[] files = new string[0];
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(typeof(string[])))
+            {
+                files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files != null && files.Length > 0)
+                {
+                    DateTime now = DateTime.UtcNow;
+                    foreach (string file in files)
+                    {
+                        await Task.Run(() =>
+                        {
+                            try
+                            {
+                           
+                                if (OnDragNDrop != null)
+                                {
+                                    SetGroupBoxText(this, Path.GetFileName(Path.GetFileName(file)) + " " + e.Effect);
+
+                                    EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
+                                    Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
+                                    handler?.Invoke(this, area23EventArgs);                                    
+                                }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                CqrException.SetLastException(ex);
+                                // Text = $"Exc:{ex.Message}";
+                            }
+                            Text += " ";
+                        });
+                    }
+                }
+            }
+            else
+            {
+                CqrException.SetLastException(new CqrException(Name + " DragNDropBox_DragDrop => files  == null"));
+            }
+
+            return ;
+            
         }
 
 
         internal async Task DragNDropBox_DragOver(object sender, DragEventArgs e)
         {
-            object o = (object)string.Empty;
-            await Task.Run(() => 
+            string lopmsg = string.Empty;
+
+            string[] files = new string[1];
+
+            if (e != null && e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(typeof(string[])))
             {
-                if (e != null && e.Effect != null && e.Data != null)
-                    o = (object)e.Data;
-                    
-                // return o; 
-            });
+                files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files != null && files.Length > 0)
+                {
+                    await Task.Run(() =>
+                    {
+                        lopmsg = "Effect = " + e.Effect + " files.length =  " + files.Length + " file[1].Name = " + files[0].ToString();
+                        e.Effect = System.Windows.Forms.DragDropEffects.Copy;
+                        
+                        DoDragDrop(e.Data, DragDropEffects.Copy);
+
+                        SetGroupBoxText(this, Path.GetFileName(files[0]) + " " + e.Effect);
+                    });
+                }
+            }
         }
 
         internal async Task DragNDropBox_DragLeave(object sender, EventArgs e)
         {
-            await Task.Run(() => { return e; });
+            await Task.Run(() => 
+            {
+                SetGroupBoxText(this, "Files Group Box");                
+            });
         }
 
         #endregion DragNDrop
 
-        #region show / hide tooltip
-
-        private void DragNDropBox_MouseEnter(object sender, EventArgs e)
-        {
-            if (DateTime.Now.Subtract(lastShownToolTip).TotalSeconds > 60)
-            {
-                // this.toolTip1.SetToolTip(this, "Drag'n Drop Files here or click on \"Attach\"");
-                toolTip1.Show("Drag'n Drop Files here or click on \"Attach\"", this, 36, 72, 6000);
-                lastShownToolTip = DateTime.Now;
-            }
-        }
-
-        private void DragNDropBox_MouseLeave(object sender, EventArgs e)
-        {
-            System.Timers.Timer tPerformToolTipHide = new System.Timers.Timer { Interval = 1500 };
-            tPerformToolTipHide.Elapsed += (s, en) =>
-            {
-                this.Invoke(new Action(() =>
-                {
-                    toolTip1.Hide(this);
-                }));
-                tPerformToolTipHide.Stop(); // Stop the timer(otherwise keeps on calling)
-            };
-            tPerformToolTipHide.Start();
-        }
-
-
-        #endregion show / hide tooltip
-
-
+        
         public void SetHeaderText(string headerText)
         {
             this.Text = headerText;

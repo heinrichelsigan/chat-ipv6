@@ -506,29 +506,29 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 
         #region show / hide tooltip
 
-        private void LinkLabelsBox_MouseEnter(object sender, EventArgs e)
-        {
-            if (DateTime.Now.Subtract(lastShownToolTip).TotalSeconds > 54)
-            {
-                // this.toolTip1.SetToolTip(this, "Drag'n Drop Files here or click on \"Attach\"");
-                toolTip1.Show("Drag'n Drop Files here or click on \"Attach\"", this, 36, 72, 6000);
-                lastShownToolTip = DateTime.Now;
-            }
-        }
+        //private void LinkLabelsBox_MouseEnter(object sender, EventArgs e)
+        //{
+        //    if (DateTime.Now.Subtract(lastShownToolTip).TotalSeconds > 54)
+        //    {
+        //        // this.toolTip1.SetToolTip(this, "Drag'n Drop Files here or click on \"Attach\"");
+        //        toolTip1.Show("Drag'n Drop Files here or click on \"Attach\"", this, 36, 72, 6000);
+        //        lastShownToolTip = DateTime.Now;
+        //    }
+        //}
 
-        private void LinkLabelsBox_MouseLeave(object sender, EventArgs e)
-        {
-            System.Timers.Timer tPerformToolTipHide = new System.Timers.Timer { Interval = 1500 };
-            tPerformToolTipHide.Elapsed += (s, en) =>
-            {
-                this.Invoke(new Action(() =>
-                {
-                    toolTip1.Hide(this);
-                }));
-                tPerformToolTipHide.Stop(); // Stop the timer(otherwise keeps on calling)
-            };
-            tPerformToolTipHide.Start();
-        }
+        //private void LinkLabelsBox_MouseLeave(object sender, EventArgs e)
+        //{
+        //    System.Timers.Timer tPerformToolTipHide = new System.Timers.Timer { Interval = 1500 };
+        //    tPerformToolTipHide.Elapsed += (s, en) =>
+        //    {
+        //        this.Invoke(new Action(() =>
+        //        {
+        //            toolTip1.Hide(this);
+        //        }));
+        //        tPerformToolTipHide.Stop(); // Stop the timer(otherwise keeps on calling)
+        //    };
+        //    tPerformToolTipHide.Start();
+        //}
 
 
         #endregion show / hide tooltip

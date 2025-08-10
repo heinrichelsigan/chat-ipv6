@@ -28,14 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {            
-            toolTip1 = new ToolTip(components);
             SuspendLayout();
-            // 
-            // toolTip1
-            // 
-            toolTip1.IsBalloon = true;
-            toolTip1.ToolTipIcon = ToolTipIcon.Info;
-            toolTip1.ToolTipTitle = "Drag'n Drop Files here or click on Attach";
             AllowDrop = true;
             this.BackColor = SystemColors.ControlLightLight;
             this.Font = new Font("Lucida Sans Unicode", 8.5F);
@@ -53,6 +46,5 @@
 
         #endregion
 
-        private ToolTip toolTip1;
     }
 }

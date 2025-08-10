@@ -858,6 +858,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelDestination.Name = "PanelDestination";
             PanelDestination.Size = new Size(168, 663);
             PanelDestination.TabIndex = 70;
+            PanelDestination.AllowDrop = true;
             // 
             // DragnDropBoxFiles
             // 
@@ -961,6 +962,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
+            AllowDrop = true;
             BackColor = SystemColors.Control;
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(998, 717);
