@@ -3,12 +3,17 @@ using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Util;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 {
     public partial class DragNDropBox  : GroupBox
     {
+        protected internal static DragDropEffects _dragDropEffect = System.Windows.Forms.DragDropEffects.None;
+        internal static HashSet<string>  HashFiles = new HashSet<string>();
+        static bool fileUploaded = false;
+
         #region eventhandler delegate callbacks
 
         public EventHandler<Area23EventArgs<string>>? OnDragNDrop;        
@@ -87,12 +92,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
             container.Add(this);
             components = container;
             InitializeComponent();
-            MiniToolBox.CreateAttachDirectory();
-
-            DragEnter += DragNDropBox_DragEnter;
-            DragOver += DragNDropBox_DragOver;
-            DragDrop += DragNDropBox_DragDrop;
-            DragLeave += DragNDropBox_DragLeave;
+            MiniToolBox.CreateAttachDirectory();            
 
             // DragEnter += new DragEventHandler(async (sender, e) => await DragEnterAsync(sender, e));            
             // DragOver += new DragEventHandler(async (sender, e) => await DragOverAsync(sender, e));
@@ -117,6 +117,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
         internal void DragNDropBox_DragEnter(object sender, DragEventArgs e)
         {
             string[] files = new string[1];
+            fileUploaded = false; 
 
             if (e != null && e.Data != null) 
             {
@@ -125,9 +126,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     if (files != null && files.Length > 0)
                     {
+                        HashFiles = new HashSet<string>(files);
+                        _dragDropEffect = e.Effect;
                         string textSet = Path.GetFileName(files[0]) ?? files[0] ?? "";                       
-                        textSet += " DragEnter: " + e.Effect;
-                        SetCtrlText(textSet);                     
+                        textSet += " DragEnter: " + _dragDropEffect;
+                        SetCtrlText(textSet);
+
+                        e.Effect = DragDropEffects.All;
                     }
                 }
             }
@@ -142,34 +147,40 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (files != null && files.Length > 0)
                 {
+                    if (HashFiles == null || HashFiles.Count  == 0)
+                        HashFiles = new HashSet<string>(files);
+
                     string textSet = Path.GetFileName(files[0]) ?? files[0] ?? "";
-                    textSet += " DragOver: " + e.Effect;
-                    SetCtrlText(textSet);
+                    if (e.Effect != DragDropEffects.None)
+                    {
+                        _dragDropEffect = e.Effect;
+                        textSet += " DragOver: " + e.Effect;
+                        SetCtrlText(textSet);
+                    }                    
                 }
             }
         }
 
-        internal void DragNDropBox_DragDrop(object sender, DragEventArgs e)
+        internal void DragNDropBox_MouseUp(object sender, MouseEventArgs e)
         {
-            string[] files = new string[0];
-            if (e != null && e.Data != null && (e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(typeof(string[]))))
+            if (HashFiles != null && HashFiles.Count > 0)
             {
-                files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (files != null && files.Length > 0)
+                if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
                 {
-                    foreach (string file in files)
+                    foreach (string file in HashFiles)
                     {
                         try
                         {
                             if (OnDragNDrop != null)
                             {
-                                string textSet = Path.GetFileName(files[0]) ?? files[0] ?? "";
-                                textSet += " DragDrop: " + e.Effect;
+                                string textSet = "Up firing " + Path.GetFileName(file) ?? file ?? "";                                
                                 SetCtrlText(textSet);
 
                                 EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
                                 Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
                                 handler?.Invoke(this, area23EventArgs);
+
+                                fileUploaded = true;
                             }
 
                         }
@@ -180,7 +191,62 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     }
                 }
             }
-            
+
+
+            if (fileUploaded = true)
+                HashFiles = new HashSet<string>();
+
+
+        }
+
+        internal void DragNDropBox_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = new string[1];            
+
+            if (e != null && e.Data != null && (e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(typeof(string[]))))
+            {
+                files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files != null && files.Length > 0)
+                {
+                    if (HashFiles == null || HashFiles.Count == 0)
+                        HashFiles = new HashSet<string>(files);
+
+                    string textSet = Path.GetFileName(files[0]) ?? files[0] ?? "";
+                    if (e.Effect != DragDropEffects.None)
+                    {
+                        _dragDropEffect = e.Effect;
+                        textSet += " DragDrop: " + e.Effect;
+                        SetCtrlText(textSet);
+                    }
+
+                    foreach (string file in files)
+                    {
+                        try
+                        {
+                            if (OnDragNDrop != null)
+                            {
+                                textSet = "Uploading " + Path.GetFileName(file) ?? file ?? "";                                
+                                SetCtrlText(textSet);
+
+                                EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
+                                Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
+                                handler?.Invoke(this, area23EventArgs);
+
+                                fileUploaded = true;
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            CqrException.SetLastException(ex);
+                        }
+                    }
+                }
+            }
+
+            if (fileUploaded)
+                HashFiles = new HashSet<string>();
+
 
             return;
 
@@ -188,6 +254,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 
         internal void DragNDropBox_DragLeave(object sender, EventArgs e)
         {
+            fileUploaded = false;
+            HashFiles = new HashSet<string>();
+            _dragDropEffect = DragDropEffects.None;
             SetCtrlText("Files Group Box");
         }
 
