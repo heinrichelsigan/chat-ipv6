@@ -120,8 +120,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
             MiniToolBox.CreateAttachDirectory();
 
             DragEnter += new DragEventHandler(async (sender, e) => await DragNDropBox_DragEnter(sender, e));
-            DragDrop += DragNDropBox_DragDrop;
-            // DragDrop += new DragEventHandler(async (sender, e) => await DragNDropBox_DragDropAsync(sender, e));
+            // DragDrop += DragNDropBox_DragDrop;
+            DragDrop += new DragEventHandler(async (sender, e) => await DragNDropBox_DragDropAsync(sender, e));
             DragLeave += new EventHandler(async (sender, e) => await DragNDropBox_DragLeave(sender, e));
             DragOver += new DragEventHandler(async (sender, e) => await DragNDropBox_DragOver(sender, e));
             // MouseEnter += DragNDropBox_MouseEnter;
@@ -157,7 +157,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                         if (string.IsNullOrEmpty(textSet))
                             textSet = files[0].Substring(files[0].Length - 8);
                         textSet += " " + e.Effect;
-                        SetCtrlText(textSet);                       
+                        SetCtrlText(textSet);
                     });
                 }
             }
@@ -206,7 +206,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
 
         internal async Task DragNDropBox_DragDropAsync(object sender, DragEventArgs e)
         {
-            string[] files = new string[0];
+            string[] files = new string[1];
+            string lopmsg = "";
+
             if (e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(typeof(string[])))
             {
                 files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -217,26 +219,32 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     {
                         await Task.Run(() =>
                         {
-                            try
-                            {
-                           
-                                if (OnDragNDrop != null)
-                                {
-                                    SetGroupBoxText(this, Path.GetFileName(Path.GetFileName(file)) + " " + e.Effect);
+                            lopmsg = "Effect = " + e.Effect + " files.length =  " + files.Length + " file[1].Name = " + files[0].ToString();
+                            e.Effect = System.Windows.Forms.DragDropEffects.Copy;
 
-                                    EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
-                                    Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
-                                    handler?.Invoke(this, area23EventArgs);                                    
-                                }
-
-                            }
-                            catch (Exception ex)
-                            {
-                                CqrException.SetLastException(ex);
-                                // Text = $"Exc:{ex.Message}";
-                            }
-                            Text += " ";
+                            string textSet = Path.GetFileName(files[0]);
+                            if (string.IsNullOrEmpty(textSet))
+                                textSet = files[0].Substring(files[0].Length - 8);
+                            textSet += " " + e.Effect;
+                            SetCtrlText(textSet);
                         });
+
+                        try
+                        {
+                            if (OnDragNDrop != null)
+                            {
+                                EventHandler<Area23EventArgs<string>> handler = OnDragNDrop;
+                                Area23EventArgs<string> area23EventArgs = new Area23EventArgs<string>(file);
+                                handler?.Invoke(this, area23EventArgs);
+                            }
+
+                            e.Effect = DragDropEffects.None;
+                        }
+                        catch (Exception ex)
+                        {
+                            CqrException.SetLastException(ex);
+                            // Text = $"Exc:{ex.Message}";
+                        }
                     }
                 }
             }
@@ -245,8 +253,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 CqrException.SetLastException(new CqrException(Name + " DragNDropBox_DragDrop => files  == null"));
             }
 
-            return ;
-            
+            return;
         }
 
 
