@@ -34,7 +34,6 @@
             this.DragOver += DragNDropBox_DragOver;
             this.DragDrop += DragNDropBox_DragDrop;
             this.DragLeave += DragNDropBox_DragLeave;
-            this.MouseUp += DragNDropBox_MouseUp;
             this.BackColor = SystemColors.ControlLightLight;
             this.Font = new Font("Lucida Sans Unicode", 8.5F);
             this.Location = new Point(0, 0);

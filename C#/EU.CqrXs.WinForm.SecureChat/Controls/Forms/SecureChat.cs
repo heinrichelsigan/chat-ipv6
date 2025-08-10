@@ -239,14 +239,14 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             if (send1stReg && Settings.Singleton.RegisterUser)
             {
-                DialogResult regServerResult = MessageBox.Show("Do you want to register?", "Register your account on server?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (regServerResult == DialogResult.Yes)
-                    Send_1st_Server_Registration(sender, e);
-                else
-                {
-                    Settings.Singleton.RegisterUser = false;
-                    Settings.SaveSettings();
-                }
+                //DialogResult regServerResult = MessageBox.Show("Do you want to register?", "Register your account on server?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                //if (regServerResult == DialogResult.Yes)
+                Send_1st_Server_Registration(sender, e);
+
+                // TODO Chnage it
+                // Settings.Singleton.RegisterUser = false;
+                // Settings.SaveSettings();
+
             }
             send1stReg = false;
             MemoryCache.CacheDict.SetValue<bool>(Constants.APP_FIRST_REG, send1stReg);
