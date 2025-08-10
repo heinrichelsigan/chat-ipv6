@@ -277,7 +277,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     textSet += " DragOver: " + e.Effect;
                     SetCtrlText(textSet);
 
-                    DoDragDrop(e.Data, DragDropEffects.Copy);
+                    // DoDragDrop(e.Data, DragDropEffects.Copy);
 
                     await Task.Run(() =>
                     {
