@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using Area23.At.Framework.Core.Crypt.Hash;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 using System;
+using Windows.Devices.AllJoyn;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
@@ -149,6 +150,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             this.LinkedLabelsBox.OnDragNDrop += OnDragNDrop;
             
             this.DragnDropBoxFiles.AllowDrop = true;
+            // TODO: Make it async
+            // this.DragnDropBoxFiles.OnDragNDrop += new EventHandler<Area23EventArgs<string>>(async (sender, e) => await 
             this.DragnDropBoxFiles.OnDragNDrop += OnDragNDrop;
             // this.DragnDropBoxFiles.DragLeave += new EventHandler(async (sender, e) => await DragnDropBoxFiles_DragLeave(sender, e));
             // this.DragnDropBoxFiles.DragDrop += new DragEventHandler(async (sender, e) => await DragnDropBoxFiles_DragDrop(sender, e));
@@ -1646,7 +1649,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             SetStatusText(StripStatusLabel, $"Generated server message with encrypted file inside, prepating to send...");
 
                             // Send message to WebService
-                            CSrvMsg<string>? rfmsg = await serverFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
+                            CSrvMsg<string>? rfmsg = serverFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
                             if (rfmsg != null)
                             {
                                 if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
@@ -1675,7 +1678,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             PlaySoundFromResource("sound_push");
                             SetStatusText(StripStatusLabel, $"File {cfile.FileName} successfully send to {chatRoomNr} !");
 
-                            await MenuCommandsItemRefresh_Click(sender, e);
+                            // await MenuCommandsItemRefresh_Click(sender, e);
                         }
                     }
                 }
