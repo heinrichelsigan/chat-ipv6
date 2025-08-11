@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -145,7 +146,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             }
             catch (Exception exJson)
             {
-                SLog.Log(exJson);
+                Area23Log.Logger.LogOriginMsgEx("CChatRoom", "FromJson", exJson);
             }
 
             return ccRoom;

@@ -53,84 +53,85 @@ namespace Area23.At.Framework.Core.Static
         /// <param name="appName">application name</param>
         public static void Log(string msg, string appName = "")
         {
-            if (Constants.NOLog)
-            {
-                Console.Error.WriteLine(msg);
-                return;
-            }
+            Area23Log.Logger.LogOriginMsg("SLog", msg);
+            //if (Constants.NOLog)
+            //{
+            //    Console.Error.WriteLine(msg);
+            //    return;
+            //}
 
-            string logMsg = string.Empty, errMsg = string.Empty;
+            //string logMsg = string.Empty, errMsg = string.Empty;
 
-            lock (_outerLock)
-            {
-                if (string.IsNullOrEmpty(LogFile) || !CheckedToday || !File.Exists(LogFile))
-                {
-                    LogFile = (!string.IsNullOrEmpty(appName)) ? LibPaths.GetLogFilePath(appName) : LibPaths.LogFileSystemPath;
+            //lock (_outerLock)
+            //{
+            //    if (string.IsNullOrEmpty(LogFile) || !CheckedToday || !File.Exists(LogFile))
+            //    {
+            //        LogFile = (!string.IsNullOrEmpty(appName)) ? LibPaths.GetLogFilePath(appName) : LibPaths.LogFileSystemPath;
 
-                    if (!File.Exists(LogFile))
-                    {
-                        lock (_lock)
-                        {
-                            try
-                            {
-                                File.Create(LogFile);
-                            }
-                            catch (Exception exLogFiteCreate)
-                            {
-                                ; // throw
-                                Console.Error.WriteLine("Exception creating logfile: " + exLogFiteCreate.ToString());
-                            }
-                        }
-                    }
-                }
+            //        if (!File.Exists(LogFile))
+            //        {
+            //            lock (_lock)
+            //            {
+            //                try
+            //                {
+            //                    File.Create(LogFile);
+            //                }
+            //                catch (Exception exLogFiteCreate)
+            //                {
+            //                    ; // throw
+            //                    Console.Error.WriteLine("Exception creating logfile: " + exLogFiteCreate.ToString());
+            //                }
+            //            }
+            //        }
+            //    }
 
-                string logFile1 = "";
-                logMsg = DateTime.Now.Area23DateTimeWithSeconds() + "\t " + (string.IsNullOrEmpty(msg) ? string.Empty : (msg.EndsWith("\n") ? msg : msg + "\n"));
-                try
-                {
-                    lock (_lock)
-                    {
-                        File.AppendAllText(LogFile, logMsg, System.Text.Encoding.UTF8);
-                    }
-                }
-                catch (Exception exLogWrite)
-                {
-                    errMsg = String.Format("{0} \tWriting to file {1} Exception {2} {3} \n{4}\n",
-                            DateTime.Now.Area23DateTimeWithSeconds(), LogFile, exLogWrite.GetType(), exLogWrite.Message, exLogWrite.ToString());
-                    System.AppDomain.CurrentDomain.SetData(Constants.LOG_EXCEPTION_STATIC, errMsg);
-                    Console.Error.WriteLine(errMsg);
+            //    string logFile1 = "";
+            //    logMsg = DateTime.Now.Area23DateTimeWithSeconds() + "\t " + (string.IsNullOrEmpty(msg) ? string.Empty : (msg.EndsWith("\n") ? msg : msg + "\n"));
+            //    try
+            //    {
+            //        lock (_lock)
+            //        {
+            //            File.AppendAllText(LogFile, logMsg, System.Text.Encoding.UTF8);
+            //        }
+            //    }
+            //    catch (Exception exLogWrite)
+            //    {
+            //        errMsg = String.Format("{0} \tWriting to file {1} Exception {2} {3} \n{4}\n",
+            //                DateTime.Now.Area23DateTimeWithSeconds(), LogFile, exLogWrite.GetType(), exLogWrite.Message, exLogWrite.ToString());
+            //        System.AppDomain.CurrentDomain.SetData(Constants.LOG_EXCEPTION_STATIC, errMsg);
+            //        Console.Error.WriteLine(errMsg);
 
-                    logFile1 = (string.IsNullOrEmpty(LogFile)) ? LibPaths.LogFileSystemPath : LogFile;
-                    logFile1 = logFile1.Replace(".log", "_1.log");
-                }
+            //        logFile1 = (string.IsNullOrEmpty(LogFile)) ? LibPaths.LogFileSystemPath : LogFile;
+            //        logFile1 = logFile1.Replace(".log", "_1.log");
+            //    }
 
-                if (!string.IsNullOrEmpty(logFile1))
-                {
-                    try
-                    {
-                        if ((AppDomain.CurrentDomain.GetData(Constants.LOG_EXCEPTION_STATIC) != null) && 
-                            ((errMsg = AppDomain.CurrentDomain.GetData(Constants.LOG_EXCEPTION_STATIC).ToString()) != null && errMsg != ""))
-                        {
-                            lock (_lock)
-                            {
-                                File.AppendAllText(logFile1, errMsg, System.Text.Encoding.UTF8);
-                                errMsg = "";
-                            }
-                        }
-                        lock (_lock)
-                        {
-                            File.AppendAllText(logFile1, logMsg, System.Text.Encoding.UTF8);
-                        }
-                    }
-                    catch (Exception exLog)
-                    {
-                        errMsg = String.Format("{0} \tWriting to file {1} Exception {2} {3} \n{4}\n",
-                            DateTime.Now.Area23DateTimeWithSeconds(), logFile1, exLog.GetType(), exLog.Message, exLog.ToString());
-                        System.AppDomain.CurrentDomain.SetData(Constants.LOG_EXCEPTION_STATIC, errMsg);
-                        Console.Error.WriteLine(errMsg);
-                    }
-                }
-            }
+            //    if (!string.IsNullOrEmpty(logFile1))
+            //    {
+            //        try
+            //        {
+            //            if ((AppDomain.CurrentDomain.GetData(Constants.LOG_EXCEPTION_STATIC) != null) && 
+            //                ((errMsg = AppDomain.CurrentDomain.GetData(Constants.LOG_EXCEPTION_STATIC).ToString()) != null && errMsg != ""))
+            //            {
+            //                lock (_lock)
+            //                {
+            //                    File.AppendAllText(logFile1, errMsg, System.Text.Encoding.UTF8);
+            //                    errMsg = "";
+            //                }
+            //            }
+            //            lock (_lock)
+            //            {
+            //                File.AppendAllText(logFile1, logMsg, System.Text.Encoding.UTF8);
+            //            }
+            //        }
+            //        catch (Exception exLog)
+            //        {
+            //            errMsg = String.Format("{0} \tWriting to file {1} Exception {2} {3} \n{4}\n",
+            //                DateTime.Now.Area23DateTimeWithSeconds(), logFile1, exLog.GetType(), exLog.Message, exLog.ToString());
+            //            System.AppDomain.CurrentDomain.SetData(Constants.LOG_EXCEPTION_STATIC, errMsg);
+            //            Console.Error.WriteLine(errMsg);
+            //        }
+            //    }
+            //}
 
         }
 
@@ -159,7 +160,8 @@ namespace Area23.At.Framework.Core.Static
                 exLog.ToString().Replace("\r", "").Replace("\n", " "),
                 exLog.StackTrace?.Replace("\r", "").Replace("\n", " "));
 
-            Log(excMsg, appName);
+            Area23Log.Logger.LogOriginMsg("SLog", excMsg);
+            // Log(excMsg, appName);
         }
 
         /// <summary>
@@ -200,7 +202,8 @@ namespace Area23.At.Framework.Core.Static
                 exLogString,
                 stackTrace);
 
-            Log(string.Concat(msgPrefix, "\n \t", exMsg), appName);
+            Area23Log.Logger.LogOriginMsg("SLog", string.Concat(msgPrefix, "\n \t", exMsg));
+            // Log(string.Concat(msgPrefix, "\n \t", exMsg), appName);
         }
 
     }

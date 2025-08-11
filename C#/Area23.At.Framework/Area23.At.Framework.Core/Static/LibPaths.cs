@@ -76,6 +76,7 @@ namespace Area23.At.Framework.Core.Static
 
         #region Web App Paths
 
+        // TODO: not only via Configuration
         public static string AppPath
         {
             get
@@ -93,7 +94,7 @@ namespace Area23.At.Framework.Core.Static
                     }
                     catch (Exception appFolderEx)
                     {
-                        SLog.Log(appFolderEx);
+                        Area23Log.Logger.LogOriginMsgEx("LibPaths", "AppPath.get", appFolderEx);     
                     }
                     if (string.IsNullOrEmpty(appPath))
                         appPath = Constants.APP_DIR;
@@ -322,13 +323,13 @@ namespace Area23.At.Framework.Core.Static
                         try
                         {
                             string dirNotFoundMsg = string.Format("out directory {0} doesn't exist, creating it!", systemDirResPath);
-                            SLog.Log(dirNotFoundMsg);
+                            Area23Log.Logger.LogOriginMsg("LibPaths", "SystemDirResPath.get: " + dirNotFoundMsg);
                             if (Constants.DirCreate)
                                 Directory.CreateDirectory(systemDirResPath);
                         }
                         catch (Exception ex)
                         {
-                            SLog.Log(ex);
+                            Area23Log.Logger.LogOriginMsgEx("LibPaths", "SystemDirResPath.get", ex);
                         }
                     }
                 }

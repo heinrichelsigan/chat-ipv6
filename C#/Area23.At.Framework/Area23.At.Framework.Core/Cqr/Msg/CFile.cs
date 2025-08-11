@@ -442,7 +442,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 }
                 catch (Exception exMime)
                 {
-                    SLog.Log(exMime);
+                    Area23Log.Logger.LogOriginMsgEx("CFile", "GetByBase64Attachment", exMime);
                 }
             }
             return isMimeAttachment;

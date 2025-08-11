@@ -226,7 +226,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             }
             catch (Exception exJson)
             {
-                SLog.Log(exJson);
+                Area23Log.Logger.LogOriginMsgEx("CImage", "FromJson", exJson);
             }
 
             return null;
@@ -435,7 +435,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                         }
                         catch (Exception exImg)
                         {
-                            SLog.Log(exImg);
+                            Area23Log.Logger.LogOriginMsgEx("CImage", "FromDrawingImage", exImg);
                             return null;
                         }
                     }

@@ -61,12 +61,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 this.textBoxServerIp.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V4];
                 _serverIp = IPAddress.Parse(textBoxServerIp.Text);
-                SLog.Log(string.Format("{0}: {1}", Constants.SERVER_IP_V4, textBoxServerIp.Text));
+                Area23Log.Logger.LogOriginMsg("TestForm", string.Format("{0}: {1}", Constants.SERVER_IP_V4, textBoxServerIp.Text));
             }
             if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V6] != null)
             {
                 this.textBoxServerIp6.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V6];
-                SLog.Log(string.Format("{0}: {1}", Constants.SERVER_IP_V6, textBoxServerIp6.Text));
+                Area23Log.Logger.LogOriginMsg("TestForm", string.Format("{0}: {1}", Constants.SERVER_IP_V6, textBoxServerIp6.Text));
             }
             this.textBoxExternalIp.Text = ExternalIpAddress.ToString();
 
@@ -119,7 +119,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exSound)
                     {
-                        SLog.Log(exSound);
+                        Area23Log.Logger.LogOriginMsgEx("TestForm", $"PlaySoundFromResource(string soundName = {soundName})", exSound);
                         played = false;
                     }
                     //fixed (byte* bufferPtr = &bytes[0])

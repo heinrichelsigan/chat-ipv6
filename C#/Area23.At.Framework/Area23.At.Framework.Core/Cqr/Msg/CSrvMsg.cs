@@ -406,7 +406,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             }
             catch (Exception exJson)
             {
-                SLog.Log(exJson);
+                Area23Log.Logger.LogOriginMsgEx("CSrvMsg", "FromJson", exJson);
             }
 
             return default(CSrvMsg<TC>);

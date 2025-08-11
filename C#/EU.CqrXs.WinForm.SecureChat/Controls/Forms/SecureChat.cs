@@ -1821,7 +1821,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     }
                                     catch (Exception exi)
                                     {
-                                        SLog.Log(exi);
+                                        Area23Log.Logger.LogOriginMsgEx("SecureChat", "BgWorkerMonitor_WorkMonitorAsync", exi);
                                     }
                                     try
                                     {
@@ -1829,7 +1829,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     }
                                     catch (Exception exi)
                                     {
-                                        SLog.Log(exi);
+                                        Area23Log.Logger.LogOriginMsgEx("SecureChat", "BgWorkerMonitor_WorkMonitorAsync", exi);
                                     }
 
                                     Thread.Sleep(Constants.CLOSING_TIMEOUT);
@@ -1855,7 +1855,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             }
                             catch (Exception exc)
                             {
-                                SLog.Log(exc);
+                                Area23Log.Logger.LogOriginMsgEx("SecureChat", "BgWorkerMonitor_WorkMonitorAsync", exc);
                             }
                         }
 
@@ -2316,7 +2316,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exV6)
             {
-                SLog.Log(exV6);
+                Area23Log.Logger.LogOriginMsgEx("SecureChat", "SetupNetwork", exV6);
             }
 
 
@@ -2376,7 +2376,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exFriendIp)
                     {
-                        SLog.Log("Error when adding friendIps + " + exFriendIp.Message);
+                        Area23Log.Logger.LogOriginMsgEx("SecureChat", "Error when adding friendIp", exFriendIp);
                     }
                 }
             }
@@ -2548,7 +2548,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            SLog.Log(exi);
+                            Area23Log.Logger.LogOriginMsgEx("SecureChat", "IPInterfaceAddressSelected", exi);
                         }
                         try
                         {
@@ -2556,7 +2556,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            SLog.Log(exi);
+                            Area23Log.Logger.LogOriginMsgEx("SecureChat", "IPInterfaceAddressSelected", exi);
                         }
 
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
@@ -2582,7 +2582,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 catch (Exception exc)
                 {
-                    SLog.Log(exc);
+                    Area23Log.Logger.LogOriginMsgEx("SecureChat", "IPInterfaceAddressSelected", exc);
                 }
             }
         }
@@ -2617,7 +2617,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exi)
                     {
-                        SLog.Log(exi);
+                        Area23Log.Logger.LogOriginMsgEx("SecureChat", "ServerProxyAddressSelected", exi);
                     }
 
                     Thread.Sleep(Constants.CLOSING_TIMEOUT);

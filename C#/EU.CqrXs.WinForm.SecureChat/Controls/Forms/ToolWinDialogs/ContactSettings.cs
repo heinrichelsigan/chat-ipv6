@@ -1,6 +1,7 @@
 ﻿using Area23.At.Framework.Core.Cache;
 using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Properties;
 using Newtonsoft.Json;
@@ -168,7 +169,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 catch (Exception exi)
                 {
-                    SLog.Log(exi);
+                    Area23Log.Logger.LogOriginMsgEx("ContactSettings", "Form_Closing(...)", exi);                    
                     imgTest = null;
                 }
                 if (Settings.Singleton.MyContact == null)

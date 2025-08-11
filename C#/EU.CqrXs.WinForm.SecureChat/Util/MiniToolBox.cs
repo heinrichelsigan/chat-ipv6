@@ -27,7 +27,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             }
             catch (Exception dirEx)
             {
-                SLog.Log($"Exeception: {dirEx.GetType()} {dirEx.Message}, when creating attachment directory: {LibPaths.AttachmentFilesDir}\n\t{dirEx}\n");
+                Area23Log.Logger.LogOriginMsgEx("MiniToolBox", 
+                    $"CreateAttachDirectory() Exception, when creating attachment directory: {LibPaths.AttachmentFilesDir}.", 
+                    dirEx);
             }
         }
 

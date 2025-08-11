@@ -4,6 +4,7 @@ using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Net.NameService;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Org.BouncyCastle.Asn1.Crmf;
 using System;
 using System.Collections.Generic;
@@ -139,7 +140,7 @@ namespace Area23.At.Framework.Core.Net.WebHttp
                 catch (Exception ex)
                 {
                     CqrException.SetLastException(ex);
-                    SLog.Log("Error on getting external client ip", ex, "");
+                    Area23Log.Logger.LogOriginMsgEx("HttpClientRequest", "Error on getting external client ip", ex);
                     return null;
                 }
             }

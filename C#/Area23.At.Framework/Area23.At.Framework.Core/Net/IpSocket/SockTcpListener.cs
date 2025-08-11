@@ -54,9 +54,9 @@ namespace Area23.At.Framework.Core.Net.IpSocket
             ServerEndPoint = new IPEndPoint(ServerAddress, Constants.CHAT_PORT);
             ServerTcpListener = new TcpListener(ServerEndPoint);
             ListenerName = ServerEndPoint.ToString();            
-            ServerTcpListener.Start();                     
+            ServerTcpListener.Start();
 
-            SLog.Log("new Socket created at " + ListenerName);            
+            Area23Log.Logger.LogOriginMsg("SockTcpListener", "new Socket created at " + ListenerName);            
         }
 
         public SockTcpListener(IPAddress connectedIpIfAddr, EventHandler<Area23EventArgs<ReceiveData>> evClReq) : this(connectedIpIfAddr)
@@ -96,7 +96,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                         }
                         catch (Exception exSock)
                         {
-                            SLog.Log(exSock, ListenerName);
+                            Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "OnAcceptClientConnection", exSock);
                             continue;
                         }
                     }
@@ -191,7 +191,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     }
                     catch (Exception exClientClose)
                     {
-                        SLog.Log(exClientClose);
+                        Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exClientClose);
                     }
                     try
                     {
@@ -199,7 +199,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                     }
                     catch (Exception exClientDispose)
                     {
-                        SLog.Log(exClientDispose);
+                        Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exClientDispose);
                     }
                 }
 
@@ -209,7 +209,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 }
                 catch (Exception exSrvListenStop)
                 {
-                    SLog.Log(exSrvListenStop);
+                    Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exSrvListenStop);
                 }
                 try
                 {
@@ -217,7 +217,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 }
                 catch (Exception exSrvListenerDispose)
                 {
-                    SLog.Log(exSrvListenerDispose);
+                    Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exSrvListenerDispose);
                 }
             }
  
@@ -229,7 +229,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
             }
             catch (Exception exTcpClientNull)
             {
-                SLog.Log(exTcpClientNull);
+                Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exTcpClientNull);                
             }
             try
             {
@@ -237,7 +237,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
             }
             catch (Exception exSrvListenerNull)
             {
-                SLog.Log(exSrvListenerNull);
+                Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exSrvListenerNull);
             }
 
             try
@@ -246,15 +246,15 @@ namespace Area23.At.Framework.Core.Net.IpSocket
             }
             catch (Exception exEventHandlerNull)
             {
-                SLog.Log(exEventHandlerNull);
+                Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exEventHandlerNull);
             }
             try { ListenerName = ""; ServerEndPoint = null; }
-            catch (Exception exSockNull) { SLog.Log(exSockNull); }
+            catch (Exception exSockNull) { Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exSockNull); }
             try { ClientSocket = null; }
-            catch (Exception exSockNull) { SLog.Log(exSockNull); }
-            try { ServerSocket = null; } catch (Exception exSockNull) { SLog.Log(exSockNull); }
+            catch (Exception exSockNull) { Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exSockNull); }
+            try { ServerSocket = null; } catch (Exception exSockNull) { Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exSockNull); }
             try { ServerAddress = null; }
-            catch (Exception exSrvAddr) { SLog.Log(exSrvAddr); }
+            catch (Exception exSrvAddr) { Area23Log.Logger.LogOriginMsgEx("SockTcpListener", "Dispose", exSrvAddr); }
 
         }
 

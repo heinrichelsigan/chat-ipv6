@@ -81,7 +81,7 @@ namespace Area23.At.Framework.Core.Static
                 }
                 catch (Exception getMapEx)
                 {
-                    SLog.Log(getMapEx);
+                    Area23Log.Logger.LogOriginMsgEx("JsonHelper", "ShortenMapJson.get", getMapEx);
                     tmpDict = null;
                 }
 
@@ -90,7 +90,7 @@ namespace Area23.At.Framework.Core.Static
                     tmpDict = new Dictionary<string, Uri>();
                 }
 
-                SLog.Log("urlshorter dict count: " + tmpDict.Count);
+                Area23Log.Logger.LogOriginMsg("JsonHelper", "urlshorter dict count: " + tmpDict.Count);
                 AppDomain.CurrentDomain.SetData(Constants.UTF8_JSON, tmpDict);
                 return tmpDict;
             }

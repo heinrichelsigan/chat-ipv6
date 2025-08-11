@@ -361,7 +361,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exSound)
                     {
-                        SLog.Log(exSound);
+                        Area23Log.Logger.LogOriginMsgEx("Form1", $"PlaySoundFromResource(string soundName = {soundName})", exSound);
                         played = false;
                     }
                     //fixed (byte* bufferPtr = &bytes[0])

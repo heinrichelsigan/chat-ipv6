@@ -136,7 +136,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception noIPv6Ex)
                 {
-                    SLog.Log(noIPv6Ex);
+                    Area23Log.Logger.LogOriginMsgEx("BaseChatForm", "ExternalIpAddressV6.get", noIPv6Ex);
                     _externalIPAddressV6 = null;
                 }
                 return _externalIPAddressV6;
@@ -1662,17 +1662,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         {
             if (e.Cancelled)
             {
-                SLog.Log($"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Canceled]");
+                Area23Log.Logger.LogOriginMsg("BaseChatForm", $"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Canceled]");
             }
             else if (e.Error != null)
             {
                 
                 string msg = (String.IsNullOrEmpty(e.Error.Message)) ? "[Error]" : "[Error: (msg = " + e.Error.Message + ")]";
-                SLog.Log($"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [msg]");
+                Area23Log.Logger.LogOriginMsg("BaseChatForm", $"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [msg]");
             }
             else
             {
-                SLog.Log($"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Completed]");
+                Area23Log.Logger.LogOriginMsg("BaseChatForm", $"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Completed]");
             }
         }
 
@@ -1925,7 +1925,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     }
                     catch (Exception exSound)
                     {
-                        SLog.Log(exSound);
+                        Area23Log.Logger.LogOriginMsgEx("BaseChatForm", $"PlaySoundFromResource(string soundName = {soundName})", exSound);     
                         played = false;
                     }
                     //fixed (byte* bufferPtr = &bytes[0])
@@ -2124,7 +2124,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             }
             catch (Exception exSetSave)
             {
-                SLog.Log(exSetSave);
+                Area23Log.Logger.LogOriginMsgEx("BaseChatForm", $"AppCloseAllFormsExit(...)", exSetSave);
                 settingsNotSavedReason = exSetSave.Message;
             }
 

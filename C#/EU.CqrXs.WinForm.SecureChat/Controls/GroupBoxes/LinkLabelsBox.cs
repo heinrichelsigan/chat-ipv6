@@ -473,7 +473,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     }
                     catch (Exception ex)
                     {
-                        SLog.Log(ex);
+                        Area23Log.Logger.LogOriginMsgEx("LinkLabelsBox", $"LinkLabelsBox_DragDrop(...)", ex);
                     }
                     gtext += " ";
                 }
