@@ -1129,7 +1129,18 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     contactNameEmail = "";
                 //     return;
 
-                string chatRoomNr = GetValidChatRoomNr();
+                string chatRoomNr = GetTextBoxText(TextBoxChatSession);
+                if (string.IsNullOrEmpty(chatRoomNr))
+                {
+                    chatRoomNr = (Entities.Settings.Singleton.ChatRoom != null && !string.IsNullOrEmpty(Entities.Settings.Singleton.ChatRoom.ChatRoomNr))
+                        ? Entities.Settings.Singleton.ChatRoom.ChatRoomNr : "";
+                    if (!string.IsNullOrEmpty(chatRoomNr))
+                        SetTextBoxText(TextBoxChatSession, chatRoomNr);
+                }
+                if (string.IsNullOrEmpty(GetTextBoxText(TextBoxChatSession)))
+                    return;
+
+                chatRoomNr = GetValidChatRoomNr();
 
                 string pipeText = GetTextBoxText(TextBoxPipe);
 
