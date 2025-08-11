@@ -65,7 +65,7 @@ namespace EU.CqrXs.Srv.Settings
                     DivTest1.InnerHtml = string.Empty;
                     DivTest2.InnerHtml = string.Empty;
                     string log0 = "Log test from " + Request.UserHostAddress + " " + Request.UserAgent + " " + Request.ClientCertificate.Issuer.ToString();
-                    Area23Log.LogStatic(log0);
+                    Area23Log.Logger.LogOriginMsg("CacheTest", log0);
                     DivTest0.InnerHtml += $"<p>{DateTime.Now.Area23DateTimeWithMillis()}: {log0} -> LogStatic to {SLog.LogFile}  successfull!</p>";
                 }
                 catch (Exception exStart)
@@ -233,7 +233,7 @@ namespace EU.CqrXs.Srv.Settings
                     }
                     catch (Exception exTableRow0)
                     {
-                        Area23Log.LogStatic(exTableRow0);
+                        Area23Log.Logger.LogOriginMsgEx("CacheTest", "PerformTests(...)", exTableRow0);
                     }
                     try
                     {
@@ -241,7 +241,7 @@ namespace EU.CqrXs.Srv.Settings
                     }
                     catch (Exception exTableRow1)
                     {
-                        Area23Log.LogStatic(exTableRow1);
+                        Area23Log.Logger.LogOriginMsgEx("CacheTest", "PerformTests(...)", exTableRow1);
                     }
                         
                 }
@@ -307,7 +307,7 @@ namespace EU.CqrXs.Srv.Settings
                         }
                         catch (Exception exCastData)
                         {
-                            Area23Log.LogStatic(exCastData);
+                            Area23Log.Logger.LogOriginMsgEx("CacheTest", "RunTasks(...)", exCastData);
                         }
                         if (data == null) 
                             data = new CacheTestData() { CKey = ckey, CThreadId = Thread.CurrentThread.ManagedThreadId, CTime = DateTime.Now };

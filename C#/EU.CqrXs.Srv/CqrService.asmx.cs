@@ -31,7 +31,7 @@ namespace EU.CqrXs.Srv
         [WebMethod]
         public string Send1StSrvMsg(string cryptMsg)
         {
-            Area23Log.LogStatic($"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
 
             MemoryCache.CacheDict.SetValue<string>("lastmsg", cryptMsg);
@@ -44,13 +44,13 @@ namespace EU.CqrXs.Srv
                 {
                     _contact = cContact.FromJson<CContact>(cryptMsg);
                     _decrypted = _contact.ToJson();
-                    Area23Log.LogStatic($"Contact decrypted successfully: {_decrypted}\n");
+                    Area23Log.Logger.LogOriginMsg("CqrService", $"Contact decrypted successfully: {_decrypted}\n");
                 }
             }
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic($"Exception {ex.GetType()} when decrypting contact: {ex.Message}\n\t{ex.ToString()}\n");
+                Area23Log.Logger.LogOriginMsgEx("CqrService", $"Exception {ex.GetType()} when decrypting contact: {ex.Message}", ex);
             }
 
             _responseString = _contact.EncryptToJson(_serverKey);
@@ -63,7 +63,7 @@ namespace EU.CqrXs.Srv
                 _responseString = foundCt.EncryptToJson(_serverKey);
             }
 
-            Area23Log.LogStatic($"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
             return _responseString;
         }
 
@@ -77,7 +77,7 @@ namespace EU.CqrXs.Srv
         [WebMethod]             
         public string ChatRoomInvite(string cryptMsg)
         {
-            Area23Log.LogStatic("ChatRoomInvite(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length +  ".\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", "ChatRoomInvite(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".");
             InitMethod();
             
             CSrvMsg<string> cSrvMsg, chatRSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
@@ -98,10 +98,10 @@ namespace EU.CqrXs.Srv
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
+                Area23Log.Logger.LogOriginMsgEx("CqrService", "ChatRoomInvite Exception", ex);
             }
 
-            Area23Log.LogStatic("ChatRoomInvite(string cryptMsg) finished. ChatRoomNr = "  + _chatRoomNumber  + ".\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", "ChatRoomInvite(string cryptMsg) finished. ChatRoomNr = " + _chatRoomNumber  + ".\n");
             return _responseString;
 
         }
@@ -119,7 +119,7 @@ namespace EU.CqrXs.Srv
         [WebMethod]
         public string ChatRoomPoll(string cryptMsg)
         {
-            Area23Log.LogStatic($"ChatRoomPoll(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length +".\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", $"ChatRoomPoll(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
             InitMethod();
 
             Dictionary<long, string> dict = new Dictionary<long, string>();
@@ -173,10 +173,10 @@ namespace EU.CqrXs.Srv
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
+                Area23Log.Logger.LogOriginMsgEx("CqrService", "ChatRoomPoll Exception", ex);
             }
 
-            Area23Log.LogStatic("ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finihed. ChatRoomNr =  " + _chatRoomNumber + ".\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", "ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finshed. ChatRoomNr =  " + _chatRoomNumber + ".\n");
             return _responseString;
 
         }
@@ -190,7 +190,7 @@ namespace EU.CqrXs.Srv
         [WebMethod]
         public string ChatRoomPush(string cryptMsg)
         {
-            Area23Log.LogStatic($"ChatRoomPushMessage(string cryptMsg) called.\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", $"ChatRoomPushMessage(string cryptMsg) called.\n");
             InitMethod();
 
             string chatRoomMembersCrypted = "";
@@ -212,7 +212,7 @@ namespace EU.CqrXs.Srv
                         ? cSrvMsg.CRoom.ChatRoomNr : "";                                        // get chat room number
                     chatRoomMembersCrypted = cSrvMsg.TContent;                                  // set chatRoomMembersCrypted to cSrvMsg.TContent
 
-                    Area23Log.LogStatic($"string chatRoomMembersCrypted = cSrvMsg.TContent; \r\n\tchatRoomMembersCrypted len = {chatRoomMembersCrypted.Length}.\n");
+                    Area23Log.Logger.LogOriginMsg("CqrService", $"string chatRoomMembersCrypted = cSrvMsg.TContent; \r\n\tchatRoomMembersCrypted len = {chatRoomMembersCrypted.Length}.");
                     chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);          // Load json chat room from file system json file                                                                                                                  
                     cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg,                // Check sender's permission to access chat room (must be creator or invited)
                         _chatRoomNumber, out _isValid);   
@@ -247,10 +247,10 @@ namespace EU.CqrXs.Srv
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
+                Area23Log.Logger.LogOriginMsgEx("CqrService", "ChatRoomPush Exception", ex);
             }
 
-            Area23Log.LogStatic($"ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finished. ChatRoomNr =  {_chatRoomNumber}.\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", $"ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finished. ChatRoomNr =  {_chatRoomNumber}.\n");
             return _responseString;
         }
 
@@ -262,7 +262,7 @@ namespace EU.CqrXs.Srv
         [WebMethod]
         public string ChatRoomClose(string cryptMsg)
         {
-            Area23Log.LogStatic($"ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  {cryptMsg.Length}.\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", $"ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  {cryptMsg.Length}.\n");
             InitMethod();
 
             CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
@@ -297,10 +297,10 @@ namespace EU.CqrXs.Srv
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
+                Area23Log.Logger.LogOriginMsgEx("CqrService", "ChatRoomClose Exception", ex);
             }
 
-            Area23Log.LogStatic($"ChatRoomClose(string cryptMsg) finished. deleted chat room ChatRoomNr =  {_chatRoomNumber}.\n");
+            Area23Log.Logger.LogOriginMsg("CqrService", $"ChatRoomClose(string cryptMsg) finished. deleted chat room ChatRoomNr =  {_chatRoomNumber}.\n");
 
             return _responseString;
 

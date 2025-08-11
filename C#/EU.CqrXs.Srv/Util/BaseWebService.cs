@@ -200,7 +200,7 @@ namespace EU.CqrXs.Srv.Util
                     catch (Exception exChatRoom)
                     {
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: loading chat room {room} failed. Exception: {exChatRoom.Message}." + Environment.NewLine;
-                        Area23Log.LogStatic($"Loading chat room {room} failed. ", exChatRoom, "");
+                        Area23Log.Logger.LogOriginMsgEx("BaseWebService", $"TestCache(): Loading chat room {room} failed. ", exChatRoom);
                     }
                 }
             }

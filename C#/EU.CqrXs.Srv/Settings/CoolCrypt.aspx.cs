@@ -253,7 +253,8 @@ namespace EU.CqrXs.Srv.Settings
                 }
                 catch (Exception exCode)
                 {
-                    Area23Log.LogStatic(exCode);
+                    Area23Log.Logger.LogOriginMsgEx("CoolCrypt", "ButtonDecrypt_Click(object sender, EventArgs e)", exCode);
+
                     cipherBytes = new byte[0];
                     this.TextBox_IV.Text = "0 bytes decoded, there might be an encode or crypt error!";
                 }
@@ -828,7 +829,7 @@ namespace EU.CqrXs.Srv.Settings
                             //        }
                             //        catch (Exception exDel)
                             //        {
-                            //            Area23Log.LogStatic(exDel); 
+                            //            Area23Log.Logger.LogOriginMsgEx("CoolCrypt", "", exDel); 
                             //        }
                             //    }
                             //}
@@ -945,7 +946,7 @@ namespace EU.CqrXs.Srv.Settings
                     }
                     catch (Exception exi)
                     {
-                        Area23Log.LogStatic(exi);
+                        Area23Log.Logger.LogOriginMsgEx("CoolCrypt", "ClearPostedFileSession(bool spansVisible = " + spansVisible + ")", exi);
                     }
                 }
 

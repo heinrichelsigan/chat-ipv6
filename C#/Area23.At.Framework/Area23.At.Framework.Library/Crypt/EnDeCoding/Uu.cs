@@ -224,7 +224,9 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
             }
             catch (Exception exStream)
             {
-                Area23Log.LogStatic($"ToUu: Exception {exStream.Message}, when encoding to uu via MemoryStream in UuEncodeBytesToString(...)");
+                Area23Log.Logger.LogOriginMsgEx("Uu", 
+                    $"ToUu: Exception {exStream.GetType()}, when encoding to uu via MemoryStream in UuEncodeBytesToString(...)", 
+                    exStream);
             }
             finally
             {
@@ -252,12 +254,12 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
 
                 memStream.Position = 0;
                 plainBytes = memStream.ToByteArray();
-                Area23Log.LogStatic($"FromUu: read {plainBytes.Length} bytes from MemoryStream.");
+                Area23Log.Logger.Log($"FromUu: read {plainBytes.Length} bytes from MemoryStream.");
                 memStream.Close();
             }
             catch
             {
-                Area23Log.LogStatic($"FromUu: uncaught com or unknown Exception, when reading bytes from MemoryStream!");
+                Area23Log.Logger.Log($"FromUu: uncaught com or unknown Exception, when reading bytes from MemoryStream!");
             }
             finally
             {

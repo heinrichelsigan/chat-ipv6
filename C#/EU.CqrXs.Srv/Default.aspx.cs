@@ -33,20 +33,20 @@ namespace EU.CqrXs.Srv
             if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V4] != null)
             {
                 LiteralServerIPv4.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V4];
-                Area23Log.LogStatic(Constants.SERVER_IP_V4 + ": "+ LiteralServerIPv4.Text);
+                Area23Log.Logger.LogOriginMsg("Default", Constants.SERVER_IP_V4 + ": "+ LiteralServerIPv4.Text);
                 tmpStr += Constants.SERVER_IP_V4 + ": " + (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V4] + Environment.NewLine;
             }
             if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V6] != null)
             {
                 this.LiteralServerIPv6.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V6];
-                Area23Log.LogStatic(Constants.SERVER_IP_V6 + ": " + LiteralServerIPv6.Text);
+                Area23Log.Logger.LogOriginMsg("Default", Constants.SERVER_IP_V6 + ": " + LiteralServerIPv6.Text);
                 tmpStr += Constants.SERVER_IP_V6 + ": " + (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V6] + Environment.NewLine + allStrng;
             }
 
             //allStrng = tmpStrg + allStrng;
 
             this.LiteralClientIp.Text = Request.UserHostAddress;
-            Area23Log.LogStatic("ClientIp: " + Request.UserHostAddress);
+            Area23Log.Logger.LogOriginMsg("Default", "ClientIp: " + Request.UserHostAddress);
             tmpStr += "ClientIp: " + Request.UserHostAddress;
 
             //if (!Page.IsPostBack)
@@ -69,12 +69,12 @@ namespace EU.CqrXs.Srv
             //    if (Application["lastdecrypted"] != null)
             //        this.preLast.InnerHtml = (string)Application["lastdecrypted"];
 
-            //    Area23Log.LogStatic("myServerKey = " + myServerKey);
+            //    Area23Log.Logger.LogOriginMsg("Default", "myServerKey = " + myServerKey);
             //    CqrFacade cqrFacade = new CqrFacade(myServerKey);
             //    Application["ServerKey"] = myServerKey;
             //    decrypted = string.Empty;
             //    allStrng += "Msg: " + rq.ToString() + Environment.NewLine;
-            //    Area23Log.LogStatic("Msg: " + rq.ToString());
+            //    Area23Log.Logger.LogOriginMsg("Default", "Msg: " + rq.ToString());
 
             //    Application["lastmsg"] = rq;
             //    this.TextBoxEncrypted.Text = rq;
@@ -88,7 +88,7 @@ namespace EU.CqrXs.Srv
             //            myContact = aContact.DecryptFromJson(myServerKey, rq);
             //            decrypted = $"<textarea name=TextBoxDecrypted>\r\nThank you Mr./Mrs. for registration {myContact.Name} [{myContact.Email}],\r\n";
 
-            //            Area23Log.LogStatic("Contact.ToJson(): " + decrypted);
+            //            Area23Log.Logger.LogOriginMsg("Default", ("Contact.ToJson(): " + decrypted);
             //        }
             //    }
             //    catch (Exception ex) 
@@ -96,7 +96,7 @@ namespace EU.CqrXs.Srv
             //        CqrException.SetLastException(ex);
             //        decrypted = $"<textarea name=TextBoxDecrypted>\r\nThank you Mr./Mrs. for registration,\r\n";
             //        this.preOut.InnerText = ex.Message + ex.ToString();
-            //        Area23Log.LogStatic(ex);
+            //        Area23Log.Logger.LogOriginMsgEx("Default", "", ex);
             //    }
 
             //    decrypted += "\n\r\nPlease wait until 30.April 2025 on next version\r\n and download new client then from https://srv.cqrxs.eu/v1,1/, \n\r\n";
@@ -110,7 +110,7 @@ namespace EU.CqrXs.Srv
             //        CContact foundCt = FindContactByNameEmail(_contacts, myContact);
             //        if (foundCt != null)
             //        {
-            //            Area23Log.LogStatic("found contact: " + foundCt.ToString());
+            //            Area23Log.Logger.LogOriginMsg("Default", "found contact: " + foundCt.ToString());
             //            foundCt.ContactId = myContact.ContactId;
             //            if (foundCt.Cuid == null || foundCt.Cuid == Guid.Empty) 
             //                foundCt.Cuid = new Guid();
@@ -131,7 +131,7 @@ namespace EU.CqrXs.Srv
             //                myContact.Cuid = new Guid();                        
             //            _contacts.Add(myContact);
 
-            //            Area23Log.LogStatic("contact added: " + myContact.ToString());
+            //            Area23Log.Logger.LogOriginMsg("Default", "contact added: " + myContact.ToString());
             //            decrypted = myContact.ToJson();
             //            foundCt = myContact;
             //        }

@@ -59,7 +59,7 @@ namespace Area23.At.Framework.Library.Util
 
         public virtual void Log(string msg)
         {
-            Area23Log.LogStatic(msg);
+            Area23Log.Logger.LogOriginMsg("UIPage", msg);
         }
 
 
@@ -103,7 +103,7 @@ namespace Area23.At.Framework.Library.Util
             }
             catch (Exception ex)
             {
-                Area23Log.LogStatic(ex);
+                Area23Log.Logger.LogOriginMsgEx("UIPage", "ByteArrayToFile(...)", ex);
                 ext = "hex";
             }
 
@@ -131,7 +131,7 @@ namespace Area23.At.Framework.Library.Util
             }
             catch (Exception ex)
             {
-                Area23Log.LogStatic(ex);
+                Area23Log.Logger.LogOriginMsgEx("UIPage", "ByteArrayToFile(...)", ex);
             }
 
             if (System.IO.File.Exists(strPath))

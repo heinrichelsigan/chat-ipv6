@@ -151,7 +151,7 @@ namespace EU.CqrXs.Srv.Settings
         {
             try
             {
-                Area23Log.LogStatic("Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
+                Area23Log.Logger.LogOriginMsg("Default", "Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
                 DivTest1.InnerHtml = $"<p>{DateTime.Now.Area23DateTimeWithMillis()} LogStatic to {SLog.LogFile} successfull!</p>";
             }
             catch (Exception ex1)
@@ -160,7 +160,7 @@ namespace EU.CqrXs.Srv.Settings
             }
             try
             {
-                Area23Log.LogStatic("Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
+                Area23Log.Logger.LogOriginMsg("Default", "Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
                 DivTest2.InnerHtml = $"<p>{DateTime.Now.Area23DateTimeWithMillis()} Logger.Log to {SLog.LogFile} successfull!</p>";
             }
             catch (Exception ex2)

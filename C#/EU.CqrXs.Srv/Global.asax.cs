@@ -13,7 +13,7 @@ namespace EU.CqrXs.Srv
 
         protected void Application_Init(object sender, EventArgs e)
         {
-            Area23Log.LogStatic($"Application_Init: EU.CqrXs.Srv.HttpApplication");
+            Area23Log.Logger.LogOriginMsg("EU.CqrXs.Srv.Global", $"Application_Init: EU.CqrXs.Srv.HttpApplication");
         }
 
         protected void Application_Start(object sender, EventArgs e)
@@ -26,9 +26,9 @@ namespace EU.CqrXs.Srv
             }
             catch (Exception exChatRoomsFrom) 
             {
-                Area23Log.LogStatic("Global.asax: Application_Start(sender, e):", exChatRoomsFrom, "");
+                Area23Log.Logger.LogOriginMsgEx("EU.CqrXs.Srv.Global", "Application_Start(sender, e):", exChatRoomsFrom);
             }
-            Area23Log.LogStatic($"Application_Start: Loaded {contacts?.Count} contacts and {chatRooms?.Count} chat rooms.");                      
+            Area23Log.Logger.LogOriginMsg("EU.CqrXs.Srv.Global", $"Application_Start: Loaded {contacts?.Count} contacts and {chatRooms?.Count} chat rooms.");                      
         }
 
         protected void Application_Disposed(object sender, EventArgs e)
@@ -37,15 +37,15 @@ namespace EU.CqrXs.Srv
 
         protected void Application_End(object sender, EventArgs e)
         {
-            Area23Log.LogStatic($"Application_End: EU.CqrXs.Srv.HttpApplication");
+            Area23Log.Logger.LogOriginMsg("EU.CqrXs.Srv.Global", $"Application_End: EU.CqrXs.Srv.HttpApplication");
         }
 
 
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
-            Area23Log.LogStatic($"Application_BeginRequest: sender  {sender?.GetType()} {sender?.ToString()} EventArgs {e?.GetType()} {e?.ToString()}");
-            Area23Log.LogStatic($"Session_Start: started new session from {Request.UserHostAddress} Referer = {Request?.UrlReferrer}");
+            Area23Log.Logger.LogOriginMsg("EU.CqrXs.Srv.Global", $"Application_BeginRequest: sender  {sender?.GetType()} {sender?.ToString()} EventArgs {e?.GetType()} {e?.ToString()}");
+            Area23Log.Logger.LogOriginMsg("EU.CqrXs.Srv.Global", $"Session_Start: started new session from {Request.UserHostAddress} Referer = {Request?.UrlReferrer}");
 
             return;
         }
@@ -63,7 +63,7 @@ namespace EU.CqrXs.Srv
             if (sender is HttpApplication)
                 path = ((HttpApplication)sender).Request.Url.PathAndQuery;
 
-            Area23Log.LogStatic($"Application_Error: sender  {sender?.GetType()} {sender?.ToString()} EventArgs {e?.GetType()} {e?.ToString()}");
+            Area23Log.Logger.LogOriginMsg("EU.CqrXs.Srv.Global", $"Application_Error: sender  {sender?.GetType()} {sender?.ToString()} EventArgs {e?.GetType()} {e?.ToString()}");
 
             CqrException appException = new CqrException(
                 string.Format("{0}: {1} thrown with path {2}", ex.GetType(), ex.Message, path), 
@@ -76,14 +76,14 @@ namespace EU.CqrXs.Srv
 
         protected void Session_Start(object sender, EventArgs e)
         {
-            Area23Log.LogStatic($"Session_Start: sender  {sender?.GetType()} {sender?.ToString()} EventArgs {e?.GetType()} {e?.ToString()}");
-            Area23Log.LogStatic($"Session_Start: started new session from {Request.UserHostAddress} Referer = {Request?.UrlReferrer}");
+            Area23Log.Logger.LogOriginMsg("EU.CqrXs.Srv.Global", $"Session_Start: sender  {sender?.GetType()} {sender?.ToString()} EventArgs {e?.GetType()} {e?.ToString()}");
+            Area23Log.Logger.LogOriginMsg("EU.CqrXs.Srv.Global", $"Session_Start: started new session from {Request.UserHostAddress} Referer = {Request?.UrlReferrer}");
         }
 
 
         protected void Session_End(object sender, EventArgs e)
         {
-            Area23Log.LogStatic($"Session_End: sender  {sender?.GetType()} {sender?.ToString()} EventArgs {e?.GetType()} {e?.ToString()}");
+            Area23Log.Logger.LogOriginMsg("EU.CqrXs.Srv.Global", $"Session_End: sender  {sender?.GetType()} {sender?.ToString()} EventArgs {e?.GetType()} {e?.ToString()}");
         }
 
     }

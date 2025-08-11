@@ -48,7 +48,7 @@ namespace EU.CqrXs.Srv.Util
             }
             catch (Exception ex)
             {
-                Area23Log.LogStatic(ex); 
+                Area23Log.Logger.LogOriginMsgEx("W.aspx", "Page_Load", ex); 
             }
         }
 
@@ -104,13 +104,13 @@ namespace EU.CqrXs.Srv.Util
 
                         yimage = new Bitmap(bmpName);
                         g.DrawImage(yimage, new System.Drawing.Rectangle(offset, 0, w, 200));
-                        try { g.Flush(); } catch (Exception exf) { Area23Log.LogStatic(exf); }
-                        // try { g.Save(); } catch (Exception exs) { Area23Log.LogStatic(exs); }
+                        try { g.Flush(); } catch (Exception exf) { Area23Log.Logger.LogOriginMsgEx("W.aspx", "MergeImage", exf); }
+                        // try { g.Save(); } catch (Exception exs) { Area23Log.Logger.LogOriginMsgEx("W.aspx", "MergeImage", exs); }
                         offset += w;
                     }
-                    
-                    // try { g.Flush(); } catch (Exception exf) { Area23Log.LogStatic(exf); }
-                    try { g.Save(); } catch (Exception exs) { Area23Log.LogStatic(exs); }
+
+                    // try { g.Flush(); } catch (Exception exf) { Area23Log.Logger.LogOriginMsgEx("W.aspx", "MergeImage", exf); }
+                    try { g.Save(); } catch (Exception exs) { Area23Log.Logger.LogOriginMsgEx("W.aspx", "MergeImage", exs); }
                 }
 
                 string fName = phypath + saveName;
@@ -118,7 +118,7 @@ namespace EU.CqrXs.Srv.Util
             }
             catch (Exception edr)
             {
-                Area23Log.LogStatic(edr);
+                Area23Log.Logger.LogOriginMsgEx("W.aspx", "MergeImage", edr);
             }
             return (zimage);
         }
