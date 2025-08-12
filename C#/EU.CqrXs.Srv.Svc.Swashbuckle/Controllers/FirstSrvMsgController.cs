@@ -32,7 +32,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             InitMethod();
 
 
-            CContact cContact = new CContact() { _hash = cqrFacade.PipeString };
+            CContact cContact = new CContact() { Hash = cqrFacade.PipeString };
 
             try
             {

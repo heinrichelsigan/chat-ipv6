@@ -700,7 +700,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 Settings.SaveSettings();
             }
             CContact myContact = new CContact(Settings.Singleton.MyContact, sessionChatText, clientFacade.PipeString);
-            myContact._message = sessionChatText;
+            myContact.Message = sessionChatText;
 
 
             CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, sessionChatText, clientFacade.PipeString);
@@ -709,9 +709,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             SetTextBoxText(this.TextBoxPipe, clientFacade.PipeString);
             // this.TextBoxPipe.Text = serverMessage.PipeString;
             // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-            myContact._hash = GetHash();
+            myContact.Hash = GetHash();
             if (friendContact != null)
-                friendContact._hash = GetHash();
+                friendContact.Hash = GetHash();
 
 
             CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, myContact.NameEmail, serverFacade.PipeString);
@@ -852,13 +852,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
                     // this.TextBoxPipe.Text = serverMessage.PipeString;
                     // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-                    myContact._hash = GetHash();
-                    myContact._message = chatRoomNr;
+                    myContact.Hash = GetHash();
+                    myContact.Message = chatRoomNr;
 
                     if (friendContact != null)
                     {
-                        friendContact._hash = GetHash();
-                        friendContact._message = chatRoomNr;
+                        friendContact.Hash = GetHash();
+                        friendContact.Message = chatRoomNr;
                     }
 
 
@@ -1011,12 +1011,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
                     // this.TextBoxPipe.Text = serverMessage.PipeString;
                     // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-                    myContact._hash = GetHash();
-                    myContact._message = chatRoomNr;
+                    myContact.Hash = GetHash();
+                    myContact.Message = chatRoomNr;
                     if (friendContact != null)
                     {
-                        friendContact._hash = GetHash();
-                        friendContact._message = chatRoomNr;
+                        friendContact.Hash = GetHash();
+                        friendContact.Message = chatRoomNr;
                     }
 
 
@@ -1129,13 +1129,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 CContact myContact = new CContact(Settings.Singleton.MyContact, chatRoomNr, clientFacade.PipeString);
                 CContact? friendContact = MiniToolBox.FindContactOrCreateByNameEmail(contactNameEmail, chatRoomNr, clientFacade.PipeString);
 
-                myContact._hash = GetHash();
-                myContact._message = chatRoomNr;
+                myContact.Hash = GetHash();
+                myContact.Message = chatRoomNr;
 
                 if (friendContact != null)
                 {
-                    friendContact._hash = GetHash();
-                    friendContact._message = chatRoomNr;
+                    friendContact.Hash = GetHash();
+                    friendContact.Message = chatRoomNr;
                 }
 
                 SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
@@ -1640,9 +1640,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                         SetTextBoxText(TextBoxPipe, clientFacade.PipeString);
                         // this.toolStripTextBoxCqrPipe.Text = serverMessage.PipeString;
-                        myContact._hash = GetHash();
-                        myContact._message = chatRoomNr;
-                        friendContact._message = chatRoomNr;
+                        myContact.Hash = GetHash();
+                        myContact.Message = chatRoomNr;
+                        friendContact.Message = chatRoomNr;
 
                         string filename = ea.GenericTData;
 

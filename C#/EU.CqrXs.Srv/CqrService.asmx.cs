@@ -34,16 +34,17 @@ namespace EU.CqrXs.Srv
             Area23Log.Logger.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
 
-            MemoryCache.CacheDict.SetValue<string>("lastmsg", cryptMsg);
-
-            CContact cContact = new CContact() { _hash = _cqrFacade.PipeString };
+            
+            CContact cContact = new CContact() { Hash = _cqrFacade.PipeString };
 
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     _contact = cContact.FromJson<CContact>(cryptMsg);
+                    _contact = cContact.DecryptFromJson(_serverKey, cryptMsg);
                     _decrypted = _contact.ToJson();
+                    MemoryCache.CacheDict.SetValue<string>("lastmsg", _decrypted);
                     Area23Log.Logger.LogOriginMsg("CqrService", $"Contact decrypted successfully: {_decrypted}\n");
                 }
             }
@@ -80,7 +81,7 @@ namespace EU.CqrXs.Srv
             Area23Log.Logger.LogOriginMsg("CqrService", "ChatRoomInvite(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".");
             InitMethod();
             
-            CSrvMsg<string> cSrvMsg, chatRSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, chatRSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
             chatRSrvMsg = chatRSrvMsg.FromJson(cryptMsg);
 
             try
@@ -124,7 +125,7 @@ namespace EU.CqrXs.Srv
 
             Dictionary<long, string> dict = new Dictionary<long, string>();
             
-            CSrvMsg<string> cSrvMsg, aSrvMsg =  new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg =  new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
 
             try
@@ -134,7 +135,7 @@ namespace EU.CqrXs.Srv
                     cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
                     cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);                // decrypt FullSrvMsg<string>
                     _contact = cSrvMsg.Sender;
-                    _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg._message;
+                    _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Message;
 
                     CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
                     chatRoomMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out _isValid);
@@ -196,7 +197,7 @@ namespace EU.CqrXs.Srv
             string chatRoomMembersCrypted = "";
             Dictionary<long, string> dict;
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
 
             CSrvMsg<string> chatRoomMsg = new CSrvMsg<string>(); // construct an empty message
@@ -235,7 +236,7 @@ namespace EU.CqrXs.Srv
                         
                         chatRoomMsg.CRoom.LastPushed = now;
                         chatRoomMsg.CRoom.TicksLong.Remove(now.Ticks);                          // TODO: Delete later, with that, you get your own message in sended queue
-                        chatRoomMsg.Sender._message = _chatRoomNumber;                          
+                        chatRoomMsg.Sender.Message = _chatRoomNumber;                          
                     }
                     else
                         chatRoomMsg.TContent = cSrvMsg.Sender.NameEmail + " has no permission for chat room " + _chatRoomNumber;
@@ -265,7 +266,7 @@ namespace EU.CqrXs.Srv
             Area23Log.Logger.LogOriginMsg("CqrService", $"ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  {cryptMsg.Length}.\n");
             InitMethod();
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _cqrFacade.PipeString, SerializedMsg = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
             List<CContact> _invited = new List<CContact>();            
 
@@ -286,7 +287,7 @@ namespace EU.CqrXs.Srv
                         if (JsonChatRoom.DeleteChatRoom(_chatRoomNumber))
                         {
                             chatRoomMsg.CRoom = null;
-                            chatRoomMsg.Sender._message = "";
+                            chatRoomMsg.Sender.Message = "";
                         }
                     }
                     

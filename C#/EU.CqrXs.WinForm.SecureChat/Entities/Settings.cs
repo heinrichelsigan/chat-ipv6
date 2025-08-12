@@ -127,7 +127,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                     try
                     {
                         cContent.Decrypt(Constants.AES_KEY);
-                        sdec = cContent._message;
+                        sdec = cContent.Message;
                     }
                     catch (Exception exDec)
                     {

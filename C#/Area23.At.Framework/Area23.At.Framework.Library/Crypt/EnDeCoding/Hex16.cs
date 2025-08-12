@@ -1,9 +1,6 @@
-﻿using Org.BouncyCastle.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Library.Crypt.EnDeCoding
 {
@@ -13,7 +10,7 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
     public class Hex16 : IDecodable
     {
         
-        public const string VALID_CHARS = "0123456789abcdef";
+        public const string VALID_CHARS = "0123456789ABCDEFabcdef";
 
         #region common interface, interfaces for static members appear in C# 7.3 or later
 
@@ -76,18 +73,12 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
         /// <exception cref="ArgumentNullException"></exception>
         public static string ToHex16(byte[] inBytes)
         {
-            if (inBytes == null || inBytes.Length < 1)
+            if (inBytes == null || inBytes.Length == 0)
                 throw new ArgumentNullException("inBytes", "public static string ToHex(byte[] inBytes == NULL)");
+            
+            string hexString = System.Text.Encoding.UTF8.GetString(inBytes);
 
-            string hexString = string.Empty;
-            for (int wc = 0; wc < inBytes.Length; wc++)
-            {
-                hexString += string.Format("{0:x2}", inBytes[wc]);
-            }
-
-            string strUtf8 = hexString; // to slow for very large files.ToLower();
-
-            return strUtf8;
+            return hexString;
         }
 
         /// <summary>
@@ -101,29 +92,29 @@ namespace Area23.At.Framework.Library.Crypt.EnDeCoding
             if (string.IsNullOrEmpty(hexStr))
                 throw new ArgumentNullException("hexStr", "public static byte[] FromHex(string hexStr), hexStr == NULL || hexStr == \"\"");
 
-            List<byte> bytes = new List<byte>();
+            //List<byte> bytes = new List<byte>();
 
-            for (int wb = 0; wb < hexStr.Length; wb += 2)
-            {
-                char msb, lsb;
-                if (wb == hexStr.Length - 1)
-                {
-                    msb = '0';
-                    lsb = hexStr[wb];
-                }
-                else
-                {
-                    msb = (char)hexStr[wb];
-                    lsb = (char)hexStr[wb + 1];
-                }
-                string sb = msb.ToString() + lsb.ToString();
-                byte b = Convert.ToByte(sb, 16);
-                bytes.Add(b);
-            }
+            //for (int wb = 0; wb < hexStr.Length; wb += 2)
+            //{
+            //    char msb, lsb;
+            //    if (wb == hexStr.Length - 1)
+            //    {
+            //        msb = '0';
+            //        lsb = hexStr[wb];
+            //    }
+            //    else
+            //    {
+            //        msb = (char)hexStr[wb];
+            //        lsb = (char)hexStr[wb + 1];
+            //    }
+            //    string sb = msb.ToString() + lsb.ToString();
+            //    byte b = Convert.ToByte(sb, 16);
+            //    bytes.Add(b);
+            //}
 
-            byte[] bytesUtf8 = EnDeCodeHelper.GetBytes(hexStr);
-            // return bytesUtf8
-            return bytes.ToArray();
+            byte[] bytesUtf8 = System.Text.Encoding.UTF8.GetBytes(hexStr);
+
+            return bytesUtf8;
 
         }
 

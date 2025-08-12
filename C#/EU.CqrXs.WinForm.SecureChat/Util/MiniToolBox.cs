@@ -44,7 +44,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
                         c.Email.Contains(nameEmail, StringComparison.CurrentCultureIgnoreCase))
                     {
                         friendContact = new CContact(c, chatRoomSession, pipeText);
-                        friendContact._message = chatRoomSession;
+                        friendContact.Message = chatRoomSession;
                         
                         break;
                     }
@@ -60,7 +60,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
                     Int32.TryParse(DateTime.Now.ToString("Mdd"), out cId);
                 CImage? friendImg = null;
                 tmpContact = new CContact(cId, Guid.NewGuid(), nameContact, nameEmail, "", "", friendImg);
-                tmpContact._message = chatRoomSession;
+                tmpContact.Message = chatRoomSession;
                     
                 friendContact = new CContact(tmpContact, chatRoomSession, pipeText);
                 

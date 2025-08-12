@@ -176,7 +176,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {
                         string decrypted = string.Empty;
                         CContent? content = cc.DecryptFromJson(myServerKey, this.textBoxSource.Text);
-                        this.textBoxDestination.Text = content._message;
+                        this.textBoxDestination.Text = content.Message;
                     }
 
                 }

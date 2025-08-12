@@ -106,14 +106,14 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                 {
                     MsgType = chatRoom.MsgType,
                     TicksLong = chatRoom.TicksLong,
-                    _message = chatRoomNumber,
-                    _hash = chatRoom.Hash,
+                    Message = chatRoomNumber,
+                    Hash = chatRoom.Hash,
                     Md5Hash = chatRoom.Md5Hash,
                     CBytes = chatRoom.CBytes
                 };
 
                 if (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr))
-                    cSrvMsg.Sender._message = cSrvMsg.CRoom.ChatRoomNr;
+                    cSrvMsg.Sender.Message = cSrvMsg.CRoom.ChatRoomNr;
 
                 string jsonCRoomFileName = GetJsonChatRoomFullPath(chatRoomNumber);
                 SerializeCSrvMsg(cSrvMsg, out jsonString, true);
@@ -215,7 +215,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
 
             if (chatRoomNumber.Equals(chatRoomMsg.CRoom.ChatRoomNr, StringComparison.CurrentCultureIgnoreCase)) // validate chat number
             {
-                chatRoomMsg._message = chatRoomNumber;
+                chatRoomMsg.Message = chatRoomNumber;
 
                 if ((!string.IsNullOrEmpty(cSrvMsg.Sender.Email) && cSrvMsg.Sender.Email.Equals(chatRoomMsg.Sender.Email, StringComparison.CurrentCultureIgnoreCase)) ||
                     (!string.IsNullOrEmpty(cSrvMsg.Sender.NameEmail) && cSrvMsg.Sender.NameEmail.Equals(chatRoomMsg.Sender.NameEmail, StringComparison.InvariantCultureIgnoreCase)))
@@ -229,7 +229,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                 if (JsonChatRoom.DeleteChatRoom(chatRoomNumber))
                 {
                     cSrvMsg.CRoom = null;
-                    cSrvMsg.Sender._message = "";
+                    cSrvMsg.Sender.Message = "";
                 }
             }
 
@@ -258,7 +258,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
 
             if (chatRoomNr.Equals(chatRoomMsg.CRoom.ChatRoomNr, StringComparison.CurrentCultureIgnoreCase)) // validate chat number
             {
-                chatRoomMsg._message = chatRoomNr;
+                chatRoomMsg.Message = chatRoomNr;
 
                 if ((!string.IsNullOrEmpty(cSrvMsg.Sender.Email) && cSrvMsg.Sender.Email.Equals(chatRoomMsg.Sender.Email, StringComparison.CurrentCultureIgnoreCase)) ||
                     (!string.IsNullOrEmpty(cSrvMsg.Sender.NameEmail) && cSrvMsg.Sender.NameEmail.Equals(chatRoomMsg.Sender.NameEmail, StringComparison.InvariantCultureIgnoreCase)))

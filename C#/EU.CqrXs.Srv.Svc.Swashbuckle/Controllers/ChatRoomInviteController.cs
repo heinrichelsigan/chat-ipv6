@@ -30,7 +30,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             InitMethod();
 
             _chatRoomNumber = "";            
-            CSrvMsg<string>? cSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string>? cSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
             cSrvMsg = cSrvMsg.FromJson(cryptMsg);
 
             _responseString = "";

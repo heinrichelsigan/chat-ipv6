@@ -1,0 +1,44 @@
+{
+  "ClearAllOnClose": false,
+  "OnlyPeer2PeerChat": false,
+  "ZipBeforeSend": false,
+  "OnlySecureFileTypes": false,
+  "RegisterUser": true,
+  "SecretKeysCrypted": [],
+  "ChatRoom": null,
+  "TimeStamp": "2025-08-12T07:25:32.2734519+02:00",
+  "SaveStamp": "2025-08-12T07:27:18.456366+02:00",
+  "MyContact": {
+    "ContactId": 0,
+    "Cuid": "00000000-0000-0000-0000-000000000000",
+    "Name": "Heinrich Elsigan",
+    "Email": "he@area23.at",
+    "Mobile": "",
+    "Address": "",
+    "SecretKey": "",
+    "ContactImage": null,
+    "NameEmail": "Heinrich Elsigan <he@area23.at>",
+    "MsgType": 0,
+    "Message": "",
+    "SerializedMsg": "",
+    "Hash": "6DgCXF5f",
+    "Md5Hash": "",
+    "CBytes": ""
+  },
+  "Contacts": [],
+  "FriendIPs": [],
+  "MyIPs": [
+    "169.254.116.213",
+    "169.254.85.69",
+    "169.254.39.21",
+    "10.103.228.181",
+    "::1",
+    "127.0.0.1",
+    "172.26.192.1"
+  ],
+  "Proxies": [
+    "18.101.101.108",
+    "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
+  ],
+  "SecretKeys": []
+}

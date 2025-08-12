@@ -142,8 +142,8 @@ namespace EU.CqrXs.Srv.Util
                     foundCt.Address = ccontact.Address;
                 if (ccontact.Mobile != null && ccontact.Mobile.Length > 1)
                     foundCt.Mobile = ccontact.Mobile;
-                if (ccontact._message != null && !string.IsNullOrEmpty(ccontact._message))
-                    foundCt._message = ccontact._message;
+                if (ccontact.Message != null && !string.IsNullOrEmpty(ccontact.Message))
+                    foundCt.Message = ccontact.Message;
 
                 foundCt.ContactImage = null;
                 UpdateContact(foundCt);
@@ -152,9 +152,9 @@ namespace EU.CqrXs.Srv.Util
             {
                 if (ccontact.Cuid == null || ccontact.Cuid == Guid.Empty)
                     ccontact.Cuid = Guid.NewGuid();
-                foundCt = new CContact(ccontact, ccontact._message, ccontact._hash);
+                foundCt = new CContact(ccontact, ccontact.Message, ccontact.Hash);
                 foundCt.ContactImage = null;
-                foundCt._message = ccontact._message;
+                foundCt.Message = ccontact.Message;
 
                 _contacts.Add(foundCt);
                 JsonContacts.SaveJsonContacts(_contacts);
@@ -174,7 +174,7 @@ namespace EU.CqrXs.Srv.Util
             if (ccontact == null || string.IsNullOrEmpty(ccontact.Email))
                 return;
 
-            string chatRoomNr = (ccontact._message != null && !string.IsNullOrEmpty(ccontact._message)) ? ccontact._message : "";
+            string chatRoomNr = (ccontact.Message != null && !string.IsNullOrEmpty(ccontact.Message)) ? ccontact.Message : "";
             HashSet<CContact> contacts = new HashSet<CContact>();
 
             foreach (CContact ct in _contacts)
@@ -186,7 +186,7 @@ namespace EU.CqrXs.Srv.Util
                     toAddContact.Mobile = ccontact.Mobile;
                     toAddContact.ContactImage = null;
                     toAddContact.Cuid = (ccontact.Cuid != null && ccontact.Cuid != Guid.Empty) ? ccontact.Cuid : Guid.NewGuid();
-                    toAddContact._message = chatRoomNr;
+                    toAddContact.Message = chatRoomNr;
                     contacts.Add(toAddContact);
                 }
                 else
@@ -228,8 +228,8 @@ namespace EU.CqrXs.Srv.Util
                 if (chatRoomMsg.Recipients.Remove(toDelContact))
                 {
 
-                    CContact cToAdd = new CContact(contact, chatRoomNr, contact._hash);
-                    cToAdd._message = chatRoomNr;
+                    CContact cToAdd = new CContact(contact, chatRoomNr, contact.Hash);
+                    cToAdd.Message = chatRoomNr;
                     chatRoomMsg.Recipients.Add(cToAdd);
                 }
             }
@@ -255,7 +255,7 @@ namespace EU.CqrXs.Srv.Util
                 if (_contacts.Remove(toDelContact))
                 {
                     CContact c2Add = new CContact(contact, chatRoomNr, contact.Hash);
-                    c2Add._message = chatRoomNr;
+                    c2Add.Message = chatRoomNr;
                     _contacts.Add(c2Add);
                 }
             }

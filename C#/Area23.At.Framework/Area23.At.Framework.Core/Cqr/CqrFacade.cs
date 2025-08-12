@@ -23,7 +23,7 @@ namespace Area23.At.Framework.Core.Cqr
     {
 
         private readonly string _key;
-        private readonly string _hash;
+        private readonly string Hash;
         private readonly byte[] _keyBytes;
         private readonly SymmCipherPipe _symmPipe;
         public string PipeString { get => _symmPipe.PipeString; }
@@ -40,8 +40,8 @@ namespace Area23.At.Framework.Core.Cqr
                 throw new ArgumentNullException("public CqrFacade(string key = \"\")");
 
             _key = key;
-            _hash = EnDeCodeHelper.KeyToHex(_key);
-            _keyBytes = CryptHelper.GetUserKeyBytes(_key, _hash, 16);
+            Hash = EnDeCodeHelper.KeyToHex(_key);
+            _keyBytes = CryptHelper.GetUserKeyBytes(_key, Hash, 16);
             _symmPipe = new SymmCipherPipe(_keyBytes, 8);
         }
 
@@ -73,7 +73,7 @@ namespace Area23.At.Framework.Core.Cqr
         /// <returns></returns>
         public string Send_CFile_Peer(CFile cFile, IPAddress peerIp, int serverPort = 7777, CType msgType = CType.Json, EncodingType encType = EncodingType.Base64)
         {
-            cFile._hash = PipeString;
+            cFile.Hash = PipeString;
             cFile.MsgType = CType.Json;
             string encrypted = cFile.EncryptToJson(_key);
 
@@ -94,9 +94,9 @@ namespace Area23.At.Framework.Core.Cqr
         public CContact? Test_Send1st_CqrSrvMsg1_Soap(CContact myContact, EncodingType encodingType = EncodingType.Base64)
         {
 
-            myContact._hash = PipeString;
+            myContact.Hash = PipeString;
             CContact sendContact = new CContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
-            sendContact._hash = PipeString;
+            sendContact.Hash = PipeString;
 
             string encMsg = sendContact.EncryptToJson(_key);
 
@@ -119,9 +119,9 @@ namespace Area23.At.Framework.Core.Cqr
         public CContact SendFirstSrvMsg_Soap(CContact myContact, EncodingType encodingType = EncodingType.Base64)
         {
 
-            myContact._hash = PipeString;
+            myContact.Hash = PipeString;
             CContact sendContact = new CContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
-            sendContact._hash = PipeString;
+            sendContact.Hash = PipeString;
 
             string encMsg = sendContact.EncryptToJson(_key);
 
@@ -148,7 +148,7 @@ namespace Area23.At.Framework.Core.Cqr
         public CSrvMsg<string> Send_InitChatRoom_Soap<T>(CSrvMsg<T> cServerMsg, EncodingType encodingType = EncodingType.Base64)
             where T : class
         {
-            cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg.Hash = _symmPipe.PipeString;
             string cryptSrvString = cServerMsg.EncryptToJson(_key);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
@@ -173,7 +173,7 @@ namespace Area23.At.Framework.Core.Cqr
 
         public CSrvMsg<string>? Send_CloseChatRoom_Soap<T>(CSrvMsg<T> cServerMsg, string chatRoomNr, EncodingType encodingType = EncodingType.Base64) where T : class
         {
-            cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg.Hash = _symmPipe.PipeString;
             cServerMsg.CRoom = new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MinValue, DateTime.MinValue);
 
             string cryptSrvString = cServerMsg.EncryptToJson(_key);
@@ -191,7 +191,7 @@ namespace Area23.At.Framework.Core.Cqr
                 throw;
             }
 
-            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) {  _hash = _symmPipe.PipeString, SerializedMsg = response };
+            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) {  Hash = _symmPipe.PipeString, SerializedMsg = response };
             CSrvMsg<string> responseMsg = respTmpMsg.DecryptFromJson(_key, response);
 
 
@@ -211,7 +211,7 @@ namespace Area23.At.Framework.Core.Cqr
         public CSrvMsg<string> SendChatMsg_Soap_CContent(CSrvMsg<string> cServerMsg, CContent cClientMsg, string clientKey = "", EncodingType encodingType = EncodingType.Base64)
         {
             SymmCipherPipe clientPipe = new SymmCipherPipe(clientKey);
-            cClientMsg._hash = clientPipe.PipeString;
+            cClientMsg.Hash = clientPipe.PipeString;
             string cryptClientMsg = cClientMsg.EncryptToJson(clientKey);
 
             CSrvMsg<string> responseMsg = SendChatMsg_Soap_Simple(cServerMsg, cryptClientMsg, encodingType);
@@ -222,7 +222,7 @@ namespace Area23.At.Framework.Core.Cqr
         public CSrvMsg<string> SendChatMsg_Soap_File(CSrvMsg<string> cServerMsg, CFile cClientMsg, string clientKey = "", EncodingType encodingType = EncodingType.Base64)
         {
             SymmCipherPipe clientPipe = new SymmCipherPipe(clientKey);
-            cClientMsg._hash = clientPipe.PipeString;
+            cClientMsg.Hash = clientPipe.PipeString;
             string cryptClientMsg = cClientMsg.EncryptToJson(clientKey);
 
             CSrvMsg<string> responseMsg = SendChatMsg_Soap_Simple(cServerMsg, cryptClientMsg, encodingType);
@@ -241,9 +241,9 @@ namespace Area23.At.Framework.Core.Cqr
         /// <returns><see cref="CSrvMsg{string}"/>, containing char room number, last polled date, updated sender and recipients</returns>
         public CSrvMsg<string> SendChatMsg_Soap_Simple(CSrvMsg<string> cServerMsg, string encryptedClientMsg, EncodingType encodingType = EncodingType.Base64)
         {
-            cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg.Hash = _symmPipe.PipeString;
             cServerMsg.TContent = encryptedClientMsg;
-            cServerMsg._message = encryptedClientMsg;
+            cServerMsg.Message = encryptedClientMsg;
             string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
@@ -267,13 +267,13 @@ namespace Area23.At.Framework.Core.Cqr
         public CSrvMsg<string> ReceiveChatMsg_Soap<T>(CSrvMsg<T> cServerMsg, EncodingType encodingType = EncodingType.Base64)
         where T : class
         {
-            cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg.Hash = _symmPipe.PipeString;
             string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
             string response = client.ChatRoomPoll(cryptSrvMsg);
 
-            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) { _hash = _symmPipe.PipeString, SerializedMsg = response };
+            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) { Hash = _symmPipe.PipeString, SerializedMsg = response };
             CSrvMsg<string> responseMsg = respTmpMsg.DecryptFromJson(_key, response);
 
             return responseMsg;
@@ -294,7 +294,7 @@ namespace Area23.At.Framework.Core.Cqr
         public async Task<CSrvMsg<string>?> Send_InitChatRoom_SoapAsync<T>(CSrvMsg<T> cServerMsg, EncodingType encodingType = EncodingType.Base64)
             where T : class
         {
-            cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg.Hash = _symmPipe.PipeString;
             string cryptSrvString = cServerMsg.EncryptToJson(_key);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
@@ -318,7 +318,7 @@ namespace Area23.At.Framework.Core.Cqr
 
         public async Task<CSrvMsg<string>?> Send_CloseChatRoom_SoapAsync<T>(CSrvMsg<T> cServerMsg, string chatRoomNr, EncodingType encodingType = EncodingType.Base64) where T : class
         {
-            cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg.Hash = _symmPipe.PipeString;
             cServerMsg.CRoom = new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MinValue, DateTime.MinValue);
 
             string cryptSrvString = cServerMsg.EncryptToJson(_key);
@@ -336,7 +336,7 @@ namespace Area23.At.Framework.Core.Cqr
                 throw;
             }
 
-            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) { _hash = _symmPipe.PipeString, SerializedMsg = response };
+            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) { Hash = _symmPipe.PipeString, SerializedMsg = response };
             CSrvMsg<string> responseMsg = respTmpMsg.DecryptFromJson(_key, response);
 
             return responseMsg;
@@ -358,11 +358,11 @@ namespace Area23.At.Framework.Core.Cqr
             T t1 = default(T);
 
             SymmCipherPipe clientPipe = new SymmCipherPipe(clientKey);
-            cClientMsg._hash = clientPipe.PipeString;
+            cClientMsg.Hash = clientPipe.PipeString;
             string cryptClientMsg = cClientMsg.EncryptToJson(clientKey);
 
-            cServerMsg._hash = _symmPipe.PipeString;
-            cServerMsg._message = cryptClientMsg;
+            cServerMsg.Hash = _symmPipe.PipeString;
+            cServerMsg.Message = cryptClientMsg;
             if ((t1 is string sts) || typeof(T) == typeof(string))
             {
                 sts = cryptClientMsg;
@@ -374,7 +374,7 @@ namespace Area23.At.Framework.Core.Cqr
             
             string response = await client.ChatRoomPushAsync(cryptSrvMsg);
 
-            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) { _hash = _symmPipe.PipeString, SerializedMsg = response };
+            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) { Hash = _symmPipe.PipeString, SerializedMsg = response };
             CSrvMsg<string> responseMsg = respTmpMsg.DecryptFromJson(_key, response);
 
             return responseMsg;
@@ -390,9 +390,9 @@ namespace Area23.At.Framework.Core.Cqr
         /// <returns><see cref="Task{CSrvMsg{string}}"/>, containing char room number, last polled date, updated sender and recipients</returns>
         public async Task<CSrvMsg<string>?> SendChatMsg_Soap_SimpleAsync(CSrvMsg<string>  cServerMsg, string encryptedClientMsg, EncodingType encodingType = EncodingType.Base64)
         {
-            cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg.Hash = _symmPipe.PipeString;
             cServerMsg.TContent = encryptedClientMsg;
-            cServerMsg._message = encryptedClientMsg;
+            cServerMsg.Message = encryptedClientMsg;
             string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
 
 
@@ -417,13 +417,13 @@ namespace Area23.At.Framework.Core.Cqr
         public async Task<CSrvMsg<string>?> ReceiveChatMsg_SoapAsync<T>(CSrvMsg<T> cServerMsg, EncodingType encodingType = EncodingType.Base64)
             where T : class
         {
-            cServerMsg._hash = _symmPipe.PipeString;
+            cServerMsg.Hash = _symmPipe.PipeString;
             string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
             string response = await client.ChatRoomPollAsync(cryptSrvMsg);
 
-            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) { _hash = _symmPipe.PipeString, SerializedMsg = response };
+            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, CType.Json) { Hash = _symmPipe.PipeString, SerializedMsg = response };
             CSrvMsg<string> responseMsg = respTmpMsg.DecryptFromJson(_key, response);
 
             return responseMsg;

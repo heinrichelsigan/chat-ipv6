@@ -78,7 +78,7 @@ namespace EU.CqrXs.Srv
 
             //    Application["lastmsg"] = rq;
             //    this.TextBoxEncrypted.Text = rq;
-            //    CContact aContact = new CContact() { _hash = cqrFacade.PipeString };
+            //    CContact aContact = new CContact() { Hash = cqrFacade.PipeString };
 
             //    try
             //    {

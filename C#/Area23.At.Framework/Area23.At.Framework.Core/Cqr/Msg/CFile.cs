@@ -47,7 +47,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             FileName = fileName;            
             Data = data;
             Base64Type = MimeType.GetMimeType(Data, FileName);
-            _hash = hash;
+            Hash = hash;
             MsgType = CType.Json;
             Md5Hash = "";
             Sha256Hash = Sha256Sum.Hash(Data, "");
@@ -66,7 +66,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             FileName = fileName;
             Data = Convert.FromBase64String(base64);
             Base64Type = MimeType.GetMimeType(Data, FileName);
-            _hash = hash;
+            Hash = hash;
             Md5Hash = "";
             FileByteLen = Data.LongLength;
             Sha256Hash = Sha256Sum.Hash(Data, "");
@@ -110,7 +110,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Sha256Hash = Sha256Sum.Hash(Data, "");
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
-            this._hash = hash;
+            this.Hash = hash;
             FileByteLen = Data.Length;
         }
 
@@ -127,7 +127,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Sha256Hash = Sha256Sum.Hash(Data, "");
             MsgType = msgArt;
             EnCodingType = EncodingType.Base64;
-            this._hash = hash;
+            this.Hash = hash;
             FileByteLen = Data.Length;
 
         }
@@ -158,41 +158,15 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         #endregion ctors
 
 
-        public new CFile? CCopy(CFile? leftDest, CFile? rightSrc)
+        public new CFile? CCopy(CFile? destination, CFile? source)
         {
-            if (rightSrc == null)
-                return null;
-            if (leftDest == null)
-                leftDest = new CFile(rightSrc);
-
-            leftDest._message = rightSrc._message;
-            leftDest._hash = rightSrc._hash;
-            leftDest.MsgType = rightSrc.MsgType;
-            leftDest.CBytes = rightSrc.CBytes;
-            leftDest.Md5Hash = rightSrc.Md5Hash;
-
-            leftDest.FileName = rightSrc.FileName;
-            leftDest.Base64Type = rightSrc.Base64Type;
-            leftDest.Data = rightSrc.Data;
-            leftDest.Sha256Hash = rightSrc.Sha256Hash;            
-            leftDest.EnCodingType = rightSrc.EnCodingType;
-            leftDest.Base64Type = rightSrc.Base64Type;
-            leftDest.FileByteLen = Math.Max(rightSrc.FileByteLen, rightSrc.Data.Length);
-            leftDest.SerializedMsg = "";
-            leftDest.SerializedMsg = leftDest.ToJson();
-
-            return leftDest;
+            return CloneCopy(source, destination);
         }
 
 
         #region EnDeCrypt+DeSerialize
 
 
-        public override byte[] EncryptToJsonToBytes(string serverKey)
-        {
-            string serialized = EncryptToJson(serverKey);
-            return Encoding.UTF8.GetBytes(serialized);
-        }
 
         public override string EncryptToJson(string serverKey)
         {
@@ -202,14 +176,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 throw new CqrException($"override string EncryptToJson(string serverKey) failed");
 
             return serializedJson;
-        }
-
-
-        public new CFile? DecryptFromJsonFromBytes(string serverKey, byte[] serializedBytes)
-        {
-            string serialized = Encoding.UTF8.GetString(serializedBytes);
-            CFile? cFile = DecryptFromJson(serverKey, serialized);
-            return cFile;
         }
 
 
@@ -307,7 +273,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                     Md5Hash = md5Hash;
                     Sha256Hash = sha256Hash;
                     Data = Convert.FromBase64String(mimeBase64);
-                    _hash = hash;
+                    Hash = hash;
                 }
             }
             else if (msgArt == CType.Json)
@@ -403,7 +369,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         internal static bool GetByBase64Attachment(string plainAttachment,
             out string cqrFileName, out string base64Type,
             out string md5Hash, out string sha256Hash,
-            out string mimeBase64, out string _hash)
+            out string mimeBase64, out string Hash)
         {
             string restString = plainAttachment;
 
@@ -416,7 +382,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                     contentLenString += ch.ToString();
             int contentLen = Int32.Parse(contentLenString);
 
-            _hash = restString.GetSubStringByPattern("Content-Verification: ", true, "", ";", false);
+            Hash = restString.GetSubStringByPattern("Content-Verification: ", true, "", ";", false);
             md5Hash = restString.GetSubStringByPattern("md5=\"", true, "", "\";", false);
             sha256Hash = restString.GetSubStringByPattern("sha256=\"", true, "", "\";", false);
 
@@ -430,10 +396,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             {
                 try
                 {
-                    if (restString.EndsWith($"\n{_hash}\0"))
-                        mimeBase64 = restString.Substring(0, restString.LastIndexOf($"\n{_hash}\0"));
-                    if (restString.EndsWith($"\n{_hash}"))
-                        mimeBase64 = restString.Substring(0, restString.LastIndexOf($"\n{_hash}"));
+                    if (restString.EndsWith($"\n{Hash}\0"))
+                        mimeBase64 = restString.Substring(0, restString.LastIndexOf($"\n{Hash}\0"));
+                    if (restString.EndsWith($"\n{Hash}"))
+                        mimeBase64 = restString.Substring(0, restString.LastIndexOf($"\n{Hash}"));
                     if (restString.LastIndexOf("\n") >= (restString.Length - 11))
                         mimeBase64 = restString.Substring(0, restString.LastIndexOf($"\n"));
 
@@ -479,8 +445,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                cfile._hash = symmPipe.PipeString;
-                cfile.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cfile._message), "");
+                cfile.Hash = symmPipe.PipeString;
+                cfile.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cfile.Message), "");
                 cfile.Sha256Hash = Sha256Sum.Hash(cfile.Data, "");
 
                 byte[] msgBytes = cfile.Data;
@@ -532,10 +498,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
 
 
-                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, cfile._hash, symmPipe.PipeString, cfile._message), "");
-                if (!md5Hash.Equals(cfile.Md5Hash) && !cfile._hash.Equals(symmPipe.PipeString))
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, cfile.Hash, symmPipe.PipeString, cfile.Message), "");
+                if (!md5Hash.Equals(cfile.Md5Hash) && !cfile.Hash.Equals(symmPipe.PipeString))
                 {
-                    string md5ErrMsg = $"Hash: {cfile._hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}; md5Hash: {md5Hash} doesn't match property Md5Hash: {cfile.Md5Hash}";
+                    string md5ErrMsg = $"Hash: {cfile.Hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}; md5Hash: {md5Hash} doesn't match property Md5Hash: {cfile.Md5Hash}";
                     Area23Log.Logger.LogOriginMsg("CFile", md5ErrMsg);
                     // throw new CqrException(md5ErrMsg);
                 }
@@ -562,6 +528,32 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #endregion static members ToJsonEncrypt EncryptSrvMsg FromJsonDecrypt DecryptSrvMsg
 
+
+        public new static CFile? CloneCopy(CFile? source, CFile? destination)
+        {
+            if (source == null)
+                return null;
+            if (destination == null)
+                destination = new CFile(source);
+
+            destination.Message = source.Message;
+            destination.Hash = source.Hash;
+            destination.MsgType = source.MsgType;
+            destination.CBytes = source.CBytes;
+            destination.Md5Hash = source.Md5Hash;
+
+            destination.FileName = source.FileName;
+            destination.Base64Type = source.Base64Type;
+            destination.Data = source.Data;
+            destination.Sha256Hash = source.Sha256Hash;
+            destination.EnCodingType = source.EnCodingType;
+            destination.Base64Type = source.Base64Type;
+            destination.FileByteLen = Math.Max(source.FileByteLen, source.Data.Length);
+            destination.SerializedMsg = "";
+            destination.SerializedMsg = destination.ToJson();
+
+            return destination;
+        }
 
         #endregion static members 
 
