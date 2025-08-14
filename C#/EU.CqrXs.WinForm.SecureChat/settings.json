@@ -3,11 +3,11 @@
   "OnlyPeer2PeerChat": false,
   "ZipBeforeSend": false,
   "OnlySecureFileTypes": false,
-  "RegisterUser": true,
+  "RegisterUser": false,
   "SecretKeysCrypted": [],
   "ChatRoom": null,
   "TimeStamp": "2025-08-12T07:25:32.2734519+02:00",
-  "SaveStamp": "2025-08-12T07:27:18.456366+02:00",
+  "SaveStamp": "2025-08-12T15:46:30.0986853+02:00",
   "MyContact": {
     "ContactId": 0,
     "Cuid": "00000000-0000-0000-0000-000000000000",
@@ -28,13 +28,13 @@
   "Contacts": [],
   "FriendIPs": [],
   "MyIPs": [
+    "10.103.228.222",
     "169.254.116.213",
     "169.254.85.69",
     "169.254.39.21",
-    "10.103.228.181",
     "::1",
     "127.0.0.1",
-    "172.26.192.1"
+    "172.22.96.1"
   ],
   "Proxies": [
     "18.101.101.108",

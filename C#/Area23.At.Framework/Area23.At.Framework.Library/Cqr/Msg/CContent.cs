@@ -317,15 +317,15 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #region members
 
-        public CContent SetMsgContent(string plainMsg)
-        {
-            CContent msgContent = new CContent(plainMsg);
-            Message = msgContent.Message;
-            SerializedMsg = msgContent.SerializedMsg;
-            Hash = msgContent.Hash;
+        //public CContent SetMsgContent(string plainMsg)
+        //{
+        //    CContent msgContent = new CContent(plainMsg);
+        //    Message = msgContent.Message;
+        //    SerializedMsg = msgContent.SerializedMsg;
+        //    Hash = msgContent.Hash;
 
-            return (CContent)this;
-        }
+        //    return (CContent)this;
+        //}
 
 
         public virtual string VerificationHash(out string msg)

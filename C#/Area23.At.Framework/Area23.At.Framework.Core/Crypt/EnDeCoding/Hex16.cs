@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace Area23.At.Framework.Core.Crypt.EnDeCoding
+﻿namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 {
     /// <summary>
     /// Normal hexadecimal byte encoding / decoding
@@ -13,7 +6,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
     public class Hex16 : IDecodable
     {
 
-        public const string VALID_CHARS = "0123456789ABCDEFabcdef";
+        public const string VALID_CHARS = "0123456789abcdef";
 
 
         #region common interface, interfaces for static members appear in C# 7.3 or later
@@ -56,8 +49,13 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             if (inBytes == null || inBytes.Length == 0)
                 throw new ArgumentNullException("inBytes", "public static string ToHex(byte[] inBytes == NULL)");
 
-            string hexString = System.Text.Encoding.UTF8.GetString(inBytes);
+            string hexString = string.Empty;
+            for (int wc = 0; wc < inBytes.Length; wc++)
+            {
+                hexString += string.Format("{0:x2}", inBytes[wc]);
+            }
 
+            // string strUtf8 = System.Text.Encoding.UTF8.GetString(inBytes);
             return hexString;
         }
 
@@ -72,27 +70,27 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             if (string.IsNullOrEmpty(hexStr))
                 throw new ArgumentNullException("hexStr", "public static byte[] FromHex(string hexStr), hexStr == NULL || hexStr == \"\"");
 
-            //List<byte> bytes = new List<byte>();
+            List<byte> bytes = new List<byte>();
 
-            //for (int wb = 0; wb < hexStr.Length; wb += 2)
-            //{
-            //    char msb, lsb;
-            //    if (wb == hexStr.Length - 1)
-            //    {
-            //        msb = '0';
-            //        lsb = hexStr[wb];
-            //    }
-            //    else
-            //    {
-            //        msb = (char)hexStr[wb];
-            //        lsb = (char)hexStr[wb + 1];
-            //    }
-            //    string sb = msb.ToString() + lsb.ToString();
-            //    byte b = Convert.ToByte(sb, 16);
-            //    bytes.Add(b);
-            //}
+            for (int wb = 0; wb < hexStr.Length; wb += 2)
+            {
+                char msb, lsb;
+                if (wb == hexStr.Length - 1)
+                {
+                    msb = '0';
+                    lsb = hexStr[wb];
+                }
+                else
+                {
+                    msb = (char)hexStr[wb];
+                    lsb = (char)hexStr[wb + 1];
+                }
+                string sb = msb.ToString() + lsb.ToString();
+                byte b = Convert.ToByte(sb, 16);
+                bytes.Add(b);
+            }
 
-            byte[] bytesUtf8 = System.Text.Encoding.UTF8.GetBytes(hexStr);
+            byte[] bytesUtf8 = bytes.ToArray(); // System.Text.Encoding.UTF8.GetBytes(hexStr);
 
             return bytesUtf8;
 

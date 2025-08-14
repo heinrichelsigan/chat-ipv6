@@ -1,11 +1,6 @@
 ﻿using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 {

@@ -4,10 +4,10 @@ using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Zfx;
 using Newtonsoft.Json;
-using System.Text;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
+
 	[Serializable]
 	public class CContent : IMsgAble
 	{
@@ -328,15 +328,15 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
 		#region members
 
-		public CContent SetMsgContent(string plainMsg)
-		{
-			CContent msgContent = new CContent(plainMsg);
-			Message = msgContent.Message;
-			SerializedMsg = msgContent.SerializedMsg;
-			Hash = msgContent.Hash;
+		//public CContent SetMsgContent(string plainMsg)
+		//{
+		//	CContent msgContent = new CContent(plainMsg);
+		//	Message = msgContent.Message;
+		//	SerializedMsg = msgContent.SerializedMsg;
+		//	Hash = msgContent.Hash;
 
-			return (CContent)this;
-		}
+		//	return (CContent)this;
+		//}
 
 
 		public virtual string VerificationHash(out string msg)
