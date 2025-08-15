@@ -211,7 +211,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                 this.textBoxSource.Text = JsonConvert.SerializeObject(myContact);
 
-                CContact? responseContact = facade.Test_Send1st_CqrSrvMsg1_Soap(myContact, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
+                CContact? responseContact = facade.SendFirstSrvMsg_Soap(myContact, Area23.At.Framework.Core.Crypt.EnDeCoding.EncodingType.Base64);
 
                 if (responseContact != null)
                     this.textBoxDestination.Text = responseContact.SerializedMsg;

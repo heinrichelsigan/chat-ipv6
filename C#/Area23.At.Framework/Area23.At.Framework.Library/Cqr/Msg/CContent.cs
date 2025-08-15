@@ -174,26 +174,13 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public virtual bool Encrypt(string serverKey)
         {
-            SerializedMsg = "";
-            Md5Hash = "";
-            CBytes = new byte[0];
-            string _serializedMsg = ToJson();
-
+            string pipeString = "";
             try
             {
-                string hash = EnDeCodeHelper.KeyToHex(serverKey);
-                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                Hash = symmPipe.PipeString;
-
-                Md5Hash = MD5Sum.HashString(_serializedMsg, "");
-                // Md5Hash = MD5Sum.HashString(String.Concat(serverKey, Hash, symmPipe.PipeString, Message), "");
-                SerializedMsg = ToJson();                
-
-                byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(SerializedMsg);
-                byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
-
-                CBytes = cqrbytes;
-                Message = Base64.ToBase64(CBytes);
+                pipeString = (new SymmCipherPipe(serverKey)).PipeString;
+                Hash = pipeString;
+                Md5Hash = MD5Sum.HashString(String.Concat(serverKey, Hash, pipeString, Message), "");
+                Message = SymmCipherPipe.EncrpytToString(Message, serverKey, out pipeString, EncodingType.Base64, ZipType.None);
             }
             catch (Exception exCrypt)
             {
@@ -220,21 +207,15 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public virtual bool Decrypt(string serverKey)
         {
+            string pipeString = "";
             try
             {
-                string hash = EnDeCodeHelper.KeyToHex(serverKey);
-                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
+                string decrypted = SymmCipherPipe.DecrpytToString(Message, serverKey, out pipeString, EncodingType.Base64, ZipType.None);
 
-                byte[] cipherBytes = CBytes;
-                byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
-                string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); //DeEnCoder.GetStringFromBytesTrimNulls(unroundedMerryBytes);
-                while (decrypted[decrypted.Length - 1] == '\0')
-                    decrypted = decrypted.Substring(0, decrypted.Length - 1);
+                if (!Hash.Equals(pipeString))
+                    throw new CqrException($"Hash: {Hash} doesn't match symmPipe.PipeString: {pipeString}");
 
-
-                if (!Hash.Equals(symmPipe.PipeString))
-                    throw new CqrException($"Hash: {Hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
-                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, Hash, symmPipe.PipeString, decrypted), "");
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, Hash, pipeString, decrypted), "");
                 if (!md5Hash.Equals(Md5Hash))
                     throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
 
@@ -507,26 +488,20 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             return null;
         }
 
-
         public static string Encrypt(string serverKey, CContent cContent, EncodingType encType = EncodingType.Base64, ZipType zipType = ZipType.None)
         {
             cContent.SerializedMsg = "";
             cContent.Md5Hash = "";
-            cContent.CBytes = new byte[0];
-            string _serializedMsg = cContent.ToJson();
+            string pipeString = "";
             string encryptedMsg = "";
 
             try
             {
-                string hash = EnDeCodeHelper.KeyToHex(serverKey);
-                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                cContent.Hash = symmPipe.PipeString;
-
-                cContent.Md5Hash = MD5Sum.HashString(_serializedMsg, "");
-                // Md5Hash = MD5Sum.HashString(String.Concat(serverKey, Hash, symmPipe.PipeString, Message), "");
+                cContent.Hash = (new SymmCipherPipe(serverKey)).PipeString;
+                cContent.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, cContent.Hash, cContent.Hash, cContent.Message), "");
                 cContent.SerializedMsg = cContent.ToJson();
 
-                encryptedMsg = SymmCipherPipe.EncrpytToStringMerryGoRound(cContent.SerializedMsg, serverKey, encType, zipType);
+                encryptedMsg = SymmCipherPipe.EncrpytToString(cContent.SerializedMsg, serverKey, out pipeString, encType, zipType);
             }
             catch (Exception exCrypt)
             {
@@ -540,30 +515,21 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         public static CContent Decrypt(string cryptedEncodedMsg, string serverKey, EncodingType encType = EncodingType.Base64)
         {
             CContent ccontent = null;
+            string pipeString = "";
             try
             {
-                string hash = EnDeCodeHelper.KeyToHex(serverKey);
-                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                string decrypted = SymmCipherPipe.DecrpytToStringRoundGoMerry(cryptedEncodedMsg, serverKey, encType, Zfx.ZipType.None);
-
+                string decrypted = SymmCipherPipe.DecrpytToString(cryptedEncodedMsg, serverKey, out pipeString, EncodingType.Base64, ZipType.None);
                 if (string.IsNullOrEmpty(decrypted) || !decrypted.IsValidJson())
                     throw new CqrException($"md5Hash: {decrypted} isn't a valid json.");
 
                 ccontent = JsonConvert.DeserializeObject<CContent>(decrypted);
-                string md5Hash = ""; // MD5Sum.HashString(String.Concat(serverKey, Hash, symmPipe.PipeString, decrypted), "");
-                if (ccontent != null)
-                {
-                    ccontent.Md5Hash = "";
-                    string serializedMsg = ccontent.ToJson();
-                    md5Hash = MD5Sum.HashString(serializedMsg);
-                }
 
-                if (!ccontent.Hash.Equals(symmPipe.PipeString))
-                    throw new CqrException($"Hash: {ccontent.Hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+                if (!ccontent.Hash.Equals(pipeString))
+                    throw new CqrException($"Hash: {ccontent.Hash} doesn't match symmPipe.PipeString: {pipeString}");
 
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, pipeString, pipeString, decrypted), "");
                 if (!md5Hash.Equals(ccontent.Md5Hash))
                     throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {ccontent.Md5Hash}");
-
 
                 ccontent.CBytes = new byte[0];
             }
@@ -572,7 +538,6 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 CqrException.SetLastException(exCrypt);
                 throw;
             }
-
             return ccontent;
         }
 

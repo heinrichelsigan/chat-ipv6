@@ -177,12 +177,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public override string EncryptToJson(string serverKey)
         {
-            if (Encrypt(serverKey))
-            {
-                this.SerializedMsg = JsonConvert.SerializeObject(this);
-                return this.SerializedMsg;
-            }
-            throw new CqrException($"EncryptToJson(string severKey) failed for CContact.");
+            string serialized = CContact.ToJsonEncrypt(serverKey, this);
+            return serialized;
         }
 
         public override bool Encrypt(string serverKey)
@@ -206,18 +202,17 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 throw;
             }
             return true;
+
         }
 
 
         public new CContact DecryptFromJson(string serverKey, string serialized = "")
-        {
+        {            
             if (string.IsNullOrEmpty(serialized))
                 serialized = this.SerializedMsg;
 
-            var ctc = this.FromJson<CContact>(serialized);
-            CContact contact = JsonConvert.DeserializeObject<CContact>(serialized);
-
-            if (contact != null && contact.Decrypt(serverKey))
+            CContact contact = CContact.FromJsonDecrypt(serverKey, serialized);
+            if (contact != null)
             {
                 contact.SerializedMsg = "";
                 contact.SerializedMsg = contact.ToJson();
@@ -226,6 +221,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             }
             throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed for CContact");
         }
+
 
         public override bool Decrypt(string serverKey)
         {
@@ -257,7 +253,6 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             }
             return true;
         }
-
 
         #endregion EnDeCrypt+DeSerialize
 

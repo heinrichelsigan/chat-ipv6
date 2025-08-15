@@ -9,6 +9,7 @@ using EU.CqrXs.Srv.Util;
 using System;
 using System.Drawing;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -177,7 +178,7 @@ namespace EU.CqrXs.Srv.Settings
                         CipherEnum cipherAlgo = CipherEnum.Aes;
                         if (Enum.TryParse<CipherEnum>(algo, out cipherAlgo))
                         {
-                            inBytes = Crypt.EncryptBytes(encryptBytes, cipherAlgo, secretKey, keyIv);
+                            inBytes = CipherPipe.EncryptBytesFast(encryptBytes, cipherAlgo, secretKey, keyIv);
                             encryptBytes = inBytes;
                         }
                     }
@@ -276,7 +277,7 @@ namespace EU.CqrXs.Srv.Settings
                         CipherEnum cipherAlgo = CipherEnum.Aes;
                         if (Enum.TryParse<CipherEnum>(algos[ig], out cipherAlgo))
                         {
-                            decryptedBytes = Crypt.DecryptBytes(cipherBytes, cipherAlgo, secretKey, keyIv);
+                            decryptedBytes = CipherPipe.DecryptBytesFast(cipherBytes, cipherAlgo, secretKey, keyIv);
                             cipherBytes = decryptedBytes;
                         }
                     }
@@ -661,7 +662,7 @@ namespace EU.CqrXs.Srv.Settings
                                 CipherEnum cipherAlgo = CipherEnum.Aes;
                                 if (Enum.TryParse<CipherEnum>(algo, out cipherAlgo))
                                 {
-                                    outBytes = Crypt.EncryptBytes(inBytes, cipherAlgo, secretKey, keyIv);
+                                    outBytes = CipherPipe.EncryptBytesFast(inBytes, cipherAlgo, secretKey, keyIv);
                                     inBytes = outBytes;
                                     cryptCount++;
                                     strFileName += "." + algo.ToLower();
@@ -749,7 +750,7 @@ namespace EU.CqrXs.Srv.Settings
                                 CipherEnum cipherAlgo = CipherEnum.Aes;
                                 if (Enum.TryParse<CipherEnum>(algos[ig], out cipherAlgo))
                                 {
-                                    inBytes = Crypt.DecryptBytes(outBytes, cipherAlgo, secretKey, keyIv);
+                                    inBytes = CipherPipe.DecryptBytesFast(outBytes, cipherAlgo, secretKey, keyIv);
                                     outBytes = inBytes;
                                     cryptCount++;
                                     strFileName = strFileName.EndsWith("." + algos[ig].ToLower()) ? strFileName.Replace("." + algos[ig].ToLower(), "") : strFileName;

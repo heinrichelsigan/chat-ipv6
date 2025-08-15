@@ -82,33 +82,7 @@ namespace Area23.At.Framework.Core.Cqr
         }
 
         #region CqrContact SendFirstSrvMsg_Soap(CqrContact myContact, IPAddress srvIp, ..)
-
-
-
-        /// <summary>
-        /// Test_Send1st_CqrSrvMsg1_Soap test method only, please use <see cref="SendFirstSrvMsg_Soap(CqrContact, IPAddress, EncodingType)"/>
-        /// </summary>
-        /// <param name="myContact"></param>
-        /// <param name="encodingType"></param>
-        /// <returns></returns>
-        public CContact? Test_Send1st_CqrSrvMsg1_Soap(CContact myContact, EncodingType encodingType = EncodingType.Base64)
-        {
-
-            myContact.Hash = PipeString;
-            CContact sendContact = new CContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
-            sendContact.Hash = PipeString;
-
-            string encMsg = sendContact.EncryptToJson(_key);
-
-            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
-            string response = client.Send1StSrvMsg(encMsg);
-
-            CContact tmpContact = new CContact();
-            CContact? responseContact = tmpContact.DecryptFromJson(_key, response);
-
-            return responseContact;
-        }
-
+      
 
         /// <summary>
         /// SendFirstSrvMsg_Soap, real soap method for 1st registration
@@ -123,14 +97,12 @@ namespace Area23.At.Framework.Core.Cqr
             CContact sendContact = new CContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
             sendContact.Hash = PipeString;
 
-            string encMsg = sendContact.EncryptToJson(_key);
+            string encMsg = CContact.ToJsonEncrypt(_key, sendContact);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
             string response = client.Send1StSrvMsg(encMsg);
-
-            CContact tmpContact = new CContact();
-            CContact responseContact = tmpContact.DecryptFromJson(_key, response);
-
+           
+            CContact responseContact = CContact.FromJsonDecrypt(_key, response);
             return responseContact;
         }
 
@@ -283,6 +255,41 @@ namespace Area23.At.Framework.Core.Cqr
         #endregion Response<T> response = webServiceSoapClient.WebMethod_To_Invoke(Request<T> request)
 
         #region async calls
+
+
+        /// <summary>
+        /// SendFirstSrvMsg_Soap, real soap method for 1st registration
+        /// </summary>
+        /// <param name="myContact">my contact</param>
+        /// <param name="encodingType"></param>
+        /// <returns>my Contact with Guid Cuid</returns>
+        public async Task<CContact> SendFirstSrvMsg_SoapAsync(CContact myContact, EncodingType encodingType = EncodingType.Base64)
+        {
+
+            myContact.Hash = PipeString;
+            CContact sendContact = new CContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
+            sendContact.Hash = PipeString;
+
+            string encMsg = CContact.ToJsonEncrypt(_key, sendContact);
+
+            CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
+            string response = string.Empty;
+            try
+            {
+                response = await client.Send1StSrvMsgAsync(encMsg);
+            }
+            catch (Exception exSoap)
+            {
+                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"SendFirstSrvMsg_SoapAsync(...) \tException {exSoap.GetType()}", exSoap);
+                throw;
+            }
+            
+            CContact responseContact = CContact.FromJsonDecrypt(_key, response);
+
+            return responseContact;
+        }
+
+
 
         /// <summary>
         /// Send_InitChatRoom_SoapAsync{<typeparamref name="T"/>} Sends async an chat roomm invitation

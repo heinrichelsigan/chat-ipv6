@@ -446,7 +446,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
                 cfile.Hash = symmPipe.PipeString;
-                cfile.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cfile.Message), "");
+                cfile.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, EnDeCodeHelper.KeyToHex(serverKey), symmPipe.PipeString, cfile.Message), "");
                 cfile.Sha256Hash = Sha256Sum.Hash(cfile.Data, "");
 
                 byte[] msgBytes = cfile.Data;

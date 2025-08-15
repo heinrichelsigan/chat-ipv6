@@ -3,6 +3,7 @@ using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
+using System.Security.Policy;
 using System.Text;
 using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 
@@ -157,7 +158,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
 
         #region EnDeCrypt+DeSerialize
-
+        /*
         public override string EncryptToJson(string serverKey)
         {
             if (Encrypt(serverKey))
@@ -170,25 +171,17 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public override bool Encrypt(string serverKey)
         {
-			SerializedMsg = "";
-			Md5Hash = "";
-			CBytes = new byte[0];
-			string _serializedMsg = ToJson();
-
-			try
+            try
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
                 Hash = symmPipe.PipeString;
-				
-                Md5Hash = MD5Sum.HashString(_serializedMsg, "");
-				// Md5Hash = MD5Sum.HashString(String.Concat(serverKey, Hash, symmPipe.PipeString, Message), "");
-				SerializedMsg = ToJson();
-				
-                byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(SerializedMsg);
+                Md5Hash = MD5Sum.HashString(String.Concat(serverKey, Hash, symmPipe.PipeString, Message), "");
+
+                byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(Message);
                 byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
 
-                CBytes = cqrbytes;                
+                CBytes = cqrbytes;
                 Message = Base64.ToBase64(CBytes);
             }
             catch (Exception exCrypt)
@@ -197,6 +190,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 throw;
             }
             return true;
+
         }
 
 
@@ -231,25 +225,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 while (decrypted[decrypted.Length - 1] == '\0')
                     decrypted = decrypted.Substring(0, decrypted.Length - 1);
 
-				if (string.IsNullOrEmpty(decrypted) || !decrypted.IsValidJson())
-					throw new CqrException($"md5Hash: {decrypted} isn't a valid json.");
 
-                CContact? ccontact = FromJson<CContact>(decrypted);
-				string md5Hash = ""; // MD5Sum.HashString(String.Concat(serverKey, Hash, symmPipe.PipeString, decrypted), "");
-                if (ccontact != null)
-				{
-					ccontact.Md5Hash = "";
-					string serializedMsg = ccontact.ToJson();
-					md5Hash = MD5Sum.HashString(serializedMsg);
-                }
-
-				if (!Hash.Equals(symmPipe.PipeString))
+                if (!Hash.Equals(symmPipe.PipeString))
                     throw new CqrException($"Hash: {Hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
-
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, Hash, symmPipe.PipeString, decrypted), "");
                 if (!md5Hash.Equals(Md5Hash))
                     throw new CqrException($"md5Hash: {md5Hash} doesn't match property Md5Hash: {Md5Hash}");
 
-                Message = ccontact.Message;
+                Message = decrypted;
                 CBytes = new byte[0];
             }
             catch (Exception exCrypt)
@@ -259,8 +242,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             }
             return true;
         }
-
-
+        */
         #endregion EnDeCrypt+DeSerialize
 
         #region members
@@ -375,8 +357,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             {
                 string hash = EnDeCodeHelper.KeyToHex(serverKey);
                 SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                ccntct.Hash = symmPipe.PipeString;
-                ccntct.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, ccntct.Message), "");
+                ccntct.Hash = (new SymmCipherPipe(serverKey)).PipeString;
+                ccntct.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, EnDeCodeHelper.KeyToHex(serverKey), ccntct.Hash, ccntct.Message), "");
 
                 byte[] msgBytes = EnDeCodeHelper.GetBytesFromString(ccntct.Message);
                 byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
