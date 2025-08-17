@@ -2253,7 +2253,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     continue;
                 if (listBoxContact.Equals(contactNameEmail, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    MessageBox.Show("Contact already added!", $"{contactNameEmail} already added!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"{contactNameEmail} already added!", "Contact already added!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
