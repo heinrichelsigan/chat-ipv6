@@ -744,7 +744,7 @@ namespace EU.CqrXs.Service
 
 
         [WebMethod]
-        public virtual string GetKey(string key)
+        public string GetKey(string key)
         {
             string vlKey = "";
             string testReport = $"{DateTime.Now.Area23DateTimeMilliseconds()}: GetKey({key}) => ";
