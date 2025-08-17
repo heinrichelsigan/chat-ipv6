@@ -237,7 +237,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                 }
             }
 
-            JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
+            JsonChatRoom.SaveChatRoom(chatRoomMsg);
             // (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
 
             foundCt = false;

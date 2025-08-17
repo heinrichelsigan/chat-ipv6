@@ -1,11 +1,8 @@
-using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Util;
-using Area23.At.Framework.Core.Win32Api;
 using EU.CqrXs.Srv.Svc.Swashbuckle.Util;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 {
@@ -21,13 +18,13 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             _logger = logger;
         }
         
-        [HttpGet("ChatRoomClose")]
+        [HttpGet(Name = "ChatRoomClose")]
         public string Get(string cryptMsg)
         {
             Area23Log.LogOriginMsg("ChatRoomCloseController", $"ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  {cryptMsg.Length}.\n");
             InitMethod();            
             _chatRoomNumber = "";
-
+            bool isValidToClose = false;
             
             CSrvMsg<string>? cSrvMsg;
 
@@ -42,10 +39,21 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                     cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg); 
                     _contact = JsonContacts.AddContact(cSrvMsg.Sender);
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
-                    
-                    cSrvMsg = JsonChatRoom.CheckChatRoomClosePermission(cSrvMsg);
-                    
-                    _responseString = cSrvMsg.EncryptToJson(_serverKey);
+
+                    CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg);
+                    isValidToClose = JsonChatRoom.CheckChatRoomClosePermission(cSrvMsg);
+
+                    if (isValidToClose)
+                    {
+                        if (JsonChatRoom.DeleteChatRoom(_chatRoomNumber))
+                        {
+                            chatRoomMsg.CRoom = null;
+                            chatRoomMsg.Sender.Message = "";
+                            chatRoomMsg.TContent = "";
+                        }
+                    }
+
+                    _responseString = chatRoomMsg.EncryptToJson(_serverKey);
 
                 }
             }

@@ -1,11 +1,8 @@
-using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Util;
-using Area23.At.Framework.Core.Win32Api;
 using EU.CqrXs.Srv.Svc.Swashbuckle.Util;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 {
@@ -26,11 +23,11 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         {
             Area23Log.LogStatic($"ChatRoomPushMessage(string cryptMsg) called.\n");
             InitMethod();
-            string chatRoomMembersCrypted = "";
+            string cRoomMembersCrypt = "";
             bool isValid = false;
             Dictionary<long, string> dict;
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { _hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
 
             _responseString = ""; // set empty response string per default
@@ -41,36 +38,37 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);
-                    chatRoomMembersCrypted = cSrvMsg.TContent ?? "";
+                    cRoomMembersCrypt = cSrvMsg.TContent ?? "";
                     _contact = cSrvMsg.Sender;
-                    _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Sender.CRoom.ChatRoomNr;
-                    Area23Log.LogStatic($"chatRoomMembersCrypted len = {chatRoomMembersCrypted.Length}.\n");
+                    _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Sender.Message;
+                    Area23Log.LogStatic($"chatRoomMembersCrypted len = {cRoomMembersCrypt.Length}.\n");
 
-                    chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
+                    chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg);
                     chatRoomMsg.TContent = ""; // set string empty, if no message
 
-                    isValid = ChatRoomCheckPermission(cSrvMsg, _chatRoomNumber);
+                    isValid = JsonChatRoom.CheckPermission(cSrvMsg);
                     if (isValid)
                     {
                         DateTime now = DateTime.Now;
 
                         dict = GetCachedMessageDict(_chatRoomNumber);
 
-                        dict.Add(now.Ticks, chatRoomMembersCrypted);
+                        dict.Add(now.Ticks, cRoomMembersCrypt);
                         chatRoomMsg.CRoom.TicksLong.Add(now.Ticks);
+                        chatRoomMsg.CRoom.LastPushed = now;
                         // chatRoomMsg.Sender.TicksLong.Add(now.Ticks);
-
                         SetCachedMessageDict(_chatRoomNumber, dict);
 
-                        _contact = AddPollDate(_contact, now, true);
-                        chatRoomMsg.Sender = AddPollDate(chatRoomMsg.Sender, now, true);
+                        chatRoomMsg.TContent = "";
+                        chatRoomMsg = JsonChatRoom.SaveChatRoom(chatRoomMsg);
 
-                        UpdateContact(_contact);
-                        chatRoomMsg = JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
-                        chatRoomMsg.Sender.CRoom.LastPushed = now;
                         chatRoomMsg.CRoom.LastPushed = now;
+                        chatRoomMsg.CRoom.TicksLong.Remove(now.Ticks);                      // TODO: Delete later, with that, you get your own message in sended queue
+                        chatRoomMsg.Sender.Message = _chatRoomNumber;
 
                     }
+                    else
+                        chatRoomMsg.TContent = cSrvMsg.Sender.NameEmail + " has no permission for chat room " + _chatRoomNumber;
 
                     _responseString = chatRoomMsg.EncryptToJson(_serverKey);
 
@@ -79,10 +77,10 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogStatic(ex);
+                Area23Log.LogOriginMsgEx("CqrService", "ChatRoomPush(...)", ex);
             }
 
-            Area23Log.LogStatic($"ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finished. ChatRoomNr =  {_chatRoomNumber}.\n");
+            Area23Log.LogOriginMsg("CqrService", $"ChatRoomPush(string cryptMsg, string cRoomMembersCrypt) finished. ChatRoomNr = " + _chatRoomNumber + ".\n");
             string[] resp = { _responseString };
 
             List<string> list = new List<string>(resp);

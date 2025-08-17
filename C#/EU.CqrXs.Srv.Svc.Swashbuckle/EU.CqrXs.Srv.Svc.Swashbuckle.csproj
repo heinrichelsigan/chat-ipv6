@@ -21,8 +21,6 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\ChatCloseController.cs" />
-    <Compile Remove="Controllers\ChatRoomPollController.cs" />
-    <Compile Remove="Controllers\ChatRoomPushController.cs" />
     <Compile Remove="Logging\EnablerLog.cs" />
     <Compile Remove="Logging\Extensions.cs" />
     <Compile Remove="Logging\Paths.cs" />

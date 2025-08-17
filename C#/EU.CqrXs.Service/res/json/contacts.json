@@ -1,21 +1,19 @@
-[    
+[
   {
-    "_hash": "6bICDgFf",
-    "_message": "room_0801_he.json",
     "ContactId": 0,
     "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
     "Name": "Heinrich G. Elsigan",
     "Email": "he@area23.at",
     "Mobile": "+436507627928",
-    "Address": "",
+    "Address": "Theresianumgasse 6/28, 1040 Wien",
     "SecretKey": "",
     "ContactImage": null,
     "NameEmail": "Heinrich G. Elsigan <he@area23.at>",
     "MsgType": 0,
-    "Message": "room_0801_he.json",
+    "Message": "room_0817_he.json",
     "SerializedMsg": "",
-    "Hash": "6bICDgFf",
-    "Md5Hash": "fe2e696dd4fc3d90856231b317cf6f7c",
+    "Hash": "6bFfDC",
+    "Md5Hash": "50b04a90e9e7cf77262f2b78b9069780",
     "CBytes": ""
   }
 ]

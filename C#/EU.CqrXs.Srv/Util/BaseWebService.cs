@@ -315,7 +315,7 @@ namespace EU.CqrXs.Srv.Util
             restMail = restMail.Replace("@", "_").Replace(".", "_");
             
             if (!string.IsNullOrEmpty(restMail))
-                chatRoomNr = String.Format("room_{0:MMdd}_{1}.json", DateTime.Now, restMail);
+                chatRoomNr = String.Format("room_{0:MMddHHmm}_{1}.json", DateTime.Now, restMail);
             else
                 chatRoomNr = $"room_{DateTime.Now:MMddHHmm}.json";
 

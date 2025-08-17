@@ -1,15 +1,8 @@
-using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Win32Api;
-using Area23.At.Framework.Core.Util;
-using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Cqr;
-using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
-using System.IO;
-using Grpc.Core;
-
-using Microsoft.AspNetCore.Components.Forms;
+using Area23.At.Framework.Core.Cqr.Msg;
+using Area23.At.Framework.Core.Util;
 using EU.CqrXs.Srv.Svc.Swashbuckle.Util;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
@@ -35,7 +28,8 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    _contact = CContact.FromJsonDecrypt(_serverKey, cryptMsg);
+					_contact = new CContact(cryptMsg, CType.Json);
+					// _contact = CContact.FromJsonDecrypt(_serverKey, cryptMsg);
                     _decrypted = _contact.ToJson();
                     Area23Log.LogOriginMsg("FirstSrvMsgController", $"Contact decrypted successfully: {_decrypted}\n");
                 }

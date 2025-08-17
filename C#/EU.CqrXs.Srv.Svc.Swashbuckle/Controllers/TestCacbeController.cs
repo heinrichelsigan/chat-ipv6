@@ -1,31 +1,27 @@
-using Area23.At.Framework.Core;
 using Area23.At.Framework.Core.Cache;
 using Area23.At.Framework.Core.Cqr.Msg;
-using Area23.At.Framework.Core.Cqr;
-using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Win32Api;
+using Area23.At.Framework.Core.Util;
 using EU.CqrXs.Srv.Svc.Swashbuckle.Util;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
-using System.Reflection;
+using System.Xml.Linq;
 
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TestCacheController : CqrSrvControllerBase
+    public class TestCacbeController : CqrSrvControllerBase
     {
 
-        private readonly ILogger<TestCacheController> _logger;
+        private readonly ILogger<TestCacbeController> _logger;
 
-        public TestCacheController(ILogger<TestCacheController> logger)
+        public TestCacbeController(ILogger<TestCacbeController> logger)
         {
             _logger = logger;
         }
 
-        [HttpGet("TestCacheController")]
+        [HttpGet(Name = "TestCacbe")]
         public string Get()
         {
             Area23Log.LogOriginMsg("TestCacheController", $"TestCacheController.Get() started.\n");

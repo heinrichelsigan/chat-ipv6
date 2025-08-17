@@ -323,7 +323,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             byte[] encryptedBytes = new byte[inBytes.Length];
             Array.Copy(inBytes, 0, encryptedBytes, 0, inBytes.Length);
 #if DEBUG
-            stageDictionary = new Dictionary<SymmCipherEnum, byte[]>();
+            stageDictionary = new Dictionary<CipherEnum, byte[]>();
             // stageDictionary.Add(SymmCipherEnum.ZenMatrix, inBytes);
 #endif
             if (zipBefore != ZipType.None)

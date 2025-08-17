@@ -238,7 +238,7 @@ namespace EU.CqrXs.Service.Util
                 }
             }
 
-            JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
+            JsonChatRoom.SaveChatRoom(chatRoomMsg);
             // (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
 
             foundCt = false;

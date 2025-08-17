@@ -12,6 +12,7 @@ using Microsoft.Ajax.Utilities;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 {
@@ -89,9 +90,9 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             restMail = restMail.Replace("@", "_").Replace(".", "_");
 
             if (!string.IsNullOrEmpty(restMail))
-                chatRoomNr = String.Format("room_{0:MMdd}_{1}.json", DateTime.Now, restMail);
+                chatRoomNr = string.Format("room_{0:MMddHHmm}_{1}.json", DateTime.Now, restMail);
             else
-                chatRoomNr = String.Format("room_{0:MMddHHmm}.json", DateTime.Now);
+                chatRoomNr = string.Format("room_{0:MMddHHmm}.json", DateTime.Now);
 
             Dictionary<long, string> dict = new Dictionary<long, string>();
             dict.Add(now.Ticks, "");
@@ -129,7 +130,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             SetCachedMessageDict(chatRoomNr, dict);
 
 
-            CSrvMsg<string> cChatRSrvMsg = JsonChatRoom.SaveChatRoom(cSrvMsg, cSrvMsg.CRoom);
+            CSrvMsg<string> cChatRSrvMsg = JsonChatRoom.SaveChatRoom(cSrvMsg);
             _chatRoomNumber = cChatRSrvMsg.CRoom.ChatRoomNr;
             cChatRSrvMsg.Message = _chatRoomNumber;
             JsonChatRoom.AddJsonChatRoomToCache(_chatRoomNumber);
@@ -139,6 +140,16 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 
             return cChatRSrvMsg;
         }
+
+        //[HttpGet]
+        //public CSrvMsg<string> AddLastDatePushed(CSrvMsg<string> chatRoomMsg, long tickIndex)
+        //{
+        //    DateTime date = new DateTime(tickIndex);
+        //    chatRoomMsg.CRoom.LastPushed = date;
+
+        //    return chatRoomMsg;
+        //}
+
 
 
 

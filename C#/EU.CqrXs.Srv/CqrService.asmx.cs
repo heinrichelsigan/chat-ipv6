@@ -40,7 +40,7 @@ namespace EU.CqrXs.Srv
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
-                {
+                {                    
                     _contact = cContact.FromJson<CContact>(cryptMsg);
                     _contact = cContact.DecryptFromJson(_serverKey, cryptMsg);
                     _decrypted = _contact.ToJson();
@@ -90,7 +90,7 @@ namespace EU.CqrXs.Srv
                 {
                     cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>
                     cSrvMsg = chatRSrvMsg.DecryptFromJson(_serverKey, cryptMsg);        // decrypt CSrvMsg<string>
-                    _contact = JsonContacts.AddContact(cSrvMsg.Sender);                       // add contact from FullSrvMsg<string>   
+                    _contact = JsonContacts.AddContact(cSrvMsg.Sender);                 // add contact from FullSrvMsg<string>   
                     chatRSrvMsg = InviteToChatRoom(cSrvMsg);                            // generate a FullSrvMsg<string> chatserver message by inviting                           
 
                     _responseString = chatRSrvMsg.EncryptToJson(_serverKey);            // crypt chatRSrvMsg with _serverKey and serialize as json

@@ -50,19 +50,21 @@ namespace EU.CqrXs.Service.Util
         /// Static LoadChatRoom
         /// </summary>
         /// <param name="cSrvMsgIn"><see cref="CSrvMsg{TC}"/></param>
-        /// <param name="chatRoomNr">chatRoomNr</param>
         /// <returns>><see cref="CSrvMsg{TC}"/></returns>
-        public static CSrvMsg<string> LoadChatRoom(CSrvMsg<string> cSrvMsgIn, string chatRoomNr)
+        public static CSrvMsg<string> LoadChatRoom(CSrvMsg<string> cSrvMsgIn)
         {
-            string jsonCRoomFileName = GetJsonChatRoomFullPath(chatRoomNr);
+            string chatRoomName = "";
+            if (cSrvMsgIn != null && cSrvMsgIn.CRoom != null && !string.IsNullOrEmpty(cSrvMsgIn.CRoom.ChatRoomNr))
+            {
+                chatRoomName = cSrvMsgIn.CRoom.ChatRoomNr;
+            }
+            string jsonCRoomFileName = GetJsonChatRoomFullPath(chatRoomName);
 
             CSrvMsg<string> cServerMessage = null;
             string jsonText = null;
             if (!File.Exists(jsonCRoomFileName)) // we need to a create chatroom
-            {
-                CChatRoom chatRoom = cSrvMsgIn.CRoom ?? new CChatRoom(chatRoomNr, Guid.NewGuid(), DateTime.MinValue, DateTime.MinValue);
-                chatRoom.ChatRoomNr = chatRoomNr;
-                SaveChatRoom(cSrvMsgIn, chatRoom);
+            {                
+                SaveChatRoom(cSrvMsgIn);
             }
 
             lock (_lock)
@@ -80,24 +82,17 @@ namespace EU.CqrXs.Service.Util
         /// <param name="cSrvMsg"><see cref="CSrvMsg<string>"/></param>
         /// <param name="chatRoom"><see cref="CChatRoom"/></param>
         /// <returns></returns>
-        public static CSrvMsg<string> SaveChatRoom(CSrvMsg<string> cSrvMsg, CChatRoom chatRoom)
+        public static CSrvMsg<string> SaveChatRoom(CSrvMsg<string> cSrvMsg)
         {
             string jsonString = "";
-            string chatRoomNumber = chatRoom.ChatRoomNr;
+            CChatRoom chatRoom = cSrvMsg.CRoom;
+            string chatRoomNumber = cSrvMsg.CRoom.ChatRoomNr;
             lock (_lock)
             {
                 if (!chatRoomNumber.EndsWith(".json"))
                     chatRoomNumber += ".json";
 
-                cSrvMsg.CRoom = new CChatRoom(chatRoomNumber, chatRoom.ChatRuid, chatRoom.LastPushed, chatRoom.LastPolled)
-                {
-                    MsgType = chatRoom.MsgType,
-                    TicksLong = chatRoom.TicksLong,
-                    Message = chatRoomNumber,
-                    Hash = chatRoom.Hash,
-                    Md5Hash = chatRoom.Md5Hash,
-                    CBytes = chatRoom.CBytes
-                };                
+                cSrvMsg.CRoom.ChatRoomNr = chatRoomNumber;
 
                 if (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr))
                     cSrvMsg.Sender.Message = cSrvMsg.CRoom.ChatRoomNr;
@@ -146,6 +141,7 @@ namespace EU.CqrXs.Service.Util
         #endregion static Load Save Delete
 
         #region basic static members
+        
         /// <summary>
         /// SerializeCSrvMsg serializes a <see cref="CSrvMsg{string}"/> to file system 
         /// TODO: we need only <see cref="CChatRoom"/> to merialize => FIX-IT
@@ -198,14 +194,14 @@ namespace EU.CqrXs.Service.Util
         /// 2.b. on of the invited persons in invitation
         /// </summary>
         /// <param name="cSrvMsg"><see cref="CSrvMsg{string}"/> decoded from <see cref="CqrService.CqrService"/> Webservice</param>
-        /// <param name="chatRoomMsg"><see cref="CSrvMsg{string}"/> generated from chat room json</param>
-        /// <param name="chatRoomNr"><see cref="string"/> chat room number of chat room</param>
         /// <param name="isValid"><see cref="bool"/>true, if person is allowed to push or receive msg from / to chat room</param>
         /// <param name="isClosingRequest"><see cref="bool"/>default false, true when closing and deleting chat room</param>
         /// <returns>modified chatRoomMsg <see cref="CSrvMsg{string}"/></returns>        
-        public static CSrvMsg<string> CheckPermission(CSrvMsg<string> cSrvMsg, CSrvMsg<string> chatRoomMsg, string chatRoomNr, out bool isValid, bool isClosingRequest = false)
+        public static CSrvMsg<string> CheckPermission(CSrvMsg<string> cSrvMsg, out bool isValid, bool isClosingRequest = false)
         {
             isValid = false;
+            string chatRoomNr = cSrvMsg.CRoom.ChatRoomNr;
+            CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg);
             if (chatRoomNr.Equals(chatRoomMsg.CRoom.ChatRoomNr, StringComparison.CurrentCultureIgnoreCase)) // validate chat number
             {
                 chatRoomMsg.TContent = string.Empty;
@@ -234,6 +230,7 @@ namespace EU.CqrXs.Service.Util
 
             return cSrvMsg;
         }
+        
         #endregion basic static members
 
         #region static cache operations
