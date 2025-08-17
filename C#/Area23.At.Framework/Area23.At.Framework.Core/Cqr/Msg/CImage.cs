@@ -1,6 +1,7 @@
 ﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
+using Area23.At.Framework.Core.Properties;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
@@ -50,15 +51,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <summary>
         /// Default empty constructor (needed for json serialize & deserialize)
         /// </summary>
-        public CImage()
+        public CImage() : base()
         {
-            ImageFileName = string.Empty;
+            ImageFileName = "";
             ImageData = new byte[0];
-            ImageMimeType = string.Empty;
-            ImageBase64 = "";
-            Md5Hash = "";
+            ImageMimeType = "";
+            ImageBase64 = ""; 
             Sha256Hash = "";
-            CBytes = new byte[0];
         }
 
 
@@ -67,7 +66,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="data"></param>
-        public CImage(string fileName, byte[] data)
+        public CImage(string fileName, byte[] data) : this()
         {
             ImageFileName = fileName;
             ImageData = data;
@@ -81,8 +80,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="base64Image"></param>
-        public CImage(string fileName, string base64Image)
-        {
+        public CImage(string fileName, string base64Image) : this()
+		{
             ImageFileName = fileName;
             ImageBase64 = base64Image;
             ImageData = Convert.FromBase64String(base64Image);
@@ -99,18 +98,18 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// then a name <see cref="Extensions.Area23DateTimeWithMillis(DateTime)"/></param> + "_image." + extension based mime type will be given
         public CImage(Image image, string fileName = "")
         {
-            CImage cImage = FromDrawingImage(image, fileName);
-            if (cImage != null)
+            CImage cImage = FromDrawingImage(image, fileName);			
+			if (cImage != null)
             {
-                CCopy(this, cImage);
+                CloneCopy(cImage, this);
             }
         }
 
-        public CImage(CImage cImage)
+        public CImage(CImage cImage) : this() 
         {            
             if (cImage != null)
             {
-                CCopy(this, cImage);
+                CloneCopy(cImage, this);
             }
         }
 
@@ -119,8 +118,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             CImage cImage = (msgType == CType.Xml) ? FromXml<CImage>(serializedImgage) : FromJson(serializedImgage);
             if (cImage != null)
             {
-                CCopy(this, cImage);
-            }
+				CloneCopy(cImage, this);
+			}
         }
 
         #endregion constructors
@@ -152,7 +151,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             if (cimg == null)
                 throw new CqrException($"CImage? DecryptFromJson(string serverKey, string serialized) failed.");
 
-            return CCopy(cimg, this);
+            return CloneCopy(cimg, this);
         }
 
 
@@ -187,12 +186,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 cJsonImage = Newtonsoft.Json.JsonConvert.DeserializeObject<CImage>(jsonText);
                 if (cJsonImage != null && !string.IsNullOrEmpty(cJsonImage?.ImageFileName) && !string.IsNullOrEmpty(cJsonImage?.ImageBase64))
                 {
-                    return CCopy(this, cJsonImage);                    
+                    return CloneCopy(cJsonImage, this);                    
                 }
             }
             catch (Exception exJson)
             {
-                Area23Log.Logger.LogOriginMsgEx("CImage", "FromJson", exJson);
+                Area23Log.LogOriginMsgEx("CImage", "FromJson", exJson);
             }
 
             return null;
@@ -214,7 +213,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             CImage? cXmlImg = Utils.DeserializeFromXml<CImage>(xmlText ?? "");
             if (cXmlImg != null && cXmlImg is CImage cimg)
             {
-                return CCopy(this, cimg);
+                return CloneCopy(cimg, this);
             }
 
             return cXmlImg;
@@ -322,12 +321,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <param name="image"><see cref="System.Drawing.Image"/></param>
         /// <param name="imgName"><see cref="string">string imgName</see></param>
         /// <returns><see cref="CImage">converted CqrImage</see></returns>
-        public static CImage FromDrawingImage(Image image, string imgName = "")
+        public static CImage? FromDrawingImage(Image image, string imgName = "")
         {
             if (image == null)
                 return null;
 
-            CImage cImage = null;
+            CImage? cImage = null;
             // ImageFormat format = image.RawFormat;
             byte[] imageData;
             string fileName = string.IsNullOrEmpty(imgName) ? string.Empty : imgName;
@@ -336,72 +335,72 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             {
                 if (string.IsNullOrEmpty(fileName))
                 {
-                    fileName += DateTime.Now.Area23DateTimeWithMillis() + "_image.";
+                    fileName += DateTime.Now.Area23DateTimeWithMillis() + "_image";
                     if (image.RawFormat == ImageFormat.Tiff)
                     {
-                        fileName += "tif";
+                        fileName += ".tif";
                         image.Save(ms, ImageFormat.Tiff);
                     }
                     else if (image.RawFormat == ImageFormat.Png)
                     {
-                        fileName += "png";
+                        fileName += ".png";
                         image.Save(ms, ImageFormat.Png);
                     }
                     else if (image.RawFormat == ImageFormat.Jpeg)
                     {
-                        fileName += "jpg";
+                        fileName += ".jpg";
                         image.Save(ms, ImageFormat.Jpeg);
                     }
                     else if (image.RawFormat == ImageFormat.Gif)
                     {
-                        fileName += "gif";
+                        fileName += ".gif";
                         image.Save(ms, ImageFormat.Gif);
                     }
                     else if (image.RawFormat == ImageFormat.Bmp || image.RawFormat == ImageFormat.MemoryBmp)
                     {
-                        fileName += "bmp";
+                        fileName += ".bmp";
                         image.Save(ms, ImageFormat.Bmp);
                     }
                     else if (image.RawFormat == ImageFormat.Exif)
                     {
-                        fileName += "exif";
+                        fileName += ".exif";
                         image.Save(ms, ImageFormat.Exif);
                     }
                     else if (image.RawFormat == ImageFormat.Wmf)
                     {
-                        fileName += "wmf";
+                        fileName += ".wmf";
                         image.Save(ms, ImageFormat.Wmf);
                     }
                     else if (image.RawFormat == ImageFormat.Emf)
                     {
-                        fileName += "emf";
+                        fileName += ".emf";
                         image.Save(ms, ImageFormat.Emf);
                     }
                     else if (image.RawFormat == ImageFormat.Icon)
                     {
-                        fileName += "ico";
+                        fileName += ".ico";
                         image.Save(ms, ImageFormat.Icon);
                     }
-                    //else if (image.RawFormat == ImageFormat.Heif)
-                    //{
-                    //    fileName += "heif";
-                    //    image.Save(ms, ImageFormat.Heif);
-                    //}
-                    //else if (image.RawFormat == ImageFormat.Webp)
-                    //{
-                    //    fileName += "webp";
-                    //    image.Save(ms, ImageFormat.Webp);
-                    //}
-                    else
-                    {
+					//else if (image.RawFormat == ImageFormat.Heif)
+					//{
+					//    fileName += ".heif";
+					//    image.Save(ms, ImageFormat.Heif);
+					//}
+					//else if (image.RawFormat == ImageFormat.Webp)
+					//{
+					//    fileName += ".webp";
+					//    image.Save(ms, ImageFormat.Webp);
+					//}
+					else
+					{
                         try
                         {
-                            fileName += "bmp";
+                            fileName += ".bmp";
                             image.Save(ms, ImageFormat.Bmp);
                         }
                         catch (Exception exImg)
                         {
-                            Area23Log.Logger.LogOriginMsgEx("CImage", "FromDrawingImage", exImg);
+                            Area23Log.LogOriginMsgEx("CImage", "FromDrawingImage", exImg);
                             return null;
                         }
                     }
@@ -551,14 +550,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!md5Hash.Equals(cimg.Md5Hash))
                 {
                     string md5ErrMsg = $"md5Hash: {md5Hash} doesn't match property Md5Hash: {cimg.Md5Hash}";
-                    Area23Log.Logger.LogOriginMsg("CImage", md5ErrMsg);
+                    Area23Log.LogOriginMsg("CImage", md5ErrMsg);
                     // throw new CqrException(md5ErrMsg);
                 }
                 string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
                 if (!sha256Hash.Equals(cimg.Sha256Hash))
                 {
                     string sha256ErrMsg = $"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {cimg.Sha256Hash}.";
-                    Area23Log.Logger.LogOriginMsg("CImage", sha256ErrMsg);
+                    Area23Log.LogOriginMsg("CImage", sha256ErrMsg);
                     // throw new CqrException(sha256ErrMsg);
                 }
 
@@ -582,7 +581,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             if (source == null)
                 return null;
             if (destination == null)
-                destination = new CImage(source);
+                destination = new CImage();
 
             destination.Message = source.Message;
             destination.Hash = source.Hash;

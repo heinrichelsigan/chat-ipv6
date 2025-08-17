@@ -1,6 +1,7 @@
 ﻿using Area23.At.Framework.Library.Cache;
 using Area23.At.Framework.Library.Cqr;
 using Area23.At.Framework.Library.Cqr.Msg;
+using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using System;
@@ -28,7 +29,7 @@ namespace EU.CqrXs.Srv.Util
         protected internal bool _isValid = false;
         protected internal string _serverKey = "", _responseString = "", _chatRoomNumber = "", _decrypted = "";
         protected internal CContact _contact;
-        protected internal CqrFacade _cqrFacade;
+        protected internal SymmCipherPipe _symmPipe;
 
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace EU.CqrXs.Srv.Util
             _responseString = "";
             _chatRoomNumber = "";
 
-            _cqrFacade = new CqrFacade(_serverKey);
+            _symmPipe = new SymmCipherPipe(_serverKey);
             
         }
 
@@ -200,7 +201,7 @@ namespace EU.CqrXs.Srv.Util
                     catch (Exception exChatRoom)
                     {
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: loading chat room {room} failed. Exception: {exChatRoom.Message}." + Environment.NewLine;
-                        Area23Log.Logger.LogOriginMsgEx("BaseWebService", $"TestCache(): Loading chat room {room} failed. ", exChatRoom);
+                        Area23Log.LogOriginMsgEx("BaseWebService", $"TestCache(): Loading chat room {room} failed. ", exChatRoom);
                     }
                 }
             }

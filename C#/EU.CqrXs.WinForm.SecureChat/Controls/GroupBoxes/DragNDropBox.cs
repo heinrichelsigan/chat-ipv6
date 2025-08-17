@@ -40,7 +40,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetGroupBoxText: {ctrl.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate GetGroupBoxText: {ctrl.Name}.\n", exDelegate);
                 }
             }
             else
@@ -67,7 +67,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetCtrlText text: \"{textToSet}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate SetCtrlText text: \"{textToSet}\".\n", exDelegate);
                 }
             }
             else

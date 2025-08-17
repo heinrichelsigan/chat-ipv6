@@ -62,7 +62,7 @@ namespace Area23.At.Framework.Core.Static
                 catch (Exception exNull)
                 {
                     error = true;
-                    Area23Log.Logger.LogOriginMsgEx("Utils", $"Error in Ext SetNull(params object[] os): {o} {exNull.Message} ...", exNull);
+                    Area23Log.LogOriginMsgEx("Utils", $"Error in Ext SetNull(params object[] os): {o} {exNull.Message} ...", exNull);
                 }
             }
 
@@ -93,7 +93,7 @@ namespace Area23.At.Framework.Core.Static
                 {
                     error = true;
 
-                    Area23Log.Logger.LogOriginMsgEx("Utils", $"Error in Ext SetNullT<T>(params T[] ts) {t.ToString()} {exNull.Message} ....", exNull);
+                    Area23Log.LogOriginMsgEx("Utils", $"Error in Ext SetNullT<T>(params T[] ts) {t.ToString()} {exNull.Message} ....", exNull);
                 }
             }
 
@@ -120,7 +120,7 @@ namespace Area23.At.Framework.Core.Static
             }
             catch (Exception exSerialize)
             {
-                Area23Log.Logger.LogOriginMsgEx("Utils", 
+                Area23Log.LogOriginMsgEx("Utils", 
                     $"Exception {exSerialize.GetType()} in static byte[]? SerializeToXml<T = {obj.GetType()}>(T obj, out serialized)  {exSerialize.Message}",
                     exSerialize);
             }
@@ -149,7 +149,7 @@ namespace Area23.At.Framework.Core.Static
             }
             catch (Exception exDeserialize)
             {
-                Area23Log.Logger.LogOriginMsgEx("Utils", 
+                Area23Log.LogOriginMsgEx("Utils", 
                     $"Exception {exDeserialize.GetType()} in static T? ({result.GetType()}) DeserializeFromXml<T = {result.GetType()}>(string xml) {exDeserialize.Message}",
                     exDeserialize);
             }

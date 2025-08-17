@@ -26,7 +26,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         [HttpGet(Name = "ChatRoomInvite")]
         public string Get(string cryptMsg)
         {
-            Area23Log.Logger.LogOriginMsg("ChatRoomInviteController", "ChatRoomInvite(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
+            Area23Log.LogOriginMsg("ChatRoomInviteController", "ChatRoomInvite(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
             InitMethod();
 
             _chatRoomNumber = "";            
@@ -48,11 +48,11 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx("ChatRoomInviteController", "Exception " + ex.GetType(), ex);
+                Area23Log.LogOriginMsgEx("ChatRoomInviteController", "Exception " + ex.GetType(), ex);
                 CqrException.SetLastException(ex);
             }
 
-            Area23Log.Logger.LogOriginMsg("ChatRoomInviteController", "ChatRoomInvite(string cryptMsg) finished. ChatRoomNr = " + _chatRoomNumber + ".\n");
+            Area23Log.LogOriginMsg("ChatRoomInviteController", "ChatRoomInvite(string cryptMsg) finished. ChatRoomNr = " + _chatRoomNumber + ".\n");
             return _responseString;
 
         }

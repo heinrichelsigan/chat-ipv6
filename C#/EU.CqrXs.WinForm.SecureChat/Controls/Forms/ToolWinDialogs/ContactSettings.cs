@@ -169,7 +169,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 catch (Exception exi)
                 {
-                    Area23Log.Logger.LogOriginMsgEx("ContactSettings", "Form_Closing(...)", exi);                    
+                    Area23Log.LogOriginMsgEx("ContactSettings", "Form_Closing(...)", exi);                    
                     imgTest = null;
                 }
                 if (Settings.Singleton.MyContact == null)

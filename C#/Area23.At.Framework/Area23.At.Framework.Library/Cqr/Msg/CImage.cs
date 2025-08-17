@@ -57,14 +57,18 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// </summary>
         public CImage()
         {
-            ImageFileName = string.Empty;
-            ImageData = new byte[0];
-            ImageMimeType = string.Empty;
-            ImageBase64 = "";
-            Md5Hash = "";
-            Sha256Hash = "";
-            CBytes = new byte[0];
-        }
+			ImageFileName = "";
+			ImageData = new byte[0];
+			ImageMimeType = "";
+			ImageBase64 = "";
+			Message = "";
+			SerializedMsg = "";
+			MsgType = CType.Json;
+			Hash = "";
+			Md5Hash = "";
+			Sha256Hash = "";
+			CBytes = new byte[0];
+		}
 
 
         /// <summary>
@@ -72,7 +76,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="data"></param>
-        public CImage(string fileName, byte[] data)
+        public CImage(string fileName, byte[] data) : this()
         {
             ImageFileName = fileName;
             ImageData = data;
@@ -86,7 +90,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="base64Image"></param>
-        public CImage(string fileName, string base64Image)
+        public CImage(string fileName, string base64Image) : this()
         {
             ImageFileName = fileName;
             ImageBase64 = base64Image;
@@ -107,7 +111,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             CImage cImage = FromDrawingImage(image, fileName);
             if (cImage != null)
             {
-                CCopy(this, cImage);
+                CloneCopy(cImage, this);
             }
         }
 
@@ -115,7 +119,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         {
             if (cImage != null)
             {
-                CCopy(this, cImage);
+                CloneCopy(cImage, this);
             }
         }
 
@@ -124,8 +128,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             CImage cImage = (msgType == CType.Xml) ? FromXml<CImage>(serializedImgage) : FromJson(serializedImgage);
             if (cImage != null)
             {
-                CCopy(this, cImage);
-            }
+				CloneCopy(cImage, this);
+			}
         }
 
         #endregion constructors
@@ -158,7 +162,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             if (cimg == null)
                 throw new CqrException($"CImage DecryptFromJson(string serverKey, string serialized) failed.");
 
-            return CCopy(cimg, this);
+            return CloneCopy(cimg, this);
         }
 
 
@@ -193,12 +197,12 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 cJsonImage = Newtonsoft.Json.JsonConvert.DeserializeObject<CImage>(jsonText);
                 if (cJsonImage != null && !string.IsNullOrEmpty(cJsonImage.ImageFileName) && !string.IsNullOrEmpty(cJsonImage.ImageBase64))
                 {
-                    return CCopy(this, cJsonImage);
+                    return CloneCopy(cJsonImage, this);
                 }
             }
             catch (Exception exJson)
             {
-                SLog.Log(exJson);
+				Area23Log.Log(exJson);
             }
 
             return null;
@@ -220,7 +224,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             CImage cXmlImg = Utils.DeserializeFromXml<CImage>(xmlText ?? "");
             if (cXmlImg != null && cXmlImg is CImage cimg)
             {
-                return CCopy(this, cimg);
+                return CloneCopy(cimg, this);
             }
 
             return cXmlImg;
@@ -407,7 +411,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                         }
                         catch (Exception exImg)
                         {
-                            SLog.Log(exImg);
+							Area23Log.Log(exImg);
                             return null;
                         }
                     }
@@ -557,14 +561,14 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 if (!md5Hash.Equals(cimg.Md5Hash))
                 {
                     string md5ErrMsg = $"md5Hash: {md5Hash} doesn't match property Md5Hash: {cimg.Md5Hash}";
-                    Area23Log.Logger.LogOriginMsg("CImage", md5ErrMsg);
+                    Area23Log.LogOriginMsg("CImage", md5ErrMsg);
                     // throw new CqrException(md5ErrMsg);
                 }
                 string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
                 if (!sha256Hash.Equals(cimg.Sha256Hash))
                 {
                     string sha256ErrMsg = $"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {cimg.Sha256Hash}.";
-                    Area23Log.Logger.LogOriginMsg("CImage", sha256ErrMsg);
+                    Area23Log.LogOriginMsg("CImage", sha256ErrMsg);
                     // throw new CqrException(sha256ErrMsg);
                 }
 

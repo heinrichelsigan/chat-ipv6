@@ -27,13 +27,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
         public CqrJdException(string message) : base(message)
         {
             AppDomain.CurrentDomain.SetData(Constants.LAST_EXCEPTION, this);
-            Area23Log.Logger.LogOriginMsgEx("CqrJdException", $"CqrJdException(string message = {message}) ctor", this);
+            Area23Log.LogOriginMsgEx("CqrJdException", $"CqrJdException(string message = {message}) ctor", this);
         }
 
         public CqrJdException(string message, Exception innerException) : base(message, innerException)
         {
             AppDomain.CurrentDomain.SetData(Constants.LAST_EXCEPTION, this);
-            Area23Log.Logger.LogOriginMsgEx("CqrJdException", "CqrJdException(...) ctor", innerException ?? this);
+            Area23Log.LogOriginMsgEx("CqrJdException", "CqrJdException(...) ctor", innerException ?? this);
         }
 
         

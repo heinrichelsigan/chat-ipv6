@@ -91,7 +91,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetGroupBoxText: \"{groupBox.Name}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate GetGroupBoxText: \"{groupBox.Name}\".\n", exDelegate);
                 }
             }
             else
@@ -118,7 +118,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetGroupBoxText text: \"{textToSet}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate SetGroupBoxText text: \"{textToSet}\".\n", exDelegate);
                 }
             }
             else
@@ -146,7 +146,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetLinkLabelName LinkLabel: \"{linkLabel}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate GetLinkLabelName LinkLabel: \"{linkLabel}\".\n", exDelegate);
                 }
             }
             else
@@ -174,7 +174,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelText text: \"{nameToSet}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelText text: \"{nameToSet}\".\n", exDelegate);
                 }
             }
             else
@@ -202,7 +202,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate GetLinkLabelText LinkLabel: \"{linkLabel.Name}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate GetLinkLabelText LinkLabel: \"{linkLabel.Name}\".\n", exDelegate);
                 }
             }
             else
@@ -235,7 +235,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelText text: \"{textToSet}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelText text: \"{textToSet}\".\n", exDelegate);
                 }
             }
             else
@@ -264,7 +264,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AddLinkLabelLinks: \"{linkToAdd}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate AddLinkLabelLinks: \"{linkToAdd}\".\n", exDelegate);
                 }
             }
             else
@@ -293,7 +293,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelVisible visible: \"{visible}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelVisible visible: \"{visible}\".\n", exDelegate);
                 }
             }
             else
@@ -473,7 +473,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes
                     }
                     catch (Exception ex)
                     {
-                        Area23Log.Logger.LogOriginMsgEx("LinkLabelsBox", $"LinkLabelsBox_DragDrop(...)", ex);
+                        Area23Log.LogOriginMsgEx("LinkLabelsBox", $"LinkLabelsBox_DragDrop(...)", ex);
                     }
                     gtext += " ";
                 }

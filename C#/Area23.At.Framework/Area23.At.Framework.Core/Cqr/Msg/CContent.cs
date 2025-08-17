@@ -40,7 +40,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 		/// </summary>
 		public CContent()
 		{
-			MsgType = CType.None;
+			MsgType = CType.Json;
 			Message = string.Empty;
 			SerializedMsg = string.Empty;
 			Hash = string.Empty;

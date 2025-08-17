@@ -39,13 +39,13 @@ namespace EU.CqrXs.Srv.Settings
                 if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V4] != null)
                 {
                     LiteralServerIPv4.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V4];
-                    Area23Log.Logger.LogOriginMsg("TestForm", Constants.SERVER_IP_V4 + ": " + LiteralServerIPv4.Text);
+                    Area23Log.LogOriginMsg("TestForm", Constants.SERVER_IP_V4 + ": " + LiteralServerIPv4.Text);
                     tmpStrg += Constants.SERVER_IP_V4 + ": " + (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V4] + Environment.NewLine;
                 }
                 if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V6] != null)
                 {
                     this.LiteralServerIPv6.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V6];
-                    Area23Log.Logger.LogOriginMsg("TestForm", Constants.SERVER_IP_V6 + ": " + LiteralServerIPv6.Text);
+                    Area23Log.LogOriginMsg("TestForm", Constants.SERVER_IP_V6 + ": " + LiteralServerIPv6.Text);
                     tmpStrg += Constants.SERVER_IP_V6 + ": " + (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V6] + Environment.NewLine + allStrng;
                 }
 
@@ -82,13 +82,13 @@ namespace EU.CqrXs.Srv.Settings
                 {
                     CqrException.SetLastException(ex);
                     this.preOut.InnerText = ex.Message + ex.ToString();
-                    Area23Log.Logger.LogOriginMsgEx("TestForm", "Page_Load", ex);
+                    Area23Log.LogOriginMsgEx("TestForm", "Page_Load", ex);
                 }
                 allStrng = tmpStrg + allStrng;
 
 
                 this.LiteralClientIp.Text = myServerKey.Replace(Constants.APP_NAME, "").ToString();
-                Area23Log.Logger.LogOriginMsg("TestForm", "ClientIp: " + myServerKey.Replace(Constants.APP_NAME, "").ToString());
+                Area23Log.LogOriginMsg("TestForm", "ClientIp: " + myServerKey.Replace(Constants.APP_NAME, "").ToString());
             }
         }
 
@@ -122,7 +122,7 @@ namespace EU.CqrXs.Srv.Settings
             {
                 CqrException.SetLastException(ex);
                 this.preOut.InnerText = ex.Message + ex.ToString();
-                Area23Log.Logger.LogOriginMsgEx("TestForm", "Page_Load", ex);
+                Area23Log.LogOriginMsgEx("TestForm", "Page_Load", ex);
             }
         }
 

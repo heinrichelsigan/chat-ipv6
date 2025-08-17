@@ -94,7 +94,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx("Chat", $"Chat? Load(int chatId = {chatId}) ctor.", ex);                
+                Area23Log.LogOriginMsgEx("Chat", $"Chat? Load(int chatId = {chatId}) ctor.", ex);                
                 // TODO: What shell we do with drunken saylor??
             }
 

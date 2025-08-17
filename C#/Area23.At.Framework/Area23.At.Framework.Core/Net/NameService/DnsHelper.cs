@@ -58,7 +58,7 @@ namespace Area23.At.Framework.Core.Net.NameService
                 }
                 catch (Exception ex)
                 {
-                    Area23Log.Logger.LogOriginMsgEx("DnsHelper", "GetHostNamesByHostName", ex);
+                    Area23Log.LogOriginMsgEx("DnsHelper", "GetHostNamesByHostName", ex);
                 }
 
                 if (!string.IsNullOrEmpty(lastAdded) && !hostnames.Contains(lastAdded))

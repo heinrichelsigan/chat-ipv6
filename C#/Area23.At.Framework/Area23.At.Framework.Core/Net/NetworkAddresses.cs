@@ -50,7 +50,7 @@ namespace Area23.At.Framework.Core.Net
             }
             catch (Exception exV6)
             {
-                Area23Log.Logger.LogOriginMsgEx("NetworkAddresses", "GetConnectedIpAddresses", exV6);
+                Area23Log.LogOriginMsgEx("NetworkAddresses", "GetConnectedIpAddresses", exV6);
             }
             //try
             //{
@@ -59,7 +59,7 @@ namespace Area23.At.Framework.Core.Net
             //}
             //catch (Exception exParisienne)
             //{
-            //    Area23Log.Logger.LogOriginMsgEx("NetworkAddresses", "GetConnectedIpAddresses", exParisienne);
+            //    Area23Log.LogOriginMsgEx("NetworkAddresses", "GetConnectedIpAddresses", exParisienne);
             //}
 
             foreach (IPAddress serverIp in serverIps)
@@ -84,7 +84,7 @@ namespace Area23.At.Framework.Core.Net
                 }
                 catch (Exception ex)
                 {
-                    Area23Log.Logger.LogOriginMsgEx("NetworkAddresses", "GetConnectedIpAddresses", ex);
+                    Area23Log.LogOriginMsgEx("NetworkAddresses", "GetConnectedIpAddresses", ex);
                 }
             }
 

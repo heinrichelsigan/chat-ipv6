@@ -69,7 +69,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         return _serverIpAddress;
                     }
                     
-                    Area23Log.Logger.LogOriginMsgEx("RichTextChat", "Exception on getting server ip address via dns", exDns);
+                    Area23Log.LogOriginMsgEx("RichTextChat", "Exception on getting server ip address via dns", exDns);
                     throw;
                 }
                 foreach (IPAddress ip in list)
@@ -644,7 +644,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in SendInit_Click: {ex.Message}.\n", ex);
+                Area23Log.LogOriginMsgEx(this.Name, $"Exception in SendInit_Click: {ex.Message}.\n", ex);
                 SetStatusText(StripStatusLabel, $"Sending to {ipAddrString} failed: {ex.Message}");
                 PlaySoundFromResource("sound_hammer");
                 return false;
@@ -909,7 +909,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
+                Area23Log.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
                 SetStatusText(StripStatusLabel, $"Sending to {ipAddrString} failed: {ex.Message}");
                 await PlaySoundFromResourcesAsync("sound_warning");
             }
@@ -1075,7 +1075,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
+                Area23Log.LogOriginMsgEx(this.Name, $"Exception in MenuItemAttach_Click: {ex.Message}.\n", ex);
                 SetStatusText(StripStatusLabel, "Attach FAILED: " + ex.Message);
                 PlaySoundFromResource("sound_warning");
             }
@@ -1354,7 +1354,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exi)
             {
-                Area23Log.Logger.Log($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                Area23Log.Log($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
                 SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
                 await PlaySoundFromResourcesAsync("sound_hammer");
             }
@@ -1378,7 +1378,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exi)
             {
-                Area23Log.Logger.Log($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
+                Area23Log.Log($"Excption {exi.GetType()}: {exi.Message}\n\t{exi}\n");
                 sendInit = false;
                 SetStatusText(this.StripStatusLabel, $"Excption {exi.GetType()} on init chat room invitation: {exi.Message}");
             }
@@ -1522,7 +1522,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exTriState)
                     {
-                        Area23Log.Logger.LogOriginMsgEx("RichTextChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
+                        Area23Log.LogOriginMsgEx("RichTextChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
                     }
                     await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
@@ -1540,7 +1540,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exTriState)
                     {
-                        Area23Log.Logger.LogOriginMsgEx("RichTextChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
+                        Area23Log.LogOriginMsgEx("RichTextChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
                     }
                     break;
                 case 1:
@@ -1556,7 +1556,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exTriState)
                     {
-                        Area23Log.Logger.LogOriginMsgEx("RichTextChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
+                        Area23Log.LogOriginMsgEx("RichTextChat", $"PeerSessionTriState = {PeerSession3State.Peer2Peer}", exTriState);
                     }
                     await BgWorkerMonitor_WorkMonitorAsync("TooglePeerSessionServerTriState", new EventArgs());
                     break;
@@ -1782,7 +1782,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // && !ipSockListener.ServerSocket.Blocking)
                     {
                         if (ipSockListener.ServerEndPoint != null)
-                            Area23Log.Logger.Log($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
+                            Area23Log.Log($"ipSockListener enpoint peforming normal: {ipSockListener.ServerEndPoint.ToString()}");
                     }
                     else // Rebind Server Socket
                     {
@@ -1830,7 +1830,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     }
                                     catch (Exception exi)
                                     {
-                                        SLog.Log(exi);
+										Area23Log.Log(exi);
                                     }
                                     try
                                     {
@@ -1838,7 +1838,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                     }
                                     catch (Exception exi)
                                     {
-                                        SLog.Log(exi);
+										Area23Log.Log(exi);
                                     }
 
                                     Thread.Sleep(Constants.CLOSING_TIMEOUT);
@@ -1864,7 +1864,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             }
                             catch (Exception exc)
                             {
-                                SLog.Log(exc);
+								Area23Log.Log(exc);
                             }
                         }
 
@@ -2325,7 +2325,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
             catch (Exception exV6)
             {
-                SLog.Log(exV6);
+				Area23Log.Log(exV6);
             }
 
 
@@ -2385,7 +2385,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exFriendIp)
                     {
-                        SLog.Log("Error when adding friendIps + " + exFriendIp.Message);
+					    Area23Log.Log("Error when adding friendIps + " + exFriendIp.Message);
                     }
                 }
             }
@@ -2557,7 +2557,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            SLog.Log(exi);
+							Area23Log.Log(exi);
                         }
                         try
                         {
@@ -2565,7 +2565,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         }
                         catch (Exception exi)
                         {
-                            SLog.Log(exi);
+							Area23Log.Log(exi);
                         }
 
                         Thread.Sleep(Constants.CLOSING_TIMEOUT);
@@ -2591,7 +2591,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 }
                 catch (Exception exc)
                 {
-                    SLog.Log(exc);
+					Area23Log.Log(exc);
                 }
             }
         }
@@ -2626,7 +2626,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     }
                     catch (Exception exi)
                     {
-                        SLog.Log(exi);
+						Area23Log.Log(exi);
                     }
 
                     Thread.Sleep(Constants.CLOSING_TIMEOUT);

@@ -203,7 +203,7 @@ namespace Area23.At.Framework.Core.Static
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx("Extensions", "ToFile(this byte[] bytes", ex);
+                Area23Log.LogOriginMsgEx("Extensions", "ToFile(this byte[] bytes", ex);
             }
 
             if (File.Exists(fullFileName))
@@ -460,7 +460,7 @@ namespace Area23.At.Framework.Core.Static
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx("Extensions", "Base64ToImage(this string base64)", ex);
+                Area23Log.LogOriginMsgEx("Extensions", "Base64ToImage(this string base64)", ex);
                 bitmap = null;
             }
             return bitmap;
@@ -745,7 +745,7 @@ namespace Area23.At.Framework.Core.Static
             catch (Exception exImgFormat)
             {
                 imgFormGuid = Guid.Empty;
-                Area23Log.Logger.LogOriginMsgEx("Extensions", "ToByteArray(this Image img)", exImgFormat); 
+                Area23Log.LogOriginMsgEx("Extensions", "ToByteArray(this Image img)", exImgFormat); 
             }
 
             if (imgFormGuid != null && imgFormGuid.HasValue && imgFormGuid.Value != Guid.Empty)
@@ -762,7 +762,7 @@ namespace Area23.At.Framework.Core.Static
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx("Extensions", "ToByteArray(this Image img)", ex);
+                Area23Log.LogOriginMsgEx("Extensions", "ToByteArray(this Image img)", ex);
             }
 
             return bytes;
@@ -785,7 +785,7 @@ namespace Area23.At.Framework.Core.Static
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx("Extensions", "ToBase64(this Image img)", ex);
+                Area23Log.LogOriginMsgEx("Extensions", "ToBase64(this Image img)", ex);
             }
 
             return base64;

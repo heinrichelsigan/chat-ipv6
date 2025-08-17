@@ -113,7 +113,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exNoInet)
                 {
-                    Area23Log.Logger.LogOriginMsgEx("BaseChatForm", "No external ip address", exNoInet);
+                    Area23Log.LogOriginMsgEx("BaseChatForm", "No external ip address", exNoInet);
                     _externalIPAddress = IPAddress.Parse("0.0.0.0");
                 }
                 return _externalIPAddress;
@@ -136,7 +136,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception noIPv6Ex)
                 {
-                    Area23Log.Logger.LogOriginMsgEx("BaseChatForm", "ExternalIpAddressV6.get", noIPv6Ex);
+                    Area23Log.LogOriginMsgEx("BaseChatForm", "ExternalIpAddressV6.get", noIPv6Ex);
                     _externalIPAddressV6 = null;
                 }
                 return _externalIPAddressV6;
@@ -294,7 +294,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate EnableTextBox enable: \"{enable}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate EnableTextBox enable: \"{enable}\".\n", exDelegate);
                 }
             }
             else
@@ -322,7 +322,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetTextBoxText(RichTextBox textBox): \"{exDelegate.Message}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetTextBoxText(RichTextBox textBox): \"{exDelegate.Message}\".\n", exDelegate);
                 }
             }
             else
@@ -350,7 +350,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetRichTextBoxText(RichTextBox textBox): \"{exDelegate.Message}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetRichTextBoxText(RichTextBox textBox): \"{exDelegate.Message}\".\n", exDelegate);
                 }
             }
             else
@@ -387,7 +387,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AppendText text: \"{text}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate AppendText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -418,7 +418,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetRichText text: \"{text}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetRichText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -450,7 +450,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetRichText text: \"{text}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetRichText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -481,7 +481,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AppendRichText text: \"{text}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate AppendRichText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -534,7 +534,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx("RichTextFromPositionWithLengthAlign",
+                    Area23Log.LogOriginMsgEx("RichTextFromPositionWithLengthAlign",
                         $"Exception in delegate RichTextFromPositionWithLengthAlign RichTextBox: " +
                         $"RichTextFromPositionWithLengthAlign(RichTextBox richTextBox = \"{richTextBox.Name}\", int start = {start}, int length = {length}, HorizontalAlignment hAlignment = {hAlignment}) ...\n", exDelegate);
                 }
@@ -582,7 +582,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SelectionAlignmentRichText: \"{leftRight}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SelectionAlignmentRichText: \"{leftRight}\".\n", exDelegate);
                 }
             }
             else
@@ -612,7 +612,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetFirstCharIndexFromLineRichText({lineNr}).\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetFirstCharIndexFromLineRichText({lineNr}).\n", exDelegate);
                 }
             }
             else
@@ -652,7 +652,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetLastIndexOfSubstring(richTextBox = {richTextBox.Name}, pattern = {pattern}).\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetLastIndexOfSubstring(richTextBox = {richTextBox.Name}, pattern = {pattern}).\n", exDelegate);
                 }
             }
             else
@@ -684,7 +684,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate DeselectAllRichText(richTextBox = {richTextBox.Name}).\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate DeselectAllRichText(richTextBox = {richTextBox.Name}).\n", exDelegate);
                 }
             }
             else
@@ -720,7 +720,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate ClearRichText: \"{exDelegate.Message}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate ClearRichText: \"{exDelegate.Message}\".\n", exDelegate);
                 }
             }
             else
@@ -764,7 +764,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetLinkLabelText text: \"{text}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetLinkLabelText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -793,7 +793,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AddLinkLabelLinks: \"{link}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate AddLinkLabelLinks: \"{link}\".\n", exDelegate);
                 }
             }
             else
@@ -820,7 +820,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetLinkLabelVisible visible: \"{visible}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetLinkLabelVisible visible: \"{visible}\".\n", exDelegate);
                 }
             }
             else
@@ -858,7 +858,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetProgressBar progress might be {progressValue}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetProgressBar progress might be {progressValue}.\n", exDelegate);
                 }
             }
             else
@@ -885,7 +885,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetProgressBar to {progress}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetProgressBar to {progress}.\n", exDelegate);
                 }
             }
             else
@@ -914,7 +914,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemText menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemText menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
@@ -943,7 +943,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, text: \"{text}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -973,7 +973,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemEnabledChecked menu item: {tsMenuItem.Name}, enabled: \"{tsmiEnabled}\", checked: \"{tsmiChecked}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemEnabledChecked menu item: {tsMenuItem.Name}, enabled: \"{tsmiEnabled}\", checked: \"{tsmiChecked}\".\n", exDelegate);
                 }
             }
             else
@@ -1007,7 +1007,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemForeColor menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemForeColor menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
@@ -1035,7 +1035,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, Color: \"{foreColor}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemText menu item: {mItem.Name}, Color: \"{foreColor}\".\n", exDelegate);
                 }
             }
             else
@@ -1066,7 +1066,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemBackColor menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemBackColor menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
@@ -1094,7 +1094,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemBackColor menu item: {mItem.Name}, Color: \"{bgColor}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemBackColor menu item: {mItem.Name}, Color: \"{bgColor}\".\n", exDelegate);
                 }
             }
             else
@@ -1124,7 +1124,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemChecked menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItemChecked menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
@@ -1150,7 +1150,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemChecked menu item: {mItem.Name}, checked: \"{mchecked}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetMenuItemChecked menu item: {mItem.Name}, checked: \"{mchecked}\".\n", exDelegate);
                 }
             }
             else
@@ -1186,7 +1186,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItems menuItem = {mItem.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetMenuItems menuItem = {mItem.Name}.\n", exDelegate);
                 }
             }
             else
@@ -1218,7 +1218,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AddMenuItemToItems menu item: {mItem.Name}, add item: \"{addItem.Name}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate AddMenuItemToItems menu item: {mItem.Name}, add item: \"{addItem.Name}\".\n", exDelegate);
                 }
             }
             else
@@ -1244,7 +1244,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetMenuDropDownItems menuItemComboBox = {tsCbx.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetMenuDropDownItems menuItemComboBox = {tsCbx.Name}.\n", exDelegate);
                 }
             }
             else
@@ -1273,7 +1273,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AddMenuItemToMenuComboBox menu combo box: {tsCombo.Name}, add object: \"{obj}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate AddMenuItemToMenuComboBox menu combo box: {tsCombo.Name}, add object: \"{obj}\".\n", exDelegate);
                 }
             }
             else
@@ -1309,7 +1309,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetStatusText text: \"{text}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetStatusText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -1356,7 +1356,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxName.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxName.\n", exDelegate);
                 }
             }
             else
@@ -1391,7 +1391,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxName.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxName.\n", exDelegate);
                 }
             }
             else
@@ -1426,7 +1426,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxText ComboBox = {comboBox.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxText ComboBox = {comboBox.Name}.\n", exDelegate);
                 }
             }
             else
@@ -1461,7 +1461,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetComboBoxText ComboBox = {comboBox.Name}, text = \"{text}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetComboBoxText ComboBox = {comboBox.Name}, text = \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -1493,7 +1493,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetComboBoxEnabled ComboBox = {comboBox.Name}, enabled = \"{enabled}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetComboBoxEnabled ComboBox = {comboBox.Name}, enabled = \"{enabled}\".\n", exDelegate);
                 }
             }
             else
@@ -1526,7 +1526,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate SetComboBoxBackColor ComboBox = {comboBox.Name}, Colore = \"{color}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate SetComboBoxBackColor ComboBox = {comboBox.Name}, Colore = \"{color}\".\n", exDelegate);
                 }
             }
             else
@@ -1556,7 +1556,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate FocusComboBox ComboBox = {comboBox.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate FocusComboBox ComboBox = {comboBox.Name}.\n", exDelegate);
                 }
             }
             else
@@ -1585,7 +1585,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxItems ComboBox = {comboBox.Name}.\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate GetComboBoxItems ComboBox = {comboBox.Name}.\n", exDelegate);
                 }
             }
             else
@@ -1614,7 +1614,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 }
                 catch (Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(Name, $"Exception in delegate AddMenuItemToComboBox combo box: {comboBox.Name}, add object: \"{obj}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate AddMenuItemToComboBox combo box: {comboBox.Name}, add object: \"{obj}\".\n", exDelegate);
                 }
             }
             else
@@ -1662,17 +1662,17 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
         {
             if (e.Cancelled)
             {
-                Area23Log.Logger.LogOriginMsg("BaseChatForm", $"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Canceled]");
+                Area23Log.LogOriginMsg("BaseChatForm", $"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Canceled]");
             }
             else if (e.Error != null)
             {
                 
                 string msg = (String.IsNullOrEmpty(e.Error.Message)) ? "[Error]" : "[Error: (msg = " + e.Error.Message + ")]";
-                Area23Log.Logger.LogOriginMsg("BaseChatForm", $"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [msg]");
+                Area23Log.LogOriginMsg("BaseChatForm", $"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [msg]");
             }
             else
             {
-                Area23Log.Logger.LogOriginMsg("BaseChatForm", $"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Completed]");
+                Area23Log.LogOriginMsg("BaseChatForm", $"BgWorkerMonitor_RunWorkerCompleted(object sender = {sender}, RunWorkerCompletedEventArgs e = {e}) [Completed]");
             }
         }
 
@@ -1855,7 +1855,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     if (IPAddress.TryParse(srvIp6, out srvPIp6))
                         cqrXsEuIpList.Add(srvPIp6);
 
-                    Area23Log.Logger.LogOriginMsgEx("BaseChatForm", "Exception on getting server ip address via dns", exDns);
+                    Area23Log.LogOriginMsgEx("BaseChatForm", "Exception on getting server ip address via dns", exDns);
                 }
 
                 foreach (IPAddress euIp in cqrXsEuIpList)
@@ -1925,7 +1925,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                     }
                     catch (Exception exSound)
                     {
-                        Area23Log.Logger.LogOriginMsgEx("BaseChatForm", $"PlaySoundFromResource(string soundName = {soundName})", exSound);     
+                        Area23Log.LogOriginMsgEx("BaseChatForm", $"PlaySoundFromResource(string soundName = {soundName})", exSound);     
                         played = false;
                     }
                     //fixed (byte* bufferPtr = &bytes[0])
@@ -2124,7 +2124,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             }
             catch (Exception exSetSave)
             {
-                Area23Log.Logger.LogOriginMsgEx("BaseChatForm", $"AppCloseAllFormsExit(...)", exSetSave);
+                Area23Log.LogOriginMsgEx("BaseChatForm", $"AppCloseAllFormsExit(...)", exSetSave);
                 settingsNotSavedReason = exSetSave.Message;
             }
 

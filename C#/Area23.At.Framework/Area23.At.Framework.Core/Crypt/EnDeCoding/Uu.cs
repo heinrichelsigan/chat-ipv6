@@ -69,7 +69,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         {
             string hexOutPath = LibPaths.SytemDirUuPath + DateTime.Now.Area23DateTimeWithMillis() + ".hex";
             string toUuFunCall = $"ToUu(byte[{inBytes.Length}] inBytes, bool originalUue = {originalUue}, bool fromFile = {fromFile})";
-            Area23Log.Logger.LogOriginMsg("Uu", $"{toUuFunCall} ... STARTED.");
+            Area23Log.LogOriginMsg("Uu", $"{toUuFunCall} ... STARTED.");
 
             string bytStr = "", uu = "";
 
@@ -84,7 +84,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
                 uu = UuEncodeBytesToString(inBytes);
             }
 
-            Area23Log.Logger.LogOriginMsg("Uu", $"ToUu(byte[{inBytes.Length}] inBytes, bool originalUue = {originalUue}. bool fromFile = {fromFile}) ... FINISHED.");
+            Area23Log.LogOriginMsg("Uu", $"ToUu(byte[{inBytes.Length}] inBytes, bool originalUue = {originalUue}. bool fromFile = {fromFile}) ... FINISHED.");
             // uu = uu.Replace(" ", "`");
             return uu;
         }
@@ -100,7 +100,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         {
 
             string fromUuFunCall = "FromUu(string uuEncStr[.Length=" + uuEncStr.Length + "], bool originalUue = " + originalUue + ", bool fromFile = " + fromFile + ")";
-            Area23Log.Logger.LogOriginMsg("Uu", fromUuFunCall + "... STARTED.");
+            Area23Log.LogOriginMsg("Uu", fromUuFunCall + "... STARTED.");
             
             string plainStr = "";
             byte[] plainBytes = new byte[Math.Max(plainStr.Length, uuEncStr.Length)];
@@ -115,11 +115,11 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             }
             else
             {
-                Area23Log.Logger.LogOriginMsg("Uu", $"FromUu: Trying to get bytes from memory stream!");
+                Area23Log.LogOriginMsg("Uu", $"FromUu: Trying to get bytes from memory stream!");
                 plainBytes = UuDecodeBytes(uuEncStr);
             }
 
-            Area23Log.Logger.LogOriginMsg("Uu", $"byte[{plainBytes.Length}] plainBytes = FromUu(string uuEncStr, bool originalUue = {originalUue}, fromFile = {fromFile}) ... FINISHED.");
+            Area23Log.LogOriginMsg("Uu", $"byte[{plainBytes.Length}] plainBytes = FromUu(string uuEncStr, bool originalUue = {originalUue}, fromFile = {fromFile}) ... FINISHED.");
             return plainBytes;
         }
 
@@ -217,7 +217,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             }
             catch (Exception exStream)
             {
-                Area23Log.Logger.LogOriginMsg("Uu", $"ToUu: Exception {exStream.Message}, when encoding to uu via MemoryStream in UuEncodeBytesToString(...)");
+                Area23Log.LogOriginMsg("Uu", $"ToUu: Exception {exStream.Message}, when encoding to uu via MemoryStream in UuEncodeBytesToString(...)");
             }
             finally
             {
@@ -246,12 +246,12 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 
                 memStream.Position = 0;
                 plainBytes = memStream.ToByteArray();
-                Area23Log.Logger.LogOriginMsg("Uu", $"FromUu: read {plainBytes.Length} bytes from MemoryStream.");
+                Area23Log.LogOriginMsg("Uu", $"FromUu: read {plainBytes.Length} bytes from MemoryStream.");
                 memStream.Close();
             }
             catch
             {
-                Area23Log.Logger.LogOriginMsg("Uu", $"FromUu: uncaught com or unknown Exception, when reading bytes from MemoryStream!");
+                Area23Log.LogOriginMsg("Uu", $"FromUu: uncaught com or unknown Exception, when reading bytes from MemoryStream!");
             }
             finally
             {

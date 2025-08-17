@@ -53,7 +53,7 @@ namespace Area23.At.Framework.Core.Static
         /// <param name="appName">application name</param>
         public static void Log(string msg, string appName = "")
         {
-            Area23Log.Logger.LogOriginMsg("SLog", msg);
+            Area23Log.LogOriginMsg("SLog", msg);
             //if (Constants.NOLog)
             //{
             //    Console.Error.WriteLine(msg);
@@ -160,7 +160,7 @@ namespace Area23.At.Framework.Core.Static
                 exLog.ToString().Replace("\r", "").Replace("\n", " "),
                 exLog.StackTrace?.Replace("\r", "").Replace("\n", " "));
 
-            Area23Log.Logger.LogOriginMsg("SLog", excMsg);
+            Area23Log.LogOriginMsg("SLog", excMsg);
             // Log(excMsg, appName);
         }
 
@@ -202,7 +202,7 @@ namespace Area23.At.Framework.Core.Static
                 exLogString,
                 stackTrace);
 
-            Area23Log.Logger.LogOriginMsg("SLog", string.Concat(msgPrefix, "\n \t", exMsg));
+            Area23Log.LogOriginMsg("SLog", string.Concat(msgPrefix, "\n \t", exMsg));
             // Log(string.Concat(msgPrefix, "\n \t", exMsg), appName);
         }
 

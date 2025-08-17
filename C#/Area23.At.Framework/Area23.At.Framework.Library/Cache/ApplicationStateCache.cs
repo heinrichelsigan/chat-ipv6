@@ -47,7 +47,7 @@ namespace Area23.At.Framework.Library.Cache
                     }
                     catch (Exception ex)
                     {
-                        Area23.At.Framework.Library.Util.Area23Log.Logger.LogOriginMsgEx("ApplicationStateCache",
+                        Area23.At.Framework.Library.Util.Area23Log.LogOriginMsgEx("ApplicationStateCache",
                             "LoadDictionaryCache(repeatLoadingPeriodically=" + repeatLoadingPeriodically + ") throwed Exception " + ex.GetType(), ex);
                     }
                 }

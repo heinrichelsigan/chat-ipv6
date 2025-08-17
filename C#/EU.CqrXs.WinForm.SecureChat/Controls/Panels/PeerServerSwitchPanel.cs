@@ -36,7 +36,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetTrackBarPeerServerEnabled enabled: \"{ena}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate SetTrackBarPeerServerEnabled enabled: \"{ena}\".\n", exDelegate);
                 }
             }
             else
@@ -60,7 +60,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Panels
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetTrackBarPeerServerValue val: \"{trackValue}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate SetTrackBarPeerServerValue val: \"{trackValue}\".\n", exDelegate);
                 }
             }
             else

@@ -2,8 +2,6 @@
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Zfx;
-using Org.BouncyCastle.Utilities;
-using System.Text;
 
 
 namespace Area23.At.Framework.Core.Crypt.Cipher
@@ -392,6 +390,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         public byte[] DecrpytRoundsGo(byte[] cipherBytes, string secretKey = "", ZipType unzipAfter = ZipType.None)
             => DecrpytRoundGoMerry(cipherBytes, secretKey, EnDeCodeHelper.KeyToHex(secretKey), unzipAfter);
 
+        #region static en-de-crypt members
+
         /// <summary>
         /// EncrpytToStringd
         /// </summary>
@@ -416,7 +416,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             return encrypted;
         }
 
-        public static string EncrpytFromBytesToString(byte[] plainBytes, string cryptKey, EncodingType encoding = EncodingType.Base64, ZipType zipBefore = ZipType.None)
+        public static string EncrpytBytesToString(byte[] plainBytes, string cryptKey, EncodingType encoding = EncodingType.Base64, ZipType zipBefore = ZipType.None)
         {
             // construct symmetric cipher pipeline with cryptKey 
             CipherPipe cyptPipe = new CipherPipe(cryptKey);
@@ -428,6 +428,20 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
 
             return encrypted;
         }
+
+        public static byte[] EncrpytStringToBytes(string inString, string cryptKey, EncodingType encoding = EncodingType.Base64, ZipType zipBefore = ZipType.None)
+        {
+            // construct symmetric cipher pipeline with cryptKey and pass pipeString as out param            
+            CipherPipe cryptPipe = new CipherPipe(cryptKey);
+
+            // Transform string to bytes
+            byte[] inBytes = EnDeCodeHelper.GetBytesFromString(inString);
+            // perform multi crypt pipe stages
+            byte[] encryptedBytes = cryptPipe.EncrpytGoRounds(inBytes, cryptKey, zipBefore);
+
+            return encryptedBytes;
+        }
+
 
         /// <summary>
         /// DecrpytToString
@@ -469,6 +483,25 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
 
             return unroundedMerryBytes;
         }
+
+        public static string DecrpytBytesToString(byte[] cipherBytes, string cryptKey, EncodingType decoding = EncodingType.Base64, ZipType unzipAfter = ZipType.None)
+        {
+            // create symmetric cipher pipe for decryption with crypt key and pass pipeString as out param
+            CipherPipe cryptPipe = new CipherPipe(cryptKey);
+
+            // staged decryption of bytes
+            byte[] unroundedMerryBytes = cryptPipe.DecrpytRoundsGo(cipherBytes, cryptKey, unzipAfter);
+
+            // Get string from decrypted bytes
+            string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes);
+            // find first \0 = NULL char in string and truncate all after first \0 apperance in string
+            while (decrypted[decrypted.Length - 1] == '\0')
+                decrypted = decrypted.Substring(0, decrypted.Length - 1);
+
+            return decrypted;
+        }
+
+        #endregion static en-de-crypt members
 
         #endregion multiple rounds en-de-cryption
     }

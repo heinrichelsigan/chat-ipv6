@@ -4,7 +4,8 @@ using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
-using System.Text;
+using System;
+using System.IO;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
@@ -36,24 +37,22 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         {
             FileName = string.Empty;
             Base64Type = string.Empty;
-            Md5Hash = string.Empty;
             Sha256Hash = string.Empty;
             Data = new byte[0];
-            MsgType = CType.None;
-        }
+			FileByteLen = 0;
+			EnCodingType = EncodingType.Base64;
+		}
 
-        public CFile(string fileName, byte[] data, string hash = "")
+        public CFile(string fileName, byte[] data, string hash = "") : this()
         {
             FileName = fileName;            
             Data = data;
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Hash = hash;
             MsgType = CType.Json;
-            Md5Hash = "";
             Sha256Hash = Sha256Sum.Hash(Data, "");
             FileByteLen = Data.LongLength;
             EnCodingType = EncodingType.Base64;
-            FileByteLen = Data.Length;
         }
 
         public CFile(string fileName, string mimeType, byte[] data, string hash) : this(fileName, data, hash) 
@@ -61,18 +60,16 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = mimeType;         
         }
 
-        public CFile(string fileName, string base64, string hash = "")
+        public CFile(string fileName, string base64, string hash = "") : this()
         {
             FileName = fileName;
             Data = Convert.FromBase64String(base64);
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Hash = hash;
-            Md5Hash = "";
             FileByteLen = Data.LongLength;
             Sha256Hash = Sha256Sum.Hash(Data, "");
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
-            FileByteLen = Data.Length;
         }
 
         public CFile(string fileName, string mimeType, string base64, string hash) : this(fileName, base64, hash) 
@@ -99,7 +96,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             this.EnCodingType = enCodeType;
         }
 
-
         public CFile(FileInfo fi, string hash = "") : this()
         {
             FileName = fi.Name;            
@@ -110,12 +106,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Sha256Hash = Sha256Sum.Hash(Data, "");
             MsgType = CType.Json;
             EnCodingType = EncodingType.Base64;
-            this.Hash = hash;
-            FileByteLen = Data.Length;
+            Hash = hash;
         }
 
-
-        public CFile(string filePath, string hash = "", CType msgArt = CType.Json)
+        public CFile(string filePath, string hash = "", CType msgType = CType.Json) : this()
         {
             if (!System.IO.File.Exists(filePath))
                 throw new FileNotFoundException($"Didn't find a file at filePath = {filePath}");
@@ -125,25 +119,22 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Md5Hash = "";
             Sha256Hash = Sha256Sum.Hash(Data, "");
-            MsgType = msgArt;
+            MsgType = msgType;
             EnCodingType = EncodingType.Base64;
-            this.Hash = hash;
+            Hash = hash;
             FileByteLen = Data.Length;
-
         }
-        
-        
-        /// <summary>
-        /// Constructor CqrFile from an json, xml or raw serialized plaintext
-        /// </summary>
-        /// <param name="plainText"></param>
-        /// <param name="msgArt"></param>
-        public CFile(string plainText, CType msgArt = CType.Json)
+
+		/// <summary>
+		/// Constructor CqrFile from an json, xml or raw serialized plaintext
+		/// </summary>
+		/// <param name="plainText"></param>
+		/// <param name="msgType"></param>
+		public CFile(string plainText, CType msgType = CType.Json)
         {
-            CFile cf = GetCFile(plainText, msgArt);
-            CCopy(this, cf);
+            CFile cf = GetCFile(plainText, msgType);
+            CloneCopy(cf, this);
         }
-
 
         /// <summary>
         /// CFile constructor with antoher <see cref="CFile"/> to clone
@@ -152,8 +143,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         public CFile(CFile cFile) : this()
         {
             if (cFile != null)
-                CCopy(this, cFile);
-        }
+				CloneCopy(cFile, this);
+		}
 
         #endregion ctors
 
@@ -166,8 +157,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #region EnDeCrypt+DeSerialize
 
-
-
         public override string EncryptToJson(string serverKey)
         {
             CFile cFile = new CFile(this);
@@ -178,7 +167,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return serializedJson;
         }
 
-
         public new CFile? DecryptFromJson(string serverKey, string serialized = "") 
         {
             CFile? cfile = FromJsonDecrypt(serverKey, serialized);
@@ -188,12 +176,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return CCopy(this, cfile);            
         }
 
-
         #endregion EnDeCrypt+DeSerialize
 
 
         #region members
-
 
         public virtual string ToBase64() => Convert.ToBase64String(Data);
 
@@ -222,7 +208,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             {
                 if (t is CFile cf)
                 {
-                    CCopy(this, cf);
+                    CloneCopy(cf, this);
                 }
 
             }
@@ -236,18 +222,16 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return SerializedMsg;
         }
 
-
         public override T FromXml<T>(string xmlText)
         {
             T cqrT = default(T);
             cqrT = base.FromXml<T>(xmlText);
             if (cqrT is CFile cf)
             {
-                CCopy(this, cf);
-            }
+				CloneCopy(cf, this);
+			}
 
             return cqrT;
-
         }
 
 
@@ -408,7 +392,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 }
                 catch (Exception exMime)
                 {
-                    Area23Log.Logger.LogOriginMsgEx("CFile", "GetByBase64Attachment", exMime);
+                    Area23Log.LogOriginMsgEx("CFile", "GetByBase64Attachment", exMime);
                 }
             }
             return isMimeAttachment;
@@ -502,14 +486,14 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!md5Hash.Equals(cfile.Md5Hash) && !cfile.Hash.Equals(symmPipe.PipeString))
                 {
                     string md5ErrMsg = $"Hash: {cfile.Hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}; md5Hash: {md5Hash} doesn't match property Md5Hash: {cfile.Md5Hash}";
-                    Area23Log.Logger.LogOriginMsg("CFile", md5ErrMsg);
+                    Area23Log.LogOriginMsg("CFile", md5ErrMsg);
                     // throw new CqrException(md5ErrMsg);
                 }
                 string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
                 if (!sha256Hash.Equals(cfile.Sha256Hash))
                 {
                     string sha256ErrMsg = $"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {cfile.Sha256Hash}.";
-                    Area23Log.Logger.LogOriginMsg("CFile", sha256ErrMsg);
+                    Area23Log.LogOriginMsg("CFile", sha256ErrMsg);
                     // throw new CqrException(sha256ErrMsg);
                 }
 
@@ -527,7 +511,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         }
 
         #endregion static members ToJsonEncrypt EncryptSrvMsg FromJsonDecrypt DecryptSrvMsg
-
 
         public new static CFile? CloneCopy(CFile? source, CFile? destination)
         {

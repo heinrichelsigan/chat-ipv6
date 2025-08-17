@@ -140,7 +140,7 @@ namespace Area23.At.Framework.Core.Net.WebHttp
                 catch (Exception ex)
                 {
                     CqrException.SetLastException(ex);
-                    Area23Log.Logger.LogOriginMsgEx("HttpClientRequest", "Error on getting external client ip", ex);
+                    Area23Log.LogOriginMsgEx("HttpClientRequest", "Error on getting external client ip", ex);
                     return null;
                 }
             }

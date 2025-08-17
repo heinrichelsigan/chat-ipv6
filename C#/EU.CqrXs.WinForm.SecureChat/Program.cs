@@ -36,7 +36,7 @@ namespace EU.CqrXs.WinForm.SecureChat
             if (!_mutex.WaitOne(1000, false))
             {                
                 NativeWrapper.Kernel32.AttachConsole(NativeWrapper.Kernel32.ATTACH_PARENT_PROCESS);
-                // Area23.At.Framework.Library.Area23Log.Logger.LogOriginMsg(roachName, $"Another instance of {roachName} is already running!");
+                // Area23.At.Framework.Library.Area23Log.LogOriginMsg(roachName, $"Another instance of {roachName} is already running!");
                 Console.Error.WriteLine($"Another instance of {progName} is already running!");
                 MessageBox.Show($"Another instance of {progName} is already running!", $"{progName}: multiple startup!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return;

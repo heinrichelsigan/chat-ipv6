@@ -95,7 +95,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelText text: \"{text}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelText text: \"{text}\".\n", exDelegate);
                 }
             }
             else
@@ -129,7 +129,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate AddLinkLabelLinks: \"{link}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate AddLinkLabelLinks: \"{link}\".\n", exDelegate);
                 }
             }
             else
@@ -162,7 +162,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.UserControls
                 }
                 catch (System.Exception exDelegate)
                 {
-                    Area23Log.Logger.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelVisible visible: \"{visible}\".\n", exDelegate);
+                    Area23Log.LogOriginMsgEx(this.Name, $"Exception in delegate SetLinkLabelVisible visible: \"{visible}\".\n", exDelegate);
                 }
             }
             else

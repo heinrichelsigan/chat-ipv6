@@ -395,7 +395,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
 
             initialised = true;
-            Area23Log.Logger.LogOriginMsg("ZenMatrix", perm + " KeyBytes = " + kbs);
+            Area23Log.LogOriginMsg("ZenMatrix", perm + " KeyBytes = " + kbs);
         }
 
 

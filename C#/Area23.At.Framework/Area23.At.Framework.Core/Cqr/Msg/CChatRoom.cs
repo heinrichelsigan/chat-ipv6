@@ -151,7 +151,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             }
             catch (Exception exJson)
             {
-                Area23Log.Logger.LogOriginMsgEx("CChatRoom", "FromJson", exJson);
+                Area23Log.LogOriginMsgEx("CChatRoom", "FromJson", exJson);
             }
 
             return ccRoom;

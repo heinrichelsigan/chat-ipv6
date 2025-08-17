@@ -154,7 +154,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
 
         /// <summary>
-        /// Please always use this constuctor
+        /// constuctor
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="to"></param>
@@ -176,14 +176,16 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             SerializedMsg = allMsg;
         }
 
-        /// <summary>
-        /// Please always use this constuctor
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="to"></param>
-        /// <param name="tc"></param>
-        /// <param name="hash"></param>
-        public CSrvMsg(CContact sender, CContact to, TC tc, string hash, CChatRoom chatRoom) : base()
+
+
+		/// <summary>
+		/// constuctor
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="to"></param>
+		/// <param name="tc"></param>
+		/// <param name="hash"></param>
+		public CSrvMsg(CContact sender, CContact to, TC tc, string hash, CChatRoom chatRoom) : base()
         {
             Sender = sender;
             CContact[] tos = (to != null) ? new CContact[1] { to } : new CContact[0];
@@ -199,16 +201,38 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             SerializedMsg = allMsg;
         }
 
+		/// <summary>
+		/// Please always use this constuctor
+		/// </summary>
+		/// <param name="sender">CqrContact</param>
+		/// <param name="tos">Array of CqrContact</param>
+		/// <param name="tc"></param>
+		/// <param name="hash"></param>
+		/// <param name="chatRoom">chatroom</param>
+		public CSrvMsg(CContact sender, CContact[] toMany, TC tc, string hash, CChatRoom chatRoom) : base()
+		{
+			Sender = sender;
+			Recipients = new HashSet<CContact>(toMany);
+			TContent = tc;
+			Hash = hash;
+			CRoom = new CChatRoom(chatRoom) { TicksLong = new List<long>(chatRoom.TicksLong) };
+			if (tc is string || tc is int || tc is long || tc is byte || tc is short || tc is uint || tc is ulong || tc is ushort || tc is sbyte || tc is float || tc is double)
+				Message = tc.ToString();
+			else
+				Message = JsonConvert.SerializeObject(tc);
+			string allMsg = this.ToJson();
+			SerializedMsg = allMsg;
+		}
 
 
-        /// <summary>
-        /// Please always use this constuctor
-        /// </summary>
-        /// <param name="sender">CqrContact</param>
-        /// <param name="tos">Array of CqrContact</param>
-        /// <param name="tc"></param>
-        /// <param name="hash"></param>
-        public CSrvMsg(CContact sender, CContact[] tos, TC tc, string hash, string chatRoomNr = "") : base()
+		/// <summary>
+		/// Please always use this constuctor
+		/// </summary>
+		/// <param name="sender">CqrContact</param>
+		/// <param name="tos">Array of CqrContact</param>
+		/// <param name="tc"></param>
+		/// <param name="hash"></param>
+		public CSrvMsg(CContact sender, CContact[] tos, TC tc, string hash, string chatRoomNr = "") : base()
         {
             Sender = sender;
             Recipients = new HashSet<CContact>(tos);
@@ -373,7 +397,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             }
             catch (Exception exJson)
             {
-                Area23Log.Logger.LogOriginMsgEx("CSrvMsg", "FromJson", exJson);
+                Area23Log.LogOriginMsgEx("CSrvMsg", "FromJson", exJson);
             }
 
             return default(CSrvMsg<TC>);
@@ -481,7 +505,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!cSrvMsg.Hash.Equals(symmPipe.PipeString))
                 {
                     string errMsg = $"Hash: {cSrvMsg.Hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}";
-                    Area23Log.Logger.LogOriginMsg("CSrvMsg<T>", (errMsg));
+                    Area23Log.LogOriginMsg("CSrvMsg<T>", (errMsg));
                     // throw new CqrException(errMsg);
                     ;
                 }
@@ -489,7 +513,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 if (!md5Hash.Equals(cSrvMsg.Md5Hash))
                 {
                     string md5ErrExcMsg = $"md5Hash: {md5Hash} doesn't match property Md5Hash: {cSrvMsg.Md5Hash}";
-                    Area23Log.Logger.LogOriginMsg("CSrvMsg<T>", md5ErrExcMsg);
+                    Area23Log.LogOriginMsg("CSrvMsg<T>", md5ErrExcMsg);
                     // throw new CqrException(md5ErrExcMsg);
                     ;
                 }

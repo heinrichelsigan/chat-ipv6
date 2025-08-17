@@ -36,7 +36,7 @@ namespace EU.CqrXs.Srv.Util
             } 
             catch (Exception exCtor)
             {
-                Area23Log.Logger.LogOriginMsgEx("JsonChatRoom", "JsonChatRoom()", exCtor);
+                Area23Log.LogOriginMsgEx("JsonChatRoom", "JsonChatRoom()", exCtor);
             }
             _chatRooms = new HashSet<string>(jsonChatRooms);
             _jsonChatRoomNumber = System.DateTime.Now.ToString();
@@ -133,7 +133,7 @@ namespace EU.CqrXs.Srv.Util
                     }
                     catch (Exception exDelChatRoomFromFs)
                     {
-                        Area23Log.Logger.LogOriginMsgEx("JsonChatRoom", 
+                        Area23Log.LogOriginMsgEx("JsonChatRoom", 
                             $"DeleteChatRoom(string chatRoomNr = {chatRoomNr}): Error deleting chat room ", exDelChatRoomFromFs);
                         return false;
                     }
@@ -260,7 +260,7 @@ namespace EU.CqrXs.Srv.Util
             }
             catch (Exception exChatRoomFs)
             {
-                Area23Log.Logger.LogOriginMsgEx("JsonChatRoom", "ChatRoomNumbersFromFs()", exChatRoomFs);
+                Area23Log.LogOriginMsgEx("JsonChatRoom", "ChatRoomNumbersFromFs()", exChatRoomFs);
             }
 
             SetJsonChatRoomsToCache(chatRooms);
@@ -285,7 +285,7 @@ namespace EU.CqrXs.Srv.Util
             }
             catch (Exception exLoadFromCache)
             {
-                Area23Log.Logger.LogOriginMsgEx("JsonChatRoom", "GetJsonChatRoomsFromCache(): Failed to load chatrooms from cache", exLoadFromCache);
+                Area23Log.LogOriginMsgEx("JsonChatRoom", "GetJsonChatRoomsFromCache(): Failed to load chatrooms from cache", exLoadFromCache);
             }
 
 

@@ -132,7 +132,7 @@ namespace Area23.At.Framework.Core.Cqr
             }
             catch (Exception exSoap)
             {
-                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"Send_InitChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
+                Area23Log.LogOriginMsgEx("CqrFacade", $"Send_InitChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
                 throw;
             }
 
@@ -159,7 +159,7 @@ namespace Area23.At.Framework.Core.Cqr
             }
             catch (Exception exSoap)
             {
-                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"Send_CloseChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
+                Area23Log.LogOriginMsgEx("CqrFacade", $"Send_CloseChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
                 throw;
             }
 
@@ -280,7 +280,7 @@ namespace Area23.At.Framework.Core.Cqr
             }
             catch (Exception exSoap)
             {
-                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"SendFirstSrvMsg_SoapAsync(...) \tException {exSoap.GetType()}", exSoap);
+                Area23Log.LogOriginMsgEx("CqrFacade", $"SendFirstSrvMsg_SoapAsync(...) \tException {exSoap.GetType()}", exSoap);
                 throw;
             }
             
@@ -312,7 +312,7 @@ namespace Area23.At.Framework.Core.Cqr
             }
             catch (Exception exSoap)
             {
-                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"Send_InitChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
+                Area23Log.LogOriginMsgEx("CqrFacade", $"Send_InitChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
                 throw;
             }
 
@@ -339,7 +339,7 @@ namespace Area23.At.Framework.Core.Cqr
             }
             catch (Exception exSoap)
             {
-                Area23Log.Logger.LogOriginMsgEx("CqrFacade", $"Send_InitChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
+                Area23Log.LogOriginMsgEx("CqrFacade", $"Send_InitChatRoom_Soap<T>(...) \tException {exSoap.GetType()}", exSoap);
                 throw;
             }
 

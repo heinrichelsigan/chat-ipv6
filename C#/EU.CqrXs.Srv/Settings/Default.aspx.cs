@@ -53,7 +53,7 @@ namespace EU.CqrXs.Srv.Settings
             }
             try
             {
-                settings.Add("SLog.LogFile", SLog.LogFile);
+                settings.Add("Area23Log.LogFile", Area23Log.LogFile);
                 settings.Add("UserHostAddress", Request.UserHostAddress);
                 settings.Add("RawUrl", Request.RawUrl);
                 settings.Add("UserAgent", Request.UserAgent);
@@ -151,8 +151,8 @@ namespace EU.CqrXs.Srv.Settings
         {
             try
             {
-                Area23Log.Logger.LogOriginMsg("Default", "Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
-                DivTest1.InnerHtml = $"<p>{DateTime.Now.Area23DateTimeWithMillis()} LogStatic to {SLog.LogFile} successfull!</p>";
+                Area23Log.LogOriginMsg("Default", "Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
+                DivTest1.InnerHtml = $"<p>{DateTime.Now.Area23DateTimeWithMillis()} LogStatic to {Area23Log.LogFile} successfull!</p>";
             }
             catch (Exception ex1)
             {
@@ -160,8 +160,8 @@ namespace EU.CqrXs.Srv.Settings
             }
             try
             {
-                Area23Log.Logger.LogOriginMsg("Default", "Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
-                DivTest2.InnerHtml = $"<p>{DateTime.Now.Area23DateTimeWithMillis()} Logger.Log to {SLog.LogFile} successfull!</p>";
+                Area23Log.LogOriginMsg("Default", "Log test from " + Request.UserHostAddress + " " + Request.UserAgent);
+                DivTest2.InnerHtml = $"<p>{DateTime.Now.Area23DateTimeWithMillis()} Logger.Log to {Area23Log.LogFile} successfull!</p>";
             }
             catch (Exception ex2)
             {

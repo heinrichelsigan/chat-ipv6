@@ -170,7 +170,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             }
             catch (Exception exa)
             {
-                Area23Log.Logger.LogOriginMsgEx("BgWorkerMonitor", "GetCurrentThreadId()", exa);
+                Area23Log.LogOriginMsgEx("BgWorkerMonitor", "GetCurrentThreadId()", exa);
                 bgwThreadId = System.AppDomain.GetCurrentThreadId(); // ;
             }
             if (bgwThreadId <= 0)

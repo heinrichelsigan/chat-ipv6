@@ -26,7 +26,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         [HttpGet(Name = "TestService")]
         public string Get()
         {
-            Area23Log.Logger.LogOriginMsg("TestServiceController", $"TestServiceController.Get() started.\n");
+            Area23Log.LogOriginMsg("TestServiceController", $"TestServiceController.Get() started.\n");
             
             string ret = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().GetName().FullName) +
                 Assembly.GetExecutingAssembly().GetName().Version.ToString();

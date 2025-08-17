@@ -98,7 +98,7 @@ namespace Area23.At.Framework.Core.Win32Api
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.LogOriginMsgEx("RegistryAccessor",
+                Area23Log.LogOriginMsgEx("RegistryAccessor",
                     $"GetRegistryEntry operation in regHive {regHive} subKeyName {subKeyName} regName {regName} throwed Exception ", ex);
                 throw;
             }
@@ -192,7 +192,7 @@ namespace Area23.At.Framework.Core.Win32Api
 
             try
             {
-                Area23Log.Logger.LogOriginMsg("RegistryAccessor", 
+                Area23Log.LogOriginMsg("RegistryAccessor", 
                     $"creating mutex {Constants.MUTEX_REGOPS} for delete operation in regHive {regHive} subTree {subTree}");
                 if ((_regOpMutex = new Mutex(true, Constants.MUTEX_REGOPS)) != null)
                 {

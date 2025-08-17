@@ -27,7 +27,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
             }
             catch (Exception dirEx)
             {
-                Area23Log.Logger.LogOriginMsgEx("MiniToolBox", 
+                Area23Log.LogOriginMsgEx("MiniToolBox", 
                     $"CreateAttachDirectory() Exception, when creating attachment directory: {LibPaths.AttachmentFilesDir}.", 
                     dirEx);
             }

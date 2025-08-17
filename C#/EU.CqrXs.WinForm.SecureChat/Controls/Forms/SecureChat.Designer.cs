@@ -91,8 +91,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PictureBoxYou = new PictureBox();
             ButtonKey = new Button();
             PanelEnCodeCrypt = new Panel();
+            ButtonAdd = new Button();
+            listBoxContacts = new ListBox();
             ButtonInviteChatRoom = new Button();
-            buttonVisitChatRoom = new Button();
             TextBoxPipe = new TextBox();
             TextBoxChatSession = new TextBox();
             ButtonCheck = new Button();
@@ -109,6 +110,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
+            ButtonDel = new Button();
             StripMenu.SuspendLayout();
             StripStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitChatView).BeginInit();
@@ -688,7 +690,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonKey.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
             ButtonKey.ForeColor = SystemColors.ActiveCaptionText;
             ButtonKey.Image = Properties.Resources.a_right_key;
-            ButtonKey.Location = new Point(368, 2);
+            ButtonKey.Location = new Point(304, 2);
             ButtonKey.Margin = new Padding(1);
             ButtonKey.Name = "ButtonKey";
             ButtonKey.Padding = new Padding(1);
@@ -697,24 +699,49 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonKey.UseVisualStyleBackColor = false;
             ButtonKey.Click += SecretKey_Update;
             // 
-            // PanelEnCodeCrypt
+            // ButtonAdd
             // 
-            PanelEnCodeCrypt.BackColor = SystemColors.ActiveCaption;
-            PanelEnCodeCrypt.Controls.Add(ButtonInviteChatRoom);
-            PanelEnCodeCrypt.Controls.Add(buttonVisitChatRoom);
-            PanelEnCodeCrypt.Controls.Add(TextBoxPipe);
-            PanelEnCodeCrypt.Controls.Add(TextBoxChatSession);
-            PanelEnCodeCrypt.Controls.Add(ButtonCheck);
-            PanelEnCodeCrypt.Controls.Add(ComboBoxContacts);
-            PanelEnCodeCrypt.Controls.Add(ComboBoxIp);
-            PanelEnCodeCrypt.Controls.Add(ComboBoxSecretKey);
-            PanelEnCodeCrypt.Controls.Add(ButtonKey);
-            PanelEnCodeCrypt.ForeColor = SystemColors.WindowText;
-            PanelEnCodeCrypt.Location = new Point(0, 28);
-            PanelEnCodeCrypt.Margin = new Padding(0);
-            PanelEnCodeCrypt.Name = "PanelEnCodeCrypt";
-            PanelEnCodeCrypt.Size = new Size(994, 64);
-            PanelEnCodeCrypt.TabIndex = 10;
+            ButtonAdd.BackColor = SystemColors.ButtonFace;
+            ButtonAdd.BackgroundImageLayout = ImageLayout.Center;
+            ButtonAdd.Font = new Font("Lucida Sans Unicode", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            ButtonAdd.ForeColor = SystemColors.ActiveCaptionText;
+            ButtonAdd.Location = new Point(616, 3);
+            ButtonAdd.Margin = new Padding(1);
+            ButtonAdd.Name = "ButtonAdd";
+            ButtonAdd.Padding = new Padding(1);
+            ButtonAdd.Size = new Size(32, 27);
+            ButtonAdd.TabIndex = 23;
+            ButtonAdd.Text = "⇒";
+            ButtonAdd.TextAlign = ContentAlignment.MiddleRight;
+            ButtonAdd.UseVisualStyleBackColor = false;
+            ButtonAdd.Click += ButtonAdd_Click;
+            // 
+            // ButtonDel
+            // 
+            ButtonDel.BackColor = SystemColors.ButtonFace;
+            ButtonDel.BackgroundImageLayout = ImageLayout.Center;
+            ButtonDel.Font = new Font("Lucida Sans Unicode", 9.5F, FontStyle.Bold);
+            ButtonDel.ForeColor = SystemColors.ActiveCaptionText;
+            ButtonDel.Location = new Point(616, 32);
+            ButtonDel.Margin = new Padding(1);
+            ButtonDel.Name = "ButtonDel";
+            ButtonDel.Padding = new Padding(1);
+            ButtonDel.Size = new Size(32, 27);
+            ButtonDel.TabIndex = 24;
+            ButtonDel.Text = "⇠";
+            ButtonDel.TextAlign = ContentAlignment.MiddleRight;
+            ButtonDel.UseVisualStyleBackColor = false;
+            ButtonDel.Click += ButtonDel_Click;
+            // 
+            // listBoxContacts
+            // 
+            listBoxContacts.FormattingEnabled = true;
+            listBoxContacts.Location = new Point(652, 6);
+            listBoxContacts.Margin = new Padding(1);
+            listBoxContacts.Name = "listBoxContacts";
+            listBoxContacts.ScrollAlwaysVisible = true;
+            listBoxContacts.Size = new Size(171, 52);
+            listBoxContacts.TabIndex = 22;
             // 
             // ButtonInviteChatRoom
             // 
@@ -722,51 +749,35 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonInviteChatRoom.BackgroundImageLayout = ImageLayout.Center;
             ButtonInviteChatRoom.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             ButtonInviteChatRoom.ForeColor = SystemColors.ActiveCaptionText;
-            ButtonInviteChatRoom.Location = new Point(762, 30);
+            ButtonInviteChatRoom.Location = new Point(536, 32);
             ButtonInviteChatRoom.Margin = new Padding(1);
             ButtonInviteChatRoom.Name = "ButtonInviteChatRoom";
             ButtonInviteChatRoom.Padding = new Padding(1);
-            ButtonInviteChatRoom.Size = new Size(64, 32);
+            ButtonInviteChatRoom.Size = new Size(76, 27);
             ButtonInviteChatRoom.TabIndex = 21;
-            ButtonInviteChatRoom.Text = "🚪Invite";
+            ButtonInviteChatRoom.Text = "ChatRoom";
             ButtonInviteChatRoom.TextAlign = ContentAlignment.MiddleRight;
             ButtonInviteChatRoom.UseVisualStyleBackColor = false;
-            // 
-            // buttonVisitChatRoom
-            // 
-            buttonVisitChatRoom.BackColor = SystemColors.ButtonFace;
-            buttonVisitChatRoom.BackgroundImageLayout = ImageLayout.Center;
-            buttonVisitChatRoom.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            buttonVisitChatRoom.ForeColor = SystemColors.ActiveCaptionText;
-            buttonVisitChatRoom.Location = new Point(762, 2);
-            buttonVisitChatRoom.Margin = new Padding(1);
-            buttonVisitChatRoom.Name = "buttonVisitChatRoom";
-            buttonVisitChatRoom.Padding = new Padding(1);
-            buttonVisitChatRoom.Size = new Size(64, 27);
-            buttonVisitChatRoom.TabIndex = 20;
-            buttonVisitChatRoom.Text = "Visit🚪";
-            buttonVisitChatRoom.TextAlign = ContentAlignment.MiddleRight;
-            buttonVisitChatRoom.UseVisualStyleBackColor = false;
             // 
             // TextBoxPipe
             // 
             TextBoxPipe.Font = new Font("Lucida Sans Unicode", 8.75F);
             TextBoxPipe.HideSelection = false;
-            TextBoxPipe.Location = new Point(277, 4);
+            TextBoxPipe.Location = new Point(211, 4);
             TextBoxPipe.Margin = new Padding(1);
             TextBoxPipe.Name = "TextBoxPipe";
             TextBoxPipe.ReadOnly = true;
-            TextBoxPipe.Size = new Size(83, 25);
+            TextBoxPipe.Size = new Size(85, 25);
             TextBoxPipe.TabIndex = 13;
             // 
             // TextBoxChatSession
             // 
             TextBoxChatSession.Font = new Font("Lucida Sans Unicode", 8F);
             TextBoxChatSession.HideSelection = false;
-            TextBoxChatSession.Location = new Point(416, 5);
+            TextBoxChatSession.Location = new Point(350, 34);
             TextBoxChatSession.Margin = new Padding(1);
             TextBoxChatSession.Name = "TextBoxChatSession";
-            TextBoxChatSession.Size = new Size(340, 24);
+            TextBoxChatSession.Size = new Size(181, 24);
             TextBoxChatSession.TabIndex = 19;
             // 
             // ButtonCheck
@@ -776,7 +787,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ButtonCheck.Font = new Font("Lucida Sans Unicode", 10F, FontStyle.Bold);
             ButtonCheck.ForeColor = SystemColors.ActiveCaptionText;
             ButtonCheck.Image = Properties.de.Resources.CableWireCut;
-            ButtonCheck.Location = new Point(368, 30);
+            ButtonCheck.Location = new Point(304, 30);
             ButtonCheck.Margin = new Padding(1);
             ButtonCheck.Name = "ButtonCheck";
             ButtonCheck.Padding = new Padding(1);
@@ -791,10 +802,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxContacts.Font = new Font("Lucida Sans Unicode", 9F);
             ComboBoxContacts.ForeColor = SystemColors.ControlText;
             ComboBoxContacts.FormattingEnabled = true;
-            ComboBoxContacts.Location = new Point(416, 35);
+            ComboBoxContacts.Location = new Point(350, 5);
             ComboBoxContacts.Margin = new Padding(1);
             ComboBoxContacts.Name = "ComboBoxContacts";
-            ComboBoxContacts.Size = new Size(340, 24);
+            ComboBoxContacts.Size = new Size(262, 24);
             ComboBoxContacts.TabIndex = 18;
             ComboBoxContacts.Text = "[Select Contact]";
             ComboBoxContacts.SelectedIndexChanged += ComboBoxContacts_SelectedIndexChanged;
@@ -807,10 +818,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxIp.Font = new Font("Lucida Sans Unicode", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             ComboBoxIp.ForeColor = SystemColors.ControlText;
             ComboBoxIp.FormattingEnabled = true;
-            ComboBoxIp.Location = new Point(4, 35);
+            ComboBoxIp.Location = new Point(4, 34);
             ComboBoxIp.Margin = new Padding(1);
             ComboBoxIp.Name = "ComboBoxIp";
-            ComboBoxIp.Size = new Size(356, 24);
+            ComboBoxIp.Size = new Size(292, 24);
             ComboBoxIp.TabIndex = 15;
             ComboBoxIp.Text = "[enter peer IPv4/IPv6]";
             ComboBoxIp.SelectedIndexChanged += ComboBoxIp_SelectedIndexChanged;
@@ -821,15 +832,36 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxSecretKey.BackColor = SystemColors.ControlLightLight;
             ComboBoxSecretKey.ForeColor = SystemColors.ControlText;
             ComboBoxSecretKey.FormattingEnabled = true;
-            ComboBoxSecretKey.Location = new Point(3, 5);
+            ComboBoxSecretKey.Location = new Point(4, 5);
             ComboBoxSecretKey.Margin = new Padding(1);
             ComboBoxSecretKey.Name = "ComboBoxSecretKey";
-            ComboBoxSecretKey.Size = new Size(265, 24);
+            ComboBoxSecretKey.Size = new Size(201, 24);
             ComboBoxSecretKey.TabIndex = 11;
             ComboBoxSecretKey.Text = "[enter secret key here]";
             ComboBoxSecretKey.SelectedIndexChanged += ComboBoxSecretKey_SelectedIndexChanged;
             ComboBoxSecretKey.TextUpdate += ComboBoxSecretKey_TextUpdate;
             ComboBoxSecretKey.Leave += ComboBoxSecretKey_FocusLeave;
+            // 
+            // PanelEnCodeCrypt
+            // 
+            PanelEnCodeCrypt.BackColor = SystemColors.ActiveCaption;
+            PanelEnCodeCrypt.Controls.Add(ButtonDel);
+            PanelEnCodeCrypt.Controls.Add(ButtonAdd);
+            PanelEnCodeCrypt.Controls.Add(listBoxContacts);
+            PanelEnCodeCrypt.Controls.Add(ButtonInviteChatRoom);
+            PanelEnCodeCrypt.Controls.Add(TextBoxPipe);
+            PanelEnCodeCrypt.Controls.Add(TextBoxChatSession);
+            PanelEnCodeCrypt.Controls.Add(ButtonCheck);
+            PanelEnCodeCrypt.Controls.Add(ComboBoxContacts);
+            PanelEnCodeCrypt.Controls.Add(ComboBoxIp);
+            PanelEnCodeCrypt.Controls.Add(ComboBoxSecretKey);
+            PanelEnCodeCrypt.Controls.Add(ButtonKey);
+            PanelEnCodeCrypt.ForeColor = SystemColors.WindowText;
+            PanelEnCodeCrypt.Location = new Point(0, 28);
+            PanelEnCodeCrypt.Margin = new Padding(0);
+            PanelEnCodeCrypt.Name = "PanelEnCodeCrypt";
+            PanelEnCodeCrypt.Size = new Size(994, 64);
+            PanelEnCodeCrypt.TabIndex = 10;            
             // 
             // RichTextBoxChat
             // 
@@ -845,6 +877,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             // PanelDestination
             // 
+            PanelDestination.AllowDrop = true;
             PanelDestination.BackColor = SystemColors.ActiveCaption;
             PanelDestination.Controls.Add(DragnDropBoxFiles);
             PanelDestination.Controls.Add(PeerServerSwitch);
@@ -858,7 +891,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelDestination.Name = "PanelDestination";
             PanelDestination.Size = new Size(168, 663);
             PanelDestination.TabIndex = 70;
-            PanelDestination.AllowDrop = true;
             // 
             // DragnDropBoxFiles
             // 
@@ -872,7 +904,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             DragnDropBoxFiles.Size = new Size(160, 94);
             DragnDropBoxFiles.TabIndex = 81;
             DragnDropBoxFiles.TabStop = false;
-            DragnDropBoxFiles.Text = "DragnDropBoxFiles";            
+            DragnDropBoxFiles.Text = "DragnDropBoxFiles";
             // 
             // PeerServerSwitch
             // 
@@ -956,13 +988,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelBottom.Margin = new Padding(1);
             PanelBottom.Name = "PanelBottom";
             PanelBottom.Size = new Size(824, 130);
-            PanelBottom.TabIndex = 40;
+            PanelBottom.TabIndex = 40;            
             // 
             // SecureChat
             // 
+            AllowDrop = true;
             AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
-            AllowDrop = true;
             BackColor = SystemColors.Control;
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(998, 717);
@@ -1078,7 +1110,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private TextBox TextBoxChatSession;
         private ToolStripSeparator SeparatorMenu0;
         private Button ButtonInviteChatRoom;
-        private Button buttonVisitChatRoom;
         private ToolStripStatusLabel StripStatusLabel;
         private ToolStripProgressBar StripProgressBar;
         private ToolStripMenuItem MenuOptionsMenuMode;
@@ -1088,6 +1119,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripSeparator toolStripSeparator3;
         private GroupBoxes.DragNDropBox DragnDropBoxFiles;
+        private ListBox listBoxContacts;
+        private Button ButtonAdd;
+        private Button ButtonDel;
     }
 
 }

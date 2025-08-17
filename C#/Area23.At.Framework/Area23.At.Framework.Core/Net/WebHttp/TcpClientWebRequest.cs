@@ -78,7 +78,7 @@ Cache-Control: no-cache";
             }
             catch (Exception ex)
             {
-                Area23Log.Logger.Log(ex);
+                Area23Log.Log(ex);
                 throw;
             }
             finally

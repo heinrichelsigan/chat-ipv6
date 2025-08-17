@@ -94,7 +94,7 @@ namespace Area23.At.Framework.Core.Static
                     }
                     catch (Exception appFolderEx)
                     {
-                        Area23Log.Logger.LogOriginMsgEx("LibPaths", "AppPath.get", appFolderEx);     
+                        Area23Log.LogOriginMsgEx("LibPaths", "AppPath.get", appFolderEx);     
                     }
                     if (string.IsNullOrEmpty(appPath))
                         appPath = Constants.APP_DIR;
@@ -323,13 +323,13 @@ namespace Area23.At.Framework.Core.Static
                         try
                         {
                             string dirNotFoundMsg = string.Format("out directory {0} doesn't exist, creating it!", systemDirResPath);
-                            Area23Log.Logger.LogOriginMsg("LibPaths", "SystemDirResPath.get: " + dirNotFoundMsg);
+                            Area23Log.LogOriginMsg("LibPaths", "SystemDirResPath.get: " + dirNotFoundMsg);
                             if (Constants.DirCreate)
                                 Directory.CreateDirectory(systemDirResPath);
                         }
                         catch (Exception ex)
                         {
-                            Area23Log.Logger.LogOriginMsgEx("LibPaths", "SystemDirResPath.get", ex);
+                            Area23Log.LogOriginMsgEx("LibPaths", "SystemDirResPath.get", ex);
                         }
                     }
                 }

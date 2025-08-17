@@ -64,7 +64,7 @@ namespace Area23.At.Framework.Library.Net.IpSocket
             ListenerName = ServerEndPoint.ToString();            
             ServerTcpListener.Start();                     
 
-            SLog.Log("new Socket created at " + ListenerName);            
+            Area23Log.Log("new Socket created at " + ListenerName);            
         }
 
         public SockTcpListener(IPAddress connectedIpIfAddr, EventHandler<Area23EventArgs<ReceiveData>> evClReq) : this(connectedIpIfAddr)
@@ -89,7 +89,7 @@ namespace Area23.At.Framework.Library.Net.IpSocket
                     " ServerTcpListener.Server.ReceiveBufferSize = " + ServerTcpListener.Server.ReceiveBufferSize + ", ServerTcpListener.Server.ReceiveTimeout = " + ServerTcpListener.Server.ReceiveTimeout + ",\n" +
                     " ServerTcpListener.Server.Ttl = " + ServerTcpListener.Server.Ttl + ", ServerTcpListener.Server.NoDelay = " + ServerTcpListener.Server.NoDelay + ",\n" +
                     " ServerTcpListener.Server.Blocking = " + ServerTcpListener.Server.Blocking + ";\n";
-                Area23Log.Logger.Log("Server: " + tcpServerSettings);
+                Area23Log.Log("Server: " + tcpServerSettings);
 
                 if (ServerTcpListener.Pending())
                 {
@@ -104,7 +104,7 @@ namespace Area23.At.Framework.Library.Net.IpSocket
                         }
                         catch (Exception exSock)
                         {
-                            SLog.Log(exSock, ListenerName);
+                            Area23Log.Log(exSock, ListenerName);
                             continue;
                         }
                     }
@@ -139,8 +139,8 @@ namespace Area23.At.Framework.Library.Net.IpSocket
                     " ClientTcpClient.Client.Ttl = " + ClientTcpClient.Client.Ttl + ", ClientTcpClient.Client.NoDelay = " + ClientTcpClient.Client.NoDelay + ",\n" +
                     " ClientTcpClient.Client.Blocking = " + ClientTcpClient.Client.Blocking + ";\n";    
                 string sstring = "Accept connection from " + clientIEP?.Address.ToString() + ":" + clientIEP?.Port.ToString() + " => " + ServerAddress?.ToString() + ":" + ServerEndPoint?.ToString();
-                Area23Log.Logger.LogInfo(sstring);
-                Area23Log.Logger.Log("Client: " + tcpClientSettings);
+                Area23Log.Log(sstring);
+                Area23Log.Log("Client: " + tcpClientSettings);
 
                 lock (_lock)
                 {
@@ -199,7 +199,7 @@ namespace Area23.At.Framework.Library.Net.IpSocket
                     }
                     catch (Exception exClientClose)
                     {
-                        SLog.Log(exClientClose);
+                        Area23Log.Log(exClientClose);
                     }
                     try
                     {
@@ -207,7 +207,7 @@ namespace Area23.At.Framework.Library.Net.IpSocket
                     }
                     catch (Exception exClientDispose)
                     {
-                        SLog.Log(exClientDispose);
+                        Area23Log.Log(exClientDispose);
                     }
                 }
 
@@ -217,7 +217,7 @@ namespace Area23.At.Framework.Library.Net.IpSocket
                 }
                 catch (Exception exSrvListenStop)
                 {
-                    SLog.Log(exSrvListenStop);
+                    Area23Log.Log(exSrvListenStop);
                 }
                 //try
                 //{
@@ -225,10 +225,10 @@ namespace Area23.At.Framework.Library.Net.IpSocket
                 //}
                 //catch (Exception exSrvListenerDispose)
                 //{
-                //    SLog.Log(exSrvListenerDispose);
+                //    Area23Log.Log(exSrvListenerDispose);
                 //}
             }
- 
+
             disposed = true;
 
             try
@@ -237,7 +237,7 @@ namespace Area23.At.Framework.Library.Net.IpSocket
             }
             catch (Exception exTcpClientNull)
             {
-                SLog.Log(exTcpClientNull);
+                Area23Log.Log(exTcpClientNull);
             }
             try
             {
@@ -245,7 +245,7 @@ namespace Area23.At.Framework.Library.Net.IpSocket
             }
             catch (Exception exSrvListenerNull)
             {
-                SLog.Log(exSrvListenerNull);
+                Area23Log.Log(exSrvListenerNull);
             }
 
             try
@@ -254,15 +254,15 @@ namespace Area23.At.Framework.Library.Net.IpSocket
             }
             catch (Exception exEventHandlerNull)
             {
-                SLog.Log(exEventHandlerNull);
+                Area23Log.Log(exEventHandlerNull);
             }
             try { ListenerName = ""; ServerEndPoint = null; }
-            catch (Exception exSockNull) { SLog.Log(exSockNull); }
+            catch (Exception exSockNull) { Area23Log.Log(exSockNull); }
             try { ClientSocket = null; }
-            catch (Exception exSockNull) { SLog.Log(exSockNull); }
-            try { ServerSocket = null; } catch (Exception exSockNull) { SLog.Log(exSockNull); }
+            catch (Exception exSockNull) { Area23Log.Log(exSockNull); }
+            try { ServerSocket = null; } catch (Exception exSockNull) { Area23Log.Log(exSockNull); }
             try { ServerAddress = null; }
-            catch (Exception exSrvAddr) { SLog.Log(exSrvAddr); }
+            catch (Exception exSrvAddr) { Area23Log.Log(exSrvAddr); }
 
         }
 
