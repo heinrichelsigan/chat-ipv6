@@ -17,6 +17,7 @@ namespace Area23.At.Framework.Core.RedisCache
 
         #region const and static
 
+        // const string VALKEY_CACHE_HOST_PORT = "ec2-18-101-101-108.eu-south-2.compute.amazonaws.com:6379";
         const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         const string VALKEY_CACHE_APP_KEY = "RedisValkeyCache";
         const string REDIS_VALKEY_SSL = "RedisValkeySsl";

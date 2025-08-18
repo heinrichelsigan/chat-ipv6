@@ -1,4 +1,5 @@
 using Area23.At.Framework.Core.Cache;
+using Area23.At.Framework.Core.RedisCache;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,8 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             {
                 InitMethod();
                 vlKey = MemoryCache.CacheDict.GetString(key);
+                if (string.IsNullOrEmpty(vlKey))
+                    vlKey = RedisValkeyCache.ValKeyInstance.GetString(key);
                 testReport += vlKey;
             }
             catch (Exception ex1)

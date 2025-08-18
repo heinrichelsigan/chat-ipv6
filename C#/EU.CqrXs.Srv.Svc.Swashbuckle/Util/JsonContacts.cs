@@ -18,7 +18,55 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
 
         static object _lock = new object();
         static HashSet<CContact> _contacts;
-        internal static string JsonContactsFileName { get { return Area23.At.Framework.Core.Static.JsonHelper.JsonContactsFile; } }
+        internal static string JsonContactsFileName = Area23.At.Framework.Core.Static.JsonHelper.JsonContactsFile;
+
+
+        internal static string FindContatcsFile()
+        {
+            if (File.Exists(JsonContactsFileName))
+                return JsonContactsFileName;
+
+            string jsonFile = "", tryDir = "";
+            string[] tryDirs =
+            {
+                System.AppDomain.CurrentDomain.BaseDirectory,
+                System.Reflection.Assembly.GetExecutingAssembly().Location,
+                Environment.ProcessPath.ToString(),
+                Path.GetDirectoryName(Environment.CommandLine.ToString())
+            };
+            foreach (string tryD in tryDirs)
+            {
+                tryDir = tryD;
+                string tryResDir = Path.Combine(tryDir, Constants.RES_DIR);
+                string[] pathSpls = tryDir.Split(Path.DirectorySeparatorChar);
+                int idx = pathSpls.Length;
+                while (!Directory.Exists(tryResDir) && idx > 0)
+                {
+                    tryDir = tryDir.Replace(Path.DirectorySeparatorChar + pathSpls[--idx], "");
+                    tryResDir = Path.Combine(tryDir, Constants.RES_DIR);
+                }
+                if (Directory.Exists(tryResDir) &&
+                    Directory.Exists(Path.Combine(tryResDir, Constants.JSON_DIR)))
+                {
+
+                    jsonFile = Path.Combine(tryResDir, Constants.JSON_DIR, Constants.JSON_CONTACTS_FILE);
+                    if (File.Exists(jsonFile))
+                        return jsonFile;
+                }
+            }
+            if (string.IsNullOrEmpty(jsonFile))
+            {
+                string tmp = Environment.GetEnvironmentVariable("TEMP");
+                if (!Directory.Exists(tmp))
+                    tmp = Environment.GetEnvironmentVariable("TMP");
+                if (!Directory.Exists(tmp))
+                    tmp = Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "Temp");
+                if (Directory.Exists(tmp))
+                    jsonFile = Path.Combine(tmp, Constants.JSON_CONTACTS_FILE);
+            }
+
+            return jsonFile;
+        }
 
 
         /// <summary>
@@ -26,6 +74,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
         /// </summary>
         static JsonContacts()
         {
+            JsonContactsFileName = FindContatcsFile();
             _contacts = LoadJsonContacts();
         }
 
