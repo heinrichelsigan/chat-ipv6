@@ -75,7 +75,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 this.Cursor = Cursors.NoMove2D;
                 NativeWrapper.User32.ReleaseCapture();
-                NativeWrapper.User32.SendMessage(Handle, NativeWrapper.User32.WM_NCLBUTTONDOWN, NativeWrapper.User32.HT_CAPTION, 0);
+                SendMessage(Handle, WM_NCLBUTTONDOWN, NativeWrapper.User32.HT_CAPTION, 0);
             }
         }
 
