@@ -1,13 +1,12 @@
 {
   "ExtendedData": {
     "inputs": [
-      "https://srv.cqrxs.eu/v1.3/CqrService.asmx"
+      "https://srv.cqrxs.eu/v1.0/CqrService.asmx"
     ],
     "collectionTypes": [
       "System.Array",
       "System.Collections.Generic.Dictionary`2"
     ],
-    "enableDataBinding": true,
     "namespaceMappings": [
       "*, Area23.At.Framework.Core.Cqr.Srv"
     ],
@@ -26,13 +25,10 @@
       "Microsoft.IdentityModel.Xml, {Microsoft.IdentityModel.Xml, 8.8.0}",
       "Microsoft.Win32.SystemEvents, {Microsoft.Win32.SystemEvents, 9.0.4}",
       "Newtonsoft.Json, {Newtonsoft.Json, 13.0.3}",
-      "NLog, {NLog, 5.4.0}",
       "Pipelines.Sockets.Unofficial, {Pipelines.Sockets.Unofficial, 2.2.8}",
-      "QRCoder.Core, {QRCoder.Core, 1.0.3}",
       "StackExchange.Redis, {StackExchange.Redis, 2.8.31}",
       "System.Collections, {System.Collections, 4.3.0}",
       "System.Diagnostics.Debug, {System.Diagnostics.Debug, 4.3.0}",
-      "System.Drawing.Common, {System.Drawing.Common, 6.0.0}",
       "System.Globalization, {System.Globalization, 4.3.0}",
       "System.IO, {System.IO, 4.3.0}",
       "System.IO.FileSystem, {System.IO.FileSystem, 4.3.0}",
@@ -56,8 +52,6 @@
       "System.ServiceModel.Primitives, {System.ServiceModel.Primitives, 8.1.2}",
       "System.ServiceModel.Security, {System.ServiceModel.Primitives, 8.1.2}",
       "System.Text.Encoding, {System.Text.Encoding, 4.3.0}",
-      "System.Text.Encoding.CodePages, {System.Text.Encoding.CodePages, 8.0.0}",
-      "System.Text.Encoding.Extensions, {System.Text.Encoding.Extensions, 4.3.0}",
       "System.Text.RegularExpressions, {System.Text.RegularExpressions, 4.3.1}",
       "System.Threading, {System.Threading, 4.3.0}",
       "System.Threading.Tasks, {System.Threading.Tasks, 4.3.0}",

@@ -11,7 +11,7 @@
 <body>
     <form id="form1" runat="server">
         <div style="font-size: large; background-color: antiquewhite">
-            Redirecting to <a id="aHrefId" runat="server" href="https://srv.cqrxs.eu/v1.2/CqrService.asmx" target="_top">CqrService.asmx</a> ...
+            Redirecting to <a id="aHrefId" runat="server" href="https://srv.cqrxs.eu/v1.0/CqrService.asmx" target="_top">CqrService.asmx</a> ...
         </div>
         <div id="DivInvisible" runat="server">            
             <asp:Literal ID="LiteralHtmlCommentBegin" runat="server" Text="<!--" ></asp:Literal>
