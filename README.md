@@ -12,12 +12,14 @@
   here: <a href="https://cqrxs.eu/download/" target="_blank">cqrxs.eu/download/</a>
   (<i>please take always the newest</i>.)
 - last release (pre-alpha) deployed on 2025-08-07 can be downloaded here: 
-  - <b>x86</b> <a href="https://cqrxs.eu/download/2025-08-07_SecureChat_WinClient_x86.7z" target="_blank">https://cqrxs.eu/download/2025-08-07_SecureChat_WinClient_x86.7z</a>
-  - <b>x64</b> <a href="https://cqrxs.eu/download/2025-08-07_SecureChat_WinClient_x64.7z" target="_blank">https://cqrxs.eu/download/2025-08-07_SecureChat_WinClient_x64.7z</a>  
+  - <b>x86</b> <a href="https://cqrxs.eu/download/2025-08-19_SecureChat_Win_x86.7z" target="_blank">https://cqrxs.eu/download/2025-08-19_SeureChat_Win_x86.7z</a>
+  - <b>x64</b> <a href="https://cqrxs.eu/download/2025-08-19_SeureChat_Win_x64.7z" target="_blank">https://cqrxs.eu/download/2025-08-19_SecureChat_Win_x64.7z</a>  
 - <b><i><u>Features</u></i></b>:
   - <b>C#</b> full client as fat .exe, requires no framework;
      version v2.25.802 is a functional prototype.    
-    - server part <a href="https://srv.cqrxs.eu/v1.3/CqrService.asmx" target="_blank">https://srv.cqrxs.eu/v1.3/CqrService.asmx</a>
+    - server part <a href="https://srv.cqrxs.eu/v1.0/CqrService.asmx" target="_blank">https://srv.cqrxs.eu/v1.0/CqrService.asmx</a>
+    - <b>DONE</b> finished Swashbuckle project under Core. (Not all well tested, but fully implemented)
+      <a href="https://github.com/heinrichelsigan/chat-ipv6/tree/main/C%23/EU.CqrXs.Srv.Svc.Swashbuckle" target="_blank">https://github.com/heinrichelsigan/chat-ipv6/tree/main/C%23/EU.CqrXs.Srv.Svc.Swashbuckle</a>
     - <b>TODO</b>: <i>refactoring</i> SVC WCF classic to SVC WCF Core and deploying it in a native .Net Core enviroment in linux.
       Currently a very old style asmx service runs at server to cache secure chats in session server mode, 
       a newer WCF Svc service and swashbuckle swagger service are included in the repository, but it doens't work properly in apache2 mod_mono.
