@@ -34,13 +34,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <summary>
         /// byte[] of Image Raw Data
         /// </summary>
-        internal byte[] ImageData { get; set; }
+        public byte[] ImageData { get; set; }
 
         /// <summary>
         /// Base64 mime encoded string of raw data
         /// </summary>
         [JsonIgnore]
-        public string ImageBase64 { get; set; }
+        protected string ImageBase64 { get; set; }
 
         public string Sha256Hash { get; set; }
 
@@ -132,22 +132,27 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         #region EnDeCrypt+DeSerialize
 
 
-        public override string EncryptToJson(string serverKey)
+        public override string EncryptToJson(
+            string serverKey, 
+            EncodingType encoder = EncodingType.Base64, 
+            Zfx.ZipType zipType = Zfx.ZipType.None
+        )
         {
             CImage? cimg = new CImage(this);
 
-            string serializedJson = ToJsonEncrypt(serverKey, ref cimg);
+            string serializedJson = ToJsonEncrypt(serverKey, ref cimg, encoder, zipType);
 
             return serializedJson;            
         }
 
 
-        public new CImage? DecryptFromJson(string serverKey, string serialized = "") 
+        public new CImage? DecryptFromJson(string serverKey, string serialized = "",
+            EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
             if (string.IsNullOrEmpty(serialized))
                 serialized = this.SerializedMsg;
 
-            CImage? cimg = FromJsonDecrypt(serverKey, serialized);
+            CImage? cimg = FromJsonDecrypt(serverKey, serialized, decoder, zipType);
             if (cimg == null)
                 throw new CqrException($"CImage? DecryptFromJson(string serverKey, string serialized) failed.");
 
@@ -167,9 +172,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <returns><see cref="string">serialized json string</see></returns>
         public override string ToJson()
         {
-            this.SerializedMsg = "";
+            // this.SerializedMsg = "";
             string jsonText = JsonConvert.SerializeObject(this);
-            this.SerializedMsg = jsonText;
+            // this.SerializedMsg = jsonText;
             return jsonText;            
         }
 
@@ -473,7 +478,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <param name="ccntct"><see cref="CContact"/> to encrypt and serialize</param>
         /// <returns>a serialized <see cref="string" /> of encrypted <see cref="CContact"/></returns>
         /// <exception cref="CqrException"></exception>
-        public static string ToJsonEncrypt(string serverKey, ref CImage cimg)
+        public static string ToJsonEncrypt(
+            string serverKey, 
+            ref CImage cimg,
+            EncodingType encoder = EncodingType.Base64,
+            Zfx.ZipType zipType = Zfx.ZipType.None
+        )
         {
             if (string.IsNullOrEmpty(serverKey) || cimg == null)
                 throw new CqrException($"static stringToJsonEncrypt(string serverKey, CImage cimg) failed: NULL reference!");
@@ -485,21 +495,25 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return serializedJson;
         }
 
-        public static bool EncryptSrvMsg(string serverKey, ref CImage cimg)
+        public static bool EncryptSrvMsg(
+            string serverKey, 
+            ref CImage cimg,
+            EncodingType encoder = EncodingType.Base64,
+            Zfx.ZipType zipType = Zfx.ZipType.None
+        )
         {
+            string pipeString = "", encrypted = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
             try
-            {
-                string hash = EnDeCodeHelper.KeyToHex(serverKey);
-                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
-                cimg.Hash = symmPipe.PipeString;
-                cimg.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, hash, symmPipe.PipeString, cimg.Message), "");
+            {                
+                pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
+                cimg.Hash = pipeString;
+                cimg.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, cimg.ImageFileName), "");
                 cimg.Sha256Hash = Sha256Sum.Hash(cimg.ImageData, "");
 
-                byte[] msgBytes = cimg.ImageData;
-                byte[] cqrbytes = LibPaths.CqrEncrypt ? symmPipe.MerryGoRoundEncrpyt(msgBytes, serverKey, hash) : msgBytes;
-
-                cimg.CBytes = cqrbytes;
+                encrypted = SymmCipherPipe.EncrpytBytesToString(cimg.ImageData, serverKey, out pipeString, encoder, zipType);
+                                
                 cimg.ImageData = new byte[0];
+                cimg.Message = encrypted;
             }
             catch (Exception exCrypt)
             {
@@ -520,49 +534,58 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// when serialized string to decrypt and deserialize is either null or empty 
         /// or <see cref="CImage"/> can't be decrypted and deserialized.
         /// </exception>
-        public static CImage FromJsonDecrypt(string serverKey, string serialized)
+        public static CImage FromJsonDecrypt(
+            string serverKey, 
+            string serialized,
+            EncodingType decoder = EncodingType.Base64, 
+            Zfx.ZipType zipType = Zfx.ZipType.None
+        )
         {
             if (string.IsNullOrEmpty(serialized))
                 throw new CqrException("static CContact FromJsonDecrypt(string serverKey, string serialized): serialized is null or empty.");
 
-            CImage cimg = new CImage(serialized, CType.Json);
-            cimg = DecryptSrvMsg(serverKey, ref cimg);
-            if (cimg == null)
+            CImage cimg = Newtonsoft.Json.JsonConvert.DeserializeObject<CImage>(serialized);
+            CImage decryptImg = DecryptSrvMsg(serverKey, ref cimg, decoder, zipType);
+            if (decryptImg == null)
                 throw new CqrException($"static CImage FromJsonDecrypt(string serverKey, string serialized).");
 
-            return cimg;
+            return decryptImg;
         }
 
-        public static CImage DecryptSrvMsg(string serverKey, ref CImage cimg)
+        public static CImage DecryptSrvMsg(
+            string serverKey, 
+            ref CImage cimg,
+            EncodingType decoder = EncodingType.Base64,
+            Zfx.ZipType zipType = Zfx.ZipType.None
+        )
         {
+            string decrypted = "", pipeString = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
             try
             {
-                string hash = EnDeCodeHelper.KeyToHex(serverKey);
-                SymmCipherPipe symmPipe = new SymmCipherPipe(serverKey, hash);
+                pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
 
-                byte[] cipherBytes = cimg.CBytes;
-                byte[] unroundedMerryBytes = LibPaths.CqrEncrypt ? symmPipe.DecrpytRoundGoMerry(cipherBytes, serverKey, hash) : cipherBytes;
+                byte[] imgBytes = SymmCipherPipe.DecrpytStringToBytes(cimg.Message, serverKey, out pipeString, decoder, zipType);
 
-                if (!cimg.Hash.Equals(symmPipe.PipeString))
-                    throw new CqrException($"Hash: {cimg.Hash} doesn't match symmPipe.PipeString: {symmPipe.PipeString}");
+                if (!cimg.Hash.Equals(pipeString))
+                    throw new CqrException($"cimg.Hash={cimg.Hash} doesn't match pipeString={pipeString}");
 
-                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, cimg.Hash, symmPipe.PipeString, cimg.Message), "");
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, cimg.ImageFileName), "");
                 if (!md5Hash.Equals(cimg.Md5Hash))
                 {
-                    string md5ErrMsg = $"md5Hash: {md5Hash} doesn't match property Md5Hash: {cimg.Md5Hash}";
+                    string md5ErrMsg = $"cimg.Md5Hash={cimg.Md5Hash} doesn't match md5Hash={md5Hash}.";
                     Area23Log.LogOriginMsg("CImage", md5ErrMsg);
                     // throw new CqrException(md5ErrMsg);
                 }
-                string sha256Hash = Sha256Sum.Hash(unroundedMerryBytes, "");
+                string sha256Hash = Sha256Sum.Hash(imgBytes, "");
                 if (!sha256Hash.Equals(cimg.Sha256Hash))
                 {
-                    string sha256ErrMsg = $"Sha256 from decrypted = {sha256Hash}, while this.Sha256Hash = {cimg.Sha256Hash}.";
+                    string sha256ErrMsg = $"cimg.Sha256Hash={cimg.Sha256Hash} doesn't match sha256Hash={sha256Hash}.";
                     Area23Log.LogOriginMsg("CImage", sha256ErrMsg);
                     // throw new CqrException(sha256ErrMsg);
                 }
 
-                cimg.ImageData = unroundedMerryBytes;
-                cimg.CBytes = new byte[0];
+                cimg.ImageData = imgBytes;
+                cimg.Message = "";
 
             }
             catch (Exception exCrypt)
@@ -595,8 +618,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             destination.ImageBase64 = source.ImageBase64;
             destination.Sha256Hash = source.Sha256Hash;
             destination.ImageBase64 = source.ImageBase64;
-            destination.SerializedMsg = "";
-            destination.SerializedMsg = destination.ToJson();
+            // destination.SerializedMsg = "";
+            // destination.SerializedMsg = destination.ToJson();
 
             return destination;
         }

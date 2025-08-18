@@ -127,7 +127,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             contactSettings.ShowInTaskbar = true;
             contactSettings.ShowDialog();
 
-            if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.ContactImage.ImageBase64))
+            if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null &&
+                Settings.Singleton.MyContact.ContactImage.ImageData != null &&
+                Settings.Singleton.MyContact.ContactImage.ImageData.Length > 0)
             {
                 try
                 {

@@ -140,7 +140,7 @@ namespace EU.CqrXs.Service
             JsonChatRoom.AddJsonChatRoomToCache(chatRoomNumber);
 
             // serialize chat room in msg later then saving
-            cChatRSrvMsg.SerializedMsg = cChatRSrvMsg.ToJson();
+            // cChatRSrvMsg.SerializedMsg = cChatRSrvMsg.ToJson();
 
             return cChatRSrvMsg;
         }
@@ -298,7 +298,7 @@ namespace EU.CqrXs.Service
             InitMethod();
             string responseString = "", chatRoomNumber = "";
 
-            CSrvMsg<string> cSrvMsg, chatRSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, chatRSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
             chatRSrvMsg = chatRSrvMsg.FromJson(cryptMsg);
 
             try
@@ -347,7 +347,7 @@ namespace EU.CqrXs.Service
 
             Dictionary<long, string> dict = new Dictionary<long, string>();            
             
-            CSrvMsg<string> cSrvMsg, aSrvMsg =  new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg =  new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
 
             try
@@ -422,7 +422,7 @@ namespace EU.CqrXs.Service
             bool isValid = false;
             Dictionary<long, string> dict;
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
 
             CSrvMsg<string> chatRoomMsg = new CSrvMsg<string>();                            // construct an empty message
@@ -500,7 +500,7 @@ namespace EU.CqrXs.Service
             string responseString = "", chatRoomNumber = "";
             bool isValid = false;
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
             List<CContact> _invited = new List<CContact>();
 

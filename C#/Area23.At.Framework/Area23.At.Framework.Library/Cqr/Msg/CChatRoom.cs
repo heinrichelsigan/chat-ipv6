@@ -84,8 +84,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             Md5Hash = md5sum;
             CBytes = bytes;
             MsgType = CType.Json;
-            SerializedMsg = "";
-            SerializedMsg = this.ToJson();
+            // SerializedMsg = "";
+            // SerializedMsg = this.ToJson();
         }
 
         public CChatRoom(CChatRoom chatRoom) : this()
@@ -123,8 +123,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             destination.LastPolled = source.LastPolled;
             destination.LastPushed = source.LastPushed;
             destination.InvitedEmails = source.InvitedEmails;
-            destination.SerializedMsg = "";
-            destination.SerializedMsg = destination.ToJson();
+            // destination.SerializedMsg = "";
+            // destination.SerializedMsg = destination.ToJson();
 
             return destination;
         }
@@ -135,9 +135,9 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         public override string ToJson()
         {
             // CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
-            this.SerializedMsg = "";
+            // this.SerializedMsg = "";
             string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
-            this.SerializedMsg = jsonString;
+            // this.SerializedMsg = jsonString;
             return jsonString;
         }
 
@@ -163,9 +163,9 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public override string ToXml()
         {
-            SerializedMsg = "";
+            // SerializedMsg = "";
             string xmlString = Utils.SerializeToXml<CChatRoom>(this);
-            SerializedMsg = xmlString;
+            // SerializedMsg = xmlString;
             return xmlString;
         }
 

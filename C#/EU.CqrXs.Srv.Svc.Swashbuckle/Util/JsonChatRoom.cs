@@ -101,7 +101,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                 // System.IO.File.WriteAllText(jsonCRoomFileName, jsonString);
             }
 
-            cSrvMsg.SerializedMsg = jsonString;
+            //cSrvMsg.SerializedMsg = jsonString;
 
             return cSrvMsg;
         }
@@ -156,7 +156,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
             serializedJsonString = string.Empty;
             if (cSrvMsg != null)
             {
-                cSrvMsg.SerializedMsg = string.Empty;
+                // cSrvMsg.SerializedMsg = string.Empty;
                 JsonSerializerSettings jsets = new JsonSerializerSettings();
                 jsets.Formatting = Formatting.Indented;
                 jsets.MaxDepth = 16;
@@ -169,7 +169,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
                 }
             }
 
-            cSrvMsg.SerializedMsg = serializedJsonString;
+            // cSrvMsg.SerializedMsg = serializedJsonString;
             return cSrvMsg;
         }
 

@@ -29,7 +29,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             Dictionary<long, string> dict = new Dictionary<long, string>();
             bool isValid = false;
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = cqrFacade.PipeString, SerializedMsg = cryptMsg };
+            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = cqrFacade.PipeString, Message = cryptMsg };
             aSrvMsg = aSrvMsg.FromJson(cryptMsg);
 
             _responseString = "";

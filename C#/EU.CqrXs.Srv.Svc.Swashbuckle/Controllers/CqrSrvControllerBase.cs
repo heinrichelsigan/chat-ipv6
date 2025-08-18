@@ -135,7 +135,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             JsonChatRoom.AddJsonChatRoomToCache(_chatRoomNumber);
 
             // serialize chat room in msg later then saving
-            cChatRSrvMsg.SerializedMsg = cChatRSrvMsg.ToJson();
+            // cChatRSrvMsg.SerializedMsg = cChatRSrvMsg.ToJson();
 
             return cChatRSrvMsg;
         }

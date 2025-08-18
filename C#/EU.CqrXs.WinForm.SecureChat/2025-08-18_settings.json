@@ -8,28 +8,25 @@
     ""
   ],
   "ChatRoom": {
-    "ChatRuid": "d3d31d6b-8534-448a-bce2-9508b87ab3f7",
-    "ChatRoomNr": "room_08180847_he.json",
+    "ChatRuid": "ac94090b-1c46-40ba-b921-e8175d921988",
+    "ChatRoomNr": "room_08181005_he.json",
     "TicksLong": [
-      638911036302417851,
-      638911036686104873,
-      638911037990939355,
-      638911038749306988,
-      638911039580419769,
-      638911040113290159
+      638911083504914457,
+      638911083687485328,
+      638911086702787099
     ],
-    "LastPushed": "2025-08-18T08:53:31.3290159+02:00",
-    "LastPolled": "2025-08-18T08:53:31.3290159",
+    "LastPushed": "2025-08-18T10:11:10.2787099+02:00",
+    "LastPolled": "2025-08-18T10:11:10.2787099",
     "InvitedEmails": [],
     "MsgType": 0,
     "Message": "",
-    "SerializedMsg": "{\r\n  \"ChatRuid\": \"d3d31d6b-8534-448a-bce2-9508b87ab3f7\",\r\n  \"ChatRoomNr\": \"room_08180847_he.json\",\r\n  \"TicksLong\": [\r\n    638911036302417851,\r\n    638911036686104873,\r\n    638911037990939355,\r\n    638911038749306988,\r\n    638911039580419769,\r\n    638911040113290159\r\n  ],\r\n  \"LastPushed\": \"2025-08-18T08:53:31.3290159+02:00\",\r\n  \"LastPolled\": \"2025-08-18T08:53:31.3290159\",\r\n  \"InvitedEmails\": [],\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": \"\"\r\n}",
+    "SerializedMsg": "{\r\n  \"ChatRuid\": \"ac94090b-1c46-40ba-b921-e8175d921988\",\r\n  \"ChatRoomNr\": \"room_08181005_he.json\",\r\n  \"TicksLong\": [\r\n    638911083504914457,\r\n    638911083687485328,\r\n    638911086702787099\r\n  ],\r\n  \"LastPushed\": \"2025-08-18T10:11:10.2787099+02:00\",\r\n  \"LastPolled\": \"2025-08-18T10:11:10.2787099\",\r\n  \"InvitedEmails\": [],\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": \"\"\r\n}",
     "Hash": "",
     "Md5Hash": "",
     "CBytes": ""
   },
   "TimeStamp": "2025-08-12T07:25:32.2734519+02:00",
-  "SaveStamp": "2025-08-18T08:56:48.9571912+02:00",
+  "SaveStamp": "2025-08-18T10:12:43.1175947+02:00",
   "MyContact": {
     "ContactId": 0,
     "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
@@ -51,10 +48,10 @@
     },
     "NameEmail": "Heinrich G. Elsigan <he@area23.at>",
     "MsgType": 0,
-    "Message": "room_08180847_he.json",
-    "SerializedMsg": "{\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"49cb518a-6966-4fbb-ac0e-e27a1115bf29\",\r\n  \"Name\": \"Heinrich G. Elsigan\",\r\n  \"Email\": \"he@area23.at\",\r\n  \"Mobile\": \"+436507627928\",\r\n  \"Address\": \"Theresianumgasse 6/28, 1040 Wien\",\r\n  \"SecretKey\": \"\",\r\n  \"ContactImage\": {\r\n    \"ImageFileName\": \"F48\",\r\n    \"ImageMimeType\": \"image/png\",\r\n    \"Sha256Hash\": \"4031bb19a5d2dad8e7d702070947d4c4e564a2fe7064277775dcf91f72d37b88\",\r\n    \"MsgType\": 1,\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Hash\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": \"\"\r\n  },\r\n  \"NameEmail\": \"Heinrich G. Elsigan <he@area23.at>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"room_08180847_he.json\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bFfDC\",\r\n  \"Md5Hash\": \"a0b4e2986614aed9ec05af497371392e\",\r\n  \"CBytes\": \"\"\r\n}",
+    "Message": "room_08181005_he.json",
+    "SerializedMsg": "{\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"49cb518a-6966-4fbb-ac0e-e27a1115bf29\",\r\n  \"Name\": \"Heinrich G. Elsigan\",\r\n  \"Email\": \"he@area23.at\",\r\n  \"Mobile\": \"+436507627928\",\r\n  \"Address\": \"Theresianumgasse 6/28, 1040 Wien\",\r\n  \"SecretKey\": \"\",\r\n  \"ContactImage\": {\r\n    \"ImageFileName\": \"F48\",\r\n    \"ImageMimeType\": \"image/png\",\r\n    \"Sha256Hash\": \"4031bb19a5d2dad8e7d702070947d4c4e564a2fe7064277775dcf91f72d37b88\",\r\n    \"MsgType\": 1,\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Hash\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": \"\"\r\n  },\r\n  \"NameEmail\": \"Heinrich G. Elsigan <he@area23.at>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"room_08181005_he.json\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bFfDC\",\r\n  \"Md5Hash\": \"e8f6cd243ec4770a2cd60c556692f5a9\",\r\n  \"CBytes\": \"\"\r\n}",
     "Hash": "6bFfDC",
-    "Md5Hash": "a0b4e2986614aed9ec05af497371392e",
+    "Md5Hash": "e8f6cd243ec4770a2cd60c556692f5a9",
     "CBytes": ""
   },
   "Contacts": [
@@ -1238,7 +1235,6 @@
     "169.254.85.69",
     "169.254.39.21",
     "10.0.0.249",
-    "10.103.228.88",
     "::1",
     "127.0.0.1",
     "192.168.176.1"

@@ -50,9 +50,9 @@ namespace EU.CqrXs.Service.Util
             {
                 foreach (CContact deContact in deserializedContacts)
                 {
-                    deContact.SerializedMsg = string.Empty;
+                    // deContact.SerializedMsg = string.Empty;
                     string serializedMsg = JsonConvert.SerializeObject(deContact);
-                    deContact.SerializedMsg = serializedMsg;
+                    // deContact.SerializedMsg = serializedMsg;
                     contacts.Add(deContact);
                 }
             }
@@ -86,7 +86,7 @@ namespace EU.CqrXs.Service.Util
             {
                 if (cContact != null && !string.IsNullOrEmpty(cContact.NameEmail))
                 {
-                    cContact.SerializedMsg = string.Empty;
+                    // cContact.SerializedMsg = string.Empty;
                     serializingContacts.Add(cContact);
                 }
             }

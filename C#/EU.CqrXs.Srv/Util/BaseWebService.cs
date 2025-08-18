@@ -361,7 +361,7 @@ namespace EU.CqrXs.Srv.Util
             JsonChatRoom.AddJsonChatRoomToCache(_chatRoomNumber);
 
             // serialize chat room in msg later then saving
-            cChatRSrvMsg.SerializedMsg = cChatRSrvMsg.ToJson();
+            // cChatRSrvMsg.SerializedMsg = cChatRSrvMsg.ToJson();
 
             return cChatRSrvMsg;
         }

@@ -96,7 +96,7 @@ namespace EU.CqrXs.Srv.Util
                     Message = chatRoomNumber,
                     Hash = chatRoom.Hash,
                     Md5Hash = chatRoom.Md5Hash,
-                    CBytes = chatRoom.CBytes
+                    // CBytes = chatRoom.CBytes
                 };                
 
                 if (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr))
@@ -107,7 +107,7 @@ namespace EU.CqrXs.Srv.Util
                 // System.IO.File.WriteAllText(jsonCRoomFileName, jsonString);
             }
 
-            cSrvMsg.SerializedMsg = jsonString;
+            // cSrvMsg.SerializedMsg = jsonString;
 
             return cSrvMsg;
         }
@@ -160,7 +160,7 @@ namespace EU.CqrXs.Srv.Util
             serializedJsonString = string.Empty;
             if (cSrvMsg != null)
             {
-                cSrvMsg.SerializedMsg = string.Empty;
+                // cSrvMsg.SerializedMsg = string.Empty;
                 JsonSerializerSettings jsets = new JsonSerializerSettings();
                 jsets.Formatting = Formatting.Indented;
                 jsets.MaxDepth = 16;
@@ -173,7 +173,7 @@ namespace EU.CqrXs.Srv.Util
                 }
             }
 
-            cSrvMsg.SerializedMsg = serializedJsonString;
+            // cSrvMsg.SerializedMsg = serializedJsonString;
             return cSrvMsg;
         }
 

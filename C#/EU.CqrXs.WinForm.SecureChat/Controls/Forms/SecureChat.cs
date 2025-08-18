@@ -199,8 +199,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (Entities.Settings.Singleton != null)
             {
 
-                if (Entities.Settings.Singleton.MyContact != null && Entities.Settings.Singleton.MyContact.ContactImage != null &&
-                    !string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.ContactImage.ImageBase64))
+                if (Entities.Settings.Singleton.MyContact != null && 
+                    Entities.Settings.Singleton.MyContact.ContactImage != null &&
+                    Entities.Settings.Singleton.MyContact.ContactImage.ImageData != null && 
+                    Entities.Settings.Singleton.MyContact.ContactImage.ImageData.Length != 0)
                 {
                     bmp = (Bitmap?)Entities.Settings.Singleton.MyContact.ContactImage.ToDrawingBitmap();
                     if (bmp == null)
@@ -1960,7 +1962,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             } while (string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Email) || string.IsNullOrEmpty(Entities.Settings.Singleton.MyContact.Name));
 
             Bitmap? bmp = Properties.fr.Resources.DefaultF45;
-            if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null && !string.IsNullOrEmpty(Settings.Singleton.MyContact.ContactImage.ImageBase64))
+            if (Settings.Singleton.MyContact != null && Settings.Singleton.MyContact.ContactImage != null &&
+                Settings.Singleton.MyContact.ContactImage.ImageData != null &&
+                Settings.Singleton.MyContact.ContactImage.ImageData.Length != 0)
             {
                 try
                 {

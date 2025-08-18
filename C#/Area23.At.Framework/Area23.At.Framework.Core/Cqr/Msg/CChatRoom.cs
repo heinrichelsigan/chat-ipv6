@@ -1,13 +1,6 @@
-﻿using Area23.At.Framework.Core.Cqr.Msg;
-using Area23.At.Framework.Core.Static;
+﻿using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
@@ -83,8 +76,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Md5Hash = md5sum;
             CBytes = bytes;
             MsgType = CType.Json;
-            SerializedMsg = "";
-            SerializedMsg = this.ToJson();
+            // SerializedMsg = "";
+            // SerializedMsg = this.ToJson();
         }
 
         public CChatRoom(CChatRoom chatRoom) : this()
@@ -121,10 +114,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 			destination.LastPolled = source.LastPolled;
 			destination.LastPushed = source.LastPushed;
 			destination.InvitedEmails = source.InvitedEmails;
-			destination.SerializedMsg = "";
-			destination.SerializedMsg = destination.ToJson();
+            // destination.SerializedMsg = "";
+            // destination.SerializedMsg = destination.ToJson();
 
-			return destination;
+            return destination;
 		}
 
 		#region members
@@ -132,9 +125,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 		public override string ToJson()
         {
             // CqrContact cqrContact = new CqrContact(ContactId, Cuid, Name, Email, Mobile, Address, ContactImage);
-            this.SerializedMsg = "";
+            // this.SerializedMsg = "";
             string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
-            this.SerializedMsg = jsonString;
+            // this.SerializedMsg = jsonString;
             return jsonString;
         }
 
@@ -160,9 +153,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public override string ToXml()
         {
-            SerializedMsg = "";
+            // SerializedMsg = "";
             string xmlString = Utils.SerializeToXml<CChatRoom>(this);
-            SerializedMsg = xmlString;
+            // SerializedMsg = xmlString;
             return xmlString;
         }
 
