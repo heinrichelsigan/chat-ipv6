@@ -12,8 +12,8 @@
   here: <a href="https://cqrxs.eu/download/" target="_blank">cqrxs.eu/download/</a>
   (<i>please take always the newest</i>.)
 - last release (pre-alpha) deployed on 2025-08-07 can be downloaded here: 
-  - <b>x86</b> <a href="https://cqrxs.eu/download/2025-08-19_SecureChat_WinClient_x86.7z" target="_blank">https://cqrxs.eu/download/2025-08-19_SeureChat_Win_x86.7z</a>
-  - <b>x64</b> <a href="https://cqrxs.eu/download/2025-08-19_SeureChat_Win_x64.7z" target="_blank">https://cqrxs.eu/download/2025-08-19_SecureChat_WinClient_x64.7z</a>  
+  - <b>x86</b> <a href="https://cqrxs.eu/download/2025-08-19_SecureChat_Win_x86.7z" target="_blank">https://cqrxs.eu/download/2025-08-19_SeureChat_Win_x86.7z</a>
+  - <b>x64</b> <a href="https://cqrxs.eu/download/2025-08-19_SeureChat_Win_x64.7z" target="_blank">https://cqrxs.eu/download/2025-08-19_SecureChat_Win_x64.7z</a>  
 - <b><i><u>Features</u></i></b>:
   - <b>C#</b> full client as fat .exe, requires no framework;
      version v2.25.802 is a functional prototype.    
