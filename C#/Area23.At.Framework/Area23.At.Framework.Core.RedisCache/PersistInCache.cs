@@ -1,12 +1,12 @@
 ﻿using Area23.At.Framework.Core.Static;
 using System.Configuration;
 
-namespace Area23.At.Framework.Core.Cache
+namespace Area23.At.Framework.Core.RedisCache
 {
     /// <summary>
     /// enum persist type
     /// </summary>
-    public enum PersistType
+    public enum CacheType
     {
         None = 0,
         AppDomain = 1,
@@ -19,31 +19,28 @@ namespace Area23.At.Framework.Core.Cache
     /// <summary>
     /// PersistInCache is a static class, which loads persistence type from Web.Config or App.Config 
     /// </summary>
-    public static class PersistInCache
+    public static class CacheTypeHelper
     {
-        private static PersistType _cacheType = PersistType.AppDomain;
+        private static readonly CacheType _cacheType = CacheType.AppDomain;
 
 
         /// <summary>
         /// returns where message is persisted
         /// </summary>
-        public static PersistType CacheType { get => _cacheType; }
+        public static CacheType CacheKind { get => _cacheType; }
 
         /// <summary>
         /// static ctor
         /// </summary>
-        static PersistInCache()
+        static CacheTypeHelper()
         {
-            string persistWhere = "AppDomain";
+            string cacheWhere = "AppDomain";
             if (ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN] != null)
-                persistWhere = (string)ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN].ToString();
+                cacheWhere = (string)ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN].ToString();
 
-            if (!Enum.TryParse<PersistType>(persistWhere, out _cacheType))
-                _cacheType = PersistType.AppDomain;
+            if (!Enum.TryParse<CacheType>(cacheWhere, out _cacheType))
+                _cacheType = CacheType.AppDomain;
         }
-
-        public static void SetRedis(PersistType cacheType = PersistType.RedisValkey) { _cacheType = cacheType; }   
-
     }
 
 }

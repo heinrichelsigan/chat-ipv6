@@ -1,0 +1,115 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net9.0-windows</TargetFramework>
+	<IsTrimmable>true</IsTrimmable>
+	<UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Copyright>Copyleft © 2000-2040</Copyright>
+    <PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
+    <AssemblyVersion>2.25.812</AssemblyVersion>
+    <FileVersion>2.25.812</FileVersion>
+	<IsTrimmable>true</IsTrimmable>
+	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+    <IncludeSymbols>true</IncludeSymbols>
+    <Title>Area23.At.Framework.Core.RedisCache</Title>
+    <Description>a small Area23.At.Framework.Core.RedisCache minimalistic helper methods</Description>
+    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <DocumentationFile>S:\chat-ipv6\C#\Area23.At.Framework\Area23.At.Framework.Core.RedisCache\Properties\Framework_Core_RedisCache.xml</DocumentationFile>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>7</WarningLevel>
+    <DebugType>embedded</DebugType>
+    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningLevel>7</WarningLevel>
+    <DebugType>embedded</DebugType>
+    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Cipher\**" />
+    <Compile Remove="Connected Services\Area23.At.Framework.Core.CqrXs.CqrJd\**" />
+    <Compile Remove="CqrXs\**" />
+    <Compile Remove="Crypt\**" />
+    <Compile Remove="EnDeCoding\**" />
+    <Compile Remove="Resources\**" />
+    <Compile Remove="Win32Api\**" />
+    <Compile Remove="Zfx\**" />
+    <EmbeddedResource Remove="Cipher\**" />
+    <EmbeddedResource Remove="Connected Services\Area23.At.Framework.Core.CqrXs.CqrJd\**" />
+    <EmbeddedResource Remove="CqrXs\**" />
+    <EmbeddedResource Remove="Crypt\**" />
+    <EmbeddedResource Remove="EnDeCoding\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <EmbeddedResource Remove="Win32Api\**" />
+    <EmbeddedResource Remove="Zfx\**" />
+    <None Remove="Cipher\**" />
+    <None Remove="Connected Services\Area23.At.Framework.Core.CqrXs.CqrJd\**" />
+    <None Remove="CqrXs\**" />
+    <None Remove="Crypt\**" />
+    <None Remove="EnDeCoding\**" />
+    <None Remove="Resources\**" />
+    <None Remove="Win32Api\**" />
+    <None Remove="Zfx\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Net\IpSocket\IpSocketSender.cs" />
+    <Compile Remove="Net\IpSocket\IPSockListener.cs" />
+    <Compile Remove="PersistInCache.cs" />
+    <Compile Remove="Static\SLog.cs" />
+    <Compile Remove="Util\GifEncoder.cs" />
+    <Compile Remove="Util\GifMetadataAdapter.cs" />  
+    <Compile Remove="Util\HttpContextWrapper.cs" />  
+    <Compile Remove="Util\JpegMetadataAdapter.cs" />  
+    <Compile Remove="Util\QRGenericString.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageReference Include="System.IO" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
+    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="8.1.2" />
+    <PackageReference Include="System.ServiceModel.Http" Version="8.1.2" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="8.1.2" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.2" />
+    <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
+    <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
+    <PackageReference Include="System.Threading" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
+    <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
+    <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Cache\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
+  </ItemGroup>
+
+</Project>
