@@ -51,13 +51,13 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 
             try
             {
-                if (PersistInCache.CacheType == PersistType.RedisValkey)
-                {
-                    string valkeyCacheHostPort = System.Configuration.ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY];
-                    testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Ready to connect to {valkeyCacheHostPort}\n";
-                    string status = RedisValkeyCache.ValKeyInstance.Status;
-                    testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
-                }
+                //if (PersistInCache.CacheType == PersistType.RedisValkey)
+                //{
+                //    string valkeyCacheHostPort = System.Configuration.ConfigurationManager.AppSettings[Constants.VALKEY_CACHE_HOST_PORT_KEY];
+                //    testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: Ready to connect to {valkeyCacheHostPort}\n";
+                //    string status = RedisValkeyCache.ValKeyInstance.Status;
+                //    testReport += $"{DateTime.Now.Area23DateTimeWithMillis()}: ConnectionMulitplexer.Status = {status}" + Environment.NewLine;
+                //}
 
                 testReport += DateTime.Now.Area23DateTimeWithMillis() + ": Preparing to set Dictionary<Guid, CContact> in cache." + Environment.NewLine;
                 MemoryCache.CacheDict.SetValue<Dictionary<Guid, CContact>>("TestCache", dictCacheTest);
