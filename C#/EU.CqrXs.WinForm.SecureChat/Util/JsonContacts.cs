@@ -1,13 +1,6 @@
 ﻿using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Threading;
-using System.Web;
 
 namespace EU.CqrXs.WinForm.SecureChat.Util
 {

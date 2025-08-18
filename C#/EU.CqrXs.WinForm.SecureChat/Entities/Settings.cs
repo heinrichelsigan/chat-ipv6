@@ -3,7 +3,6 @@ using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
 using Newtonsoft.Json;
-using System.Runtime;
 
 namespace EU.CqrXs.WinForm.SecureChat.Entities
 {
@@ -192,10 +191,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                 try
                 {
                     JsonContacts.SetContacts(new HashSet<CContact>(settings.Contacts));
-                    string moveFile = LibPaths.SystemDirPath + DateTime.Now.ToString("yyyy-MM-dd_") + Constants.JSON_SETTINGS_FILE;
+                    string moveFile = Path.Combine(
+                        LibPaths.SystemDirSecureChatFilesPath,
+                        DateTime.Now.ToString("yyyy-MM-dd_") + Constants.JSON_SETTINGS_FILE);                    
                     File.Move(jsonFileName, moveFile, true);
-                    settings.SaveStamp = DateTime.Now;
-                    saveString = JsonConvert.SerializeObject(settings, jsets);
+
+                    settings.SaveStamp = DateTime.Now;                    
+                    saveString = JsonConvert.SerializeObject(settings, jsets);                    
                     File.WriteAllText(jsonFileName, saveString);
                 }
                 catch (Exception ex)

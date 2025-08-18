@@ -159,6 +159,7 @@ namespace Area23.At.Framework.Core.Static
         public const string BASE64_EXT = ".base64";
         public const string HTML_EXT = ".html";
         public const string ATTACH_FILES_DIR = "AttachFiles";
+        public const string SECURE_CHAT_FILES_DIR = "SecureChatFiles";
 
         public const string UTF8_JSON = "utf8symol.json";
         public const string JSON_SAVE_FILE = "urlshort.json";

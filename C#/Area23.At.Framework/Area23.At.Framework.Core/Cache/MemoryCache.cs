@@ -107,9 +107,9 @@ namespace Area23.At.Framework.Core.Cache
                     case PersistType.JsonFile:
                         _instance = new Lazy<MemoryCache>(() => new JsonFileCache());
                         break;
-                    case PersistType.RedisValkey:
-                        _instance = new Lazy<MemoryCache>(() => new RedisValkeyCache());
-                        break;
+                    // case PersistType.RedisValkey:
+                    //   _instance = new Lazy<MemoryCache>(() => new RedisValkeyCache());
+                    //     break;
                     //case PersistType.RedisMS:
                     //    _instance = new Lazy<MemoryCache>(() => new RedisMSCache());
                     //    break;

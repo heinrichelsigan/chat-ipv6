@@ -1,12 +1,4 @@
 ﻿using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core;
-using EU.CqrXs.WinForm.SecureChat.Util;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
 
 namespace EU.CqrXs.WinForm.SecureChat.Util
 {
@@ -22,7 +14,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
         {
             get
             {
-                string loadFileName = System.IO.Path.Combine(LibPaths.SystemDirPath, Constants.JSON_CONTACTS_FILE);
+                string loadFileName = System.IO.Path.Combine(LibPaths.SystemDirSecureChatFilesPath, Constants.JSON_CONTACTS_FILE);
                 if (!File.Exists(loadFileName))
                 {
                     loadFileName = AppContext.BaseDirectory.

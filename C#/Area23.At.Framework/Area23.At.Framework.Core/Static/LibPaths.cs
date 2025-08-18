@@ -13,6 +13,7 @@ namespace Area23.At.Framework.Core.Static
     {
         private static string appPath = "";
         private static string baseAppPath = "";
+        private static string cqrjdPath = "";
         private static string systemDirPath = "";
         private static string systemDirResPath = "";
         private static string logDirPath = "";
@@ -21,7 +22,7 @@ namespace Area23.At.Framework.Core.Static
         private static readonly char _sepCh;
         private static int daysave = -1;
 
-        public static bool LogDebug { get; private set; }  
+        public static bool LogDebug { get; private set; }
 
         public static char SepCh { get => _sepCh; }
 
@@ -89,7 +90,7 @@ namespace Area23.At.Framework.Core.Static
                     }
                     catch (Exception appFolderEx)
                     {
-                        Area23Log.LogOriginMsgEx("LibPaths", "AppPath.get", appFolderEx);     
+                        Area23Log.LogOriginMsgEx("LibPaths", "AppPath.get", appFolderEx);
                     }
                     if (string.IsNullOrEmpty(appPath))
                         appPath = Constants.APP_DIR;
@@ -301,6 +302,30 @@ namespace Area23.At.Framework.Core.Static
             }
         }
 
+        public static string SystemDirSecureChatFilesPath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(cqrjdPath) && Directory.Exists(cqrjdPath))
+                    return cqrjdPath;
+
+                cqrjdPath = Path.Combine(SystemDirPath, Constants.SECURE_CHAT_FILES_DIR);
+                if (!Directory.Exists(cqrjdPath))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(cqrjdPath);
+                    }
+                    catch (Exception exi)
+                    {
+                        Area23Log.LogOriginMsgEx("LibPaths", "SystemDirSecureChatFilesPath", exi);
+                    }
+                }
+
+                return cqrjdPath;
+            }
+        }
+
 
         /// <summary>
         /// SystemDirResPath returns path to subdirector <see cref="Constants.RES_DIR"/> of base directory <see cref="SystemDirPath"/>.
@@ -308,29 +333,26 @@ namespace Area23.At.Framework.Core.Static
         /// </summary>
         public static string SystemDirResPath
         {
-            get
-            {
-                if (string.IsNullOrEmpty(systemDirResPath))
+            get {
+                if (!string.IsNullOrEmpty(systemDirResPath) && Directory.Exists(systemDirResPath))
+                    return systemDirResPath;
+
+                systemDirResPath = Path.Combine(SystemDirSecureChatFilesPath, Constants.RES_DIR) + SepCh;
+                if (!Directory.Exists(systemDirResPath))
                 {
-                    systemDirResPath = SystemDirPath + Constants.RES_DIR + SepChar;
-                    if (!Directory.Exists(systemDirResPath))
+                    try
                     {
-                        try
-                        {
-                            string dirNotFoundMsg = string.Format("out directory {0} doesn't exist, creating it!", systemDirResPath);
-                            Area23Log.LogOriginMsg("LibPaths", "SystemDirResPath.get: " + dirNotFoundMsg);
-                            if (Constants.DirCreate)
-                                Directory.CreateDirectory(systemDirResPath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Area23Log.LogOriginMsgEx("LibPaths", "SystemDirResPath.get", ex);
-                        }
+                        Directory.CreateDirectory(systemDirResPath);
+                    }
+                    catch (Exception exi)
+                    {
+                        Area23Log.LogOriginEx("LibPatjs", exi);
                     }
                 }
                 return systemDirResPath;
             }
         }
+    
 
 
         public static string SystemDirBinPath { get => SystemDirResPath + Constants.BIN_DIR + SepChar; }
@@ -348,13 +370,13 @@ namespace Area23.At.Framework.Core.Static
         public static string SystemDirQUtf8Path { get => SystemDirResPath + Constants.UTF8_DIR + SepChar; }
 
 
-        public static string SystemDirQrPath { get => SystemDirPath + Constants.QR_DIR + SepChar; }
+        public static string SystemDirQrPath { get => Path.Combine(SystemDirSecureChatFilesPath, Constants.QR_DIR) + SepChar; }
 
 
-        public static string SystemDirJsonPath { get => SystemDirResPath + Constants.JSON_DIR + SepChar; }
+        public static string SystemDirJsonPath { get => Path.Combine(SystemDirSecureChatFilesPath, Constants.JSON_DIR) + SepChar; }
 
 
-        public static string AttachmentFilesDir { get => SystemDirPath + Constants.ATTACH_FILES_DIR + SepChar; }
+        public static string AttachmentFilesDir { get => Path.Combine(SystemDirSecureChatFilesPath, Constants.ATTACH_FILES_DIR) + SepChar; }
 
         #endregion directory & file paths
 
@@ -369,7 +391,7 @@ namespace Area23.At.Framework.Core.Static
             {
                 if (string.IsNullOrEmpty(logDirPath))
                 {
-                    logDirPath = SystemDirPath + Constants.LOG_DIR + SepChar;
+                    logDirPath = Path.Combine(SystemDirSecureChatFilesPath, Constants.LOG_DIR) + SepChar;
 
                     if (!Directory.Exists(logDirPath))
                     {

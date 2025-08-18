@@ -1,10 +1,5 @@
 ﻿using Area23.At.Framework.Core.Static;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Core.Cache
 {
@@ -15,7 +10,7 @@ namespace Area23.At.Framework.Core.Cache
     {
         None = 0,
         AppDomain = 1,
-        RedisValkey = 2,
+        //  RedisValkey = 2,       
         JsonFile = 3,
         ApplicationState = 4
         //RedisMS = 5
