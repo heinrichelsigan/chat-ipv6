@@ -26,7 +26,7 @@ namespace Area23.At.Framework.Core.Cache
     /// </summary>
     public static class PersistInCache
     {
-        private static readonly PersistType _cacheType = PersistType.RedisValkey;
+        private static readonly PersistType _cacheType = PersistType.AppDomain;
 
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Area23.At.Framework.Core.Cache
         /// </summary>
         static PersistInCache()
         {
-            string persistWhere = "RedisValkey";
+            string persistWhere = "AppDomain";
             if (ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN] != null)
                 persistWhere = (string)ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN].ToString();
 
