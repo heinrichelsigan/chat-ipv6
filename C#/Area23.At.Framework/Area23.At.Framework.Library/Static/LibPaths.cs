@@ -1,6 +1,5 @@
 ﻿using Area23.At.Framework.Library;
 using Area23.At.Framework.Library.Util;
-using NLog;
 using System;
 using System.Configuration;
 using System.IO;

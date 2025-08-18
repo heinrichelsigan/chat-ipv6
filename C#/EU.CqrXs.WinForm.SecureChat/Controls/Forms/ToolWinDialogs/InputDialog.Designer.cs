@@ -131,7 +131,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             labelTitle.Size = new Size(335, 24);
             labelTitle.TabIndex = 2;
             labelTitle.Text = "enter title text here";
-            labelTitle.MouseDown += InputDialog_MouseDown;
             // 
             // panelOuterDialog
             // 
@@ -151,6 +150,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             // panelInnerDialog
             // 
+            panelInnerDialog.BorderStyle = BorderStyle.FixedSingle;
             panelInnerDialog.Controls.Add(TextBoxSecureKey);
             panelInnerDialog.Controls.Add(labelTextBox);
             panelInnerDialog.Controls.Add(buttonOK);

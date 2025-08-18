@@ -194,7 +194,6 @@
     <Compile Include="Cache\MemoryCache.cs" />
     <Compile Include="Cache\MutalExclusion.cs" />
     <Compile Include="Cache\PersistInCache.cs" />
-    <Compile Include="Cache\RedisMSCache.cs" />
     <Compile Include="Cache\RedisValkeyCache.cs" />
     <Compile Include="Cqr\CqrFacade.cs" />
     <Compile Include="Cqr\CqrService.cs" />

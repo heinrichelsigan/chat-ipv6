@@ -700,7 +700,35 @@ namespace EU.CqrXs.Service
                 testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Getting MemoryCache.CacheDict.AllKeys" + Environment.NewLine;
 
                 string[] allKeys = MemoryCache.CacheDict.AllKeys;
-                HashSet<string> newKeys = new HashSet<string>();
+                HashSet<string> newKeys = new HashSet<string>(allKeys);
+                
+                List<string> chatRooms = MemoryCache.CacheDict.GetValue<List<string>>(Constants.CHATROOMS);
+                string[] chatRoomArray = new string[chatRooms.Count];
+                Array.Copy(chatRooms.ToArray(), 0, chatRoomArray, 0, chatRooms.Count);
+
+                foreach (string chatRoom in chatRoomArray)
+                {
+                    Dictionary<long, string> dict = new Dictionary<long, string>();
+
+                    dict = (Dictionary<long, string>)MemoryCache.CacheDict.GetValue<Dictionary<long, string>>(chatRoom);
+                    if (dict != null || dict.Count == 0)
+                    {
+                        chatRooms.Remove(chatRoom);
+                        if (newKeys.Contains(chatRoom))
+                            newKeys.Remove(chatRoom);
+                    }
+                    else
+                    {
+                        if (!newKeys.Contains(chatRoom))
+                        {
+                            newKeys.Add(chatRoom);
+                            MemoryCache.CacheDict.SetValue<Dictionary<long, string>>(chatRoom, dict);
+                        }                            
+                    }
+                }
+                MemoryCache.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
+                
+                allKeys = MemoryCache.CacheDict.AllKeys;
                 if (allKeys == null)
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
                 else
@@ -710,20 +738,21 @@ namespace EU.CqrXs.Service
                 }
                 foreach (string aKey in allKeys)
                 {
-                    if (aKey.Equals("AllKeys", StringComparison.CurrentCultureIgnoreCase) || aKey.Equals("ChatRooms", StringComparison.CurrentCultureIgnoreCase) ||
-                        (aKey.StartsWith("room", StringComparison.CurrentCultureIgnoreCase) && aKey.EndsWith(".json", StringComparison.CurrentCultureIgnoreCase)))
+                    if (aKey.Equals(Constants.ALL_KEYS, StringComparison.CurrentCultureIgnoreCase) || aKey.Equals(Constants.CHATROOMS, StringComparison.CurrentCultureIgnoreCase) ||
+                        (aKey.StartsWith("room", StringComparison.CurrentCultureIgnoreCase) && 
+                            aKey.EndsWith(".json", StringComparison.CurrentCultureIgnoreCase) &&
+                            chatRooms.Contains(aKey)))
                     {
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Keeping key \"" + aKey + "\":" + "\r\n";
                     }
                     else
                     {
                         testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Preparing to delete key \"" + aKey + "\":" + "\r\n";
-                        MemoryCache.CacheDict.RemoveKey(aKey);
-                        newKeys.Add(aKey);
+                        MemoryCache.CacheDict.RemoveKey(aKey);                        
                     }
                 }
+                
                 allKeys = MemoryCache.CacheDict.AllKeys;
-                newKeys = new HashSet<string>();
                 if (allKeys == null)
                     testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: Got null (NULL) keys" + Environment.NewLine;
                 else

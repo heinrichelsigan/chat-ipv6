@@ -2,6 +2,7 @@
 using Area23.At.Framework.Core.Cqr;
 using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Net;
 using Area23.At.Framework.Core.Net.IpSocket;
 using Area23.At.Framework.Core.Net.NameService;
@@ -12,17 +13,10 @@ using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using EU.CqrXs.WinForm.SecureChat.Controls.UserControls;
 using EU.CqrXs.WinForm.SecureChat.Entities;
 using EU.CqrXs.WinForm.SecureChat.Util;
-using CqrContact = Area23.At.Framework.Core.Cqr.Msg.CContact;
-
 using System.ComponentModel;
-using System.Formats.Tar;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime;
-using System.Threading.Tasks;
-using Area23.At.Framework.Core.Crypt.Hash;
-using static QRCoder.Core.PayloadGenerator.SwissQrCode;
-using System;
+using CqrContact = Area23.At.Framework.Core.Cqr.Msg.CContact;
 
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms

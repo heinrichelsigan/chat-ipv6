@@ -1,6 +1,5 @@
 ﻿using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
-using Area23.At.Framework.Core.Win32Api;
 using System.ComponentModel;
 
 namespace EU.CqrXs.WinForm.SecureChat.Util
@@ -166,12 +165,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Util
         {
             try
             {
-                bgwThreadId = (int)Threads.GetCurrentThreadId();
+                bgwThreadId = System.AppDomain.GetCurrentThreadId(); // 
             }
             catch (Exception exa)
             {
                 Area23Log.LogOriginMsgEx("BgWorkerMonitor", "GetCurrentThreadId()", exa);
-                bgwThreadId = System.AppDomain.GetCurrentThreadId(); // ;
             }
             if (bgwThreadId <= 0)
             {

@@ -110,9 +110,9 @@ namespace Area23.At.Framework.Core.Cache
                     case PersistType.RedisValkey:
                         _instance = new Lazy<MemoryCache>(() => new RedisValkeyCache());
                         break;
-                    case PersistType.RedisMS:
-                        _instance = new Lazy<MemoryCache>(() => new RedisMSCache());
-                        break;
+                    //case PersistType.RedisMS:
+                    //    _instance = new Lazy<MemoryCache>(() => new RedisMSCache());
+                    //    break;
                     case PersistType.AppDomain:
                     case PersistType.ApplicationState:
                     default:

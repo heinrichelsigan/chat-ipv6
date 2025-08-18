@@ -1,9 +1,8 @@
 using Area23.At.Framework.Core.Cache;
 using Area23.At.Framework.Core.Cqr;
-using Area23.At.Framework.Core.Cqr.Srv;
 using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Win32Api;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace EU.CqrXs.WinForm.SecureChat
 {
@@ -13,6 +12,11 @@ namespace EU.CqrXs.WinForm.SecureChat
     /// </summary>
     internal static class Program
     {
+        public const int ATTACH_PARENT_PROCESS = -1;
+
+        [DllImport("kernel32.dll")]
+        public static extern bool AttachConsole(int dwProcessId);
+
         internal static string progName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
         // internal static readonly string? progName = System.Environment.ProcessPath;
         internal static readonly string? progDirectory = Path.GetFullPath(System.Environment.ProcessPath);
@@ -35,7 +39,7 @@ namespace EU.CqrXs.WinForm.SecureChat
             
             if (!_mutex.WaitOne(1000, false))
             {                
-                NativeWrapper.Kernel32.AttachConsole(NativeWrapper.Kernel32.ATTACH_PARENT_PROCESS);
+                AttachConsole(ATTACH_PARENT_PROCESS);
                 // Area23.At.Framework.Library.Area23Log.LogOriginMsg(roachName, $"Another instance of {roachName} is already running!");
                 Console.Error.WriteLine($"Another instance of {progName} is already running!");
                 MessageBox.Show($"Another instance of {progName} is already running!", $"{progName}: multiple startup!", MessageBoxButtons.OK, MessageBoxIcon.Stop);

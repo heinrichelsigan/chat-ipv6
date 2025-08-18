@@ -17,8 +17,8 @@ namespace Area23.At.Framework.Core.Cache
         AppDomain = 1,
         RedisValkey = 2,
         JsonFile = 3,
-        ApplicationState = 4,
-        RedisMS = 5
+        ApplicationState = 4
+        //RedisMS = 5
     }
 
     /// <summary>

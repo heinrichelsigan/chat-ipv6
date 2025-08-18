@@ -7,7 +7,7 @@ using EU.CqrXs.WinForm.SecureChat.Properties;
 using Newtonsoft.Json;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using static QRCoder.Core.PayloadGenerator.SwissQrCode;
+// using static QRCoder.Core.PayloadGenerator.SwissQrCode;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {

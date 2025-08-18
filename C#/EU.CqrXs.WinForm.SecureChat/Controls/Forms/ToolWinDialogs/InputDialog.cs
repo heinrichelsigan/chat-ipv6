@@ -1,23 +1,24 @@
-﻿using Area23.At.Framework.Core.Win32Api;
-using EU.CqrXs.WinForm.SecureChat.Controls.Forms;
-using EU.CqrXs.WinForm.SecureChat;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Area23.At.Framework.Core.Util;
+﻿using Area23.At.Framework.Core.Cache;
 using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Cache;
+using System.Runtime.InteropServices;
 
 namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 {
     public partial class InputDialog : System.Windows.Forms.Form
     {
+
+        public const int HT_CAPTION = 0x2;
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+
+        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+        public static extern bool ReleaseCapture();
+
+        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+
+        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+        public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
         static int i = 0;
         static string _title = string.Empty;
         static string _text= string.Empty;  
@@ -74,8 +75,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (e.Button == MouseButtons.Left)
             {
                 this.Cursor = Cursors.NoMove2D;
-                NativeWrapper.User32.ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, NativeWrapper.User32.HT_CAPTION, 0);
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
 

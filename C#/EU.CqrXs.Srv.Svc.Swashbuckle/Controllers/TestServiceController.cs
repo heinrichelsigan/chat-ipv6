@@ -3,7 +3,6 @@ using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Cqr;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Static;
-using Area23.At.Framework.Core.Win32Api;
 using EU.CqrXs.Srv.Svc.Swashbuckle.Util;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;

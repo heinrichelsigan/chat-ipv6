@@ -1,8 +1,5 @@
-﻿using Area23.At.Framework.Core.Cqr;
-using Area23.At.Framework.Core.Static;
-using System;
+﻿using Area23.At.Framework.Core.Static;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 
 namespace Area23.At.Framework.Core.Util
@@ -11,20 +8,20 @@ namespace Area23.At.Framework.Core.Util
     /// <summary>
     /// simple static logger via NLog
     /// </summary>
-    public class Area23Log
+    public static class Area23Log
     {
 
         #region static fields and properties
 
         private static readonly object _lock = new object(), _outerLock = new object();
-        private static readonly Lazy<Area23Log> instance = new Lazy<Area23Log>(() => new Area23Log());
+        // private static readonly Lazy<Area23Log> instance = new Lazy<Area23Log>(() => new Area23Log());
 
         private static int checkedToday = DateTime.UtcNow.Date.Day;
 
         /// <summary>
         /// Get the Logger
         /// </summary>
-        public static Area23Log Logger { get => instance.Value; }
+        // public static Area23Log Logger { get => instance.Value; }
 
         /// <summary>
         /// Checked today if logfiles and other needed resources exist
@@ -69,7 +66,7 @@ namespace Area23.At.Framework.Core.Util
         /// InitLog init Log configuration
         /// </summary>
         /// <param name="appName">application name</param>
-        protected internal static void InitLog(string appName = "")
+        internal static void InitLog(string appName = "")
         {
             if (!string.IsNullOrEmpty(appName))
                 AppName = appName;
