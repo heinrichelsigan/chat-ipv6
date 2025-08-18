@@ -1137,7 +1137,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         {
             if (chat == null)
                 chat = new Chat(0);
-
+            
             if ((myServerKey = GetComboBoxMustHaveText(ref ComboBoxSecretKey)) == null)
             {
                 SetStatusText(StripStatusLabel, "Nothing to send!");

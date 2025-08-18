@@ -51,7 +51,7 @@ namespace EU.CqrXs.Service.Util
         /// </summary>
         /// <param name="cSrvMsgIn"><see cref="CSrvMsg{TC}"/></param>
         /// <returns>><see cref="CSrvMsg{TC}"/></returns>
-        public static CSrvMsg<string> LoadChatRoom(CSrvMsg<string> cSrvMsgIn)
+        public static CSrvMsg<TC> LoadChatRoom<TC>(CSrvMsg<TC> cSrvMsgIn, TC tc = null) where TC : class
         {
             string chatRoomName = "";
             if (cSrvMsgIn != null && cSrvMsgIn.CRoom != null && !string.IsNullOrEmpty(cSrvMsgIn.CRoom.ChatRoomNr))
@@ -60,17 +60,17 @@ namespace EU.CqrXs.Service.Util
             }
             string jsonCRoomFileName = GetJsonChatRoomFullPath(chatRoomName);
 
-            CSrvMsg<string> cServerMessage = null;
+            CSrvMsg<TC> cServerMessage = cSrvMsgIn;;
             string jsonText = null;
             if (!File.Exists(jsonCRoomFileName)) // we need to a create chatroom
             {                
-                SaveChatRoom(cSrvMsgIn);
+                SaveChatRoom<TC>(cSrvMsgIn, cSrvMsgIn.TContent);
             }
 
             lock (_lock)
             {
                 jsonText = File.ReadAllText(jsonCRoomFileName);
-                cServerMessage = JsonConvert.DeserializeObject<CSrvMsg<string>>(jsonText);
+                cServerMessage = JsonConvert.DeserializeObject<CSrvMsg<TC>>(jsonText);
             }
 
             return SerializeCSrvMsg(cServerMessage, out string serJsonString);
@@ -79,10 +79,10 @@ namespace EU.CqrXs.Service.Util
         /// <summary>
         /// static SaveChatRoom
         /// </summary>
-        /// <param name="cSrvMsg"><see cref="CSrvMsg<string>"/></param>
+        /// <param name="cSrvMsg"><see cref="CSrvMsg<TC>"/></param>
         /// <param name="chatRoom"><see cref="CChatRoom"/></param>
         /// <returns></returns>
-        public static CSrvMsg<string> SaveChatRoom(CSrvMsg<string> cSrvMsg)
+        public static CSrvMsg<TC> SaveChatRoom<TC>(CSrvMsg<TC> cSrvMsg, TC tc = null) where TC : class
         {
             string jsonString = "";
             CChatRoom chatRoom = cSrvMsg.CRoom;
@@ -141,16 +141,16 @@ namespace EU.CqrXs.Service.Util
         #endregion static Load Save Delete
 
         #region basic static members
-        
+
         /// <summary>
-        /// SerializeCSrvMsg serializes a <see cref="CSrvMsg{string}"/> to file system 
+        /// SerializeCSrvMsg serializes a <see cref="CSrvMsg{TC}"/> to file system 
         /// TODO: we need only <see cref="CChatRoom"/> to merialize => FIX-IT
         /// </summary>
         /// <param name="cSrvMsg">a full CSrvMsg</param>
         /// <param name="serializedJsonString">out parameter of serialized string</param>
         /// <param name="wrtieJsonToFs">if true, serialize it to fs, default false</param>
         /// <returns>CSrvMsg with actual serialized string</returns>
-        public static CSrvMsg<string> SerializeCSrvMsg(CSrvMsg<string> cSrvMsg, out string serializedJsonString, bool wrtieJsonToFs = false)
+        public static CSrvMsg<TC> SerializeCSrvMsg<TC>(CSrvMsg<TC> cSrvMsg, out string serializedJsonString, bool wrtieJsonToFs = false) where TC : class
         {
             // TODO: we need only<see cref = "CChatRoom" /> to merialize => FIX  IT!!!
             serializedJsonString = string.Empty;

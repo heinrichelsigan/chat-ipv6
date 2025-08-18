@@ -5,28 +5,34 @@
   "OnlySecureFileTypes": false,
   "RegisterUser": true,
   "SecretKeysCrypted": [
-    ""
+    "OFBWeFBZd25PM0ZhOTBKZ2dBRUpiclBjc1VPdFhCdW5GQVdJY1RiQ1IrMWpCWjJqZ3dxZ1MzaDRWTEZnMmY5MnBoME1lSW1HT1BOaW1aRmpkUFI4Uk1rek5ldkRKWGJZN25ZaGxRWGxMNkN4alBzVHhWNHg3TmZic1NsclExeHM="
   ],
   "ChatRoom": {
-    "ChatRuid": "ac94090b-1c46-40ba-b921-e8175d921988",
-    "ChatRoomNr": "room_08181005_he.json",
+    "ChatRuid": "ab5524b8-77ad-4400-bd5a-ac1a4678b526",
+    "ChatRoomNr": "room_08181537_he.json",
     "TicksLong": [
-      638911083504914457,
-      638911083687485328,
-      638911086702787099
+      638911282462034244,
+      638911282625175379,
+      638911283212599350,
+      638911283948078667,
+      638911284496267403,
+      638911285656260628,
+      638911286607225587,
+      638911286724519933,
+      638911287443439980,
+      638911288069697055,
+      638911288592860047
     ],
-    "LastPushed": "2025-08-18T10:11:10.2787099+02:00",
-    "LastPolled": "2025-08-18T10:11:10.2787099",
+    "LastPushed": "2025-08-18T15:48:42.7643069+02:00",
+    "LastPolled": "2025-08-18T15:47:39.2860047",
     "InvitedEmails": [],
     "MsgType": 0,
     "Message": "",
-    "SerializedMsg": "{\r\n  \"ChatRuid\": \"ac94090b-1c46-40ba-b921-e8175d921988\",\r\n  \"ChatRoomNr\": \"room_08181005_he.json\",\r\n  \"TicksLong\": [\r\n    638911083504914457,\r\n    638911083687485328,\r\n    638911086702787099\r\n  ],\r\n  \"LastPushed\": \"2025-08-18T10:11:10.2787099+02:00\",\r\n  \"LastPolled\": \"2025-08-18T10:11:10.2787099\",\r\n  \"InvitedEmails\": [],\r\n  \"MsgType\": 0,\r\n  \"Message\": \"\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"\",\r\n  \"Md5Hash\": \"\",\r\n  \"CBytes\": \"\"\r\n}",
     "Hash": "",
-    "Md5Hash": "",
-    "CBytes": ""
+    "Md5Hash": ""
   },
   "TimeStamp": "2025-08-12T07:25:32.2734519+02:00",
-  "SaveStamp": "2025-08-18T10:12:43.2022112+02:00",
+  "SaveStamp": "2025-08-18T15:51:04.8527372+02:00",
   "MyContact": {
     "ContactId": 0,
     "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
@@ -34,25 +40,11 @@
     "Email": "he@area23.at",
     "Mobile": "+436507627928",
     "Address": "Theresianumgasse 6/28, 1040 Wien",
-    "SecretKey": "",
-    "ContactImage": {
-      "ImageFileName": "F48",
-      "ImageMimeType": "image/png",
-      "Sha256Hash": "4031bb19a5d2dad8e7d702070947d4c4e564a2fe7064277775dcf91f72d37b88",
-      "MsgType": 1,
-      "Message": "",
-      "SerializedMsg": "",
-      "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
-    },
-    "NameEmail": "Heinrich G. Elsigan <he@area23.at>",
+    "ContactImage": null,
     "MsgType": 0,
-    "Message": "room_08181005_he.json",
-    "SerializedMsg": "{\r\n  \"ContactId\": 0,\r\n  \"Cuid\": \"49cb518a-6966-4fbb-ac0e-e27a1115bf29\",\r\n  \"Name\": \"Heinrich G. Elsigan\",\r\n  \"Email\": \"he@area23.at\",\r\n  \"Mobile\": \"+436507627928\",\r\n  \"Address\": \"Theresianumgasse 6/28, 1040 Wien\",\r\n  \"SecretKey\": \"\",\r\n  \"ContactImage\": {\r\n    \"ImageFileName\": \"F48\",\r\n    \"ImageMimeType\": \"image/png\",\r\n    \"Sha256Hash\": \"4031bb19a5d2dad8e7d702070947d4c4e564a2fe7064277775dcf91f72d37b88\",\r\n    \"MsgType\": 1,\r\n    \"Message\": \"\",\r\n    \"SerializedMsg\": \"\",\r\n    \"Hash\": \"\",\r\n    \"Md5Hash\": \"\",\r\n    \"CBytes\": \"\"\r\n  },\r\n  \"NameEmail\": \"Heinrich G. Elsigan <he@area23.at>\",\r\n  \"MsgType\": 0,\r\n  \"Message\": \"room_08181005_he.json\",\r\n  \"SerializedMsg\": \"\",\r\n  \"Hash\": \"6bFfDC\",\r\n  \"Md5Hash\": \"e8f6cd243ec4770a2cd60c556692f5a9\",\r\n  \"CBytes\": \"\"\r\n}",
+    "Message": "room_08181537_he.json",
     "Hash": "6bFfDC",
-    "Md5Hash": "e8f6cd243ec4770a2cd60c556692f5a9",
-    "CBytes": ""
+    "Md5Hash": "d473601fedca733b5744384f3d88f9d0"
   },
   "Contacts": [
     {
@@ -62,15 +54,11 @@
       "Email": "aengl@aengl.cc",
       "Mobile": "43-676-840341317",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Adolf Engl <aengl@aengl.cc>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 2,
@@ -79,15 +67,11 @@
       "Email": "master.log@gmx.at",
       "Mobile": "+43 676 3057399",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Alexander El-Boueri <master.log@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 3,
@@ -96,15 +80,11 @@
       "Email": "alexander.winkelmeyer@gmail.com",
       "Mobile": "+436766205802 ",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Alexander Winkelmeyer <alexander.winkelmeyer@gmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 4,
@@ -113,15 +93,11 @@
       "Email": "amira.awad@gmx.at",
       "Mobile": "+43-676-3058827",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Amira Awad <amira.awad@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 5,
@@ -130,15 +106,11 @@
       "Email": "akrann@csc.com",
       "Mobile": "+43-664-6126181",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Andrea Krann <akrann@csc.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 6,
@@ -147,15 +119,11 @@
       "Email": "office@goodfood-stangl.com",
       "Mobile": "+43 650 50 10 757",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Angela Stangl <office@goodfood-stangl.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 7,
@@ -164,15 +132,11 @@
       "Email": "anton.scheu@activesolution.at",
       "Mobile": "0676 841785290",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Anton SCHEU <anton.scheu@activesolution.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 8,
@@ -181,15 +145,11 @@
       "Email": "armin.fuerst@techtalk.at",
       "Mobile": "+43 699 14020072",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Armin Fürst <armin.fuerst@techtalk.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 9,
@@ -198,15 +158,11 @@
       "Email": "Werner.Bach@gmx.at",
       "Mobile": "+43 676 6953338",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Werner Manfred Bachmayer <Werner.Bach@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 10,
@@ -215,15 +171,11 @@
       "Email": "office@steiner-rechtsanwaeltin.at",
       "Mobile": "699-11760046",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Barbara Steiner <office@steiner-rechtsanwaeltin.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 11,
@@ -232,15 +184,11 @@
       "Email": "Binh-Thanh.Nguyen@andritz.com",
       "Mobile": "+4367762189758",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Binh Nguyen <Binh-Thanh.Nguyen@andritz.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 12,
@@ -249,15 +197,11 @@
       "Email": "Bojana.Jevtic@logic4biz.com",
       "Mobile": "+43 660 2504400",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Bojana Jevtic <Bojana.Jevtic@logic4biz.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 13,
@@ -266,15 +210,11 @@
       "Email": "christian.magnet@generali.at",
       "Mobile": "+4369910298202",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Christian Magnet <christian.magnet@generali.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 14,
@@ -283,15 +223,11 @@
       "Email": "christian.rehnelt@gmx.at",
       "Mobile": "+436803074134",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Christian Rehnelt <christian.rehnelt@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 15,
@@ -300,15 +236,11 @@
       "Email": "Claudia.Hacker@inhouse.wko.at",
       "Mobile": "",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Claudia Hacker <Claudia.Hacker@inhouse.wko.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 16,
@@ -317,15 +249,11 @@
       "Email": "vielbros@libero.it",
       "Mobile": "+39-0431-430657",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Claudio Viel <vielbros@libero.it>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 17,
@@ -334,15 +262,11 @@
       "Email": "danielkeberle@gmx.at",
       "Mobile": "676-3404260",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Daniel Keberle <danielkeberle@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 18,
@@ -351,15 +275,11 @@
       "Email": "ordination@dr-basic.at",
       "Mobile": "+43 1 6043257",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Dr. Emina Basic <ordination@dr-basic.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 19,
@@ -368,15 +288,11 @@
       "Email": "office@fact-consulting.com",
       "Mobile": "",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Fact Office <office@fact-consulting.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 20,
@@ -385,15 +301,11 @@
       "Email": "florian.soucek@icloud.com",
       "Mobile": "+43 664 9695117",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Florian Soucek <florian.soucek@icloud.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 21,
@@ -402,15 +314,11 @@
       "Email": "fp.walder@fact-consulting.com",
       "Mobile": "+43 1 8771130",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Franz-Peter Walder <fp.walder@fact-consulting.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 22,
@@ -419,15 +327,11 @@
       "Email": "franziska.kroen@gmx.at",
       "Mobile": "650-2535683",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Franziska Ladtstätter-Krön <franziska.kroen@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 23,
@@ -436,15 +340,11 @@
       "Email": "Eman@gmx.at",
       "Mobile": "+43-650-9091659",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Georg Toth <Eman@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 24,
@@ -453,15 +353,11 @@
       "Email": "noreply@github.com",
       "Mobile": "",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "GitHub noreply <noreply@github.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 25,
@@ -470,15 +366,11 @@
       "Email": "helmar.albrecht@protonmail.com",
       "Mobile": "0676 3295847",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Helmar Albrecht <helmar.albrecht@protonmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 26,
@@ -487,15 +379,11 @@
       "Email": "Horst.Leitenmueller@liwest.at",
       "Mobile": "+43-650-2042702",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Horst Leitenmueller <Horst.Leitenmueller@liwest.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 27,
@@ -504,15 +392,11 @@
       "Email": "Huberta.winkler@chello.at",
       "Mobile": "699-14568834",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Huberta Winkler (Attems) <Huberta.winkler@chello.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 28,
@@ -521,15 +405,11 @@
       "Email": "igor.sekowski@gmail.com",
       "Mobile": "+43 677 62540360",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Igor Sekowski <igor.sekowski@gmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 29,
@@ -538,15 +418,11 @@
       "Email": "ina.ivanceanu@gmail.com",
       "Mobile": "",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Ina Ivanceanu <ina.ivanceanu@gmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 30,
@@ -555,15 +431,11 @@
       "Email": "praxis@drstrauch.net",
       "Mobile": "",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Katrin Strauch <praxis@drstrauch.net>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 31,
@@ -572,15 +444,11 @@
       "Email": "konrad.antonicek@oeaw.ac.at",
       "Mobile": "",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Konrad Antonitschek <konrad.antonicek@oeaw.ac.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 32,
@@ -589,15 +457,11 @@
       "Email": "manfred.mahringer@gmx.at",
       "Mobile": "+43 676 6184073",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Manfred Mahringer <manfred.mahringer@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 33,
@@ -606,15 +470,11 @@
       "Email": "marchausmann@hotmail.com",
       "Mobile": "+39 366 3253394",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Marc Hausmann <marchausmann@hotmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 34,
@@ -623,15 +483,11 @@
       "Email": "MARIA.KARWINSKY@t-online.de",
       "Mobile": "0677 63148428",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Maria Karwinsky <MARIA.KARWINSKY@t-online.de>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 35,
@@ -640,15 +496,11 @@
       "Email": "marcus.fried@beko.at",
       "Mobile": "676-4065700",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Markus Fried <marcus.fried@beko.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 36,
@@ -657,15 +509,11 @@
       "Email": "markus.stumpfel2007@protonmail.com",
       "Mobile": "+43 664 5217354",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Markus Norbert Stumpfel <markus.stumpfel2007@protonmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 37,
@@ -674,15 +522,11 @@
       "Email": "mbiribau@gmail.com",
       "Mobile": "0676 4241959",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Martin Biribauer <mbiribau@gmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 38,
@@ -691,15 +535,11 @@
       "Email": "info@warum.net",
       "Mobile": "",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Martin Schipany <info@warum.net>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 39,
@@ -708,15 +548,11 @@
       "Email": "matthias.wohlmann@logic4biz.com",
       "Mobile": "+43 664 8490133",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Matthias  Wohlmann <matthias.wohlmann@logic4biz.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 40,
@@ -725,15 +561,11 @@
       "Email": "michael.figl@gmail.com",
       "Mobile": "+43 699 10139303",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Michael Figl <michael.figl@gmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 41,
@@ -742,15 +574,11 @@
       "Email": "Michael.Wild@andritz.com",
       "Mobile": "+436763182510",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Michael Wild <Michael.Wild@andritz.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 42,
@@ -759,15 +587,11 @@
       "Email": "wuest@mwi.co.at",
       "Mobile": "+43 664 214 9550",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Michael Wüst <wuest@mwi.co.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 43,
@@ -776,15 +600,11 @@
       "Email": "kontakt@praxis-friedrich.at",
       "Mobile": "0699 19697911",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Michaela Friedrich <kontakt@praxis-friedrich.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 44,
@@ -793,15 +613,11 @@
       "Email": "andrea.nekula@justiz.gv.at",
       "Mobile": "",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Nekula Andrea <andrea.nekula@justiz.gv.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 45,
@@ -810,15 +626,11 @@
       "Email": "nikolaus.bublik@chello.at",
       "Mobile": "0676 3779794",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Nikolaus Bublik <nikolaus.bublik@chello.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 46,
@@ -827,15 +639,11 @@
       "Email": "norbert.elsigan@gmx.at",
       "Mobile": "+43 664 73741347",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Norbert Elsigan <norbert.elsigan@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 47,
@@ -844,15 +652,11 @@
       "Email": "olaf@schermann.com",
       "Mobile": "+43-1-9971112",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Olaf Schermann <olaf@schermann.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 48,
@@ -861,15 +665,11 @@
       "Email": "paul.hoffmann@protec-austria.com",
       "Mobile": "+43-662-633393-0",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Paul Hoffmann <paul.hoffmann@protec-austria.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 49,
@@ -878,15 +678,11 @@
       "Email": "peter.chana@inhouse.wko.at",
       "Mobile": "+43 699 19746897",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Peter Chana <peter.chana@inhouse.wko.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 50,
@@ -895,15 +691,11 @@
       "Email": "peter.horcicka@gmx.at",
       "Mobile": "+43 676 6621511",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Peter Horcicka <peter.horcicka@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 51,
@@ -912,15 +704,11 @@
       "Email": "philipp.sztatecsny@magna.com",
       "Mobile": "664-88405120",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Philip Sztatescny <philipp.sztatecsny@magna.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 52,
@@ -929,15 +717,11 @@
       "Email": "philipp.mitteroecker@univie.ac.at",
       "Mobile": "+43 1 427756705",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Phillip Mitteröcker <philipp.mitteroecker@univie.ac.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 53,
@@ -946,15 +730,11 @@
       "Email": "officelinz@mpsa.com",
       "Mobile": "+43 732 7704810",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "PSA Retail Linz Leonding <officelinz@mpsa.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 54,
@@ -963,15 +743,11 @@
       "Email": "renate.ausserdorfer@logic4biz.com",
       "Mobile": "+43 1 8771881 10",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Renate Außerdorfer <renate.ausserdorfer@logic4biz.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 55,
@@ -980,15 +756,11 @@
       "Email": "rspringer@logic.univie.ac.at",
       "Mobile": "0676 3197788",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Richard Springer <rspringer@logic.univie.ac.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 56,
@@ -997,15 +769,11 @@
       "Email": "Robert.Berezka@gmx.at",
       "Mobile": "+43-676-4501576",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Robert Berezka <Robert.Berezka@gmx.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 57,
@@ -1014,15 +782,11 @@
       "Email": "robert.satzinger@chello.at",
       "Mobile": "+43-664-1781518",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Robert Satzinger <robert.satzinger@chello.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 58,
@@ -1031,15 +795,11 @@
       "Email": "Robert.Varga@inhouse.wko.at",
       "Mobile": "+43 5 90900-4583",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Robert Varga <Robert.Varga@inhouse.wko.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 59,
@@ -1048,15 +808,11 @@
       "Email": "rwalcher@chello.at",
       "Mobile": "+43-699-11361910",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Roland Walcher <rwalcher@chello.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 60,
@@ -1065,15 +821,11 @@
       "Email": "romana.mracek@gmail.com",
       "Mobile": "+4369917095976",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Romana Mracek <romana.mracek@gmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 61,
@@ -1082,15 +834,11 @@
       "Email": "sabine.krasny@aon.at",
       "Mobile": "+43 680 1262616",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Sabine Krasny <sabine.krasny@aon.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 62,
@@ -1099,15 +847,11 @@
       "Email": "sabine.stumpfel@gmail.com",
       "Mobile": "+43 660 4360239",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Sabine Stumpfel <sabine.stumpfel@gmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 63,
@@ -1116,15 +860,11 @@
       "Email": "sandrakonrad@live.at",
       "Mobile": "+43-1-711003215",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Sandra Konrad <sandrakonrad@live.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 64,
@@ -1133,15 +873,11 @@
       "Email": "sophiekonrad50@gmail.com",
       "Mobile": "+43-680-3130010",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Sophie Konrad <sophiekonrad50@gmail.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 65,
@@ -1150,15 +886,11 @@
       "Email": "svetlana.maksimovic@aon.at",
       "Mobile": "+43 699 12099823",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Svetlana Maksimovic-Djordjevic <svetlana.maksimovic@aon.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 66,
@@ -1167,15 +899,11 @@
       "Email": "tanja.afra@gmail.com ",
       "Mobile": "0676 951 97 31",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Tanja Afra <tanja.afra@gmail.com >",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 67,
@@ -1184,15 +912,11 @@
       "Email": "vallac@yahoo.com",
       "Mobile": "664-3523852",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Valerie Markones Croy <vallac@yahoo.com>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 68,
@@ -1201,15 +925,11 @@
       "Email": "a.w.m@aon.at",
       "Mobile": "+43224320198",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Wolfgang Brandstätter <a.w.m@aon.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     },
     {
       "ContactId": 69,
@@ -1218,15 +938,11 @@
       "Email": "Wolfgang.Wagner@inhouse.wko.at",
       "Mobile": "+43 664 48179189",
       "Address": "",
-      "SecretKey": "",
       "ContactImage": null,
-      "NameEmail": "Wolfgang Wagner <Wolfgang.Wagner@inhouse.wko.at>",
       "MsgType": 1,
       "Message": "",
-      "SerializedMsg": "",
       "Hash": "",
-      "Md5Hash": "",
-      "CBytes": ""
+      "Md5Hash": ""
     }
   ],
   "FriendIPs": [],
@@ -1234,17 +950,16 @@
     "169.254.116.213",
     "169.254.85.69",
     "169.254.39.21",
-    "10.0.0.249",
+    "10.103.228.28",
     "::1",
     "127.0.0.1",
-    "192.168.176.1"
+    "172.18.192.1"
   ],
   "Proxies": [
     "18.101.101.108",
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
   "SecretKeys": [
-    "",
     "123456"
   ]
 }

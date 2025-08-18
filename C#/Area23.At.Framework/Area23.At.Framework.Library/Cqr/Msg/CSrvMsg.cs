@@ -295,10 +295,13 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public override bool Encrypt(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
-            string keyHash = "", pipeString = "", encrypted = "";
+            string pipeString = "", encrypted = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
             try
             {
-                keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+                if (TContent != null)
+                {                    
+                    Message = JsonConvert.SerializeObject(TContent);
+                }
                 pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
                 Hash = pipeString;
                 Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, Message), "");
@@ -364,10 +367,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 }
 
                 Message = decrypted;
-                if (decrypted.IsValidJson())
-                {
-                    TContent = Newtonsoft.Json.JsonConvert.DeserializeObject<TC>(decrypted);
-                }
+                TContent = Newtonsoft.Json.JsonConvert.DeserializeObject<TC>(decrypted);
 
             }
             catch (Exception exCrypt)
@@ -479,6 +479,10 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             string encrypted = "", pipeString = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
             try
             {
+                if (cSrvMsg.TContent != null)
+                {                    
+                    cSrvMsg.Message = JsonConvert.SerializeObject(cSrvMsg.TContent);
+                }
                 pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
                 cSrvMsg.Hash = pipeString;
                 cSrvMsg.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, cSrvMsg.Message), "");
@@ -541,10 +545,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 }
 
                 cSrvMsg.Message = decrypted;
-                if (decrypted.IsValidJson())
-                {
-                    cSrvMsg.TContent = Newtonsoft.Json.JsonConvert.DeserializeObject<TC>(decrypted);
-                }
+                cSrvMsg.TContent = Newtonsoft.Json.JsonConvert.DeserializeObject<TC>(decrypted);            
             }
             catch (Exception exCrypt)
             {

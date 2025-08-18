@@ -64,7 +64,13 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         this.textBoxEmail.Text = Settings.Singleton.MyContact.Email;
                         this.textBoxMobile.Text = Settings.Singleton.MyContact.Mobile;
                         this.textBoxAddress.Text = Settings.Singleton.MyContact.Address;
-                        base64image = Convert.ToBase64String(Entities.Settings.Singleton.MyContact?.ContactImage.ImageData);
+                        base64image = "";
+                        if (Entities.Settings.Singleton.MyContact.ContactImage != null &&
+                            Entities.Settings.Singleton.MyContact.ContactImage.ImageData != null &&
+                            Entities.Settings.Singleton.MyContact.ContactImage.ImageData.Length > 0)
+                        {
+                            base64image = Convert.ToBase64String(Entities.Settings.Singleton.MyContact.ContactImage.ImageData);
+                        }                        
                         if (!string.IsNullOrEmpty(base64image))
                         {
                             this.pictureBoxImage.Image = base64image.Base64ToImage();
