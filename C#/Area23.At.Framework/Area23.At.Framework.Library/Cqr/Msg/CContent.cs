@@ -10,37 +10,34 @@ using System.Linq;
 namespace Area23.At.Framework.Library.Cqr.Msg
 {
 
-
     [Serializable]
     public class CContent : IMsgAble
     {
-        // public string Message;
+        
+        #region properties
 
-        public CType MsgType { get; set; }
-
-        // public bool IsMime { get => IsMimeAttachment(); 
-
-        /// <summary>
-        /// Message TODO:
-        /// Obsolete("TODO: remove it with hash at end", false)]
-        /// </summary>
+        public SerType MsgType { get; set; }
+        
         public string Message { get; set; }
 
         [JsonIgnore]
-        internal virtual string SerializedMsg 
-        { 
-            get => (MsgType == CType.Xml) ? 
+        public virtual string SerializedMsg
+        {
+            get => (MsgType == SerType.Xml) ?
                         ToXml() :
-                        Newtonsoft.Json.JsonConvert.SerializeObject(this, Formatting.Indented); 
+                        Newtonsoft.Json.JsonConvert.SerializeObject(this, Formatting.Indented);
         }
 
         public string Hash { get; set; }
 
-
         public string Md5Hash { get; set; }
+
+        public EncodingType EnCodingType { get; set; }
 
         [JsonIgnore]
         protected internal byte[] CBytes { get; set; }
+
+        #endregion properties
 
         #region ctor
 
@@ -49,12 +46,13 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// </summary>
         public CContent()
         {
-            MsgType = CType.Json;
+            MsgType = SerType.Json;
             Message = string.Empty;
             // SerializedMsg = string.Empty;
             Hash = string.Empty;
             Md5Hash = string.Empty;
             CBytes = new byte[0];
+            EnCodingType = EncodingType.Base64;
         }
 
 
@@ -63,7 +61,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// </summary>
         /// <param name="serializedString">serialized string</param>
         /// <param name="msgArt">Serialization type</param>
-        public CContent(string serializedString, CType msgArt = CType.None)
+        public CContent(string serializedString, SerType msgArt = SerType.None)
         {
             Md5Hash = Crypt.Hash.MD5Sum.HashString(serializedString);
             Message = serializedString;
@@ -76,30 +74,30 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
             switch (msgArt)
             {
-                case CType.Json:
-                    MsgType = CType.Json;
-                    CContent cjson = GetMsgContentType(serializedString, out Type cqrType, CType.Json);
+                case SerType.Json:
+                    MsgType = SerType.Json;
+                    CContent cjson = GetMsgContentType(serializedString, out Type cqrType, SerType.Json);
                     if (cjson != null)
                     {
-                        cjson.MsgType = CType.Json;
+                        cjson.MsgType = SerType.Json;
                         CloneCopy(cjson, this);
                     }
                     break;
-                case CType.Xml:
-                    MsgType = CType.Xml;
+                case SerType.Xml:
+                    MsgType = SerType.Xml;
                     CContent cXml = GetMsgContentType(serializedString, out Type cqType, msgArt);
                     if (cXml != null)
                     {
-                        cXml.MsgType = CType.Xml;
+                        cXml.MsgType = SerType.Xml;
                         CloneCopy(cXml, this);
                     }
                     break;
-                case CType.None: //TODO
+                case SerType.None: //TODO
                     throw new NotImplementedException("TODO: implement reverse Reflection deserialization");
 
-                case CType.Raw:
+                case SerType.Raw:
                 default:
-                    MsgType = CType.Raw;
+                    MsgType = SerType.Raw;
                     Message = serializedString;
                     // SerializedMsg = serializedString;
 
@@ -119,7 +117,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// <param name="plainTextMsg">plain text message</param>
         /// <param name="hash"></param>
         /// <param name="msgArt"></param>
-        public CContent(string plainTextMsg, string hash, CType msgArt = CType.Raw, string md5Hash = "")
+        public CContent(string plainTextMsg, string hash, SerType msgArt = SerType.Raw, string md5Hash = "")
         {
             MsgType = msgArt;
             Hash = hash;
@@ -128,29 +126,29 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             CBytes = new byte[0];
             Md5Hash = md5Hash;
 
-            if (msgArt == CType.Json)
-            {
-                // SerializedMsg = this.ToJson();
-            }
-            if (msgArt == CType.Xml)
-            {
-                // SerializedMsg = this.ToXml();
-            }
-            if (msgArt == CType.Raw)
+            //if (msgArt == CType.Json)
+            //{
+            //	SerializedMsg = this.ToJson();
+            //}
+            //if (msgArt == CType.Xml)
+            //{
+            //	SerializedMsg = this.ToXml();
+            //}
+            if (msgArt == SerType.Raw)
             {
                 if (plainTextMsg.Contains(hash) && plainTextMsg.IndexOf(hash) > (plainTextMsg.Length - 10))
                 {
                     Message = SerializedMsg.Substring(0, SerializedMsg.Length - Hash.Length);
                 }
-                else
-                {
-                    // SerializedMsg = Message + "\n" + hash + "\0";
-                }
+                //else
+                //{
+                // SerializedMsg = Message + "\n" + hash + "\0";
+                // }
             }
-            if (msgArt == CType.None)
-            {
-                // SerializedMsg = this.ToString();
-            }
+            // if (msgArt == CType.None)
+            // {
+            //	SerializedMsg = this.ToString();
+            // }
         }
 
 
@@ -161,10 +159,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #endregion ctor
 
-        public virtual CContent CCopy(CContact leftDest, CChatRoom rightSrc)
-        {
-            return CloneCopy(rightSrc, leftDest);
-        }
+        #region members
 
         #region EnDeCrypt+DeSerialize
 
@@ -246,16 +241,10 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         #region serialization / deserialization
 
         /// <summary>
-        /// Serialize <see cref="CContent"/> to Json Stting
+        /// Serialize all CC classes to json
         /// </summary>
         /// <returns>json serialized string</returns>
-        public virtual string ToJson()
-        {
-            // this.SerializedMsg = "";
-            string jsonText = JsonConvert.SerializeObject(this);
-            // this.SerializedMsg = jsonText;
-            return jsonText;
-        }
+        public virtual string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented);
 
         public virtual T FromJson<T>(string jsonText)
         {
@@ -263,50 +252,55 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 jsonText = SerializedMsg;
 
             T t = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonText);
-            if (t != null && t is CContent cc)
+            if (t != null)
             {
-                CloneCopy(cc, this);
+                if (t is CContent cc)
+                    cc.CCopy(this, cc);
+                if (t is CContact cct)
+                    cct.CCopy(this, cct);
+                if (t is CFile cfile)
+                    cfile.CCopy(this, cfile);
+                else if (t is CImage cimg)
+                    cimg.CCopy(this, cimg);
+                else if (t is CChatRoom cchatr)
+                    cchatr.CCopy(this, cchatr);
             }
+
             return t;
         }
 
-        public virtual string ToXml()
-        {
-            // SerializedMsg = "";
-            string xmlString = Utils.SerializeToXml<CContent>(this);
-            // SerializedMsg = xmlString;
-            return xmlString;
-        }
+        public virtual string ToXml() => Utils.SerializeToXml<CContent>(this);
 
         public virtual T FromXml<T>(string xmlText)
         {
-            T cqrT = Utils.DeserializeFromXml<T>(xmlText);
-            if (cqrT is CContent cc)
+            T t = Utils.DeserializeFromXml<T>(xmlText);
+            if (t != null)
             {
-                CloneCopy(cc, this);
+                if (t is CContent cc)
+                    cc.CCopy(this, cc);
+                if (t is CContact cct)
+                    cct.CCopy(this, cct);
+                else if (t is CFile cfile)
+                    cfile.CCopy(this, cfile);
+                else if (t is CImage cimg)
+                    cimg.CCopy(this, cimg);
+                else if (t is CChatRoom cchatr)
+                    cchatr.CCopy(this, cchatr);
+                //else if (t is CSrvMsg<TC> csrvmsg)
+                //                csrvmsg.CCopy(this, csrvmsg);
             }
 
-            return cqrT;
+            return t;
         }
 
-        public override string ToString()
-        {
-            string s = this.GetType().ToString() + "\n";
-            var fields = Utils.GetAllFields(this.GetType());
-            foreach (var field in fields)
-                s += field.Name + " \t\"" + field.GetRawConstantValue()?.ToString() + "\"\n";
-            var props = Utils.GetAllProperties(this.GetType());
-            foreach (var prp in props)
-                s += prp.Name + " \t\"" + prp.GetRawConstantValue()?.ToString() + "\"\n";
-
-            return s;
-        }
 
         #endregion serialization / deserialization
 
 
-        #region members
-
+        public virtual CContent CCopy(CContent leftDest, CContent rightSrc)
+        {
+            return CloneCopy(rightSrc, leftDest);
+        }
 
         public virtual string VerificationHash(out string msg)
         {
@@ -371,7 +365,6 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             return Hash ?? string.Empty;
         }
 
-
         public virtual bool IsCFile()
         {
             if (this is CFile cf && string.IsNullOrEmpty(cf.FileName) && cf.Data != null)
@@ -391,7 +384,6 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             return false;
         }
 
-
         public virtual CFile ToCFile()
         {
             if (this is CFile cf && string.IsNullOrEmpty(cf.FileName) && cf.Data != null)
@@ -400,9 +392,9 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             if (string.IsNullOrEmpty(SerializedMsg))
             {
                 //if (MsgType == null || MsgType == CType.Json || MsgType == CType.Json)
-                    // SerializedMsg = this.ToJson();
-                // else if (MsgType == CType.Xml)
-                    // SerializedMsg = this.ToXml();
+                //	SerializedMsg = this.ToJson();
+                //else if (MsgType == CType.Xml)
+                //	SerializedMsg = this.ToXml();
             }
             if (SerializedMsg.IsValidJson() && SerializedMsg.Contains("FileName") && SerializedMsg.Contains("Base64Type"))
                 return (CFile)JsonConvert.DeserializeObject<CFile>(SerializedMsg);
@@ -416,12 +408,12 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #region static members
 
-        public static CContent GetMsgContentType(string serString, out Type outType, CType msgType = CType.None)
+        public static CContent GetMsgContentType(string serString, out Type outType, SerType msgType = SerType.None)
         {
             outType = typeof(CContent);
             switch (msgType)
             {
-                case CType.Json:
+                case SerType.Json:
                     if (serString.IsValidJson())
                     {
                         //if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
@@ -458,7 +450,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                         return (CContent)JsonConvert.DeserializeObject<CContent>(serString);
                     }
                     break;
-                case CType.Xml:
+                case SerType.Xml:
                     if (serString.IsValidXml())
                     {
                         //if (serString.Contains("ServerMsg") && serString.Contains("ClientMsg") && serString.Contains("ServerMsgString") && serString.Contains("ClientMsgString"))
@@ -492,8 +484,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                         return (CContent)Utils.DeserializeFromXml<CContent>(serString);
                     }
                     break;
-                case CType.Raw:
-                case CType.None:
+                case SerType.Raw:
+                case SerType.None:
                 default: throw new NotImplementedException("GetMsgContentType(...): case MsgEnum.RawWithHashAtEnd and MsgEnum.None not implemented");
             }
 
@@ -559,15 +551,15 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             if (source == null)
                 return null;
             if (destination == null)
-                destination = new CContent(source);
+                destination = new CContent();
 
             destination.Hash = source.Hash;
             destination.Message = source.Message;
             destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
-            // destination.SerializedMsg = "";
-            // destination.SerializedMsg = source.ToJson();
+            destination.EnCodingType = source.EnCodingType;
+
             return destination;
 
         }

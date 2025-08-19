@@ -9,7 +9,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 {
 
     [Serializable]
-    public enum CType
+    public enum SerType
     {
         None = 0,
         Json = 1,

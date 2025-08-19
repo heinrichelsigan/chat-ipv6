@@ -14,6 +14,48 @@ namespace Area23.At.Framework.Core.Cache
 {
 
     /// <summary>
+    /// enum persist type
+    /// </summary>
+    public enum Persist
+    {
+        None = 0,
+        App = 1,
+        Redis = 2,
+        Json = 3,
+        State = 4
+        //RedisMS = 5
+    }
+
+    public static class PersistCache
+    {
+        private static Persist _cache= Persist.App;
+
+        public const string PERSIST_MSG_IN = "PersistMsgIn";
+
+        /// <summary>
+        /// returns where message is persisted
+        /// </summary>
+        public static Persist CacheType { get => _cache; }
+
+        /// <summary>
+        /// static ctor
+        /// </summary>
+        static PersistCache()
+        {
+            string persistWhere = "AppDomain";
+            if (ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN] != null)
+                persistWhere = (string)ConfigurationManager.AppSettings[PERSIST_MSG_IN].ToString();
+
+            if (!Enum.TryParse<Persist>(persistWhere, out _cache))
+                _cache = PersistType.AppDomain;
+        }
+
+        public static void SetRedis(PersistType cacheType = Persist.Redis { _cache = cacheType; }
+
+    }
+
+
+    /// <summary>
     /// CacheTypVal any cached value.
     /// Use default empty ctor <see cref="CacheTypVal()"/> and
     /// <see cref="SetValue{T}(T)"/> to set the cached value;
@@ -73,6 +115,8 @@ namespace Area23.At.Framework.Core.Cache
             return tvalue ?? default(T);
         }
 
+
+
         /// <summary>
         /// Sets a generic cached value
         /// </summary>
@@ -88,127 +132,259 @@ namespace Area23.At.Framework.Core.Cache
 
 
     /// <summary>
-    /// MemCache an application cache implemented saved in memory only at runtime
-    /// derive from <see cref="MemCache"/> and implement your own cache by implementing a new variant
+    /// CacheHashDict an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheTypVal}"/> saved in memory only at runtime
+    /// derive from <see cref="MemCache"/> and implement your own cache by implementing a new variant for property <see cref="AppDict"/>
     /// </summary>
-    public abstract class MemCache
+    public class MemCache
     {
 
         public const string APP_CONCURRENT_DICT = "APP_CONCURRENT_DICT";
-        protected internal readonly Lock _lock = new Lock();
+        public const int CACHE_READ_UPDATE_INTERVAL = 120;
+        protected internal static readonly object _lock = new object(), _outerlock = new object();
 
-        protected internal static readonly Lazy<MemCache> _instance;
-        public static MemCache CacheDict => _instance.Value;
+        protected internal DateTime _lastCacheRW = DateTime.Now;
 
-        public static readonly string CacheVariant = "MemCache";
+        protected internal TimeSpan _timePassedSinceLastRW = TimeSpan.Zero;
 
-        /// <summary>
-        /// private <see cref="ConcurrentDictionary{string, CacheTypeValue}"/>
-        /// </summary>
-        protected internal static ConcurrentDictionary<string, CacheTypVal> _appCache = new ConcurrentDictionary<string, CacheTypVal>();
+        protected internal static HashSet<string> _allKeys = new HashSet<string>();
 
-        /// <summary>
-        /// public property get accessor for <see cref="_appCache"/> stored in <see cref="AppDomain.CurrentDomain"/>
-        /// </summary>
-        protected virtual ConcurrentDictionary<string, CacheTypVal> AppCache
+        public static string CacheVariant = "MemCache";
+
+        protected internal static bool _onceCreated = false;
+
+        protected internal Persist _persist;
+        public virtual string CacheType { get => _persist.ToString(); }
+
+        protected internal static Lazy<MemCache> _instance;
+        public static MemCache CacheDict
         {
             get
             {
-                // _appCache =  (ConcurrentDictionary<string, CacheTypVal>) get it where to get it
-                if (_appCache == null)
+                if (_instance == null && !_onceCreated)
                 {
-                    _appCache = new ConcurrentDictionary<string, CacheTypVal>();
-                    // where to set it _appCache
+                    Persist cacheType = PersistCache.CacheType;
+                    CreateInstance(cacheType);
                 }
-                return _appCache;
-            }
-            set
-            {
-                if (value != null && value.Count > 0)
-                {
-                    _appCache = value;
-                    // if (_appCache != null && _appCache.Count > 0)
-                    //      set it where to set it _appCache
-                }
+
+                return _instance.Value;
             }
         }
 
-        public object? this[string ckey]
-        {
-            get => (AppCache.ContainsKey(ckey) && AppCache.TryGetValue(ckey, out CacheTypVal? cvalue)) ? cvalue._Value : null;
-            set
-            {
-                object? ovalue = value;
-                Type? otype = value?.GetType();
-                if (AppCache.ContainsKey(ckey) && AppCache.TryGetValue(ckey, out CacheTypVal oldValue))
-                    _appCache.TryRemove(ckey, out oldValue);
-
-                _appCache.TryAdd(ckey, new CacheTypVal(ovalue, otype));
-                AppCache = _appCache;
-            }
-        }
 
         /// <summary>
-        /// Get all keys from <see cref="AppCache"/> which is implemented as a <see cref="ConcurrentDictionary{string, CacheTypVal}"/>
+        /// private <see cref="ConcurrentDictionary{string, CacheTypVal}"/> 
         /// </summary>
-        public virtual string[] AllKeys { get => AppCache.Keys.ToArray(); }
+        protected ConcurrentDictionary<string, CacheTypVal> _appDict = new ConcurrentDictionary<string, CacheTypVal>();
 
         /// <summary>
-        /// static ctor
+        /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
+        /// </summary>
+        protected virtual ConcurrentDictionary<string, CacheTypVal> AppDict
+        {
+            get => LoadDictionaryCache();           // get, where to get it (_appDict from cache)
+            set => SaveDictionaryToCache(value);    // set it where to set it (value to _appDict to cache)
+        }
+
+
+        /// <summary>
+        /// Indexer with string 
+        /// </summary>
+        /// <param name="ckey">key to lookup</param>
+        /// <returns>object or null, thou must cast object</returns>
+        public string this[string ckey]
+        {
+            get => GetString(ckey);
+            set => SetString(ckey, value);
+        }
+
+        /// <summary>
+        /// Get all keys from <see cref="AppDict"/> which is implemented as a <see cref="ConcurrentDictionary{string, CacheTypVal}"/>
+        /// </summary>
+        public virtual string[] AllKeys { get => GetAllKeys().ToArray(); }
+
+
+        /// <summary>
+        /// ctor
         /// </summary>
         static MemCache()
         {
-            string persistMsgIn = "JsonFile";
-
-            if (ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN] != null)
-            {
-                persistMsgIn = (string)ConfigurationManager.AppSettings[Constants.PERSIST_MSG_IN];
-            }
-
-            switch (persistMsgIn)
-            {
-                case "JsonFile":
-                    CacheVariant = "JsonFile";
-                    _instance = new Lazy<MemCache>(() => new JsonCache());
-                    break;
-                case "Redis":
-                    // TODO: Redis
-                    CacheVariant = "Redis";
-                    _instance = new Lazy<MemCache>(() => new RedIsCache());
-                    break;
-                case "ApplicationState":
-                case "AppDomain":
-                default:
-                    CacheVariant = "AppDomain";
-                    _instance = new Lazy<MemCache>(() => new AppCurrentDomainCache());
-                    break;
-            }
+            Persist persistType = PersistCache.CacheType;
+            CreateInstance(persistType);
         }
 
 
-        /// <summary>
-        /// Static constructor
-        /// </summary>
         public MemCache()
         {
-            _appCache = new ConcurrentDictionary<string, CacheTypVal>();
+            _persist = PersistCache.CacheType;
+        }
+
+        protected internal static void CreateInstance(Persist cacheType)
+        {
+            lock (_lock)
+            {
+                switch (cacheType)
+                {
+                    case Persist.Json:
+                        _instance = new Lazy<MemCache>(() => new JsonCache());
+                        break;
+                    case Persist.Redis:
+                        _instance = new Lazy<MemCache>(() => new RedisCache());
+                        break;
+                    //case Persist.RedisMS:
+                    //    _instance = new Lazy<MemCache>(() => new RedisMSCache());
+                    //    break;
+                    case Persist.App:
+                    case Persist.State:
+                    default:
+                        _instance = new Lazy<MemCache>(() => new AppCache());
+                        break;
+                }
+
+                _onceCreated = true;
+                CacheVariant = cacheType.ToString();
+            }
+
         }
 
         /// <summary>
-        /// Gets a value from <see cref="ConcurrentDictionary<string, CacheTypVal>"/> stored <see cref="System.AppDomain.CurrentDomain"/>
+        /// get, where to get it (_appDict from cache)
+        /// </summary>
+        /// <param name="repeatLoadingPeriodically">if true, _appDict will be repeatedly loaded from cache <see cref="CACHE_READ_UPDATE_INTERVAL" /> in seconds</param>
+        /// <returns><see cref="ConcurrentDictionary{string, CacheTypVal}"/> _appDict</returns>
+        public virtual ConcurrentDictionary<string, CacheTypVal> LoadDictionaryCache(bool repeatLoadingPeriodically = false)
+        {
+
+            if (_appDict == null || _appDict.Count == 0)
+            {
+                _timePassedSinceLastRW = DateTime.Now.Subtract(_lastCacheRW);
+                _lastCacheRW = DateTime.Now;
+                _appDict = new ConcurrentDictionary<string, CacheTypVal>();
+                // where to set it _appDict
+            }
+
+            return _appDict;
+        }
+
+        /// <summary>
+        /// set where to set <see cref="ConcurrentDictionary{string, CacheTypVal}">it</see>  
+        /// (value to _appDict to cache)
+        /// </summary>
+        /// <param name="cacheDict"><see cref="ConcurrentDictionary{string, CacheTypVal}"/></param>
+        public virtual void SaveDictionaryToCache(ConcurrentDictionary<string, CacheTypVal> cacheDict)
+        {
+            if (cacheDict != null) //  && value.Count > 0
+                _appDict = cacheDict;
+        }
+
+        
+        #region virtual cache operations on _appDict methods
+
+        public virtual string GetString(string ckey)
+        {
+            string valString = "";
+
+            if (!string.IsNullOrEmpty(ckey))
+            {
+                _appDict = AppDict;
+                lock (_lock)
+                {
+                    if (_appDict.ContainsKey(ckey) && _appDict.TryGetValue(ckey, out var cvalue))
+                    {
+                        if (cvalue != null)
+                            valString = cvalue.ToString();
+                    }
+                }
+            }
+
+            return valString;
+        }
+
+        /// <summary>
+        /// Gets a value from <see cref="ConcurrentDictionary{string, CacheTypVal}"/> stored <see cref="System.AppDomain.CurrentDomain"/>
         /// </summary>
         /// <typeparam name="T">generic type of cached value</typeparam>
         /// <param name="ckey">cache key</param>
         /// <returns>generic cached value stored at key</returns>
         public virtual T GetValue<T>(string ckey)
         {
-            T tvalue = (AppCache.ContainsKey(ckey) && AppCache.TryGetValue(ckey, out var cvalue)) ? cvalue.GetValue<T>() : default(T);
+            lock (_outerlock)
+            {
+                T tvalue = default(T);
 
-            return tvalue;
+                if (!string.IsNullOrEmpty(ckey))
+                {
+                    _appDict = AppDict;
+                    lock (_lock)
+                    {
+                        if (_appDict.ContainsKey(ckey) && _appDict.TryGetValue(ckey, out var cvalue))
+                        {
+                            if (cvalue != null)
+                            {
+                                tvalue = cvalue.GetValue<T>();
+                            }
+                        }
+                    }
+                }
+
+                return tvalue;
+            }
+
+        }
+
+        public virtual Nullable<T> GetNullableValue<T>(string ckey) where T : struct
+        {
+            Nullable<T> nullableT = null;
+
+            if (!string.IsNullOrEmpty(ckey))
+            {
+                lock (_lock)
+                {
+                    if (_appDict.ContainsKey(ckey) && _appDict.TryGetValue(ckey, out var cvalue))
+                    {
+                        if (cvalue != null)
+                            nullableT = cvalue.GetNullableValue<T>();
+                    }
+                }
+            }
+
+            return nullableT;
+        }
+
+        public virtual bool SetString(string ckey, string svalue)
+        {
+            lock (_outerlock)
+            {
+                bool addedOrUpdated = false;
+
+                if (string.IsNullOrEmpty(ckey) || svalue == null)
+                    return addedOrUpdated;
+
+                CacheTypVal cvalue = new CacheTypVal();
+                cvalue.SetValue<string>(svalue);
+
+                _appDict = LoadDictionaryCache(true);
+
+                lock (_lock)
+                {
+                    if (!_appDict.ContainsKey(ckey))
+                        addedOrUpdated = _appDict.TryAdd(ckey, cvalue);
+                    else if (_appDict.TryGetValue(ckey, out CacheTypVal oldValue))
+                        addedOrUpdated = _appDict.TryUpdate(ckey, cvalue, oldValue);
+
+                    // MAYBE SHORTER BUT NOBODY CAN QUICK READ AND UNDERSTAND THIS
+                    // addedOrUpdated = (!AppCache.ContainsKey(ckey)) ? AppCache.TryAdd(ckey, cvalue) :
+                    //    (AppCache.TryGetValue(ckey, out CacheTypVal oldValue)) ? _appCache.TryUpdate(ckey, cvalue, oldValue) : false;
+
+                    if (addedOrUpdated) // saves the modified ConcurrentDictionary{string, CacheTypVal} back to AppDomain
+                        SaveDictionaryToCache(_appDict);
+                }
+
+                return addedOrUpdated;
+            }
         }
 
         /// <summary>
-        /// Sets a generic value to <see cref="ConcurrentDictionary<string, CacheTypVal>"/> stored <see cref="System.AppDomain.CurrentDomain"/>
+        /// Sets a generic value to <see cref="ConcurrentDictionary{string, CacheTypVal}"/> stored <see cref="System.AppDomain.CurrentDomain"/>
         /// </summary>
         /// <typeparam name="T">generic type of cached value</typeparam>
         /// <param name="ckey">cache key</param>
@@ -216,60 +392,84 @@ namespace Area23.At.Framework.Core.Cache
         /// <returns>true, if add or updated succeeded, otherwise false</returns>
         public virtual bool SetValue<T>(string ckey, T tvalue)
         {
-            bool addedOrUpdated = false;
+            lock (_outerlock)
+            {
+                bool addedOrUpdated = false;
 
-            if (string.IsNullOrEmpty(ckey) || tvalue == null)
+                if (string.IsNullOrEmpty(ckey) || tvalue == null)
+                    return addedOrUpdated;
+
+                CacheTypVal cvalue = new CacheTypVal();
+                cvalue.SetValue<T>(tvalue);
+
+                _appDict = LoadDictionaryCache(true);
+
+                lock (_lock)
+                {
+                    if (!_appDict.ContainsKey(ckey))
+                        addedOrUpdated = _appDict.TryAdd(ckey, cvalue);
+                    else if (_appDict.TryGetValue(ckey, out CacheTypVal oldValue))
+                        addedOrUpdated = _appDict.TryUpdate(ckey, cvalue, oldValue);
+
+                    // MAYBE SHORTER BUT NOBODY CAN QUICK READ AND UNDERSTAND THIS
+                    // addedOrUpdated = (!AppCache.ContainsKey(ckey)) ? AppCache.TryAdd(ckey, cvalue) :
+                    //    (AppCache.TryGetValue(ckey, out CacheTypVal oldValue)) ? _appCache.TryUpdate(ckey, cvalue, oldValue) : false;
+
+                    if (addedOrUpdated) // saves the modified ConcurrentDictionary{string, CacheTypVal} back to AppDomain
+                        SaveDictionaryToCache(_appDict);
+                }
+
                 return addedOrUpdated;
-
-            CacheTypVal cvalue = new CacheTypVal();
-            cvalue.SetValue<T>(tvalue);
-
-            if (!AppCache.ContainsKey(ckey))
-                addedOrUpdated = AppCache.TryAdd(ckey, cvalue);
-            else if (AppCache.TryGetValue(ckey, out CacheTypVal oldValue))
-                addedOrUpdated = _appCache.TryUpdate(ckey, cvalue, oldValue);
-
-            // MAYBE SHORTER BUT NOBODY CAN QUICK READ AND UNDERSTAND THIS
-            // addedOrUpdated = (!AppCache.ContainsKey(ckey)) ? AppCache.TryAdd(ckey, cvalue) :
-            //    (AppCache.TryGetValue(ckey, out CacheTypVal oldValue)) ? _appCache.TryUpdate(ckey, cvalue, oldValue) : false;
-
-            if (addedOrUpdated)
-                AppCache = _appCache;  // saves the modified ConcurrentDictionary{string, CacheTypVal} back to AppDomain
-
-            return addedOrUpdated;
+            }
         }
 
         /// <summary>
         /// Looks, if  <see cref="ConcurrentDictionary{string, CacheTypVal}"/>  contains the key
         /// </summary>
         /// <param name="ckey">lookup key</param>
-        /// <returns>true, if ckey is not null or empty and <see cref="AppCache"/> contains ckey, otherwise false</returns>
+        /// <returns>true, if ckey is not null or empty and <see cref="AppDict"/> contains ckey, otherwise false</returns>
         public virtual bool ContainsKey(string ckey)
         {
-            return (!string.IsNullOrEmpty(ckey) && AppCache.ContainsKey(ckey));
+            return (!string.IsNullOrEmpty(ckey) && AppDict.ContainsKey(ckey));
         }
 
         /// <summary>
-        /// RemoveKey removes a key value pair from <see cref="AppCache"/>
+        /// RemoveKey removes a key value pair from <see cref="AppDict"/>
         /// </summary>
         /// <param name="ckey">key to remove</param>
-        /// <returns>true, if key value pair was successfully removed or <see cref="AppCache"/> doesn't contain anymore ckey;
+        /// <returns>true, if key value pair was successfully removed or <see cref="AppDict"/> doesn't contain anymore ckey;
         /// false if ckey is <see cref="null"/> or <see cref="string.Empty"/> or removing ckey from <see cref="ConcurrentDictionary{string, CacheTypVal}"/> failed.</returns>
         public virtual bool RemoveKey(string ckey)
         {
-            bool success = false;
-            if (string.IsNullOrEmpty(ckey))
+            lock (_outerlock)
+            {
+                bool success = false;
+                if (string.IsNullOrEmpty(ckey))
+                    return success;
+
+                _appDict = AppDict;
+
+                lock (_lock)
+                {
+                    if ((success = !_appDict.ContainsKey(ckey)) == false)
+                        if ((success = _appDict.TryRemove(ckey, out CacheTypVal cvalue)) == true)
+                            SaveDictionaryToCache(_appDict);  // saves the modified ConcurrentDictionary{string, CacheTypVal} back to AppDomain
+                }
+
                 return success;
-
-            if ((success = !AppCache.ContainsKey(ckey)) == false)
-                if ((success = AppCache.TryRemove(ckey, out CacheTypVal cvalue)) == true)
-                    AppCache = _appCache; // saves the modified ConcurrentDictionary{string, CacheTypVal} back to AppDomain
-
-            return success;
+            }
         }
 
-    }
+        public virtual HashSet<string> GetAllKeys()
+        {
+            _allKeys = new HashSet<string>(AppDict.Keys.ToArray());
+            return _allKeys;
+        }
 
+
+        #endregion virtual cache operations on _appDict methods
+
+    }
 
 
     /// <summary>
@@ -278,22 +478,18 @@ namespace Area23.At.Framework.Core.Cache
     public class JsonCache : MemCache
     {
 
-        //protected internal static readonly Lazy<MemCache> _instance = new Lazy<MemCache>(() => new JsonCache());
-        //public static MemCache CacheDict => _instance.Value;
-
-        const int INIT_SEM_COUNT = 1;
-        const int MAX_SEM_COUNT = 1;
+        protected internal static readonly object _smartLock = new object();
         const string JSON_APPCACHE_FILE = "AppCache.json";
-        readonly static string JsonFullDirPath = Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "TEMP");
+        readonly static string JsonFullDirPath = LibPaths.SystemDirJsonPath;
         readonly static string JsonFullFilePath = Path.Combine(JsonFullDirPath, JSON_APPCACHE_FILE);
 
-        protected static SemaphoreSlim ReadWriteSemaphore = new SemaphoreSlim(INIT_SEM_COUNT, MAX_SEM_COUNT);
+        public static new string CacheVariant = "JsonFileCache";
 
         protected static JsonSerializerSettings JsonSettings = new JsonSerializerSettings()
         {
             Formatting = Formatting.Indented,
             MaxDepth = 16,
-            // NullValueHandling = NullValueHandling.Include,
+            NullValueHandling = NullValueHandling.Include,
             MissingMemberHandling = MissingMemberHandling.Ignore,
             ObjectCreationHandling = ObjectCreationHandling.Auto,
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
@@ -303,19 +499,35 @@ namespace Area23.At.Framework.Core.Cache
         };
 
         /// <summary>
-        /// public property get accessor for <see cref="_appCache"/> stored in <see cref="AppDomain.CurrentDomain"/>
+        /// public property get accessor for <see cref="_appDict"/> stored in <see cref="AppDomain.CurrentDomain"/>
         /// </summary>
-        protected override ConcurrentDictionary<string, CacheTypVal> AppCache
+        protected override ConcurrentDictionary<string, CacheTypVal> AppDict
         {
-            get
+            get => LoadDictionaryCache(true);
+            set => SaveDictionaryToCache(value);
+        }
+
+        /// <summary>
+        /// get, where to get it (_appDict from cache)
+        /// </summary>
+        /// <param name="repeatLoadingPeriodically">if true, _appDict will be repeatedly loaded from cache <see cref="CACHE_READ_UPDATE_INTERVAL" /> in seconds</param>
+        /// <returns><see cref="ConcurrentDictionary{string, CacheTypVal}"/> _appDict</returns>        
+        public override ConcurrentDictionary<string, CacheTypVal> LoadDictionaryCache(bool repeatLoadingPeriodically = false)
+        {
+            lock (_smartLock)
             {
-                int semCnt = 0;
+                _timePassedSinceLastRW = DateTime.Now.Subtract(_lastCacheRW);
+
                 try
                 {
-                    ReadWriteSemaphore.Wait(64);
-                    // if (mutex.WaitOne(250, false)) 
-                    if (_appCache == null || _appCache.Count == 0)
+                    if (_appDict == null || _appDict.Count == 0 || (repeatLoadingPeriodically && _timePassedSinceLastRW.TotalSeconds > CACHE_READ_UPDATE_INTERVAL))
                     {
+                        var mutex = StaticCacheMutex.TheStaticCacheMutex;
+                        if (mutex != null && mutex.WaitOne(1024, false))
+                        {
+                            throw new SynchronizationLockException("Mutex " + mutex.ToString() + " blocks loading serialized json from " + JsonFullFilePath + ".");
+                        }
+
                         lock (_lock)
                         {
                             if (!Directory.Exists(JsonFullDirPath))
@@ -323,64 +535,162 @@ namespace Area23.At.Framework.Core.Cache
 
                             string jsonSerializedAppDict = (System.IO.File.Exists(JsonFullFilePath)) ? System.IO.File.ReadAllText(JsonFullFilePath) : "";
                             if (!string.IsNullOrEmpty(jsonSerializedAppDict))
-                                _appCache = (ConcurrentDictionary<string, CacheTypVal>)JsonConvert.DeserializeObject<ConcurrentDictionary<string, CacheTypVal>>(jsonSerializedAppDict);
+                            {
+                                _appDict = (ConcurrentDictionary<string, CacheTypVal>)JsonConvert.DeserializeObject<ConcurrentDictionary<string, CacheTypVal>>(jsonSerializedAppDict);
+                                _lastCacheRW = DateTime.Now;
+                            }
                         }
-                        if (_appCache == null || _appCache.Count == 0)
-                            _appCache = new ConcurrentDictionary<string, CacheTypVal>();
                     }
                 }
                 catch (Exception exGetRead)
                 {
-                    Console.WriteLine($"Exception {exGetRead.GetType()}: {exGetRead.Message} \r\n\t{exGetRead}");
+                    CqrException.SetLastException(exGetRead);
+                    // Console.WriteLine($"Exception {exGetRead.GetType()}: {exGetRead.Message} \r\n\t{exGetRead}");
                 }
                 finally
                 {
-                    if (ReadWriteSemaphore.CurrentCount > 0)
-                        semCnt = ReadWriteSemaphore.Release();
-                    // mutex.ReleaseMutex();
+                    if (_appDict == null || _appDict.Count == 0)
+                    {
+                        _appDict = new ConcurrentDictionary<string, CacheTypVal>();
+                        _lastCacheRW = DateTime.Now;
+                    }
                 }
-                return _appCache;
+                return _appDict;
             }
-            set
+
+        }
+
+        /// <summary>
+        /// set where to set <see cref="ConcurrentDictionary{string, CacheTypVal}">it</see>  
+        /// (value to _appDict to cache)
+        /// </summary>
+        /// <param name="cacheDict"><see cref="ConcurrentDictionary{string, CacheTypVal}"/></param>
+        public override void SaveDictionaryToCache(ConcurrentDictionary<string, CacheTypVal> cacheDict)
+        {
+            lock (_outerlock)
             {
-                int semCnt = 0;
+                string jsonDeserializedAppDict = "";
+                var mutex = StaticCacheMutex.TheStaticCacheMutex;
+                if (cacheDict == null) //  && value.Count > 0
+                    return;
+
                 try
                 {
-                    semCnt = ReadWriteSemaphore.CurrentCount;
-                    ReadWriteSemaphore.Wait(64);
-
-                    string jsonDeserializedAppDict = "";
-                    if (value != null && value.Count > 0)
+                    if (mutex != null && mutex.WaitOne(1024, false))
                     {
-                        // if (mutex.WaitOne(250, false)) 
-                        lock (_lock)
-                        {
-                            _appCache = value;
-
-                            // set it, where to set it _appCache
-                            jsonDeserializedAppDict = JsonConvert.SerializeObject(_appCache, Formatting.Indented, JsonSettings);
-                            System.IO.File.WriteAllText(JsonFullFilePath, jsonDeserializedAppDict, Encoding.UTF8);
-                        }
+                        throw new SynchronizationLockException("Mutex " + mutex.ToString() + " blocks writing serialized json to " + JsonFullFilePath + ".");
                     }
+
+                    StaticCacheMutex.CreateMutex("CacheWrite", false);
+
+                    lock (_lock)
+                    {
+                        _appDict = cacheDict;
+
+                        // set it, where to set it _appDict
+                        jsonDeserializedAppDict = JsonConvert.SerializeObject(_appDict, Formatting.Indented, JsonSettings);
+                        System.IO.File.WriteAllText(JsonFullFilePath, jsonDeserializedAppDict, Encoding.UTF8);
+                        _lastCacheRW = DateTime.Now;
+                    }
+
                 }
                 catch (Exception exSetWrite)
                 {
-                    Console.WriteLine($"Exception {exSetWrite.GetType()}: {exSetWrite.Message} \r\n\t{exSetWrite}");
+                    CqrException.SetLastException(exSetWrite);
+                    // Console.WriteLine($"Exception {exSetWrite.GetType()}: {exSetWrite.Message} \r\n\t{exSetWrite}");
                 }
                 finally
                 {
-                    if (ReadWriteSemaphore.CurrentCount > 0)
-                        semCnt = ReadWriteSemaphore.Release();
+                    StaticCacheMutex.ReleaseCloseDisposeMutex();
                 }
             }
         }
+
+
+        /// <summary>
+        /// Gets a value from <see cref="ConcurrentDictionary{string, CacheTypVal}"/> stored <see cref="System.AppDomain.CurrentDomain"/>
+        /// </summary>
+        /// <typeparam name="T">generic type of cached value</typeparam>
+        /// <param name="ckey">cache key</param>
+        /// <returns>generic cached value stored at key</returns>
+        public override T GetValue<T>(string ckey)
+        {
+            T tvalue = default;
+
+            if (!string.IsNullOrEmpty(ckey))
+            {
+                lock (_lock)
+                {
+
+                    if (_appDict.ContainsKey(ckey) && _appDict.TryGetValue(ckey, out var cvalue))
+                    {
+                        if (cvalue != null)
+                        {
+                            tvalue = cvalue.GetValue<T>();
+                        }
+                    }
+                }
+            }
+
+            return tvalue;
+        }
+
+
+        public override Nullable<T> GetNullableValue<T>(string ckey)
+        {
+            T tvalue = default(T);
+
+            if (!string.IsNullOrEmpty(ckey))
+            {
+                lock (_lock)
+                {
+
+                    if (_appDict.ContainsKey(ckey) && _appDict.TryGetValue(ckey, out var cvalue))
+                    {
+                        if (cvalue != null)
+                        {
+                            var nilvalue = cvalue.GetNullableValue<T>();
+                            if (nilvalue != null && nilvalue.HasValue)
+                                tvalue = nilvalue.Value;
+                        }
+                    }
+                }
+            }
+
+            return tvalue;
+        }
+
+
+        public JsonCache() : this(Persist.Json) { }
+
+        public JsonCache(Persist cacheType)
+        {
+            _persist = (cacheType == Persist.Json) ? cacheType : Persist.Json;
+
+            lock (_lock)
+            {
+
+                try
+                {
+                    if (!Directory.Exists(JsonFullDirPath))
+                        Directory.CreateDirectory(JsonFullDirPath);
+                }
+                catch (Exception ioEx)
+                {
+                    CqrException.SetLastException(ioEx);
+                }
+                _appDict = LoadDictionaryCache(true);
+            }
+
+        }
+
     }
 
 
     /// <summary>
-    /// AppCurrentDomainCache an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheTypVal}"/>
+    /// AppCache an application cache implemented with a <see cref="ConcurrentDictionary{string, CacheTypVal}"/>
     /// </summary>
-    public class AppCurrentDomainCache : MemCache
+    public class AppCache : MemCache
     {
 
         /// <summary>
@@ -415,7 +725,7 @@ namespace Area23.At.Framework.Core.Cache
             }
         }
 
-        public AppCurrentDomainCache()
+        public AppCache()
         {
             if (AppCache == null) ;
         }
@@ -425,24 +735,19 @@ namespace Area23.At.Framework.Core.Cache
     /// <summary>
     /// RedisCache AWS elastic valkey cache singelton connector
     /// </summary>
-    public class RedIsCache : MemCache
+    public class RedisCache : MemCache
     {
+
+        #region const and static
 
         const string VALKEY_CACHE_HOST_PORT = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
         const string VALKEY_CACHE_APP_KEY = "RedisValkeyCache";
+        const string REDIS_VALKEY_SSL = "RedisValkeySsl";
         const string ALL_KEYS = "AllKeys";
 
-
-        ConnectionMultiplexer connMux;
-        ConfigurationOptions options;
-        string endpoint = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
-        StackExchange.Redis.IDatabase db;
-
-        public static MemCache ValKey => _instance.Value;
-
-        private static HashSet<string> _allKeys = new HashSet<string>();
-        public override string[] AllKeys { get => GetAllKeys().ToArray(); }
-
+        protected internal static object _redIsLock = new object();
+        public static new string CacheVariant = "RedisValkey";
+        private static bool _ssl = true;
         private static string _endPoint = VALKEY_CACHE_HOST_PORT;
         public static string EndPoint
         {
@@ -455,66 +760,130 @@ namespace Area23.At.Framework.Core.Cache
                 return _endPoint;
             }
         }
+        public static RedisCache ValKeyInstance => ((RedisCache)_instance.Value);
 
-        public static StackExchange.Redis.IDatabase Db
+        public string Status { get => ConnMux.GetStatus(); }
+
+        #endregion const and static
+
+
+        ConfigurationOptions options;
+
+        public override string[] AllKeys { get => GetAllKeys().ToArray(); }
+
+        StackExchange.Redis.IDatabase _db;
+        public StackExchange.Redis.IDatabase Db
         {
             get
             {
-                if (((RedIsCache)(_instance.Value)).db == null)
-                    ((RedIsCache)(_instance.Value)).db = ConnMux.GetDatabase();
+                if (_db == null)
+                    _db = ConnMux.GetDatabase();
 
-                return ((RedIsCache)(_instance.Value)).db;
+                return _db;
             }
         }
 
-        public static StackExchange.Redis.ConnectionMultiplexer ConnMux
+        ConnectionMultiplexer _connMux;
+        public StackExchange.Redis.ConnectionMultiplexer ConnMux
         {
             get
             {
-                if (((RedIsCache)(_instance.Value)).connMux == null)
+                if (_connMux == null)
                 {
-                    if (((RedIsCache)(_instance.Value)).options == null)
-                        ((RedIsCache)(_instance.Value)).options = new ConfigurationOptions
+                    if (options == null)
+                    {
+                        if (!bool.TryParse((string)ConfigurationManager.AppSettings[REDIS_VALKEY_SSL], out _ssl))
+                            _ssl = true;
+                        options = new ConfigurationOptions
                         {
                             EndPoints = { EndPoint },
-                            Ssl = true
+                            AbortOnConnectFail = false,
+                            Ssl = _ssl
                         };
-                    ((RedIsCache)(_instance.Value)).connMux = ConnectionMultiplexer.Connect(((RedIsCache)(_instance.Value)).options);
+                    }
+                    _connMux = ConnectionMultiplexer.Connect(options);
                 }
-                return ((RedIsCache)(_instance.Value)).connMux;
+                return _connMux;
             }
         }
 
 
+        #region constructors
+
+        public RedisCache() : this(Persist.Redis) { }
+
         /// <summary>
-        /// default parameterless constructor for RedisCacheValKey cache singleton
+        /// default constructor for RedisCacheValKey cache singleton
         /// </summary>
-        public RedIsCache()
+        public RedisCache(Persist cacheType)
         {
-            endpoint = VALKEY_CACHE_HOST_PORT; // "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com:6379";
-            if (ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY] != null)
-                endpoint = (string)ConfigurationManager.AppSettings[VALKEY_CACHE_APP_KEY];
+            _persist = (cacheType == Persist.Redis) ? cacheType : Persist.Redis;
+            _allKeys = new HashSet<string>();
+            if (!bool.TryParse((string)ConfigurationManager.AppSettings[REDIS_VALKEY_SSL], out _ssl))
+                _ssl = true;
+
             options = new ConfigurationOptions
             {
-                EndPoints = { endpoint },
-                Ssl = true
+                EndPoints = { EndPoint },
+                AbortOnConnectFail = false,
+                Ssl = _ssl,
+                ConnectTimeout = 6000,
+                AsyncTimeout = 6000,
+                SyncTimeout = 9000
             };
-            if (connMux == null)
-                connMux = ConnectionMultiplexer.Connect(options);
-            if (db == null)
-                db = connMux.GetDatabase();
+
+            _connMux = ConnectionMultiplexer.Connect(options);
+            _db = _connMux.GetDatabase();
         }
 
+        #endregion constructors
 
+        #region GetString GetValue
         /// <summary>
         /// GetString gets a string value by RedisCache key
         /// </summary>
         /// <param name="redIsKey">key</param>
-        /// <param name="flags"><see cref="CommandFlags"/></param>
         /// <returns>(<see cref="string"/>) value for key redIsKey</returns>
-        public string GetString(string redIsKey, CommandFlags flags = CommandFlags.None)
+        public override string GetString(string redIsKey)
         {
-            return Db.StringGet(redIsKey, flags);
+            return GetStringWithParams(redIsKey, CommandFlags.None);
+        }
+
+        public virtual string GetStringWithParams(string ckey, CommandFlags flags = CommandFlags.None)
+        {
+            return Db.StringGet(ckey, flags);
+        }
+
+        /// <summary>
+        /// gets a generic class type T from redis cache with key
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ckey">rediskey</param>
+        /// <returns>T value/returns>
+        public override T GetValue<T>(string ckey)
+        {
+            string jsonVal = GetStringWithParams(ckey, CommandFlags.None); // Db.StringGet(ckey, flags);
+
+            T tval = default(T);
+            if (jsonVal != null)
+            {
+                tval = JsonConvert.DeserializeObject<T>(jsonVal);
+            }
+
+            return tval;
+        }
+
+        #endregion GetString GetValue
+
+        #region SetString SetValue
+        /// <summary>
+        /// SetString set key with string value
+        /// </summary>
+        /// <param name="ckey">key for string/param>
+        /// <param name="svalue">value to set</param>
+        public override bool SetString(string ckey, string svalue)
+        {
+            return SetStringWithParams(ckey, svalue);
         }
 
         /// <summary>
@@ -526,20 +895,19 @@ namespace Area23.At.Framework.Core.Cache
         /// <param name="keepTtl"></param>
         /// <param name="when"></param>
         /// <param name="flags"></param>
-        public bool SetString(string redIsKey, string redIsString, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
+        public virtual bool SetStringWithParams(string redIsKey, string redIsString, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             bool success = false;
-            lock (_lock)
+            lock (_redIsLock)
             {
-                var allRedIsKeys = GetAllKeys();
+                _allKeys = GetAllKeys();
                 success = Db.StringSet(redIsKey, redIsString, expiry, when, flags);
 
-                if (success && !allRedIsKeys.Contains(redIsKey))
+                if (success && !_allKeys.Contains(redIsKey))
                 {
-                    allRedIsKeys.Add(redIsKey);
-                    string jsonVal = JsonConvert.SerializeObject(AllKeys);
+                    _allKeys.Add(redIsKey);
+                    string jsonVal = JsonConvert.SerializeObject(_allKeys);
                     success = Db.StringSet(ALL_KEYS, jsonVal, null, keepTtl, When.Always, CommandFlags.None);
-                    _allKeys = allRedIsKeys;
                 }
             }
 
@@ -555,34 +923,19 @@ namespace Area23.At.Framework.Core.Cache
         /// <returns>success on true</returns>
         public override bool SetValue<T>(string ckey, T tvalue)
         {
-            TimeSpan? expiry = null;
+            TimeSpan? expiry = new TimeSpan(1, 1, 1, 1);
             bool keepTtl = false;
             When when = When.Always;
             CommandFlags flags = CommandFlags.None;
             string jsonVal = JsonConvert.SerializeObject(tvalue);
-            bool success = SetString(ckey, jsonVal, expiry, keepTtl, when, flags);
+            bool success = SetStringWithParams(ckey, jsonVal, expiry, keepTtl, when, flags);
 
             return success;
         }
 
-        /// <summary>
-        /// gets a generic class type T from redis cache with key
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="ckey">rediskey</param>
-        /// <returns>T value/returns>
-        public override T GetValue<T>(string ckey)
-        {
-            CommandFlags flags = CommandFlags.None;
-            string jsonVal = Db.StringGet(ckey, flags);
-            T tval = default(T);
-            if (jsonVal != null)
-            {
-                tval = JsonConvert.DeserializeObject<T>(jsonVal);
-            }
+        #endregion SetString SetValue
 
-            return tval;
-        }
+        #region RemoveKey ContainsKey
 
         /// <summary>
         /// DeleteKey delete entry referenced at key
@@ -592,15 +945,13 @@ namespace Area23.At.Framework.Core.Cache
         public override bool RemoveKey(string redIsKey)
         {
             CommandFlags flags = CommandFlags.FireAndForget;
-            lock (_lock)
+            lock (_redIsLock)
             {
-                var allRedIsKeys = GetAllKeys();
-                if (allRedIsKeys.Contains(redIsKey))
+                if (ContainsKey(redIsKey) || _allKeys.Contains(redIsKey))
                 {
-                    allRedIsKeys.Remove(redIsKey);
-                    string jsonVal = JsonConvert.SerializeObject(allRedIsKeys.ToArray());
+                    _allKeys.Remove(redIsKey);
+                    string jsonVal = JsonConvert.SerializeObject(_allKeys.ToArray());
                     Db.StringSet("AllKeys", jsonVal, null, false, When.Always, flags);
-                    _allKeys = allRedIsKeys;
                 }
                 try
                 {
@@ -624,21 +975,23 @@ namespace Area23.At.Framework.Core.Cache
         /// <returns>true, if cache contains key, otherwise false</returns>
         public override bool ContainsKey(string ckey)
         {
-            if (GetAllKeys().Contains(ckey))
+            _allKeys = GetAllKeys();
+            if (_allKeys.Contains(ckey))
             {
                 string redIsString = Db.StringGet(ckey, CommandFlags.None);
-                if (!string.IsNullOrEmpty(redIsString))
+                if (redIsString != null)
                     return true;
             }
-
             return false;
         }
+
+        #endregion RemoveKey ContainsKey
 
         /// <summary>
         /// GetAllKeys returns <see cref="HashSet{string}"/></string> <see cref="_allKeys"/>
         /// </summary>
         /// <returns>returns <see cref="HashSet{string}"/></string> <see cref="_allKeys"/></returns>
-        public static HashSet<string> GetAllKeys()
+        public override HashSet<string> GetAllKeys()
         {
             if (_allKeys == null || _allKeys.Count == 0)
             {
@@ -650,8 +1003,128 @@ namespace Area23.At.Framework.Core.Cache
 
             return _allKeys;
         }
+
     }
 
+    /// <summary>
+    /// static <see cref="Mutex"/> for mutal exclusion, you can only use it once for one mutal exclusion caae, cause it's static 
+    /// get <see cref="Mutex"/> by calling <see cref="CreateMutex(string, bool)"/> 
+    /// release <see cref="Mutex"/> by calling <see cref="ReleaseCloseDisposeMutex"/>
+    /// </summary>
+    internal static class StaticCacheMutex
+    {
+        private static readonly object _outerLock = new object(), _lock = new object();
+
+        private static Mutex _theStaticCacheMutex = null;
+
+        /// <summary>
+        /// Gets the Mutal Exclusion
+        /// </summary>
+        internal static Mutex TheStaticCacheMutex { get => _theStaticCacheMutex; }
+
+        /// <summary>
+        /// static ctor
+        /// </summary>
+        static StaticCacheMutex()
+        {
+            _theStaticCacheMutex = null;
+        }
+
+        /// <summary>
+        /// Gets existing mutex or creates a new <see cref="Mutex"/> 
+        /// </summary>
+        /// <param name="mutexUniqueName">unique string identifier for the mutal exlusion</param>
+        /// <param name="useExistingMutex">if true, existing and valid <see cref="Mutex"/> will be returned, 
+        /// otherwise a new <see cref="Mutex"/> will be created; default <see cref="false"/></param>
+        /// <returns><see cref="Mutex"/></returns>
+        internal static Mutex CreateMutex(string mutexUniqueName = "StaticCacheMutex", bool useExistingMutex = false)
+        {
+            if (useExistingMutex && _theStaticCacheMutex != null && _theStaticCacheMutex.SafeWaitHandle != null &&
+                !_theStaticCacheMutex.SafeWaitHandle.IsClosed && !_theStaticCacheMutex.SafeWaitHandle.IsInvalid)
+                return _theStaticCacheMutex;
+
+            Thread.Sleep(16);
+            _theStaticCacheMutex = new Mutex(true, mutexUniqueName);
+
+            return _theStaticCacheMutex;
+        }
+
+        /// <summary>
+        /// Release Mutax exclusion, that not 2 chat programs could be started at same machine
+        /// </summary>
+        internal static void ReleaseCloseDisposeMutex()
+        {
+            Exception ex = null;
+            Microsoft.Win32.SafeHandles.SafeWaitHandle safeWaitHandle = null;
+            IntPtr safeMutextWin32Handle = IntPtr.Zero;
+
+            lock (_outerLock)
+            {
+                if (_theStaticCacheMutex != null)
+                {
+                    lock (_lock)
+                    {
+                        safeWaitHandle = _theStaticCacheMutex.GetSafeWaitHandle();
+                        safeMutextWin32Handle = safeWaitHandle.DangerousGetHandle();
+                        if (safeWaitHandle != null && !safeWaitHandle.IsClosed)
+                        {
+                            try
+                            {
+                                _theStaticCacheMutex.ReleaseMutex();
+                                //    safeWaitHandle.DangerousRelease();
+                            }
+                            catch (Exception exRelease)
+                            {
+                                ex = new CqrException("Releasing Mutex failed", exRelease);
+                                CqrException.SetLastException(ex);
+                            }
+                            try
+                            {
+                                _theStaticCacheMutex.Close();
+                                //    safeWaitHandle.Close();
+                            }
+                            catch (Exception exClose)
+                            {
+                                ex = new CqrException("Closing Mutex failed", exClose);
+                                CqrException.SetLastException(ex);
+                            }
+                        }
+
+                        try
+                        {
+                            _theStaticCacheMutex.Dispose();
+                            //    safeWaitHandle.Dispose();
+                        }
+                        catch (Exception exDispose)
+                        {
+                            ex = new CqrException("Disposing Mutex failed", exDispose);
+                            CqrException.SetLastException(ex);
+                        }
+                    }
+                }
+
+                try
+                {
+                    _theStaticCacheMutex = null;
+                }
+                catch (Exception exNull)
+                {
+                    ex = new CqrException("Setting Mutex to null failed", exNull);
+                    CqrException.SetLastException(ex);
+                }
+                finally
+                {
+                    if (ex != null)
+                    {
+                        CqrException.SetLastException(new CqrException("Disposing mutex and safeWaitHandle throwed exception.", ex));
+                    }
+                }
+            }
+
+            return;
+        }
+
+    }
 
     [Serializable]
     public class CacheData

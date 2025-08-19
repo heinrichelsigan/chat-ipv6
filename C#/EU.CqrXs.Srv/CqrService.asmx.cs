@@ -80,16 +80,14 @@ namespace EU.CqrXs.Srv
         {
             Area23Log.LogOriginMsg("CqrService", "ChatRoomInvite(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".");
             InitMethod();
-            
-            CSrvMsg<string> cSrvMsg, chatRSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
-            chatRSrvMsg = chatRSrvMsg.FromJson(cryptMsg);
+
+            CSrvMsg<string> cSrvMsg, chatRSrvMsg;
 
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>
-                    cSrvMsg = chatRSrvMsg.DecryptFromJson(_serverKey, cryptMsg);        // decrypt CSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>                    
                     _contact = JsonContacts.AddContact(cSrvMsg.Sender);                 // add contact from FullSrvMsg<string>   
                     chatRSrvMsg = InviteToChatRoom(cSrvMsg);                            // generate a FullSrvMsg<string> chatserver message by inviting                           
 
@@ -124,16 +122,14 @@ namespace EU.CqrXs.Srv
             InitMethod();
 
             Dictionary<long, string> dict = new Dictionary<long, string>();
-            
-            CSrvMsg<string> cSrvMsg, aSrvMsg =  new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
-            aSrvMsg = aSrvMsg.FromJson(cryptMsg);
+
+            CSrvMsg<string> cSrvMsg, aSrvMsg;
 
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
-                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);                // decrypt FullSrvMsg<string>
                     _contact = cSrvMsg.Sender;
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Message;
 
@@ -197,8 +193,7 @@ namespace EU.CqrXs.Srv
             string chatRoomMembersCrypted = "";
             Dictionary<long, string> dict;
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
-            aSrvMsg = aSrvMsg.FromJson(cryptMsg);
+            CSrvMsg<string> cSrvMsg, aSrvMsg;
 
             CSrvMsg<string> chatRoomMsg = new CSrvMsg<string>(); // construct an empty message
 
@@ -207,7 +202,6 @@ namespace EU.CqrXs.Srv
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);            // decrypt FullSrvMsg<string>
-                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);                    // decrypt FullSrvMsg<string>
                     _contact = cSrvMsg.Sender;
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) 
                         ? cSrvMsg.CRoom.ChatRoomNr : "";                                        // get chat room number
@@ -266,20 +260,18 @@ namespace EU.CqrXs.Srv
             Area23Log.LogOriginMsg("CqrService", $"ChatRoomClose(string cryptMsg) started. cryptMsg.Length =  {cryptMsg.Length}.\n");
             InitMethod();
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
-            aSrvMsg = aSrvMsg.FromJson(cryptMsg);
+            CSrvMsg<string> cSrvMsg, chatRoomMsg;
             List<CContact> _invited = new List<CContact>();            
 
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);
-                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);                    // decrypt FullSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
                     _contact = JsonContacts.AddContact(cSrvMsg.Sender);
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
                     
-                    CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
+                    chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg, _chatRoomNumber);
                     cSrvMsg = JsonChatRoom.CheckPermission(cSrvMsg, chatRoomMsg, _chatRoomNumber, out _isValid, true);
 
                     if (_isValid)

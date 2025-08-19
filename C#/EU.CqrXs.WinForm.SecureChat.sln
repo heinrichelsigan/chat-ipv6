@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.WinForm.SecureChat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.Console.Core", "EU.CqrXs.Console\Core\EU.CqrXs.Console.Core.csproj", "{68BE0E85-391D-45FF-8F13-ED5C8D53BDB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EU.CqrXs.Srv.Svc.Swashbuckle", "EU.CqrXs.Srv.Svc.Swashbuckle\EU.CqrXs.Srv.Svc.Swashbuckle.csproj", "{7B9DFC8C-D8D2-21C1-48D7-6991A0182E87}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Area23.At.Framework.Core", "Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj", "{9D095DBD-CA89-4C02-8B29-0FB6F42822BE}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{68BE0E85-391D-45FF-8F13-ED5C8D53BDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68BE0E85-391D-45FF-8F13-ED5C8D53BDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68BE0E85-391D-45FF-8F13-ED5C8D53BDB8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B9DFC8C-D8D2-21C1-48D7-6991A0182E87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B9DFC8C-D8D2-21C1-48D7-6991A0182E87}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B9DFC8C-D8D2-21C1-48D7-6991A0182E87}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B9DFC8C-D8D2-21C1-48D7-6991A0182E87}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9D095DBD-CA89-4C02-8B29-0FB6F42822BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D095DBD-CA89-4C02-8B29-0FB6F42822BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D095DBD-CA89-4C02-8B29-0FB6F42822BE}.Release|Any CPU.ActiveCfg = Release|Any CPU

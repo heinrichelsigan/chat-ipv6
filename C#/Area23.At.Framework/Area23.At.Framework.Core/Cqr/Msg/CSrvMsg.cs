@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+﻿using Area23.At.Framework.Core.Cqr.Msg;
+using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
@@ -6,6 +7,7 @@ using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
 using System.Security.Policy;
 using System.Text;
+using System.Xml;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
@@ -29,17 +31,19 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         public CChatRoom? CRoom { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
-        protected internal List<string> Emails
+        public string Emails
         {
             get
             {
                 HashSet<string> mails = new HashSet<string>();
+                mails.Add(Sender.Email);
                 foreach (CContact c in Recipients)
                 {
                     if (!mails.Contains(c.Email))
                         mails.Add(c.Email);
                 }
-                return mails.ToList();
+
+                return string.Join("; ", mails.ToArray());
             }
         }
 
@@ -59,10 +63,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         }
 
         [Newtonsoft.Json.JsonIgnore]
-        protected internal CContact Recipient
+        public CContact Recipient
         {
             get => (Recipients == null || Recipients.Count < 1) ? null : Recipients.ElementAt(0);
-            set
+            protected internal set
             {
                 if (value != null && !string.IsNullOrEmpty(value.NameEmail))
                 {
@@ -112,21 +116,21 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             CRoom = new CChatRoom();
         }
 
-        public CSrvMsg(string serializedString, CType msgArt = CType.Json) : base()
+        public CSrvMsg(string serializedString, SerType msgArt = SerType.Json) : base()
         {
             CSrvMsg<TC> deserializedSrvMsg = null;
             if (string.IsNullOrEmpty(serializedString))
                 throw new CqrException("Can not deserialize null or empty serializedString.");
 
-            if (msgArt == CType.Json)
+            if (msgArt == SerType.Json)
             {
                 deserializedSrvMsg = this.FromJson<CSrvMsg<TC>>(serializedString);
-                deserializedSrvMsg.MsgType = CType.Json;
+                deserializedSrvMsg.MsgType = SerType.Json;
             }
-            else if (msgArt == CType.Xml)
+            else if (msgArt == SerType.Xml)
             {
                 deserializedSrvMsg = this.FromXml<CSrvMsg<TC>>(serializedString);
-                deserializedSrvMsg.MsgType = CType.Xml;
+                deserializedSrvMsg.MsgType = SerType.Xml;
             }
 
             if (deserializedSrvMsg == null)
@@ -327,8 +331,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 csrvmsg.TContent = TContent;
                 csrvmsg.Sender = Sender;
                 csrvmsg.Recipients = Recipients;
-                // csrvmsg.SerializedMsg = "";
-                // csrvmsg.SerializedMsg = csrvmsg.ToJson();
                 return csrvmsg;
             }
             throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
@@ -375,73 +377,63 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #region members
 
-        public override string ToJson()
-        {
-            // this.SerializedMsg = "";
-            string jsonText = JsonConvert.SerializeObject(this);
-            // his.SerializedMsg = jsonText;
-            return jsonText;
-        }
-
-        public new CSrvMsg<TC> FromJson(string jsonText)
-        {
+        public override T? FromJson<T>(string jsonText) where T : default
+        {            
             CSrvMsg<TC> cMsg = JsonConvert.DeserializeObject<CSrvMsg<TC>>(jsonText);
             try
             {
-                if (cMsg != null && cMsg is CSrvMsg<TC> cSrvMsg)
+                if (this is T t && cMsg is T && cMsg != null)
                 {
-                    if (cSrvMsg != null && !string.IsNullOrEmpty(cSrvMsg.SerializedMsg))
-                    {
-                        Sender = cSrvMsg.Sender;
-                        Recipients = cSrvMsg.Recipients;
-                        TContent = cSrvMsg.TContent;
-                        CRoom = new CChatRoom(cSrvMsg.CRoom);
-                        Hash = cSrvMsg.Hash;
-                        Md5Hash = cSrvMsg.Md5Hash;
-                        Message = cSrvMsg.Message;
-                        MsgType = CType.Json;
-                        // SerializedMsg = jsonText;
-                    }
-                    return cMsg;
+                    Sender = new CContact(cMsg.Sender);
+                    Recipients = cMsg.Recipients;
+                    TContent = cMsg.TContent;
+                    CRoom = new CChatRoom(cMsg.CRoom);
+                    Hash = cMsg.Hash;
+                    Md5Hash = cMsg.Md5Hash;
+                    Message = cMsg.Message;
+                    MsgType = SerType.Json;
+
+                    return t;
                 }
             }
             catch (Exception exJson)
             {
                 Area23Log.LogOriginMsgEx("CSrvMsg", "FromJson", exJson);
             }
-
-            return default(CSrvMsg<TC>);
+            
+            return base.FromJson<T>(jsonText);
         }
 
-        public override string ToXml()
-        {
-            // SerializedMsg = "";
-            string xmlString = Utils.SerializeToXml<CSrvMsg<TC>>(this);
-            // SerializedMsg = xmlString;
-            return xmlString;
-        }
+        public override string ToXml() => Utils.SerializeToXml<CSrvMsg<TC>>(this);
 
-        public new T FromXml<T>(string xmlText)
+        public override T FromXml<T>(string xmlText)
         {
-            T cqrT = Utils.DeserializeFromXml<T>(xmlText);
-            if (cqrT is CSrvMsg<TC> cSrvMsg)
+            CSrvMsg<TC> cMsg = Utils.DeserializeFromXml<CSrvMsg<TC>>(xmlText);
+            try
             {
-                // this.SerializedMsg = xmlText;
-                this.MsgType = CType.Xml;
-                this.Md5Hash = cSrvMsg.Md5Hash;
-                this.Hash = cSrvMsg.Hash;
-                this.Message = cSrvMsg.Message;
-                this.CBytes = cSrvMsg.CBytes;
-                this.TContent = cSrvMsg.TContent;
-                this.CRoom = cSrvMsg.CRoom;
-                this.Sender = cSrvMsg.Sender;
-                this.Recipients = cSrvMsg.Recipients;
+                if (this is T t && cMsg is T && cMsg != null)
+                {
+                    Sender = new CContact(cMsg.Sender);
+                    Recipients = cMsg.Recipients;
+                    TContent = cMsg.TContent;
+                    CRoom = new CChatRoom(cMsg.CRoom);
+                    Hash = cMsg.Hash;
+                    Md5Hash = cMsg.Md5Hash;
+                    Message = cMsg.Message;
+                    MsgType = SerType.Xml;
+
+                    return t;
+                }
+            }
+            catch (Exception exJson)
+            {
+                Area23Log.LogOriginMsgEx("CSrvMsg", "FromXml", exJson);
             }
 
-            return cqrT;
+            return base.FromXml<T>(xmlText);
         }
 
-        public string[] GetEmails() => this.Emails.ToArray();
+        public string[] GetEmails() => this.Emails.Split(";".ToCharArray());
 
         #endregion members
 
@@ -550,12 +542,15 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #endregion static members ToJsonEncrypt EncryptSrvMsg FromJsonDecrypt DecryptSrvMsg
 
-        public new static CSrvMsg<TC> CloneCopy(CSrvMsg<TC> source, CSrvMsg<TC> destination)
+        public new static CSrvMsg<TC>? CloneCopy(CSrvMsg<TC> source, CSrvMsg<TC> destination)
         {
             if (source == null)
                 return null;
-            if (source == null)
+            if (destination == null)
+            {
                 destination = new CSrvMsg<TC>(source);
+                return destination;
+            }
 
             destination.Hash = source.Hash;
             destination.Message = source.Message;
@@ -564,12 +559,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             destination.Md5Hash = source.Md5Hash;
 
             destination.Sender = source.Sender;
-            destination.Recipients = source.Recipients;
-            destination.TContent = source.TContent;
-            destination.CRoom = source.CRoom;
+            destination.Recipients = source.Recipients;                        
+            destination.CRoom = (source.CRoom != null) ? new CChatRoom(source.CRoom) : source.CRoom;
 
-            // destination.SerializedMsg = "";
-            // destination.SerializedMsg = destination.ToJson();
+            destination.TContent = source.TContent;
 
             return destination;
         }

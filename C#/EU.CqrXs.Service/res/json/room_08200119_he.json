@@ -1,0 +1,53 @@
+{
+  "Sender": {
+    "ContactId": 0,
+    "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
+    "Name": "Heinrich G. Elsigan",
+    "Email": "he@area23.at",
+    "Mobile": "+43 650 7527928",
+    "Address": "Theresianumgasse 6/28, 1040 Wien",
+    "ContactImage": null,
+    "MsgType": 0,
+    "Message": "room_08200119_he.json",
+    "Hash": "6bFfDC",
+    "Md5Hash": "b08c701456ddcfe7a2a1c61b5518f5bf",
+    "EnCodingType": 0
+  },
+  "Recipients": [
+    {
+      "ContactId": 23,
+      "Cuid": "f29f868e-a0f4-4923-aa6c-f8b02b7fc8be",
+      "Name": "Georg Toth",
+      "Email": "Eman@gmx.at",
+      "Mobile": "+43-650-9091659",
+      "Address": "",
+      "ContactImage": null,
+      "MsgType": 1,
+      "Message": "room_08200119_he.json",
+      "Hash": "6bFfDC",
+      "Md5Hash": "",
+      "EnCodingType": 0
+    }
+  ],
+  "TContent": "Heinrich G. Elsigan <he@area23.at>",
+  "CRoom": {
+    "ChatRuid": "77cb4ac7-e423-4c31-83fa-611ac38db7d7",
+    "ChatRoomNr": "room_08200119_he.json",
+    "TicksLong": [
+      638912495888203414
+    ],
+    "LastPushed": "2025-08-20T01:19:48.8203414+02:00",
+    "LastPolled": "2025-08-20T01:19:48.8203414+02:00",
+    "InvitedEmails": [],
+    "MsgType": 0,
+    "Message": "",
+    "Hash": "",
+    "Md5Hash": "",
+    "EnCodingType": 0
+  },
+  "MsgType": 1,
+  "Message": "room_08200119_he.json",
+  "Hash": "6CDgbXFf",
+  "Md5Hash": "48987f82e0bda9b1c581c7c950409c20",
+  "EnCodingType": 0
+}

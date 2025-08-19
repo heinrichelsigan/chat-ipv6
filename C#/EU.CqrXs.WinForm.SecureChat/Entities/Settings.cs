@@ -122,7 +122,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                     string sdec = "";
                     CqrFacade facade = new CqrFacade(Constants.AES_KEY);
 
-                    CContent cContent = new CContent(skey, facade.PipeString, CType.Json, "") 
+                    CContent cContent = new CContent(skey, facade.PipeString, SerType.Json, "") 
                     { 
                         Message = System.Text.Encoding.UTF8.GetString(Base64.FromBase64(skey)) 
                     };
@@ -178,7 +178,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Entities
                     {
                         CqrFacade facade = new CqrFacade(Constants.AES_KEY);
 
-                        CContent cContent = new CContent(plainKey, facade.PipeString, CType.Json, "");
+                        CContent cContent = new CContent(plainKey, facade.PipeString, SerType.Json, "");
                         if (cContent.Encrypt(Constants.AES_KEY))
                         {
                             string ddec = Base64.ToBase64(System.Text.Encoding.UTF8.GetBytes(cContent.Message));

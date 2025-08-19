@@ -201,7 +201,7 @@
     <Compile Include="Cqr\Msg\CChatRoom.cs" />
     <Compile Include="Cqr\Msg\CContact.cs" />
     <Compile Include="Cqr\Msg\CImage.cs" />
-    <Compile Include="Cqr\Msg\CType.cs" />
+    <Compile Include="Cqr\Msg\SerType.cs" />
     <Compile Include="Cqr\Msg\CSrvMsg.cs" />
     <Compile Include="Cqr\Msg\IMsgAble.cs" />
     <Compile Include="Crypt\Cipher\CipherPipe.cs" />

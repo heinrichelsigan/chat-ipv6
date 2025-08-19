@@ -1,12 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
 
 namespace Area23.At.Framework.Core.Cache
 {

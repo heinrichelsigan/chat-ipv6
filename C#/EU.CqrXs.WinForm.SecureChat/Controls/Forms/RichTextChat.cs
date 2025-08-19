@@ -864,7 +864,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
                     // client msg inside 
-                    CContent msg = new CContent(unencrypted, clientFacade.PipeString, CType.Json, MD5Sum.HashString(unencrypted, ""));
+                    CContent msg = new CContent(unencrypted, clientFacade.PipeString, SerType.Json, MD5Sum.HashString(unencrypted, ""));
                     string encrypted = msg.EncryptToJson(myServerKey);
 
                     // Server message to webservice with myContact, friendContact, chatRoomNr, 
@@ -964,7 +964,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             string partnerIpAddrStr = GetComboBoxText(this.ComboBoxIp);
                             partnerIpAddress = IPAddress.Parse(partnerIpAddrStr);
 
-                            string sndFileResponse = clientFacade.Send_CFile_Peer(cfile, partnerIpAddress, Constants.CHAT_PORT, CType.Json, EncodingType.Base64);
+                            string sndFileResponse = clientFacade.Send_CFile_Peer(cfile, partnerIpAddress, Constants.CHAT_PORT, SerType.Json, EncodingType.Base64);
 
                             string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cfile.FileName + Constants.BASE64_EXT);
                             System.IO.File.WriteAllText(base64FilePath, cfile.ToBase64());
@@ -1148,7 +1148,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 CSrvMsg<string>? rfmsg = await serverFacade.ReceiveChatMsg_SoapAsync<string>(fmsg, EncodingType.Base64);
 
 
-                CContent msg = new CContent("", clientFacade.PipeString, CType.Json, "");
+                CContent msg = new CContent("", clientFacade.PipeString, SerType.Json, "");
                 if (rfmsg == null)
                 {
                     MessageBox.Show("Empty message or empty body", "Message from Service is null or body is empty!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1229,7 +1229,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     else if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
                         msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
                     {
-                        msgFile = new CFile(msgInnerContent, CType.Json);
+                        msgFile = new CFile(msgInnerContent, SerType.Json);
                         cReceivedFile = msgFile.DecryptFromJson(myServerKey, msgInnerContent);
                         if (cReceivedFile != null)
                         {
@@ -1451,7 +1451,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     string msgInnerContent = (string)(encrypted);
                     string friendMsg = "";
-                    CContent msgContent, msg = new CContent(msgInnerContent, CType.Json);
+                    CContent msgContent, msg = new CContent(msgInnerContent, SerType.Json);
                     CFile? msgFile, cReceivedFile;
 
                     try
@@ -1459,7 +1459,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
                         msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
                         {
-                            msgFile = new CFile(msgInnerContent, CType.Json);
+                            msgFile = new CFile(msgInnerContent, SerType.Json);
                             cReceivedFile = msgFile.DecryptFromJson(myServerKey, msgInnerContent);
                             if (cReceivedFile != null)
                             {

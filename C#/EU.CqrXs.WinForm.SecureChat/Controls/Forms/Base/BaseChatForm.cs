@@ -1773,7 +1773,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             string fileNameOnly = Path.GetFileName(filePath);
             string mimeType = Area23FwCore.Static.MimeType.GetMimeType(fileBytes, fileNameOnly);
 
-            cfile = new CFile(fileNameOnly, mimeType, fileBytes, cryptPipe, md5, sha256, CType.Json, EncodingType.Base64);
+            cfile = new CFile(fileNameOnly, mimeType, fileBytes, cryptPipe, md5, sha256, SerType.Json, EncodingType.Base64);
             return cfile;
         }
 
@@ -1794,7 +1794,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
                 
                 CqrFacade facade = new CqrFacade(secretKey);
                 cfile = new CFile(fileNameOnly, mimeType, fileBytes, facade.PipeString, md5, sha256);
-                string response = facade.Send_CFile_Peer(cfile, partnerIpAddress, Constants.CHAT_PORT, CType.Json, EncodingType.Base64);
+                string response = facade.Send_CFile_Peer(cfile, partnerIpAddress, Constants.CHAT_PORT, SerType.Json, EncodingType.Base64);
 
                 string base64FilePath = Path.Combine(LibPaths.AttachmentFilesDir, cfile.FileName + Constants.BASE64_EXT);
                 File.WriteAllText(base64FilePath, cfile.ToBase64());

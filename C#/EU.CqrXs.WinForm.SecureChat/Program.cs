@@ -12,10 +12,103 @@ namespace EU.CqrXs.WinForm.SecureChat
     /// </summary>
     internal static class Program
     {
-        public const int ATTACH_PARENT_PROCESS = -1;
 
-        [DllImport("kernel32.dll")]
-        public static extern bool AttachConsole(int dwProcessId);
+        /// <summary>
+        /// Helper class containing kernel32 functions
+        /// </summary>
+        public class Kernel32
+        {
+            public const int ATTACH_PARENT_PROCESS = -1;
+
+            /// <summary>
+            /// AttachConsole to Windows Form App
+            /// </summary>
+            /// <param name="dwProcessId"></param>
+            /// <returns></returns>
+            [DllImport("kernel32.dll")]
+            public static extern bool AttachConsole(int dwProcessId);
+        }
+
+
+        /// <summary>
+        /// Helper class containing User32 API functions
+        /// </summary>
+        public class User32
+        {
+
+            public const int HT_CAPTION = 0x2;
+
+            public const uint GW_HWNDFIRST = 0x000;
+            public const uint GW_HWNDLAST = 0x001;
+            public const uint GW_HWNDNEXT = 0x002;
+            public const uint GW_HWNDPREV = 0x003;
+            public const uint GW_OWNER = 0x004;
+            public const uint GW_CHILD = 0x005;
+            public const uint GW_ENABLEDPOPUP = 0x006;
+
+            public const uint WM_PRINT = 0x317;
+            public const int WM_NCLBUTTONDOWN = 0xA1;
+            public const int WM_APPCOMMAND = 0x319;
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct RECT
+            {
+                internal int left;
+                internal int top;
+                internal int right;
+                internal int bottom;
+            }
+
+            [Flags]
+            public enum PRF_FLAGS : uint
+            {
+                CHECKVISIBLE = 0x01,
+                CHILDREN = 0x02,
+                CLIENT = 0x04,
+                ERASEBKGND = 0x08,
+                NONCLIENT = 0x10,
+                OWNED = 0x20
+            }
+
+
+            [DllImport("user32.dll")]
+            public static extern IntPtr GetDesktopWindow();
+
+
+            [DllImport("user32.dll")]
+            public static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+            [DllImport("user32.dll")]
+            public static extern IntPtr GetWindowRect(IntPtr hWnd, ref RECT rect);
+
+            [DllImport("user32.dll")]
+            public static extern IntPtr GetTopWindow(IntPtr hWnd);
+
+            [DllImport("user32.dll")]
+            public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+            [DllImport("User32.dll")]
+            public static extern int GetWindowDC(int hWnd);
+
+            [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+            public static extern bool ReleaseCapture();
+
+            [DllImport("user32.dll")]
+            public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
+            [DllImport("User32.dll")]
+            public static extern int ReleaseDC(int hWnd, int hDC);
+
+
+            [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+            public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+
+            [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+            public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
+            [DllImport("user32.dll")]
+            public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr hdc, PRF_FLAGS drawingOptions);
+
+        }
+
 
         internal static string progName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
         // internal static readonly string? progName = System.Environment.ProcessPath;
@@ -38,8 +131,8 @@ namespace EU.CqrXs.WinForm.SecureChat
                 _mutex = new Mutex(true, progName);
             
             if (!_mutex.WaitOne(1000, false))
-            {                
-                AttachConsole(ATTACH_PARENT_PROCESS);
+            {
+                Kernel32.AttachConsole(Kernel32.ATTACH_PARENT_PROCESS);
                 // Area23.At.Framework.Library.Area23Log.LogOriginMsg(roachName, $"Another instance of {roachName} is already running!");
                 Console.Error.WriteLine($"Another instance of {progName} is already running!");
                 MessageBox.Show($"Another instance of {progName} is already running!", $"{progName}: multiple startup!", MessageBoxButtons.OK, MessageBoxIcon.Stop);

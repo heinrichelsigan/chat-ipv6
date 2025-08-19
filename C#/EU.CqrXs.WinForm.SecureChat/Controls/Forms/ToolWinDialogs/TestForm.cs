@@ -165,7 +165,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     CqrFacade facade = new CqrFacade(myServerKey);
                     this.textBoxPipeHash.Text = facade.PipeString;
 
-                    CContent cc = new CContent(this.textBoxSource.Text, facade.PipeString, CType.Json, MD5Sum.HashString(this.textBoxSource.Text, ""));
+                    CContent cc = new CContent(this.textBoxSource.Text, facade.PipeString, SerType.Json, MD5Sum.HashString(this.textBoxSource.Text, ""));
 
                     if (!this.checkBoxDecrypt.Checked)
                     {

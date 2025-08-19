@@ -61,21 +61,21 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// </summary>
         /// <param name="serialized">serialized or mime string</param>
         /// <param name="serType">serialized type</param>
-        public CContact(string serialized, CType serType = CType.Json)
+        public CContact(string serialized, SerType serType = SerType.Json)
         {
             switch (serType)
             {
-                case CType.Xml:
+                case SerType.Xml:
                     FromXml<CContact>(serialized);
                     break;
-                case CType.Raw:     // TODO= implement it
-                case CType.None:    // TODO= implement it
+                case SerType.Raw:     // TODO= implement it
+                case SerType.None:    // TODO= implement it
                     break;
-                case CType.Mime:
+                case SerType.Mime:
                     string json = Encoding.UTF8.GetString(Convert.FromBase64String(serialized));
                     FromJson<CContact>(json);
                     break;
-                case CType.Json:
+                case SerType.Json:
                 default:
                     FromJson<CContact>(serialized);
                     break;
@@ -176,7 +176,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             ContactImage = cqrImage;
             Message = chatRoomNr;
             // SerializedMsg = "";
-            // SerializedMsg = this.ToJson();
+            // SerializedMsg = this.ToJson();      
         }
 
         #endregion constructors
@@ -221,67 +221,16 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #region members
 
-        public override string ToJson()
+        public override CContent CCopy(CContent leftDest, CContent rightSrc)
         {
-            // this.SerializedMsg = "";
-            string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
-            // this.SerializedMsg = jsonString;
-            return jsonString;
+            if (leftDest is CContact && rightSrc is CContact)
+                return CloneCopy(rightSrc, leftDest);
+
+            return base.CCopy(leftDest, rightSrc);
         }
 
-        public new T FromJson<T>(string jsonText)
-        {
-            T tt = JsonConvert.DeserializeObject<T>(jsonText);
-            if (tt != null && tt is CContact contactJson)
-            {
-                if (contactJson != null && contactJson.ContactId > -1 && !string.IsNullOrEmpty(contactJson.Name))
-                {
-                    CloneCopy(contactJson, this);
-                }
-            }
+        public override string ToXml() => Utils.SerializeToXml<CContact>(this);
 
-            return tt;
-        }
-
-
-        public override string ToXml()
-        {
-            // SerializedMsg = "";
-            string xmlString = Utils.SerializeToXml<CContact>(this);
-            // SerializedMsg = xmlString;
-            return xmlString;
-        }
-
-        public new T FromXml<T>(string xmlText)
-        {
-            T cqrT = base.FromXml<T>(xmlText);
-            if (cqrT is CContact cCnt)
-            {
-                CloneCopy(cCnt, this);
-            }
-
-            return (T)cqrT;
-
-        }
-
-
-        public override string ToString()
-        {
-            return
-                "\"ContactId\": \t\"" + ContactId + "\";" + Environment.NewLine +
-                "\"Cuid\": \t\"" + Cuid + "\";" + Environment.NewLine +
-                "\"Name\": \t\"" + Name + "\";" + Environment.NewLine +
-                "\"Email\": \t\"" + Email ?? "" + "\";" + Environment.NewLine +
-                "\"Mobile\": \t\"" + Mobile ?? "" + "\";" + Environment.NewLine +
-                "\"Address\": \t\"" + Address ?? "" + "\";" + Environment.NewLine +
-                "\"NameEmail\": \t\"" + NameEmail ?? "" + "\";" + Environment.NewLine +
-                ((ContactImage != null) ?
-                    "\"ContactImage\": \t" + Environment.NewLine +
-                    "\"ContactImage.ImageFileName\": \t\"" + ContactImage.ImageFileName + "\";" + Environment.NewLine +
-                    "\"ContactImage.ImageMimeType\": \t\"" + ContactImage.ImageMimeType + "\";" + Environment.NewLine 
-                    : "")
-                ;
-        }
 
         /// <summary>
         /// <see cref="object[]">RowParams</see> gets an object array of row parameters to show in <see cref="DataGridView"/>
@@ -473,4 +422,5 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         #endregion static members 
 
     }
+
 }

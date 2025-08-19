@@ -7,18 +7,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
     public partial class InputDialog : System.Windows.Forms.Form
     {
 
-        public const int HT_CAPTION = 0x2;
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-
-        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
-        public static extern bool ReleaseCapture();
-
-        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-
-        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
-        public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
-
         static int i = 0;
         static string _title = string.Empty;
         static string _text= string.Empty;  
@@ -75,8 +63,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             if (e.Button == MouseButtons.Left)
             {
                 this.Cursor = Cursors.NoMove2D;
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                Program.User32.ReleaseCapture();
+                Program.User32.SendMessage(Handle, Program.User32.WM_NCLBUTTONDOWN, Program.User32.HT_CAPTION, 0);
             }
         }
 

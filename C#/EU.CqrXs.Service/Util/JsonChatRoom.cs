@@ -51,7 +51,7 @@ namespace EU.CqrXs.Service.Util
         /// </summary>
         /// <param name="cSrvMsgIn"><see cref="CSrvMsg{TC}"/></param>
         /// <returns>><see cref="CSrvMsg{TC}"/></returns>
-        public static CSrvMsg<TC> LoadChatRoom<TC>(CSrvMsg<TC> cSrvMsgIn, TC tc = null) where TC : class
+        public static CSrvMsg<string> LoadChatRoom(CSrvMsg<string> cSrvMsgIn) 
         {
             string chatRoomName = "";
             if (cSrvMsgIn != null && cSrvMsgIn.CRoom != null && !string.IsNullOrEmpty(cSrvMsgIn.CRoom.ChatRoomNr))
@@ -60,17 +60,17 @@ namespace EU.CqrXs.Service.Util
             }
             string jsonCRoomFileName = GetJsonChatRoomFullPath(chatRoomName);
 
-            CSrvMsg<TC> cServerMessage = cSrvMsgIn;;
+            CSrvMsg<string> cServerMessage = cSrvMsgIn;;
             string jsonText = null;
             if (!File.Exists(jsonCRoomFileName)) // we need to a create chatroom
             {                
-                SaveChatRoom<TC>(cSrvMsgIn, cSrvMsgIn.TContent);
+                SaveChatRoom(cSrvMsgIn);
             }
 
             lock (_lock)
             {
                 jsonText = File.ReadAllText(jsonCRoomFileName);
-                cServerMessage = JsonConvert.DeserializeObject<CSrvMsg<TC>>(jsonText);
+                cServerMessage = JsonConvert.DeserializeObject<CSrvMsg<string>>(jsonText);
             }
 
             return SerializeCSrvMsg(cServerMessage, out string serJsonString);
@@ -82,11 +82,22 @@ namespace EU.CqrXs.Service.Util
         /// <param name="cSrvMsg"><see cref="CSrvMsg<TC>"/></param>
         /// <param name="chatRoom"><see cref="CChatRoom"/></param>
         /// <returns></returns>
-        public static CSrvMsg<TC> SaveChatRoom<TC>(CSrvMsg<TC> cSrvMsg, TC tc = null) where TC : class
+        public static CSrvMsg<string> SaveChatRoom(CSrvMsg<string> cSrvMsg)
         {
             string jsonString = "";
             CChatRoom chatRoom = cSrvMsg.CRoom;
             string chatRoomNumber = cSrvMsg.CRoom.ChatRoomNr;
+
+            if (string.IsNullOrEmpty(chatRoomNumber) || chatRoomNumber.Length < 6)
+            {
+                string restMail = cSrvMsg.Sender.Email.Contains("@") ? (cSrvMsg.Sender.Email.Substring(0, cSrvMsg.Sender.Email.IndexOf("@"))) : cSrvMsg.Sender.Email.Trim();
+                restMail = restMail.Replace("@", "_").Replace(".", "_");
+
+                if (!string.IsNullOrEmpty(restMail))
+                    chatRoomNumber = String.Format("room_{0:MMddHHmm}_{1}.json", DateTime.Now, restMail);
+                else
+                    chatRoomNumber = $"room_{DateTime.Now:MMddHHmm}.json";
+            }
             lock (_lock)
             {
                 if (!chatRoomNumber.EndsWith(".json"))
@@ -194,24 +205,23 @@ namespace EU.CqrXs.Service.Util
         /// 2.b. on of the invited persons in invitation
         /// </summary>
         /// <param name="cSrvMsg"><see cref="CSrvMsg{string}"/> decoded from <see cref="CqrService.CqrService"/> Webservice</param>
-        /// <param name="isValid"><see cref="bool"/>true, if person is allowed to push or receive msg from / to chat room</param>
         /// <param name="isClosingRequest"><see cref="bool"/>default false, true when closing and deleting chat room</param>
-        /// <returns>modified chatRoomMsg <see cref="CSrvMsg{string}"/></returns>        
-        public static CSrvMsg<string> CheckPermission(CSrvMsg<string> cSrvMsg, out bool isValid, bool isClosingRequest = false)
+        /// <returns>>true, if person is allowed to push or receive msg from / to chat room</returns>        
+        public static bool CheckPermission(ref CSrvMsg<string> cSrvMsg, bool isClosingRequest = false)
         {
-            isValid = false;
+            bool isValid = false;
             string chatRoomNr = cSrvMsg.CRoom.ChatRoomNr;
             CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg);
             if (chatRoomNr.Equals(chatRoomMsg.CRoom.ChatRoomNr, StringComparison.CurrentCultureIgnoreCase)) // validate chat number
             {
-                chatRoomMsg.TContent = string.Empty;
+                // chatRoomMsg.TContent = string.Empty;
                 chatRoomMsg.Message = chatRoomNr;
 
                 if ((!string.IsNullOrEmpty(cSrvMsg.Sender.Email) && cSrvMsg.Sender.Email.Equals(chatRoomMsg.Sender.Email, StringComparison.CurrentCultureIgnoreCase)) ||
                     (!string.IsNullOrEmpty(cSrvMsg.Sender.NameEmail) && cSrvMsg.Sender.NameEmail.Equals(chatRoomMsg.Sender.NameEmail, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     isValid = true;
-                    return cSrvMsg;
+                    return isValid;
                 }
                 if (!isClosingRequest)
                 {
@@ -222,13 +232,13 @@ namespace EU.CqrXs.Service.Util
                             (cSrvMsg.Sender.Name.Equals(c.Name, StringComparison.CurrentCultureIgnoreCase) && cSrvMsg.Sender.Cuid == c.Cuid))
                         {
                             isValid = true;
-                            return cSrvMsg;
+                            return isValid;
                         }
                     }
                 }
             }
 
-            return cSrvMsg;
+            return isValid;
         }
         
         #endregion basic static members

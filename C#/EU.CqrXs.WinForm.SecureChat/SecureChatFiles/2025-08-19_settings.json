@@ -1,0 +1,45 @@
+{
+  "ClearAllOnClose": false,
+  "OnlyPeer2PeerChat": false,
+  "ZipBeforeSend": false,
+  "OnlySecureFileTypes": false,
+  "RegisterUser": true,
+  "SecretKeysCrypted": [
+    "OFBWeFBZd25PM0ZhOTBKZ2dBRUpiclBjc1VPdFhCdW5GQVdJY1RiQ1IrMWpCWjJqZ3dxZ1MzaDRWTEZnMmY5MnBoME1lSW1HT1BOaW1aRmpkUFI4Uk1rek5ldkRKWGJZN25ZaGxRWGxMNkN4alBzVHhWNHg3TmZic1NsclExeHM="
+  ],
+  "ChatRoom": null,
+  "TimeStamp": "2025-08-19T23:20:02.0561038+02:00",
+  "SaveStamp": "2025-08-19T23:41:38.2654486+02:00",
+  "MyContact": {
+    "ContactId": 0,
+    "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
+    "Name": "Heinrich G. Elsigan",
+    "Email": "he@area23.at",
+    "Mobile": "+43 650 7527928",
+    "Address": "Theresianumgasse 6/28, 1040 Wien",
+    "ContactImage": null,
+    "MsgType": 0,
+    "EnCodingType": 0,
+    "Message": "s9rCSmVv0fE+efLqtfna53+UyD1qqmRTI+lcTAKa0tI96hRWPeiG7j4F5Bh4k3xos00O15rvTJ/sxr7w3R2qT3+G8z8PRuOTJhr/L8j4KzP2Zl2QVBD2G4REfGrd4sq6qy/O52FIiV0fmgHZTfaOkUk15x8ymNEpT4+528zzFFbUYGwu2pvRq/M/c+Yak1pqObZ3RR49qcFXU00HZsR8Y2S2YCuiVkgXndmU8of7vlq+yzxQ2AVSdg0L9ou58zW6YuC+pEO/QmATlw7nf0JiQc36o0b2UsJUZMfOqSGtqnUM1paV7zXzVatGENILEF98",
+    "Hash": "6CDgbXFf",
+    "Md5Hash": "b08c701456ddcfe7a2a1c61b5518f5bf"
+  },
+  "Contacts": [],
+  "FriendIPs": [],
+  "MyIPs": [
+    "169.254.116.213",
+    "169.254.85.69",
+    "169.254.39.21",
+    "10.0.0.249",
+    "::1",
+    "127.0.0.1",
+    "172.29.208.1"
+  ],
+  "Proxies": [
+    "18.101.101.108",
+    "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
+  ],
+  "SecretKeys": [
+    "123456"
+  ]
+}

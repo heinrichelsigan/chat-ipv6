@@ -55,7 +55,7 @@ namespace EU.CqrXs.Srv.Settings
                 this.TextBoxKey.Text = myServerKey;
                 facade = new CqrFacade(myServerKey);
 
-                CContent cMsg = new CContent(this.TextBoxSource.Text, facade.PipeString, CType.Json, "");
+                CContent cMsg = new CContent(this.TextBoxSource.Text, facade.PipeString, SerType.Json, "");
                 try
                 {
                     if (!string.IsNullOrEmpty(this.TextBoxKey.Text))
@@ -102,7 +102,7 @@ namespace EU.CqrXs.Srv.Settings
                 facade = new CqrFacade(myServerKey);
                 this.TextBoxPipeHash.Text = facade.PipeString;
             }
-            CContent cMsg = new CContent(this.TextBoxSource.Text, facade.PipeString, CType.Json, "");
+            CContent cMsg = new CContent(this.TextBoxSource.Text, facade.PipeString, SerType.Json, "");
 
             try
             {
