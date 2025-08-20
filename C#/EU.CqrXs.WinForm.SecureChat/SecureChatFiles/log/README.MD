@@ -1,0 +1,3 @@
+﻿# log default logging directory
+
+## 
