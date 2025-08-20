@@ -132,6 +132,12 @@ namespace EU.CqrXs.Service
             if (addSender)
                 _invited.Add(cSrvMsg.Sender);
 
+            foreach (CContact cr in _invited)
+            {
+                if (cr != null && !string.IsNullOrEmpty(cr.Email))
+                    cSrvMsg.CRoom.InvitedEmails.Add(cr.Email);
+            }
+
             SetCachedMessageDict(chatRoomNr, dict);
 
 

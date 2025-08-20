@@ -716,7 +716,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
             CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendContact ?? myContact, myContact.NameEmail, serverFacade.PipeString);
-            string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\n";
+            string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\r\n";
             SetTextBoxText(TextBoxSource, chat.AddMyMessage(myReqMsg));
 
 

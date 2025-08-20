@@ -735,7 +735,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             myContact.Hash = GetHash();            
 
             CSrvMsg<string> fmsg = new CSrvMsg<string>(myContact, friendList.ToArray(), myContact.NameEmail, serverFacade.PipeString);
-            string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\n";
+            string myReqMsg = $"{fmsg.Sender.NameEmail} requests a new chatroom from server\r\n";
             SetTextBoxText(TextBoxSource, chat.AddMyMessage(myReqMsg));
 
 
@@ -748,9 +748,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 MessageBox.Show($"Response message form server {ServerIpAddress} is null. Please call helpdesk +436507527928", "Invite Chatroom failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-
-            SetTextBoxText(TextBoxChatSession, rfmsg.CRoom.ChatRoomNr);
-
+            
 
             if (rfmsg != null)
             {
@@ -1131,8 +1129,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        /// <returns></returns>
-
+        /// <returns>asybc Task</returns>
         internal async Task MenuCommandsItemRefresh_Click(object sender, EventArgs e)
         {
             if (chat == null)
