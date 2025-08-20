@@ -22,7 +22,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         [HttpGet(Name = "GetKey")]
         public string Get(string key)
         {
-            Area23Log.LogOriginMsg("GetKeyController", $"GetKeyController.Get(string key = " + key + ") started.\n");
+            Area23Log.LogOriginMsg("GetKeyController", "GetKeyController.Get(string key = " + key + ") started.\n");
 
             string vlKey = "";
             string testReport = DateTime.Now.Area23DateTimeWithMillis() + ": GetKey(" + key + ") => ";

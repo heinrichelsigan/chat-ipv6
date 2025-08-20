@@ -129,7 +129,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             SetCachedMessageDict(chatRoomNr, dict);
 
 
-            CSrvMsg<string> cChatRSrvMsg = JsonChatRoom.SaveChatRoom(cSrvMsg);
+            CSrvMsg<string> cChatRSrvMsg = JsonChatRoom.SaveChatRoom(ref cSrvMsg);
             _chatRoomNumber = cChatRSrvMsg.CRoom.ChatRoomNr;
             cChatRSrvMsg.Message = _chatRoomNumber;
             JsonChatRoom.AddJsonChatRoomToCache(_chatRoomNumber);

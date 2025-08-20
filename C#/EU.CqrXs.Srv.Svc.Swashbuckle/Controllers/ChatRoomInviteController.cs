@@ -28,9 +28,8 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             Area23Log.LogOriginMsg("ChatRoomInviteController", "ChatRoomInvite(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
             InitMethod();
 
-            _chatRoomNumber = "";            
-            CSrvMsg<string>? cSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = cqrFacade.PipeString, Message = cryptMsg };
-            cSrvMsg = cSrvMsg.FromJson(cryptMsg);
+            _chatRoomNumber = "";
+            CSrvMsg<string>? cSrvMsg;
 
             _responseString = "";
 

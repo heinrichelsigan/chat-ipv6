@@ -79,6 +79,7 @@ namespace EU.CqrXs.Srv.Util
             return serverKey;
         }
 
+
         /// <summary>
         /// Generates a chat room with a new ChatRoomNr, containing sender and recpients
         /// </summary>
@@ -140,13 +141,10 @@ namespace EU.CqrXs.Srv.Util
             SetCachedMessageDict(chatRoomNr, dict);
 
 
-            CSrvMsg<string> cChatRSrvMsg = JsonChatRoom.SaveChatRoom(cSrvMsg);
+            CSrvMsg<string> cChatRSrvMsg = JsonChatRoom.SaveChatRoom(ref cSrvMsg);
             string chatRoomNumber = cChatRSrvMsg.CRoom.ChatRoomNr;
             cChatRSrvMsg.Message = chatRoomNumber;
             JsonChatRoom.AddJsonChatRoomToCache(chatRoomNumber);
-
-            // serialize chat room in msg later then saving
-            // cChatRSrvMsg.SerializedMsg = cChatRSrvMsg.ToJson();
 
             return cChatRSrvMsg;
         }
@@ -180,12 +178,20 @@ namespace EU.CqrXs.Srv.Util
         public static List<long> GetNewMessageIndices(List<long> dictKeys, CSrvMsg<string> cSrvMsg)
         {
 
+            Area23Log.LogOriginMsg("CqrService.asmx", $"GetNewMessageIndices(...) " +
+                        $"cSrvMsg.CRoom.TicksLong.Count = {cSrvMsg.CRoom.TicksLong.Count}.\r\n");
+
             List<long> pollKeys = new List<long>();
             foreach (long tickIndex in dictKeys)
             {
                 // if (tickIndex > sender.LastPolled.Ticks)
                 if (!cSrvMsg.CRoom.TicksLong.Contains(tickIndex))
+                {
                     pollKeys.Add(tickIndex);
+                    Area23Log.LogOriginMsg("CqrService.asmx",
+                        $"GetNewMessageIndices(...) added {tickIndex} to pollKeys count = {pollKeys.Count}.\r\n");
+                }
+
             }
 
             return pollKeys;
@@ -199,10 +205,15 @@ namespace EU.CqrXs.Srv.Util
         /// <param name="dict">the mesage dictionary for chat room </param>
         public static void SetCachedMessageDict(string chatRoomNumber, Dictionary<long, string> dict)
         {
+
+            Area23Log.LogOriginMsg("CqrService.asmx", $"SetCachedMessageDict(string chatroomNumber = " + chatRoomNumber +
+                        $") dict.Countt = {dict.Count}.\r\n");
+
             MemoryCache.CacheDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
 
             return;
         }
+
 
         /// <summary>
         /// AddLastDate adds lastPolled or lastPushed date and tickIndex to TicksLong

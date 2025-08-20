@@ -40,8 +40,8 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                     _contact = JsonContacts.AddContact(cSrvMsg.Sender);
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
 
-                    CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg);
-                    isValidToClose = JsonChatRoom.CheckChatRoomClosePermission(cSrvMsg);
+                    CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(ref cSrvMsg);
+                    isValidToClose = JsonChatRoom.CheckChatRoomClosePermission(ref cSrvMsg);
 
                     if (isValidToClose)
                     {

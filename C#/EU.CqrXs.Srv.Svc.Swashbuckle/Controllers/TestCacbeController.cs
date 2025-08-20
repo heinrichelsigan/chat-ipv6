@@ -4,7 +4,6 @@ using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.Srv.Svc.Swashbuckle.Util;
 using Microsoft.AspNetCore.Mvc;
-using System.Xml.Linq;
 
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
@@ -45,7 +44,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             {
                 if (c != null && c.Cuid != null && c.Cuid != Guid.Empty &&
                     !dictCacheTest.Keys.Contains(c.Cuid))
-                    dictCacheTest.Add(c.Cuid, c);
+                        dictCacheTest.Add(c.Cuid, c);
             }
             testReport += DateTime.Now.Area23DateTimeWithMillis() + ": Added " + dictCacheTest.Count + " count contacts to Dictionary<Guid, CqrContact>...\n";
 
@@ -73,13 +72,24 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                 }
 
                 List<string> chatRooms = JsonChatRoom.GetJsonChatRoomsFromCache();
+                string[] chatRoomArray = new string[chatRooms.Count];
+                Array.Copy(chatRooms.ToArray(), 0, chatRoomArray, 0, chatRooms.Count);
+
                 testReport += DateTime.Now.Area23DateTimeWithMillis() + ": Found " + chatRooms.Count + " chat room keys in cache." + Environment.NewLine;
-                foreach (string room in chatRooms)
+                foreach (string room in chatRoomArray)
                 {
                     try
                     {
                         Dictionary<long, string> dicTest = GetCachedMessageDict(room);
-                        testReport += DateTime.Now.Area23DateTimeWithMillis() + ": chat room " + room + " with keys " + dicTest.Keys.Count + ": messages." + Environment.NewLine;
+                        if (dicTest != null)
+                        {
+                            testReport += DateTime.Now.Area23DateTimeWithMillis() + ": chat room " + room + " with keys " + dicTest.Keys.Count + ": messages." + Environment.NewLine;
+                        }
+                        else
+                        {
+                            MemoryCache.CacheDict.RemoveKey(room);
+                            chatRooms.Remove(room);
+                        }
                     }
                     catch (Exception exChatRoom)
                     {
@@ -88,6 +98,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                         Area23Log.LogOriginMsgEx("TestCacheController", $"loading chat room {room} failed. Exception {exChatRoom.GetType()}.", exChatRoom);
                     }
                 }
+                MemoryCache.CacheDict.SetValue<List<string>>(Constants.CHATROOMS, chatRooms);
             }
             catch (Exception ex2)
             {

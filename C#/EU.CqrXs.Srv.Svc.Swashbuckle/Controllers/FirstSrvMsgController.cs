@@ -28,9 +28,9 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-					_contact = new CContact(cryptMsg, CType.Json);
-					// _contact = CContact.FromJsonDecrypt(_serverKey, cryptMsg);
-                    _decrypted = _contact.ToJson();
+					_contact = new CContact(cryptMsg, SerType.Json);
+                    _contact = _contact.FromJson<CContact>(cryptMsg);
+                    _decrypted = _contact.ToJson().ToString();
                     Area23Log.LogOriginMsg("FirstSrvMsgController", $"Contact decrypted successfully: {_decrypted}\n");
                 }
             }

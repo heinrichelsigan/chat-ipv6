@@ -1,10 +1,8 @@
-using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Cqr;
+using Area23.At.Framework.Core.Cqr.Msg;
 using Area23.At.Framework.Core.Util;
 using EU.CqrXs.Srv.Svc.Swashbuckle.Util;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 {
@@ -21,7 +19,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         }
 
         [HttpGet(Name = "ChatRoomPoll")]
-        public IEnumerable<string> Get(string cryptMsg)
+        public string Get(string cryptMsg)
         {
             Area23Log.LogStatic($"ChatRoomPoll(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
             InitMethod();
@@ -29,8 +27,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             Dictionary<long, string> dict = new Dictionary<long, string>();
             bool isValid = false;
 
-            CSrvMsg<string> cSrvMsg, aSrvMsg = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = cqrFacade.PipeString, Message = cryptMsg };
-            aSrvMsg = aSrvMsg.FromJson(cryptMsg);
+            CSrvMsg<string> cSrvMsg;
 
             _responseString = "";
 
@@ -38,12 +35,12 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = aSrvMsg.DecryptFromJson(_serverKey, cryptMsg);           // decrypt FullSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);          // decrypt FullSrvMsg<string>
                     _contact = cSrvMsg.Sender;
                     _chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Sender.Message;
 
-                    CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(cSrvMsg);
-                    isValid = JsonChatRoom.CheckPermission(cSrvMsg);
+                    CSrvMsg<string> chatRoomMsg = JsonChatRoom.LoadChatRoom(ref cSrvMsg);
+                    isValid = JsonChatRoom.CheckPermission(ref cSrvMsg);
                     chatRoomMsg.TContent = string.Empty;
 
                     if (isValid)
@@ -74,7 +71,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
                                 chatRoomMsg.CRoom.TicksLong.Add(polledPtr);
 
                             JsonContacts.UpdateContact(chatRoomMsg.Sender);
-                            chatRoomMsg = JsonChatRoom.SaveChatRoom(chatRoomMsg);
+                            chatRoomMsg = JsonChatRoom.SaveChatRoom(ref chatRoomMsg);
 
                             chatRoomMsg.TContent = firstPollClientMsg;
                         }
@@ -93,10 +90,9 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
 
             Area23Log.LogOriginMsg("CqrService", "ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finihed. ChatRoomNr =  " + _chatRoomNumber + ".\n");
 
-            string[] resp = { _responseString };
-            List<string> list = new List<string>(resp);
-            return list;
+            return _responseString;
         }
+
     }
 
 
