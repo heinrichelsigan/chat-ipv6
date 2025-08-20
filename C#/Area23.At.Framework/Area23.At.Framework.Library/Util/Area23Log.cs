@@ -1,8 +1,6 @@
 ﻿using Area23.At.Framework.Library.Static;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 
 namespace Area23.At.Framework.Library.Util
 {
@@ -167,20 +165,8 @@ namespace Area23.At.Framework.Library.Util
         /// <param name="exLog"><see cref="Exception"/> to log</param>
         /// <param name="appName">application name</param>
         public static void Log(Exception exLog, string appName = "")
-        {
-            string methodBase = "unknown";
-            try
-            {
-                MethodBase mBase = (new StackFrame(1))?.GetMethod();
-                methodBase = mBase.ToString();
-            }
-            catch
-            {
-                methodBase = "unknown";
-            }
-
-            string excMsg = String.Format("{0} throwed {1} ⇒ {2}\t{3}\nStacktrace: \t{4}\n",
-                methodBase,
+        {            
+            string excMsg = String.Format("Exception {0} throw ⇒ {1}\n\t{2}\nStacktrace: \t{3}\n",
                 exLog.GetType(),
                 exLog.Message,
                 exLog.ToString().Replace("\r", "").Replace("\n", " "),

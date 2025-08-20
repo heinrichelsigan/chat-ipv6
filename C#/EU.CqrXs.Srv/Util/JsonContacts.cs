@@ -16,14 +16,13 @@ namespace EU.CqrXs.Srv.Util
         static object _lock = new object();
         static HashSet<CContact> _contacts;
         internal static string JsonContactsFileName { get => Area23.At.Framework.Library.Static.JsonHelper.JsonContactsFile; }
-        
-        
+
         /// <summary>
         /// JsonContacts
         /// </summary>
         static JsonContacts()
         {
-            _contacts = LoadJsonContacts();            
+            _contacts = LoadJsonContacts();
         }
 
         #region LoadSaveJsonContacts
@@ -120,7 +119,7 @@ namespace EU.CqrXs.Srv.Util
         {
             if (_contacts == null || _contacts.Count < 1 || loadFromJson)
                 _contacts = JsonContacts.LoadJsonContacts();
-            
+
             return _contacts;
         }
 
@@ -159,7 +158,7 @@ namespace EU.CqrXs.Srv.Util
                 _contacts.Add(foundCt);
                 JsonContacts.SaveJsonContacts(_contacts);
             }
-            
+
             return foundCt;
         }
 
@@ -234,7 +233,7 @@ namespace EU.CqrXs.Srv.Util
                 }
             }
 
-            JsonChatRoom.SaveChatRoom(chatRoomMsg, chatRoomMsg.CRoom);
+            JsonChatRoom.SaveChatRoom(chatRoomMsg);
             // (new JsonChatRoom(_chatRoomNumber)).SaveJsonChatRoom(chatRoomMsg, chatRoomNr);
 
             foundCt = false;
@@ -314,7 +313,7 @@ namespace EU.CqrXs.Srv.Util
 
             return null;
         }
-        
+
         #endregion SearchFindContacts
 
     }

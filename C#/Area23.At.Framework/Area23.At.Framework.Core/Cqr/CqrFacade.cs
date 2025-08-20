@@ -1,7 +1,6 @@
 ﻿using Area23.At.Framework.Core.Cqr.Msg;
 // using Area23.At.Framework.Core.Cqr.Srv;
-using Area23.At.Framework.Core.Cqr.Srv;
-// using Area23.At.Framework.Core.Cqr.Service;
+using Area23.At.Framework.Core.Cqr.Service;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
@@ -396,7 +395,7 @@ namespace Area23.At.Framework.Core.Cqr
         /// <param name="encryptedClientMsg">already encrypted client msg, that server can't read</param>
         /// <param name="encodingType"></param>
         /// <returns><see cref="Task{CSrvMsg{string}}"/>, containing char room number, last polled date, updated sender and recipients</returns>
-        public async Task<CSrvMsg<string>?> SendChatMsg_Soap_SimpleAsync(CSrvMsg<string>  cServerMsg, string encryptedClientMsg, EncodingType encodingType = EncodingType.Base64)
+        public async Task<CSrvMsg<List<string>>?> SendChatMsg_Soap_SimpleAsync(CSrvMsg<string>  cServerMsg, string encryptedClientMsg, EncodingType encodingType = EncodingType.Base64)
         {
             cServerMsg.Hash = _symmPipe.PipeString;
             cServerMsg.TContent = encryptedClientMsg;
@@ -408,7 +407,7 @@ namespace Area23.At.Framework.Core.Cqr
             string response = await client.ChatRoomPushAsync(cryptSrvMsg);
 
 
-            CSrvMsg<string> responseMsg  = CSrvMsg<string>.FromJsonDecrypt(_key, response);
+            CSrvMsg<List<string>> responseMsg  = CSrvMsg<List<string>>.FromJsonDecrypt(_key, response);
 
             return responseMsg;
         }
@@ -422,20 +421,18 @@ namespace Area23.At.Framework.Core.Cqr
         /// <param name="fullServerMsg"><see cref="CSrvMsg{T}"/>, containing char room number, sender and recipients</param>
         /// <param name="encodingType"></param>
         /// <returns><see cref="Task{CSrvMsg{string}}"/>, containing char room number, last polled date, updated sender and recipients</returns>
-        public async Task<CSrvMsg<string>?> ReceiveChatMsg_SoapAsync<T>(CSrvMsg<T> cServerMsg, EncodingType encodingType = EncodingType.Base64)
+        public async Task<CSrvMsg<List<string>>?> ReceiveChatMsg_SoapAsync<T>(CSrvMsg<T> cServerMsg, EncodingType encodingType = EncodingType.Base64)
             where T : class
         {
+            cServerMsg.Hash = _symmPipe.PipeString;
             cServerMsg.Hash = _symmPipe.PipeString;
             string cryptSrvMsg = cServerMsg.EncryptToJson(_key);
 
             CqrServiceSoapClient client = new CqrServiceSoapClient(CqrServiceSoapClient.EndpointConfiguration.CqrServiceSoap);
-            string response = await client.ChatRoomPollAsync(cryptSrvMsg);
+            string response = await client.ChatPollAllAsync(cryptSrvMsg);
 
-            CSrvMsg<string> respTmpMsg = new CSrvMsg<string>(response, SerType.Json) { Hash = _symmPipe.PipeString, Message = response };
-            CSrvMsg<string> responseMsg = respTmpMsg.DecryptFromJson(_key, response);
-
+            CSrvMsg<List<string>> responseMsg = CSrvMsg<List<string>>.FromJsonDecrypt(_key, response, EncodingType.Base64, Zfx.ZipType.None);
             return responseMsg;
-
         }
 
 

@@ -15,8 +15,7 @@ namespace EU.CqrXs.Service.Util
 
         static object _lock = new object();
         static HashSet<CContact> _contacts;
-        internal static string JsonContactsFileName { get => Area23.At.Framework.Library.Static.JsonHelper.JsonContactsFile; }
-        
+        internal static string JsonContactsFileName { get => Area23.At.Framework.Library.Static.JsonHelper.JsonContactsFile; }        
         
         /// <summary>
         /// JsonContacts

@@ -1,6 +1,4 @@
 ﻿using Area23.At.Framework.Core.Static;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace Area23.At.Framework.Core.Util
 {
@@ -13,8 +11,7 @@ namespace Area23.At.Framework.Core.Util
 
         #region static fields and properties
 
-        private static readonly object _lock = new object(), _outerLock = new object();
-        // private static readonly Lazy<Area23Log> instance = new Lazy<Area23Log>(() => new Area23Log());
+        private static readonly object _lock = new object(), _outerLock = new object();        
 
         private static int checkedToday = DateTime.UtcNow.Date.Day;
 
@@ -165,20 +162,8 @@ namespace Area23.At.Framework.Core.Util
         /// <param name="exLog"><see cref="Exception"/> to log</param>
         /// <param name="appName">application name</param>
         public static void Log(Exception exLog, string appName = "")
-        {
-            string methodBase = "unknown";
-            try
-            {
-                MethodBase mBase = (new StackFrame(1))?.GetMethod();
-                methodBase = mBase.ToString();
-            }
-            catch
-            {
-                methodBase = "unknown";
-            }
-
-            string excMsg = String.Format("{0} throwed {1} ⇒ {2}\t{3}\nStacktrace: \t{4}\n",
-                methodBase,
+        {            
+            string excMsg = String.Format("Exception {0} thrown  ⇒ {1}\t{2}\nStacktrace: \t{3}\n",
                 exLog.GetType(),
                 exLog.Message,
                 exLog.ToString().Replace("\r", "").Replace("\n", " "),

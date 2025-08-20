@@ -3,8 +3,10 @@
   "OnlyPeer2PeerChat": false,
   "ZipBeforeSend": false,
   "OnlySecureFileTypes": false,
-  "RegisterUser": false,
-  "SecretKeysCrypted": [],
+  "RegisterUser": true,
+  "SecretKeysCrypted": [
+    "OFBWeFBZd25PM0ZhOTBKZ2dBRUpiclBjc1VPdFhCdW5GQVdJY1RiQ1IrMWpCWjJqZ3dxZ1MzaDRWTEZnMmY5MnBoME1lSW1HT1BOaW1aRmpkUFI4Uk1rek5ldkRKWGJZN25ZaGxRWGxMNkN4alBzVHhWNHg3TmZic1NsclExeHM="
+  ],
   "ChatRoom": {
     "ChatRuid": "5883d5ba-f61d-4ef7-9279-b14e76aaa418",
     "ChatRoomNr": "room_08201126_he.json",
@@ -31,7 +33,7 @@
     "Md5Hash": ""
   },
   "TimeStamp": "2025-08-19T23:20:02.0561038+02:00",
-  "SaveStamp": "2025-08-20T13:43:19.4841083+02:00",
+  "SaveStamp": "2025-08-20T13:30:49.4946966+02:00",
   "MyContact": {
     "ContactId": 0,
     "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
@@ -1031,5 +1033,7 @@
     "18.101.101.108",
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
-  "SecretKeys": []
+  "SecretKeys": [
+    "123456"
+  ]
 }
