@@ -32,7 +32,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public CChatRoom() : base()
         {
-            ChatRuid = Guid.Empty;
+            ChatRuid = Guid.NewGuid();
             InvitedEmails = new List<string>();
             ChatRoomNr = "";
             Message = "";
@@ -74,9 +74,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Hash = hash;
             Md5Hash = md5sum;
             CBytes = bytes;
-            MsgType = SerType.Json;
-            // SerializedMsg = "";
-            // SerializedMsg = this.ToJson();
+            MsgType = SerType.Json;            
         }
 
         public CChatRoom(CChatRoom chatRoom) : this()
@@ -84,7 +82,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             if (chatRoom != null)
             {
                 CChatRoom.CloneCopy(chatRoom, this);
-                CCopy(this, chatRoom);
             }            
         }
 

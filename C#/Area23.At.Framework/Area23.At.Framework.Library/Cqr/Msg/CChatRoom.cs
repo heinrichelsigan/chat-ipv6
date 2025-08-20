@@ -27,7 +27,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public CChatRoom() : base()
         {
-            ChatRuid = Guid.Empty;
+            ChatRuid = Guid.NewGuid();
             InvitedEmails = new List<string>();
             ChatRoomNr = "";
             Message = "";

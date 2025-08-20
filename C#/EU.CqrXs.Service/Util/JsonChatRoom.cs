@@ -87,19 +87,20 @@ namespace EU.CqrXs.Service.Util
             string jsonString = "";
             CChatRoom chatRoom = cSrvMsg.CRoom;
             string chatRoomNumber = cSrvMsg.CRoom.ChatRoomNr;
-
-            if (string.IsNullOrEmpty(chatRoomNumber) || chatRoomNumber.Length < 6)
-            {
-                string restMail = cSrvMsg.Sender.Email.Contains("@") ? (cSrvMsg.Sender.Email.Substring(0, cSrvMsg.Sender.Email.IndexOf("@"))) : cSrvMsg.Sender.Email.Trim();
-                restMail = restMail.Replace("@", "_").Replace(".", "_");
-
-                if (!string.IsNullOrEmpty(restMail))
-                    chatRoomNumber = String.Format("room_{0:MMddHHmm}_{1}.json", DateTime.Now, restMail);
-                else
-                    chatRoomNumber = $"room_{DateTime.Now:MMddHHmm}.json";
-            }
+            
             lock (_lock)
             {
+                if (string.IsNullOrEmpty(chatRoomNumber) || chatRoomNumber.Length < 6)
+                {
+                    string restMail = cSrvMsg.Sender.Email.Contains("@") ? (cSrvMsg.Sender.Email.Substring(0, cSrvMsg.Sender.Email.IndexOf("@"))) : cSrvMsg.Sender.Email.Trim();
+                    restMail = restMail.Replace("@", "_").Replace(".", "_");
+
+                    if (!string.IsNullOrEmpty(restMail))
+                        chatRoomNumber = String.Format("room_{0:MMddHHmm}_{1}.json", DateTime.Now, restMail);
+                    else
+                        chatRoomNumber = $"room_{DateTime.Now:MMddHHmm}.json";
+                }
+
                 if (!chatRoomNumber.EndsWith(".json"))
                     chatRoomNumber += ".json";
 
