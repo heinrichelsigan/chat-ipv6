@@ -345,7 +345,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Util
 
             if (!string.IsNullOrEmpty(cName) || !string.IsNullOrEmpty(cEmail))
             {
-                string cNameEmail = string.IsNullOrEmpty(cEmail) ? cName : string.Format("{ß} <{1}>", cName, cEmail);
+                string cNameEmail = string.IsNullOrEmpty(cEmail) ? cName : string.Format("{0} <{1}>", cName, cEmail);
                 string cPhone = cMobile ?? string.Empty;
 
                 foreach (CContact c in contacts)

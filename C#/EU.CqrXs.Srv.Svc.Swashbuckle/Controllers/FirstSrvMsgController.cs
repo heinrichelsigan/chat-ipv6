@@ -21,14 +21,14 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
         [HttpGet(Name = "Send1StSrvMsg")]
         public string Get(string cryptMsg)
         {
-            Area23Log.LogOriginMsg("FirstSrvMsgController", $"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
+            Area23Log.LogOriginMsg("FirstSrvMsgController", "Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
             InitMethod();
 
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-					_contact = new CContact(cryptMsg, SerType.Json);
+                    _contact = new CContact();
                     _contact = _contact.FromJson<CContact>(cryptMsg);
                     _decrypted = _contact.ToJson().ToString();
                     Area23Log.LogOriginMsg("FirstSrvMsgController", $"Contact decrypted successfully: {_decrypted}\n");
