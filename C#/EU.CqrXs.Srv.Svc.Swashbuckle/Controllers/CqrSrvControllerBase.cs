@@ -42,7 +42,7 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             _decrypted = "";
             _responseString = string.Empty;
             _contact = null;
-            _serverKey = Constants.VALKEY_CACHE_HOST_PORT;
+            _serverKey = Constants.AUTHOR_EMAIL;
             // GetServerKey();
             cqrFacade = new CqrFacade(_serverKey);
          

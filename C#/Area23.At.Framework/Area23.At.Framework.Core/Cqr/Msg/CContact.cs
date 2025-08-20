@@ -263,8 +263,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             EncodingType encoder = EncodingType.Base64, 
             Zfx.ZipType zipType = Zfx.ZipType.None)
         {
-            if (string.IsNullOrEmpty(serverKey) || ccntct == null)
-                throw new CqrException($"static string ToJsonEncrypt(string serverKey, CContact ccntct) failed: NULL reference!");
+            if (string.IsNullOrEmpty(serverKey))
+                throw new ArgumentNullException("serverKey");
+
+            if (ccntct == null)
+                throw new ArgumentNullException("ccntct");
+            // throw new CqrException($"static string ToJsonEncrypt(string serverKey, CContact ccntct) failed: NULL reference!");
 
             if (!EncryptSrvMsg(serverKey, ref ccntct, encoder, zipType))
                 throw new CqrException($"static string ToJsonEncrypt(string severKey, CContact ccntct) failed.");

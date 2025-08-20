@@ -45,7 +45,8 @@ namespace EU.CqrXs.Srv.Svc.Swashbuckle.Controllers
             if (!string.IsNullOrEmpty(_decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {               
                 CContact foundCt = JsonContacts.AddContact(_contact);
-                _responseString = CContact.ToJsonEncrypt(_serverKey, foundCt);
+                foundCt = (foundCt == null) ? _contact : foundCt;
+                _responseString = CContact.ToJsonEncrypt(_serverKey, _contact);
             }
 
             Area23Log.LogOriginMsg("FirstSrvMsgController", $"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
