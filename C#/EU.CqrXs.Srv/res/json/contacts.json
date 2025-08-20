@@ -1,21 +1,30 @@
-[    
-  {
-    "_hash": "6bICDgFf",
-    "_message": "room_0801_he.json",
-    "ContactId": 0,
-    "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
-    "Name": "Heinrich G. Elsigan",
-    "Email": "he@area23.at",
-    "Mobile": "+436507627928",
-    "Address": "",
-    "SecretKey": "",
-    "ContactImage": null,
-    "NameEmail": "Heinrich G. Elsigan <he@area23.at>",
-    "MsgType": 0,
-    "Message": "room_0801_he.json",
-    "SerializedMsg": "",
-    "Hash": "6bICDgFf",
-    "Md5Hash": "fe2e696dd4fc3d90856231b317cf6f7c",
-    "CBytes": ""
-  }
+[
+	{
+		"ContactId": 0,
+		"Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
+		"Name": "Heinrich G. Elsigan",
+		"Email": "he@area23.at",
+		"Mobile": "+43 650 7527928",
+		"Address": "Theresianumgasse 6/28, 1040 Wien",
+		"ContactImage": null,
+		"MsgType": 0,
+		"Message": "room_08200827_he.json",
+		"Hash": "6bFfDC",
+		"Md5Hash": "b08c701456ddcfe7a2a1c61b5518f5bf",
+		"EnCodingType": 64
+	},
+	{
+		  "ContactId": 36,
+		  "Cuid": "1a784497-0826-4b5d-a8a9-fd61a3e2e09b",
+		  "Name": "Markus Norbert Stumpfel",
+		  "Email": "markus.stumpfel2007@protonmail.com",
+		  "Mobile": "+43 664 5217354",
+		  "Address": "",
+		  "ContactImage": null,
+		  "MsgType": 1,
+		  "Message": "room_08200827_he.json",
+		  "Hash": "6bFfDC",
+		  "Md5Hash": "",
+		  "EnCodingType": 64
+    }
 ]
