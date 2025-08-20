@@ -3,23 +3,21 @@
   "OnlyPeer2PeerChat": false,
   "ZipBeforeSend": false,
   "OnlySecureFileTypes": false,
-  "RegisterUser": false,
-  "SecretKeysCrypted": [],
+  "RegisterUser": true,
+  "SecretKeysCrypted": [
+    "OFBWeFBZd25PM0ZhOTBKZ2dBRUpiclBjc1VPdFhCdW5GQVdJY1RiQ1IrMWpCWjJqZ3dxZ1MzaDRWTEZnMmY5MnBoME1lSW1HT1BOaW1aRmpkUFI4Uk1rek5ldkRKWGJZN25ZaGxRWGxMNkN4alBzVHhWNHg3TmZic1NsclExeHM="
+  ],
   "ChatRoom": {
-    "ChatRuid": "5883d5ba-f61d-4ef7-9279-b14e76aaa418",
-    "ChatRoomNr": "room_08201126_he.json",
+    "ChatRuid": "bf43ab65-20f7-468e-8c09-d9cd0c881949",
+    "ChatRoomNr": "room_08201144_he.json",
     "TicksLong": [
-      638912859629385090,
-      638912859938912080,
-      638912860120314390,
-      638912860330495180,
-      638912860678123060,
-      638912860862865080,
-      638912861142906900,
-      638912861503855490
+      638912870578995560,
+      638912870668533580,
+      638912870780033930,
+      638912870917824930
     ],
-    "LastPushed": "2025-08-20T13:29:10.385549+02:00",
-    "LastPolled": "2025-08-20T11:29:10.385549",
+    "LastPushed": "2025-08-20T13:44:51.782493+02:00",
+    "LastPolled": "2025-08-20T11:44:51.782493",
     "InvitedEmails": [
       "vielbros@libero.it",
       "he@area23.at"
@@ -31,7 +29,7 @@
     "Md5Hash": ""
   },
   "TimeStamp": "2025-08-19T23:20:02.0561038+02:00",
-  "SaveStamp": "2025-08-20T13:43:19.4841083+02:00",
+  "SaveStamp": "2025-08-20T13:44:32.8230192+02:00",
   "MyContact": {
     "ContactId": 0,
     "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
@@ -42,7 +40,7 @@
     "ContactImage": null,
     "MsgType": 0,
     "EnCodingType": 64,
-    "Message": "room_08201126_he.json",
+    "Message": "room_08201144_he.json",
     "Hash": "6bFfDC",
     "Md5Hash": "c8bb0ce3187477f62067cb0f2bae8ac0"
   },
@@ -1031,5 +1029,7 @@
     "18.101.101.108",
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
-  "SecretKeys": []
+  "SecretKeys": [
+    "123456"
+  ]
 }
