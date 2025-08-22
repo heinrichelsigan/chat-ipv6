@@ -1,7 +1,7 @@
 {
   "ExtendedData": {
     "inputs": [
-      "https://srv.cqrxs.eu/v1.4/CqrService.asmx"
+      "https://srv.cqrxs.eu/v1.6/CqrService.asmx"
     ],
     "collectionTypes": [
       "System.Array",
@@ -11,29 +11,23 @@
       "*, Area23.At.Framework.Core.Cqr.Srv"
     ],
     "references": [
-      "BouncyCastle.Cryptography, {BouncyCastle.Cryptography, 2.5.1}",
+      "BouncyCastle.Cryptography, {BouncyCastle.Cryptography, 2.6.2}",
       "ICSharpCode.SharpZipLib, {SharpZipLib, 1.4.2}",
-      "Microsoft.Bcl.TimeProvider, {Microsoft.Bcl.TimeProvider, 9.0.4}",
-      "Microsoft.Extensions.DependencyInjection.Abstractions, {Microsoft.Extensions.DependencyInjection.Abstractions, 8.0.2}",
-      "Microsoft.Extensions.Logging.Abstractions, {Microsoft.Extensions.Logging.Abstractions, 8.0.2}",
-      "Microsoft.Extensions.ObjectPool, {Microsoft.Extensions.ObjectPool, 9.0.4}",
-      "Microsoft.IdentityModel.Abstractions, {Microsoft.IdentityModel.Abstractions, 8.8.0}",
-      "Microsoft.IdentityModel.Logging, {Microsoft.IdentityModel.Logging, 8.8.0}",
+      "Microsoft.Bcl.TimeProvider, {Microsoft.Bcl.TimeProvider, 8.0.1}",
+      "Microsoft.Extensions.ObjectPool, {Microsoft.Extensions.ObjectPool, 8.0.10}",
+      "Microsoft.IdentityModel.Abstractions, {Microsoft.IdentityModel.Abstractions, 8.2.0}",
+      "Microsoft.IdentityModel.Logging, {Microsoft.IdentityModel.Logging, 8.2.0}",
       "Microsoft.IdentityModel.Protocols.WsTrust, {Microsoft.IdentityModel.Protocols.WsTrust, 6.8.0}",
-      "Microsoft.IdentityModel.Tokens, {Microsoft.IdentityModel.Tokens, 8.8.0}",
+      "Microsoft.IdentityModel.Tokens, {Microsoft.IdentityModel.Tokens, 8.2.0}",
       "Microsoft.IdentityModel.Tokens.Saml, {Microsoft.IdentityModel.Tokens.Saml, 8.2.0}",
-      "Microsoft.IdentityModel.Xml, {Microsoft.IdentityModel.Xml, 8.8.0}",
-      "Microsoft.Win32.SystemEvents, {Microsoft.Win32.SystemEvents, 9.0.4}",
+      "Microsoft.IdentityModel.Xml, {Microsoft.IdentityModel.Xml, 8.2.0}",
       "Newtonsoft.Json, {Newtonsoft.Json, 13.0.3}",
-      "Pipelines.Sockets.Unofficial, {Pipelines.Sockets.Unofficial, 2.2.8}",
-      "StackExchange.Redis, {StackExchange.Redis, 2.8.31}",
       "System.Collections, {System.Collections, 4.3.0}",
       "System.Diagnostics.Debug, {System.Diagnostics.Debug, 4.3.0}",
       "System.Globalization, {System.Globalization, 4.3.0}",
       "System.IO, {System.IO, 4.3.0}",
       "System.IO.FileSystem, {System.IO.FileSystem, 4.3.0}",
       "System.IO.FileSystem.Primitives, {System.IO.FileSystem.Primitives, 4.3.0}",
-      "System.IO.Pipelines, {System.IO.Pipelines, 5.0.1}",
       "System.Reflection, {System.Reflection, 4.3.0}",
       "System.Reflection.Primitives, {System.Reflection.Primitives, 4.3.0}",
       "System.Resources.ResourceManager, {System.Resources.ResourceManager, 4.3.0}",
@@ -47,7 +41,7 @@
       "System.ServiceModel.Federation, {System.ServiceModel.Federation, 8.1.2}",
       "System.ServiceModel.Http, {System.ServiceModel.Http, 8.1.2}",
       "System.ServiceModel.NetFramingBase, {System.ServiceModel.NetFramingBase, 8.1.2}",
-      "System.ServiceModel.NetNamedPipe, {System.ServiceModel.NetNamedPipe, 8.1.2}",
+      "System.ServiceModel.NetNamedPipe, {System.ServiceModel.NetNamedPipe, 6.0.0}",
       "System.ServiceModel.NetTcp, {System.ServiceModel.NetTcp, 8.1.2}",
       "System.ServiceModel.Primitives, {System.ServiceModel.Primitives, 8.1.2}",
       "System.ServiceModel.Security, {System.ServiceModel.Primitives, 8.1.2}",
