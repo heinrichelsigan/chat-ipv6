@@ -103,15 +103,15 @@ namespace EU.CqrXs.Srv.Util
             dict.Add(now.Ticks, "");
 
             if (cSrvMsg.CRoom == null)
-                cSrvMsg.CRoom = new CChatRoom(chatRoomNr, Guid.NewGuid(), now, now) { TicksLong = dict.Keys.ToList() };
+                cSrvMsg.CRoom = new CChatRoom(chatRoomNr, Guid.NewGuid(), now, now) { MsgDict = dict };
             else
             {
                 cSrvMsg.CRoom.ChatRoomNr = chatRoomNr;
                 cSrvMsg.CRoom.ChatRuid = (cSrvMsg.CRoom.ChatRuid == Guid.Empty) ? Guid.NewGuid() : cSrvMsg.CRoom.ChatRuid;
                 cSrvMsg.CRoom.LastPolled = now;
                 cSrvMsg.CRoom.LastPushed = now;
-                if (cSrvMsg.CRoom.TicksLong == null || cSrvMsg.CRoom.TicksLong.Count == 0)
-                    cSrvMsg.CRoom.TicksLong = dict.Keys.ToList();
+                if (cSrvMsg.CRoom.MsgDict == null || cSrvMsg.CRoom.MsgDict.Count == 0)
+                    cSrvMsg.CRoom.MsgDict = dict;
                 else
                     cSrvMsg.CRoom.TicksLong.Add(now.Ticks);
             }

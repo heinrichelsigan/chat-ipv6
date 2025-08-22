@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core.Static;
+using System.Text.Json.Serialization;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
@@ -10,13 +11,16 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public string ChatRoomNr { get; set; }
 
-        public List<long> TicksLong { get; set; }
+        [JsonIgnore]
+        public List<long> TicksLong { get => MsgDict.Keys.ToList(); }
 
         public DateTime LastPushed { get; set; }
 
         public DateTime LastPolled { get; set; }
 
         public List<string> InvitedEmails { get; set; }
+
+        public Dictionary<long, string> MsgDict { get; set; }
 
         #region ICqrMessagable interface
 
@@ -36,7 +40,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             InvitedEmails = new List<string>();
             ChatRoomNr = "";
             Message = "";
-            TicksLong = new List<long>();
+            MsgDict = new Dictionary<long, string>();
             LastPushed = DateTime.MinValue;
             LastPolled = DateTime.MinValue;
             Hash = "";
@@ -51,7 +55,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             ChatRuid = Guid.NewGuid();
             LastPushed = DateTime.MinValue;
             LastPolled = DateTime.MinValue;
-            TicksLong = new List<long>();
+            MsgDict = new Dictionary<long, string>();
         }
 
         public CChatRoom(string chatRoomNr, Guid chatRuid, DateTime lastPushed, DateTime lastPolled)  : this()
@@ -60,16 +64,16 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             ChatRuid = (chatRuid == Guid.Empty) ? Guid.NewGuid() : chatRuid;
             LastPushed = lastPushed;
             LastPolled = lastPolled;
-            TicksLong = new List<long>();            
+            MsgDict = new Dictionary<long, string>();            
         }
 
-        public CChatRoom(string chatRoomNr, Guid chatRuid, DateTime lastPushed, DateTime lastPolled, List<long> ticks, List<string> invited, string hash, string md5sum, byte[] bytes) : this()
+        public CChatRoom(string chatRoomNr, Guid chatRuid, DateTime lastPushed, DateTime lastPolled, Dictionary<long, string> msgDict, List<string> invited, string hash, string md5sum, byte[] bytes) : this()
         {
             ChatRoomNr = chatRoomNr;
             ChatRuid = (chatRuid == Guid.Empty) ? Guid.NewGuid() : chatRuid;
             LastPushed = lastPushed;
             LastPolled = lastPolled;
-            TicksLong = new List<long>(ticks);
+            MsgDict = new Dictionary<long, string>(msgDict);
             InvitedEmails = new List<string>(invited);
             Hash = hash;
             Md5Hash = md5sum;
@@ -119,7 +123,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
             destination.ChatRoomNr = source.ChatRoomNr;
             destination.ChatRuid = source.ChatRuid;
-            destination.TicksLong = source.TicksLong;
+            destination.MsgDict = source.MsgDict;
             destination.LastPolled = source.LastPolled;
             destination.LastPushed = source.LastPushed;
             destination.InvitedEmails = source.InvitedEmails;

@@ -193,7 +193,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Recipients = new HashSet<CContact>(tos);
             TContent = tc;
             Hash = hash;
-            CRoom = new CChatRoom(chatRoom) { TicksLong = new List<long>(chatRoom.TicksLong) };
+            CRoom = new CChatRoom(chatRoom) { MsgDict = new Dictionary<long, string>(chatRoom.MsgDict) };
             if (tc is string || tc is int || tc is long || tc is byte || tc is short || tc is uint || tc is ulong || tc is ushort || tc is sbyte || tc is float || tc is double)
                 Message = tc.ToString();
             else
@@ -216,7 +216,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 			Recipients = new HashSet<CContact>(toMany);
 			TContent = tc;
 			Hash = hash;
-			CRoom = new CChatRoom(chatRoom) { TicksLong = new List<long>(chatRoom.TicksLong) };
+			CRoom = new CChatRoom(chatRoom) { MsgDict = new Dictionary<long, string>(chatRoom.MsgDict) };
 			if (tc is string || tc is int || tc is long || tc is byte || tc is short || tc is uint || tc is ulong || tc is ushort || tc is sbyte || tc is float || tc is double)
 				Message = tc.ToString();
 			else

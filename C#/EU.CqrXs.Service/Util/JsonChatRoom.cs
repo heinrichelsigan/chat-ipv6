@@ -82,7 +82,7 @@ namespace EU.CqrXs.Service.Util
                 {
                     chatRoomMsg.CRoom.LastPolled = cSrvMsgIn.CRoom.LastPolled;
                     chatRoomMsg.CRoom.LastPushed = cSrvMsgIn.CRoom.LastPushed;
-                    chatRoomMsg.CRoom.TicksLong = new List<long>(cSrvMsgIn.CRoom.TicksLong);
+                    chatRoomMsg.CRoom.MsgDict = new Dictionary<long, string>(cSrvMsgIn.CRoom.MsgDict);
                 }
             }
         

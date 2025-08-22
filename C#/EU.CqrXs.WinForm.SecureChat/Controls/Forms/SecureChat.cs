@@ -706,7 +706,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             if (Settings.Singleton.ChatRoom != null)
             {
-                Settings.Singleton.ChatRoom.TicksLong = new List<long>();
+                Settings.Singleton.ChatRoom.MsgDict = new Dictionary<long, string>();
                 Settings.Singleton.ChatRoom.LastPushed = DateTime.MinValue;
                 Settings.Singleton.ChatRoom.LastPolled = DateTime.MinValue;
                 Settings.SaveSettings();
@@ -1576,7 +1576,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     Settings.Singleton.ChatRoom = new CChatRoom(chatRoomTxt);
                 }
                 // TODO: Delete lt later
-                Settings.Singleton.ChatRoom.TicksLong = new List<long>();
+                Settings.Singleton.ChatRoom.MsgDict = new Dictionary<long, string>();
                 Settings.Singleton.ChatRoom.LastPushed = DateTime.MinValue;
                 Settings.Singleton.ChatRoom.LastPolled = DateTime.MinValue;
                 Settings.SaveSettings();
