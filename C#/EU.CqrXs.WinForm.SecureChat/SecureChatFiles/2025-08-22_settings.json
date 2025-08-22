@@ -4,19 +4,21 @@
   "ZipBeforeSend": false,
   "OnlySecureFileTypes": false,
   "RegisterUser": true,
-  "SecretKeysCrypted": [],
+  "SecretKeysCrypted": [
+    "OFBWeFBZd25PM0ZhOTBKZ2dBRUpiclBjc1VPdFhCdW5GQVdJY1RiQ1IrMWpCWjJqZ3dxZ1MzaDRWTEZnMmY5MnBoME1lSW1HT1BOaW1aRmpkUFI4Uk1rek5ldkRKWGJZN25ZaGxRWGxMNkN4alBzVHhWNHg3TmZic1NsclExeHM="
+  ],
   "ChatRoom": {
-    "ChatRuid": "80c71e65-374e-4586-9199-a023135792d8",
-    "ChatRoomNr": "room_08221222_he.json",
+    "ChatRuid": "c8100981-f49c-495d-9a19-e172fe031e6e",
+    "ChatRoomNr": "room_08221241_he.json",
     "TicksLong": [
-      638914621483898740
+      638914632706523950,
+      638914632883928790
     ],
-    "LastPushed": "2025-08-22T14:22:41.883896+02:00",
-    "LastPolled": "2025-08-22T14:22:28.389874+02:00",
+    "LastPushed": "2025-08-22T14:41:28.392879+02:00",
+    "LastPolled": "2025-08-22T12:41:28.392879",
     "InvitedEmails": [
-      "ina.ivanceanu@gmail.com",
-      "svetlana.maksimovic@aon.at",
-      "Wolfgang.Wagner@inhouse.wko.at",
+      "Binh-Thanh.Nguyen@andritz.com",
+      "renate.ausserdorfer@logic4biz.com",
       "he@area23.at"
     ],
     "MsgType": 0,
@@ -26,7 +28,7 @@
     "Md5Hash": ""
   },
   "TimeStamp": "2025-08-19T23:20:02.0561038+02:00",
-  "SaveStamp": "2025-08-22T14:27:18.450058+02:00",
+  "SaveStamp": "2025-08-22T14:41:02.6380726+02:00",
   "MyContact": {
     "ContactId": 0,
     "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
@@ -37,7 +39,7 @@
     "ContactImage": null,
     "MsgType": 0,
     "EnCodingType": 64,
-    "Message": "room_08221222_he.json",
+    "Message": "room_08221241_he.json",
     "Hash": "6bFfDC",
     "Md5Hash": "17c20e23cea16f1c870cfe137834fafe"
   },
@@ -1025,5 +1027,7 @@
     "18.101.101.108",
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
-  "SecretKeys": []
+  "SecretKeys": [
+    "123456"
+  ]
 }
