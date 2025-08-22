@@ -305,7 +305,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             foreach (byte keyByte in new List<byte>(privateBytes))
             {
                 sbyte b = (sbyte)(keyByte % 0x10);
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < 0x24; i++)
                 {
                     if (PermutationKeyHash.Contains(b) || ((int)b) == ba)
                     {
@@ -379,15 +379,28 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             }
             else
             {
+                #region bugfix for missing permutations                
+                sbyte[] strikeBytes = {  (sbyte)0x0, (sbyte)0x1, (sbyte)0x2, (sbyte)0x3, (sbyte)0x4, (sbyte)0x5, (sbyte)0x6, (sbyte)0x7,
+                                        (sbyte)0x8, (sbyte)0x9, (sbyte)0xa, (sbyte)0xb, (sbyte)0xc, (sbyte)0xd, (sbyte)0xe, (sbyte)0xf  };
+                HashSet<sbyte> strikeList = new HashSet<sbyte>(strikeBytes);
+
                 for (int i = 0; i < 0x10; i++)
                 {
+                    if ((PermutationKeyHash.Count <= i) && strikeList.Count > 0)
+                        PermutationKeyHash.Add((sbyte)strikeList.ElementAt(0));
+
+                    sbyte inByte = (sbyte)i;
                     if ((int)PermutationKeyHash.ElementAt(i) != i)
                     {
-                        MatrixPermutationKey[i] = PermutationKeyHash.ElementAt(i);
+                        inByte = PermutationKeyHash.ElementAt(i);
+                        MatrixPermutationKey[i] = inByte;
                     }
+                    if (strikeList.Contains(inByte))
+                        strikeList.Remove(inByte);
                 }
 
                 _inverseMatrix = BuildInverseMatrix(MatrixPermutationKey);
+                #endregion bugfix for missing permutations
             }
 
             string perm = string.Empty, kbs = string.Empty;
