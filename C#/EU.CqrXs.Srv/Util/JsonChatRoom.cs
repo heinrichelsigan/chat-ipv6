@@ -98,7 +98,7 @@ namespace EU.CqrXs.Srv.Util
         /// <returns></returns>
         public static CSrvMsg<string> SaveChatRoom(ref CSrvMsg<string> cSrvMsg)
         {
-            string jsonString = "";
+            // string jsonString = "";
             CChatRoom chatRoom = cSrvMsg.CRoom;
             string chatRoomNumber = cSrvMsg.CRoom.ChatRoomNr;
 

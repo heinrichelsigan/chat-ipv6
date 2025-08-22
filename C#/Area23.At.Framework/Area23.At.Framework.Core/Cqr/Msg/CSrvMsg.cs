@@ -1,13 +1,9 @@
-﻿using Area23.At.Framework.Core.Cqr.Msg;
-using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
+﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Newtonsoft.Json;
-using System.Security.Policy;
-using System.Text;
-using System.Xml;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {

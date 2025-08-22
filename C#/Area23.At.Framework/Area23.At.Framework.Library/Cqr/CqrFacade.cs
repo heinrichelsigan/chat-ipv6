@@ -331,7 +331,7 @@ namespace Area23.At.Framework.Library.Cqr
             where TC : class
         {
             T t = default(T);
-            TC tc = default(TC);
+            // TC tc = default(TC);
 
             cServerMsg.Hash = _symmPipe.PipeString;
             SymmCipherPipe clientPipe = new SymmCipherPipe(clientKey);

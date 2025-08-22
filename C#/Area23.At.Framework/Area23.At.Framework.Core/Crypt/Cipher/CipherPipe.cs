@@ -194,7 +194,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.Aes:
                 case CipherEnum.AesLight:
                 case CipherEnum.Aria:
-                case CipherEnum.Rijndael:
                 case CipherEnum.BlowFish:
                 case CipherEnum.Camellia:
                 case CipherEnum.Cast5:
@@ -211,6 +210,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.RC2:
                 case CipherEnum.RC532:
                 case CipherEnum.RC6:
+                case CipherEnum.Rijndael:
                 case CipherEnum.Seed:
                 case CipherEnum.SM4:
                 case CipherEnum.SkipJack:
@@ -266,8 +266,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     break;
                 case CipherEnum.Aes:
                 case CipherEnum.AesLight:
-                case CipherEnum.Aria:
-                case CipherEnum.Rijndael:
+                case CipherEnum.Aria:                
                 case CipherEnum.BlowFish:
                 case CipherEnum.Camellia:
                 case CipherEnum.Cast5:
@@ -284,6 +283,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.RC2:
                 case CipherEnum.RC532:
                 case CipherEnum.RC6:
+                case CipherEnum.Rijndael:
                 case CipherEnum.Seed:
                 case CipherEnum.SM4:
                 case CipherEnum.SkipJack:

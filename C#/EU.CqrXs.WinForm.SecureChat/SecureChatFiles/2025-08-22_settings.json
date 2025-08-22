@@ -5,21 +5,21 @@
   "OnlySecureFileTypes": false,
   "RegisterUser": true,
   "SecretKeysCrypted": [
-    "YzExeGFjQWwxVW5qZTYrdnNyL01oRFlwSVZEckxzd0VWVjcwKzMxenZIeGpCWjJqZ3dxZ1MzaDRWTEZnMmY5MnBoME1lSW1HT1BOaW1aRmpkUFI4Uk1rek5ldkRKWGJZN25ZaGxRWGxMNkN4alBzVHhWNHg3TmZic1NsclExeHM="
+    "OFBWeFBZd25PM0ZhOTBKZ2dBRUpiclBjc1VPdFhCdW5GQVdJY1RiQ1IrMWpCWjJqZ3dxZ1MzaDRWTEZnMmY5MnBoME1lSW1HT1BOaW1aRmpkUFI4Uk1rek5ldkRKWGJZN25ZaGxRWGxMNkN4alBzVHhWNHg3TmZic1NsclExeHM="
   ],
   "ChatRoom": {
-    "ChatRuid": "716123d7-6ce6-42de-a4f5-ebe32fda72d1",
-    "ChatRoomNr": "room_08221135_he.json",
+    "ChatRuid": "bf43ab65-20f7-468e-8c09-d9cd0c881949",
+    "ChatRoomNr": "room_08201144_he.json",
     "TicksLong": [
-      638914593136835870,
-      638914597092657850,
-      638914597637033310
+      638912870578995560,
+      638912870668533580,
+      638912870780033930,
+      638912870917824930
     ],
-    "LastPushed": "2025-08-22T13:42:43.703331+02:00",
-    "LastPolled": "2025-08-22T11:42:43.703331",
+    "LastPushed": "2025-08-20T13:44:51.782493+02:00",
+    "LastPolled": "2025-08-20T11:44:51.782493",
     "InvitedEmails": [
-      "christian.rehnelt@gmx.at",
-      "michael.figl@gmail.com",
+      "vielbros@libero.it",
       "he@area23.at"
     ],
     "MsgType": 0,
@@ -29,20 +29,20 @@
     "Md5Hash": ""
   },
   "TimeStamp": "2025-08-19T23:20:02.0561038+02:00",
-  "SaveStamp": "2025-08-22T13:43:21.1484541+02:00",
+  "SaveStamp": "2025-08-20T13:44:32.8230192+02:00",
   "MyContact": {
     "ContactId": 0,
-    "Cuid": "ffb58ecb-5217-49f9-85a3-4290d6d84339",
+    "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
     "Name": "Heinrich G. Elsigan",
     "Email": "he@area23.at",
     "Mobile": "+43 650 7527928",
     "Address": "Theresianumgasse 6/28, 1040 Wien",
     "ContactImage": null,
-    "MsgType": 1,
+    "MsgType": 0,
     "EnCodingType": 64,
-    "Message": "room_08221135_he.json",
-    "Hash": "6bgFfD",
-    "Md5Hash": "17c20e23cea16f1c870cfe137834fafe"
+    "Message": "room_08201144_he.json",
+    "Hash": "6bFfDC",
+    "Md5Hash": "c8bb0ce3187477f62067cb0f2bae8ac0"
   },
   "Contacts": [
     {
@@ -1014,21 +1014,22 @@
   ],
   "FriendIPs": [],
   "MyIPs": [
+    "2001:4bc9:81c:71bf:95f8:5dde:4039:177e",
+    "2001:4bc9:81c:71bf:21be:d631:97b3:6b91",
+    "10.103.228.14",
     "169.254.116.213",
     "169.254.85.69",
     "169.254.39.21",
-    "2001:4bc9:81c:71bf:ade8:334c:f2b1:46e5",
-    "2001:4bc9:81c:71bf:80eb:4ab4:f803:63be",
-    "10.103.228.217",
+    "10.0.0.249",
     "::1",
     "127.0.0.1",
-    "172.24.16.1"
+    "172.26.144.1"
   ],
   "Proxies": [
     "18.101.101.108",
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
   "SecretKeys": [
-    "1234567"
+    "123456"
   ]
 }

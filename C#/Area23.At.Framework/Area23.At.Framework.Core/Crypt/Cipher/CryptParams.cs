@@ -64,7 +64,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             switch (Cipher)
             {
                 case CipherEnum.Aes:
-                case CipherEnum.Rijndael:
                     Size = 256;
                     KeyLen = 32;
                     Mode = "ECB";
@@ -189,6 +188,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     KeyLen = 32;
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.RC6Engine();
+                    break;
+                case CipherEnum.Rijndael:
+                    Size = 256;
+                    KeyLen = 32;
+                    Mode = "ECB";
+                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.RijndaelEngine();
                     break;
                 case CipherEnum.Seed:
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.SeedEngine();

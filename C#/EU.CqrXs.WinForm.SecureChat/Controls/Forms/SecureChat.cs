@@ -898,6 +898,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     {                       
                         await PlaySoundFromResourcesAsync("sound_arrow");
                         SetStatusText(StripStatusLabel, $"Send to {chatRoomNr} via server {ServerIpAddress} successfully.");
+                        
+                        string userMsg = chat.AddMyMessage(unencrypted);
+                        AppendText(TextBoxSource, userMsg);
 
                         if (rfmsg.TContent == null)
                             rfmsg.TContent = new List<string>();
@@ -997,8 +1000,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                     // AppendText(TextBoxDestionation, chat.AddFriendMessage(msgChatRoom));
-                    //string userMsg = chat.AddMyMessage(unencrypted);
-                    //AppendText(TextBoxSource, userMsg);
 
                     // this.RichTextBoxOneView.Rtf = this.RichTextBoxChat.Rtf;
                     Format_Lines_RichTextBox();
@@ -1152,6 +1153,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                                 await PlaySoundFromResourcesAsync("sound_push");
                                 SetStatusText(StripStatusLabel, $"File {cfile.FileName} send to {partnerIpAddress} successfully!");
 
+                                string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength() + "\r\n");
+                                AppendText(TextBoxSource, userMsg);
+
                                 if (rfmsg.TContent == null)
                                     rfmsg.TContent = new List<string>();
 
@@ -1248,8 +1252,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                             }
 
-                            //string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength());
-                            //AppendText(TextBoxSource, userMsg);
+                            ;
                             Format_Lines_RichTextBox();
                             SetRichText(RichTextBoxChat, string.Empty);
                             // this.RichTextBoxChat.Text = string.Empty;

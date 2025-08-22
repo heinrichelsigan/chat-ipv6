@@ -5,6 +5,8 @@ using Area23.At.Framework.Library.Zfx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using System.Windows.Input;
 
 
 namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
@@ -96,7 +98,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 			// What ever is entered here as parameter, maxpipe has to be not greater 8, because of no such agency
 			maxpipe = (maxpipe > Constants.MAX_PIPE_LEN) ? Constants.MAX_PIPE_LEN : maxpipe; // if somebody wants more, he/she/it gets less
 
-			ushort scnt = 0;
+			// ushort scnt = 0;
 			List<SymmCipherEnum> pipeList = new List<SymmCipherEnum>();
 			Dictionary<char, SymmCipherEnum> symDict = SymmCipherEnumExtensions.GetCharSymmCipherDict();
 			SymmCipherEnum[] symmCiphers = SymmCipherEnumExtensions.GetSymmCipherTypes();
@@ -275,11 +277,10 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 			string hashIv = "6865696e726963682e656c736967616e406172656132332e6174",
 			ZipType zipBefore = ZipType.None)
 		{
-			if (!string.IsNullOrEmpty(symmCipherKey) && !string.IsNullOrEmpty(symmCipherHash))
-			{
-				if (secretKey.Equals(symmCipherKey, StringComparison.CurrentCulture))
-					; // TODO wajz Exception should be thrown ??
-			}
+			if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(symmCipherKey))
+				throw new ArgumentNullException("secretKey");
+			if (string.IsNullOrEmpty(hashIv) && string.IsNullOrEmpty(symmCipherHash))
+                hashIv = EnDeCodeHelper.KeyToHex(secretKey);
 			symmCipherKey = secretKey;
 			symmCipherHash = hashIv;
 
@@ -321,13 +322,15 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 			string hashIv = "6865696e726963682e656c736967616e406172656132332e6174",
 			ZipType unzipAfter = ZipType.None)
 		{
-			if (!string.IsNullOrEmpty(symmCipherKey) && !string.IsNullOrEmpty(symmCipherHash))
-			{
-				if (secretKey.Equals(symmCipherKey, StringComparison.CurrentCulture))
-					; // TODO wajz Exception should be thrown ??
-			}
-			symmCipherKey = secretKey;
-			symmCipherHash = hashIv;
+			if (string.IsNullOrEmpty(symmCipherKey) && string.IsNullOrEmpty(secretKey))
+				throw new ArgumentNullException("secretKey");
+
+			symmCipherKey = string.IsNullOrEmpty(secretKey) ? symmCipherKey : secretKey;
+
+            if (string.IsNullOrEmpty(hashIv) && string.IsNullOrEmpty(symmCipherHash))
+				hashIv = EnDeCodeHelper.KeyToHex(symmCipherKey);
+
+			symmCipherHash = string.IsNullOrEmpty(hashIv) ? symmCipherHash : hashIv;
 
 			long outByteLen = (OutPipe == null || OutPipe.Length == 0) ? cipherBytes.Length : ((cipherBytes.Length * 3) + 1);
 			byte[] decryptedBytes = new byte[outByteLen];

@@ -175,6 +175,7 @@ namespace Area23.At.Framework.Library.Cache
         public virtual bool SetStringWithParams(string redIsKey, string redIsString, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             bool success = false;
+            TimeSpan? expiryAllKeys = new TimeSpan(30, 23, 59, 59);
             lock (_redIsLock)
             {
                 _allKeys = GetAllKeys();
@@ -183,8 +184,8 @@ namespace Area23.At.Framework.Library.Cache
                 if (success && !_allKeys.Contains(redIsKey))
                 {
                     _allKeys.Add(redIsKey);
-                    string jsonVal = JsonConvert.SerializeObject(_allKeys);
-                    success = Db.StringSet(ALL_KEYS, jsonVal, null, keepTtl, When.Always, CommandFlags.None);
+                    string jsonVal = JsonConvert.SerializeObject(_allKeys);                    
+                    success = Db.StringSet(ALL_KEYS, jsonVal, expiryAllKeys, When.Always, CommandFlags.None);
                 }
             }
 
@@ -199,10 +200,10 @@ namespace Area23.At.Framework.Library.Cache
         /// <param name="tvalue">generic value</param>
         /// <returns>success on true</returns>
         public override bool SetValue<T>(string ckey, T tvalue)
-        {
-            TimeSpan? expiry = new TimeSpan(1, 1, 1, 1);
+        {            
             bool keepTtl = false;
             When when = When.Always;
+            TimeSpan? expiry = new TimeSpan(6, 6, 6, 6);
             CommandFlags flags = CommandFlags.None;
             string jsonVal = JsonConvert.SerializeObject(tvalue);
             bool success = SetStringWithParams(ckey, jsonVal, expiry, keepTtl, when, flags);
@@ -222,13 +223,14 @@ namespace Area23.At.Framework.Library.Cache
         public override bool RemoveKey(string redIsKey)
         {
             CommandFlags flags = CommandFlags.FireAndForget;
+            TimeSpan? expiryAllKeys = new TimeSpan(30, 23, 59, 59);            
             lock (_redIsLock)
             {
                 if (ContainsKey(redIsKey) || _allKeys.Contains(redIsKey))
                 {
                     _allKeys.Remove(redIsKey);
                     string jsonVal = JsonConvert.SerializeObject(_allKeys.ToArray());
-                    Db.StringSet("AllKeys", jsonVal, null, false, When.Always, flags);
+                    Db.StringSet("AllKeys", jsonVal, expiryAllKeys, When.Always, flags);
                 }
                 try
                 {
