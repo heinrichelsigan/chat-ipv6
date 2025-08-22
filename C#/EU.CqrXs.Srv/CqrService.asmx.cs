@@ -34,8 +34,9 @@ namespace EU.CqrXs.Srv
             Area23Log.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
             string responseString = "", decrypted = "";
-
             CContact cContact = new CContact() { Hash = _symmPipe.PipeString };
+
+            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -57,13 +58,13 @@ namespace EU.CqrXs.Srv
 
             if (!string.IsNullOrEmpty(decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
-                // MemoryCache.CacheDict.SetValue<string>("lastdecrypted", decrypted);                     
-
                 CContact foundCt = JsonContacts.AddContact(_contact);
                 responseString = foundCt.EncryptToJson(_serverKey);
             }
 
+            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
             Area23Log.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
+            
             return responseString;
         }
 
@@ -80,10 +81,9 @@ namespace EU.CqrXs.Srv
             Area23Log.LogOriginMsg("CqrService", "ChatRoomInvite(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
             InitMethod();
             string responseString = "", chatRoomNumber = "";
-
             CSrvMsg<string> cSrvMsg, chatRoomMsg;
-            // = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
-            // CSrvMsg<string> chatRoomMsg; = chatRoomMsg.FromJson(cryptMsg);
+
+            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -104,9 +104,10 @@ namespace EU.CqrXs.Srv
                 Area23Log.LogOriginMsgEx("CqrService", "ChatRoomInvite(...)", ex);
             }
 
+            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
             Area23Log.LogOriginMsg("CqrService", "ChatRoomInvite(string cryptMsg) finished. ChatRoomNr = " + chatRoomNumber + ".");
+            
             return responseString;
-
         }
 
 
@@ -127,10 +128,10 @@ namespace EU.CqrXs.Srv
             InitMethod();
             string responseString = "", chatRoomNumber = "";
             bool isValid = false;
-
             Dictionary<long, string> dict = new Dictionary<long, string>();
-
             CSrvMsg<string> cSrvMsg, chatRoomMsg;
+
+            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -181,9 +182,10 @@ namespace EU.CqrXs.Srv
                 Area23Log.LogOriginMsgEx("CqrService", "ChatRoomPoll(...)", ex);
             }
 
+            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);            
             Area23Log.LogOriginMsg("CqrService", "ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finihed. ChatRoomNr =  " + chatRoomNumber + ".\n");
+            
             return responseString;
-
         }
 
 
@@ -204,11 +206,11 @@ namespace EU.CqrXs.Srv
             InitMethod();
             string responseString = "", chatRoomNumber = "";
             bool isValid = false;
-
             Dictionary<long, string> dict = new Dictionary<long, string>();
-
             CSrvMsg<string> cSrvMsg, chatRoomMsg;
             CSrvMsg<List<string>> allPollMsg;
+
+            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -272,9 +274,10 @@ namespace EU.CqrXs.Srv
                 Area23Log.LogOriginMsgEx("CqrService", "ChatRoomPoll(...)", ex);
             }
 
-            Area23Log.LogOriginMsg("CqrService", "ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finihed. ChatRoomNr =  " + chatRoomNumber + ".\n");
+            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
+            Area23Log.LogOriginMsg("CqrService", "ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finihed. ChatRoomNr =  " + chatRoomNumber + ".\n");            
+            
             return responseString;
-
         }
 
 
@@ -292,9 +295,9 @@ namespace EU.CqrXs.Srv
             string responseString = "", chatRoomNumber = "", cRoomMembersCrypt = "";
             bool isValid = false;
             Dictionary<long, string> dict;
+            CSrvMsg<string> cSrvMsg, chatRoomMsg;
 
-            CSrvMsg<string> cSrvMsg, chatRoomMsg; // = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
-                                                  // chatRoomMsg = chatRoomMsg.FromJson(cryptMsg);
+            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -348,7 +351,9 @@ namespace EU.CqrXs.Srv
                 Area23Log.LogOriginMsgEx("CqrService", "ChatRoomPush(...)", ex);
             }
 
+            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
             Area23Log.LogOriginMsg("CqrService", $"ChatRoomPush(string cryptMsg, string cRoomMembersCrypt) finished. ChatRoomNr = " + chatRoomNumber + ".\n");
+            
             return responseString;
         }
 
@@ -367,9 +372,10 @@ namespace EU.CqrXs.Srv
             string responseString = "", chatRoomNumber = "", cRoomMembersCrypt = "";
             bool isValid = false;
             Dictionary<long, string> dict;
-
             CSrvMsg<string> cSrvMsg, chatRoomMsg;
             CSrvMsg<List<string>> allPollMsg;
+
+            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -466,7 +472,9 @@ namespace EU.CqrXs.Srv
                 Area23Log.LogOriginMsgEx("CqrService", "ChatPushPoll(...)", ex);
             }
 
+            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
             Area23Log.LogOriginMsg("CqrService", $"ChatPushPoll(string cryptMsg) finished. ChatRoomNr = " + chatRoomNumber + ".\n");
+
             return responseString;
         }
 
@@ -484,10 +492,10 @@ namespace EU.CqrXs.Srv
             InitMethod();
             string responseString = "", chatRoomNumber = "";
             bool isValid = false;
-
-            CSrvMsg<string> cSrvMsg, chatRoomMsg; // = new CSrvMsg<string>(cryptMsg, CType.Json) { Hash = _symmPipe.PipeString, Message = cryptMsg };
-            // chatRoomMsg = chatRoomMsg.FromJson(cryptMsg);
+            CSrvMsg<string> cSrvMsg, chatRoomMsg;;
             List<CContact> _invited = new List<CContact>();
+
+            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -519,10 +527,10 @@ namespace EU.CqrXs.Srv
                 Area23Log.LogOriginMsgEx("CqrService", "ChatRoomClose(...)", ex);
             }
 
+            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);            
             Area23Log.LogOriginMsg("CqrService", $"ChatRoomClose(string cryptMsg) finished. deleted chat room ChatRoomNr =  " + chatRoomNumber + ".\n");
-
+            
             return responseString;
-
         }
 
 

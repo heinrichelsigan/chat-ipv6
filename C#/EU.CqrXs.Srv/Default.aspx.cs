@@ -43,7 +43,8 @@ namespace EU.CqrXs.Srv
                 tmpStr += Constants.SERVER_IP_V6 + ": " + (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V6] + Environment.NewLine + allStrng;
             }
 
-            //allStrng = tmpStrg + allStrng;
+            if (ConfigurationManager.AppSettings["ExternalClientIPv4"] != null)
+                LiteralFromClient.Text = (string)ConfigurationManager.AppSettings["ExternalClientIPv4"];
 
             this.LiteralClientIp.Text = Request.UserHostAddress;
             Area23Log.LogOriginMsg("Default", "ClientIp: " + Request.UserHostAddress);
@@ -151,6 +152,10 @@ namespace EU.CqrXs.Srv
             //    Application["lastall"] = allStrng;
             //}
 
+            if (metaRefreshId != null && metaRefreshId.Attributes != null && metaRefreshId.Attributes.Count > 0 && metaRefreshId.Attributes["content"] != null)
+            {                
+                metaRefreshId.Attributes["content"] = "8; url=" + ConfigurationManager.AppSettings["AppUrl"] + "CqrService.asmx";
+            }
             Response.Redirect("CqrService.asmx");
             return;
         }

@@ -10,6 +10,7 @@ using System.IO;
 namespace EU.CqrXs.Srv.Util
 {
 
+
     /// <summary>
     /// JsonChatRoom 
     /// </summary>
@@ -363,6 +364,5 @@ namespace EU.CqrXs.Srv.Util
         #endregion static cache operations
 
     }
-
 
 }
