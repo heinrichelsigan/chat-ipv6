@@ -341,10 +341,13 @@ namespace EU.CqrXs.Service
                                 // firstPollClientMsg = dict[polledPtr] ?? "";
                                 firstPollClientMsg = MemoryCache.CacheDict.GetValue<string>(polledPtr.ToString()) ?? "";                               
                                 chatRoomMsg.CRoom.LastPolled = new DateTime(polledPtr);
-                                allPollMsg.CRoom.LastPolled = new DateTime(polledPtr);                                
-                                
+                                allPollMsg.CRoom.LastPolled = new DateTime(polledPtr);
+
                                 if (!string.IsNullOrEmpty(firstPollClientMsg))
+                                {
                                     allPollMsg.TContent.Add(firstPollClientMsg);
+                                }
+                                allPollMsg.CRoom.MsgDict.Add(polledPtr, ccr.MsgDict[polledPtr]);
                                 
                                 if (ccr.LastPolled < allPollMsg.CRoom.LastPolled)
                                 {
@@ -523,10 +526,10 @@ namespace EU.CqrXs.Service
                         MemoryCache.CacheDict.SetValue<string>(now.Ticks.ToString(), cRoomMembersCrypt);
 
                         ccr.MsgDict.Add(now.Ticks, cSrvMsg.Sender.NameEmail);               // Add new entry to cached chatroom message dictionary with DateTime.Now
-                        chatRoomMsg.CRoom.MsgDict.Add(now.Ticks, cSrvMsg.Sender.NameEmail);
-                        chatRoomMsg.CRoom.LastPushed = now;
                         ccr.LastPushed = now;
-                        allPollMsg.CRoom.TicksLong.Add(now.Ticks);
+                        chatRoomMsg.CRoom.MsgDict.Add(now.Ticks, cSrvMsg.Sender.NameEmail);
+                        chatRoomMsg.CRoom.LastPushed = now;                        
+                        allPollMsg.CRoom.MsgDict.Add(now.Ticks, cSrvMsg.Sender.NameEmail);
                         allPollMsg.CRoom.LastPushed = now;
 
                         SetCachedChatRoom(chatRoomNumber, ccr);                             // Saves chatroom msg dict back to cache (Amazon valkey or ApplicationState)
