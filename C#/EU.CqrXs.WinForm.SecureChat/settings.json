@@ -4,22 +4,19 @@
   "ZipBeforeSend": false,
   "OnlySecureFileTypes": false,
   "RegisterUser": true,
-  "SecretKeysCrypted": [
-    "YzExeGFjQWwxVW5qZTYrdnNyL01oRFlwSVZEckxzd0VWVjcwKzMxenZIeGpCWjJqZ3dxZ1MzaDRWTEZnMmY5MnBoME1lSW1HT1BOaW1aRmpkUFI4Uk1rek5ldkRKWGJZN25ZaGxRWGxMNkN4alBzVHhWNHg3TmZic1NsclExeHM="
-  ],
+  "SecretKeysCrypted": [],
   "ChatRoom": {
-    "ChatRuid": "716123d7-6ce6-42de-a4f5-ebe32fda72d1",
-    "ChatRoomNr": "room_08221135_he.json",
+    "ChatRuid": "80c71e65-374e-4586-9199-a023135792d8",
+    "ChatRoomNr": "room_08221222_he.json",
     "TicksLong": [
-      638914593136835870,
-      638914597092657850,
-      638914597637033310
+      638914621483898740
     ],
-    "LastPushed": "2025-08-22T13:42:43.703331+02:00",
-    "LastPolled": "2025-08-22T11:42:43.703331",
+    "LastPushed": "2025-08-22T14:22:41.883896+02:00",
+    "LastPolled": "2025-08-22T14:22:28.389874+02:00",
     "InvitedEmails": [
-      "christian.rehnelt@gmx.at",
-      "michael.figl@gmail.com",
+      "ina.ivanceanu@gmail.com",
+      "svetlana.maksimovic@aon.at",
+      "Wolfgang.Wagner@inhouse.wko.at",
       "he@area23.at"
     ],
     "MsgType": 0,
@@ -29,19 +26,19 @@
     "Md5Hash": ""
   },
   "TimeStamp": "2025-08-19T23:20:02.0561038+02:00",
-  "SaveStamp": "2025-08-22T13:43:21.1484541+02:00",
+  "SaveStamp": "2025-08-22T14:27:31.0467781+02:00",
   "MyContact": {
     "ContactId": 0,
-    "Cuid": "ffb58ecb-5217-49f9-85a3-4290d6d84339",
+    "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
     "Name": "Heinrich G. Elsigan",
     "Email": "he@area23.at",
     "Mobile": "+43 650 7527928",
     "Address": "Theresianumgasse 6/28, 1040 Wien",
     "ContactImage": null,
-    "MsgType": 1,
+    "MsgType": 0,
     "EnCodingType": 64,
-    "Message": "room_08221135_he.json",
-    "Hash": "6bgFfD",
+    "Message": "room_08221222_he.json",
+    "Hash": "6CDgAbXs",
     "Md5Hash": "17c20e23cea16f1c870cfe137834fafe"
   },
   "Contacts": [
@@ -1028,7 +1025,5 @@
     "18.101.101.108",
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
-  "SecretKeys": [
-    "1234567"
-  ]
+  "SecretKeys": []
 }

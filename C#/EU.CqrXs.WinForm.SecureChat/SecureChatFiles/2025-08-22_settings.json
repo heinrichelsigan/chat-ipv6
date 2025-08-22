@@ -4,22 +4,19 @@
   "ZipBeforeSend": false,
   "OnlySecureFileTypes": false,
   "RegisterUser": true,
-  "SecretKeysCrypted": [
-    "OFBWeFBZd25PM0ZhOTBKZ2dBRUpiclBjc1VPdFhCdW5GQVdJY1RiQ1IrMWpCWjJqZ3dxZ1MzaDRWTEZnMmY5MnBoME1lSW1HT1BOaW1aRmpkUFI4Uk1rek5ldkRKWGJZN25ZaGxRWGxMNkN4alBzVHhWNHg3TmZic1NsclExeHM="
-  ],
+  "SecretKeysCrypted": [],
   "ChatRoom": {
-    "ChatRuid": "bf43ab65-20f7-468e-8c09-d9cd0c881949",
-    "ChatRoomNr": "room_08201144_he.json",
+    "ChatRuid": "80c71e65-374e-4586-9199-a023135792d8",
+    "ChatRoomNr": "room_08221222_he.json",
     "TicksLong": [
-      638912870578995560,
-      638912870668533580,
-      638912870780033930,
-      638912870917824930
+      638914621483898740
     ],
-    "LastPushed": "2025-08-20T13:44:51.782493+02:00",
-    "LastPolled": "2025-08-20T11:44:51.782493",
+    "LastPushed": "2025-08-22T14:22:41.883896+02:00",
+    "LastPolled": "2025-08-22T14:22:28.389874+02:00",
     "InvitedEmails": [
-      "vielbros@libero.it",
+      "ina.ivanceanu@gmail.com",
+      "svetlana.maksimovic@aon.at",
+      "Wolfgang.Wagner@inhouse.wko.at",
       "he@area23.at"
     ],
     "MsgType": 0,
@@ -29,7 +26,7 @@
     "Md5Hash": ""
   },
   "TimeStamp": "2025-08-19T23:20:02.0561038+02:00",
-  "SaveStamp": "2025-08-20T13:44:32.8230192+02:00",
+  "SaveStamp": "2025-08-22T14:27:18.450058+02:00",
   "MyContact": {
     "ContactId": 0,
     "Cuid": "49cb518a-6966-4fbb-ac0e-e27a1115bf29",
@@ -40,9 +37,9 @@
     "ContactImage": null,
     "MsgType": 0,
     "EnCodingType": 64,
-    "Message": "room_08201144_he.json",
+    "Message": "room_08221222_he.json",
     "Hash": "6bFfDC",
-    "Md5Hash": "c8bb0ce3187477f62067cb0f2bae8ac0"
+    "Md5Hash": "17c20e23cea16f1c870cfe137834fafe"
   },
   "Contacts": [
     {
@@ -1014,22 +1011,19 @@
   ],
   "FriendIPs": [],
   "MyIPs": [
-    "2001:4bc9:81c:71bf:95f8:5dde:4039:177e",
-    "2001:4bc9:81c:71bf:21be:d631:97b3:6b91",
-    "10.103.228.14",
     "169.254.116.213",
     "169.254.85.69",
     "169.254.39.21",
-    "10.0.0.249",
+    "2001:4bc9:81c:71bf:ade8:334c:f2b1:46e5",
+    "2001:4bc9:81c:71bf:80eb:4ab4:f803:63be",
+    "10.103.228.217",
     "::1",
     "127.0.0.1",
-    "172.26.144.1"
+    "172.24.16.1"
   ],
   "Proxies": [
     "18.101.101.108",
     "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
   ],
-  "SecretKeys": [
-    "123456"
-  ]
+  "SecretKeys": []
 }
