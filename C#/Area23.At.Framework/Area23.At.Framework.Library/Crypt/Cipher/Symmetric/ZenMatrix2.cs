@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Library.Static;
+﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
+using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using System;
 using System.Collections.Generic;
@@ -93,9 +94,12 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         /// <exception cref="ApplicationException"></exception>
         public ZenMatrix2(string secretKey = "", string hashIV = "", bool fullSymmetric = false) : this()
         {
-            secretKey = string.IsNullOrEmpty(secretKey) ? Constants.AUTHOR_EMAIL : secretKey;
-            hashIV = string.IsNullOrEmpty(hashIV) ? Constants.AREA23_EMAIL : hashIV;
-            byte[] keyBytes2 = CryptHelper.GetUserKeyBytes(secretKey, hashIV, 0x10);
+            if (string.IsNullOrEmpty(secretKey))
+                throw new ArgumentNullException("secretKey");
+
+            hashIV = string.IsNullOrEmpty(hashIV) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIV;
+            byte[] keyBytes = CryptHelper.GetUserKeyBytes(secretKey, hashIV, 0x10);
+            byte[] keyBytes2 = CryptHelper.GetUserKeyBytes(secretKey, hashIV, 0x20);
 
             ZenMatrixGenWithBytes2(keyBytes2, true);
         }

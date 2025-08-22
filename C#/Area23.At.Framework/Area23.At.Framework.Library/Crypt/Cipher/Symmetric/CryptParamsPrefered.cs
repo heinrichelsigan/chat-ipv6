@@ -1,4 +1,5 @@
 ﻿using Org.BouncyCastle.Crypto;
+using System;
 using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
@@ -129,6 +130,12 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.XteaEngine();
                     break;
+                case SymmCipherEnum.ZenMatrix:
+                    Size = 16;
+                    KeyLen = 16;
+                    Mode = "ECB";
+                    BlockCipher = new ZenMatrix();
+                    break;
                 default:
                     Size = 256;
                     KeyLen = 32;
@@ -160,11 +167,13 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         /// </summary>
         /// <param name="cipherAlgo"><see cref="SymmCipherEnum"/></param>
         /// <returns><see cref="CryptParamsPrefered"/></returns>
+        [Obsolete("RequestPreferedAlgorithm no mote used", true)]
         public static CryptParamsPrefered RequestPreferedAlgorithm(SymmCipherEnum cipherAlgo, bool fishOnAesEngine = false)
         {
             return new CryptParamsPrefered(cipherAlgo, fishOnAesEngine);
         }
 
+        [Obsolete("GetCryptParams is not used anymore.", true)]
         public static IBlockCipher GetCryptParams(SymmCipherEnum cipherAlgo, bool fishOnAesEngine = false)
         {
             return new CryptParamsPrefered(cipherAlgo, fishOnAesEngine).BlockCipher;

@@ -1733,7 +1733,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             }
         }
 
-
+        /// <summary>
+        /// Toogles between no chat in the middle, server proxy chat and peer-2-oeer mode
+        /// </summary>
+        /// <param name="svalue"></param>
+        /// <param name="fireUp"></param>
+        /// <returns></returns>
         public async Task TooglePeerSessionServerTriState(short svalue, bool fireUp = true)
         {
             if (Settings.Singleton.OnlyPeer2PeerChat)
@@ -1748,6 +1753,8 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     try
                     {
                         EnableTextBox(this.TextBoxChatSession, false);
+                        EnableListBox(this.listBoxContacts, false);
+
                         SetComboBoxEnabled(this.ComboBoxIp, true);
                         SetComboBoxEnabled(this.ComboBoxContacts, false);
 
@@ -1767,6 +1774,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     try
                     {
                         EnableTextBox(this.TextBoxChatSession, true);
+                        EnableListBox(this.listBoxContacts, true);
                         SetComboBoxEnabled(this.ComboBoxIp, false);
                         SetComboBoxEnabled(this.ComboBoxContacts, true);
 
@@ -1784,6 +1792,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     try
                     {
                         EnableTextBox(this.TextBoxChatSession, false);
+                        EnableListBox(this.listBoxContacts, false);
                         SetComboBoxEnabled(this.ComboBoxIp, false);
                         SetComboBoxEnabled(this.ComboBoxContacts, false);
                         SetMenuItemEnabledChecked(this.MenuOptionsItemPeer2Peer, true, false);

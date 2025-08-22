@@ -1,8 +1,8 @@
-﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
+﻿using Area23.At.Framework.Library.Crypt.Hash;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
-using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 {
+
 
     /// <summary>
     /// Simple sbyte reduced to 0x0 .. 0xf symmetric cipher mapping matrix,
@@ -23,6 +24,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         private const string SYMMCIPHERALGONAME = "ZenMatrix";
         private const int BLOCK_SIZE = 0x10;
         private bool initialised = false;
+        private bool forEncryption;
 
         /// <summary>
         /// MatrixPermutationBase is a Permutation Matrix where every value will mapped to itself
@@ -140,6 +142,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 
 
         #endregion Properties
+
         #region IBlockCipher interface
 
         public string AlgorithmName => SYMMCIPHERALGONAME;
@@ -149,10 +152,31 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 
         public void Init(bool forEncryption, ICipherParameters parameters)
         {
-            if (!(parameters is KeyParameter))
-                throw new ArgumentException("only simple KeyParameter expected.");
+            if (!(parameters is KeyParameter) && !(parameters is ParametersWithIV))
+                throw new ArgumentException("only KeyParameter or ParametersWithIV expected.", "parameters");
 
-            ZenMatrixGenWithBytes(privateBytes, !forEncryption);
+            if (parameters is KeyParameter)
+            {
+                this.privateBytes = ((KeyParameter)parameters).GetKey();
+            }
+            if (parameters is ParametersWithIV)
+            {
+                byte[] bKey = new byte[0], bIv = ((ParametersWithIV)parameters).GetIV();
+                if (((ParametersWithIV)parameters).Parameters is KeyParameter)
+                {
+                    bKey = ((KeyParameter)(((ParametersWithIV)parameters).Parameters)).GetKey();
+                }
+                bKey = bKey ?? new byte[0];
+                bIv = bIv ?? new byte[0];
+                if (bKey.Length == 0 && bIv.Length == 0)
+                    throw new ArgumentNullException("parameters", "KeyParameter and/or ParametersWithIV contain a null or empty key or iv.");
+
+                this.privateBytes = bKey.TarBytes(bIv);
+            }
+
+            this.forEncryption = forEncryption;
+
+            ZenMatrixGenWithBytes(privateBytes, false);
             initialised = true;
         }
 
@@ -168,32 +192,86 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         /// <exception cref="InvalidDataException"></exception>
         public int ProcessBlock(byte[] inBuf, int inOff, byte[] outBuf, int outOff)
         {
+            if (privateBytes == null)
+                throw new InvalidOperationException($"{SYMMCIPHERALGONAME} engine not initialised");
+
             int len = BLOCK_SIZE;
-            int aCnt = 0, bCnt = 0;
-            byte[] processedEncrypted = null;
-            if (inOff >= inBuf.Length || inOff + len > inBuf.Length)
+            int bCnt = 0;
+
+            if (inOff >= inBuf.Length || inOff + BLOCK_SIZE > inBuf.Length)
                 throw new InvalidDataException($"Cannot process next {BLOCK_SIZE} bytes, because inOff ({inOff}) + BLOCK_SIZE ({BLOCK_SIZE}) > inBuf.Length ({inBuf.Length})");
-            if (outOff >= outBuf.Length || outOff + len > outBuf.Length)
+            if (outOff >= outBuf.Length || outOff + BLOCK_SIZE > outBuf.Length)
                 throw new InvalidDataException($"Cannot process next {BLOCK_SIZE} bytes, because inOff ({outOff}) + BLOCK_SIZE ({BLOCK_SIZE}) > outBuf.Length ({outBuf.Length})");
 
-            if (inOff < inBuf.Length && inOff + len <= inBuf.Length && outOff < outBuf.Length && outOff + len <= outBuf.Length)
+            if (inOff < inBuf.Length && inOff + BLOCK_SIZE <= inBuf.Length && outOff < outBuf.Length && outOff + BLOCK_SIZE <= outBuf.Length)
             {
-                processedEncrypted = new byte[len];
-                for (aCnt = 0, bCnt = inOff; bCnt < inOff + len; aCnt++, bCnt++)
+                byte[] inOffBuf = new byte[inBuf.Length - inOff];
+                Array.Copy(inBuf, inOff, inOffBuf, 0, inOffBuf.Length);
+
+                if (forEncryption)
                 {
-                    byte b = inBuf[bCnt];
-                    MapByteValue(ref b, out byte mapEncryptB, true);
-                    sbyte sm = MatrixPermutationKey[aCnt];
-                    outBuf[outOff + (int)sm] = mapEncryptB;
+                    byte[] padBytes = PadBuffer(inOffBuf);
+                    inOffBuf = padBytes;
                 }
+
+                if (BLOCK_SIZE > inOffBuf.Length)
+                    throw new InvalidOperationException($"{BLOCK_SIZE} > inOffBuf.Length = {inOffBuf.Length}");
+
+                byte[] processed = new byte[BLOCK_SIZE];
+
+                for (bCnt = 0; bCnt < BLOCK_SIZE; bCnt++)
+                {
+                    byte b = inOffBuf[bCnt];
+                    MapByteValue(ref b, out byte mappedByte, forEncryption);
+                    sbyte sm = forEncryption ? MatrixPermutationKey[bCnt] : InverseMatrix[bCnt];
+                    processed[(int)sm] = mappedByte;
+                }
+
+                byte[] outBytes = processed;
+                //if (!forEncryption)
+                //{
+                //    outBytes = PadBuffer(processed);
+                //}
+
+                Array.Copy(outBytes, 0, outBuf, outOff, BLOCK_SIZE);
+
+                return BLOCK_SIZE;
             }
 
-            return BLOCK_SIZE;
+            return 0;
         }
 
         public int ProcessBlock(ReadOnlySpan<byte> input, Span<byte> output)
         {
-            throw new NotImplementedException();
+            byte[] buffer = input.ToArray();
+            if (forEncryption)                                  // add padding buffer to match BLOCK_SIZE
+            {
+                byte[] padBytes = PadBuffer(input.ToArray());
+                buffer = padBytes;
+            }
+
+            if (BLOCK_SIZE > buffer.Length)
+                throw new InvalidOperationException($"{BLOCK_SIZE} > buffer.Length = {buffer.Length}");
+
+            byte[] processed = new byte[BLOCK_SIZE];
+
+            for (int bCnt = 0; bCnt < BLOCK_SIZE; bCnt++)
+            {
+                byte b = buffer[bCnt];
+                MapByteValue(ref b, out byte mappedByte, forEncryption);
+                sbyte sm = forEncryption ? MatrixPermutationKey[bCnt] : InverseMatrix[bCnt];
+                processed[(int)sm] = mappedByte;
+            }
+
+            byte[] outBytes = processed;
+            //if (!forEncryption)                             // trim padding buffer from decrypted output
+            //{
+            //    outBytes = PadBuffer(processed);
+            //}
+
+            output = new Span<byte>(outBytes);
+
+            return BLOCK_SIZE;
         }
 
         #endregion IBlockCipher interface
@@ -217,6 +295,18 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             _inverseMatrix = BuildInverseMatrix(MatrixPermutationKey);
         }
 
+        public ZenMatrix(string secretKey = "", KeyHash keyHash = KeyHash.Hex, bool fullSymmetric = false) : this()
+        {
+            if (string.IsNullOrEmpty(secretKey))
+                throw new ArgumentNullException("secretKey");
+
+            string hashIV =  keyHash.Hash(secretKey);
+            byte[] keyBytes = CryptHelper.GetUserKeyBytes(secretKey, hashIV, 0x10);
+
+            ZenMatrixGenWithBytes(keyBytes, fullSymmetric);
+        }
+
+
         /// <summary>
         /// initializes a <see cref="ZenMatrix"/> with secret user key string and hash iv
         /// </summary>
@@ -226,11 +316,13 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         /// fullSymmetric means that zen matrix is it's inverse element 
         /// and decrypts back to plain text, when encrypting twice or ²</param>       
         /// <exception cref="ApplicationException"></exception>
-        public ZenMatrix(string secretKey = "", string hashIV = "", bool fullSymmetric = true) : this()
+        public ZenMatrix(string secretKey = "", string hashIV = "", bool fullSymmetric = false, KeyHash keyHash = KeyHash.Hex) : this()
         {
-            secretKey = string.IsNullOrEmpty(secretKey) ? Constants.AUTHOR_EMAIL : secretKey;
-            hashIV = string.IsNullOrEmpty(hashIV) ? Constants.AREA23_EMAIL : hashIV;
-            byte[] keyBytes = CryptHelper.GetUserKeyBytes(secretKey, hashIV, 16);
+            if (string.IsNullOrEmpty(secretKey))
+                throw new ArgumentNullException("secretKey");
+
+            hashIV = string.IsNullOrEmpty(hashIV) ? keyHash.Hash(secretKey) : hashIV;
+            byte[] keyBytes = CryptHelper.GetUserKeyBytes(secretKey, hashIV, 0x10);
 
             ZenMatrixGenWithBytes(keyBytes, fullSymmetric);
         }
@@ -243,7 +335,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         /// <param name="fullSymmetric">
         /// fullSymmetric means that zen matrix is it's inverse element 
         /// and decrypts back to plain text, when encrypting twice or ²</param> 
-        public ZenMatrix(byte[] keyBytes, bool fullSymmetric = true) : this()
+        public ZenMatrix(byte[] keyBytes, bool fullSymmetric = false) : this()
         {
             ZenMatrixGenWithBytes(keyBytes, fullSymmetric);
         }
@@ -277,7 +369,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         /// fullSymmetric means that zen matrix is it's inverse element 
         /// and decrypts back to plain text, when encrypting twice or ²</param>       
         /// <exception cref="ApplicationException"></exception>
-        protected internal void ZenMatrixGenWithBytes(byte[] keyBytes, bool fullSymmetric = true)
+        protected internal void ZenMatrixGenWithBytes(byte[] keyBytes, bool fullSymmetric = false)
         {
             if ((keyBytes == null || keyBytes.Length < 4))
                 throw new ApplicationException("byte[] keyBytes is null or keyBytes.Length < 4");
@@ -305,7 +397,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             foreach (byte keyByte in new List<byte>(privateBytes))
             {
                 sbyte b = (sbyte)(keyByte % 0x10);
-                for (int i = 0; i < 0x24; i++)
+                for (int i = 0; i < 0x20; i++)
                 {
                     if (PermutationKeyHash.Contains(b) || ((int)b) == ba)
                     {
@@ -475,6 +567,75 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         #region encrypt decrypt
 
         /// <summary>
+        /// in case of encryption, 
+        ///     pads 0 or random buffer at end of inBytes,
+        ///     so that inBytes % BLOCK_SIZE == 0 
+        /// in case of decryption,
+        ///     trims remaining padding buffer from inBytes
+        /// encryption or decryption are triggered via <see cref="forEncryption"/>
+        /// </summary>
+        /// <param name="inBytes">input bytes to pad </param>
+        /// <param name="useRandom">use random padding</param>
+        /// <returns>padded or unpadded out bytes</returns>
+        public virtual byte[] PadBuffer(byte[] inBytes, bool useRandom = false)
+        {
+            int ilen = inBytes.Length;                          // length of data bytes
+            int oSize = (BLOCK_SIZE - (ilen % BLOCK_SIZE));     // oSize is rounded up to next number % BLOCK_SIZE == 0
+            byte[] outBytes;
+
+            if (forEncryption)                                  // add buffer for encryption to inbytes
+            {
+                long olen = ((long)(ilen + oSize));             // olen is (long)(ilen + oSize)
+                byte[] padbuf = new byte[oSize];                // padding buffer 
+                outBytes = new byte[olen];                      // out bytes with random padding bytes at end            
+
+                if (!useRandom)
+                    for (int ic = 0; ic < padbuf.Length; padbuf[ic++] = (byte)0) ;
+                else
+                {
+                    Random rnd = new Random(ilen);
+                    rnd.NextBytes(padbuf);
+                }
+
+                for (int i = 0, j = 0; i < olen; i++)
+                {
+                    // outBytes[i] = (i < ilen) ? inBytes[i] : ((i == ilen || i == (olen - 1)) ? (byte)0x0 : buf[j++]);
+                    if (i < ilen)
+                        outBytes[i] = inBytes[i];               // copy full inBytes to outBytes
+                    else if (i == ilen)
+                        outBytes[i] = (byte)0x0;                // write 0x0 at end of inBytes
+                    else if (i > ilen)
+                        outBytes[i] = padbuf[j++];              // fill rest with padding buffer
+                    else if (i == (olen - 1))
+                        outBytes[i] = (byte)0x0;                // terminate outBytes with NULL
+                }
+            }
+            else                                                // truncate padding buffer to get trimmed decrypted output
+            {
+                int olen = inBytes.Length;
+                bool last0 = false;
+
+                for (olen = ilen; (olen > 0 && !last0); olen--)
+                {
+                    if (olen < (ilen - 2))
+                    {
+                        if ((inBytes[olen - 1] == (byte)0x0) && inBytes[olen - 2] != (byte)0x0)
+                        {
+                            last0 = true;
+                            break;
+                        }
+                    }
+                }
+
+                outBytes = (olen > 1) ? new byte[olen] : new byte[ilen];
+                Array.Copy(inBytes, 0, outBytes, 0, outBytes.Length);
+            }
+
+            return outBytes;
+
+        }
+
+        /// <summary>
         /// MatrixSymChiffer Encrypt member function
         /// </summary>
         /// <param name="pdata">plain data as <see cref="byte[]"/></param>
@@ -485,29 +646,8 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             if (pdata == null || pdata.Length <= 0)
                 throw new ArgumentNullException("ZenMatrix byte[] Encrypt(byte[] pdata): ArgumentNullException pdata = null or Lenght 0.");
 
-            int dlen = pdata.Length;                        // length of data bytes
-            int oSize = dlen + (0x10 - (dlen % 0x10));      // oSize is rounded up to next number % 16 == 0
-            long olen = ((long)(oSize / 0x10)) * 0x10;      // olen is (long)oSize
-            byte[] rndbuf = new byte[olen - dlen];          // random padding buffer 
-            byte[] obytes = new byte[olen];                 // out bytes with random padding bytes at end            
-
-            Random rnd = new Random(dlen);
-            rnd.NextBytes(rndbuf);
-
-            for (int i = 0, j = 0; i < olen; i++)
-            {
-                // obytes[i] = (i < dlen) ? data[i] : (i == dlen || i == (olen - 1)) ? obytes[i] = (byte)0x0 : rndbuf[j++];
-                if (i < dlen)
-                    obytes[i] = pdata[i];                    // copy full data to obytes
-                else if (i == dlen)
-                    obytes[i] = (byte)0x0;                  // write 0x0 at end of data bytes
-                else if (i > dlen)
-                    obytes[i] = rndbuf[j++];                // fill rest with random hash padding 
-
-                if (i == (olen - 1))
-                    obytes[i] = (byte)0x0;                  // terminate end of obytes with 0x0                                    
-            }
-
+            forEncryption = true;
+            byte[] obytes = PadBuffer(pdata, true);
 
             List<byte> encryptedBytes = new List<byte>();
             for (int i = 0; i < obytes.Length; i += 0x10)
@@ -519,7 +659,6 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             }
 
             return encryptedBytes.ToArray();
-
         }
 
         /// <summary>
@@ -532,156 +671,23 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             if (ecdata == null || ecdata.Length <= 0)
                 throw new ArgumentNullException("ZenMatrix byte[] Encrypt(byte[] ecdata): ArgumentNullException ecdata = null or Lenght 0.");
 
+            forEncryption = false;
             int eclen = ecdata.Length;
-            int ecSize = (eclen % 0x10 == 0) ? eclen : (eclen + (0x10 - (eclen % 0x10)));
-            if (ecSize > eclen) {; } // something went wrong                
 
-            List<byte> outBytes = new List<byte>();
+            List<byte> decBytes = new List<byte>();
             for (int pc = 0; pc < ecdata.Length; pc += 16)
             {
                 foreach (byte rb in ProcessDecryptBytes(ecdata, pc, 16))
                 {
-                    outBytes.Add(rb);
+                    decBytes.Add(rb);
                 }
             }
 
-            int olen = outBytes.Count;
-            int dlen = olen;
-            bool first0 = false, last0 = (outBytes.ElementAt(olen - 1) == (byte)0x0);
+            byte[] outBytes = PadBuffer(decBytes.ToArray(), true);
 
-            for (dlen = olen; dlen > 0 && !first0; dlen--)
-            {
-                if (dlen < (olen - 2) && (outBytes.ElementAt(dlen - 1) == (byte)0x0))
-                {
-                    first0 = true;
-                    break;
-                }
-            }
-            byte[] obytes = (dlen > 1) ? new byte[dlen] : new byte[olen];
-            Array.Copy(outBytes.ToArray(), 0, obytes, 0, obytes.Length);
-
-            return obytes;
+            return outBytes;
         }
 
-        #region encrypt decrypt variants
-
-        /// <summary>
-        /// Encrypts a string
-        /// </summary>
-        /// <param name="inPlainString">plain text string</param>
-        /// <returns>Base64 encoded encrypted byte[]</returns>
-        public virtual byte[] EncryptTextToBytes(string plaintext)
-        {
-            byte[] ecdata = Encrypt(EnDeCodeHelper.GetBytes(plaintext));
-            return ecdata;
-        }
-
-        /// <summary>
-        /// EncryptTextToEncoded Encrypts a string to a raw data string or 
-        /// hex16, base32, hex32, uu or base64 encoded string
-        /// </summary>
-        /// <param name="plaintext">string to encrypt</param>        
-        /// <param name="encType"><see cref="EncodingType"/>, default: <see cref="EncodingType.Base64/></param>
-        /// <returns>a raw string or a hex16, base32, hex32, uu or base64 encoded string</returns>
-        public virtual string EncryptTextToEncoded(string plaintext, EncodingType encType = EncodingType.Base64)
-        {
-            byte[] ecdata = EncryptTextToBytes(plaintext);
-            return EncryptBytesToEncoded(ecdata, encType);
-        }
-
-        /// <summary>
-        /// EncryptBytesToEncoded Encrypts plain data bytes to a raw data string or 
-        /// a hex16, base32, hex32, uu or base64 encoded string
-        /// </summary>
-        /// <param name="pdata">plain data bytes</param>
-        /// <param name="encType"><see cref="EncodingType"/>, default: <see cref="EncodingType.Base64/></param>
-        /// <returns>a raw string or a hex16, base32, hex32, uu or base64 encoded string</returns>
-        public virtual string EncryptBytesToEncoded(byte[] pdata, EncodingType encType = EncodingType.Base64)
-        {
-            byte[] ecdata = Encrypt(pdata);
-            switch (encType)
-            {
-                case EncodingType.Null:
-                case EncodingType.None:
-                    return RawString.ToRawString(ecdata);
-                case EncodingType.Hex16:
-                    return Hex16.ToHex16(ecdata);
-                case EncodingType.Base32:
-                    return Base32.ToBase32(ecdata);
-                case EncodingType.Hex32:
-                    return Hex32.ToHex32(ecdata);
-                case EncodingType.Uu:
-                    return Uu.Encode(ecdata);
-                case EncodingType.Base64:
-                default:
-                    return Base64.ToBase64(ecdata);
-            }
-
-            // return new byte[0];
-        }
-
-        /// <summary>
-        /// Decrypts a string, that is truely a base64 encoded encrypted byte[]
-        /// </summary>
-        /// <param name="inCryptString">base64 encoded string from encrypted byte[]</param>
-        /// <returns>plain text string (decrypted)</returns>
-        public virtual string DecryptTextFromBytes(byte[] ecdata)
-        {
-            byte[] plaindata = Decrypt(ecdata);
-            string plaintext = EnDeCodeHelper.GetString(plaindata);
-            return plaintext;
-        }
-
-        /// <summary>
-        /// DecryptTextFromEncoded dectypts a encoded and encrypted string to a plain string
-        /// </summary>
-        /// <param name="encodedStr">a encrypted and encoded string</param>
-        /// <param name="encType"><see cref="EncodingType"/>, default: <see cref="EncodingType.Base64/></param>
-        /// <returns>plain text string</returns>
-        public virtual string DecryptTextFromEncoded(string encodedStr, EncodingType encType = EncodingType.Base64)
-        {
-            byte[] ecdata = DecryptBytesFromEncoded(encodedStr, encType);
-            string plaintext = DecryptTextFromBytes(ecdata);
-            return plaintext;
-        }
-
-        /// <summary>
-        /// DecryptBytesFromEncoded
-        /// </summary>
-        /// <param name="encodedStr"></param>
-        /// <param name="encType"><see cref="EncodingType"/>, default: <see cref="EncodingType.Base64/></param>
-        /// <returns>plain data bytes</returns>
-        public virtual byte[] DecryptBytesFromEncoded(string encodedStr, EncodingType encType = EncodingType.Base64)
-        {
-            byte[] ecdata = new byte[0];
-            switch (encType)
-            {
-                case EncodingType.Null:
-                case EncodingType.None:
-                    ecdata = RawString.FromRawString(encodedStr);
-                    break;
-                case EncodingType.Hex16:
-                    ecdata = Hex16.FromHex16(encodedStr);
-                    break;
-                case EncodingType.Base32:
-                    ecdata = Base32.FromBase32(encodedStr);
-                    break;
-                case EncodingType.Hex32:
-                    ecdata = Hex32.FromHex32(encodedStr);
-                    break;
-                case EncodingType.Uu:
-                    ecdata = Uu.Decode(encodedStr);
-                    break;
-                case EncodingType.Base64:
-                default:
-                    ecdata = Base64.FromBase64(encodedStr);
-                    break;
-            }
-
-            return ecdata;
-        }
-
-        #endregion encrypt decrypt variants
 
         #endregion encrypt decrypt
 
@@ -719,8 +725,8 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         protected internal sbyte[] MapByteValue(ref byte inByte, out byte outByte, bool encrypt = true)
         {
             List<sbyte> outSBytes = new List<sbyte>(2);
-            sbyte lsbIn = (sbyte)((short)inByte % 16);
-            sbyte msbIn = (sbyte)((short)((short)inByte / 16));
+            sbyte lsbIn = (sbyte)((short)inByte % 0x10);
+            sbyte msbIn = (sbyte)((short)((short)inByte / 0x10));
             sbyte lsbOut, msbOut;
             if (encrypt)
             {
@@ -728,7 +734,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                 msbOut = MatrixPermutationKey[(int)msbIn];
                 outSBytes.Add(lsbOut);
                 outSBytes.Add(msbOut);
-                outByte = (byte)((short)(((short)msbOut * 16) + ((short)lsbOut)));
+                outByte = (byte)((short)(((short)msbOut * 0x10) + ((short)lsbOut)));
             }
             else // if decrypt
             {
@@ -736,7 +742,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                 msbOut = _inverseMatrix[(int)msbIn];
                 outSBytes.Add(lsbOut);
                 outSBytes.Add(msbOut);
-                outByte = (byte)((short)(((short)msbOut * 16) + ((short)lsbOut)));
+                outByte = (byte)((short)(((short)msbOut * 0x10) + ((short)lsbOut)));
             }
 
             return outSBytes.ToArray();

@@ -1,4 +1,5 @@
-﻿using Area23.At.Framework.Core.Static;
+﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 
 namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
@@ -17,7 +18,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
         #region fields
 
-
+        private const string SYMMCIPHERALGONAME = "ZenMatrix1";
         // protected internal new byte[] privateBytes = new byte[0x10];
         protected internal byte[] privateBytes2 = new byte[0x10];
 
@@ -89,10 +90,13 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// and decrypts back to plain text, when encrypting twice or ²</param>       
         /// <exception cref="ApplicationException"></exception>
         public ZenMatrix2(string secretKey = "", string hashIV = "", bool fullSymmetric = false) : this()
-        {            
-            secretKey = string.IsNullOrEmpty(secretKey) ? Constants.AUTHOR_EMAIL : secretKey;
-            hashIV = string.IsNullOrEmpty(hashIV) ? Constants.AREA23_EMAIL : hashIV;
-            byte[] keyBytes2 = CryptHelper.GetUserKeyBytes(secretKey, hashIV, 0x10);
+        {
+            if (string.IsNullOrEmpty(secretKey))
+                throw new ArgumentNullException("secretKey");
+
+            hashIV = string.IsNullOrEmpty(hashIV) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIV;
+            byte[] keyBytes = CryptHelper.GetUserKeyBytes(secretKey, hashIV, 0x10);
+            byte[] keyBytes2 = CryptHelper.GetUserKeyBytes(secretKey, hashIV, 0x20);
 
             ZenMatrixGenWithBytes2(keyBytes2, true);
         }
@@ -159,7 +163,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             if (keyBytes2.Length < 0x10)
             {
                 Array.Copy(keyBytes2, 0, privateBytes2, 0, Math.Min(keyBytes2.Length, 0x10));
-                for (int i = keyBytes2.Length; i < 0x10; i++)
+                for (int i = keyBytes2.Length; i < 0x20; i++)
                 {
                     if (i < 0x08)
                         privateBytes2[i] = (byte)keyBytes2[i % keyBytes2.Length];

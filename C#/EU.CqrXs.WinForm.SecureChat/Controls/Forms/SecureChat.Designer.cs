@@ -103,11 +103,11 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             ComboBoxSecretKey = new ComboBox();
             RichTextBoxChat = new RichTextBox();
             PanelDestination = new Panel();
-            DragnDropBoxFiles = new EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox(components);
             PeerServerSwitch = new EU.CqrXs.WinForm.SecureChat.Controls.Panels.PeerServerSwitchPanel(components);
+            LinkedLabelsBox = new EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox(components);
+            DragnDropBoxFiles = new EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox(components);
             ButtonSend = new Button();
             ButtonAttach = new Button();
-            LinkedLabelsBox = new EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox(components);
             PanelCenter = new Panel();
             RichTextBoxOneView = new RichTextBox();
             PanelBottom = new Panel();
@@ -756,6 +756,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             // listBoxContacts
             // 
+            listBoxContacts.Enabled = false;
             listBoxContacts.FormattingEnabled = true;
             listBoxContacts.Location = new Point(654, 5);
             listBoxContacts.Margin = new Padding(1);
@@ -793,6 +794,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             // 
             // TextBoxChatSession
             // 
+            TextBoxChatSession.Enabled = false;
             TextBoxChatSession.Font = new Font("Lucida Sans Unicode", 8F);
             TextBoxChatSession.HideSelection = false;
             TextBoxChatSession.Location = new Point(350, 34);
@@ -889,20 +891,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PanelDestination.Size = new Size(168, 460);
             PanelDestination.TabIndex = 70;
             // 
-            // DragnDropBoxFiles
-            // 
-            DragnDropBoxFiles.AllowDrop = true;
-            DragnDropBoxFiles.BackColor = SystemColors.ControlLightLight;
-            DragnDropBoxFiles.Font = new Font("Lucida Sans Unicode", 8.5F);
-            DragnDropBoxFiles.Location = new Point(830, 4);
-            DragnDropBoxFiles.Margin = new Padding(1);
-            DragnDropBoxFiles.Name = "DragnDropBoxFiles";
-            DragnDropBoxFiles.Padding = new Padding(1);
-            DragnDropBoxFiles.Size = new Size(154, 91);
-            DragnDropBoxFiles.TabIndex = 81;
-            DragnDropBoxFiles.TabStop = false;
-            DragnDropBoxFiles.Text = "DragnDropBoxFiles";
-            // 
             // PeerServerSwitch
             // 
             PeerServerSwitch.AllowDrop = true;
@@ -914,30 +902,6 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             PeerServerSwitch.Padding = new Padding(1);
             PeerServerSwitch.Size = new Size(154, 48);
             PeerServerSwitch.TabIndex = 84;
-            // 
-            // ButtonSend
-            // 
-            ButtonSend.Font = new Font("Lucida Sans Unicode", 9F);
-            ButtonSend.Location = new Point(830, 100);
-            ButtonSend.Margin = new Padding(1);
-            ButtonSend.Name = "ButtonSend";
-            ButtonSend.Padding = new Padding(1);
-            ButtonSend.Size = new Size(75, 27);
-            ButtonSend.TabIndex = 83;
-            ButtonSend.Text = "Send";
-            ButtonSend.UseVisualStyleBackColor = true;
-            // 
-            // ButtonAttach
-            // 
-            ButtonAttach.Font = new Font("Lucida Sans Unicode", 9F);
-            ButtonAttach.Location = new Point(909, 99);
-            ButtonAttach.Margin = new Padding(1);
-            ButtonAttach.Name = "ButtonAttach";
-            ButtonAttach.Padding = new Padding(1);
-            ButtonAttach.Size = new Size(75, 27);
-            ButtonAttach.TabIndex = 82;
-            ButtonAttach.Text = "Attach";
-            ButtonAttach.UseVisualStyleBackColor = true;
             // 
             // LinkedLabelsBox
             // 
@@ -952,6 +916,48 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             LinkedLabelsBox.TabIndex = 83;
             LinkedLabelsBox.TabStop = false;
             LinkedLabelsBox.Text = "Attachments";
+            // 
+            // DragnDropBoxFiles
+            // 
+            DragnDropBoxFiles.AllowDrop = true;
+            DragnDropBoxFiles.BackColor = SystemColors.ControlLightLight;
+            DragnDropBoxFiles.Font = new Font("Lucida Sans Unicode", 8.5F);
+            DragnDropBoxFiles.Location = new Point(830, 4);
+            DragnDropBoxFiles.Margin = new Padding(1);
+            DragnDropBoxFiles.Name = "DragnDropBoxFiles";
+            DragnDropBoxFiles.Padding = new Padding(1);
+            DragnDropBoxFiles.Size = new Size(154, 91);
+            DragnDropBoxFiles.TabIndex = 81;
+            DragnDropBoxFiles.TabStop = false;
+            DragnDropBoxFiles.Text = "DragnDropBoxFiles";
+            // 
+            // ButtonSend
+            // 
+            ButtonSend.BackColor = SystemColors.ButtonHighlight;
+            ButtonSend.Font = new Font("Lucida Sans Unicode", 9F);
+            ButtonSend.ForeColor = SystemColors.ActiveCaptionText;
+            ButtonSend.Location = new Point(830, 100);
+            ButtonSend.Margin = new Padding(1);
+            ButtonSend.Name = "ButtonSend";
+            ButtonSend.Padding = new Padding(1);
+            ButtonSend.Size = new Size(75, 27);
+            ButtonSend.TabIndex = 83;
+            ButtonSend.Text = "Send";
+            ButtonSend.UseVisualStyleBackColor = false;
+            // 
+            // ButtonAttach
+            // 
+            ButtonAttach.BackColor = SystemColors.ButtonHighlight;
+            ButtonAttach.Font = new Font("Lucida Sans Unicode", 9F);
+            ButtonAttach.ForeColor = SystemColors.ActiveCaptionText;
+            ButtonAttach.Location = new Point(909, 100);
+            ButtonAttach.Margin = new Padding(1);
+            ButtonAttach.Name = "ButtonAttach";
+            ButtonAttach.Padding = new Padding(1);
+            ButtonAttach.Size = new Size(75, 27);
+            ButtonAttach.TabIndex = 82;
+            ButtonAttach.Text = "Attach";
+            ButtonAttach.UseVisualStyleBackColor = false;
             // 
             // PanelCenter
             // 

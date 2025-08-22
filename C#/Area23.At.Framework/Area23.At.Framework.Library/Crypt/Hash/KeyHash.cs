@@ -29,9 +29,9 @@ namespace Area23.At.Framework.Library.Crypt.Hash
             switch (hash)
             {
                 case KeyHash.SCrypt:
-                    return Encoding.UTF8.GetString(PasswdCrypt.SCrypt(stringToHash));
+                    return Hex16.ToHex16(PasswdCrypt.SCrypt(stringToHash));
                 case KeyHash.BCrypt:
-                    return Encoding.UTF8.GetString(PasswdCrypt.BCrypt(stringToHash));
+                    return Hex16.ToHex16(PasswdCrypt.BCrypt(stringToHash));
                 case KeyHash.OpenBSDCrypt:
                     return PasswdCrypt.BSDCrypt(stringToHash);
                 case KeyHash.MD5:

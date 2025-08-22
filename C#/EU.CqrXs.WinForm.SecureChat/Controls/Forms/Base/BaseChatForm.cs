@@ -239,7 +239,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
 
         #region TextBox&RichTextBox
 
-        internal delegate void EnableTextBoxCallback(System.Windows.Forms.TextBox textBox, bool enabled); 
+        internal delegate void EnableTextBoxCallback(System.Windows.Forms.TextBox textBox, bool enabled);
+
+        internal delegate void EnableListBoxCallback(System.Windows.Forms.ListBox listBox, bool enabled);
 
         internal delegate string GetTextBoxTextCallback(System.Windows.Forms.TextBox textBox);
 
@@ -297,6 +299,36 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base
             {
                 if (textBox != null)
                     textBox.Enabled = enable;
+            }
+        }
+
+
+        internal void EnableListBox(System.Windows.Forms.ListBox listBox, bool enable)
+        {
+            // InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (listBox.InvokeRequired)
+            {
+                EnableListBoxCallback enableListBoxCallback = // new EnableTextBoxCallback(EnableTextBox);
+                    delegate (System.Windows.Forms.ListBox lstBx, bool ena)
+                    {
+                        if (lstBx != null)
+                            lstBx.Enabled = ena;
+                    };
+                try
+                {
+                    listBox.Invoke(enableListBoxCallback, new object[] { listBox, enable });
+                    // textBox.Invoke((System.Reflection.MethodInvoker)delegate { textBox.AppendText(text); });
+                }
+                catch (Exception exDelegate)
+                {
+                    Area23Log.LogOriginMsgEx(Name, $"Exception in delegate EnableTextBox enable: \"{enable}\".\n", exDelegate);
+                }
+            }
+            else
+            {
+                if (listBox != null)
+                    listBox.Enabled = enable;
             }
         }
 

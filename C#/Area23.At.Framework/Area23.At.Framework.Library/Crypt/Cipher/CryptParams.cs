@@ -1,12 +1,8 @@
-﻿using Area23.At.Framework.Library.Crypt.EnDeCoding;
+﻿using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
+using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher
 {
@@ -236,6 +232,12 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                     Mode = "ECB";
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.XteaEngine();
                     break;
+                case CipherEnum.ZenMatrix:
+                    Size = 16;
+                    KeyLen = 16;
+                    Mode = "ECB";
+                    BlockCipher = new ZenMatrix();
+                    break;
                 default:
                     Size = 256;
                     KeyLen = 32;
@@ -270,16 +272,19 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
         /// </summary>
         /// <param name="cipherAlgo"><see cref="CipherEnum"/></param>
         /// <returns><see cref="CryptParams"/></returns>
+        [Obsolete("RequestAlgorithm no mote used", true)]
         public static CryptParams RequestAlgorithm(CipherEnum cipherAlgo)
         {
             return new CryptParams(cipherAlgo);
         }
 
+        [Obsolete("GetCryptParams no mote used", true)]
         public static CryptParams GetCryptParams(CryptParams cParams)
         {
             return new CryptParams(cParams);
         }
 
+        [Obsolete("GetBlockCipher no mote used", true)]
         public static IBlockCipher GetBlockCipher(CipherEnum cipherAlgo)
         {
             return (new CryptParams(cipherAlgo)).BlockCipher;

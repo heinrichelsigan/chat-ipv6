@@ -2,7 +2,6 @@
 using Area23.At.Framework.Library.Static;
 using System;
 using System.Collections.Generic;
-using System.Windows.Input;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher
 {

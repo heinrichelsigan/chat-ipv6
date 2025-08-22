@@ -179,13 +179,13 @@ namespace Area23.At.Framework.Library.Cache
             lock (_redIsLock)
             {
                 _allKeys = GetAllKeys();
-                success = Db.StringSet(redIsKey, redIsString, expiry, when, flags);
+                success = Db.StringSet(redIsKey, redIsString, expiry, keepTtl, when, flags);
 
                 if (success && !_allKeys.Contains(redIsKey))
                 {
                     _allKeys.Add(redIsKey);
                     string jsonVal = JsonConvert.SerializeObject(_allKeys);                    
-                    success = Db.StringSet(ALL_KEYS, jsonVal, expiryAllKeys, When.Always, CommandFlags.None);
+                    success = Db.StringSet(ALL_KEYS, jsonVal, null, keepTtl, When.Always, CommandFlags.None);
                 }
             }
 
@@ -230,7 +230,7 @@ namespace Area23.At.Framework.Library.Cache
                 {
                     _allKeys.Remove(redIsKey);
                     string jsonVal = JsonConvert.SerializeObject(_allKeys.ToArray());
-                    Db.StringSet("AllKeys", jsonVal, expiryAllKeys, When.Always, flags);
+                    Db.StringSet("AllKeys", jsonVal, null, false, When.Always, flags);
                 }
                 try
                 {
