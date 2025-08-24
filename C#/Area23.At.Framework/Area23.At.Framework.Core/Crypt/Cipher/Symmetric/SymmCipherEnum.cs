@@ -105,7 +105,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
                 case SymmCipherEnum.Idea: return 'I';
                 case SymmCipherEnum.RC532: return '5';
-                // case SymmCipherEnum.Rijndael: return 'a';
                 case SymmCipherEnum.Seed: return 's';
                 case SymmCipherEnum.Serpent: return 'S';
                 case SymmCipherEnum.SkipJack: return 'J';
@@ -157,3 +156,4 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
     }
 
 }
+

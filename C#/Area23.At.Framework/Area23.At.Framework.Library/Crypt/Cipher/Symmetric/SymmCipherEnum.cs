@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 
 namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
@@ -47,7 +47,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         public static SymmCipherEnum[] GetSymmCipherTypes()
         {
             List<SymmCipherEnum> list = new List<SymmCipherEnum>();
-            foreach (SymmCipherEnum symmCipher in Enum.GetValues(typeof(SymmCipherEnum))) 
+            foreach (SymmCipherEnum symmCipher in Enum.GetValues(typeof(SymmCipherEnum)))
                 list.Add(symmCipher);
             return list.ToArray();
         }
@@ -107,7 +107,6 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
 
                 case SymmCipherEnum.Idea: return 'I';
                 case SymmCipherEnum.RC532: return '5';
-                // case SymmCipherEnum.Rijndael: return 'a';
                 case SymmCipherEnum.Seed: return 's';
                 case SymmCipherEnum.Serpent: return 'S';
                 case SymmCipherEnum.SkipJack: return 'J';

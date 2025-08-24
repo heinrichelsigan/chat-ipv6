@@ -99,11 +99,11 @@ namespace EU.CqrXs.Srv.Util
             else
                 chatRoomNr = $"room_{DateTime.Now:MMddHHmm}.json";
 
-            Dictionary<long, string> dict = new Dictionary<long, string>();
-            dict.Add(now.Ticks, "");
+            Dictionary<long, string> msgDict = new Dictionary<long, string>();
+            msgDict.Add(now.Ticks, cSrvMsg.Sender.NameEmail);
 
             if (cSrvMsg.CRoom == null)
-                cSrvMsg.CRoom = new CChatRoom(chatRoomNr, Guid.NewGuid(), now, now) { MsgDict = dict };
+                cSrvMsg.CRoom = new CChatRoom(chatRoomNr, Guid.NewGuid(), now, now) { MsgDict = msgDict };
             else
             {
                 cSrvMsg.CRoom.ChatRoomNr = chatRoomNr;
@@ -111,12 +111,14 @@ namespace EU.CqrXs.Srv.Util
                 cSrvMsg.CRoom.LastPolled = now;
                 cSrvMsg.CRoom.LastPushed = now;
                 if (cSrvMsg.CRoom.MsgDict == null || cSrvMsg.CRoom.MsgDict.Count == 0)
-                    cSrvMsg.CRoom.MsgDict = dict;
+                    cSrvMsg.CRoom.MsgDict = msgDict;
                 else
-                    cSrvMsg.CRoom.TicksLong.Add(now.Ticks);
+                    cSrvMsg.CRoom.MsgDict.Add(now.Ticks, cSrvMsg.Sender.NameEmail);
             }
 
+            MemoryCache.CacheDict.SetValue<string>(now.Ticks.ToString(), "");   // add empty key to ticks index
             cSrvMsg.Message = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";
+
 
 
             bool addSender = true;
@@ -138,13 +140,15 @@ namespace EU.CqrXs.Srv.Util
                     cSrvMsg.CRoom.InvitedEmails.Add(cr.Email);
             }
 
-            SetCachedMessageDict(chatRoomNr, dict);
-
+            SetCachedChatRoom(chatRoomNr, cSrvMsg.CRoom);
 
             CSrvMsg<string> cChatRSrvMsg = JsonChatRoom.SaveChatRoom(ref cSrvMsg);
             string chatRoomNumber = cChatRSrvMsg.CRoom.ChatRoomNr;
             cChatRSrvMsg.Message = chatRoomNumber;
             JsonChatRoom.AddJsonChatRoomToCache(chatRoomNumber);
+
+            // serialize chat room in msg later then saving
+            // cChatRSrvMsg.SerializedMsg = cChatRSrvMsg.ToJson();
 
             return cChatRSrvMsg;
         }
@@ -155,15 +159,13 @@ namespace EU.CqrXs.Srv.Util
         /// </summary>
         /// <param name="chatRoomNumber">json chat room number</param>
         /// <returns>one chat room message dictionary</returns>
-        public static Dictionary<long, string> GetCachedMessageDict(string chatRoomNumber)
+        public static CChatRoom GetCachedChatRoom(string chatRoomNumber)
         {
-            Dictionary<long, string> dict = new Dictionary<long, string>();
-
-            dict = (Dictionary<long, string>)MemoryCache.CacheDict.GetValue<Dictionary<long, string>>(chatRoomNumber);
+            CChatRoom chatRoomt = (CChatRoom)MemoryCache.CacheDict.GetValue<CChatRoom>(chatRoomNumber);
 
             // TODO: implement filesystem 
 
-            return dict;
+            return chatRoomt;
 
         }
 
@@ -203,16 +205,17 @@ namespace EU.CqrXs.Srv.Util
         /// </summary>
         /// <param name="chatRoomNumber">json chat room number</param>
         /// <param name="dict">the mesage dictionary for chat room </param>
-        public static void SetCachedMessageDict(string chatRoomNumber, Dictionary<long, string> dict)
+        public static void SetCachedChatRoom(string chatRoomNumber, CChatRoom chatRoom)
         {
 
-            Area23Log.LogOriginMsg("CqrService.asmx", $"SetCachedMessageDict(string chatroomNumber = " + chatRoomNumber +
-                        $") dict.Countt = {dict.Count}.\r\n");
+            Area23Log.LogOriginMsg("CqrService.asmx", $"SetCachedChatRoom(string chatroomNumber = " + chatRoomNumber +
+                        $") chatRoom.MsgDict.Count = {chatRoom.MsgDict.Count}.\r\n");
 
-            MemoryCache.CacheDict.SetValue<Dictionary<long, string>>(chatRoomNumber, dict);
+            MemoryCache.CacheDict.SetValue<CChatRoom>(chatRoomNumber, chatRoom);
 
             return;
         }
+
 
 
         /// <summary>
@@ -374,15 +377,11 @@ namespace EU.CqrXs.Srv.Util
                 {
                     try
                     {
-                        Dictionary<long, string> dicTest = GetCachedMessageDict(room);
+                        CChatRoom ccr = GetCachedChatRoom(room);
+                        Dictionary<long, string> dicTest = ccr.MsgDict;
                         if (dicTest != null)
                         {
                             testReport += $"{DateTime.Now.Area23DateTimeMilliseconds()}: chat room {room} with keys {dicTest.Keys.Count} messages." + Environment.NewLine;
-                        }
-                        else
-                        {
-                            MemoryCache.CacheDict.RemoveKey(room);
-                            chatRooms.Remove(room);
                         }
                     }
                     catch (Exception exChatRoom)

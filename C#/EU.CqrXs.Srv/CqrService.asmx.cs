@@ -23,6 +23,7 @@ namespace EU.CqrXs.Srv
     public class CqrService : Util.BaseWebService
     {
 
+
         /// <summary>
         /// Send1StSrvMsg sends first registration message of contact
         /// </summary>
@@ -36,15 +37,12 @@ namespace EU.CqrXs.Srv
             string responseString = "", decrypted = "";
             CContact cContact = new CContact() { Hash = _symmPipe.PipeString };
 
-            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
-
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     _contact = cContact.FromJson<CContact>(cryptMsg);
                     decrypted = _contact.ToJson();
-                    MemoryCache.CacheDict.SetValue<string>("lastmsg", decrypted);
                     Area23Log.LogOriginMsg("CqrService", $"Contact decrypted successfully: " + decrypted + "\n");
                 }
             }
@@ -62,9 +60,8 @@ namespace EU.CqrXs.Srv
                 responseString = foundCt.EncryptToJson(_serverKey);
             }
 
-            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
             Area23Log.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
-            
+
             return responseString;
         }
 
@@ -83,14 +80,11 @@ namespace EU.CqrXs.Srv
             string responseString = "", chatRoomNumber = "";
             CSrvMsg<string> cSrvMsg, chatRoomMsg;
 
-            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
-
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
                     cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>
-                                                                                        // aSrvMsg = chatRoomMsg.DecryptFromJson(_serverKey, cryptMsg);     // decrypt CSrvMsg<string>
 
                     _contact = JsonContacts.AddContact(cSrvMsg.Sender);                 // add contact from FullSrvMsg<string>   
                     chatRoomMsg = InviteToChatRoom(cSrvMsg);                            // generate a FullSrvMsg<string> chatserver message by inviting                           
@@ -104,9 +98,105 @@ namespace EU.CqrXs.Srv
                 Area23Log.LogOriginMsgEx("CqrService", "ChatRoomInvite(...)", ex);
             }
 
-            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
             Area23Log.LogOriginMsg("CqrService", "ChatRoomInvite(string cryptMsg) finished. ChatRoomNr = " + chatRoomNumber + ".");
-            
+
+            return responseString;
+        }
+
+        /// <summary>
+        /// Polls all chats from a chat room
+        /// </summary>
+        /// <param name="cryptMsg">encrypted <see cref="CSrvMsg{string}"/> with chat room number and last polled dates</param>
+        /// <returns>
+        /// encrypted <see cref="CSrvMsg{List{String}}"/> including chatroom number 
+        /// with encrypted clientmsg with clientkey.
+        /// Server doesn't know client key and always delivers encrypted encrypted messages
+        /// Server can only read and decrypt outer envelope message encrypted with server key
+        /// </returns>
+        [WebMethod]
+        public string ChatPollAll(string cryptMsg)
+        {
+            Area23Log.LogOriginMsg("CqrService", $"ChatPollAll(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
+            InitMethod();
+            string responseString = "", chatRoomNumber = "";
+            bool isValid = false;
+            Dictionary<long, string> dict = new Dictionary<long, string>();
+            CSrvMsg<string> cSrvMsg, chatRoomMsg;
+            CSrvMsg<List<string>> allPollMsg;
+
+            try
+            {
+                if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
+                {
+                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
+
+                    _contact = cSrvMsg.Sender;
+                    chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Message;
+
+                    chatRoomMsg = JsonChatRoom.LoadChatRoom(ref cSrvMsg);
+                    isValid = JsonChatRoom.CheckPermission(ref cSrvMsg);
+                    allPollMsg = new CSrvMsg<List<string>>(cSrvMsg.Sender, cSrvMsg.Recipients.ToArray(), new List<string>(), cSrvMsg.Hash, cSrvMsg.CRoom) { Md5Hash = cSrvMsg.Md5Hash, Message = cSrvMsg.Message, MsgType = cSrvMsg.MsgType };
+
+                    if (isValid)
+                    {
+                        CChatRoom ccr = GetCachedChatRoom(chatRoomNumber);
+                        dict = ccr.MsgDict;
+
+                        List<long> longKeyList = (dict == null || dict.Count < 1) ? new List<long>() : dict.Keys.ToList();
+                        List<long> pollKeys = GetNewMessageIndices(longKeyList, cSrvMsg);
+                        string firstPollClientMsg = "";
+                        long polledPtr = -1;
+                        int pollIdx = 0;
+
+                        if (dict != null && dict.Count > 0 && pollKeys != null && pollKeys.Count > 0)
+                        {
+                            while (pollIdx < pollKeys.Count)
+                            {
+                                Area23Log.LogOriginMsg("CqrService", "ChatPollAll: " + chatRoomNumber +
+                                    $"\r\n\tpollIdx = {pollIdx} to dict\r\n\tpollKeys.Count = {pollKeys.Count} \r\n");
+
+                                polledPtr = pollKeys[pollIdx++];
+                                // firstPollClientMsg = dict[polledPtr] ?? "";
+                                firstPollClientMsg = MemoryCache.CacheDict.GetValue<string>(polledPtr.ToString()) ?? "";
+                                chatRoomMsg.CRoom.LastPolled = new DateTime(polledPtr);
+                                allPollMsg.CRoom.LastPolled = new DateTime(polledPtr);
+
+                                if (!string.IsNullOrEmpty(firstPollClientMsg))
+                                {
+                                    allPollMsg.TContent.Add(firstPollClientMsg);
+                                }
+                                allPollMsg.CRoom.MsgDict.Add(polledPtr, ccr.MsgDict[polledPtr]);
+
+                                if (ccr.LastPolled < allPollMsg.CRoom.LastPolled)
+                                {
+                                    ccr.LastPolled = allPollMsg.CRoom.LastPolled;
+                                    SetCachedChatRoom(chatRoomNumber, ccr);
+                                }
+                            }
+
+                            chatRoomMsg.CRoom.MsgDict = ccr.MsgDict;
+                            allPollMsg.CRoom.MsgDict = ccr.MsgDict;
+
+                            Area23Log.LogOriginMsg("CqrService", $"ChatPollAll: \r\n\tallPollMsg.TContent.Count = {allPollMsg.TContent.Count}\r\n");
+
+                            JsonContacts.UpdateContact(chatRoomMsg.Sender);
+                            chatRoomMsg = JsonChatRoom.SaveChatRoom(ref chatRoomMsg);
+                        }
+
+                    }
+
+                    responseString = chatRoomMsg.EncryptToJson(_serverKey);        // encrypt chatRoomMsg and json serialize it
+
+                }
+            }
+            catch (Exception ex)
+            {
+                CqrException.SetLastException(ex);
+                Area23Log.LogOriginMsgEx("CqrService", "ChatRoomPoll(...)", ex);
+            }
+
+            Area23Log.LogOriginMsg("CqrService", "ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finihed. ChatRoomNr =  " + chatRoomNumber + ".\n");
+
             return responseString;
         }
 
@@ -130,87 +220,7 @@ namespace EU.CqrXs.Srv
             bool isValid = false;
             Dictionary<long, string> dict = new Dictionary<long, string>();
             CSrvMsg<string> cSrvMsg, chatRoomMsg;
-
-            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
-
-            try
-            {
-                if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
-                {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
-
-                    _contact = cSrvMsg.Sender;
-                    chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Message;
-
-                    chatRoomMsg = JsonChatRoom.LoadChatRoom(ref cSrvMsg);
-                    isValid = JsonChatRoom.CheckPermission(ref cSrvMsg);
-
-                    if (isValid)
-                    {
-                        dict = GetCachedMessageDict(chatRoomNumber);
-                        List<long> longKeyList = (dict == null || dict.Count < 1) ? new List<long>() : dict.Keys.ToList();
-                        List<long> pollKeys = GetNewMessageIndices(longKeyList, cSrvMsg);
-
-                        long polledPtr = -1;
-                        if (dict != null && dict.Count > 0 && pollKeys != null && pollKeys.Count > 0)
-                        {
-                            polledPtr = pollKeys[0];
-                            string firstPollClientMsg = dict[polledPtr] ?? "";
-                            if (string.IsNullOrEmpty(firstPollClientMsg) && pollKeys.Count > 1)
-                            {
-                                chatRoomMsg.CRoom.LastPushed = new DateTime(polledPtr);
-                                polledPtr = pollKeys[1];
-                                firstPollClientMsg = dict[polledPtr] ?? "";
-                            }
-                            chatRoomMsg.CRoom.LastPushed = new DateTime(polledPtr);
-
-                            JsonContacts.UpdateContact(chatRoomMsg.Sender);
-                            chatRoomMsg = JsonChatRoom.SaveChatRoom(ref chatRoomMsg);
-
-                            chatRoomMsg.TContent = firstPollClientMsg;
-                        }
-
-                    }
-
-                    responseString = chatRoomMsg.EncryptToJson(_serverKey);        // encrypt chatRoomMsg and json serialize it
-
-                }
-            }
-            catch (Exception ex)
-            {
-                CqrException.SetLastException(ex);
-                Area23Log.LogOriginMsgEx("CqrService", "ChatRoomPoll(...)", ex);
-            }
-
-            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);            
-            Area23Log.LogOriginMsg("CqrService", "ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finihed. ChatRoomNr =  " + chatRoomNumber + ".\n");
-            
-            return responseString;
-        }
-
-
-        /// <summary>
-        /// Polls all chats from a chat room
-        /// </summary>
-        /// <param name="cryptMsg">encrypted <see cref="CSrvMsg{string}"/> with chat room number and last polled dates</param>
-        /// <returns>
-        /// encrypted <see cref="CSrvMsg{List{String}}"/> including chatroom number 
-        /// with encrypted clientmsg with clientkey.
-        /// Server doesn't know client key and always delivers encrypted encrypted messages
-        /// Server can only read and decrypt outer envelope message encrypted with server key
-        /// </returns>
-        [WebMethod]
-        public string ChatPollAll(string cryptMsg)
-        {
-            Area23Log.LogOriginMsg("CqrService", $"ChatPollAll(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
-            InitMethod();
-            string responseString = "", chatRoomNumber = "";
-            bool isValid = false;
-            Dictionary<long, string> dict = new Dictionary<long, string>();
-            CSrvMsg<string> cSrvMsg, chatRoomMsg;
             CSrvMsg<List<string>> allPollMsg;
-
-            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -227,40 +237,46 @@ namespace EU.CqrXs.Srv
 
                     if (isValid)
                     {
-                        dict = GetCachedMessageDict(chatRoomNumber);
+                        CChatRoom ccr = GetCachedChatRoom(chatRoomNumber);
+                        dict = ccr.MsgDict;
+
                         List<long> longKeyList = (dict == null || dict.Count < 1) ? new List<long>() : dict.Keys.ToList();
                         List<long> pollKeys = GetNewMessageIndices(longKeyList, cSrvMsg);
-                        string firstPollClientMsg = "";
+
                         long polledPtr = -1;
                         int pollIdx = 0;
+                        string firstPollClientMsg = "";
 
                         if (dict != null && dict.Count > 0 && pollKeys != null && pollKeys.Count > 0)
                         {
-                            while (pollIdx < pollKeys.Count)
+                            polledPtr = pollKeys[pollIdx++];
+                            firstPollClientMsg = MemoryCache.CacheDict.GetValue<string>(polledPtr.ToString()) ?? "";
+                            // firstPollClientMsg = dict[polledPtr] ?? "";
+                            if (string.IsNullOrEmpty(firstPollClientMsg) && pollKeys.Count > pollIdx)
                             {
-                                Area23Log.LogOriginMsg("CqrService", "ChatPollAll: " + chatRoomNumber +
-                                    $"\r\n\tpollIdx = {pollIdx} to dict\r\n\tpollKeys.Count = {pollKeys.Count} \r\n");
-
+                                chatRoomMsg.CRoom.LastPushed = new DateTime(polledPtr);
+                                cSrvMsg.CRoom.LastPushed = new DateTime(polledPtr);
                                 polledPtr = pollKeys[pollIdx++];
-                                firstPollClientMsg = dict[polledPtr] ?? "";
-                                if (string.IsNullOrEmpty(firstPollClientMsg) && pollKeys.Count > pollIdx)
-                                {
-                                    chatRoomMsg.CRoom.LastPolled = new DateTime(polledPtr);
-                                    allPollMsg.CRoom.LastPolled = new DateTime(polledPtr);
-                                    polledPtr = pollKeys[pollIdx++];
-                                    firstPollClientMsg = dict[polledPtr] ?? "";
-                                }
-                                chatRoomMsg.CRoom.LastPolled = new DateTime(polledPtr);
-                                allPollMsg.CRoom.LastPolled = new DateTime(polledPtr);
-
-                                allPollMsg.TContent.Add(firstPollClientMsg);
+                                firstPollClientMsg = MemoryCache.CacheDict.GetValue<string>(polledPtr.ToString()) ?? "";
+                                // firstPollClientMsg = dict[polledPtr] ?? "";
+                            }
+                            chatRoomMsg.CRoom.LastPolled = new DateTime(polledPtr);
+                            cSrvMsg.CRoom.LastPolled = new DateTime(polledPtr);
+                            if (ccr.LastPolled < chatRoomMsg.CRoom.LastPolled)
+                            {
+                                ccr.LastPolled = chatRoomMsg.CRoom.LastPolled;
+                                SetCachedChatRoom(chatRoomNumber, ccr);
                             }
 
-                            Area23Log.LogOriginMsg("CqrService", $"ChatPollAll: \r\n\tallPollMsg.TContent.Count = {allPollMsg.TContent.Count}\r\n");
+                            chatRoomMsg.TContent = firstPollClientMsg;
+                            cSrvMsg.TContent = firstPollClientMsg;
 
-                            JsonContacts.UpdateContact(chatRoomMsg.Sender);
-                            chatRoomMsg = JsonChatRoom.SaveChatRoom(ref chatRoomMsg);
+                            chatRoomMsg.CRoom.MsgDict = ccr.MsgDict;
+                            cSrvMsg.CRoom.MsgDict = ccr.MsgDict;
                         }
+
+                        JsonContacts.UpdateContact(chatRoomMsg.Sender);
+                        chatRoomMsg = JsonChatRoom.SaveChatRoom(ref chatRoomMsg);
 
                     }
 
@@ -271,12 +287,11 @@ namespace EU.CqrXs.Srv
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogOriginMsgEx("CqrService", "ChatRoomPoll(...)", ex);
+                Area23Log.LogOriginMsgEx("CqrService", "ChatPollAll(...)", ex);
             }
 
-            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
-            Area23Log.LogOriginMsg("CqrService", "ChatRoomPushMessage(string cryptMsg, string chatRoomMembersCrypted) finihed. ChatRoomNr =  " + chatRoomNumber + ".\n");            
-            
+            Area23Log.LogOriginMsg("CqrService", "ChatPollAll(string cryptMsg) finihed. ChatRoomNr =  " + chatRoomNumber + ".\n");
+
             return responseString;
         }
 
@@ -296,86 +311,7 @@ namespace EU.CqrXs.Srv
             bool isValid = false;
             Dictionary<long, string> dict;
             CSrvMsg<string> cSrvMsg, chatRoomMsg;
-
-            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
-
-            try
-            {
-                if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
-                {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>                    
-                                                                                            // aSrvMsg = chatRoomMsg.DecryptFromJson(_serverKey, cryptMsg);         // decrypt FullSrvMsg<string>
-
-                    _contact = cSrvMsg.Sender;
-                    chatRoomNumber = (cSrvMsg.CRoom != null &&                              // get chat room number
-                        !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ?
-                        cSrvMsg.CRoom.ChatRoomNr : "";
-                    cRoomMembersCrypt = cSrvMsg.TContent;                                   // set chatRoomMembersCrypted to cSrvMsg.TContent
-
-                    Area23Log.LogOriginMsg("CqrService", "ChatRoomPush: " +
-                        chatRoomNumber + $"\r\n\tsender = {cSrvMsg.Sender.NameEmail};" +
-                        $"\r\n\tall emails = {cSrvMsg.Emails}; \r\n");
-
-                    chatRoomMsg = JsonChatRoom.LoadChatRoom(ref cSrvMsg);                       // Load json chat room from file system json file                                                                                                                  
-                    isValid = JsonChatRoom.CheckPermission(ref cSrvMsg);                    // Check sender's permission to access chat room (must be creator or invited)
-
-                    if (isValid)
-                    {
-                        DateTime now = DateTime.Now;                                        // Determine DateTime.Now
-
-                        dict = GetCachedMessageDict(chatRoomNumber);                        // Get chatroom message dictionary out of cache
-
-                        dict.Add(now.Ticks, cRoomMembersCrypt);                             // Add new entry to cached chatroom message dictionary with DateTime.Now
-                        chatRoomMsg.CRoom.TicksLong.Add(now.Ticks);
-                        chatRoomMsg.CRoom.LastPushed = now;
-                        SetCachedMessageDict(chatRoomNumber, dict);                         // Saves chatroom msg dict back to cache (Amazon valkey or ApplicationState)
-
-                        // UpdateContact(_contact);        
-                        chatRoomMsg.TContent = "";                                          // set TContent empty, because we don't want a same huge response as request                                             
-                        chatRoomMsg = JsonChatRoom.SaveChatRoom(ref chatRoomMsg);
-                        // saves chat room back to json file
-                        chatRoomMsg.CRoom.LastPushed = now;
-                        chatRoomMsg.CRoom.TicksLong.Remove(now.Ticks);                      // TODO: Delete later, with that, you get your own message in sended queue
-                        chatRoomMsg.Sender.Message = chatRoomNumber;
-                    }
-                    else
-                        chatRoomMsg.TContent = cSrvMsg.Sender.NameEmail + " has no permission for chat room " + chatRoomNumber;
-
-                    responseString = chatRoomMsg.EncryptToJson(_serverKey);
-
-                }
-            }
-            catch (Exception ex)
-            {
-                CqrException.SetLastException(ex);
-                Area23Log.LogOriginMsgEx("CqrService", "ChatRoomPush(...)", ex);
-            }
-
-            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
-            Area23Log.LogOriginMsg("CqrService", $"ChatRoomPush(string cryptMsg, string cRoomMembersCrypt) finished. ChatRoomNr = " + chatRoomNumber + ".\n");
-            
-            return responseString;
-        }
-
-
-        /// <summary>
-        /// Pushes a new message for chatroom to the server and then polls all
-        /// </summary>
-        /// <param name="cryptMsg">encrypted <see cref="CSrvMsg{string}"/> with chat room number and last polled dates</param>
-        /// <param name="chatRoomMembersCrypted">with client key encrypted message, that is stored in proc of server, but server can't decrypt</param>
-        /// <returns>encrypted <see cref="CSrvMsg{string}"/> with chat room number and last polled date changed to now</returns>
-        [WebMethod]
-        public string ChatPushPoll(string cryptMsg)
-        {
-            Area23Log.LogOriginMsg("CqrService", $"ChatPushPoll(string cryptMsg) called.\n");
-            InitMethod();
-            string responseString = "", chatRoomNumber = "", cRoomMembersCrypt = "";
-            bool isValid = false;
-            Dictionary<long, string> dict;
-            CSrvMsg<string> cSrvMsg, chatRoomMsg;
             CSrvMsg<List<string>> allPollMsg;
-
-            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -389,7 +325,7 @@ namespace EU.CqrXs.Srv
 
                     cRoomMembersCrypt = cSrvMsg.TContent;                                   // set chatRoomMembersCrypted to cSrvMsg.TContent
 
-                    Area23Log.LogOriginMsg("CqrService", "ChatPushPoll: " +
+                    Area23Log.LogOriginMsg("CqrService", "ChatRoomPush: " +
                         chatRoomNumber + $"\r\n\tsender = {cSrvMsg.Sender.NameEmail};\r\n\tall emails = {cSrvMsg.Emails}; \r\n");
 
                     allPollMsg = new CSrvMsg<List<string>>(cSrvMsg.Sender, cSrvMsg.Recipients.ToArray(), new List<string>(), cSrvMsg.Hash, cSrvMsg.CRoom) { Md5Hash = cSrvMsg.Md5Hash, Message = cSrvMsg.Message, MsgType = cSrvMsg.MsgType };
@@ -401,28 +337,31 @@ namespace EU.CqrXs.Srv
                     {
                         DateTime now = DateTime.Now;                                        // Determine DateTime.Now
 
-                        dict = GetCachedMessageDict(chatRoomNumber);                        // Get chatroom message dictionary out of cache
+                        CChatRoom ccr = GetCachedChatRoom(chatRoomNumber);                  // Get chatroom message dictionary out of cache
 
-                        Area23Log.LogOriginMsg("CqrService", "ChatPushPoll: " + chatRoomNumber + $"\r\n\tdict.keys = {dict.Keys.Count} \r\n");
+                        Area23Log.LogOriginMsg("CqrService", "ChatRoomPush: " + chatRoomNumber + $"\r\n\tdict.keys = {ccr.MsgDict.Keys.Count} \r\n");
 
-                        dict.Add(now.Ticks, cRoomMembersCrypt);                             // Add new entry to cached chatroom message dictionary with DateTime.Now
-                        chatRoomMsg.CRoom.TicksLong.Add(now.Ticks);
+                        MemoryCache.CacheDict.SetValue<string>(now.Ticks.ToString(), cRoomMembersCrypt);
+
+                        ccr.MsgDict.Add(now.Ticks, cSrvMsg.Sender.NameEmail);               // Add new entry to cached chatroom message dictionary with DateTime.Now
+                        ccr.LastPushed = now;
+                        chatRoomMsg.CRoom.MsgDict.Add(now.Ticks, cSrvMsg.Sender.NameEmail);
                         chatRoomMsg.CRoom.LastPushed = now;
+                        allPollMsg.CRoom.MsgDict.Add(now.Ticks, cSrvMsg.Sender.NameEmail);
+                        allPollMsg.CRoom.LastPushed = now;
 
-                        SetCachedMessageDict(chatRoomNumber, dict);                         // Saves chatroom msg dict back to cache (Amazon valkey or ApplicationState)
+                        SetCachedChatRoom(chatRoomNumber, ccr);                             // Saves chatroom msg dict back to cache (Amazon valkey or ApplicationState)
 
-                        Area23Log.LogOriginMsg("CqrService", "ChatPushPoll: " + chatRoomNumber + $"\r\n\tadded key {now.Ticks} to dict\r\n\tdict.keys = {dict.Keys.Count} \r\n");
+                        Area23Log.LogOriginMsg("CqrService", "ChatRoomPush: " + chatRoomNumber + $"\r\n\tadded key {now.Ticks} to dict\r\n\tdict.keys = {ccr.MsgDict.Keys.Count} \r\n");
 
                         chatRoomMsg.TContent = "";                                          // set TContent empty, because we don't want a same huge response as request                                             
                         chatRoomMsg = JsonChatRoom.SaveChatRoom(ref chatRoomMsg);
                         // saves chat room back to json file
-                        chatRoomMsg.CRoom.LastPushed = now;
-                        chatRoomMsg.CRoom.TicksLong.Remove(now.Ticks);                      // TODO: Delete later, with that, you get your own message in sended queue
+                        // chatRoomMsg.CRoom.LastPushed = now;
+                        // chatRoomMsg.CRoom.TicksLong.Remove(now.Ticks);                      // TODO: Delete later, with that, you get your own message in sended queue
                         chatRoomMsg.Sender.Message = chatRoomNumber;
 
-                        allPollMsg.CRoom.TicksLong.Add(now.Ticks);
-                        allPollMsg.CRoom.LastPushed = now;
-
+                        dict = ccr.MsgDict;
                         List<long> longKeyList = (dict == null || dict.Count < 1) ? new List<long>() : dict.Keys.ToList();
                         List<long> pollKeys = GetNewMessageIndices(longKeyList, cSrvMsg);
 
@@ -434,25 +373,28 @@ namespace EU.CqrXs.Srv
                         {
                             while (pollIdx < pollKeys.Count)
                             {
-                                Area23Log.LogOriginMsg("CqrService", "ChatPushPoll: " + chatRoomNumber + $"\r\n\tpollIdx = {pollIdx} to dict\r\n\tpollKeys.Count = {pollKeys.Count} \r\n");
+                                Area23Log.LogOriginMsg("CqrService", "ChatRoomPush: " + chatRoomNumber + $"\r\n\tpollIdx = {pollIdx} to dict\r\n\tpollKeys.Count = {pollKeys.Count} \r\n");
 
                                 polledPtr = pollKeys[pollIdx++];
-                                firstPollClientMsg = dict[polledPtr] ?? "";
-                                if (string.IsNullOrEmpty(firstPollClientMsg) && pollKeys.Count > pollIdx)
-                                {
-                                    chatRoomMsg.CRoom.LastPolled = new DateTime(polledPtr);
-                                    allPollMsg.CRoom.LastPolled = new DateTime(polledPtr);
-                                    polledPtr = pollKeys[pollIdx++];
-                                    firstPollClientMsg = dict[polledPtr] ?? "";
-                                }
+                                firstPollClientMsg = MemoryCache.CacheDict.GetValue<string>(polledPtr.ToString()) ?? "";
+                                // firstPollClientMsg = dict[polledPtr] ?? "";                                
                                 chatRoomMsg.CRoom.LastPolled = new DateTime(polledPtr);
                                 allPollMsg.CRoom.LastPolled = new DateTime(polledPtr);
+                                if (ccr.LastPolled < allPollMsg.CRoom.LastPolled)
+                                    ccr.LastPolled = allPollMsg.CRoom.LastPolled;
 
-                                allPollMsg.TContent.Add(firstPollClientMsg);
+                                if (!string.IsNullOrEmpty(firstPollClientMsg))
+                                {
+                                    allPollMsg.TContent.Add(firstPollClientMsg);
+                                }
                             }
 
-                            Area23Log.LogOriginMsg("CqrService", $"ChatPushPoll: allPollMsg.TContent.Count = {allPollMsg.TContent.Count}\r\n");
+                            Area23Log.LogOriginMsg("CqrService", $"ChatRoomPush: allPollMsg.TContent.Count = {allPollMsg.TContent.Count}\r\n");
 
+                            chatRoomMsg.CRoom.MsgDict = ccr.MsgDict;
+                            cSrvMsg.CRoom.MsgDict = ccr.MsgDict;
+
+                            SetCachedChatRoom(chatRoomNumber, ccr);
                             JsonContacts.UpdateContact(chatRoomMsg.Sender);
                             chatRoomMsg = JsonChatRoom.SaveChatRoom(ref chatRoomMsg);
                         }
@@ -469,16 +411,14 @@ namespace EU.CqrXs.Srv
             catch (Exception ex)
             {
                 CqrException.SetLastException(ex);
-                Area23Log.LogOriginMsgEx("CqrService", "ChatPushPoll(...)", ex);
+                Area23Log.LogOriginMsgEx("CqrService", "ChatRoomPush(...)", ex);
             }
 
-            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);
-            Area23Log.LogOriginMsg("CqrService", $"ChatPushPoll(string cryptMsg) finished. ChatRoomNr = " + chatRoomNumber + ".\n");
+
+            Area23Log.LogOriginMsg("CqrService", $"ChatRoomPush(string cryptMsg, string cRoomMembersCrypt) finished. ChatRoomNr = " + chatRoomNumber + ".\n");
 
             return responseString;
         }
-
-
 
         /// <summary>
         /// ChatRoomClose
@@ -492,10 +432,8 @@ namespace EU.CqrXs.Srv
             InitMethod();
             string responseString = "", chatRoomNumber = "";
             bool isValid = false;
-            CSrvMsg<string> cSrvMsg, chatRoomMsg;;
+            CSrvMsg<string> cSrvMsg, chatRoomMsg;
             List<CContact> _invited = new List<CContact>();
-
-            MemoryCache.CacheDict.SetValue<string>("LastRequest", cryptMsg);
 
             try
             {
@@ -527,9 +465,9 @@ namespace EU.CqrXs.Srv
                 Area23Log.LogOriginMsgEx("CqrService", "ChatRoomClose(...)", ex);
             }
 
-            MemoryCache.CacheDict.SetValue<string>("LastResponse", responseString);            
+
             Area23Log.LogOriginMsg("CqrService", $"ChatRoomClose(string cryptMsg) finished. deleted chat room ChatRoomNr =  " + chatRoomNumber + ".\n");
-            
+
             return responseString;
         }
 

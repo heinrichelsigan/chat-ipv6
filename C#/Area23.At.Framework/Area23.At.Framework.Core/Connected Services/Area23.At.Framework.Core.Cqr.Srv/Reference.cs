@@ -32,13 +32,6 @@ namespace Area23.At.Framework.Core.Cqr.Srv
         [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatRoomInvite", ReplyAction="*")]
         System.Threading.Tasks.Task<string> ChatRoomInviteAsync(string cryptMsg);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatRoomPoll", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        string ChatRoomPoll(string cryptMsg);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatRoomPoll", ReplyAction="*")]
-        System.Threading.Tasks.Task<string> ChatRoomPollAsync(string cryptMsg);
-        
         [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatPollAll", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         string ChatPollAll(string cryptMsg);
@@ -46,19 +39,19 @@ namespace Area23.At.Framework.Core.Cqr.Srv
         [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatPollAll", ReplyAction="*")]
         System.Threading.Tasks.Task<string> ChatPollAllAsync(string cryptMsg);
         
+        [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatRoomPoll", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        string ChatRoomPoll(string cryptMsg);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatRoomPoll", ReplyAction="*")]
+        System.Threading.Tasks.Task<string> ChatRoomPollAsync(string cryptMsg);
+        
         [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatRoomPush", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         string ChatRoomPush(string cryptMsg);
         
         [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatRoomPush", ReplyAction="*")]
         System.Threading.Tasks.Task<string> ChatRoomPushAsync(string cryptMsg);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatPushPoll", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        string ChatPushPoll(string cryptMsg);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatPushPoll", ReplyAction="*")]
-        System.Threading.Tasks.Task<string> ChatPushPollAsync(string cryptMsg);
         
         [System.ServiceModel.OperationContractAttribute(Action="https://srv.cqrxs.eu/v1.6/ChatRoomClose", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -166,16 +159,6 @@ namespace Area23.At.Framework.Core.Cqr.Srv
             return base.Channel.ChatRoomInviteAsync(cryptMsg);
         }
         
-        public string ChatRoomPoll(string cryptMsg)
-        {
-            return base.Channel.ChatRoomPoll(cryptMsg);
-        }
-        
-        public System.Threading.Tasks.Task<string> ChatRoomPollAsync(string cryptMsg)
-        {
-            return base.Channel.ChatRoomPollAsync(cryptMsg);
-        }
-        
         public string ChatPollAll(string cryptMsg)
         {
             return base.Channel.ChatPollAll(cryptMsg);
@@ -186,6 +169,16 @@ namespace Area23.At.Framework.Core.Cqr.Srv
             return base.Channel.ChatPollAllAsync(cryptMsg);
         }
         
+        public string ChatRoomPoll(string cryptMsg)
+        {
+            return base.Channel.ChatRoomPoll(cryptMsg);
+        }
+        
+        public System.Threading.Tasks.Task<string> ChatRoomPollAsync(string cryptMsg)
+        {
+            return base.Channel.ChatRoomPollAsync(cryptMsg);
+        }
+        
         public string ChatRoomPush(string cryptMsg)
         {
             return base.Channel.ChatRoomPush(cryptMsg);
@@ -194,16 +187,6 @@ namespace Area23.At.Framework.Core.Cqr.Srv
         public System.Threading.Tasks.Task<string> ChatRoomPushAsync(string cryptMsg)
         {
             return base.Channel.ChatRoomPushAsync(cryptMsg);
-        }
-        
-        public string ChatPushPoll(string cryptMsg)
-        {
-            return base.Channel.ChatPushPoll(cryptMsg);
-        }
-        
-        public System.Threading.Tasks.Task<string> ChatPushPollAsync(string cryptMsg)
-        {
-            return base.Channel.ChatPushPollAsync(cryptMsg);
         }
         
         public string ChatRoomClose(string cryptMsg)
@@ -270,7 +253,8 @@ namespace Area23.At.Framework.Core.Cqr.Srv
         {
             return System.Threading.Tasks.Task.Factory.FromAsync(((System.ServiceModel.ICommunicationObject)(this)).BeginOpen(null, null), new System.Action<System.IAsyncResult>(((System.ServiceModel.ICommunicationObject)(this)).EndOpen));
         }
-        
+
+
         private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(EndpointConfiguration endpointConfiguration)
         {
             if ((endpointConfiguration == EndpointConfiguration.CqrServiceSoap))

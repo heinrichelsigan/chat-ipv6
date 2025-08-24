@@ -52,5 +52,4 @@ namespace Area23.At.Framework.Library.Crypt.Hash
 
     }
 
-
 }

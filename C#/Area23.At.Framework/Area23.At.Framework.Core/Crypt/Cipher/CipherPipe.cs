@@ -4,7 +4,6 @@ using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Zfx;
 
-
 namespace Area23.At.Framework.Core.Crypt.Cipher
 {
 
@@ -13,7 +12,9 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
     /// </summary>
     public class CipherPipe
     {
-        
+
+        #region fields and properties
+
         private string cipherKey = "", cipherHash = "";
         private readonly CipherEnum[] inPipe;
         public readonly CipherEnum[] outPipe;
@@ -42,6 +43,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             }
         }
 #endif
+
+        #endregion fields and properties
 
         #region ctor CipherPipe
 
@@ -137,7 +140,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="key">secret key to generate pipe</param>
         /// <param name="hash">hash value of secret key</param>
         public CipherPipe(string key = "heinrich.elsigan@area23.at", string hash = "6865696e726963682e656c736967616e406172656132332e6174")
-            : this(CryptHelper.GetUserKeyBytes(key, hash, 16), Constants.MAX_PIPE_LEN)
+            : this(CryptHelper.GetKeyBytesSimple(key, hash, 16), Constants.MAX_PIPE_LEN)
         {
             cipherKey = key;
             cipherHash = hash;
@@ -167,9 +170,11 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         public static byte[] EncryptBytesFast(byte[] inBytes, CipherEnum cipherAlgo = CipherEnum.Aes,
             string secretKey = "heinrich.elsigan@area23.at", string hashIv = "")
         {
-            byte[] encryptBytes = inBytes;
+            if (string.IsNullOrEmpty(secretKey))
+                throw new ArgumentNullException("seretkey");
+
             string hash = (string.IsNullOrEmpty(hashIv)) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIv;
-            string algo = cipherAlgo.ToString();
+            byte[] encryptBytes = inBytes;
 
             switch (cipherAlgo)
             {
@@ -182,13 +187,16 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     string privKey = keyPair.Private.ToString();
                     encryptBytes = Asymmetric.Rsa.Encrypt(inBytes);
                     break;
-                case CipherEnum.Serpent:
-                    Serpent.SerpentGenWithKey(secretKey, hash, true);
-                    encryptBytes = Serpent.Encrypt(inBytes);
-                    break;                
-                case CipherEnum.ZenMatrix2:
-                    encryptBytes = (new ZenMatrix2(secretKey, hash, false)).Encrypt(inBytes);
-                    break;
+                //case CipherEnum.Serpent:
+                //    Serpent.SerpentGenWithKey(secretKey, hash, true);
+                //    encryptBytes = Serpent.Encrypt(inBytes);
+                //    break;
+                //case CipherEnum.ZenMatrix:
+                //    encryptBytes = (new ZenMatrix(secretKey, hash, true)).Encrypt(inBytes);
+                //    break;
+                //case CipherEnum.ZenMatrix2:
+                //    encryptBytes = (new ZenMatrix2(secretKey, hash, false)).Encrypt(inBytes);
+                //    break;
                 case CipherEnum.Aes:
                 case CipherEnum.AesLight:
                 case CipherEnum.Aria:
@@ -210,12 +218,14 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.RC6:
                 case CipherEnum.Rijndael:
                 case CipherEnum.Seed:
+                case CipherEnum.Serpent:
                 case CipherEnum.SM4:
                 case CipherEnum.SkipJack:
                 case CipherEnum.Tea:
                 case CipherEnum.Tnepres:
                 case CipherEnum.XTea:
                 case CipherEnum.ZenMatrix:
+                case CipherEnum.ZenMatrix2:
                 default:
                     CryptParams cpParams = new CryptParams(cipherAlgo, secretKey, hash);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
@@ -237,17 +247,18 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         public static byte[] DecryptBytesFast(byte[] cipherBytes, CipherEnum cipherAlgo = CipherEnum.Aes,
             string secretKey = "heinrich.elsigan@area23.at", string hashIv = "", bool fishOnAesEngine = false)
         {
-            bool sameKey = true;
-            string algorithmName = cipherAlgo.ToString();
-            byte[] decryptBytes = cipherBytes;
+            if (string.IsNullOrEmpty(secretKey))
+                throw new ArgumentNullException("seretkey");
+            // bool sameKey = true;
             string hash = (string.IsNullOrEmpty(hashIv)) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIv;
+            byte[] decryptBytes = cipherBytes;
 
             switch (cipherAlgo)
             {
-                case CipherEnum.Serpent:
-                    sameKey = Serpent.SerpentGenWithKey(secretKey, hash, true);
-                    decryptBytes = Serpent.Decrypt(cipherBytes);
-                    break;
+                //case CipherEnum.Serpent:
+                //    sameKey = Serpent.SerpentGenWithKey(secretKey, hash, true);
+                //    decryptBytes = Serpent.Decrypt(cipherBytes);
+                //    break;
                 case CipherEnum.RC564:
                     RC564.RC564GenWithKey(secretKey, hash, true);
                     decryptBytes = RC564.Decrypt(cipherBytes);
@@ -257,12 +268,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     string privKey = keyPair.Private.ToString();
                     decryptBytes = Asymmetric.Rsa.Decrypt(cipherBytes);
                     break;
-                case CipherEnum.ZenMatrix2:
-                    decryptBytes = (new ZenMatrix2(secretKey, hash, false)).Decrypt(cipherBytes);
-                    break;
+                //case CipherEnum.ZenMatrix2:
+                //    decryptBytes = (new ZenMatrix2(secretKey, hash, false)).Decrypt(cipherBytes);
+                //    break;
                 case CipherEnum.Aes:
                 case CipherEnum.AesLight:
-                case CipherEnum.Aria:                
+                case CipherEnum.Aria:
                 case CipherEnum.BlowFish:
                 case CipherEnum.Camellia:
                 case CipherEnum.Cast5:
@@ -281,12 +292,14 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.RC6:
                 case CipherEnum.Rijndael:
                 case CipherEnum.Seed:
+                case CipherEnum.Serpent:
                 case CipherEnum.SM4:
                 case CipherEnum.SkipJack:
                 case CipherEnum.Tea:
                 case CipherEnum.Tnepres:
                 case CipherEnum.XTea:
                 case CipherEnum.ZenMatrix:
+                case CipherEnum.ZenMatrix2:
                 default:
                     CryptParams cpParams = new CryptParams(cipherAlgo, secretKey, hash);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
@@ -311,7 +324,9 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="hashIv">hash key iv relational to secret key</param>
         /// <param name="zipBefore"><see cref="ZipType"/> and <see cref="ZipTypeExtensions.Zip(ZipType, byte[])"/></param>
         /// <returns>encrypted byte[]</returns>
-        public byte[] MerryGoRoundEncrpyt(byte[] inBytes, string secretKey = "heinrich.elsigan@area23.at", string hashIv = "", ZipType zipBefore = ZipType.None)
+        public byte[] MerryGoRoundEncrpyt(byte[] inBytes,
+            string secretKey = "heinrich.elsigan@area23.at", string hashIv = "",
+            ZipType zipBefore = ZipType.None)
         {
             if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
                 throw new ArgumentNullException("seretkey");
@@ -324,7 +339,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             Array.Copy(inBytes, 0, encryptedBytes, 0, inBytes.Length);
 #if DEBUG
             stageDictionary = new Dictionary<CipherEnum, byte[]>();
-            // stageDictionary.Add(SymmCipherEnum.ZenMatrix, inBytes);
+            // stageDictionary.Add(CipherEnum.ZenMatrix, inBytes);
 #endif
             if (zipBefore != ZipType.None)
             {
@@ -353,7 +368,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="hashIv">hash relational to secret kay</param>
         /// <param name="unzipAfter"><see cref="ZipType"/> and <see cref="ZipTypeExtensions.Unzip(ZipType, byte[])"/></param>
         /// <returns><see cref="byte[]"/> plain bytes</returns>
-        public byte[] DecrpytRoundGoMerry(byte[] cipherBytes, string secretKey = "heinrich.elsigan@area23.at", string hashIv = "", ZipType unzipAfter = ZipType.None)
+        public byte[] DecrpytRoundGoMerry(byte[] cipherBytes,
+            string secretKey = "heinrich.elsigan@area23.at",
+            string hashIv = "",
+            ZipType unzipAfter = ZipType.None)
         {
             if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
                 throw new ArgumentNullException("seretkey");
@@ -383,7 +401,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             if (unzipAfter != ZipType.None)
                 decryptedBytes = unzipAfter.Unzip(cipherBytes);
 
-            return decryptedBytes;
+            return cipherBytes;
         }
 
 
@@ -529,6 +547,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         #endregion static en-de-crypt members
 
         #endregion multiple rounds en-de-cryption
+
     }
 
 }

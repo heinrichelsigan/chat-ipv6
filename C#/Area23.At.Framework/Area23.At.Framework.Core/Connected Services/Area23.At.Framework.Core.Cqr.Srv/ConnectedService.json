@@ -1,7 +1,7 @@
 {
   "ExtendedData": {
     "inputs": [
-      "https://srv.cqrxs.eu/v1.6/CqrService.asmx"
+      "http://srv.cqrxs.eu/v1.6/CqrService.asmx"
     ],
     "collectionTypes": [
       "System.Array",

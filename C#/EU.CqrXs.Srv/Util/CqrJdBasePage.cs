@@ -1,7 +1,4 @@
-﻿using Area23.At.Framework.Library;
-using Area23.At.Framework.Library.Cqr;
-using Area23.At.Framework.Library.Cqr.Msg;
-using Area23.At.Framework.Library.Net.WebHttp;
+﻿using Area23.At.Framework.Library.Cqr.Msg;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
 using System;

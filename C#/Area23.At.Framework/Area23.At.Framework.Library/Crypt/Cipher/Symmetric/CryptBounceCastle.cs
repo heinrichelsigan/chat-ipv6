@@ -105,6 +105,13 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
         /// <param name="init">init <see cref="ThreeFish"/> first time with a new key</param>
         public CryptBounceCastle(CryptParams cparams, bool init = true)
         {
+            CryptoBlockCipher = (cparams.BlockCipher == null) ? new AesEngine() : cparams.BlockCipher;
+            if ((CryptoBlockCipher.AlgorithmName == "RC564"))
+                CryptoBlockCipherPadding = new ISO7816d4Padding();
+            else CryptoBlockCipherPadding = new ZeroBytePadding();
+            KeyLen = cparams.KeyLen;
+            Size = Math.Min(cparams.Size, CryptoBlockCipher.GetBlockSize());
+            Mode = cparams.Mode;
             if (init)
             {
                 tmpKey = new byte[KeyLen];

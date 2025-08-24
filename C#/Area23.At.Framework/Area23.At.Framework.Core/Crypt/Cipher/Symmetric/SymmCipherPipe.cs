@@ -8,10 +8,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 {
 
     /// <summary>
-    /// Provides a simple crypt pipe for <see cref="SymmCipherEnum"/>
+    /// Provides a simple multistaged crypt pipe for <see cref="SymmCipherEnum"/> with max stages = 8
     /// </summary>
     public class SymmCipherPipe
     {
+
+        #region fields and properties
 
         private readonly SymmCipherEnum[] inPipe;
         public readonly SymmCipherEnum[] outPipe;
@@ -41,6 +43,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             }
         }
 #endif
+
+        #endregion fields and properties
 
         #region ctor SymmCipherPipe
 
@@ -93,7 +97,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             // What ever is entered here as parameter, maxpipe has to be not greater 8, because of no such agency
             maxpipe = (maxpipe > Constants.MAX_PIPE_LEN) ? Constants.MAX_PIPE_LEN : maxpipe; // if somebody wants more, he/she/it gets less
 
-            ushort scnt = 0;
+            // ushort scnt = 0;
             List<SymmCipherEnum> pipeList = new List<SymmCipherEnum>();
             Dictionary<char, SymmCipherEnum> symDict = SymmCipherEnumExtensions.GetCharSymmCipherDict();
             SymmCipherEnum[] symmCiphers = SymmCipherEnumExtensions.GetSymmCipherTypes();
@@ -132,7 +136,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="key">secret key to generate pipe</param>
         /// <param name="hash">hash value of secret key</param>
         public SymmCipherPipe(string key = "heinrich.elsigan@area23.at", string hash = "6865696e726963682e656c736967616e406172656132332e6174")
-            : this(CryptHelper.GetUserKeyBytes(key, hash, 16), Constants.MAX_PIPE_LEN)
+            : this(CryptHelper.GetKeyBytesSimple(key, hash, 16), Constants.MAX_PIPE_LEN)
         {
             symmCipherKey = key;
             symmCipherHash = hash;
@@ -141,7 +145,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// SymmCipherPipe ctor with only key
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">server key</param>
         public SymmCipherPipe(string key = "heinrich.elsigan@area23.at") : this(key, EnDeCodeHelper.KeyToHex(key))
         {
             symmCipherKey = key;
@@ -159,18 +163,21 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="secretKey">secret key to decrypt</param>
         /// <param name="keyIv">key's iv</param>
         /// <returns>encrypted byte Array</returns>
-        public static byte[] EncryptBytesFast(byte[] inBytes, SymmCipherEnum cipherAlgo = SymmCipherEnum.Aes,
-            string secretKey = "heinrich.elsigan@area23.at", string hashIv = "")
+        public static byte[] EncryptBytesFast(byte[] inBytes,
+            SymmCipherEnum cipherAlgo = SymmCipherEnum.Aes,
+            string secretKey = "heinrich.elsigan@area23.at",
+            string hashIv = "6865696e726963682e656c736967616e406172656132332e6174")
         {
             byte[] encryptBytes = inBytes;
-            string hash = (string.IsNullOrEmpty(hashIv)) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIv;
+
+            string algo = cipherAlgo.ToString();
 
             switch (cipherAlgo)
             {
-                case SymmCipherEnum.Serpent:
-                    Serpent.SerpentGenWithKey(secretKey, hash, true);
-                    encryptBytes = Serpent.Encrypt(inBytes);
-                    break;                                    
+                // case SymmCipherEnum.Serpent:
+                //	Serpent.SerpentGenWithKey(secretKey, hashIv, true);
+                //	encryptBytes = Serpent.Encrypt(inBytes);
+                //	break;				
                 case SymmCipherEnum.Aes:
                 case SymmCipherEnum.BlowFish:
                 case SymmCipherEnum.Fish2:
@@ -182,12 +189,13 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 case SymmCipherEnum.Gost28147:
                 case SymmCipherEnum.Idea:
                 case SymmCipherEnum.Seed:
+                case SymmCipherEnum.Serpent:
                 case SymmCipherEnum.SkipJack:
                 case SymmCipherEnum.Tea:
                 case SymmCipherEnum.XTea:
                 case SymmCipherEnum.ZenMatrix:
                 default:
-                    CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hash);
+                    CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hashIv);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
                     encryptBytes = cryptBounceCastle.Encrypt(inBytes);
                     break;
@@ -204,19 +212,22 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="secretKey">secret key to decrypt</param>
         /// <param name="keyIv">key's iv</param>
         /// <returns>decrypted byte Array</returns>
-        public static byte[] DecryptBytesFast(byte[] cipherBytes, SymmCipherEnum cipherAlgo = SymmCipherEnum.Aes,
-            string secretKey = "heinrich.elsigan@area23.at", string hashIv = "", bool fishOnAesEngine = false)
+        public static byte[] DecryptBytesFast(byte[] cipherBytes,
+            SymmCipherEnum cipherAlgo = SymmCipherEnum.Aes,
+            string secretKey = "heinrich.elsigan@area23.at",
+            string hashIv = "6865696e726963682e656c736967616e406172656132332e6174",
+            bool fishOnAesEngine = false)
         {
-            bool sameKey = true;
-            string hash = (string.IsNullOrEmpty(hashIv)) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIv;
+            // bool sameKey = true;
+            string algorithmName = cipherAlgo.ToString();
             byte[] decryptBytes = cipherBytes;
 
             switch (cipherAlgo)
             {
-                case SymmCipherEnum.Serpent:
-                    sameKey = Serpent.SerpentGenWithKey(secretKey, hash, true);
-                    decryptBytes = Serpent.Decrypt(cipherBytes);
-                    break;
+                // case SymmCipherEnum.Serpent:
+                //	sameKey = Serpent.SerpentGenWithKey(secretKey, hashIv, true);
+                //	decryptBytes = Serpent.Decrypt(cipherBytes);
+                //	break;
                 case SymmCipherEnum.Aes:
                 case SymmCipherEnum.BlowFish:
                 case SymmCipherEnum.Fish2:
@@ -228,33 +239,40 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 case SymmCipherEnum.Idea:
                 case SymmCipherEnum.RC532:
                 case SymmCipherEnum.Seed:
+                case SymmCipherEnum.Serpent:
                 case SymmCipherEnum.SkipJack:
                 case SymmCipherEnum.Tea:
                 case SymmCipherEnum.XTea:
                 case SymmCipherEnum.ZenMatrix:
                 default:
-                    CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hash, fishOnAesEngine);
+                    CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hashIv, fishOnAesEngine);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
                     decryptBytes = cryptBounceCastle.Decrypt(cipherBytes);
+
                     break;
+
             }
+
 
             return EnDeCodeHelper.GetBytesTrimNulls(decryptBytes);
         }
 
-		#endregion static members EncryptBytesFast DecryptBytesFast
+        #endregion static members EncryptBytesFast DecryptBytesFast
 
-		#region multiple rounds en-de-cryption
+        #region multiple rounds en-de-cryption
 
-		/// <summary>
-		/// MerryGoRoundEncrpyt starts merry to go arround from left to right in clock hour cycle
-		/// </summary>
-		/// <param name="inBytes">plain <see cref="byte[]"/ to encrypt></param>
-		/// <param name="secretKey">user secret key to use for all symmetric cipher algorithms in the pipe</param>
-		/// <param name="hashIv">hash key iv relational to secret key</param>
-		/// <param name="zipBefore"><see cref="ZipType"/> and <see cref="ZipTypeExtensions.Zip(ZipType, byte[])"/></param>
-		/// <returns>encrypted byte[]</returns>
-		public byte[] MerryGoRoundEncrpyt(byte[] inBytes, string secretKey = "", string hashIv = "", ZipType zipBefore = ZipType.None)
+        /// <summary>
+        /// MerryGoRoundEncrpyt starts merry to go arround from left to right in clock hour cycle
+        /// </summary>
+        /// <param name="inBytes">plain <see cref="byte[]"/ to encrypt></param>
+        /// <param name="secretKey">user secret key to use for all symmetric cipher algorithms in the pipe</param>
+        /// <param name="hashIv">hash key iv relational to secret key</param>
+        /// <param name="zipBefore"><see cref="ZipType"/> and <see cref="ZipTypeExtensions.Zip(ZipType, byte[])"/></param>
+        /// <returns>encrypted byte[]</returns>
+        public byte[] MerryGoRoundEncrpyt(byte[] inBytes,
+            string secretKey = "heinrich.elsigan@area23.at",
+            string hashIv = "6865696e726963682e656c736967616e406172656132332e6174",
+            ZipType zipBefore = ZipType.None)
         {
             if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(symmCipherKey))
                 throw new ArgumentNullException("secretKey");
@@ -296,7 +314,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="hashIv">hash relational to secret kay</param>
         /// <param name="unzipAfter"><see cref="ZipType"/> and <see cref="ZipTypeExtensions.Unzip(ZipType, byte[])"/></param>
         /// <returns><see cref="byte[]"/> plain bytes</returns>
-        public byte[] DecrpytRoundGoMerry(byte[] cipherBytes, string secretKey = "", string hashIv = "", ZipType unzipAfter = ZipType.None)
+        public byte[] DecrpytRoundGoMerry(byte[] cipherBytes,
+            string secretKey = "heinrich.elsigan@area23.at",
+            string hashIv = "6865696e726963682e656c736967616e406172656132332e6174",
+            ZipType unzipAfter = ZipType.None)
         {
             if (string.IsNullOrEmpty(symmCipherKey) && string.IsNullOrEmpty(secretKey))
                 throw new ArgumentNullException("secretKey");
@@ -313,7 +334,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 #if DEBUG
             stageDictionary = new Dictionary<SymmCipherEnum, byte[]>();
             // stageDictionary.Add(SymmCipherEnum.ZenMatrix, cipherBytes);
-#endif 
+#endif
             if (OutPipe == null || OutPipe.Length == 0)
                 Array.Copy(cipherBytes, 0, decryptedBytes, 0, cipherBytes.Length);
             else
@@ -339,6 +360,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         public byte[] DecrpytRoundsGo(byte[] cipherBytes, string secretKey = "", ZipType unzipAfter = ZipType.None, KeyHash keyHash = KeyHash.Hex)
             => DecrpytRoundGoMerry(cipherBytes, secretKey, keyHash.Hash(secretKey), unzipAfter);
 
+
         #region static en-de-crypt members
 
         /// <summary>
@@ -350,9 +372,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="pipeStrig">out parameter for setting hash to compare entities encryption</param>
         /// <param name="encoding"><see cref="EncodingType"/ type for encoding encrypted bytes back in plain text></param>
         /// <param name="zipBefore">Zip bytes with <see cref="ZipType"/> before passing them in encrypted stage pipeline. <see cref="ZipTypeExtensions.Zip(ZipType, byte[])"/></param>
-        /// <param name="keyHash"><see cref="KeyHash"/> hashing key algorithm</param>
-        /// <returns>encrypted string</returns>        
-        /// <returns></returns>
+		/// <param name="keyHash"><see cref="KeyHash"/> hashing key algorithm</param>
+        /// <returns>encrypted string</returns>
         public static string EncrpytToString(string inString, string cryptKey, out string pipeString,
             EncodingType encoding = EncodingType.Base64, ZipType zipBefore = ZipType.None, KeyHash keyHash = KeyHash.Hex)
         {
@@ -370,22 +391,22 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             return encrypted;
         }
 
-		public static byte[] EncrpytStringToBytes(string inString, string cryptKey, out string pipeString,
-			EncodingType encoding = EncodingType.Base64, ZipType zipBefore = ZipType.None, KeyHash keyHash = KeyHash.Hex)
+        public static byte[] EncrpytStringToBytes(string inString, string cryptKey, out string pipeString,
+            EncodingType encoding = EncodingType.Base64, ZipType zipBefore = ZipType.None, KeyHash keyHash = KeyHash.Hex)
         {
-			// construct symmetric cipher pipeline with cryptKey and pass pipeString as out param            
-			SymmCipherPipe symmPipe = new SymmCipherPipe(cryptKey);
-			pipeString = symmPipe.PipeString;
+            // construct symmetric cipher pipeline with cryptKey and pass pipeString as out param            
+            SymmCipherPipe symmPipe = new SymmCipherPipe(cryptKey);
+            pipeString = symmPipe.PipeString;
 
-			// Transform string to bytes
-			byte[] inBytes = EnDeCodeHelper.GetBytesFromString(inString);
-			// perform multi crypt pipe stages
-			byte[] encryptedBytes = symmPipe.EncrpytGoRounds(inBytes, cryptKey, zipBefore, keyHash);			
+            // Transform string to bytes
+            byte[] inBytes = EnDeCodeHelper.GetBytesFromString(inString);
+            // perform multi crypt pipe stages
+            byte[] encryptedBytes = symmPipe.EncrpytGoRounds(inBytes, cryptKey, zipBefore, keyHash);
 
-			return encryptedBytes;
-		}
+            return encryptedBytes;
+        }
 
-		public static string EncrpytBytesToString(byte[] plainBytes, string cryptKey, out string pipeString,
+        public static string EncrpytBytesToString(byte[] plainBytes, string cryptKey, out string pipeString,
             EncodingType encoding = EncodingType.Base64, ZipType zipBefore = ZipType.None, KeyHash keyHash = KeyHash.Hex)
         {
             // construct symmetric cipher pipeline with cryptKey and pass pipeString as out param            
@@ -410,7 +431,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="pipeStrig">out parameter for setting hash to compare entities encryption</param>
         /// <param name="decoding"><see cref="EncodingType"/> type for encoding encrypted bytes back in plain text></param>
         /// <param name="unzipAfter"><see cref="ZipType"/> and <see cref="ZipTypeExtensions.Unzip(ZipType, byte[])"/></param>
-        /// <param name="keyHash"><see cref="KeyHash"/> hashing key algorithm</param>
         /// <returns>Decrypted stirng</returns>
         public static string DecrpytToString(string cryptedEncodedMsg, string cryptKey, out string pipeString,
             EncodingType decoding = EncodingType.Base64, ZipType unzipAfter = ZipType.None, KeyHash keyHash = KeyHash.Hex)
@@ -425,7 +445,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             byte[] unroundedMerryBytes = symmPipe.DecrpytRoundsGo(cipherBytes, cryptKey, unzipAfter, keyHash);
 
             // Get string from decrypted bytes
-            string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes); 
+            string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes);
             // find first \0 = NULL char in string and truncate all after first \0 apperance in string
             while (decrypted[decrypted.Length - 1] == '\0')
                 decrypted = decrypted.Substring(0, decrypted.Length - 1);
@@ -448,29 +468,29 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             return unroundedMerryBytes;
         }
 
-		public static string DecrpytBytesToString(byte[] cipherBytes, string cryptKey, out string pipeString,
-			EncodingType decoding = EncodingType.Base64, ZipType unzipAfter = ZipType.None, KeyHash keyHash = KeyHash.Hex)
+        public static string DecrpytBytesToString(byte[] cipherBytes, string cryptKey, out string pipeString,
+            EncodingType decoding = EncodingType.Base64, ZipType unzipAfter = ZipType.None, KeyHash keyHash = KeyHash.Hex)
         {
-			// create symmetric cipher pipe for decryption with crypt key and pass pipeString as out param
-			SymmCipherPipe symmPipe = new SymmCipherPipe(cryptKey);
-			pipeString = symmPipe.PipeString;
+            // create symmetric cipher pipe for decryption with crypt key and pass pipeString as out param
+            SymmCipherPipe symmPipe = new SymmCipherPipe(cryptKey);
+            pipeString = symmPipe.PipeString;
 
-			// staged decryption of bytes
-			byte[] unroundedMerryBytes = symmPipe.DecrpytRoundsGo(cipherBytes, cryptKey, unzipAfter, keyHash);
+            // staged decryption of bytes
+            byte[] unroundedMerryBytes = symmPipe.DecrpytRoundsGo(cipherBytes, cryptKey, unzipAfter, keyHash);
 
             // Get string from decrypted bytes
             string decrypted = EnDeCodeHelper.GetString(unroundedMerryBytes);
-			// find first \0 = NULL char in string and truncate all after first \0 apperance in string
-			while (decrypted[decrypted.Length - 1] == '\0')
-				decrypted = decrypted.Substring(0, decrypted.Length - 1);
-            
+            // find first \0 = NULL char in string and truncate all after first \0 apperance in string
+            while (decrypted[decrypted.Length - 1] == '\0')
+                decrypted = decrypted.Substring(0, decrypted.Length - 1);
+
             return decrypted;
-		}
+        }
 
-		#endregion static en-de-crypt members
+        #endregion static en-de-crypt members
 
-		#endregion multiple rounds en-de-cryption
+        #endregion multiple rounds en-de-cryption
 
-	}
+    }
 
 }

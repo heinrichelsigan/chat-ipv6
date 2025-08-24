@@ -103,7 +103,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.RC532: return '5';
                 case CipherEnum.RC564: return 'R';
                 case CipherEnum.RC6: return 'r';
-                case CipherEnum.Rijndael: return 'J';
                 case CipherEnum.Rsa: return '%';
 
                 case CipherEnum.Seed: return 's';
@@ -113,6 +112,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
 
                 case CipherEnum.Tea: return 't';
                 case CipherEnum.Tnepres: return 'T';
+                case CipherEnum.Rijndael: return 'j';
                 case CipherEnum.XTea: return 'X';
 
                 case CipherEnum.ZenMatrix: return 'z';
@@ -125,14 +125,9 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         }
 
 
-        public static string PrintChipherTypes()
+        public static string PrintChipherTypes(this CipherEnum cipher)
         {
-            string s = "";
-            foreach (CipherEnum cipher in GetCipherTypes())
-            {
-                s += "\t" + cipher.GetCipherChar() + "\t" + cipher.ToString() + "\t" + cipher.ToString("x:2");
-            }
-
+            string s = cipher.ToString("x:2") + " " + cipher.GetCipherChar() + "\t" + cipher.ToString();
             return s;
         }
 
@@ -141,6 +136,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         {
             return symmCipherEnum.ToCipherEnum();
         }
+
     }
 
 }

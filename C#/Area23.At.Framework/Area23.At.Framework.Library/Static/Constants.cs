@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Configuration;
+using System.IO;
 using System.Text;
 using System.Web;
+
 
 namespace Area23.At.Framework.Library.Static
 {
@@ -34,6 +37,7 @@ namespace Area23.At.Framework.Library.Static
 
         public const string APP_NAME = "Area23.At";
         public const string APP_DIR = "net";
+        public const string APP_ERROR = "AppError";
         public const string VERSION = "v2.25.411";
         public const string VALKEY_CACHE_HOST = "cqrcachecqrxseu-53g0xw.serverless.eus2.cache.amazonaws.com";
         public const int VALKEY_CACHE_PORT = 6379;
@@ -79,7 +83,7 @@ namespace Area23.At.Framework.Library.Static
         public const string FR_CQRXS_EU = "fr.cqrxs.eu";
         public const string PARIS_CQRXS_EU = "paris.cqrxs.eu";
         public const string PARISIENNSE_CQRXS_EU = "parisienne.cqrxs.eu";
-        
+
         public const string DE_CQRXS_EU = "de.cqrxs.eu";
         public const string FRANKFURT_CQRXS_EU = "frankfurt.cqrxs.eu";
         public const string BERLINERIN_CQRXS_EU = "berlinerin.cqrxs.eu";
@@ -94,7 +98,7 @@ namespace Area23.At.Framework.Library.Static
         public const string UK_CQRXS_EU = "uk.cqrxs.eu";
         public const string LONDON_CQRXS_EU = "london.cqrxs.eu";
         public const string EDINBURGH_CQRXS_EU = "edinburgh.cqrxs.eu";
-        
+
         public const string CH_CQRXS_EU = "ch.cqrxs.eu";
         public const string ZURICH_CQRXS_EU = "zurich.cqrxs.eu";
         public const string BERNERIN_CQRXS_EU = "bernerin.cqrxs.eu";
@@ -112,7 +116,7 @@ namespace Area23.At.Framework.Library.Static
         public const string CQRXS_DELETE_DATA_ON_CLOSE = "CqrXsDeleteDataOnClose";
         public const string PERSIST_MSG_IN = "PersistMsgIn";
         public const string PERSIST_MSG_IN_APPLICATION_STATE = "ApplicationState";
-        public const string PERSIST_MSG_IN_AMAZON_ELASTIC_CACHE = "AmazonElasticCache";        
+        public const string PERSIST_MSG_IN_AMAZON_ELASTIC_CACHE = "AmazonElasticCache";
         public const string PERSIST_MSG_IN_FILE_SYSTEM = "FileSystem";
 
         public const string ACK = "Ack";
@@ -155,7 +159,7 @@ namespace Area23.At.Framework.Library.Static
         public const string LOG_DIR = "log";
         public const string LOG_EXT = ".log";
         public const string LOG_EXCEPTION_STATIC = "LogExceptionStatic";
-        public const string OUT_DIR = "out";        
+        public const string OUT_DIR = "out";
         public const string QR_DIR = "Qr";
         public const string RES_DIR = "res";
         public const string RES_FOLDER = "res";
@@ -164,7 +168,7 @@ namespace Area23.At.Framework.Library.Static
         public const string UNIX_DIR = "Unix";
         public const string UTF8_DIR = "Utf8";
         public const string UU_DIR = "uu";
-        
+
         public const string OBJ_DIR = "obj";
         public const string RELEASE_DIR = "Release";
         public const string DEBUG_DIR = "Release";
@@ -179,18 +183,17 @@ namespace Area23.At.Framework.Library.Static
         public const string ATTACH_FILES_DIR = "AttachFiles";
         public const string UPSAVED_FILE = "SavedFile";
 
-        
         public const string UTF8_JSON = "utf8symol.json";
         public const string JSON_SAVE_FILE = "urlshort.json";
         public const string JSON_CONTACTS = "contacts";
         public const string JSON_CONTACTS_FILE = "contacts.json";
-        public const string JSON_SETTINGS_FILE = "settings.json";        
+        public const string JSON_SETTINGS_FILE = "settings.json";
         public const string CQR_CHAT_FILE = "cqr{0}chat.json";
         public const string PREVIOUS_EXCEPTION = "previous_exception";
         public const string LAST_EXCEPTION = "last_exception";
         public const string COOL_CRYPT_SPLIT = "+-;,:→⇛\t ";
 
-        
+
         public const string FORTUNE_BOOL = "FORTUNE_BOOL";
         public const string UNKNOWN = "UnKnown";
         public const string DEFAULT_MIMETYPE = "application/octet-stream";
@@ -404,6 +407,9 @@ PMsi2xTrUPC6pAERVgu7wz02ka3WPOdlxfoG0o9s/BwJmhi5EEBqGB4CriR8R8AY
 2sGnnAaPJgE8Iy2z08jS3rF9npK27A==
 -----END PRIVATE KEY-----";
 
+
+
+
 #pragma warning restore CA1707 // Identifiers should not contain underscores
         #endregion public const
 
@@ -427,12 +433,78 @@ PMsi2xTrUPC6pAERVgu7wz02ka3WPOdlxfoG0o9s/BwJmhi5EEBqGB4CriR8R8AY
             EXE_WIN_LOGON, EXE_DESKTOP_WINDOW_MANAGER
         };
 
+        public static readonly string[] OUTFILE_EXTENSIONS = {
+            ".md", ".txt", ".text", ".cfg",
+            ".css", ".js", ".htm", ".html", ".xhtml", ".json", ".rdf",
+
+            ".avif", ".bmp", ".exif", ".gif", ".ico", ".ief", ".jpg", ".jpeg", ".pcx", ".pic", ".png", ".psd", ".tif", ".xcf", ".xif",
+            ".3pg", ".3g2", ".aif", ".au", ".m3u", ".mid", ".midi", ".mp4", ".mpeg", ".ogg", ".webm", ".wav", ".wax", ".wma", ".mp3",
+            ".avi", ".f4v", ".flx", ".m4u", ".m4v", ".mov", ".mpg", ".wmv",
+
+            ".pdf", ".ps", ".gs", ".dvi", ".tex",
+            ".ods", ".odt", ".rtf", ".doc", ".dot", ".xls", ".xlt", ".csv", ".mdb", ".ppt", ".vsx", ".vst", ".mpp",
+
+            ".ttf", ".woff",
+
+            ".eml", ".mbox", ".vcs", ".vcf", ".msg",
+
+            ".zip",
+            ".z", ".gz", ".bz", ".bz2", ".tar", ".tgz", ".tbz",
+            ".arj", ".arc", ".rar",
+            ".7z", ".xz",
+            ".uu", ".base", ".mime",
+
+            ".pki", ".cer", ".der", ".crl", ".p10", ".p7c", ".p7s",
+
+            ".exe", ".dll", ".oct", ".bin", ".tmp", ".img"
+        };
+
         #endregion public static readonly fields
 
         #region public static properties
 
-        public static bool UNIX => (SEP_CHAR == '/');
-        public static bool WIN32 => (SEP_CHAR == '\\');
+        private static bool _unix = false;
+        public static bool UNIX
+        {
+            get
+            {
+                if (_unix)
+                    return _unix;
+
+                string pathUnix = "";
+
+                if (ConfigurationManager.AppSettings["AppDirPathUnix"] != null)
+                    pathUnix = ConfigurationManager.AppSettings["AppDirPathUnix"];
+
+                _unix = ((System.AppDomain.CurrentDomain.BaseDirectory.ToString().Contains("/") &&
+                            !System.AppDomain.CurrentDomain.BaseDirectory.ToString().Contains("\\"))
+                        || Directory.Exists(pathUnix));
+
+                return _unix;
+            }
+        }
+
+        private static bool _win32 = false;
+
+        public static bool WIN32
+        {
+            get
+            {
+                if (_win32)
+                    return _win32;
+
+                string pathWin32 = "";
+
+                if (ConfigurationManager.AppSettings["AppDirPathWin"] != null)
+                    pathWin32 = ConfigurationManager.AppSettings["AppDirPathWin"];
+
+                _win32 = ((AppDomain.CurrentDomain.BaseDirectory.Contains("\\") &&
+                            !AppDomain.CurrentDomain.BaseDirectory.Contains("/"))
+                        || Directory.Exists(pathWin32));
+
+                return _win32;
+            }
+        }
 
         /// <summary>
         /// AppLogFile - logfile with <see cref="At.Framework.Library.Extensions.Area23Date(DateTime)"/> prefix
@@ -587,7 +659,7 @@ PMsi2xTrUPC6pAERVgu7wz02ka3WPOdlxfoG0o9s/BwJmhi5EEBqGB4CriR8R8AY
         /// <summary>
         /// AppSettingsValueByKey 
         /// </summary>
-        /// <param name="key">key to lookup up in appsettings key value collection</param>
+        /// <param name="key">key to lookup up in AppSettings key value collection</param>
         /// <returns><see cref="string"/> AppSettingsValue</returns>
         public static string AppSettingsValueByKey(string key)
         {
