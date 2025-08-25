@@ -48,6 +48,8 @@
             textBoxSource = new TextBox();
             textBoxPipeHash = new TextBox();
             panelInput = new Panel();
+            textBoxServerIp6 = new TextBox();
+            labelServerIp6 = new Label();
             panelButtons = new Panel();
             buttonClear = new Button();
             buttonSend1stSrvMsg = new Button();
@@ -56,8 +58,6 @@
             button_Base64Enc = new Button();
             groupBoxOutPut = new GroupBox();
             textBoxDestination = new TextBox();
-            textBoxServerIp6 = new TextBox();
-            labelServerIp6 = new Label();
             panelInput.SuspendLayout();
             panelButtons.SuspendLayout();
             groupBoxOutPut.SuspendLayout();
@@ -122,11 +122,11 @@
             // 
             // textBoxServerIp
             // 
-            textBoxServerIp.Location = new Point(99, 11);
+            textBoxServerIp.Location = new Point(82, 11);
             textBoxServerIp.Margin = new Padding(2);
             textBoxServerIp.Name = "textBoxServerIp";
             textBoxServerIp.ReadOnly = true;
-            textBoxServerIp.Size = new Size(280, 23);
+            textBoxServerIp.Size = new Size(297, 23);
             textBoxServerIp.TabIndex = 10;
             // 
             // labelPipeHash
@@ -158,6 +158,7 @@
             // 
             // panelInput
             // 
+            panelInput.BackColor = SystemColors.AppWorkspace;
             panelInput.Controls.Add(textBoxServerIp6);
             panelInput.Controls.Add(labelServerIp6);
             panelInput.Controls.Add(textBoxServerIp);
@@ -170,28 +171,48 @@
             panelInput.Controls.Add(textBoxSecKey);
             panelInput.Controls.Add(textBoxExternalIp);
             panelInput.Controls.Add(labelSecKey);
-            panelInput.Location = new Point(0, 0);
+            panelInput.Location = new Point(9, 8);
             panelInput.Margin = new Padding(2);
             panelInput.Name = "panelInput";
             panelInput.Size = new Size(394, 273);
             panelInput.TabIndex = 14;
             // 
+            // textBoxServerIp6
+            // 
+            textBoxServerIp6.Location = new Point(82, 39);
+            textBoxServerIp6.Margin = new Padding(2);
+            textBoxServerIp6.Name = "textBoxServerIp6";
+            textBoxServerIp6.ReadOnly = true;
+            textBoxServerIp6.Size = new Size(297, 23);
+            textBoxServerIp6.TabIndex = 15;
+            // 
+            // labelServerIp6
+            // 
+            labelServerIp6.AutoSize = true;
+            labelServerIp6.Location = new Point(17, 43);
+            labelServerIp6.Margin = new Padding(2, 0, 2, 0);
+            labelServerIp6.Name = "labelServerIp6";
+            labelServerIp6.Size = new Size(61, 15);
+            labelServerIp6.TabIndex = 14;
+            labelServerIp6.Text = "Server Ip6:";
+            // 
             // panelButtons
             // 
+            panelButtons.BackColor = SystemColors.AppWorkspace;
             panelButtons.Controls.Add(buttonClear);
             panelButtons.Controls.Add(buttonSend1stSrvMsg);
             panelButtons.Controls.Add(buttonSubmit);
             panelButtons.Controls.Add(button_Base64Dec);
             panelButtons.Controls.Add(button_Base64Enc);
-            panelButtons.Location = new Point(395, 0);
+            panelButtons.Location = new Point(415, 8);
             panelButtons.Margin = new Padding(2);
             panelButtons.Name = "panelButtons";
-            panelButtons.Size = new Size(85, 476);
+            panelButtons.Size = new Size(85, 483);
             panelButtons.TabIndex = 20;
             // 
             // buttonClear
             // 
-            buttonClear.Location = new Point(3, 445);
+            buttonClear.Location = new Point(3, 450);
             buttonClear.Margin = new Padding(2);
             buttonClear.Name = "buttonClear";
             buttonClear.Size = new Size(75, 23);
@@ -246,51 +267,35 @@
             // 
             // groupBoxOutPut
             // 
+            groupBoxOutPut.BackColor = SystemColors.AppWorkspace;
             groupBoxOutPut.Controls.Add(textBoxDestination);
-            groupBoxOutPut.Location = new Point(0, 277);
+            groupBoxOutPut.Location = new Point(9, 285);
             groupBoxOutPut.Margin = new Padding(2);
             groupBoxOutPut.Name = "groupBoxOutPut";
             groupBoxOutPut.Padding = new Padding(2);
-            groupBoxOutPut.Size = new Size(394, 199);
+            groupBoxOutPut.Size = new Size(394, 206);
             groupBoxOutPut.TabIndex = 15;
             groupBoxOutPut.TabStop = false;
             groupBoxOutPut.Text = "Output";
             // 
             // textBoxDestination
             // 
-            textBoxDestination.Location = new Point(14, 25);
+            textBoxDestination.Location = new Point(15, 25);
             textBoxDestination.Margin = new Padding(2);
             textBoxDestination.Multiline = true;
             textBoxDestination.Name = "textBoxDestination";
             textBoxDestination.ReadOnly = true;
-            textBoxDestination.Size = new Size(365, 166);
+            textBoxDestination.Size = new Size(362, 166);
             textBoxDestination.TabIndex = 16;
-            // 
-            // textBoxServerIp6
-            // 
-            textBoxServerIp6.Location = new Point(82, 39);
-            textBoxServerIp6.Margin = new Padding(2);
-            textBoxServerIp6.Name = "textBoxServerIp6";
-            textBoxServerIp6.ReadOnly = true;
-            textBoxServerIp6.Size = new Size(297, 23);
-            textBoxServerIp6.TabIndex = 15;
-            // 
-            // labelServerIp6
-            // 
-            labelServerIp6.AutoSize = true;
-            labelServerIp6.Location = new Point(17, 43);
-            labelServerIp6.Margin = new Padding(2, 0, 2, 0);
-            labelServerIp6.Name = "labelServerIp6";
-            labelServerIp6.Size = new Size(61, 15);
-            labelServerIp6.TabIndex = 14;
-            labelServerIp6.Text = "Server Ip6:";
             // 
             // TestForm
             // 
-            ClientSize = new Size(480, 480);
+            BackColor = SystemColors.ActiveBorder;
+            ClientSize = new Size(506, 498);
             Controls.Add(panelButtons);
             Controls.Add(groupBoxOutPut);
             Controls.Add(panelInput);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             MinimumSize = new Size(480, 480);
             Name = "TestForm";
             Text = "En-/Decrypt TestForm";

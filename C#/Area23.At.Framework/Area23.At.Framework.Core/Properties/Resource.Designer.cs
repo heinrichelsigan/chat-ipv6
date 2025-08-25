@@ -341,7 +341,34 @@ namespace Area23.At.Framework.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to v2.25.426.
+        ///   Looks up a localized string similar to 18.101.101.108;2a05:d011:cdf:3a00:75d:d95d:136e:9e41.
+        /// </summary>
+        internal static string server_ips {
+            get {
+                return ResourceManager.GetString("server_ips", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to cqrxs.eu;ipv6.cqrxs.eu;ipv4.cqrxs.eu.
+        /// </summary>
+        internal static string server_names {
+            get {
+                return ResourceManager.GetString("server_names", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://cqrxs.eu/net/R.aspx;http://srv.cqrxs.eu/v1.6/R.aspx;;https://ipv4.cqrxs.eu/net/R.aspx;https://ipv6.cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx.
+        /// </summary>
+        internal static string server_rurls {
+            get {
+                return ResourceManager.GetString("server_rurls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to v2.25.901.
         /// </summary>
         internal static string version_name {
             get {
@@ -350,7 +377,7 @@ namespace Area23.At.Framework.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://github.com/heinrichelsigan/area23.at/.
+        ///   Looks up a localized string similar to https://github.com/heinrichelsigan/.
         /// </summary>
         internal static string wiki_uri {
             get {

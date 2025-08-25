@@ -187,7 +187,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv6.cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx.
+        ///   Looks up a localized string similar to https://srv.cqrxs.eu/v1.6/R.aspx;https://cqrxs.eu/net/R.aspx;https://ipv4.cqrxs.eu/v1.6/R.aspx;https://ipv6.cqrxs.eu/v1.6/R.aspx;https://area23.at/net/R.aspx.
         /// </summary>
         internal static string RemoteIpUrls {
             get {

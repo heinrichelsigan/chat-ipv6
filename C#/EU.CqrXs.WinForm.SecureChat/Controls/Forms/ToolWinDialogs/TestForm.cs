@@ -13,8 +13,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using IDataObject_Com = System.Runtime.InteropServices.ComTypes.IDataObject;
-using System.Text.Json.Nodes;
 using Newtonsoft.Json;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
@@ -56,7 +54,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            this.ClientSize = new Size(361, 498);
+            this.ClientSize = new Size(506, 498);
             if (ConfigurationManager.AppSettings[Constants.SERVER_IP_V4] != null)
             {
                 this.textBoxServerIp.Text = (string)ConfigurationManager.AppSettings[Constants.SERVER_IP_V4];
