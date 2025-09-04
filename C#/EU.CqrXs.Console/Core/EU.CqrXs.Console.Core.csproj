@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishAot>False</PublishAot>
+	<IsAotCompatible>True</IsAotCompatible>
+    <InvariantGlobalization>True</InvariantGlobalization>
+	<StripSymbols>False</StripSymbols>
+    <StartupObject>EU.CqrXs.Console.Core.Program</StartupObject>
+    <ApplicationIcon>SatIcon.ico</ApplicationIcon>
+    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+    <PublishTrimmed>True</PublishTrimmed>
+    <Title>EU.CqrXs.Core.Console</Title>
+    <Description>EU.CqrXs.Core.Console</Description>
+    <Copyright>Copyright © 2000-2040 Copyleft https://cqrxs.eu</Copyright>
+    <PackageProjectUrl>https://cqrxs.eu/download/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
+    <AssemblyVersion>2.25.811</AssemblyVersion>
+    <FileVersion>2.25.811</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <WarningLevel>8</WarningLevel>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <WarningLevel>8</WarningLevel>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="README.MD" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="README.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SatIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
+  </ItemGroup>
+
+</Project>

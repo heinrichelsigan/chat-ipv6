@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EU.CqrXs.WinForm.SecureChat": {
+      "commandName": "Project",
+      "commandLineArgs": "firstreg test"
+    }
+  }
+}

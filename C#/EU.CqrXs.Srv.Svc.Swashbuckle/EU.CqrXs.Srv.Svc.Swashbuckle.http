@@ -1,0 +1,6 @@
+@EU.CqrXs.Srv.Svc.Swashbuckle_HostAddress = http://localhost:5094
+
+GET {{EU.CqrXs.Srv.Svc.Swashbuckle_HostAddress}}/Svc/
+Accept: application/json
+
+###

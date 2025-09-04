@@ -1,0 +1,125 @@
+{
+  "ClearAllOnClose": true,
+  "OnlyPeer2PeerChat": false,
+  "ZipBeforeSend": false,
+  "OnlySecureFileTypes": false,
+  "RegisterUser": true,
+  "SecretKeysCrypted": [
+    "bTf8gBura5RdcxfBBjLtVgX9ZxBXqxKkoVtV22w7e8LipEGoB3YXUUw/pZeWZC26IPKZfZkSlNcfuZRbTDGBqWtsZFxjVbMtFI1oVnJBkBXegH7Cbw22LCW5hrhXMB0O",
+    "vpFuSdysTVg40+qpvBwMR3kukp4hWD3axKXl4EE8dpDipEGoB3YXUUw/pZeWZC26IPKZfZkSlNcfuZRbTDGBqWtsZFxjVbMtFI1oVnJBkBXegH7Cbw22LCW5hrhXMB0O",
+    "lBPWUluhLsBoe4BZs5ybD92UdSIAF6dhxUR79SwGyXXipEGoB3YXUUw/pZeWZC26IPKZfZkSlNcfuZRbTDGBqWtsZFxjVbMtFI1oVnJBkBXegH7Cbw22LCW5hrhXMB0O",
+    "WqpeH9D4FSWWRN5HS0nBsz+bpdGwkygnWwzHnYqDQGXipEGoB3YXUUw/pZeWZC26IPKZfZkSlNcfuZRbTDGBqWtsZFxjVbMtFI1oVnJBkBXegH7Cbw22LCW5hrhXMB0O"
+  ],
+  "ChatRoom": {
+    "ChatRuid": "6a200f87-2ec9-464f-9ba4-613a7abae28a",
+    "ChatRoomNr": "room_09040514_he.json",
+    "TicksLong": [
+      638925596699289640,
+      638925596809347470,
+      638925597018288590
+    ],
+    "LastPushed": "2025-09-04T07:15:01.828859+02:00",
+    "LastPolled": "2025-09-04T05:15:01.828859",
+    "InvitedEmails": [
+      "he@area23.at"
+    ],
+    "MsgDict": {
+      "638925596699289640": "Heinrich G. Elsigan <he@area23.at>",
+      "638925596809347470": "Heinrich G. Elsigan <he@area23.at>",
+      "638925597018288590": "Heinrich G. Elsigan <he@area23.at>"
+    },
+    "MsgType": 0,
+    "EnCodingType": 64,
+    "Message": "",
+    "Hash": "",
+    "Md5Hash": ""
+  },
+  "TimeStamp": "2025-08-19T23:20:02.0561038+02:00",
+  "SaveStamp": "2025-09-04T07:15:49.8047892+02:00",
+  "MyContact": {
+    "ContactId": 0,
+    "Cuid": "e2075df5-5348-4dcd-a8e6-f3b275e2227d",
+    "Name": "Heinrich G. Elsigan",
+    "Email": "he@area23.at",
+    "Mobile": "+43 650 7527928",
+    "Address": "Theresianumgasse 6/28, 1040 Wien",
+    "ContactImage": null,
+    "MsgType": 1,
+    "EnCodingType": 64,
+    "Message": "room_09040514_he.json",
+    "Hash": "6AgCFfDb",
+    "Md5Hash": "0ee523f3afffd49998b2995324bf03b9"
+  },
+  "Contacts": [
+    {
+      "ContactId": 18,
+      "Cuid": "d944479d-91e1-4894-8a1c-da8e4a37da1d",
+      "Name": "Dr. Emina Basic",
+      "Email": "ordination@dr-basic.at",
+      "Mobile": "+43 1 6043257",
+      "Address": "",
+      "ContactImage": null,
+      "MsgType": 1,
+      "EnCodingType": 64,
+      "Message": "",
+      "Hash": "",
+      "Md5Hash": ""
+    },
+    {
+      "ContactId": 43,
+      "Cuid": "8ad05a5c-80da-49ef-89a0-588b7e14aef5",
+      "Name": "Michaela Friedrich",
+      "Email": "kontakt@praxis-friedrich.at",
+      "Mobile": "0699 19697911",
+      "Address": "",
+      "ContactImage": null,
+      "MsgType": 1,
+      "EnCodingType": 64,
+      "Message": "",
+      "Hash": "",
+      "Md5Hash": ""
+    },
+    {
+      "ContactId": 53,
+      "Cuid": "2af211a3-a4ac-4847-a9e9-a01f5adb380e",
+      "Name": "PSA Retail Linz Leonding",
+      "Email": "officelinz@mpsa.com",
+      "Mobile": "+43 732 7704810",
+      "Address": "",
+      "ContactImage": null,
+      "MsgType": 1,
+      "EnCodingType": 64,
+      "Message": "",
+      "Hash": "",
+      "Md5Hash": ""
+    },
+    {
+      "ContactId": 250902,
+      "Cuid": "1e0207d3-45af-4cc8-9ea4-9ea2c630580d",
+      "Name": "he",
+      "Email": "he@area23.at",
+      "Mobile": "",
+      "Address": "",
+      "ContactImage": null,
+      "MsgType": 1,
+      "EnCodingType": 64,
+      "Message": "",
+      "Hash": "6bIgFfDC",
+      "Md5Hash": ""
+    }
+  ],
+  "FriendIPs": [],
+  "MyIPs": [
+    "192.168.160.1",
+    "10.42.0.228",
+    "169.254.59.64",
+    "169.254.195.213",
+    "169.254.134.20",
+    "::1",
+    "127.0.0.1"
+  ],
+  "Proxies": [
+    "18.101.101.108",
+    "2a05:d011:cdf:3a00:75d:d95d:136e:9e41"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EU.CqrXs.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "-C=heinrich.elsigan@area23.at -c=base64 "
+    }
+  }
+}

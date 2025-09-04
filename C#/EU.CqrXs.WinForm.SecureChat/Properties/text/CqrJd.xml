@@ -1,0 +1,1680 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EU.CqrXs.WinForm.SecureChat</name>
+    </assembly>
+    <members>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm">
+            <summary>
+            BaseChat Form is common base class for <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat"/>, <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat"/> and <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat"/>
+            BaseChat contains mainly:
+            thread independent delegate accessor to <see cref="N:System.Windows.Forms"  /> 
+            basic member to play sounds <see cref="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.PlaySoundFromResource(System.String)" /> and <see cref="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.PlaySoundFromResourcesAsync(System.String)"/> 
+            help, info and <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TransparentDialog">about dialog</see> menu events 
+            close and exit <see cref="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.AppCloseAllFormsExit(System.Object,System.EventArgs)"/>
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.DialogFileSave">
+            <summary>
+            DialogFileSave returns initialized FileSaveDialog type SaveFileDialog
+            </summary>
+            <param name="filename"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.AppendText(System.Windows.Forms.TextBox,System.String)">
+            <summary>
+            AppendText - appends text on a <see cref="T:System.Windows.Forms.TextBox"/>
+            </summary>
+            <param name="textBox"><see cref="T:System.Windows.Forms.TextBox"/></param>
+            <param name="text"><see cref="T:System.String">string text</see> to set</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.ClearRichText(System.Windows.Forms.RichTextBox,System.Boolean)">
+            <summary>
+            ClearRichText thread save accessor
+            </summary>
+            <param name="richTextBox"></param>
+            <param name="clear"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.SetLinkLabelText(System.Windows.Forms.LinkLabel,System.String)">
+            <summary>
+            SetLinkLabelText - sets text on a <see cref="T:System.Windows.Forms.LinkLabel"/>
+            </summary>
+            <param name="linkLabel"><see cref="!:linkLabel"/></param>
+            <param name="text"><see cref="T:System.String">string text</see> to set</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.GetComboBoxName(System.Windows.Forms.ComboBox)">
+            <summary>
+            thread save deleagte to get name out of a <see cref="T:System.Windows.Controls.ComboBox"/>
+            </summary>
+            <param name="comboBox"><see cref="T:System.Windows.Controls.ComboBox"/> from which name to get</param>
+            <returns><see cref="T:System.String"/> name from <see cref="!:ComboBox.Text" /></returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.GetComboBoxEnabled(System.Windows.Forms.ComboBox)">
+            <summary>
+            thread save deleagte to get enabled state from <see cref="T:System.Windows.Controls.ComboBox"/>
+            </summary>
+            <param name="comboBox"><see cref="T:System.Windows.Controls.ComboBox"/> from which name to get</param>
+            <returns><see cref="T:System.String"/> name from <see cref="!:ComboBox.Text" /></returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.GetComboBoxText(System.Windows.Forms.ComboBox)">
+            <summary>
+            thread save deleagte to get text out of a <see cref="T:System.Windows.Controls.ComboBox"/>
+            </summary>
+            <param name="comboBox"><see cref="T:System.Windows.Controls.ComboBox"/> from which text to get</param>
+            <returns><see cref="T:System.String"/> text from <see cref="!:ComboBox.Text" /></returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.SetComboBoxText(System.Windows.Forms.ComboBox,System.String)">
+            <summary>
+            thread save deleagte to set text in a <see cref="T:System.Windows.Controls.ComboBox"/>
+            </summary>
+            <param name="comboBox"><see cref="!:ComboBox.Text" /> where set text <see cref="T:System.String"/></param>
+            <param name="text">string text to set</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.SetComboBoxEnabled(System.Windows.Forms.ComboBox,System.Boolean)">
+            <summary>
+            thread save deleagte to set enabled / disabled in a <see cref="T:System.Windows.Controls.ComboBox"/>
+            </summary>
+            <param name="comboBox"><see cref="!:ComboBox.Text" /> where set text <see cref="T:System.String"/></param>
+            <param name="enabled"><see cref="!:true"/> for enable, <see cref="!:false"/> for disabled</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.SetComboBoxBackColor(System.Windows.Forms.ComboBox,System.Drawing.Color)">
+            <summary>
+            thread save deleagte to change <see cref="!:ComboBox.BackColor" />
+            </summary>
+            <param name="comboBox"><see cref="T:System.Windows.Controls.ComboBox"/> where you want to change <see cref="!:ComboBox.BackColor"/></param>
+            <param name="color"><see cref="T:System.Drawing.Color"/> to set as new <see cref="!:ComboBox.BackColor"/></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.GetProxiesFromSettingsResources">
+            <summary>
+            GetProxiesFromSettingsResources 
+            </summary>
+            <returns>list of ip addr of proxies</returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.PlaySoundFromResource(System.String)">
+            <summary>
+            PlaySoundFromResource - plays a sound embedded in application ressource file
+            </summary>
+            <param name="soundName">unique qualified name for sound</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.FormClose_Click(System.Object,System.Windows.Forms.FormClosingEventArgs)">
+            <summary>
+            Closes Form, if this is the last form of application, then executes <see cref="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.AppCloseAllFormsExit(System.Object,System.EventArgs)"/>
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">FormClosingEventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.MenuFileItemExit_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuFileItemExit_Click is fired, when selecting exit menu 
+            and will nevertheless close all forms and exits application
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm.AppCloseAllFormsExit(System.Object,System.EventArgs)">
+            <summary>
+            AppCloseAllFormsExit closes all open forms and exit and finally unlocks Mutex
+            </summary>
+            <exception cref="T:System.ApplicationException"></exception>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm">
+            <summary>
+            MenuChat inherited from <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base.BaseChatForm"/> is abstraction for all menu items provided by derived classed,
+            e.g. <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat"/>, <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat"/>, <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat"/>
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm.BaseMenuForm_Load(System.Object,System.EventArgs)">
+            <summary>
+            BaseMenuForm_Load first time forces you to enter your contact
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm.MenuContactsItemMyContact_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuContactsItemMyContact_Click edits or adds at 1st time starting own contact
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm.MenuItemAddContact_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuItemAddContact_Click launches <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings"/> to add or edit a contact
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm.MenuContactsItemView_Click(System.Object,System.EventArgs)">
+            <summary> 
+            MenuContactsItemView_Click launches <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactsView"/> to view contacts
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm.MenuContactstemImport_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuContactstemImport_Click performs an import of existing contacts from csv or vcard
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.BaseMenuForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat">
+            <summary>
+            Peer2PeerChat main form
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.Format_Lines_RichTextBox">
+            <summary>
+            Displays and formats lines in <see cref="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.RichTextBoxOneView" />
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.ButtonKey_Click(System.Object,System.EventArgs)">
+            <summary>
+            ButtonKey_Click Event
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.ComboBoxSecretKey_FocusLeave(System.Object,System.EventArgs)">
+            <summary>
+            ComboBoxSecretKey_FocusLeave event is fired, when we leave focus of ComboBoxSecretKe
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.ComboBoxSecretKey_TextUpdate(System.Object,System.EventArgs)">
+            <summary>
+            ComboBoxSecretKey_TextUpdate is fired, when text entered in ComboBoxSecretKey changes.
+            Event is fired, when 1 char will be added or deleted at each change of <see cref="!:ComboBoxSecretKey.Text"/>
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.ComboBoxSecretKey_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            ComboBoxSecretKey_SelectedIndexChanged is fired, when we select a previous secret key in ComboBoxSecretKey
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.Send_1st_Server_Registration(System.Object,System.EventArgs)">
+            <summary>
+            Send_1st_Server_Registration sends contact registration to cqrxs.eu server
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.OnClientReceive(System.Object,Area23.At.Framework.Core.Util.Area23EventArgs{Area23.At.Framework.Core.Net.IpSocket.ReceiveData})">
+            <summary>
+            OnClientReceive event is fired, 
+            when another secure chat client connects directly peer 2 peer 
+            to server socket of our local chat app,
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.SendInit_Click">
+            <summary>
+            Sends a init secure message to peer ip address
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.SendInit_Contact">
+            <summary>
+            Sends a init secure message to contact over server proxy
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.MenuItemSend_Click(System.Object,System.EventArgs)">
+            <summary>
+            Sends a secure message
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.MenuItemAttach_Click(System.Object,System.EventArgs)">
+            <summary>
+            Attaches a file to send
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.OnDragNDrop(System.Object,System.EventArgs)">
+            <summary>
+            OnDragDrop is fired up, when files are dragged into <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox"/> or <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox"/>
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.MenuItemClear_Click(System.Object,System.EventArgs)" -->
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.SetAttachmentTextLink(Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile)">
+            <summary>
+            SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl"/>
+            </summary>
+            <param name="cqrFile"><see cref="T:Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile"/></param>
+            <summary>
+            SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl"/>
+            </summary>
+            <param name="mimeAttachment"><see cref="!:MimeAttachment"/></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.MenuContactsItemMyContact_Click(System.Object,System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.MenuView_ItemTopBottom_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuView_ItemTopBottom_Click occures, when user clicks on Top-Bottom in chat app
+            shows top bottom view of chat líke ancient talk/talks
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.MenuView_ItemLeftRíght_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuView_ItemLeftRíght_Click occurs, when user clicks on View->Left-Right in chat app
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.MenuView_Item1View_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuView_Item1View_Click, occurs, when user clicks on 1-View in chat app
+            shows only a single rich textbox instead of sender and receiver view
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.SetupNetwork">
+            <summary>
+            SetupNetwork async method to setup network
+            </summary>
+            <returns><see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.IPInterfaceAddressSelected(System.Object,System.EventArgs)">
+            <summary>
+            IPAdressSelected Delegate is invoked, 
+            when a different IP Address in context menu is selected
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat">
+            <summary>
+            RichTextChat main form
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.RichTextChat_Load(System.Object,System.EventArgs)">
+            <summary>
+            async RichTextChat_Load performs init at startup
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.Format_Lines_RichTextBox">
+            <summary>
+            Displays and formats lines in <see cref="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.RichTextBoxOneView" />
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SecretKey_Update(System.Object,System.EventArgs)">
+            <summary>
+            SecretKey Update Event
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.ComboBoxSecretKey_FocusLeave(System.Object,System.EventArgs)">
+            <summary>
+            ComboBoxSecretKey_FocusLeave event is fired, when we leave focus of ComboBoxSecretKe
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.ComboBoxSecretKey_TextUpdate(System.Object,System.EventArgs)">
+            <summary>
+            ComboBoxSecretKey_TextUpdate is fired, when text entered in ComboBoxSecretKey changes.
+            Event is fired, when 1 char will be added or deleted at each change of <see cref="!:ComboBoxSecretKey.Text"/>
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.ComboBoxSecretKey_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            ComboBoxSecretKey_SelectedIndexChanged is fired, when we select a previous secret key in ComboBoxSecretKey
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.ButtonVisitChatRoom_Click(System.Object,System.EventArgs)">
+            <summary>
+            ButtonVisitChatRoom_Click visits a chat room
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.ButtonInviteChatRoom_Click(System.Object,System.EventArgs)">
+            <summary>
+            Invites a selected contact to chat room, request a new chatroom
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">ÊventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.Send_1st_Server_Registration(System.Object,System.EventArgs)">
+            <summary>
+            Send_1st_Server_Registration sends contact registration to cqrxs.eu server
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SendInit_Click">
+            <summary>
+            Sends a init secure message to peer ip address
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SendInvite_ToChatRoom">
+            <summary>
+            SendInvite_ToChatRoom sends an invitation to chat room for a contact
+            You have to tell your contact the secret key and chat room number
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemSend_Click(System.Object,System.EventArgs)">
+            <summary>
+            Sends a secure message
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemAttach_Click(System.Object,System.EventArgs)">
+            <summary>
+            Attaches a file to send
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemRefresh_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuCommandsItemRefresh_Click refresh in session server mode from server
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuCommandsItemClear_Click(System.Object,System.EventArgs)" -->
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.OnClientReceive(System.Object,Area23.At.Framework.Core.Util.Area23EventArgs{Area23.At.Framework.Core.Net.IpSocket.ReceiveData})">
+            <summary>
+            OnClientReceive event is fired, 
+            when another secure chat client connects directly peer 2 peer 
+            to server socket of our local chat app,
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.OnDragNDrop(System.Object,System.EventArgs)">
+            <summary>
+            OnDragDrop is fired up, when files are dragged into <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox"/> or <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox"/>
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SetAttachmentTextLink(Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile)">
+            <summary>
+            SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl"/>
+            </summary>
+            <param name="cqrFile"><see cref="T:Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile"/></param>
+            <summary>
+            SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl"/>
+            </summary>
+            <param name="mimeAttachment"><see cref="!:MimeAttachment"/></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuContactsItemMyContact_Click(System.Object,System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuView_ItemTopBottom_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuView_ItemTopBottom_Click occures, when user clicks on Top-Bottom in chat app
+            shows top bottom view of chat líke ancient talk/talks
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuView_ItemLeftRíght_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuView_ItemLeftRíght_Click occurs, when user clicks on View->Left-Right in chat app
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.MenuView_Item1View_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuView_Item1View_Click, occurs, when user clicks on 1-View in chat app
+            shows only a single rich textbox instead of sender and receiver view
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.SetupNetwork">
+            <summary>
+            SetupNetwork async method to setup network
+            </summary>
+            <returns><see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.IPInterfaceAddressSelected(System.Object,System.EventArgs)">
+            <summary>
+            IPAdressSelected Delegate is invoked, 
+            when a different IP Address in context menu is selected
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.RichTextChat.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat">
+            <summary>
+            SecureChat main form
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SecureChat_Load(System.Object,System.EventArgs)">
+            <summary>
+            async SecureChat_Load performs init at startup
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.Format_Lines_RichTextBox">
+            <summary>
+            Displays and formats lines in <see cref="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.RichTextBoxOneView" />
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SecretKey_Update(System.Object,System.EventArgs)">
+            <summary>
+            SecretKey Update Event
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.ComboBoxSecretKey_FocusLeave(System.Object,System.EventArgs)">
+            <summary>
+            ComboBoxSecretKey_FocusLeave event is fired, when we leave focus of ComboBoxSecretKe
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.ComboBoxSecretKey_TextUpdate(System.Object,System.EventArgs)">
+            <summary>
+            ComboBoxSecretKey_TextUpdate is fired, when text entered in ComboBoxSecretKey changes.
+            Event is fired, when 1 char will be added or deleted at each change of <see cref="!:ComboBoxSecretKey.Text"/>
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.ComboBoxSecretKey_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            ComboBoxSecretKey_SelectedIndexChanged is fired, when we select a previous secret key in ComboBoxSecretKey
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.ButtonVisitChatRoom_Click(System.Object,System.EventArgs)">
+            <summary>
+            ButtonVisitChatRoom_Click visits a chat room
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.ButtonInviteChatRoom_Click(System.Object,System.EventArgs)">
+            <summary>
+            Invites a selected contact to chat room, request a new chatroom
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">ÊventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.Send_1st_Server_Registration(System.Object,System.EventArgs)">
+            <summary>
+            Send_1st_Server_Registration sends contact registration to cqrxs.eu server
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SendInit_Click">
+            <summary>
+            Sends a init secure message to peer ip address
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SendInvite_ToChatRoom">
+            <summary>
+            SendInvite_ToChatRoom sends an invitation to chat room for a contact
+            You have to tell your contact the secret key and chat room number
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemSend_Click(System.Object,System.EventArgs)">
+            <summary>
+            Sends a secure message
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemAttach_Click(System.Object,System.EventArgs)">
+            <summary>
+            Attaches a file to send
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemRefresh_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuCommandsItemRefresh_Click refresh in session server mode from server
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuCommandsItemClear_Click(System.Object,System.EventArgs)" -->
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.OnClientReceive(System.Object,Area23.At.Framework.Core.Util.Area23EventArgs{Area23.At.Framework.Core.Net.IpSocket.ReceiveData})">
+            <summary>
+            OnClientReceive event is fired, 
+            when another secure chat client connects directly peer 2 peer 
+            to server socket of our local chat app,
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.OnDragNDrop(System.Object,System.EventArgs)">
+            <summary>
+            OnDragDrop is fired up, when files are dragged into <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox"/> or <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox"/>
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SetAttachmentTextLink(Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile)">
+            <summary>
+            SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl"/>
+            </summary>
+            <param name="cqrFile"><see cref="T:Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile"/></param>
+            <summary>
+            SetAttachmentTextLink saves attachment in attachment folder and adds link in <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl"/>
+            </summary>
+            <param name="mimeAttachment"><see cref="!:MimeAttachment"/></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuContactsItemMyContact_Click(System.Object,System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuView_ItemTopBottom_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuView_ItemTopBottom_Click occures, when user clicks on Top-Bottom in chat app
+            shows top bottom view of chat líke ancient talk/talks
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuView_ItemLeftRíght_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuView_ItemLeftRíght_Click occurs, when user clicks on View->Left-Right in chat app
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.MenuView_Item1View_Click(System.Object,System.EventArgs)">
+            <summary>
+            MenuView_Item1View_Click, occurs, when user clicks on 1-View in chat app
+            shows only a single rich textbox instead of sender and receiver view
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.SetupNetwork">
+            <summary>
+            SetupNetwork async method to setup network
+            </summary>
+            <returns><see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.IPInterfaceAddressSelected(System.Object,System.EventArgs)">
+            <summary>
+            IPAdressSelected Delegate is invoked, 
+            when a different IP Address in context menu is selected
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings">
+            <summary>
+            ContactSettings is Form to Edit <see cref="T:Area23.At.Framework.Core.CqrXs.CqrMsg.CqrContact"/>
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings.GetIdFromTitle(System.String)">
+            <summary>
+            Get contact id from title of dialog
+            </summary>
+            <param name="title">string title of dialog</param>
+            <returns>ContactId</returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings.Form_Closing(System.Object,System.Windows.Forms.FormClosingEventArgs)">
+            <summary>
+            Form_Closing update owner
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings.comboBoxName_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            select combobox Name and display entry to the name
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings.Image_Clicked(System.Object,System.EventArgs)">
+            <summary>
+            Upload new Image
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings.ResizeImage(System.Drawing.Image,System.Int32,System.Int32)" -->
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactSettings.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactsView">
+            <summary>
+            ContactsView views <see cref="T:Area23.At.Framework.Core.CqrXs.CqrMsg.CqrContact"/>
+            </summary>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactsView.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactsView.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.ContactsView.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Dialog.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Dialog.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Dialog.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Form1.PlaySoundFromResource(System.String)">
+            <summary>
+            PlaySoundFromResource - plays a sound embedded in application ressource file
+            </summary>
+            <param name="soundName">unique qualified name for sound</param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Form1.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Form1.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>        
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Form1.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.InputDialog.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.InputDialog.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.InputDialog.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TestForm.PlaySoundFromResource(System.String)">
+            <summary>
+            PlaySoundFromResource - plays a sound embedded in application ressource file
+            </summary>
+            <param name="soundName">unique qualified name for sound</param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TestForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TestForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>        
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TestForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TransparentBadge.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TransparentBadge.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TransparentBadge.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TransparentDialog.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TransparentDialog.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Forms.TransparentDialog.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.DragNDropBox.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox">
+            <summary>
+            LinkLabelsBox inherited from <see cref="T:System.Windows.Forms.GroupBox"/>
+            Displays LinkLabels
+            Implements drag and drop, when files are dropped into the control.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.SetLinkLabelText(System.Windows.Forms.LinkLabel,System.String)">
+            <summary>
+            SetLinkLabelText - sets text on a <see cref="T:System.Windows.Forms.LinkLabel"/>
+            </summary>
+            <param name="linkLabel"><see cref="!:System.Windows.Forms.linkLabel"/></param>
+            <param name="text"><see cref="T:System.String">string text</see> to set</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.SetNameUri(System.String,System.Uri)">
+            <summary>
+            SetNameUri sets a name and an internet hyperlink uri to the next round robin label
+            </summary>
+            <param name="linkLabelName">name to set</param>
+            <param name="uri">internet <see cref="T:System.Uri"/> to set</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.SetNameFilePath(System.String,System.String,System.Boolean)">
+            <summary>
+            SetNameFilePath sets a name, a file system path pointing to a regular file to open to next round robin link label
+            </summary>
+            <param name="linkLabelName">display name to ste</param>
+            <param name="fullFilePath">full file path pointing to a regular file in filesystem UNC possible</param>
+            <param name="chackFilePath">if true, an <see cref="T:System.IO.FileNotFoundException"/> will be thrown, when file doesn't exist</param>
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.SetCqrFileTextLink(Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile)">
+            <summary>
+            SetCqrFileTextLink is called, when receiving a <see cref="T:Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile"/> 
+            Binary file <see cref="P:Area23.At.Framework.Core.CqrXs.CqrMsg.CqrFile.Data" /> will be written to <see cref="!:Path.Combine(LibPaths.AttachmentFilesDir, CqrFile.CqrFileName)"/>        
+            <see cref="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.SetNameFilePath(System.String,System.String,System.Boolean)"/>
+            </summary>
+            <param name="cqrFile"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.LinkLabel_Uri_LinkClicked(System.Object,System.Windows.Forms.LinkLabelLinkClickedEventArgs)">
+            <summary>
+            LinkLabel_Uri_LinkClicked Event delegate function 
+            occurs, when an internet uri is added to linked label links and LinkLabel will be link clicked.
+            </summary>
+            <param name="sender">sender</param>
+            <param name="e"><see cref="T:System.Windows.Forms.LinkLabelLinkClickedEventArgs"/></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.LinkLabel_File_LinkClicked(System.Object,System.Windows.Forms.LinkLabelLinkClickedEventArgs)">
+            <summary>
+            LinkLabel_File_LinkClicked Event delegate functions
+            occurs, when a file in file system is added to linked label links and LinkLabel is clicked.
+            </summary>
+            <param name="sender">sender</param>
+            <param name="e"><see cref="T:System.Windows.Forms.LinkLabelLinkClickedEventArgs"/></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.LinkLabelsBox_DragEnter(System.Object,System.Windows.Forms.DragEventArgs)">
+            <summary>
+            Occurs, when a file drag enter the LinkLabelsBox
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.LinkLabelsBox_DragDrop(System.Object,System.Windows.Forms.DragEventArgs)">
+            <summary>
+            LinkLabelsBox_DragDrop occurs, when dropping a dragged file into LinkLabelsBox
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.LinkLabelsBox_DragLeave(System.Object,System.EventArgs)">
+            <summary>
+            LinkLabelsBox_DragLeave occurs, when mouse pointer left 
+            button hold down with dragging file leaves the graphical area of the box
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.GroupBoxes.LinkLabelsBox.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Menu.CqrMenu.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Menu.CqrMenu.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Menu.CqrMenu.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Panels.PeerServerSwitchPanel.SuspendResumeLayout(System.Boolean)">
+            <summary>
+            Suspends or resumes control layout mode
+            </summary>
+            <param name="perfromLayout">if <see cref="!:false"/>, suspends layout <see cref="M:System.Windows.Forms.Control.SuspendLayout"/> for all controls
+            if <see cref="!:true"/>, then <see cref="M:EU.CqrXs.WinForm.SecureChat.Controls.Panels.PeerServerSwitchPanel.SuspendResumeLayout(System.Boolean)"/> for all controls</param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.Panels.PeerServerSwitchPanel.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Panels.PeerServerSwitchPanel.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.Panels.PeerServerSwitchPanel.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl">
+            <summary>
+            AttachmentListControl extends <see cref="T:System.Windows.Forms.UserControl"/> displays LinkedLabels for attachments 
+            and allows to drag and drop files into the Control from desktop or explorer
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl.SetLinkLabelText(System.Windows.Forms.LinkLabel,System.String)">
+            <summary>
+            SetLinkLabelText - sets text on a <see cref="T:System.Windows.Forms.LinkLabel"/>
+            </summary>
+            <param name="linkLabel"><see cref="!:System.Windows.Forms.linkLabel"/></param>
+            <param name="text"><see cref="T:System.String">string text</see> to set</param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.AttachmentListControl.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.PeerServerSwitchControl.SuspendResumeLayout(System.Boolean)">
+            <summary>
+            Suspends or resumes control layout mode
+            </summary>
+            <param name="perfromLayout">if <see cref="!:false"/>, suspends layout <see cref="M:System.Windows.Forms.Control.SuspendLayout"/> for all controls
+            if <see cref="!:true"/>, then <see cref="M:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.PeerServerSwitchControl.SuspendResumeLayout(System.Boolean)"/> for all controls</param>
+        </member>
+        <member name="F:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.PeerServerSwitchControl.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.PeerServerSwitchControl.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Controls.UserControls.PeerServerSwitchControl.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Entities.Chat">
+            <summary>
+            Chat persistency
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.Chat.Save(EU.CqrXs.WinForm.SecureChat.Entities.Chat)">
+            <summary>
+            json serializes current chat and saves it to AppDomain.BaseDirectory + cqr{ContactId}chat.json
+            </summary>
+            <param name="cqrChat">secure Chat to save</param>
+            <returns>true, if saving operation was successfully</returns>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Entities.CqrJdException">
+            <summary>
+            CqrJsException is inherited from <see cref="T:Area23.At.Framework.Core.CqrXs.CqrException"/>
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Entities.JsonContacts">
+            <summary>
+            Static class for JsonContacts
+            providing load, save, get, find
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.JsonContacts.#cctor">
+            <summary>
+            Constructor for static class
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.Settings.#ctor">
+            <summary>
+            Settings constructor maybe needed public for NewTonSoftJson serializing object
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.Settings.LoadSettings(System.String,System.Boolean)">
+            <summary>
+            loads json serialized Settings data string from 
+            <see cref="!:LibPaths.AppDirPath"/> + <see cref="F:Area23.At.Framework.Core.Static.Constants.JSON_SAVE_FILE"/>
+            and deserialize it to singleton instance <see cref="T:EU.CqrXs.WinForm.SecureChat.Entities.Settings"/> of <seealso cref="T:System.Lazy`1"/>
+            </summary>
+            <returns>singelton <see cref="!:Settings.Instance"/></returns>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Entities.Settings.SaveSettings(EU.CqrXs.WinForm.SecureChat.Entities.Settings,System.Boolean,System.String)">
+            <summary>
+            json serializes <see cref="T:EU.CqrXs.WinForm.SecureChat.Entities.Settings"/> and 
+            saves json serialized data string to 
+            <see cref="!:LibPaths.AppDirPath"/> + <see cref="F:Area23.At.Framework.Core.Static.Constants.JSON_SAVE_FILE"/>
+            </summary>
+            <param name="settings">settings to save</param>
+            <returns>true on successfully save</returns>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Program">
+            <summary>
+            Main Program entrance for <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.SecureChat"/> or <see cref="T:EU.CqrXs.WinForm.SecureChat.Controls.Forms.Peer2PeerChat"/>
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Program.Main(System.String[])">
+            <summary>
+             The main entry point for the application.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Program.ReleaseCloseDisposeMutex(System.Threading.Mutex)">
+            <summary>
+            Release Mutax exclusion, that not 2 chat programs could be started at same machine
+            </summary>
+            <param name="mutex"></param>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.a_hash">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.a_right_key">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.AddAesArrow">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.CableWireCut">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.ClickToUpload">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.CqrServerUrlToPost">
+            <summary>
+              Looks up a localized string similar to https://cqrxs.eu/cqrsrv/cqrjd/Default.aspx;https://ipv4.cqrxs.eu/cqrsrv/cqrjd/Default.aspx;.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.github_uri">
+            <summary>
+              Looks up a localized string similar to https://github.com/heinrichelsigan/chat-ipv6.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.Proxies">
+            <summary>
+              Looks up a localized string similar to 18.100.254.167;2a05:d011:cdf:3a00:75d:d95d:136e:9e41;2a05:d011:cdf:3a00:726a:e8ec:f5ca:8caa.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.ProxyNames">
+            <summary>
+              Looks up a localized string similar to cqrxs.eu;ipv6.cqrxs.eu;ipv4.cqrxs.eu;virginia.area23.at.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.RemoteConnect">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.RemoteIpUrls">
+            <summary>
+              Looks up a localized string similar to https://cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv6.cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://area23.at/net/R.aspx;.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.TransparentFormsIcon">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.de.Resources.WinFormAboutDialog">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.CableWireCutIcon">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Click2UploadBackground">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.ClickToUpload">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.ClickToUploadBackground">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.ClickUpload">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.ClickUploadBackground">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.CqrXsEuBadge">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF40">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF42">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF45">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF47">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF48">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF50">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF53">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF55">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.encryptedIcon">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.InviteToChatRoom">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Key_gray">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.Key_right">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.KeyIcon">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.RemoteConnectedIcon">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.SatIcon">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.TransparentFormsIcon">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.VisitChatRoom">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.a_hash">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.a_right_key">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.AddAesArrow">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.CableWireCut">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.CableWireCutIcon">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.ClickToUpload">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.CqrServerUrlToPost">
+            <summary>
+              Looks up a localized string similar to https://cqrxs.eu/cqrsrv/cqrjd/Default.aspx;https://ipv4.cqrxs.eu/cqrsrv/cqrjd/Default.aspx;https://ipv6.cqrxs.eu/cqrsrv/cqrjd/Default.aspx.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.github_uri">
+            <summary>
+              Looks up a localized string similar to https://github.com/heinrichelsigan/chat-ipv6.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.image_ClickToUpload">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.image_WinFormAboutDialog">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.Proxies">
+            <summary>
+              Looks up a localized string similar to 18.101.101.108;2a05:d011:cdf:3a00:75d:d95d:136e:9e41.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.ProxyNames">
+            <summary>
+              Looks up a localized string similar to cqrxs.eu;ipv6.cqrxs.eu;ipv4.cqrxs.eu.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.RemoteConnect">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.RemoteIpUrls">
+            <summary>
+              Looks up a localized string similar to https://cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv4.cqrxs.eu/cqrsrv/cqrjd/R.aspx;https://ipv6.cqrxs.eu/net/R.aspx;https://area23.at/net/R.aspx.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.SatLink">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_arrow">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_breakpoint">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_camera">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_click">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_coin">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_error">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_glasses">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_gong">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_hammer">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_laser">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_push">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_romans">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_soft">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_space">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_top">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_train">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_volatage">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_warning">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_whoosh">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.sound_wind">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.TransparentFormsIcon">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Properties.Resources.WinFormAboutDialog">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EU.CqrXs.WinForm.SecureChat.Util.BgWorkerMonitor.Work_Monitor">
+            <summary>
+            Eventhanlder Work_Monitor is fired, when needing a delegate back in WinForm Chat
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Util.BgWorkerMonitor.#ctor">
+            <summary>
+            Constructor of PollSleeper
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Util.BgWorkerMonitor.BgWorkerMonitor_DoWork(System.Object,System.ComponentModel.DoWorkEventArgs)">
+            <summary>
+            BgWorkerMonitor_DoWork is fired on <see cref="E:System.ComponentModel.BackgroundWorker.DoWork"/>
+            </summary>
+            <param name="sender"><see cref="!:object?"/> sender</param>
+            <param name="e"><see cref="T:System.ComponentModel.DoWorkEventArgs"/> e</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:EU.CqrXs.WinForm.SecureChat.Util.BgWorkerMonitor.BgWorkerMonitor_ProgressChanged(System.Object,System.ComponentModel.ProgressChangedEventArgs)" -->
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Util.BgWorkerMonitor.BgWorkerMonitor_RunWorkerCompleted(System.Object,System.ComponentModel.RunWorkerCompletedEventArgs)">
+            <summary>
+            BgWorkerMonitor_RunWorkerCompleted is launched, when <see cref="T:EU.CqrXs.WinForm.SecureChat.Util.BgWorkerMonitor" /> 
+            finished work by <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted"/>
+            </summary>
+            <param name="sender"><see cref="!:object?"/> sender</param>
+            <param name="e"><see cref="T:System.ComponentModel.RunWorkerCompletedEventArgs"/> e</param>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Util.BgWorkerMonitor.BgWorkerMonitor_DoMonitor(System.Object)">
+            <summary>
+            ObserverBeholderWatchMonitor invokes EventHandler <see cref="T:EU.CqrXs.WinForm.SecureChat.Util.BgWorkerMonitor"/> with
+            <see cref="T:Area23.At.Framework.Core.Util.Area23EventArgs`1"/>
+            </summary>
+            <param name="sender">object sender</param>
+            <returns>true, invoking EventHandler <see cref="!:Watch_Monitor"/> succeeds.</returns>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.Util.JsonHelper">
+            <summary>
+            JsonHelper class for reading and writing json serialized store file.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.Util.MiniToolBox.CreateAttachDirectory">
+            <summary>
+            Creates Attachment Directory 
+            </summary>
+        </member>
+        <member name="T:EU.CqrXs.WinForm.SecureChat.ApplicationConfiguration">
+            <summary>
+             Bootstrap the application configuration.
+            </summary>
+        </member>
+        <member name="M:EU.CqrXs.WinForm.SecureChat.ApplicationConfiguration.Initialize">
+            <summary>
+             Bootstrap the application as follows:
+             <code>
+             global::System.Windows.Forms.Application.EnableVisualStyles();
+             global::System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+             global::System.Windows.Forms.Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            </code>
+            </summary>
+        </member>
+    </members>
+</doc>

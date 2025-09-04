@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyVersion>2.25.811</AssemblyVersion>
+    <FileVersion>2.25.811</FileVersion>
+    <StartupObject>EU.CqrXs.Srv.Svc.Swashbuckle.Program</StartupObject>
+    <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
+    <PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>   
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\ChatCloseController.cs" />
+    <Compile Remove="Logging\EnablerLog.cs" />
+    <Compile Remove="Logging\Extensions.cs" />
+    <Compile Remove="Logging\Paths.cs" />
+    <Compile Remove="Util\PersistMsgIn.cs" />
+    <Compile Remove="Util\RedIS.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Core" Version="2.46.6" />
+    <PackageReference Include="NLog" Version="5.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+    <PackageReference Include="WebGrease" Version="1.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Documents\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Area23.At.Framework\Area23.At.Framework.Core.RedisCache\Area23.At.Framework.Core.RedisCache.csproj" />
+    <ProjectReference Include="..\Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
+  </ItemGroup>
+
+</Project>

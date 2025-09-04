@@ -1,0 +1,361 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+	<TargetFramework>net9.0-windows7.0</TargetFramework>
+	<UseWindowsForms>True</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <StartupObject>EU.CqrXs.WinForm.SecureChat.Program</StartupObject>
+    <RootNamespace>EU.CqrXs.WinForm.SecureChat</RootNamespace>
+	<ApplicationIcon>RemoteConnectedIcon.ico</ApplicationIcon>
+	<AssemblyVersion>2.25.826</AssemblyVersion>
+    <FileVersion>2.25.826</FileVersion>
+    <ErrorReport>send</ErrorReport>
+    <Title>SecureChat</Title>
+    <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>		
+	<IncludeSymbols>true</IncludeSymbols>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+	<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>	
+	<AnalysisLevel>latest</AnalysisLevel>
+	<EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
+	<SignAssembly>False</SignAssembly>
+	<Company>Heinrich Georg Elsigan</Company>
+	<Copyright>Copyright © 2000-2040 Copyleft https://cqrxs.eu/</Copyright>
+	<GenerateDocumentationFile>False</GenerateDocumentationFile>
+	<DocumentationFile>S:\chat-ipv6\C#\EU.CqrXs.WinForm.SecureChat\Properties\text\CqrJd.xml</DocumentationFile>	
+	<UseWPF>False</UseWPF>	  		
+	<IsTrimmable>true</IsTrimmable>
+	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+	<TargetFrameworks></TargetFrameworks>
+	<Description>https://cqrxs.eu/help</Description>
+	<PackageProjectUrl>https://cqrxs.eu/</PackageProjectUrl>
+	<NuGetAuditMode>all</NuGetAuditMode>
+	<NuGetAuditLevel>low</NuGetAuditLevel>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<!-- PublishTrimmed>True</PublishTrimmed -->
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>8</WarningLevel>
+    <DebugType>embedded</DebugType>
+    <IsAotCompatible>True</IsAotCompatible>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
+    <WarningLevel>4</WarningLevel>
+    <IsAotCompatible>True</IsAotCompatible>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controls\Forms\TextChat.cs" />
+    <Compile Remove="Controls\Forms\TextChat.Designer.cs" />
+    <Compile Remove="Entities\Contact.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Controls\Forms\TextChat.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\Audio\sound_breakpoint.wav" />
+    <None Remove="Properties\Audio\sound_camera.wav" />
+    <None Remove="Properties\Audio\sound_chimes.wav" />
+    <None Remove="Properties\Audio\sound_click.wav" />
+    <None Remove="Properties\Audio\sound_coin.wav" />
+    <None Remove="Properties\Audio\sound_error.wav" />
+    <None Remove="Properties\Audio\sound_glasses.wav" />
+    <None Remove="Properties\Audio\sound_gong.wav" />
+    <None Remove="Properties\Audio\sound_hammer.wav" />
+    <None Remove="Properties\Audio\sound_laser.wav" />
+    <None Remove="Properties\Audio\sound_pluckpcm.wav" />
+    <None Remove="Properties\Audio\sound_push.wav" />
+    <None Remove="Properties\Audio\sound_romans.wav" />
+    <None Remove="Properties\Audio\sound_soft.wav" />
+    <None Remove="Properties\Audio\sound_space.wav" />
+    <None Remove="Properties\Audio\sound_sputnik.wav" />
+    <None Remove="Properties\Audio\sound_suction.wav" />
+    <None Remove="Properties\Audio\sound_top.wav" />
+    <None Remove="Properties\Audio\sound_train.wav" />
+    <None Remove="Properties\Audio\sound_type.wav" />
+    <None Remove="Properties\Audio\sound_ups.wav" />
+    <None Remove="Properties\Audio\sound_volatage.wav" />
+    <None Remove="Properties\Audio\sound_warning.wav" />
+    <None Remove="Properties\Audio\sound_whoosh.wav" />
+    <None Remove="Properties\Audio\sound_wind.wav" />
+    <None Remove="Properties\Image\AddAesArrow.gif" />
+    <None Remove="Properties\Image\AddAesArrowHover.gif" />
+    <None Remove="Properties\Image\a_hash.png" />
+    <None Remove="Properties\Image\a_right_key.png" />
+    <None Remove="Properties\Image\CableWireCut.png" />
+    <None Remove="Properties\Image\ClickToUpload.png" />
+    <None Remove="Properties\Image\CutNetworkWire.png" />
+    <None Remove="Properties\Image\decrypted.png" />
+    <None Remove="Properties\Image\encrypted.png" />
+    <None Remove="Properties\Image\file.png" />
+    <None Remove="Properties\Image\RemoteConnect.gif" />
+    <None Remove="Properties\Image\SatLink.png" />
+    <None Remove="Properties\Image\TransparentFormsIcon.ico" />
+    <None Remove="Properties\Image\WinFormAboutDialog.png" />
+    <None Remove="Properties\text\settings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Properties\Icon\SatIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Audio\sound_arrow.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_camera.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_chimes.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_click.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_coin.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_error.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_glasses.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_gong.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_hammer.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_laser.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_pluckpcm.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_push.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_romans.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_soft.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_space.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_sputnik.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_suction.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_top.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_train.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_type.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_ups.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_volatage.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_warning.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_whoosh.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Audio\sound_wind.wav">
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\AddAesArrow.gif">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\AddAesArrowHover.gif">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\a_hash.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\a_right_key.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\CableWireCut.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\image_ClickToUpload.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\ClickToUpload.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\CutNetworkWire.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\decrypted.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\encrypted.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\file.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\RemoteConnect.gif">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\SatLink.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\TransparentFormsIcon.ico">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\image_WinFormAboutDialog.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Image\WinFormAboutDialog.png">
+      <Generator>EU.CqrXs.WinForm.Properties.Image</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Properties\en\" />
+    <Folder Include="Properties\it\" />
+    <Folder Include="Properties\pl\" />
+    <Folder Include="SecureChatFiles\res\tmp\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Audio\sound_breakpoint.wav">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CustomToolNamespace>EU.CqrXs.WinForm.Properties.Audio</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="S:\chat-ipv6\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Controls\Forms\RichTextChat.cs" />
+    <Compile Update="Controls\Forms\Base\BaseChatForm.cs" />
+    <Compile Update="Controls\Forms\SecureChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\Forms\ToolWinDialogs\TestForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\Forms\ToolWinDialogs\InputDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\Forms\ToolWinDialogs\TransparentBadge.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\Forms\ToolWinDialogs\ContactsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\Forms\ToolWinDialogs\Dialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\Forms\ToolWinDialogs\TransparentDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\UserControls\AttachmentsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Properties\de\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\fr\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\de\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\de\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\fr\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+
+	<!-- feature switches for trimming  -->
+	<!-- 
+	<ItemGroup>
+		<Using Include="System.Drawing" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<RuntimeHostConfigurationOption Include="System.ComponentModel.Design.IDesignerHost.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Binding.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.ComponentModel.DefaultValueAttribute.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Drawing.Design.UITypeEditor.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.ActiveXImpl.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Control.AreDesignTimeFeaturesSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.MdiWindowDialog.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.ImageIndexConverter.IsSupported" Value="false" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Primitives.TypeConverterHelper.UseComponentModelRegisteredTypes" Value="true" Trim="true" />
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.Control.UseComponentModelRegisteredTypes" Value="true" Trim="true" />
+	</ItemGroup>
+	-->
+   
+</Project>

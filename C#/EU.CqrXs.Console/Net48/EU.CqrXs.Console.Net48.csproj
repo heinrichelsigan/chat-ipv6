@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>EU.CqrXs.Console.Net48</RootNamespace>
+    <StartupObject>EU.CqrXs.Console.Net48.Program</StartupObject>
+    <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>
+    <Description>EU.CqrXs.Console.Net48 x64</Description>
+    <UserSecretsId>2cbf0438-c744-4c59-9aad-ed94816a1022</UserSecretsId>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <AssemblyVersion>2.25.805</AssemblyVersion>
+    <FileVersion>2.25.805</FileVersion>
+    <AnalysisLevel>latest-minimum</AnalysisLevel>
+    <ApplicationIcon>SatIcon.ico</ApplicationIcon>	               
+  </PropertyGroup>
+    
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <Prefer32Bit>False</Prefer32Bit>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <Prefer32Bit>False</Prefer32Bit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="OpenLibreOffice\**" />
+    <EmbeddedResource Remove="OpenLibreOffice\**" />
+    <None Remove="OpenLibreOffice\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="SatIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>    
+    <PackageReference Include="NLog" Version="5.4.0" />    
+    <PackageReference Include="System.Buffers" Version="4.6.1" />
+
+    
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Area23.At.Framework\Area23.At.Framework.Library\Area23.At.Framework.Library.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>    
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>C:\Program Files\IIS\Microsoft Web Deploy V3\Newtonsoft.Json.dll</HintPath>
+    </Reference>    
+    <Reference Include="System.Windows" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>    
+
+
+	<ItemGroup>
+	  <None Update="App.config">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>	 
+	</ItemGroup>
+	
+</Project>

@@ -1,0 +1,48 @@
+﻿#
+# .gitignore file 
+#
+
+serv/client
+serv/server
+serv
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+[Ppackages]/
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+# Unc
+
+CSharp/Server6
+CSharp/Server6/.vs
+
+CSharp/EU.CqrXs/Publish
+/CSharp/EU.CqrXs/Publish
+/CSharp/EU.CqrXs/packages
+/CSharp/Server6/.vs
+/CSharp/EU.CqrXs/.vs
+/CSharp/EU.CqrXs/WinForm/SecureChat/AttachFiles
+
+*.class
+*.a
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/compmgmt.msc
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/compmgmt.msc.base64
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/compmgmt.msc.html
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/Wien_Energie_Rechnung_005151506171 (1).pdf
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/Wien_Energie_Rechnung_005151506171 (1).pdf.base64
+/C#/EU.CqrXs.WinForm.SecureChat/AttachFiles/Wien_Energie_Rechnung_005151506171 (1).pdf.html
