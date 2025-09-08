@@ -98,12 +98,12 @@ namespace Area23.At.Framework.Library.Cqr
             CContact sendContact = new CContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
             sendContact.Hash = PipeString;
 
-            string encMsg = CContact.ToJsonEncrypt(_key, sendContact);
+            string encMsg = CContact.Encrypt2Json(_key, sendContact);
 
             CqrService webService = new CqrService();
             string response = webService.Send1StSrvMsg(encMsg);
 
-            CContact responseContact = CContact.FromJsonDecrypt(_key, response);
+            CContact responseContact = CContact.Json2Decrypt(_key, response);
             return responseContact;
         }
 
@@ -138,7 +138,7 @@ namespace Area23.At.Framework.Library.Cqr
                 throw;
             }
 
-            CSrvMsg<string> responseMsg = CSrvMsg<string>.FromJsonDecrypt(_key, response);
+            CSrvMsg<string> responseMsg = CSrvMsg<string>.Json2Decrypt(_key, response);
 
             return responseMsg;
         }
@@ -220,7 +220,7 @@ namespace Area23.At.Framework.Library.Cqr
             CqrService webService = new CqrService();
             string response = webService.ChatRoomPush(cryptSrvMsg);
 
-            CSrvMsg<string> responseMsg = CSrvMsg<string>.FromJsonDecrypt(_key, response);
+            CSrvMsg<string> responseMsg = CSrvMsg<string>.Json2Decrypt(_key, response);
 
             return responseMsg;
         }
@@ -269,7 +269,7 @@ namespace Area23.At.Framework.Library.Cqr
             CContact sendContact = new CContact(myContact.ContactId, myContact.Name, myContact.Email, myContact.Mobile, myContact.Address);
             sendContact.Hash = PipeString;
 
-            string encMsg = CContact.ToJsonEncrypt(_key, sendContact);
+            string encMsg = CContact.Encrypt2Json(_key, sendContact);
 
             CqrService webService = new CqrService();
             string response = string.Empty;
@@ -283,7 +283,7 @@ namespace Area23.At.Framework.Library.Cqr
                 throw;
             }
 
-            CContact responseContact = CContact.FromJsonDecrypt(_key, response);
+            CContact responseContact = CContact.Json2Decrypt(_key, response);
 
             return responseContact;
         }
@@ -315,7 +315,7 @@ namespace Area23.At.Framework.Library.Cqr
                 throw;
             }
 
-            CSrvMsg<string> responseMsg = CSrvMsg<string>.FromJsonDecrypt(_key, response);
+            CSrvMsg<string> responseMsg = CSrvMsg<string>.Json2Decrypt(_key, response);
 
             return responseMsg;
         }
@@ -404,7 +404,7 @@ namespace Area23.At.Framework.Library.Cqr
 
             string response = await Task.Run(() => webService.ChatRoomPush(cryptSrvMsg));
 
-            CSrvMsg<List<string>> responseMsg = CSrvMsg<List<string>>.FromJsonDecrypt(_key, response);
+            CSrvMsg<List<string>> responseMsg = CSrvMsg<List<string>>.Json2Decrypt(_key, response);
 
             return responseMsg;
         }
@@ -426,7 +426,7 @@ namespace Area23.At.Framework.Library.Cqr
             CqrService webService = new CqrService();
             string response = await Task.Run(() => webService.ChatRoomPoll(cryptSrvMsg));
             
-            CSrvMsg<List<string>> responseMsg = CSrvMsg<List<string>>.FromJsonDecrypt(_key, response, EncodingType.Base64, Zfx.ZipType.None);
+            CSrvMsg<List<string>> responseMsg = CSrvMsg<List<string>>.Json2Decrypt(_key, response, EncodingType.Base64, Zfx.ZipType.None);
 
             return responseMsg;
 

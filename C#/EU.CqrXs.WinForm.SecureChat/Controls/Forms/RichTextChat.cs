@@ -767,6 +767,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
         }
 
+
+
+
         /// <summary>
         /// Sends a secure message
         /// </summary>
@@ -1673,7 +1676,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         SetStatusText(StripStatusLabel, $"Generated server message with encrypted file inside, prepating to send...");
 
                         // Send message to WebService
-                        CSrvMsg<string> rfmsg = serverFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
+                        CSrvMsg<List<string>> rfmsg = serverFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
                         if (rfmsg != null)
                         {
                             if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&

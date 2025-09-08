@@ -287,20 +287,21 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public override bool Encrypt(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
-            string pipeString = "", encrypted = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            string keyHash = EnDeCodeHelper.KeyToHex(serverKey);
             try
             {                
                 if (TContent != null)
                 {
                     Message = JsonConvert.SerializeObject(TContent);
                 }
-                pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
+                string pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
                 Hash = pipeString;
                 Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, Message), "");
 
-                encrypted = SymmCipherPipe.EncrpytToString(Message, serverKey, out pipeString, encoder, zipType);
+                string encrypted = SymmCipherPipe.EncrpytToString(Message, serverKey, out pipeString, encoder, zipType);
 
-                Message = encrypted;                
+                Message = encrypted;
+                TContent = null;
             }
             catch (Exception exCrypt)
             {
@@ -436,77 +437,56 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #region static members 
 
-        #region static members ToJsonEncrypt EncryptSrvMsg FromJsonDecrypt DecryptSrvMsg
+        #region static members Encrypt2Json Json2Decrypt
 
         /// <summary>
         /// Serialize <see cref="CSrvMsg{TC}"/> to Json Stting
         /// </summary>
         /// <returns>json serialized string</returns>
-        public static string ToJsonEncrypt(string serverKey, CSrvMsg<TC> cSrvMsg,
+        public static string Encrypt2Json(string serverKey, CSrvMsg<TC> cSrvMsg,
             EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
-        {
-            if (EncryptSrvMsg(serverKey, ref cSrvMsg, encoder, zipType))
-            {
-                string serializedJson = cSrvMsg.ToJson();
-                return serializedJson;
-            }
-            throw new CqrException($"EncryptToJson(string severKey, CSrvMsg<TC> cSrvMsg) failed");
-        }
-
-        public static bool EncryptSrvMsg(string serverKey, ref CSrvMsg<TC> cSrvMsg,
-            EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
-        {
-            string encrypted = "", pipeString = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+        {               
+            string keyHash = EnDeCodeHelper.KeyToHex(serverKey);
             try
             {
                 if (cSrvMsg.TContent != null)
                 {
                     cSrvMsg.Message = JsonConvert.SerializeObject(cSrvMsg.TContent);
                 }
-                pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
+                string pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
                 cSrvMsg.Hash = pipeString;
                 cSrvMsg.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, cSrvMsg.Message), "");
 
-                encrypted = SymmCipherPipe.EncrpytToString(cSrvMsg.Message, serverKey, out pipeString, encoder, zipType);
+                string encrypted = SymmCipherPipe.EncrpytToString(cSrvMsg.Message, serverKey, out pipeString, encoder, zipType);
                 cSrvMsg.Message = encrypted;
+                cSrvMsg.TContent = null;                     
             }
             catch (Exception exCrypt)
             {
                 CqrException.SetLastException(exCrypt);
                 throw;
             }
-            return true;
+            string serializedJson = JsonConvert.SerializeObject(cSrvMsg, Newtonsoft.Json.Formatting.Indented);
+            if (string.IsNullOrEmpty(serializedJson))            
+                throw new CqrException($"Encrypt2Json(string severKey, CSrvMsg<TC> cSrvMsg) failed");
+
+            return serializedJson;
         }
 
-        public static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized,
+        public static new CSrvMsg<TC> Json2Decrypt(string serverKey, string serialized,
              EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
             if (string.IsNullOrEmpty(serialized))
                 throw new CqrException("static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized): serialized is null or empty.");
 
-            CSrvMsg<TC> cSrvMsgDeserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<CSrvMsg<TC>>(serialized);
-            CSrvMsg<TC> cSrvMsgDecrypted = DecryptSrvMsg(serverKey, ref cSrvMsgDeserialized, decoder, zipType);
+            CSrvMsg<TC> cSrvMsg = Newtonsoft.Json.JsonConvert.DeserializeObject<CSrvMsg<TC>>(serialized);
 
-            if (cSrvMsgDecrypted != null)
-            {
-                cSrvMsgDecrypted.Recipients = cSrvMsgDeserialized.Recipients;
-                cSrvMsgDecrypted.Sender = cSrvMsgDeserialized.Sender;
-                cSrvMsgDecrypted.CRoom = cSrvMsgDeserialized.CRoom;
-                return cSrvMsgDecrypted;
-            }
-           
-            throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
-        }
-
-        public static CSrvMsg<TC> DecryptSrvMsg(string serverKey, ref CSrvMsg<TC> cSrvMsg, 
-            EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
-        {
-            string pipeString = "", decrypted = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            string keyHash = EnDeCodeHelper.KeyToHex(serverKey);
             try
             {
-                pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
+                string pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
 
-                decrypted = SymmCipherPipe.DecrpytToString(cSrvMsg.Message, serverKey, out pipeString, decoder, zipType);
+                string decrypted = SymmCipherPipe.DecrpytToString(cSrvMsg.Message, serverKey, out pipeString, decoder, zipType);
 
                 if (!cSrvMsg.Hash.Equals(pipeString))
                 {
@@ -536,9 +516,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return cSrvMsg;
         }
 
-        #endregion static members ToJsonEncrypt EncryptSrvMsg FromJsonDecrypt DecryptSrvMsg
+        #endregion static members Encrypt2Json Json2Decrypt
 
-        public new static CSrvMsg<TC>? CloneCopy(CSrvMsg<TC> source, CSrvMsg<TC> destination)
+        public static new CSrvMsg<TC>? CloneCopy(CSrvMsg<TC> source, CSrvMsg<TC> destination)
         {
             if (source == null)
                 return null;

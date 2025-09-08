@@ -257,7 +257,7 @@ namespace EU.CqrXs.Service
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.Json2Decrypt(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>
                     
                     _contact = JsonContacts.AddContact(cSrvMsg.Sender);                 // add contact from FullSrvMsg<string>   
                     chatRoomMsg = InviteToChatRoom(cSrvMsg);                            // generate a FullSrvMsg<string> chatserver message by inviting                           
@@ -301,7 +301,7 @@ namespace EU.CqrXs.Service
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.Json2Decrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
 
                     _contact = cSrvMsg.Sender;
                     chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Message;
@@ -399,7 +399,7 @@ namespace EU.CqrXs.Service
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.Json2Decrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
                     
                     _contact = cSrvMsg.Sender;
                     chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Message;
@@ -489,7 +489,7 @@ namespace EU.CqrXs.Service
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.Json2Decrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
                     
                     _contact = cSrvMsg.Sender;
                     chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr))
@@ -610,7 +610,7 @@ namespace EU.CqrXs.Service
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.FromJsonDecrypt(_serverKey, cryptMsg);            // decrypt FullSrvMsg<string>                    
+                    cSrvMsg = CSrvMsg<string>.Json2Decrypt(_serverKey, cryptMsg);            // decrypt FullSrvMsg<string>                    
 
                     _contact = JsonContacts.AddContact(cSrvMsg.Sender);
                     chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : "";

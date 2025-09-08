@@ -239,7 +239,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
             {
                 //DialogResult regServerResult = MessageBox.Show("Do you want to register?", "Register your account on server?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 //if (regServerResult == DialogResult.Yes)
-                Send_1st_Server_Registration(sender, e);
+                await Send_1st_Server_Registration(sender, e);
 
                 // TODO Chnage it
                 // Settings.Singleton.RegisterUser = false;
@@ -574,7 +574,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
-        private void Send_1st_Server_Registration(object sender, EventArgs e)
+        private async Task Send_1st_Server_Registration(object sender, EventArgs e)
         {
             if (chat == null)
                 chat = new Chat(0);
@@ -595,7 +595,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
             CContact myContact = Entities.Settings.Singleton.MyContact;
 
-            CContact? returnContact = serverFacade.SendFirstSrvMsg_Soap(myContact, EncodingType.Base64);
+            CContact? returnContact = await serverFacade.SendFirstSrvMsg_SoapAsync(myContact, EncodingType.Base64);
 
             barProgress = (barProgress <= 95) ? barProgress + 5 : 100;
             this.SetProgressBar(this.StripProgressBar, barProgress);
@@ -889,113 +889,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     // Send msg to WebService
                     CSrvMsg<List<string>>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync(fmsg, encrypted, EncodingType.Base64);
 
-
-                    string friendMsg = "";
-                    CContent msgContent;
-                    CFile? msgFile, cReceivedFile;
-
                     if (rfmsg != null)
-                    {                       
-                        await PlaySoundFromResourcesAsync("sound_arrow");
-                        SetStatusText(StripStatusLabel, $"Send to {chatRoomNr} via server {ServerIpAddress} successfully.");
-                        
+                    {
                         string userMsg = chat.AddMyMessage(unencrypted);
                         AppendText(TextBoxSource, userMsg);
 
-                        if (rfmsg.TContent == null)
-                            rfmsg.TContent = new List<string>();
-
-                        if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                            rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
-                            Settings.Singleton.MyContact = myContact;
-                        }
-                        if (rfmsg.Recipients != null && rfmsg.Recipients.Count > 0)
-                        {
-                            if (listBoxContacts.Items.Count == 0)
-                            {
-                                foreach (CContact friendContact in rfmsg.Recipients)
-                                {
-                                    if (friendContact != null && !friendContact.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
-                                    {
-                                        listBoxContacts.Items.Add(friendContact.NameEmail.ToString());
-                                    }
-                                }
-                            }
-                            // CImage friendCImg = CImage.FromDrawingImage(EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF42, "F42");                            
-                        }
-
-                        if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
-                            Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
-
-                        SetStatusText(StripStatusLabel, $"Send server message, now saving results from chatroom...");
-                        Settings.SaveSettings(Settings.Singleton);
-
-                        bool playedSound = false;
-                        foreach (string msgInnerContent in rfmsg.TContent)
-                        {
-                            try
-                            {
-                                if (msgInnerContent.Equals(chatRoomNr, StringComparison.CurrentCultureIgnoreCase) ||
-                                    msgInnerContent.EndsWith(chatRoomNr, StringComparison.CurrentCultureIgnoreCase) ||
-                                    msgInnerContent.StartsWith(chatRoomNr.Replace(".json", ""), StringComparison.CurrentCultureIgnoreCase))
-                                {
-                                    if (!playedSound)
-                                    {
-                                        ;
-                                        //playedSound = true;
-                                        //await PlaySoundFromResourcesAsync("sound_ups");
-                                    }
-                                }
-                                else if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
-                                    msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
-                                {
-                                    msgFile = new CFile(msgInnerContent, SerType.Json);
-                                    cReceivedFile = msgFile.DecryptFromJson(myServerKey, msgInnerContent);
-                                    if (cReceivedFile != null)
-                                    {
-                                        SetAttachmentTextLink(cReceivedFile);
-                                        friendMsg = cReceivedFile.GetFileNameContentLength() + Environment.NewLine;
-                                        if (!playedSound)
-                                        {
-                                            playedSound = true;
-                                            await PlaySoundFromResourcesAsync("sound_wind");
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    msgContent = msg.DecryptFromJson(myServerKey, msgInnerContent);
-                                    friendMsg = msgContent.Message + Environment.NewLine;
-                                    if (!playedSound)
-                                    {
-                                        playedSound = true;
-                                        await PlaySoundFromResourcesAsync("sound_push");
-                                    }
-                                }
-                            }
-                            catch (Exception exCrypt)
-                            {
-                                await PlaySoundFromResourcesAsync("sound_hammer");
-                                if (exCrypt is InvalidOperationException)
-                                {
-                                    MessageBox.Show(((InvalidOperationException)exCrypt).Message, "Invalid or non matching secret key for decrypt.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    SetComboBoxBackColor(ComboBoxSecretKey, Color.OrangeRed);
-                                }
-                                else
-                                {
-                                    MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIp)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                                CqrException.SetLastException(exCrypt);
-                                SetStatusText(StripStatusLabel, $"Exception {exCrypt.Message} on receiving message from from server {ServerIpAddress} chat room {chatRoomNr}.");
-                                return;
-                            }
-
-                            string appendDestMsg = chat.AddFriendMessage(friendMsg);
-                            AppendText(TextBoxDestionation, appendDestMsg);
-                        }
-
+                        await HandleResponseFromService(myServerKey, rfmsg, msg, myContact, chat, chatRoomNr);
                     }
 
                     // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
@@ -1017,6 +916,118 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 Area23Log.LogOriginMsgEx(this.Name, $"Exception in MenuCommandsItemSend_Click: {ex.Message}.\n", ex);
                 SetStatusText(StripStatusLabel, $"Sending to {ipAddrString} failed: {ex.Message}");
                 await PlaySoundFromResourcesAsync("sound_warning");
+            }
+
+        }
+
+
+        internal async Task HandleResponseFromService(string serverKey, CSrvMsg<List<string>> receivedFromService, 
+            CContent msg, CContact myContact, Chat? chat, string chatRoomNr)
+        {
+
+            CFile msgFile, cReceivedFile;
+            CContent msgContent;
+            string friendMsg = "";
+
+            await PlaySoundFromResourcesAsync("sound_arrow");
+            SetStatusText(StripStatusLabel, $"Send to {chatRoomNr} via server {ServerIpAddress} successfully.");
+
+
+            if (receivedFromService.TContent == null)
+                receivedFromService.TContent = new List<string>();
+
+            if (receivedFromService.Sender != null && !string.IsNullOrEmpty(receivedFromService.Sender.NameEmail) &&
+                receivedFromService.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+            {
+                myContact = new CContact(receivedFromService.Sender, receivedFromService.CRoom.ChatRoomNr, receivedFromService.Sender.Hash, myContact.ContactImage);
+                Settings.Singleton.MyContact = myContact;
+            }
+            if (receivedFromService.Recipients != null && receivedFromService.Recipients.Count > 0)
+            {
+                if (listBoxContacts.Items.Count == 0)
+                {
+                    foreach (CContact friendContact in receivedFromService.Recipients)
+                    {
+                        if (friendContact != null && !friendContact.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            listBoxContacts.Items.Add(friendContact.NameEmail.ToString());
+                        }
+                    }
+                }
+                // CImage friendCImg = CImage.FromDrawingImage(EU.CqrXs.WinForm.SecureChat.Properties.fr.Resources.DefaultF42, "F42");                            
+            }
+
+            if (receivedFromService.CRoom != null && !string.IsNullOrEmpty(receivedFromService.CRoom.ChatRoomNr))
+                Settings.Singleton.ChatRoom = new CChatRoom(receivedFromService.CRoom);
+
+            SetStatusText(StripStatusLabel, $"Send server message, now saving results from chatroom...");
+            Settings.SaveSettings(Settings.Singleton);
+
+            bool playedSound = false;
+            foreach (string msgInnerContent in receivedFromService.TContent)
+            {
+                try
+                {
+                    if (msgInnerContent.Equals(chatRoomNr, StringComparison.CurrentCultureIgnoreCase) ||
+                        msgInnerContent.EndsWith(chatRoomNr, StringComparison.CurrentCultureIgnoreCase) ||
+                        msgInnerContent.StartsWith(chatRoomNr.Replace(".json", ""), StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        if (!playedSound)
+                        {
+                            ;
+                            //playedSound = true;
+                            //await PlaySoundFromResourcesAsync("sound_ups");
+                        }
+                    }
+                    else if ((msgInnerContent.IsValidJson() || msgInnerContent.IsValidXml()) &&
+                        msgInnerContent.Contains("FileName") && msgInnerContent.Contains("Base64Type"))
+                    {
+                        msgFile = new CFile(msgInnerContent, SerType.Json);
+                        cReceivedFile = msgFile.DecryptFromJson(serverKey, msgInnerContent);
+                        // TODO: look if it's same
+                        msgFile = CFile.Json2Decrypt(serverKey, msgInnerContent, EncodingType.Base64, Area23.At.Framework.Core.Zfx.ZipType.None);
+
+                        if (cReceivedFile != null)
+                        {
+                            SetAttachmentTextLink(cReceivedFile);
+                            friendMsg = cReceivedFile.GetFileNameContentLength() + Environment.NewLine;
+                            if (!playedSound)
+                            {
+                                playedSound = true;
+                                await PlaySoundFromResourcesAsync("sound_wind");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        msgContent = msg.DecryptFromJson(serverKey, msgInnerContent);
+                        friendMsg = msgContent.Message + Environment.NewLine;
+                        if (!playedSound)
+                        {
+                            playedSound = true;
+                            await PlaySoundFromResourcesAsync("sound_push");
+                        }
+                    }
+                }
+                catch (Exception exCrypt)
+                {
+                    await PlaySoundFromResourcesAsync("sound_hammer");
+                    if (exCrypt is InvalidOperationException)
+                    {
+                        MessageBox.Show(((InvalidOperationException)exCrypt).Message, "Invalid or non matching secret key for decrypt.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        SetComboBoxBackColor(ComboBoxSecretKey, Color.OrangeRed);
+                    }
+                    else
+                    {
+                        MessageBox.Show(exCrypt.Message, $"Error/Exception, when decrypting incoming message from {GetComboBoxText(ComboBoxIp)}.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    CqrException.SetLastException(exCrypt);
+                    SetStatusText(StripStatusLabel, $"Exception {exCrypt.Message} on receiving message from from server {ServerIpAddress} chat room {chatRoomNr}.");
+                    return;
+                }
+
+                string appendDestMsg = chat.AddFriendMessage(friendMsg);
+                AppendText(TextBoxDestionation, appendDestMsg);
             }
 
         }
@@ -1885,30 +1896,20 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             SetStatusText(StripStatusLabel, $"Generated server message with encrypted file inside, prepating to send...");
 
                             // Send message to WebService
-                            CSrvMsg<string>? rfmsg = serverFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
+                            CSrvMsg<List<string>>? rfmsg = serverFacade.SendChatMsg_Soap_Simple(fmsg, encryptedFileMsg, EncodingType.Base64);
                             if (rfmsg != null)
                             {
-                                if (rfmsg.Sender != null && !string.IsNullOrEmpty(rfmsg.Sender.NameEmail) &&
-                                    rfmsg.Sender.NameEmail.Equals(myContact.NameEmail, StringComparison.CurrentCultureIgnoreCase))
-                                {
-                                    myContact = new CContact(rfmsg.Sender, rfmsg.CRoom.ChatRoomNr, rfmsg.Sender.Hash, myContact.ContactImage);
-                                    Settings.Singleton.MyContact = myContact;
-                                }
-                                if (rfmsg.CRoom != null && !string.IsNullOrEmpty(rfmsg.CRoom.ChatRoomNr))
-                                {
-                                    Settings.Singleton.ChatRoom = new CChatRoom(rfmsg.CRoom);
-                                    chatRoomNr = Settings.Singleton.ChatRoom.ChatRoomNr;
-                                }
-
-                                SetStatusText(StripStatusLabel, $"Encrypted file {cfile.FileName} and sended it to chat room {chatRoomNr}...");
-                                Settings.SaveSettings(Settings.Singleton);
+                                string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength());
+                                AppendText(TextBoxSource, userMsg);
+                                CContent msg = new CContent("", clientFacade.PipeString, SerType.Json);
+                                Task.Run(() => HandleResponseFromService(myServerKey, rfmsg, msg, myContact, chat, chatRoomNr));
+                                                                
                             }
 
 
                             // string msgChatRoom = "ChatRoomNr: " + rfmsg.ChatRoomNr + "\n" + String.Join(", ", rfmsg.GetEmails()) + "\r\n"; // + serverMessage.symmPipe.HexStages;
                             // this.TextBoxDestionation.Text = msgChatRoom;
-                            string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength());
-                            AppendText(TextBoxSource, userMsg);
+
                             Format_Lines_RichTextBox();
                             SetRichText(RichTextBoxChat, string.Empty);
                             PlaySoundFromResource("sound_push");

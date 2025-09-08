@@ -127,9 +127,9 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 // sw.Close();
                 // sr.Close();
                 // netStream.Close();
-                Thread.Sleep(125);
+                Thread.Sleep(50);
                 tcpClient.Client.Shutdown(SocketShutdown.Both);
-                Thread.Sleep(125);
+                Thread.Sleep(50);
                 // tcpClient.Close();
             }
             catch (Exception ex)
