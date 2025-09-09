@@ -34,14 +34,13 @@ namespace EU.CqrXs.Srv
         {
             Area23Log.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
-            string responseString = "", decrypted = "";
-            CContact cContact = new CContact() { Hash = _symmPipe.PipeString };
+            string decrypted = "";            
 
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    _contact = cContact.FromJson<CContact>(cryptMsg);
+                    _contact = CContact.Json2Decrypt(_serverKey, cryptMsg);
                     decrypted = _contact.ToJson();
                     Area23Log.LogOriginMsg("CqrService", $"Contact decrypted successfully: " + decrypted + "\n");
                 }
@@ -52,12 +51,12 @@ namespace EU.CqrXs.Srv
                 Area23Log.LogOriginMsgEx("CqrService", $"Exception {ex.GetType()} when decrypting contact: {ex.Message}", ex);
             }
 
-            responseString = _contact.EncryptToJson(_serverKey);
+            string responseString = (_contact != null) ? CContact.Encrypt2Json(_serverKey, _contact) : "";
 
             if (!string.IsNullOrEmpty(decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {
                 CContact foundCt = JsonContacts.AddContact(_contact);
-                responseString = foundCt.EncryptToJson(_serverKey);
+                responseString = CContact.Encrypt2Json(_serverKey, foundCt);
             }
 
             Area23Log.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
@@ -199,7 +198,6 @@ namespace EU.CqrXs.Srv
 
             return responseString;
         }
-
 
         /// <summary>
         /// Polls a chat room for new messages
@@ -419,11 +417,12 @@ namespace EU.CqrXs.Srv
             return responseString;
         }
 
+
         /// <summary>
         /// ChatRoomClose
         /// </summary>
-        /// <param name="cryptMsg"></param>
-        /// <returns></returns>
+        /// <param name="cryptMsg">serialized and encrypted <see cref="CSrvMsg{string}"/></param>
+        /// <returns>serialized and encrypted <see cref="CSrvMsg{string}"/></returns>
         [WebMethod]
         public string ChatRoomClose(string cryptMsg)
         {

@@ -21,7 +21,7 @@ namespace EU.CqrXs.Service
     /// <summary>
     /// CqrService offers a simple chat room service with strong encryption
     /// </summary>
-    [WebService(Namespace = "https://srv.cqrxs.eu/v1.5.2/")]
+    [WebService(Namespace = "https://srv.cqrxs.eu/v1.7/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [System.ComponentModel.ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
@@ -142,16 +142,6 @@ namespace EU.CqrXs.Service
             return cChatRSrvMsg;
         }
 
-        [Obsolete("Use JsonChatRoom.GetCachedChatRoom(string chatRoomNumber) instead", false)]
-        public static CChatRoom GetCachedChatRoom(string chatRoomNumber)
-        {
-            CChatRoom chatRoomt = (CChatRoom)JsonChatRoom.GetCachedChatRoom(chatRoomNumber);
-
-            // TODO: implement filesystem 
-
-            return chatRoomt;
-
-        }
 
         /// <summary>
         /// GetNewMessageIndices get all chat room indices, 
@@ -183,19 +173,6 @@ namespace EU.CqrXs.Service
             return pollKeys;
         }
 
-        /// <summary>
-        /// SetCachedMessageDict saves the mesage dictionary for chat room in 
-        /// either application state in proc or Amazon Valkey Elastic cache
-        /// </summary>
-        /// <param name="chatRoomNumber">json chat room number</param>
-        /// <param name="dict">the mesage dictionary for chat room </param>
-        [Obsolete("SetCachedChatRoom is obsolete", true)]
-        public static void SetCachedChatRoom(string chatRoomNumber, CChatRoom chatRoom)
-        {
-            JsonChatRoom.SetCachedChatRoom(chatRoomNumber, chatRoom);
-            return;
-        }
-
 
         /// <summary>
         /// Send1StSrvMsg sends first registration message of contact
@@ -207,14 +184,14 @@ namespace EU.CqrXs.Service
         {
             Area23Log.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) called.  cryptMsg.Length = {cryptMsg.Length}.\n");
             InitMethod();
-            string responseString = "", decrypted = "";
-            CContact cContact = new CContact() { Hash = _symmPipe.PipeString };
+            string decrypted = "";
 
             try
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {                    
-                    _contact = cContact.FromJson<CContact>(cryptMsg);                    
+                    _contact = CContact.Json2Decrypt(_serverKey, cryptMsg);
+                    // _contact = cContact.FromJson<CContact>(cryptMsg);                    
                     decrypted = _contact.ToJson();                    
                     Area23Log.LogOriginMsg("CqrService", $"Contact decrypted successfully: " + decrypted + "\n");                    
                 }
@@ -225,12 +202,12 @@ namespace EU.CqrXs.Service
                 Area23Log.LogOriginMsgEx("CqrService", $"Exception {ex.GetType()} when decrypting contact: {ex.Message}", ex);
             }
 
-            responseString = _contact.EncryptToJson(_serverKey);
+            string responseString = CContact.Encrypt2Json(_serverKey, _contact);
 
             if (!string.IsNullOrEmpty(decrypted) && _contact != null && !string.IsNullOrEmpty(_contact.NameEmail))
             {  
                 CContact foundCt = JsonContacts.AddContact(_contact);
-                responseString = foundCt.EncryptToJson(_serverKey);
+                responseString = CContact.Encrypt2Json(_serverKey, foundCt);
             }
 
             Area23Log.LogOriginMsg("CqrService", $"Send1StSrvMsg(string cryptMsg) finished.  _contact.Cuid = {_contact.Cuid}.\n");
@@ -257,7 +234,7 @@ namespace EU.CqrXs.Service
             {
                 if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
                 {
-                    cSrvMsg = CSrvMsg<string>.Json2Decrypt(_serverKey, cryptMsg);    // decrypt CSrvMsg<string>
+                    cSrvMsg = CSrvMsg<string>.Json2Decrypt(_serverKey, cryptMsg);       // decrypt CSrvMsg<string>
                     
                     _contact = JsonContacts.AddContact(cSrvMsg.Sender);                 // add contact from FullSrvMsg<string>   
                     chatRoomMsg = InviteToChatRoom(cSrvMsg);                            // generate a FullSrvMsg<string> chatserver message by inviting                           
@@ -375,105 +352,11 @@ namespace EU.CqrXs.Service
 
 
         /// <summary>
-        /// Polls a chat room for new messages
-        /// </summary>
-        /// <param name="cryptMsg">encrypted <see cref="CSrvMsg{string}"/> with chat room number and last polled dates</param>
-        /// <returns>
-        /// encrypted <see cref="CSrvMsg{string}"/> including chatroom number 
-        /// with encrypted clientmsg with clientkey.
-        /// Server doesn't know client key and always delivers encrypted encrypted messages
-        /// Server can only read and decrypt outer envelope message encrypted with server key
-        /// </returns>
-        [WebMethod]
-        public string ChatRoomPoll (string cryptMsg)
-        {
-            Area23Log.LogOriginMsg("CqrService", $"ChatRoomPoll(string cryptMsg) called.  cryptMsg.Length = " + cryptMsg.Length + ".\n");
-            InitMethod();
-            string responseString = "", chatRoomNumber = "";
-            bool isValid = false;
-            Dictionary<long, string> dict = new Dictionary<long, string>();
-            CSrvMsg<string> cSrvMsg, chatRoomMsg;
-            CSrvMsg<List<string>> allPollMsg;
-
-            try
-            {
-                if (!string.IsNullOrEmpty(cryptMsg) && cryptMsg.Length >= 8)
-                {
-                    cSrvMsg = CSrvMsg<string>.Json2Decrypt(_serverKey, cryptMsg);        // decrypt FullSrvMsg<string>
-                    
-                    _contact = cSrvMsg.Sender;
-                    chatRoomNumber = (cSrvMsg.CRoom != null && !string.IsNullOrEmpty(cSrvMsg.CRoom.ChatRoomNr)) ? cSrvMsg.CRoom.ChatRoomNr : cSrvMsg.Message;
-
-                    chatRoomMsg = JsonChatRoom.LoadChatRoom(ref cSrvMsg);
-                    isValid = JsonChatRoom.CheckPermission(ref cSrvMsg);
-                    allPollMsg = new CSrvMsg<List<string>>(cSrvMsg.Sender, cSrvMsg.Recipients.ToArray(), new List<string>(), cSrvMsg.Hash, cSrvMsg.CRoom) { Md5Hash = cSrvMsg.Md5Hash, Message = cSrvMsg.Message, MsgType = cSrvMsg.MsgType };
-
-                    if (isValid)
-                    {
-                        CChatRoom ccr = JsonChatRoom.GetCachedChatRoom(chatRoomNumber);
-                        dict = ccr.MsgDict;
-
-                        List<long> longKeyList = (dict == null || dict.Count < 1) ? new List<long>() : dict.Keys.ToList();
-                        List<long> pollKeys = GetNewMessageIndices(longKeyList, cSrvMsg);
-
-                        long polledPtr = -1;
-                        int pollIdx = 0;
-                        string firstPollClientMsg = "";
-
-                        if (dict != null && dict.Count > 0 && pollKeys != null && pollKeys.Count > 0)
-                        {
-                            while (pollIdx < pollKeys.Count)
-                            {
-                                Area23Log.LogOriginMsg("CqrService", "ChatRoomPush: " + chatRoomNumber + $"\r\n\tpollIdx = {pollIdx} to dict\r\n\tpollKeys.Count = {pollKeys.Count} \r\n");
-
-                                polledPtr = pollKeys[pollIdx++];
-                                firstPollClientMsg = MemoryCache.CacheDict.GetValue<string>(polledPtr.ToString()) ?? "";
-                                // firstPollClientMsg = dict[polledPtr] ?? "";                                
-                                chatRoomMsg.CRoom.LastPolled = new DateTime(polledPtr);
-                                cSrvMsg.CRoom.LastPolled = new DateTime(polledPtr);
-                                if (ccr.LastPolled < allPollMsg.CRoom.LastPolled)
-                                    ccr.LastPolled = allPollMsg.CRoom.LastPolled;
-
-                                if (!string.IsNullOrEmpty(firstPollClientMsg))
-                                {
-                                    chatRoomMsg.TContent = firstPollClientMsg;
-                                    cSrvMsg.TContent = firstPollClientMsg;
-                                    break;
-                                }
-                            }
-
-                            chatRoomMsg.CRoom = ccr;
-                            chatRoomMsg.CRoom.MsgDict = ccr.MsgDict;
-                            cSrvMsg.CRoom.MsgDict = ccr.MsgDict;
-                        }                            
-
-                        JsonContacts.UpdateContact(chatRoomMsg.Sender);
-                        chatRoomMsg = JsonChatRoom.SaveChatRoom(ref chatRoomMsg);
-
-                    }
-
-                    responseString = chatRoomMsg.EncryptToJson(_serverKey);        // encrypt chatRoomMsg and json serialize it
-
-                }
-            }
-            catch (Exception ex)
-            {
-                CqrException.SetLastException(ex);
-                Area23Log.LogOriginMsgEx("CqrService", "ChatPollAll(...)", ex);
-            }
-
-            Area23Log.LogOriginMsg("CqrService", "ChatPollAll(string cryptMsg) finihed. ChatRoomNr =  " + chatRoomNumber + ".\n");
-            
-            return responseString;
-        }
-
-
-        /// <summary>
         /// Pushes a new message for chatroom to the server
         /// </summary>
         /// <param name="cryptMsg">encrypted <see cref="CSrvMsg{string}"/> with chat room number and last polled dates</param>
         /// <param name="chatRoomMembersCrypted">with client key encrypted message, that is stored in proc of server, but server can't decrypt</param>
-        /// <returns>encrypted <see cref="CSrvMsg{string}"/> with chat room number and last polled date changed to now</returns>
+        /// <returns>encrypted <see cref="CSrvMsg{List{string}}"/> containing messages with chat room number and last polled date changed to now</returns>
         [WebMethod]
         public string ChatRoomPush(string cryptMsg)
         {
@@ -594,8 +477,8 @@ namespace EU.CqrXs.Service
         /// <summary>
         /// ChatRoomClose
         /// </summary>
-        /// <param name="cryptMsg"></param>
-        /// <returns></returns>
+        /// <param name="cryptMsg">serialized and encrypted <see cref="CSrvMsg{string}"/></param>
+        /// <returns>serialized and encrypted <see cref="CSrvMsg{string}"/></returns>
         [WebMethod]
         public string ChatRoomClose(string cryptMsg)
         {

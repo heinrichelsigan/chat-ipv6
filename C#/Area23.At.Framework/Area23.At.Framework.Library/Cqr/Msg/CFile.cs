@@ -142,18 +142,93 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #endregion ctors
 
-
         #region EnDeCrypt+DeSerialize
+
+        public override bool Encrypt(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        {
+            if (string.IsNullOrEmpty(serverKey))
+                throw new ArgumentNullException("serverKey");
+
+            try
+            {
+                string keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+                string pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
+                Hash = pipeString;
+                Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, FileName), "");
+                Sha256Hash = Sha256Sum.Hash(Data, "");
+
+                string encrypted = SymmCipherPipe.EncrpytBytesToString(Data, serverKey, out pipeString, encoder, zipType);
+                Data = new byte[0];
+                Message = encrypted;
+            }
+            catch (Exception exCrypt)
+            {
+                CqrException.SetLastException(exCrypt);
+                throw;
+            }
+
+            return true;
+        }
+
 
         public override string EncryptToJson(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
             CFile cFile = new CFile(this);
-            string serializedJson = CFile.Encrypt2Json(serverKey, ref cFile, encoder, zipType);
+            string serializedJson = Encrypt2Json(serverKey, ref cFile, encoder, zipType);
             if (string.IsNullOrEmpty(serializedJson))
                 throw new CqrException($"override string EncryptToJson(string serverKey) failed");
 
             return serializedJson;
         }
+
+
+        public override bool Decrypt(string serverKey, EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        {
+            if (string.IsNullOrEmpty(serverKey))
+                throw new ArgumentNullException("serverKey");
+
+            if (string.IsNullOrEmpty(Message))
+                throw new CqrException("CFile.Decrypt(string serverKey, EncodingType decoder, Zfx.ZipType zipType); serialized Message is null or empty.");
+    
+            string keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            try
+            {
+                string pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
+
+                byte[] fileBytes = SymmCipherPipe.DecrpytStringToBytes(Message, serverKey, out pipeString, decoder, zipType);
+
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, FileName), "");
+                if (!Hash.Equals(pipeString))
+                {
+                    throw new CqrException($"CFile.Decrypt: Hash={Hash} doesn't match PipeString={pipeString}");
+                }
+                if (!md5Hash.Equals(Md5Hash))
+                {
+                    string md5ErrMsg = $"Md5Hash={Md5Hash} doesn't match md5Hash={md5Hash}.";
+                    Area23Log.LogOriginMsg("CFile,Decrypt", md5ErrMsg);
+                    // throw new CqrException(md5ErrMsg);
+                }
+                string sha256Hash = Sha256Sum.Hash(fileBytes, "");
+                if (!sha256Hash.Equals(Sha256Hash))
+                {
+                    string sha256ErrMsg = $"Sha256Hash={Sha256Hash} doesn't match sha256Hash={sha256Hash}.";
+                    Area23Log.LogOriginMsg("CFile,Decryp", sha256ErrMsg);
+                    // throw new CqrException(sha256ErrMsg);
+                }
+
+                Data = fileBytes;
+                Message = "";
+
+            }
+            catch (Exception exCrypt)
+            {
+                CqrException.SetLastException(exCrypt);
+                throw;
+            }
+
+            return true;
+        }
+
 
         public new CFile DecryptFromJson(string serverKey, string serialized = "",
             EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
@@ -166,7 +241,6 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         }
 
         #endregion EnDeCrypt+DeSerialize
-
 
         #region members
 
@@ -267,7 +341,6 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         }
 
         #endregion members
-
 
         #region static members
 
@@ -370,16 +443,15 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             if (string.IsNullOrEmpty(key) || cfile == null)
                 throw new CqrException($"static string ToJsonEncrypt(string serverKey, ref CFile cfile) failed: NULL reference!");
 
-            string pipeString = "", keyHash = "", encrypted = "";
             try
             {
-                keyHash = EnDeCodeHelper.KeyToHex(key);
-                pipeString = (new SymmCipherPipe(key, keyHash)).PipeString;
+                string keyHash = EnDeCodeHelper.KeyToHex(key);
+                string pipeString = (new SymmCipherPipe(key, keyHash)).PipeString;
                 cfile.Hash = pipeString;
                 cfile.Md5Hash = MD5Sum.HashString(String.Concat(key, keyHash, pipeString, cfile.FileName), "");
                 cfile.Sha256Hash = Sha256Sum.Hash(cfile.Data, "");
 
-                encrypted = SymmCipherPipe.EncrpytBytesToString(cfile.Data, key, out pipeString, encoder, zipType);
+                string encrypted = SymmCipherPipe.EncrpytBytesToString(cfile.Data, key, out pipeString, encoder, zipType);
                 cfile.Data = new byte[0];
                 cfile.Message = encrypted;
             }

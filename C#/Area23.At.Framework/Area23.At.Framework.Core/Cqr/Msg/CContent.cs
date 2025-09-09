@@ -168,7 +168,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
 		public virtual string EncryptToJson(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
-			if (Encrypt(serverKey, encoder, zipType))
+            if (string.IsNullOrEmpty(serverKey))
+                throw new ArgumentNullException("serverKey");
+
+            if (Encrypt(serverKey, encoder, zipType))
 			{
 				string serializedJson = ToJson();
 				return serializedJson;
@@ -178,10 +181,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public virtual bool Encrypt(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
-			string pipeString = "", encrypted = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            if (string.IsNullOrEmpty(serverKey))
+                throw new ArgumentNullException("serverKey");
+
+            string pipeString = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
             try
-            {                
-                encrypted = SymmCipherPipe.EncrpytToString(Message, serverKey, out pipeString, encoder, zipType);
+            {
+                string encrypted = SymmCipherPipe.EncrpytToString(Message, serverKey, out pipeString, encoder, zipType);
                 Hash = pipeString;
 				Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, Message), "");
 
@@ -199,7 +205,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         public virtual CContent? DecryptFromJson(string serverKey, string serialized = "",
             EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
-			if (string.IsNullOrEmpty(serialized))
+            if (string.IsNullOrEmpty(serverKey))
+                throw new ArgumentNullException("serverKey");
+
+            if (string.IsNullOrEmpty(serialized))
 				serialized = this.SerializedMsg;
 
 			CContent? cc = FromJson<CContent>(serialized);
@@ -213,7 +222,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public virtual bool Decrypt(string serverKey, EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
-			string pipeString = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            if (string.IsNullOrEmpty(serverKey))
+                throw new ArgumentNullException("serverKey");
+
+            string pipeString = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
             try
             {
                 string decrypted = SymmCipherPipe.DecrpytToString(Message, serverKey, out pipeString, EncodingType.Base64, ZipType.None);

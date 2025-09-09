@@ -226,6 +226,13 @@
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\EU.CqrXs.Service.pubxml" />
     <Content Include="res\json\contacts.json" />
+    <None Include="Web.config.arm" />
+    <None Include="Web.config.Debug.arm">
+      <DependentUpon>Web.config.arm</DependentUpon>
+    </None>
+    <None Include="Web.config.Release.arm">
+      <DependentUpon>Web.config.arm</DependentUpon>
+    </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

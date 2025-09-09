@@ -439,7 +439,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         #endregion static members Encrypt2Json Json2Decrypt
 
 
-        public new static CImage CloneCopy(CImage source, CImage destination)
+        public static new CImage CloneCopy(CImage source, CImage destination)
         {
             if (source == null)
                 return null;
@@ -460,7 +460,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             return destination;
         }
 
-        public new static CFile ToFile(CImage source)
+        public static new CFile ToFile(CImage source)
         {
             if (source == null)
                 return null;
