@@ -3,6 +3,7 @@ using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Crypt.Hash;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
+using Area23.At.Framework.Library.Zfx;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -259,10 +260,11 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #endregion ctor
 
-        public new CSrvMsg<TC> CCopy(CSrvMsg<TC> leftDest, CSrvMsg<TC> rightSrc)
+        public CSrvMsg<TC> CCopy(CSrvMsg<TC> leftDest, CSrvMsg<TC> rightSrc)
         {
             return CloneCopy(rightSrc, leftDest);
         }
+
 
         #region EnDeCrypt+DeSerialize
 
@@ -270,9 +272,9 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// Serialize <see cref="CSrvMsg{TC}"/> to Json Stting
         /// </summary>
         /// <returns>json serialized string</returns>
-        public override string EncryptToJson(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public override string EncryptToJson(string serverKey, EncodingType encoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
-            if (Encrypt(serverKey, encoder, zipType))
+            if (Encrypt(serverKey, encoder, zipType, kHash))
             {
                 string serializedJson = ToJson();
                 return serializedJson;
@@ -280,22 +282,23 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             throw new CqrException($"EncryptToJson(string severKey failed");
         }
 
-        public override bool Encrypt(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public override bool Encrypt(string serverKey, EncodingType encoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
-            string pipeString = "", encrypted = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            string keyHash = kHash.Hash(serverKey);
             try
             {
                 if (TContent != null)
                 {
                     Message = JsonConvert.SerializeObject(TContent);
                 }
-                pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
+                string pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
                 Hash = pipeString;
                 Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, Message), "");
 
-                encrypted = SymmCipherPipe.EncrpytToString(Message, serverKey, out pipeString, encoder, zipType);
+                string encrypted = SymmCipherPipe.EncrpytToString(Message, serverKey, out pipeString, encoder, zipType, kHash);
 
                 Message = encrypted;
+                TContent = null;
             }
             catch (Exception exCrypt)
             {
@@ -306,19 +309,21 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         }
 
         public new CSrvMsg<TC> DecryptFromJson(string serverKey, string serialized = "",
-            EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+            EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(serialized))
                 serialized = this.SerializedMsg;
 
             CSrvMsg<TC> csrvmsg = FromJson<CSrvMsg<TC>>(serialized);
-            if (csrvmsg != null && Decrypt(serverKey, decoder, zipType))
+            if (csrvmsg != null && Decrypt(serverKey, decoder, zipType, kHash))
             {
                 csrvmsg.Message = Message;
                 csrvmsg.CBytes = CBytes;
                 csrvmsg.MsgType = MsgType;
                 csrvmsg.Md5Hash = Md5Hash;
                 csrvmsg.Hash = Hash;
+                csrvmsg.KHash = KHash;
+                csrvmsg.ZType = ZType;
                 csrvmsg.TContent = TContent;
                 csrvmsg.Sender = Sender;
                 csrvmsg.Recipients = Recipients;
@@ -327,14 +332,14 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             throw new CqrException($"DecryptFromJson<T>(string severKey, string serialized) failed");
         }
 
-        public override bool Decrypt(string serverKey, EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public override bool Decrypt(string serverKey, EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
-            string pipeString = "", decrypted = "", keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            string pipeString = "", decrypted = "", keyHash = kHash.Hash(serverKey);
             try
             {
                 pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
 
-                decrypted = SymmCipherPipe.DecrpytToString(Message, serverKey, out pipeString, decoder, zipType);
+                decrypted = SymmCipherPipe.DecrpytToString(Message, serverKey, out pipeString, decoder, zipType, kHash);
 
                 if (!Hash.Equals(pipeString))
                 {
@@ -368,7 +373,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #region members
 
-        public override T FromJson<T>(string jsonText) 
+        public override T FromJson<T>(string jsonText)
         {
             CSrvMsg<TC> cMsg = JsonConvert.DeserializeObject<CSrvMsg<TC>>(jsonText);
             try
@@ -431,7 +436,6 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #region static members 
 
-
         #region static members Encrypt2Json Json2Decrypt
 
         /// <summary>
@@ -439,9 +443,9 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// </summary>
         /// <returns>json serialized string</returns>
         public static string Encrypt2Json(string serverKey, CSrvMsg<TC> cSrvMsg,
-            EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+            EncodingType encoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
-            string keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            string keyHash = kHash.Hash(serverKey);
             try
             {
                 if (cSrvMsg.TContent != null)
@@ -452,7 +456,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                 cSrvMsg.Hash = pipeString;
                 cSrvMsg.Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, cSrvMsg.Message), "");
 
-                string encrypted = SymmCipherPipe.EncrpytToString(cSrvMsg.Message, serverKey, out pipeString, encoder, zipType);
+                string encrypted = SymmCipherPipe.EncrpytToString(cSrvMsg.Message, serverKey, out pipeString, encoder, zipType, kHash);
                 cSrvMsg.Message = encrypted;
                 cSrvMsg.TContent = null;
             }
@@ -469,19 +473,19 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         }
 
         public static new CSrvMsg<TC> Json2Decrypt(string serverKey, string serialized,
-             EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+             EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(serialized))
                 throw new CqrException("static CSrvMsg<TC> FromJsonDecrypt(string serverKey, string serialized): serialized is null or empty.");
 
             CSrvMsg<TC> cSrvMsg = Newtonsoft.Json.JsonConvert.DeserializeObject<CSrvMsg<TC>>(serialized);
 
-            string keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            string keyHash = kHash.Hash(serverKey);
             try
             {
                 string pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
 
-                string decrypted = SymmCipherPipe.DecrpytToString(cSrvMsg.Message, serverKey, out pipeString, decoder, zipType);
+                string decrypted = SymmCipherPipe.DecrpytToString(cSrvMsg.Message, serverKey, out pipeString, decoder, zipType, kHash);
 
                 if (!cSrvMsg.Hash.Equals(pipeString))
                 {
@@ -490,7 +494,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
                     // throw new CqrException(errMsg);
                     ;
                 }
-                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, cSrvMsg.Hash, pipeString, decrypted), "");
+                string md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, decrypted), "");
                 if (!md5Hash.Equals(cSrvMsg.Md5Hash))
                 {
                     string md5ErrExcMsg = $"CSrvMsg-Md5Hash={cSrvMsg.Md5Hash} doesn't match md5Hash={md5Hash}";
@@ -513,7 +517,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #endregion static members Encrypt2Json Json2Decrypt
 
-        public static new CSrvMsg<TC> CloneCopy(CSrvMsg<TC> source, CSrvMsg<TC> destination)
+        public static CSrvMsg<TC> CloneCopy(CSrvMsg<TC> source, CSrvMsg<TC> destination)
         {
             if (source == null)
                 return null;
@@ -528,6 +532,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
+            destination.KHash = source.KHash;
+            destination.ZType = source.ZType;
 
             destination.Sender = source.Sender;
             destination.Recipients = source.Recipients;
@@ -539,6 +545,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         }
 
         #endregion static members 
+
 
     }
 

@@ -7,6 +7,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
     [Serializable]
     public class CChatRoom : CContent, IMsgAble
     {
+
+        #region properties
         public Guid ChatRuid { get; set; }
 
         public string ChatRoomNr { get; set; }
@@ -21,6 +23,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         public List<string> InvitedEmails { get; set; }
 
         public Dictionary<long, string> MsgDict { get; set; }
+
+        #endregion properties
 
         #region ICqrMessagable interface
 
@@ -91,6 +95,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #endregion ctor
 
+        #region members
         public override CContent CCopy(CContent leftDest, CContent rightSrc)
         {
             if (leftDest is CChatRoom && rightSrc is CChatRoom)
@@ -99,16 +104,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return base.CCopy(leftDest, rightSrc);
         }
 
-
-		#region members
-		
         public override string ToXml() => Utils.SerializeToXml<CChatRoom>(this);
 
         #endregion members
 
         #region static members
 
-        public new static CChatRoom? CloneCopy(CChatRoom? source, CChatRoom? destination)
+        public static CChatRoom? CloneCopy(CChatRoom? source, CChatRoom? destination)
         {
             if (source == null)
                 return null;
@@ -120,6 +122,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
+            destination.ZType = source.ZType;
+            destination.KHash = source.KHash;
 
             destination.ChatRoomNr = source.ChatRoomNr;
             destination.ChatRuid = source.ChatRuid;

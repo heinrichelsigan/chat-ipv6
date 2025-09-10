@@ -6,7 +6,6 @@ using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Zfx;
 using Newtonsoft.Json;
 using System.Text;
-using System.Windows.Forms;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
@@ -182,7 +181,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #region EnDeCrypt+DeSerialize
 
-        public override bool Encrypt(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public override bool Encrypt(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(serverKey))
                 throw new ArgumentNullException("serverKey");
@@ -195,12 +194,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             ContactImage = null;
             Message = serialized;
 
-            string keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            string keyHash = kHash.Hash(serverKey);
             try
             {
                 string pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
 
-                string encrypted = SymmCipherPipe.EncrpytToString(Message, serverKey, out pipeString, encoder, zipType);
+                string encrypted = SymmCipherPipe.EncrpytToString(Message, serverKey, out pipeString, encoder, zipType, kHash);
                 Hash = pipeString;
                 Md5Hash = MD5Sum.HashString(String.Concat(serverKey, keyHash, pipeString, Message), "");
 
@@ -216,12 +215,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return true;
         }
         
-        public override string EncryptToJson(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public override string EncryptToJson(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
-            return CContact.Encrypt2Json(serverKey, this, encoder, zipType);            
+            return CContact.Encrypt2Json(serverKey, this, encoder, zipType, kHash);            
         }
 
-        public override bool Decrypt(string serverKey, EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public override bool Decrypt(string serverKey, EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(serverKey))
                 throw new ArgumentNullException("serverKey");
@@ -229,12 +228,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             if (string.IsNullOrEmpty(Message))
                 throw new CqrException("CContact.Decrypt(string serverKey, EncodingType decoder, Zfx.ZipType zipType); serialized Message is null or empty.");
 
-            string keyHash = EnDeCodeHelper.KeyToHex(serverKey);
+            string keyHash = kHash.Hash(serverKey);
             try
             {
                 string pipeString = (new SymmCipherPipe(serverKey, keyHash)).PipeString;
 
-                string decrypted = SymmCipherPipe.DecrpytToString(Message, serverKey, out pipeString, EncodingType.Base64, Zfx.ZipType.None);
+                string decrypted = SymmCipherPipe.DecrpytToString(Message, serverKey, out pipeString, decoder, zipType, kHash);
 
                 if (!Hash.Equals(pipeString))
                 {
@@ -274,7 +273,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return true;
         }
 
-        public new CContact DecryptFromJson(string key, string serialized = "", EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public new CContact DecryptFromJson(string key, string serialized = "", 
+            EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(serialized))
                 serialized = this.SerializedMsg;
@@ -282,8 +282,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             if (string.IsNullOrEmpty(serialized))
                 throw new ArgumentNullException("serialized");
 
-            CContact contact = CContact.Json2Decrypt(key, serialized, decoder, zipType);
-            
+            CContact contact = CContact.Json2Decrypt(key, serialized, decoder, zipType, kHash);
+
+
             if (contact != null)
             {
 				CloneCopy(contact, this);    
@@ -309,7 +310,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         /// <summary>
         /// <see cref="object[]">RowParams</see> gets an object array of row parameters to show in <see cref="DataGridView"/>
-        /// </summary>
+        /// </summary>        
         public object[] GetRowParams()
         {
             List<object> oList = new List<object>();
@@ -336,7 +337,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <param name="ccntct"><see cref="CContact"/> to encrypt and serialize</param>
         /// <returns>a serialized <see cref="string" /> of encrypted <see cref="CContact"/></returns>
         /// <exception cref="CqrException"></exception>
-        public static string Encrypt2Json(string key, CContact ccntct, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public static string Encrypt2Json(string key, CContact ccntct, 
+            EncodingType encoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(key))
                 throw new ArgumentNullException("key");
@@ -352,12 +354,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             ccntct.ContactImage = null;
             ccntct.Message = serialized;
 
-            string keyHash = EnDeCodeHelper.KeyToHex(key);
+            string keyHash = kHash.Hash(key);
             try
             {
                 string pipeString = (new SymmCipherPipe(key, keyHash)).PipeString;
 
-                string encrypted = SymmCipherPipe.EncrpytToString(ccntct.Message, key, out pipeString, encoder, zipType);
+                string encrypted = SymmCipherPipe.EncrpytToString(ccntct.Message, key, out pipeString, encoder, zipType, kHash);
                 ccntct.Hash = pipeString;
                 ccntct.Md5Hash = MD5Sum.HashString(String.Concat(key, keyHash, pipeString, ccntct.Message), "");
 
@@ -383,7 +385,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// when serialized string to decrypt and deserialize is either null or empty 
         /// or <see cref="CContact"/> can't be decrypted and deserialized.
         /// </exception>
-        public static new CContact Json2Decrypt(string key, string serialized, EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public static new CContact Json2Decrypt(string key, string serialized, 
+            EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(key))
                 throw new ArgumentNullException("key");
@@ -393,12 +396,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
             CContact ccntct = Newtonsoft.Json.JsonConvert.DeserializeObject<CContact>(serialized);
 
-            string keyHash = EnDeCodeHelper.KeyToHex(key);
+            string keyHash = kHash.Hash(key);
             try
             {
                 string pipeString = (new SymmCipherPipe(key, keyHash)).PipeString;
 
-                string decrypted = SymmCipherPipe.DecrpytToString(ccntct.Message, key, out pipeString, EncodingType.Base64, Zfx.ZipType.None);
+                string decrypted = SymmCipherPipe.DecrpytToString(ccntct.Message, key, out pipeString, decoder, zipType, kHash);
 
                 if (!ccntct.Hash.Equals(pipeString))
                 {
@@ -441,7 +444,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #endregion static members Encrypt2Json Json2Decrypt
 
-        public static new CContact? CloneCopy(CContact? source, CContact? destination)
+        public static CContact? CloneCopy(CContact? source, CContact? destination)
 		{
 			if (source == null)
 				return null;
@@ -453,8 +456,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 			destination.MsgType = source.MsgType;
 			destination.CBytes = source.CBytes;
 			destination.Md5Hash = source.Md5Hash;
+            destination.KHash = source.KHash;
+            destination.ZType = source.ZType;
 
-			destination.ContactId = source.ContactId;
+            destination.ContactId = source.ContactId;
 			destination.Cuid = source.Cuid;
 			destination.Name = source.Name;
 			destination.Email = source.Email;
@@ -467,7 +472,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 			}
 			catch (Exception exImg)
 			{
-			}
+                CqrException.SetLastException(exImg);
+            }
 			CImage? contactImage = source.ContactImage;
 			if (contactImage != null)
 			{
@@ -477,7 +483,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 				}
 				catch (Exception exImg)
 				{
-				}
+                    CqrException.SetLastException(exImg);
+                }
 			}
 
             // destination.SerializedMsg = "";

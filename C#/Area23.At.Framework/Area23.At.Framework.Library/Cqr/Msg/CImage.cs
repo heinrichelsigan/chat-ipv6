@@ -3,6 +3,7 @@ using Area23.At.Framework.Library.Crypt.EnDeCoding;
 using Area23.At.Framework.Library.Crypt.Hash;
 using Area23.At.Framework.Library.Static;
 using Area23.At.Framework.Library.Util;
+using Area23.At.Framework.Library.Zfx;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -129,22 +130,22 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #region EnDeCrypt+DeSerialize
 
-        public override string EncryptToJson(string serverKey, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public override string EncryptToJson(string serverKey, EncodingType encoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
-            string serializedJson = CImage.Encrypt2Json(serverKey, this, encoder, zipType);
+            string serializedJson = CImage.Encrypt2Json(serverKey, this, encoder, zipType, kHash);
 
             return serializedJson;
         }
 
         public new CImage DecryptFromJson(string serverKey, string serialized = "",
-            EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+            EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(serialized))
                 serialized = this.SerializedMsg;
 
-            CImage cimg = CImage.Json2Decrypt(serverKey, serialized, decoder, zipType);
+            CImage cimg = CImage.Json2Decrypt(serverKey, serialized, decoder, zipType, kHash);
             if (cimg == null)
-                throw new CqrException($"CImage DecryptFromJson(string serverKey, string serialized) failed.");
+                throw new CqrException($"CImage? DecryptFromJson(string serverKey, string serialized) failed.");
 
             return CloneCopy(cimg, this);
         }
@@ -354,20 +355,20 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// <param name="cimg"><see cref="CImage"/> to encrypt and serialize</param>
         /// <returns>a serialized <see cref="string" /> of encrypted <see cref="CImage"/></returns>
         /// <exception cref="CqrException"></exception>
-        public static string Encrypt2Json(string key, CImage cimg, EncodingType encoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public static string Encrypt2Json(string key, CImage cimg, EncodingType encoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(key) || cimg == null)
                 throw new CqrException($"static string ToJsonEncrypt(string key, ref CImage cimg) failed: NULL reference!");
 
             try
             {
-                string keyHash = EnDeCodeHelper.KeyToHex(key);
+                string keyHash = kHash.Hash(key);
                 string pipeString = (new SymmCipherPipe(key, keyHash)).PipeString;
                 cimg.Hash = pipeString;
                 cimg.Md5Hash = MD5Sum.HashString(String.Concat(key, keyHash, pipeString, cimg.FileName), "");
                 cimg.Sha256Hash = Sha256Sum.Hash(cimg.Data, "");
 
-                string encrypted = SymmCipherPipe.EncrpytBytesToString(cimg.Data, key, out pipeString, encoder, zipType);
+                string encrypted = SymmCipherPipe.EncrpytBytesToString(cimg.Data, key, out pipeString, encoder, zipType, kHash);
                 cimg.Data = new byte[0];
                 cimg.Message = encrypted;
             }
@@ -390,19 +391,19 @@ namespace Area23.At.Framework.Library.Cqr.Msg
         /// when serialized string to decrypt and deserialize is either null or empty 
         /// or <see cref="CImage"/> can't be decrypted and deserialized.
         /// </exception>
-        public static new CImage Json2Decrypt(string key, string serialized, EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
+        public static new CImage Json2Decrypt(string key, string serialized, EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
             if (string.IsNullOrEmpty(serialized))
                 throw new CqrException("static CFile FromJsonDecrypt(string serverKey, string serialized): serialized is null or empty.");
 
             CImage cimg = Newtonsoft.Json.JsonConvert.DeserializeObject<CImage>(serialized);
 
-            string keyHash = EnDeCodeHelper.KeyToHex(key);
+            string keyHash = kHash.Hash(key);
             try
             {
                 string pipeString = (new SymmCipherPipe(key, keyHash)).PipeString;
 
-                byte[] fileBytes = SymmCipherPipe.DecrpytStringToBytes(cimg.Message, key, out pipeString, decoder, zipType);
+                byte[] fileBytes = SymmCipherPipe.DecrpytStringToBytes(cimg.Message, key, out pipeString, decoder, zipType, kHash);
 
                 string md5Hash = MD5Sum.HashString(String.Concat(key, keyHash, pipeString, cimg.FileName), "");
                 if (!cimg.Hash.Equals(pipeString))
@@ -438,8 +439,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #endregion static members Encrypt2Json Json2Decrypt
 
-
-        public static new CImage CloneCopy(CImage source, CImage destination)
+        public static CImage CloneCopy(CImage source, CImage destination)
         {
             if (source == null)
                 return null;
@@ -451,6 +451,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
+            destination.ZType = source.ZType;
+            destination.KHash = source.KHash;
 
             destination.FileName = source.FileName;
             destination.Base64Type = source.Base64Type;
@@ -460,7 +462,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             return destination;
         }
 
-        public static new CFile ToFile(CImage source)
+        public static CFile ToFile(CImage source)
         {
             if (source == null)
                 return null;
@@ -480,6 +482,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
             return destination;
         }
+
 
         #endregion static members
 

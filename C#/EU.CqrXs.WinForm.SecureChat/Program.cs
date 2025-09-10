@@ -110,16 +110,16 @@ namespace EU.CqrXs.WinForm.SecureChat
         }
 
 
-        internal static string progName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
+        internal static string progName = "EU.CqrXs.WinForm.SecureChat.exe"; // System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
         // internal static readonly string? progName = System.Environment.ProcessPath;
         internal static readonly string? progDirectory = Path.GetFullPath(System.Environment.ProcessPath);
-        private static Mutex? _mutex = null;
+        internal static Mutex? _mutex = null;
         static internal int mode = 0;
         static internal string startFormSwitch = string.Empty;
         static internal bool firstRegistration = false;
 
 
-        internal static Mutex? PMutec { get => _mutex; }
+        public static Mutex? PMutec { get => _mutex; }
 
         /// <summary>
         ///  The main entry point for the application.
@@ -130,7 +130,7 @@ namespace EU.CqrXs.WinForm.SecureChat
             if (_mutex == null)
                 _mutex = new Mutex(true, progName);
             
-            if (!_mutex.WaitOne(1000, false))
+            if (!_mutex.WaitOne(2000, false))
             {
                 Kernel32.AttachConsole(Kernel32.ATTACH_PARENT_PROCESS);
                 // Area23.At.Framework.Library.Area23Log.LogOriginMsg(roachName, $"Another instance of {roachName} is already running!");

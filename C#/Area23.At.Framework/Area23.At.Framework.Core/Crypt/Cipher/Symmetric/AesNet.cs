@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core;
+using Area23.At.Framework.Core.Cqr;
 using Area23.At.Framework.Core.Crypt;
 using Area23.At.Framework.Core.Crypt.Cipher;
 using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
@@ -97,6 +98,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             }
             catch (Exception e)
             {
+                CqrException.SetLastException(e);
                 // TODO: what shell we do with the drunken sailor
                 AesKey = Convert.FromBase64String(Constants.AES_KEY);
                 AesIv = Encoding.UTF8.GetBytes(Constants.AES_IV);

@@ -1,7 +1,9 @@
-﻿using Area23.At.Framework.Library.Crypt;
+﻿using Area23.At.Framework.Library.Cqr;
+using Area23.At.Framework.Library.Crypt;
 using Area23.At.Framework.Library.Crypt.Cipher;
 using Area23.At.Framework.Library.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Library.Static;
+using Area23.At.Framework.Library.Util;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Protocols.WSTrust;
@@ -93,6 +95,8 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
             }
             catch (Exception e)
             {
+                CqrException.SetLastException(e);
+                Area23Log.LogOriginMsgEx("AesNet:ctor", e.GetType().ToString(), e);
                 // TODO: what shell we do with the drunken sailor
                 AesKey = Convert.FromBase64String(Constants.AES_KEY);
                 AesIv = Encoding.UTF8.GetBytes(Constants.AES_IV);

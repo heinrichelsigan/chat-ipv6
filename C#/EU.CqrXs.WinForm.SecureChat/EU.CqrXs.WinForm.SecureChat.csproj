@@ -10,8 +10,8 @@
     <StartupObject>EU.CqrXs.WinForm.SecureChat.Program</StartupObject>
     <RootNamespace>EU.CqrXs.WinForm.SecureChat</RootNamespace>
 	<ApplicationIcon>RemoteConnectedIcon.ico</ApplicationIcon>
-	<AssemblyVersion>2.25.826</AssemblyVersion>
-    <FileVersion>2.25.826</FileVersion>
+	<AssemblyVersion>2.25.910</AssemblyVersion>
+    <FileVersion>2.25.910</FileVersion>
     <ErrorReport>send</ErrorReport>
     <Title>SecureChat</Title>
     <RepositoryUrl>https://github.com/heinrichelsigan/chat-ipv6</RepositoryUrl>		

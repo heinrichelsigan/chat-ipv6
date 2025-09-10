@@ -10,6 +10,8 @@ namespace Area23.At.Framework.Library.Cqr.Msg
     [Serializable]
     public class CChatRoom : CContent, IMsgAble
     {
+
+        #region properties
         public Guid ChatRuid { get; set; }
 
         public string ChatRoomNr { get; set; }
@@ -23,8 +25,9 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         public List<string> InvitedEmails { get; set; }
 
-        public Dictionary<long, string> MsgDict { get; set; }   
+        public Dictionary<long, string> MsgDict { get; set; }
 
+        #endregion properties
 
         #region ctor
 
@@ -102,7 +105,7 @@ namespace Area23.At.Framework.Library.Cqr.Msg
 
         #region static members
 
-        public new static CChatRoom CloneCopy(CChatRoom source, CChatRoom destination)
+        public static CChatRoom CloneCopy(CChatRoom source, CChatRoom destination)
         {
             if (source == null)
                 return null;
@@ -114,11 +117,12 @@ namespace Area23.At.Framework.Library.Cqr.Msg
             destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
+            destination.ZType = source.ZType;
+            destination.KHash = source.KHash;
 
             destination.ChatRoomNr = source.ChatRoomNr;
             destination.ChatRuid = source.ChatRuid;
             destination.MsgDict = source.MsgDict;
-            // destination.TicksLong = source.TicksLong;
             destination.LastPolled = source.LastPolled;
             destination.LastPushed = source.LastPushed;
             destination.InvitedEmails = source.InvitedEmails;
