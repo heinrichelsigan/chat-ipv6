@@ -77,8 +77,8 @@ namespace Area23.At.Framework.Core.Cqr
         public string Send_CFile_Peer(CFile cFile, IPAddress peerIp, int serverPort = 7777, SerType msgType = SerType.Json, EncodingType encType = EncodingType.Base64,
             ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
         {
-            cFile.Hash = PipeString;
-            cFile.MsgType = SerType.Json;
+            // cFile.Hash = PipeString;
+            // cFile.MsgType = SerType.Json;
             string encrypted = cFile.EncryptToJson(_key, encType, zipType, kHash);
 
             string response = Sender.Send(peerIp, encrypted, Constants.CHAT_PORT);

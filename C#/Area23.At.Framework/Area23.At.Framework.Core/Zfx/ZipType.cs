@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Newtonsoft.Json.Linq;
+using System.ComponentModel;
 
 namespace Area23.At.Framework.Core.Zfx
 {
@@ -6,15 +7,25 @@ namespace Area23.At.Framework.Core.Zfx
     [DefaultValue(None)]
     public enum ZipType
     {
-        None = 0x0,
-        Zip = 0x1,
-        GZip = 0x2,
-        BZip2 = 0x3,
-        Z7 = 0x4
+        None =  0x00,
+        Zip =   0x10,
+        GZip =  0x20,
+        BZip2 = 0x30,
+        Z7 =    0x40
     }
 
     public static class ZipTypeExtensions
     {
+        private static readonly ZipType[] ZipTypes = { ZipType.None, ZipType.Zip, ZipType.GZip, ZipType.BZip2, ZipType.Z7 };
+        public static ZipType GetZipTypeFromValue(short zValue)
+        {
+            foreach (ZipType zType in ZipTypes)
+            {
+                if ((short)zType == zValue)
+                    return zType;
+            }
+            return ZipType.None;
+        }
 
         /// <summary>
         /// Generic zip extension method for <see cref="ZipType"/>

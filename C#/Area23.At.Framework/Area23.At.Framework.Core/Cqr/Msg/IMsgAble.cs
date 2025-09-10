@@ -2,7 +2,10 @@
 {
     public interface IMsgAble
     {
-        SerType MsgType { get; }        
+        // SerType MsgType { get; }        
+
+        MsgMetaSettings MetaSettings { get => MsgMetaSettings.MsgSetInstance; }
+
         string Message { get; }
 
         string Hash { get; }

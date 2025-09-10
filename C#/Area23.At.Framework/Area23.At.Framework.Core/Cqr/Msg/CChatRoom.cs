@@ -49,7 +49,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             LastPolled = DateTime.MinValue;
             Hash = "";
             Md5Hash = "";
-            MsgType = SerType.None;
+            // MsgType = SerType.None;
             CBytes = new byte[0];
         }
 
@@ -82,7 +82,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Hash = hash;
             Md5Hash = md5sum;
             CBytes = bytes;
-            MsgType = SerType.Json;            
+            // MsgType = SerType.Json;            
         }
 
         public CChatRoom(CChatRoom chatRoom) : this()
@@ -119,11 +119,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
             destination.Message = source.Message;
             destination.Hash = source.Hash;
-            destination.MsgType = source.MsgType;
+            // destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
-            destination.ZType = source.ZType;
-            destination.KHash = source.KHash;
+            // destination.ZType = source.ZType;
+            // destination.KHash = source.KHash;
 
             destination.ChatRoomNr = source.ChatRoomNr;
             destination.ChatRuid = source.ChatRuid;

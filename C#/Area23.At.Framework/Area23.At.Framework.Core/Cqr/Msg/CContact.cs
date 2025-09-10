@@ -453,11 +453,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
 			destination.Hash = source.Hash;
 			destination.Message = source.Message;
-			destination.MsgType = source.MsgType;
-			destination.CBytes = source.CBytes;
+            // destination.MsgType = source.MsgType;
+            destination.CBytes = source.CBytes;
 			destination.Md5Hash = source.Md5Hash;
-            destination.KHash = source.KHash;
-            destination.ZType = source.ZType;
+            // destination.KHash = source.KHash;
+            // destination.ZType = source.ZType;
 
             destination.ContactId = source.ContactId;
 			destination.Cuid = source.Cuid;

@@ -123,12 +123,12 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             if (msgArt == SerType.Json)
             {
                 deserializedSrvMsg = this.FromJson<CSrvMsg<TC>>(serializedString);
-                deserializedSrvMsg.MsgType = SerType.Json;
+                // deserializedSrvMsg.MsgType = SerType.Json;
             }
             else if (msgArt == SerType.Xml)
             {
                 deserializedSrvMsg = this.FromXml<CSrvMsg<TC>>(serializedString);
-                deserializedSrvMsg.MsgType = SerType.Xml;
+                // deserializedSrvMsg.MsgType = SerType.Xml;
             }
 
             if (deserializedSrvMsg == null)
@@ -142,7 +142,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             this.Message = deserializedSrvMsg.Message;
             this.CBytes = deserializedSrvMsg.CBytes;
             this.Md5Hash = deserializedSrvMsg.Md5Hash;
-            this.MsgType = deserializedSrvMsg.MsgType;
+            // this.MsgType = deserializedSrvMsg.MsgType;
         }
 
 
@@ -324,11 +324,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             {
                 csrvmsg.Message = Message;
                 csrvmsg.CBytes = CBytes;
-                csrvmsg.MsgType = MsgType;
+                // csrvmsg.MsgType = MsgType;
                 csrvmsg.Md5Hash = Md5Hash;
                 csrvmsg.Hash = Hash;
-                csrvmsg.KHash = KHash;
-                csrvmsg.ZType = ZType;
+                // csrvmsg.KHash = KHash;
+                // csrvmsg.ZType = ZType;
                 csrvmsg.TContent = TContent;
                 csrvmsg.Sender = Sender;
                 csrvmsg.Recipients = Recipients;
@@ -392,7 +392,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                     Hash = cMsg.Hash;
                     Md5Hash = cMsg.Md5Hash;
                     Message = cMsg.Message;
-                    MsgType = SerType.Json;
+                    // MsgType = SerType.Json;
 
                     return t;
                 }
@@ -421,7 +421,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                     Hash = cMsg.Hash;
                     Md5Hash = cMsg.Md5Hash;
                     Message = cMsg.Message;
-                    MsgType = SerType.Xml;
+                    // MsgType = SerType.Xml;
 
                     return t;
                 }
@@ -534,11 +534,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
             destination.Hash = source.Hash;
             destination.Message = source.Message;
-            destination.MsgType = source.MsgType;
+            // destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
-            destination.KHash = source.KHash;
-            destination.ZType = source.ZType;
+            // destination.KHash = source.KHash;
+            // destination.ZType = source.ZType;
 
             destination.Sender = source.Sender;
             destination.Recipients = source.Recipients;                        

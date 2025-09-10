@@ -15,27 +15,23 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
 		#region properties
 
-        public SerType MsgType { get; set; }
-
-        public EncodingType EnCodingType { get; set; }
-
         public string Message { get; set; }
 
         [JsonIgnore]
         public virtual string SerializedMsg
         {
-            get => (MsgType == SerType.Xml) ?
+			get => (MsgMetaSettings.MsgSetInstance.MsgType == SerType.Xml) ?
                         ToXml() :
                         Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
         }
 
         public string Hash { get; set; }
 
-        public string Md5Hash { get; set; }
+        public string Md5Hash  { get; set; }
 
-		public ZipType ZType { get; set; }
-
-		public KeyHash KHash { get; set; }
+		[JsonIgnore]
+		public MsgMetaSettings MetaSettings { get => MsgMetaSettings.MsgSetInstance; }
+        
 
         [JsonIgnore]
         protected internal byte[] CBytes { get; set; }
@@ -49,15 +45,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 		/// </summary>
 		public CContent()
 		{
-			MsgType = SerType.Json;
 			Message = string.Empty;
-			ZType = ZipType.None;
-			KHash = KeyHash.Hex;
             Hash = string.Empty;
 			Md5Hash = string.Empty;
 			CBytes = new byte[0];
-			EnCodingType = EncodingType.Base64;
-
         }
 
 
@@ -80,20 +71,18 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 			switch (msgArt)
 			{
 				case SerType.Json:
-					MsgType = SerType.Json;
 					CContent cjson = GetMsgContentType(serializedString, out Type cqrType, SerType.Json);
 					if (cjson != null)
 					{
-						cjson.MsgType = SerType.Json;
-						CloneCopy(cjson, this);
+                        // cjson.MsgType = SerType.Json;
+                        CloneCopy(cjson, this);
                     }
 					break;
 				case SerType.Xml:
-					MsgType = SerType.Xml;
 					CContent cXml = GetMsgContentType(serializedString, out Type cqType, msgArt);
 					if (cXml != null)
 					{
-						cXml.MsgType = SerType.Xml;
+                        // cXml.MsgType = SerType.Xml;
                         CloneCopy(cXml, this);
 					}
 					break;
@@ -102,7 +91,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
 				case SerType.Raw:
 				default:
-					MsgType = SerType.Raw;
 					Message = serializedString;
                     // SerializedMsg = serializedString;
 
@@ -127,11 +115,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <param name="kHash"><see cref="KeyHash"/> default: <see cref="KeyHash.Hex"/></param>
         public CContent(string plainTextMsg, string hash, SerType msgArt = SerType.Raw, string md5Hash = "", ZipType zType = ZipType.None, KeyHash kHash = KeyHash.Hex)
 		{
-			MsgType = msgArt;
 			Hash = hash;
 			Message = plainTextMsg;
-			KHash = kHash;
-			ZType = zType;
             // SerializedMsg = "";
             CBytes = new byte[0];
 			Md5Hash = md5Hash;
@@ -192,8 +177,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             if (string.IsNullOrEmpty(serverKey))
                 throw new ArgumentNullException("serverKey");
 
-            KHash = kHash;
-            ZType = zipType;
             string pipeString = "", keyHash = kHash.Hash(serverKey);
             try
             {
@@ -235,8 +218,6 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             if (string.IsNullOrEmpty(serverKey))
                 throw new ArgumentNullException("serverKey");
 
-			KHash = kHash;
-			ZType = zipType;
             string pipeString = "", keyHash = kHash.Hash(serverKey);
             try
             {
@@ -722,13 +703,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 destination = new CContent(source);
 
             destination.Hash = source.Hash;
-			destination.KHash = source.KHash;
-			destination.ZType = source.ZType;
+            // destination.KHash = source.KHash;
+            // destination.ZType = source.ZType;
             destination.Message = source.Message;
-            destination.MsgType = source.MsgType;
+            // destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
-			destination.EnCodingType = source.EnCodingType;
+            // destination.EnCodingType = source.EnCodingType;
 
             return destination;
         }

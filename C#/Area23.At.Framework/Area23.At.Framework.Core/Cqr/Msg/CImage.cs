@@ -445,11 +445,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
             destination.Message = source.Message;
             destination.Hash = source.Hash;
-            destination.MsgType = source.MsgType;
+            // destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
-            destination.ZType = source.ZType;
-            destination.KHash = source.KHash;
+            // destination.ZType = source.ZType;
+            // destination.KHash = source.KHash;
 
             destination.FileName = source.FileName;
             destination.Base64Type = source.Base64Type;
@@ -468,7 +468,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
             destination.Message = source.Message;
             destination.Hash = source.Hash;
-            destination.MsgType = source.MsgType;
+            // destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
 

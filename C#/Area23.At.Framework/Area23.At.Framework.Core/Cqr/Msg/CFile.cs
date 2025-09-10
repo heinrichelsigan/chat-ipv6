@@ -41,7 +41,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = string.Empty;
             Sha256Hash = string.Empty;
             Data = new byte[0];
-			EnCodingType = EncodingType.Base64;
+			// EnCodingType = EncodingType.Base64;
 		}
 
         public CFile(string fileName, byte[] data, string hash = "") : this()
@@ -50,9 +50,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Data = data;
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Hash = hash;
-            MsgType = SerType.Json;
+            // MsgType = SerType.Json;
             Sha256Hash = Sha256Sum.Hash(Data, "");
-            EnCodingType = EncodingType.Base64;
+            // EnCodingType = EncodingType.Base64;
         }
 
         public CFile(string fileName, string mimeType, byte[] data, string hash) : this(fileName, data, hash) 
@@ -67,8 +67,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Hash = hash;            
             Sha256Hash = Sha256Sum.Hash(Data, "");
-            MsgType = SerType.Json;
-            EnCodingType = EncodingType.Base64;
+            // MsgType = SerType.Json;
+            // EnCodingType = EncodingType.Base64;
         }
 
         public CFile(string fileName, string mimeType, string base64, string hash) : this(fileName, base64, hash) 
@@ -86,13 +86,13 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         public CFile(string fileName, string mimeType, byte[] data, string hash, string sMd5 = "", string sSha256 = "", SerType msgType = SerType.Json) :
                 this(fileName, mimeType, data, hash, sMd5, sSha256)
         {
-            MsgType = msgType;
+            // MsgType = msgType;
         }
 
         public CFile(string fileName, string mimeType, byte[] data, string hash, string sMd5 = "", string sSha256 = "", SerType msgType = SerType.Json, EncodingType enCodeType = EncodingType.Base64) :
                 this(fileName, mimeType, data, hash, sMd5, sSha256, msgType)
         {
-            this.EnCodingType = enCodeType;
+            // this.EnCodingType = enCodeType;
         }
 
         public CFile(FileInfo fi, string hash = "") : this()
@@ -102,8 +102,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Md5Hash = "";
             Sha256Hash = Sha256Sum.Hash(Data, "");
-            MsgType = SerType.Json;
-            EnCodingType = EncodingType.Base64;
+            // MsgType = SerType.Json;
+            // EnCodingType = EncodingType.Base64;
             Hash = hash;
         }
 
@@ -117,8 +117,8 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             Base64Type = MimeType.GetMimeType(Data, FileName);
             Md5Hash = "";
             Sha256Hash = Sha256Sum.Hash(Data, "");
-            MsgType = msgType;
-            EnCodingType = EncodingType.Base64;
+            // MsgType = msgType;
+            // EnCodingType = EncodingType.Base64;
             Hash = hash;
         }
 
@@ -537,17 +537,17 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
             destination.Message = source.Message;
             destination.Hash = source.Hash;
-            destination.MsgType = source.MsgType;
+            // destination.MsgType = source.MsgType;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
-            destination.ZType = source.ZType;
-            destination.KHash = source.KHash;
+            // destination.ZType = source.ZType;
+            // destination.KHash = source.KHash;
 
             destination.FileName = source.FileName;
             destination.Base64Type = source.Base64Type;
             destination.Data = source.Data;
             destination.Sha256Hash = source.Sha256Hash;
-            destination.EnCodingType = source.EnCodingType;
+            // destination.EnCodingType = source.EnCodingType;
             destination.Base64Type = source.Base64Type;
 
             return destination;

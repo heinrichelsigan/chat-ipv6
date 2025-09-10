@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Area23.At.Framework.Core.Crypt.Hash;
+using System.ComponentModel;
 
 namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 {
@@ -10,19 +11,32 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
     [DefaultValue(EncodingType.Base64)]
     public enum EncodingType
     {
-        Null =      0x00,
-        None =      0x01,
-        Base16 =    0x10,
-        Hex16 =     0x11,
-        Base32 =    0x20,
-        Hex32 =     0x21,
-        Uu =        0x33,
-        Base58 =    0x3a,
-        Base64 =    0x40
+        Null =      0x000,
+        None =      0x100,
+        Base16 =    0x200,
+        Hex16 =     0x300,
+        Base32 =    0x400,
+        Hex32 =     0x500,
+        Uu =        0x600,
+        Base58 =    0x700,
+        Base64 =    0x800
     }
 
     public static class EncodingTypesExtensions
     {
+        private static readonly EncodingType[] encodingTypes = { EncodingType.Null, EncodingType.None, EncodingType.Base16, EncodingType.Hex16,
+            EncodingType.Base32, EncodingType.Hex32, EncodingType.Uu, EncodingType.Base58, EncodingType.Base64 };
+
+        public static EncodingType GetEncodingTypeFromValue(short encValue)
+        {
+            foreach (EncodingType enctyp in encodingTypes)
+            {
+                if ((short)enctyp == encValue)
+                    return enctyp;
+            }
+            return EncodingType.Base64;
+        }
+
         public static EncodingType[] GetEncodingTypes()
         {
             List<EncodingType> list = new List<EncodingType>();
