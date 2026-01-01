@@ -48,6 +48,14 @@ namespace Area23.At.Framework.Library.Zfx
             using (MemoryStream memIn = new MemoryStream(inBytes, 0, inBytes.Length))
             {
                 MemoryStream memOut = GZipStream(memIn);
+                //MemoryStream memOut = new MemoryStream();
+                //// using (GZipOutputStream gzOut = new GZipOutputStream(msOut, buflen))
+                //var zlibOpt = new ZLibCompressionOptions() { CompressionLevel = 6, CompressionStrategy = ZLibCompressionStrategy.Fixed };
+                //using (GZipStream gzOut = new GZipStream(memOut, zlibOpt, false))
+                //{
+                //    StreamUtils.Copy(memIn, gzOut, new byte[BUFSZE]);
+                //}
+                //memOut.Flush();
                 zipBytes = memOut.ToByteArray();
             }
 
@@ -73,6 +81,7 @@ namespace Area23.At.Framework.Library.Zfx
         }
 
         #endregion gzip compression
+
 
         #region gunzip decompression
 
@@ -145,6 +154,12 @@ namespace Area23.At.Framework.Library.Zfx
 
         #endregion gunzip decompression
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inFile"></param>
+
         /// <summary>
         /// GzFile gzips or gunzips a file
         /// </summary>
@@ -190,5 +205,6 @@ namespace Area23.At.Framework.Library.Zfx
         }
 
     }
+
 
 }

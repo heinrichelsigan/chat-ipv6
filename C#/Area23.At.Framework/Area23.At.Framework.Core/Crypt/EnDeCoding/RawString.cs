@@ -1,6 +1,4 @@
-﻿
-
-namespace Area23.At.Framework.Core.Crypt.EnDeCoding
+﻿namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 {
     /// <summary>
     /// Base16 hexadecimal byte encoding / decoding
@@ -33,8 +31,8 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// <summary>
         /// Decodes a hex string to byte[]
         /// </summary>
-        /// <param name="hexString">hex16 encoded string</param>
-        /// <returns></returns>
+        /// <param name="encodedString">hex16 encoded string</param>
+        /// <returns><see cref="T:byte[]"/></returns>
         public byte[] Decode(string encodedString)
         {
             return RawString.FromRawString(encodedString);
@@ -67,7 +65,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             }
             */
 
-
+            // Encoding.UTF8.GetString(inBytes);
             return EnDeCodeHelper.GetString(inBytes);
         }
 

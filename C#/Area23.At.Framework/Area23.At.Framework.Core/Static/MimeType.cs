@@ -36,7 +36,7 @@ namespace Area23.At.Framework.Core.Static
         /// <summary>
         /// GetMimeType
         /// </summary>
-        /// <param name="fileBytes"><see cref="byte[]">byte[] binary array</see></param>
+        /// <param name="fileBytes"><see cref="T:byte[]">byte[] binary array</see></param>
         /// <param name="fileName">save filename</param>
         /// <returns>detected mime type by binary byte pattern, 
         /// if no specific mime type detect => default application/octet-stream</returns>

@@ -2,7 +2,12 @@
 using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Zfx;
+using Newtonsoft.Json;
+using Org.BouncyCastle.Crypto;
+using System.IO.Pipelines;
+using System.Text;
 
 namespace Area23.At.Framework.Core.Crypt.Cipher
 {
@@ -16,58 +21,123 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         #region fields and properties
 
         private string cipherKey = "", cipherHash = "";
-        private readonly CipherEnum[] inPipe;
-        public readonly CipherEnum[] outPipe;
-        private readonly string pipeString;
+        private ZipType zType = ZipType.None;
+        // private readonly CipherEnum[] inPipe;
+        private CipherEnum[] inPipe;
+        // private readonly CipherEnum[] outPipe;
+        private EncodingType encodeType = EncodingType.Base64;
+        private KeyHash kHash = KeyHash.Hex;
+        // private readonly string pipeString;
 
-        public CipherEnum[] InPipe { get => inPipe; }
+        /// <summary>
+        /// ZType is current <see cref="ZipType"/>
+        /// </summary>
+        public ZipType ZType { get => zType; internal set => zType = value; }
 
-        public CipherEnum[] OutPipe { get => outPipe; }
+        /// <summary>
+        /// Current <see cref="EncodeType"/> 
+        /// </summary>
+        public EncodingType EncodeType { get => encodeType; internal set => encodeType = value; }
 
-        public string PipeString { get => pipeString; }
+        /// <summary>
+        /// KHash is <see cref="KeyHash"/>
+        /// </summary>
+        public KeyHash KHash { get => kHash; internal set => kHash = value; }
 
-#if DEBUG
-        public Dictionary<CipherEnum, byte[]> stageDictionary = new Dictionary<CipherEnum, byte[]>();
+        /// <summary>
+        /// InPipe is current encryption pipe
+        /// </summary>
+        public CipherEnum[] InPipe { get => inPipe; internal set => inPipe = value; }
 
-        public string HexStages
+        /// <summary>
+        /// OutPipe will always be generated from <see cref="InPipe"/>
+        /// </summary>
+        public CipherEnum[] OutPipe { get => inPipe.ToList().Reverse<CipherEnum>().ToArray(); }
+
+        /// <summary>
+        /// PipeString will always be generated on the fly from <see cref="InPipe"/>
+        /// </summary>
+        public string PipeString
         {
             get
             {
-                string hexOut = string.Empty;
-                foreach (var stage in stageDictionary)
-                {
-                    hexOut += stage.Key.ToString() + "\r\n" + Hex16.ToHex16(stage.Value) + "\r\n";
-                }
-
-                return hexOut;
+                string pipeString = "";
+                foreach (CipherEnum cipher in inPipe)
+                    pipeString += cipher.GetCipherChar();
+                return pipeString;
             }
         }
-#endif
+
+
+
+
+
+        //#if DEBUG
+        //        public Dictionary<CipherEnum, byte[]> stageDictionary = new Dictionary<CipherEnum, byte[]>();
+
+        //        public string HexStages
+        //        {
+        //            get
+        //            {
+        //                string hexOut = string.Empty;
+        //                foreach (var stage in stageDictionary)
+        //                {
+        //                    hexOut += stage.Key.ToString() + "\r\n" + Hex16.ToHex16(stage.Value) + "\r\n";
+        //                }
+
+        //                return hexOut;
+        //            }
+        //        }
+        //#endif
 
         #endregion fields and properties
 
         #region ctor CipherPipe
 
-        /// <summary>
-        /// CipherPipe constructor with an array of <see cref="CipherEnum[]"/> as inpipe
-        /// </summary>
-        /// <param name="cipherEnums">array of <see cref="CipherEnum[]"/> as inpipe</param>
-        public CipherPipe(CipherEnum[] cipherEnums)
+        public CipherPipe()
         {
-            inPipe = new List<CipherEnum>(cipherEnums).ToArray();
-            outPipe = cipherEnums.Reverse<CipherEnum>().ToArray();
-            pipeString = "";
-            foreach (CipherEnum cipher in inPipe)
-                pipeString += cipher.GetCipherChar();
+            cipherKey = ""; //
+            cipherHash = "";
+            inPipe = (new List<CipherEnum>()).ToArray();
+            encodeType = EncodingType.Base64;
+            zType = ZipType.None;
+            kHash = KeyHash.Hex;
         }
 
         /// <summary>
-        /// CipherPipe constructor with an array of <see cref="string[]"/> cipherAlgos as inpipe
+        /// CipherPipe constructor with an array of <see cref="T:CipherEnum[]"/> as inpipe
         /// </summary>
-        /// <param name="cipherAlgos">array of <see cref="string[]"/> as inpipe</param>
-        public CipherPipe(string[] cipherAlgos)
+        /// <param name="cipherEnums">array of <see cref="T:CipherEnum[]"/> as inpipe</param>
+        public CipherPipe(CipherEnum[] cipherEnums, uint maxpipe = 8, 
+            EncodingType encType = EncodingType.Base64, ZipType zpType = ZipType.None, KeyHash kh = KeyHash.Hex)
         {
+            // What ever is entered here as parameter, maxpipe has to be not greater 8, because of no such agency
+            maxpipe = (maxpipe > Constants.MAX_PIPE_LEN) ? Constants.MAX_PIPE_LEN : maxpipe; // if somebody wants more, he/she/it gets less
+
+            int isize = Math.Min(((int)cipherEnums.Length), ((int)maxpipe));
+            inPipe = new CipherEnum[isize];
+            Array.Copy(cipherEnums, inPipe, isize);
+
+            encodeType = encType;
+            zType = zpType;
+            kHash = kh;            
+        }
+
+        /// <summary>
+        /// CipherPipe constructor with an array of <see cref="T:string[]"/> cipherAlgos as inpipe
+        /// </summary>
+        /// <param name="cipherAlgos">array of <see cref="T:string[]"/> as inpipe</param>
+        /// <param name="maxpipe">maximum lentgh <see cref="Constants.MAX_PIPE_LEN"/></param>
+        /// <param name="encType"><see cref="EncodeType"/></param>
+        /// <param name="zpType"><see cref="Zip.ZipType"/></param>
+        /// <param name="kh"><see cref="KeyHash"/></param>
+        public CipherPipe(string[] cipherAlgos, uint maxpipe = 8, EncodingType encType = EncodingType.Base64, ZipType zpType = ZipType.None, KeyHash kh = KeyHash.Hex)
+        {
+            // What ever is entered here as parameter, maxpipe has to be not greater 8, because of no such agency
+            maxpipe = (maxpipe > Constants.MAX_PIPE_LEN) ? Constants.MAX_PIPE_LEN : maxpipe; // if somebody wants more, he/she/it gets less
+
             List<CipherEnum> cipherEnums = new List<CipherEnum>();
+            int cnt = 0;
             foreach (string algo in cipherAlgos)
             {
                 if (!string.IsNullOrEmpty(algo))
@@ -77,14 +147,17 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                         cipherAlgo = CipherEnum.Aes;
 
                     cipherEnums.Add(cipherAlgo);
+
+                    if (++cnt > maxpipe)
+                        break;
                 }
             }
 
-            inPipe = new List<CipherEnum>(cipherEnums).ToArray();
-            outPipe = cipherEnums.Reverse<CipherEnum>().ToArray();
-            pipeString = "";
-            foreach (CipherEnum cipher in inPipe)
-                pipeString += cipher.GetCipherChar();
+            inPipe = cipherEnums.ToArray();
+
+            encodeType = encType;
+            kHash = kh;
+            zType = zpType;
         }
 
         /// <summary>
@@ -92,55 +165,60 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// </summary>
         /// <param name="keyBytes">user key bytes</param>
         /// <param name="maxpipe">maximum lentgh <see cref="Constants.MAX_PIPE_LEN"/></param>
-        public CipherPipe(byte[] keyBytes, uint maxpipe = 8)
+        /// <param name="encType"><see cref="EncodeType"/></param>
+        /// <param name="zpType"><see cref="Zip.ZipType"/></param>
+        /// <param name="kh"><see cref="KeyHash"/></param>
+        /// <exception cref="ArgumentException"></exception>
+        public CipherPipe(byte[] keyBytes, uint maxpipe = 8, 
+            EncodingType encType = EncodingType.Base64, ZipType zpType = ZipType.None, KeyHash kh = KeyHash.Hex)
         {
             // What ever is entered here as parameter, maxpipe has to be not greater 8, because of no such agency
             maxpipe = (maxpipe > Constants.MAX_PIPE_LEN) ? Constants.MAX_PIPE_LEN : maxpipe; // if somebody wants more, he/she/it gets less
 
             ushort scnt = 0;
-            List<CipherEnum> pipeList = new List<CipherEnum>();
-            Dictionary<string, CipherEnum> symDict = new Dictionary<string, CipherEnum>();
-            foreach (CipherEnum symmC in Enum.GetValues(typeof(CipherEnum)))
-            {
-                string hex = $"{((ushort)symmC):x2}";
-                scnt++;
-                symDict.Add(hex, symmC);
-            }
+            List<CipherEnum> pipeList = new List<CipherEnum>();     
 
-            string hexString = string.Empty;
-            HashSet<string> hashBytes = new HashSet<string>();
-            foreach (byte bb in keyBytes)
+            HashSet<byte> hashBytes = new HashSet<byte>();
+            for (int i = 0; i < keyBytes.Length && pipeList.Count < maxpipe; i++)
             {
-                byte cb = (byte)((int)((int)bb % 21));
-                hexString = string.Format("{0:x2}", cb);
-                if (hexString.Length > 0 && !hashBytes.Contains(hexString))
-                    hashBytes.Add(hexString);
+                byte cb = (byte)((int)((int)keyBytes[i] % 0x20));
+                if (!hashBytes.Contains(cb))
+                {
+                    hashBytes.Add(cb);
+                    pipeList.Add(CipherEnumExtensions.ByteCipherDict[cb]);
+                }
             }
+           
+            inPipe = pipeList.ToArray();
 
-            hexString = string.Empty;
-            for (int kcnt = 0; kcnt < hashBytes.Count && pipeList.Count < maxpipe; kcnt++)
-            {
-                hexString += hashBytes.ElementAt(kcnt).ToString();
-                CipherEnum sym0 = symDict[hashBytes.ElementAt(kcnt)];
-                pipeList.Add(sym0);
-            }
+            zType = zpType;            
+            encodeType = encType;
+            kHash = kh;
 
-            inPipe = new List<CipherEnum>(pipeList).ToArray();
-            outPipe = pipeList.Reverse<CipherEnum>().ToArray();
-            pipeString = "";
-            foreach (CipherEnum cipherE in inPipe)
-                pipeString += cipherE.GetCipherChar();
+            //if (inPipe.Length > maxpipe)
+            //{
+            //    List<string> pipElems = new List<string>(inPipe.Length);
+            //    foreach (var cipherEnum in inPipe)
+            //        pipElems.Add(cipherEnum.ToString());
+            //    throw new ArgumentException($"Pipe \"{string.Join(";", pipElems.ToArray())}\" length exceeds {maxpipe}!");
+            //}
+
+            // foreach (CipherEnum cipherE in inPipe)
+            // pipeString += cipherE.GetCipherChar();
 
         }
 
         /// <summary>
         /// Constructs a <see cref="CipherPipe"/> from key and hash
-        /// by getting <see cref="byte[]">byte[] keybytes</see> with <see cref="CryptHelper.GetUserKeyBytes(string, string, int)"/>
+        /// by getting <see cref="T:byte[]">byte[] keybytes</see> with <see cref="CryptHelper.GetUserKeyBytes(string, string, int)"/>
         /// </summary>
         /// <param name="key">secret key to generate pipe</param>
         /// <param name="hash">hash value of secret key</param>
-        public CipherPipe(string key = "heinrich.elsigan@area23.at", string hash = "6865696e726963682e656c736967616e406172656132332e6174")
-            : this(CryptHelper.GetKeyBytesSimple(key, hash, 16), Constants.MAX_PIPE_LEN)
+        /// <param name="encType"></param>
+        /// <param name="zpType"></param>
+        /// <param name="kh"></param>
+        public CipherPipe(string key, string hash, EncodingType encType = EncodingType.Base64, ZipType zpType = ZipType.None, KeyHash kh = KeyHash.Hex)
+            : this(CryptHelper.GetKeyBytesSimple(key, hash, 16), Constants.MAX_PIPE_LEN, encType, zpType, kh)
         {
             cipherKey = key;
             cipherHash = hash;
@@ -150,12 +228,43 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// CipherPipe ctor with only key
         /// </summary>
         /// <param name="key"></param>
-        public CipherPipe(string key = "heinrich.elsigan@area23.at") : this(key, EnDeCodeHelper.KeyToHex(key))
+        public CipherPipe(string key)
+            : this(key, EnDeCodeHelper.KeyToHex(key))
         {
             cipherKey = key;
         }
 
         #endregion ctor CipherPipe
+
+        #region json
+
+        /// <summary>
+        /// ToJson 
+        /// </summary>
+        /// <returns>serialized string</returns>
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        /// <summary>
+        /// FromJson
+        /// </summary>
+        /// <param name="json">serialized json</param>
+        /// <returns><see cref="CipherPipe"/></returns>
+        public CipherPipe FromJson(string json)
+        {
+            CipherPipe pipe = JsonConvert.DeserializeObject<CipherPipe>(json);
+            if (pipe == null)
+            {
+                this.inPipe = pipe.InPipe;
+                this.encodeType = pipe.EncodeType;
+                this.kHash = pipe.KHash;
+                this.zType = pipe.ZType;
+                this.cipherKey = pipe.cipherKey;
+                this.cipherHash = pipe.cipherHash;
+            }
+            return pipe;
+        }
+
+        #endregion json
 
         #region static members EncryptBytesFast DecryptBytesFast
 
@@ -165,15 +274,16 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="inBytes">Array of byte</param>
         /// <param name="cipherAlgo"><see cref="CipherEnum"/> both symmetric and asymetric cipher algorithms</param>
         /// <param name="secretKey">secret key to decrypt</param>
-        /// <param name="keyIv">key's iv</param>
+        /// <param name="hash">key's hash</param>
         /// <returns>encrypted byte Array</returns>
-        public static byte[] EncryptBytesFast(byte[] inBytes, CipherEnum cipherAlgo = CipherEnum.Aes,
-            string secretKey = "heinrich.elsigan@area23.at", string hashIv = "")
+        public static byte[] EncryptBytesFast(byte[] inBytes, CipherEnum cipherAlgo, 
+            string secretKey, string hash)
         {
             if (string.IsNullOrEmpty(secretKey))
                 throw new ArgumentNullException("seretkey");
+            if (string.IsNullOrEmpty(hash))
+                throw new ArgumentNullException("hash");
 
-            string hash = (string.IsNullOrEmpty(hashIv)) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIv;
             byte[] encryptBytes = inBytes;
 
             switch (cipherAlgo)
@@ -186,15 +296,20 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     Des3Net des3 = new Des3Net(secretKey, hash);
                     encryptBytes = des3.Encrypt(inBytes);
                     break;
-                case CipherEnum.RC564:
-                    RC564.RC564GenWithKey(secretKey, hash, true);
-                    encryptBytes = RC564.Encrypt(inBytes);
-                    break;
-                //case CipherEnum.Rsa:
-                //    var keyPair = Asymmetric.Rsa.RsaGenWithKey(Constants.RSA_PUB, Constants.RSA_PRV);
-                //    string privKey = keyPair.Private.ToString();
-                //    encryptBytes = Asymmetric.Rsa.Encrypt(inBytes);
+                //case CipherEnum.RC564:
+                //    RC564.RC564GenWithKey(secretKey, hash, true);
+                //    encryptBytes = RC564.Encrypt(inBytes);
                 //    break;
+                case CipherEnum.Rsa:
+                    AsymmetricCipherKeyPair keyPair = Asymmetric.Rsa.RsaGenWithKey(Constants.RSA_PUB, Constants.RSA_PRV);
+                    encryptBytes = Asymmetric.Rsa.Encrypt(inBytes, keyPair);
+                    break;
+                case CipherEnum.ZenMatrix:
+                    encryptBytes = (new ZenMatrix(secretKey, hash, false)).Encrypt(inBytes);
+                    break;
+                case CipherEnum.ZenMatrix2:
+                    encryptBytes = (new ZenMatrix2(secretKey, hash, false)).Encrypt(inBytes);
+                    break;
                 case CipherEnum.Aes:
                 case CipherEnum.AesLight:
                 case CipherEnum.Aria:
@@ -213,6 +328,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.Noekeon:
                 case CipherEnum.RC2:
                 case CipherEnum.RC532:
+                case CipherEnum.RC564:
                 case CipherEnum.RC6:
                 case CipherEnum.Rijndael:
                 case CipherEnum.Seed:
@@ -222,8 +338,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.Tea:
                 case CipherEnum.Tnepres:
                 case CipherEnum.XTea:
-                case CipherEnum.ZenMatrix:
-                case CipherEnum.ZenMatrix2:
+                // case CipherEnum.ZenMatrix:
+                // case CipherEnum.ZenMatrix2:
                 default:
                     CryptParams cpParams = new CryptParams(cipherAlgo, secretKey, hash);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
@@ -240,15 +356,17 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="cipherBytes">Encrypted array of byte</param>
         /// <param name="cipherAlgo"><see cref="CipherEnum"/>both symmetric and asymetric cipher algorithms</param>
         /// <param name="secretKey">secret key to decrypt</param>
-        /// <param name="keyIv">key's iv</param>
+        /// <param name="hash">key's hash</param>
         /// <returns>decrypted byte Array</returns>
-        public static byte[] DecryptBytesFast(byte[] cipherBytes, CipherEnum cipherAlgo = CipherEnum.Aes,
-            string secretKey = "heinrich.elsigan@area23.at", string hashIv = "", bool fishOnAesEngine = false)
+        public static byte[] DecryptBytesFast(byte[] cipherBytes, CipherEnum cipherAlgo, 
+            string secretKey, string hash)
         {
             if (string.IsNullOrEmpty(secretKey))
                 throw new ArgumentNullException("seretkey");
+            if (string.IsNullOrEmpty(hash))
+                throw new ArgumentNullException("hash");
             // bool sameKey = true;
-            string hash = (string.IsNullOrEmpty(hashIv)) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIv;
+
             byte[] decryptBytes = cipherBytes;
 
             switch (cipherAlgo)
@@ -261,15 +379,20 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     Des3Net des3 = new Des3Net(secretKey, hash);
                     decryptBytes = des3.Decrypt(cipherBytes);
                     break;
-                case CipherEnum.RC564:
-                    RC564.RC564GenWithKey(secretKey, hash, true);
-                    decryptBytes = RC564.Decrypt(cipherBytes);
-                    break;
-                //case CipherEnum.Rsa:
-                //    Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair keyPair = Asymmetric.Rsa.RsaGenWithKey(Constants.RSA_PUB, Constants.RSA_PRV);
-                //    string privKey = keyPair.Private.ToString();
-                //    decryptBytes = Asymmetric.Rsa.Decrypt(cipherBytes);
+                //case CipherEnum.RC564:
+                //    RC564.RC564GenWithKey(secretKey, hash, true);
+                //    decryptBytes = RC564.Decrypt(cipherBytes);
                 //    break;
+                case CipherEnum.Rsa:
+                    AsymmetricCipherKeyPair keyPair = Asymmetric.Rsa.RsaGenWithKey(Constants.RSA_PUB, Constants.RSA_PRV);
+                    decryptBytes = Asymmetric.Rsa.DecryptWithPrivate(cipherBytes, keyPair);
+                    break;
+                case CipherEnum.ZenMatrix:
+                    decryptBytes = (new ZenMatrix(secretKey, hash, false)).Decrypt(cipherBytes);
+                    break;
+                case CipherEnum.ZenMatrix2:
+                    decryptBytes = (new ZenMatrix2(secretKey, hash, false)).Decrypt(cipherBytes);
+                    break;
                 case CipherEnum.Aes:
                 case CipherEnum.AesLight:
                 case CipherEnum.Aria:
@@ -288,6 +411,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.Noekeon:
                 case CipherEnum.RC2:
                 case CipherEnum.RC532:
+                case CipherEnum.RC564:
                 case CipherEnum.RC6:
                 case CipherEnum.Rijndael:
                 case CipherEnum.Seed:
@@ -297,8 +421,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.Tea:
                 case CipherEnum.Tnepres:
                 case CipherEnum.XTea:
-                case CipherEnum.ZenMatrix:
-                case CipherEnum.ZenMatrix2:
+                // case CipherEnum.ZenMatrix:
+                // case CipherEnum.ZenMatrix2:
                 default:
                     CryptParams cpParams = new CryptParams(cipherAlgo, secretKey, hash);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
@@ -318,28 +442,26 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <summary>
         /// MerryGoRoundEncrpyt starts merry to go arround from left to right in clock hour cycle
         /// </summary>
-        /// <param name="inBytes">plain <see cref="byte[]"/ to encrypt></param>
+        /// <param name="inBytes">plain <see cref="T:byte[]"/> to encrypt</param>
         /// <param name="secretKey">user secret key to use for all symmetric cipher algorithms in the pipe</param>
         /// <param name="hashIv">hash key iv relational to secret key</param>
         /// <param name="zipBefore"><see cref="ZipType"/> and <see cref="ZipTypeExtensions.Zip(ZipType, byte[])"/></param>
         /// <returns>encrypted byte[]</returns>
-        public byte[] MerryGoRoundEncrpyt(byte[] inBytes,
-            string secretKey = "heinrich.elsigan@area23.at", string hashIv = "",
-            ZipType zipBefore = ZipType.None)
+        public virtual byte[] MerryGoRoundEncrpyt(byte[] inBytes, string secretKey, string hashIv, ZipType zipBefore = ZipType.None)
         {
             if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
                 throw new ArgumentNullException("seretkey");
 
-            string hash = (string.IsNullOrEmpty(hashIv)) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIv; // TODO
+            string hash = (!string.IsNullOrEmpty(hashIv)) ? hashIv : (kHash != null) ? kHash.Hash(secretKey) : EnDeCodeHelper.KeyToHex(secretKey);
             cipherKey = string.IsNullOrEmpty(secretKey) ? cipherKey : secretKey;
             cipherHash = hash;
 
             byte[] encryptedBytes = new byte[inBytes.Length];
             Array.Copy(inBytes, 0, encryptedBytes, 0, inBytes.Length);
-#if DEBUG
-            stageDictionary = new Dictionary<CipherEnum, byte[]>();
-            // stageDictionary.Add(CipherEnum.ZenMatrix, inBytes);
-#endif
+            //#if DEBUG
+            //            stageDictionary = new Dictionary<CipherEnum, byte[]>();
+            //            // stageDictionary.Add(CipherEnum.ZenMatrix, inBytes);
+            //#endif
             if (zipBefore != ZipType.None)
             {
                 encryptedBytes = zipBefore.Zip(inBytes);
@@ -350,9 +472,9 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             {
                 encryptedBytes = EncryptBytesFast(inBytes, cipher, cipherKey, cipherHash);
                 inBytes = encryptedBytes;
-#if DEBUG
-                stageDictionary.Add(cipher, encryptedBytes);
-#endif
+                //#if DEBUG
+                //                stageDictionary.Add(cipher, encryptedBytes);
+                //#endif
             }
 
             return encryptedBytes;
@@ -366,24 +488,21 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="secretKey">user secret key, normally email address</param>
         /// <param name="hashIv">hash relational to secret kay</param>
         /// <param name="unzipAfter"><see cref="ZipType"/> and <see cref="ZipTypeExtensions.Unzip(ZipType, byte[])"/></param>
-        /// <returns><see cref="byte[]"/> plain bytes</returns>
-        public byte[] DecrpytRoundGoMerry(byte[] cipherBytes,
-            string secretKey = "heinrich.elsigan@area23.at",
-            string hashIv = "",
-            ZipType unzipAfter = ZipType.None)
+        /// <returns><see cref="T:byte[]"/> plain bytes</returns>
+        public virtual byte[] DecrpytRoundGoMerry(byte[] cipherBytes, string secretKey, string hashIv, ZipType unzipAfter = ZipType.None)
         {
             if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
                 throw new ArgumentNullException("seretkey");
 
-            string hash = (string.IsNullOrEmpty(hashIv)) ? EnDeCodeHelper.KeyToHex(secretKey) : hashIv;
+            string hash = (!string.IsNullOrEmpty(hashIv)) ? hashIv : (kHash != null) ? kHash.Hash(secretKey) : EnDeCodeHelper.KeyToHex(secretKey);
             cipherKey = string.IsNullOrEmpty(secretKey) ? cipherKey : secretKey;
             cipherHash = hash;
 
             byte[] decryptedBytes = new byte[cipherBytes.Length];
-#if DEBUG
-            stageDictionary = new Dictionary<CipherEnum, byte[]>();
-            // stageDictionary.Add(CipherEnum.ZenMatrix, cipherBytes);
-#endif 
+            //#if DEBUG
+            //            stageDictionary = new Dictionary<CipherEnum, byte[]>();
+            //            // stageDictionary.Add(CipherEnum.ZenMatrix, cipherBytes);
+            //#endif 
             if (OutPipe == null || OutPipe.Length == 0)
                 Array.Copy(cipherBytes, 0, decryptedBytes, 0, cipherBytes.Length);
             else
@@ -391,9 +510,9 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 {
                     decryptedBytes = DecryptBytesFast(cipherBytes, cipher, cipherKey, cipherHash);
                     cipherBytes = decryptedBytes;
-#if DEBUG
-                    stageDictionary.Add(cipher, cipherBytes);
-#endif
+                    //#if DEBUG
+                    //                    stageDictionary.Add(cipher, cipherBytes);
+                    //#endif
                 }
 
             if (unzipAfter != ZipType.None)
@@ -412,7 +531,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="zipBefore"><see cref="ZipType"/></param>
         /// <param name="keyHash"><see cref="KeyHash"/></param>
         /// <returns>UTF9 emcoded encrypted string without binary data</returns>
-        public string EncrpytTextGoRounds(
+        public virtual string EncrpytTextGoRounds(
             string inString,
             string cryptKey,
             string hashIv,
@@ -437,11 +556,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// </summary>
         /// <param name="inBytes">binary data</param>
         /// <param name="cryptKey">prviate key for encryption</param>
+        /// <param name="encoding"><see cref="EncodingType">encoding type</see> for decodinng</param>
         /// <param name="hashIv">private key hash for encryption</param>
         /// <param name="zipBefore"><see cref="ZipType"/></param>
         /// <param name="keyHash"><see cref="KeyHash"/></param>
-        /// <returns><binary data/returns>
-        public byte[] EncrpytFileBytesGoRounds(
+        /// <returns>binary data</returns>
+        public virtual byte[] EncrpytFileBytesGoRounds(
             byte[] inBytes,
             string cryptKey,
             string hashIv,
@@ -451,6 +571,11 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         {
             // hashIv if empty hash secretKey with keyHash hashing variant
             hashIv = (string.IsNullOrEmpty(hashIv)) ? keyHash.Hash(cryptKey) : hashIv;
+            cipherKey = cryptKey;
+            cipherHash = hashIv;
+            KHash = keyHash;
+            ZType = zipBefore;
+            EncodeType = encoding;
 
             // perform multi crypt pipe stages
             byte[] encryptedBytes = MerryGoRoundEncrpyt(inBytes, cryptKey, hashIv, zipBefore);
@@ -468,7 +593,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="unzipAfter"><see cref="ZipType"/></param>
         /// <param name="keyHash"><see cref="KeyHash"/></param>
         /// <returns>decrypted UTF8 string, containing no binary data</returns>
-        public string DecryptTextRoundsGo(
+        public virtual string DecryptTextRoundsGo(
             string cryptedEncodedMsg,
             string cryptKey,
             string hashIv,
@@ -476,11 +601,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             ZipType unzipAfter = ZipType.None,
             KeyHash keyHash = KeyHash.Hex)
         {
-            // get bytes from encrypted encoded string dependent on the encoding type(uu, base64, base32,..)
             byte[] cipherBytes = decoding.GetEnCoder().Decode(cryptedEncodedMsg);
 
             // perform multi crypt pipe stages
-            byte[] decryptedBytes = DecryptFileBytesRoundsGo(cipherBytes, cryptKey, hashIv, unzipAfter, keyHash);
+            byte[] decryptedBytes = DecryptFileBytesRoundsGo(cipherBytes, cryptKey, hashIv, decoding, unzipAfter, keyHash);
 
             // Get string from decrypted bytes
             string decrypted = EnDeCodeHelper.GetString(decryptedBytes);
@@ -497,18 +621,25 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="cipherBytes"></param>
         /// <param name="cryptKey">prviate key for encryption</param>
         /// <param name="hashIv">private hash for encryption</param>
+        /// <param name="decoding"><see cref="EncodingType">decoding type</see> for decodinng</param>
         /// <param name="unzipAfter"><see cref="ZipType"/></param>
         /// <param name="keyHash"><see cref="KeyHash"/></param>
         /// <returns>plain data byte[]</returns>
-        public byte[] DecryptFileBytesRoundsGo(
+        public virtual byte[] DecryptFileBytesRoundsGo(
             byte[] cipherBytes,
             string cryptKey,
             string hashIv,
+            EncodingType decoding = EncodingType.Base64,
             ZipType unzipAfter = ZipType.None,
             KeyHash keyHash = KeyHash.Hex)
         {
-            // hashIv if empty hash secretKey with keyHash hashing variant
+            // hashIv if empty hash secretKey with keyHash hashing variant            
             hashIv = string.IsNullOrEmpty(hashIv) ? keyHash.Hash(cryptKey) : hashIv;
+            cipherKey = cryptKey;
+            cipherHash = hashIv;
+            KHash = keyHash;
+            ZType = unzipAfter;
+            EncodeType = decoding;
 
             // perform multi crypt pipe stages
             byte[] decryptedBytes = DecrpytRoundGoMerry(cipherBytes, cryptKey, hashIv, unzipAfter);
@@ -517,13 +648,121 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         }
 
 
-        public byte[] EncrpytGoRounds(byte[] inBytes, string secretKey = "", ZipType zipBefore = ZipType.None, KeyHash keyHash = KeyHash.Hex)
-            => MerryGoRoundEncrpyt(inBytes, secretKey, keyHash.Hash(secretKey), zipBefore);
+        public virtual byte[] EncrpytGoRounds(byte[] inBytes, string secretKey, ZipType zipBefore = ZipType.None, KeyHash keyHash = KeyHash.Hex)
+        {
+            if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
+                throw new ArgumentNullException("seretkey");
 
-        // TODO:
-        public byte[] DecrpytRoundsGo(byte[] cipherBytes, string secretKey = "", ZipType unzipAfter = ZipType.None, KeyHash keyHash = KeyHash.Hex)
-            => DecrpytRoundGoMerry(cipherBytes, secretKey, keyHash.Hash(secretKey), unzipAfter);
+            cipherKey = (!string.IsNullOrEmpty(secretKey)) ? secretKey : cipherKey;
+            cipherHash = keyHash.Hash(secretKey);
+            ZType = zipBefore;
+            KHash = keyHash;
+            return MerryGoRoundEncrpyt(inBytes, secretKey, cipherHash, zipBefore);
+        }
 
+
+        public virtual byte[] DecrpytRoundsGo(byte[] cipherBytes, string secretKey, ZipType unzipAfter = ZipType.None, KeyHash keyHash = KeyHash.Hex)
+        {
+            if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
+                throw new ArgumentNullException("seretkey");
+
+            cipherKey = (!string.IsNullOrEmpty(secretKey)) ? secretKey : cipherKey;
+            cipherHash = keyHash.Hash(secretKey);
+            ZType = unzipAfter;
+            KHash = keyHash;
+            return DecrpytRoundGoMerry(cipherBytes, secretKey, keyHash.Hash(secretKey), unzipAfter);
+        }
+
+
+        public virtual string EncrpytEncode(byte[] inBytes, string secretKey, EncodingType encType = EncodingType.Base64,
+            ZipType zipBefore = ZipType.None, KeyHash keyHash = KeyHash.Hex)
+        {
+            if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
+                throw new ArgumentNullException("seretkey");
+
+            cipherKey = (!string.IsNullOrEmpty(secretKey)) ? secretKey : cipherKey;
+            cipherHash = keyHash.Hash(secretKey);
+            encodeType = encType;
+            ZType = zipBefore;
+            KHash = keyHash;
+            byte[] outBytes = MerryGoRoundEncrpyt(inBytes, secretKey, cipherHash, zipBefore);
+            string cryptedEncoded = encType.EnCode(outBytes);
+            return cryptedEncoded;
+        }
+
+        public virtual byte[]  EncryptEncodeBytes(byte[] inBytes, string secretKey, string hashIV, EncodingType encType = EncodingType.Base64,
+           ZipType zipBefore = ZipType.None, KeyHash keyHash = KeyHash.Hex)
+        {
+            if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
+                throw new ArgumentNullException("seretkey");
+
+            cipherKey = (!string.IsNullOrEmpty(secretKey)) ? secretKey : cipherKey;
+            hashIV = (string.IsNullOrEmpty(hashIV)) ? keyHash.Hash(cipherKey) : hashIV;
+            cipherHash = hashIV;
+            encodeType = encType;
+            ZType = zipBefore;
+            KHash = keyHash;
+
+            byte[] outBytes = MerryGoRoundEncrpyt(inBytes, secretKey, cipherHash, zipBefore);
+            byte[] encryptedBytes = (new List<byte>()).ToArray();
+            if (encType != EncodingType.None)
+            {
+                string cryptedEncoded = encType.EnCode(outBytes);
+                encryptedBytes = System.Text.Encoding.UTF8.GetBytes(cryptedEncoded);
+            }
+            else
+                encryptedBytes = outBytes;
+
+
+            return encryptedBytes;
+        }
+
+
+
+        public virtual byte[] DecodeDecrpyt(string encoded, string secretKey, EncodingType encType = EncodingType.Base64,
+            ZipType unzipAfter = ZipType.None, KeyHash keyHash = KeyHash.Hex)
+        {
+            if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
+                throw new ArgumentNullException("seretkey");
+
+            cipherKey = (!string.IsNullOrEmpty(secretKey)) ? secretKey : cipherKey;
+            cipherHash = keyHash.Hash(secretKey);
+            encodeType = encType;
+            ZType = unzipAfter;
+            KHash = keyHash;
+            byte[] cipherBytes = encodeType.DeCode(encoded);
+            byte[] outBytes = DecrpytRoundGoMerry(cipherBytes, secretKey, keyHash.Hash(secretKey), unzipAfter);
+
+            return outBytes;
+        }
+
+
+        public virtual byte[] DecodeDecrpytBytes(byte[] encodedBytes, string secretKey, string hashIV, EncodingType encType = EncodingType.Base64,
+           ZipType unzipAfter = ZipType.None, KeyHash keyHash = KeyHash.Hex)
+        {
+            if (string.IsNullOrEmpty(secretKey) && string.IsNullOrEmpty(cipherKey))
+                throw new ArgumentNullException("seretkey");
+
+            cipherKey = (!string.IsNullOrEmpty(secretKey)) ? secretKey : cipherKey;
+            hashIV = (string.IsNullOrEmpty(hashIV)) ? keyHash.Hash(cipherKey) : hashIV;
+            cipherHash = hashIV;
+            encodeType = encType;
+            ZType = unzipAfter;
+            KHash = keyHash;
+
+            byte[] cipherBytes = (new List<byte>()).ToArray();
+            if (encType != EncodingType.None)
+            {
+                string encoded = System.Text.Encoding.UTF8.GetString(encodedBytes);
+                cipherBytes = encodeType.DeCode(encoded);
+            }
+            else
+                cipherBytes = encodedBytes;
+
+            byte[] outBytes = DecrpytRoundGoMerry(cipherBytes, secretKey, hashIV, unzipAfter);
+
+            return outBytes;
+        }
 
 
         #region static en-de-crypt members
@@ -534,7 +773,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// <param name="inString">string to encrypt multiple times</param>
         /// <param name="cryptKey">Unique deterministic key for either generating the mix of symmetric cipher algorithms in the crypt pipeline 
         /// and unique crypt key for each symmetric cipher algorithm in each stage of the pipe</param>
-        /// <param name="encType"><see cref="EncodingType"/ type for encoding encrypted bytes back in plain text></param>
+        /// <param name="encoding"><see cref="EncodingType"/> type for encoding encrypted bytes back in plain text</param>
         /// <param name="zipBefore">Zip bytes with <see cref="ZipType"/> before passing them in encrypted stage pipeline. <see cref="ZipTypeExtensions.Zip(ZipType, byte[])"/></param>
         /// <param name="keyHash"><see cref="KeyHash"/> hashing key algorithm</param>
         /// <returns>encrypted string</returns>        

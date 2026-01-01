@@ -1,5 +1,5 @@
-﻿using Area23.At.Framework.Core.Net.NameService;
-using Area23.At.Framework.Core.Static;
+﻿using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -7,8 +7,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 {
     /// <summary>
     /// Des3Net native .Net triple des without bouncy castle
-    /// <see cref="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.tripledes.-ctor?view=net-8.0" />
-    /// <seealso cref="https://www.c-sharpcorner.com/article/tripledes-encryption-and-decryption-in-c-sharp/ "/>
+    /// <see href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.tripledes.-ctor?view=net-8.0" />
+    /// <seealso href="https://www.c-sharpcorner.com/article/tripledes-encryption-and-decryption-in-c-sharp/" />
     /// </summary>
     public class Des3Net
     {
@@ -16,7 +16,9 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         #region properties
 
         public static byte[] DesKey { get; private set; }
-        public static int DesKeyLen { get; private set; }
+        
+        public static int DesKeyLen = 16;
+
         public static byte[] DesIv { get; private set; }
 
         public static TripleDESCryptoServiceProvider Des3;
@@ -56,7 +58,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             //        }
             //    }
             //}
-
+            
             List<byte> span = new List<byte>(keyBytes);
             while (span.Count < DesKeyLen)
                 span.AddRange(keyBytes);
@@ -97,26 +99,22 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         #endregion ctor helpers
 
         #region ctor
+    
 
         /// <summary>
-        /// static constructor
+        /// 
         /// </summary>
-        static Des3Net()
-        {
-            DesKeyLen = 16;
-        }
-
         public Des3Net() : this(Convert.FromBase64String(Constants.DES3_KEY), Convert.FromBase64String(Constants.DES3_IV)) { }
 
-        public Des3Net(string desKey, string desIv)
+        public Des3Net(string desKey, string hash)
         {
             if (string.IsNullOrEmpty(desKey))
                 desKey = Constants.DES3_KEY;
-            if (string.IsNullOrEmpty(desIv))
-                desIv = Constants.DES3_IV;
+            if (string.IsNullOrEmpty(hash))
+                hash = Constants.DES3_IV;
 
             byte[] key3Des = Encoding.UTF8.GetBytes(desKey);
-            byte[] iv3Des = Encoding.UTF8.GetBytes(desIv);
+            byte[] iv3Des = Encoding.UTF8.GetBytes(hash);
             Gen3DesKey(ref key3Des);
             Gen3DesIv(DesKey, ref iv3Des);
 
@@ -127,7 +125,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             Des3.Key = DesKey;
             Des3.IV = DesIv;
             Des3.Mode = CipherMode.ECB;
-            Des3.Padding = PaddingMode.Zeros;
+            Des3.Padding = PaddingMode.PKCS7;
         }
 
         public Des3Net(byte[] desKey, byte[] desIv)
@@ -176,7 +174,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// 3Des decrypt bytes
         /// </summary>
-        /// <param name="inBytes">Hex bytes encrypted</param>
+        /// <param name="cipherBytes">Hex bytes encrypted</param>
         /// <returns>byte[] decrypted bytes</returns>
         public byte[] Decrypt(byte[] cipherBytes)
         {

@@ -73,7 +73,7 @@ namespace Area23.At.Framework.Core.Net.IpSocket
                 int read = tcpClient.Client.Receive(outbuf, SocketFlags.None);
                 string resp1 = EnDeCodeHelper.GetString(outbuf);
                 if (!resp1.Equals(data.Length.ToString() +  " " + Constants.ACK))
-                    ; // rtodo i+nvli+d prorocoll
+                    ; // todo i+nvli+d prorocoll
 
                 // repeat until send all data
                 while (fsize < data.Length)

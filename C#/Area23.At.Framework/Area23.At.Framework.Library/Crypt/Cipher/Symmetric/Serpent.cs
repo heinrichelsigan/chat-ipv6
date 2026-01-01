@@ -14,6 +14,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
     /// <summary>
     /// Serpent static class implementing Serpent symetric chiffer algorithm
     /// </summary>
+    [Obsolete("Please use Serpent from CryptBounceCastle https://www.bouncycastle.org/", false)]
     public static class Serpent
     {
 

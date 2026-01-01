@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 
 namespace Area23.At.Framework.Core.Crypt.Cipher
 {
@@ -8,7 +9,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
     /// static class CryptHelper provides static helper methods for encryption / decryption
     /// </summary>
     public static class CryptHelper
-    {        
+    {
 
         #region GetUserKeyBytes
 
@@ -26,15 +27,15 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// PrivateKeyWithUserHash, helper to double private secret key with hash
         /// </summary>
         /// <param name="secKey">users private secret key</param>
-        /// <param name="keyHash">users private secret key hash</param>
+        /// <param name="hashedKey">users private secret key hash</param>
         /// <returns>doubled concatendated string of (secretKey + hash)</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        internal static string PrivateKeyWithUserHash(string secKey, string kayHash)
+        internal static string PrivateKeyWithUserHash(string secKey, string hashedKey)
         {
             if (string.IsNullOrEmpty(secKey))
                 throw new ArgumentNullException("secKey");
 
-            string usrHash = string.IsNullOrEmpty(kayHash) ? EnDeCodeHelper.KeyToHex(secKey) : kayHash;
+            string usrHash = string.IsNullOrEmpty(hashedKey) ? EnDeCodeHelper.KeyToHex(secKey) : hashedKey;
 
             return string.Concat(secKey, usrHash);
         }
@@ -127,6 +128,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             return GetUserKeyBytes(key, keyHash, keyLen);
         }
 
+
         /// <summary>
         /// GetUserKeyBytes gets symmetric chiffre private byte[KeyLen] encryption / decryption key
         /// </summary>
@@ -147,6 +149,59 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             int keyByteCnt = -1;
             keyLen = (keyLen > Constants.MAX_KEY_LEN) ? Constants.MAX_KEY_LEN : keyLen;
             string keyByteHashString = key;
+            byte[] tmpKey = new byte[keyLen];
+
+            byte[] keyHashBytes = KeyHashBytes(keyBytes, hashBytes);
+            keyByteCnt = keyHashBytes.Length;
+            byte[] keyHashTarBytes = new byte[keyByteCnt * 2 + 1];
+
+            if (keyByteCnt < keyLen)
+            {
+                keyHashTarBytes = keyHashBytes.TarBytes(KeyHashBytes(hashBytes, keyBytes));
+                keyByteCnt = keyHashTarBytes.Length;
+                keyHashBytes = new byte[keyByteCnt];
+                Array.Copy(keyHashTarBytes, 0, keyHashBytes, 0, keyByteCnt);
+            }
+            if (keyByteCnt < keyLen)
+            {
+                keyHashTarBytes = keyHashBytes.TarBytes(
+                    KeyHashBytes(hashBytes, keyBytes),
+                    KeyHashBytes(keyBytes, hashBytes)
+                );
+                keyByteCnt = keyHashTarBytes.Length;
+                keyHashBytes = new byte[keyByteCnt];
+                Array.Copy(keyHashTarBytes, 0, keyHashBytes, 0, keyByteCnt);
+            }
+
+            while (keyByteCnt < keyLen)
+            {
+                keyHashTarBytes = keyHashBytes.TarBytes(keyHashBytes);
+                keyByteCnt = keyHashTarBytes.Length;
+                keyHashBytes = new byte[keyByteCnt];
+                Array.Copy(keyHashTarBytes, 0, keyHashBytes, 0, keyByteCnt);
+            }
+
+            if (keyLen <= keyByteCnt)
+            {
+                // Array.Copy(keyHashBytes, 0, tmpKey, 0, keyLen);
+                for (int bytIdx = 0; bytIdx < keyLen; bytIdx++)
+                    tmpKey[bytIdx] = keyHashBytes[bytIdx];
+            }
+
+            return tmpKey;
+
+        }
+
+
+        public static byte[] GetKeyBytesFromBytes(byte[] keyBytes, int keyLen = 32)
+        {
+            if (keyBytes == null || keyBytes.Length == 0)
+                throw new ArgumentNullException("keyBytes");
+
+            byte[] hashBytes = EnDeCodeHelper.GetBytes(Hex16.ToHex16(keyBytes));
+
+            int keyByteCnt = -1;
+            keyLen = (keyLen > Constants.MAX_KEY_LEN) ? Constants.MAX_KEY_LEN : keyLen;
             byte[] tmpKey = new byte[keyLen];
 
             byte[] keyHashBytes = KeyHashBytes(keyBytes, hashBytes);

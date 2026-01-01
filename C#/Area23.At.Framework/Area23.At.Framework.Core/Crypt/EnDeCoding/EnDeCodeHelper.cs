@@ -6,7 +6,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 {
 
     /// <summary>
-    // static helper class for Encoding / Decoding
+    /// static helper class for Encoding / Decoding
     /// </summary>
     public static class EnDeCodeHelper
     {
@@ -30,8 +30,8 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// <summary>
         /// KeyBytesToHex transforms keyBytes to a hex string
         /// </summary>
-        /// <param name="keyBytes"><see cref="byte[]"/> keyBytes to transform</param>
-        /// <returns><see cref="string">hexString</see>< of keyBytes/returns>
+        /// <param name="keyBytes"><see cref="T:byte[]"/> keyBytes to transform</param>
+        /// <returns><see cref="string">hexString</see> of keyBytes</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static string KeyBytesToHex(byte[] keyBytes)
         {
@@ -45,21 +45,21 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// <summary>
         /// KeyToHexBytes
         /// </summary>
-        /// <param name="key">secret key</param>
+        /// <param name="keyBytes">secret keyBytes</param>
         /// <param name="length">byte array length, default: 16, -1 for unlimited length</param>
-        /// <returns><see cref="byte[]">byte[length]</see></returns>
+        /// <returns><see cref="T:byte[]">byte[length]</see></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static byte[] KeyToHexBytesSalt(string key, int length = 16)
+        public static byte[] KeyBytesToHexBytesSalt(byte[] keyBytes, int length = 16)
         {
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentNullException("key");
+            if (keyBytes == null || keyBytes.Length == 0)
+                throw new ArgumentNullException("keyBytes");
 
-            string hexString = Hex16.ToHex16(EnDeCodeHelper.GetBytes(key));
+            string hexString = Hex16.ToHex16(keyBytes);
             byte[] hexBytes = EnDeCodeHelper.GetBytes(hexString);
 
             while (hexBytes.Length < length)
             {
-                hexBytes = hexBytes.TarBytes(EnDeCodeHelper.GetBytes(key), GetBytes(hexString));
+                hexBytes = hexBytes.TarBytes(keyBytes, GetBytes(hexString));
             }
 
             int len = (length > 0 && hexBytes.Length >= length) ? length : hexBytes.Length;
@@ -69,6 +69,14 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             Array.Copy(hexBytes, 0, outBytes, 0, len);
 
             return outBytes;
+        }
+
+        public static byte[] KeyToHexBytesSalt(string key, int length = 16)
+        {
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentNullException("key");
+
+            return KeyBytesToHexBytesSalt(EnDeCodeHelper.GetBytes(key), length);
         }
 
         /// <summary>
@@ -96,16 +104,15 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         /// <param name="inBytes">inBytes to encdode</param>
         /// <param name="encodingType">EncodingTypes are "None", "Hex16", "Base16", "Base32", "Hex32", "Uu", "Base64".
         /// "Base64" is default.</param>
-        /// <param name="fromPlain">Only for uu: true, if <see cref="encryptBytes"/> represent a binary without encryption</param>
+        /// <param name="fromPlain">Only for uu: true, if <see cref="T:byte[]"/> represent a binary without encryption</param>
         /// <param name="fromFile">Only for uu: true, if file and not textbox will be encrypted, default (false)</param>
         /// <returns>encoded string</returns>
         public static string EncodeBytes(byte[] inBytes, EncodingType encodingType = EncodingType.Base64, bool fromPlain = false, bool fromFile = false)
         {
             Area23Log.LogOriginMsg("EnDeCodeHelper", 
-                "EncodeEncryptedBytes(byte[] inBytes.[Length=" + inBytes.Length + "], EncodingType encodingType =  "
-                + encodingType.ToString() + ", bool fromPlain = " + fromPlain + ", bool fromFile = " + fromFile + ")");
+                "EncodeEncryptedBytes(byte[] inBytes.[Length=" + inBytes.Length + "], EncodingType encodingType =  " + encodingType.ToString() + ")");
 
-            string encryptedText = EnDeCodeHelper.Encode(inBytes, encodingType, fromPlain, fromFile);
+            string encryptedText = EnDeCodeHelper.Encode(inBytes, encodingType);
 
             return encryptedText;
         }
@@ -133,14 +140,14 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 
 
         /// <summary>
-        /// EncodedTextToBytes transforms an encoded text string into a <see cref="byte[]">býte array</see>
+        /// EncodedTextToBytes transforms an encoded text string into a <see cref="T:byte[]">býte array</see>
         /// </summary>
         /// <param name="cipherText">encoded (encrypted) text string</param>
         /// <param name="encodingType"><see cref="EncodingType"/> could be 
         /// "None", "Hex16", "Base16", "Base32", "Hex32", "Uu", "Base64". "Base64" is default.</param>
-        /// <param name="fromPlain">Only for uu: true, if <see cref="encryptBytes"/> represent a binary without encryption</param>
+        /// <param name="fromPlain">Only for uu: true, if <see cref="T:byte[]"/> represent a binary without encryption</param>
         /// <param name="fromFile">Only for uu: true, if file and not textbox will be encrypted, default (false)</param>
-        /// <returns>binary byte array</returns>
+        /// <returns><see cref="T:byte[]">binary byte array</see></returns>
         public static byte[] DecodeText(string cipherText, /* out string errMsg, */ EncodingType encodingType = EncodingType.Base64, bool fromPlain = false, bool fromFile = false)
         {
             Area23Log.LogOriginMsg("EnDeCodeHelper", 
@@ -160,7 +167,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         }
 
         /// <summary>
-        /// DecodeText decodes an encoded text string to a <see cref="byte[]">býte array</see>
+        /// DecodeText decodes an encoded text string to a <see cref="T:byte[]">býte array</see>
         /// </summary>
         /// <param name="inText">encoded (encrypted) text string</param>
         /// <param name="enCodingString">ebcoding enum <see cref="EncodingType"/> as plain string
@@ -189,9 +196,9 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         }
 
         /// <summary>
-        /// DecodeText decodes an encoded text string to a <see cref="byte[]">býte array</see>
+        /// DecodeText decodes an encoded text string to a <see cref="T:byte[]">býte array</see>
         /// </summary>
-        /// <param name="inText">encoded (encrypted) text string</param>
+        /// <param name="inBytes">encoded (encrypted) text string</param>
         /// <param name="enCodingString">ebcoding enum <see cref="EncodingType"/> as plain string
         /// "Base64" is default.</param>
         /// <returns>binary byte array</returns>>
@@ -350,11 +357,9 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
         }
 
 
-        public static string Encode(byte[] inBytes, EncodingType encodingType = EncodingType.Base64, bool fromPlain = false, bool fromFile = false)
+        public static string Encode(byte[] inBytes, EncodingType encodingType = EncodingType.Base64)
         {
-            IDecodable enc = encodingType.GetEnCoder();
-            if (encodingType == EncodingType.Uu)
-                return Uu.Encode(inBytes, fromPlain, fromFile);
+            IDecodable enc = encodingType.GetEnCoder();            
             return enc.Encode(inBytes);
 
         }
@@ -408,6 +413,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
             return Encoding.ASCII.GetString(data, 0, data.Length);
         }
 
+        [Obsolete("Encoding.UTF7 namespace is obsolete", true)]
         public static string GetString7(byte[] data)
         {
             return Encoding.UTF7.GetString(data, 0, data.Length);
@@ -435,6 +441,7 @@ namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 
         public static byte[] GetBytesASCII(string str2encode) => Encoding.ASCII.GetBytes(str2encode);
 
+        [Obsolete("namespace Systen.Text.Encoding.UTF7 is obsolete", true)]
         public static byte[] GetBytes7(string str2encode) => Encoding.UTF7.GetBytes(str2encode);
 
         public static byte[] GetBytes8(string str2encode)

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-	<TargetFramework>net9.0-windows7.0</TargetFramework>
+	<TargetFramework>net10.0-windows7.0</TargetFramework>
 	<UseWindowsForms>True</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -48,7 +48,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>8</WarningLevel>
     <IsAotCompatible>True</IsAotCompatible>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
     <DefineConstants>$(DefineConstants);HTTPBINDING</DefineConstants>

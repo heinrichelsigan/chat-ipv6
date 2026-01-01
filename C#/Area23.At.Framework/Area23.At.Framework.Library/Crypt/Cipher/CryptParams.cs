@@ -48,7 +48,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
         /// standard ctor with <see cref="CipherEnum.Aes"/> default
         /// </summary>
         public CryptParams()
-        {            
+        {
             Cipher = CipherEnum.Aes;
             Size = 256;
             KeyLen = 32;
@@ -73,7 +73,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
             {
                 case CipherEnum.Aes:
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.AesEngine();
-                    break;                
+                    break;
                 case CipherEnum.AesLight:
                     Size = 128;
                     KeyLen = 32;
@@ -102,12 +102,13 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                 case CipherEnum.Fish3:
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.ThreefishEngine(Size);
                     break;
-                case CipherEnum.ThreeFish256:;
+                case CipherEnum.ThreeFish256:
+                    ;
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.ThreefishEngine(Size);
                     break;
                 case CipherEnum.Camellia:
                     Size = 128;
-                    KeyLen = 16;;
+                    KeyLen = 16; ;
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.CamelliaLightEngine();
                     break;
                 case CipherEnum.CamelliaLight:
@@ -120,7 +121,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                     KeyLen = 16;
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.Cast5Engine();
                     break;
-                case CipherEnum.Cast6:                    
+                case CipherEnum.Cast6:
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.Cast6Engine();
                     break;
                 case CipherEnum.Des:
@@ -170,7 +171,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                 case CipherEnum.RC6:
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.RC6Engine();
                     break;
-                case CipherEnum.Rijndael:                    
+                case CipherEnum.Rijndael:
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.RijndaelEngine();
                     break;
                 case CipherEnum.Seed:
@@ -207,12 +208,12 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
                 case CipherEnum.ZenMatrix:
                     Size = 16;
                     KeyLen = 16;
-                    BlockCipher = new ZenMatrix();
+                    BlockCipher = new ZenMatrix(Size);
                     break;
                 case CipherEnum.ZenMatrix2:
                     Size = 32;
                     KeyLen = 32;
-                    BlockCipher = new ZenMatrix2();
+                    BlockCipher = new ZenMatrix2(Size);
                     break;
                 default:
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.AesEngine();
@@ -243,7 +244,7 @@ namespace Area23.At.Framework.Library.Crypt.Cipher
         {
             Key = key;
             Hash = (string.IsNullOrEmpty(hash)) ? KeyHashing.Hash(key) : hash;
-        }        
+        }
 
         /// <summary>
         /// Constructs instance via another object instance

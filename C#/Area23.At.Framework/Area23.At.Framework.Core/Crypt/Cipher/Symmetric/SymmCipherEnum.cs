@@ -5,7 +5,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
     /// <summary>
     /// SymmCipherEnum maps prefered provided symmetric <see cref="Org.BouncyCastle.Crypto.IBlockCipher"/> algorthims
-    /// Default algorithm is <see cref="SymmCipherEnum.Aes"/ ><seealso cref="Org.BouncyCastle.Crypto.Engines.AesEngine" />
+    /// Default algorithm is <see cref="SymmCipherEnum.Aes"/> <seealso cref="Org.BouncyCastle.Crypto.Engines.AesEngine" />
     /// </summary>
     [DefaultValue("Aes")]
     public enum SymmCipherEnum : byte
@@ -28,7 +28,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         Tea = 0xd,
         XTea = 0xe,
 
-        ZenMatrix = 0xf
+        SM4 = 0xf
 
     }
 
@@ -51,10 +51,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         }
 
         /// <summary>
-        /// GetCharSymmCipherDict gets <see cref="Dictionary{char, SymmCipherEnum}"/>,
+        /// GetCharSymmCipherDict gets <see cref="T:Dictionary{T:char, T:SymmCipherEnum}"/>,
         /// where hexbyte as char is mapped to <see cref="SymmCipherEnum" />
         /// </summary>
-        /// <returns><see cref="Dictionary{char, SymmCipherEnum}"/></returns>        
+        /// <returns><see cref="T:Dictionary{T:char, T:SymmCipherEnum}"/></returns>        
         public static Dictionary<char, SymmCipherEnum> GetCharSymmCipherDict()
         {
             Dictionary<char, SymmCipherEnum> charSymmCipherDict = new Dictionary<char, SymmCipherEnum>();
@@ -67,10 +67,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         }
 
         /// <summary>
-        /// GetByteSymmCipherDict gets <see cref="Dictionary{byte, SymmCipherEnum}"/>,
+        /// GetByteSymmCipherDict gets <see cref="T:Dictionary{T:byte, T:SymmCipherEnum}"/>,
         /// where hex byte value is mapped to  <see cref="SymmCipherEnum" />
         /// </summary>
-        /// <returns><see cref="Dictionary{byte, SymmCipherEnum}"/></returns>
+        /// <returns><see cref="T:Dictionary{ T:byte, T:SymmCipherEnum}"/></returns>
         public static Dictionary<byte, SymmCipherEnum> GetByteSymmCipherDict()
         {
             Dictionary<byte, SymmCipherEnum> byteSymmCipherDict = new Dictionary<byte, SymmCipherEnum>();
@@ -105,13 +105,15 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
                 case SymmCipherEnum.Idea: return 'I';
                 case SymmCipherEnum.RC532: return '5';
+                // case SymmCipherEnum.Rijndael: return 'a';
                 case SymmCipherEnum.Seed: return 's';
                 case SymmCipherEnum.Serpent: return 'S';
+                case SymmCipherEnum.SM4: return '4';
                 case SymmCipherEnum.SkipJack: return 'J';
                 case SymmCipherEnum.Tea: return 't';
                 case SymmCipherEnum.XTea: return 'X';
 
-                case SymmCipherEnum.ZenMatrix: return 'z';
+                // case SymmCipherEnum.ZenMatrix: return 'z';
             }
 
             return ((char)('A'));
@@ -145,7 +147,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
                 case SymmCipherEnum.Tea: return CipherEnum.Tea;
                 case SymmCipherEnum.XTea: return CipherEnum.XTea;
-                case SymmCipherEnum.ZenMatrix: return CipherEnum.ZenMatrix;
+                case SymmCipherEnum.SM4: return CipherEnum.SM4;
 
                 case SymmCipherEnum.Aes:
                 default: return CipherEnum.Aes;
@@ -156,4 +158,3 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
     }
 
 }
-

@@ -3,13 +3,13 @@
   "OnlyPeer2PeerChat": false,
   "ZipBeforeSend": false,
   "OnlySecureFileTypes": false,
-  "RegisterUser": true,
+  "RegisterUser": false,
   "SecretKeysCrypted": [
-    "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"
+    "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"
   ],
   "ChatRoom": {
     "ChatRuid": "ebb104c7-180d-461c-9a9b-545f6c063081",
@@ -31,14 +31,12 @@
       "638929415807712630": "Heinrich G. Elsigan <he@area23.at>",
       "638929416506474110": "Heinrich G. Elsigan <he@area23.at>"
     },
-    "MsgType": 0,
-    "EnCodingType": 64,
     "Message": "",
     "Hash": "",
     "Md5Hash": ""
   },
   "TimeStamp": "2025-08-19T23:20:02.0561038+02:00",
-  "SaveStamp": "2025-09-09T04:58:22.6033882+02:00",
+  "SaveStamp": "2025-11-20T14:52:57.9323411+01:00",
   "MyContact": {
     "ContactId": 0,
     "Cuid": "00000000-0000-0000-0000-000000000000",
@@ -47,8 +45,6 @@
     "Mobile": "+43 650 7527928",
     "Address": "Theresianumgasse 6/28, 1040 Wien",
     "ContactImage": null,
-    "MsgType": 1,
-    "EnCodingType": 64,
     "Message": "",
     "Hash": "6DbCXF5g",
     "Md5Hash": "052abb13223599c12afa82339e0990a0"
@@ -62,8 +58,6 @@
       "Mobile": "+43 1 6043257",
       "Address": "",
       "ContactImage": null,
-      "MsgType": 1,
-      "EnCodingType": 64,
       "Message": "",
       "Hash": "",
       "Md5Hash": ""
@@ -76,8 +70,6 @@
       "Mobile": "0699 19697911",
       "Address": "",
       "ContactImage": null,
-      "MsgType": 1,
-      "EnCodingType": 64,
       "Message": "",
       "Hash": "",
       "Md5Hash": ""
@@ -90,8 +82,6 @@
       "Mobile": "+43 732 7704810",
       "Address": "",
       "ContactImage": null,
-      "MsgType": 1,
-      "EnCodingType": 64,
       "Message": "",
       "Hash": "",
       "Md5Hash": ""
@@ -104,8 +94,6 @@
       "Mobile": "",
       "Address": "",
       "ContactImage": null,
-      "MsgType": 1,
-      "EnCodingType": 64,
       "Message": "",
       "Hash": "6bIgFfDC",
       "Md5Hash": ""
@@ -118,8 +106,7 @@
     "169.254.59.64",
     "169.254.195.213",
     "::1",
-    "127.0.0.1",
-    "192.168.160.1"
+    "127.0.0.1"
   ],
   "Proxies": [
     "18.101.101.108",

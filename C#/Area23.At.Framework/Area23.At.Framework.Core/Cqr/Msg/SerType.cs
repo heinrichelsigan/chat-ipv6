@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Zfx;
 using System.ComponentModel;
 using System.Text;
 
@@ -25,17 +26,46 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
     public static class SerializationTypeExtension
     {
-        private static readonly SerType[] serializationTypes = { SerType.None, SerType.Json, SerType.Xml, SerType.Mime, SerType.Raw };
 
-        public static SerType GetSerializationTypeFromValue(short serValue)
+        public static SerType[] GetSerTypes()
         {
-            foreach (SerType sertyp in serializationTypes)
+            List<SerType> list = new List<SerType>();
+            foreach (string encName in Enum.GetNames(typeof(SerType)))
             {
-                if ((short)sertyp == serValue)
-                    return sertyp;
+                list.Add((SerType)Enum.Parse(typeof(SerType), encName));
+            }
+
+            return list.ToArray();
+        }
+
+        public static SerType GetSerType(string typeString)
+        {
+            if (!string.IsNullOrEmpty(typeString))
+            {
+                switch (typeString.ToLower().Replace("menu", ""))
+                {
+                    case "none": return SerType.None;
+                    case "json": return SerType.Json;
+                    case "xml": return SerType.Xml;
+                    case "mime": return SerType.Mime;
+                    case "raw": return SerType.Raw;
+                    default: break;
+                }
             }
             return SerType.Json;
         }
+
+        public static SerType GetSerializationTypeFromValue(short serValue)
+        {
+            serValue = (short)((serValue % 0x10000) - (serValue % 0x1000));
+            foreach (SerType serType in GetSerTypes())
+            {
+                if ((short)serType == serValue)
+                    return serType;
+            }
+            return SerType.None;
+        }
+
 
         public static string Cerialize<T>(this SerType serTyoe, T t)
         {

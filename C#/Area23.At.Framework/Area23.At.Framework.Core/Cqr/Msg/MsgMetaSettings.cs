@@ -2,9 +2,7 @@
 using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Zfx;
-using System.Security.Cryptography;
 using System.Text.Json.Serialization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
@@ -40,7 +38,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             }
             set
             {
-                byte[] b = value;
+                byte[] b = value ?? new byte[] { 0x0, 0x0 };
                 short number = (short)b[1];
                 number <<= 4;
                 number += (short)b[0];

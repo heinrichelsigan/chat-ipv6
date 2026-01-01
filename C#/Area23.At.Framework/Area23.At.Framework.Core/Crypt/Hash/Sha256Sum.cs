@@ -1,13 +1,7 @@
 ﻿using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Core.Crypt.Hash
 {
@@ -22,7 +16,7 @@ namespace Area23.At.Framework.Core.Crypt.Hash
         /// Hashes a file
         /// </summary>
         /// <param name="filePath">full(unc) path to file</param>
-        /// <param name="fileName">optional filename to add after hash</param>
+        /// <param name="showFileName">true for filename to add after hash, otherwise false</param>
         /// <returns>Sha512 hash of file with optional fileName at end</returns>
         /// <exception cref="ArgumentNullException">thrown, when filePath == null | filePath == "" | !File.Exists(filePath)</exception>        
         public static string Hash(string filePath, bool showFileName = true)

@@ -520,7 +520,7 @@ namespace EU.CqrXs.Srv.Settings
                         strFileName = strFileName.EndsWith("." + extEncType.GetEncodingFileExtension()) ? strFileName.Replace("." + extEncType.GetEncodingFileExtension(), "") : strFileName;
                     }
 
-                    outBytes = cipherPipe.DecryptFileBytesRoundsGo(inBytes, key, hash, zipType, keyHash);
+                    outBytes = cipherPipe.DecryptFileBytesRoundsGo(inBytes, key, hash, extEncType, zipType, keyHash);
                     strFileName = strFileName.Contains(zipType.ZipFileExtension(cipherPipe.PipeString)) ?
                         strFileName.Replace(zipType.ZipFileExtension(cipherPipe.PipeString), "") :
                         strFileName;

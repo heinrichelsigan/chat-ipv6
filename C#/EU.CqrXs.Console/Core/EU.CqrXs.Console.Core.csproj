@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishAot>False</PublishAot>
@@ -11,7 +11,7 @@
 	<StripSymbols>False</StripSymbols>
     <StartupObject>EU.CqrXs.Console.Core.Program</StartupObject>
     <ApplicationIcon>SatIcon.ico</ApplicationIcon>
-    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <PublishTrimmed>True</PublishTrimmed>
     <Title>EU.CqrXs.Core.Console</Title>
     <Description>EU.CqrXs.Core.Console</Description>

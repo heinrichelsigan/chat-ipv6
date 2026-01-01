@@ -194,9 +194,9 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                 case SymmCipherEnum.Seed:
                 case SymmCipherEnum.Serpent:
                 case SymmCipherEnum.SkipJack:
+                case SymmCipherEnum.SM4:
                 case SymmCipherEnum.Tea:
                 case SymmCipherEnum.XTea:
-                case SymmCipherEnum.ZenMatrix:
                 default:
                     CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hashIv);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);
@@ -244,9 +244,9 @@ namespace Area23.At.Framework.Library.Crypt.Cipher.Symmetric
                 case SymmCipherEnum.Seed:
                 case SymmCipherEnum.Serpent:
                 case SymmCipherEnum.SkipJack:
+                case SymmCipherEnum.SM4:
                 case SymmCipherEnum.Tea:
                 case SymmCipherEnum.XTea:
-                case SymmCipherEnum.ZenMatrix:
                 default:
                     CryptParamsPrefered cpParams = new CryptParamsPrefered(cipherAlgo, secretKey, hashIv, fishOnAesEngine);
                     Symmetric.CryptBounceCastle cryptBounceCastle = new Symmetric.CryptBounceCastle(cpParams, true);

@@ -14,6 +14,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
     /// <summary>
     /// Serpent static class implementing Serpent symetric chiffer algorithm
     /// </summary>
+    [Obsolete("Please use Serpent from CryptBounceCastle https://www.bouncycastle.org/", false)]
     public static class Serpent
     {
 
@@ -108,8 +109,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// Serpent Encrypt member function
         /// </summary>
-        /// <param name="plainData">plain data as <see cref="byte[]"/></param>
-        /// <returns>encrypted data <see cref="byte[]">bytes</see></returns>
+        /// <param name="plainData">plain data as <see cref="T:byte[]"/></param>
+        /// <returns>encrypted data <see cref="T:byte[]">bytes</see></returns>
         public static byte[] Encrypt(byte[] plainData)
         {
             var cipher = new SerpentEngine();
@@ -157,7 +158,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// Serpent Decrypt member function
         /// </summary>
-        /// <param name="cipherData">encrypted <see cref="byte[]">bytes</see></param>
+        /// <param name="cipherData">encrypted <see cref="T:byte[]">bytes</see></param>
         /// <returns>decrypted plain byte[] data</returns>
         public static byte[] Decrypt(byte[] cipherData)
         {
@@ -209,7 +210,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// Serpent Encrypt String method
         /// </summary>
-        /// <param name="inString">plain string to encrypt</param>
+        /// <param name="inPlainString">plain string to encrypt</param>
         /// <returns>base64 encoded encrypted string</returns>
         public static string EncryptString(string inPlainString)
         {

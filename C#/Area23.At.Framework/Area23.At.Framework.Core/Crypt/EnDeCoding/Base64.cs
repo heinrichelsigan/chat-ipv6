@@ -6,13 +6,11 @@
     public class Base64 : IDecodable
     {
 
-        public const char ZERO_WIDTH_NO_BREAK_SPACE = (char)0xfeff;
-        public static readonly char[] SPECIAL_CHAR_ARRAY = { ZERO_WIDTH_NO_BREAK_SPACE, ' ', '\t', '\r', '\n' };
-        public static readonly string SPECIAL_CHARS = new string(SPECIAL_CHAR_ARRAY);
         public const string VALID_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/=";
+        static string invalidChars = "";
 
         #region common interface, interfaces for static members appear in C# 7.3 or later
-
+        
         public IDecodable Decodable => this;
 
         public static HashSet<char>? ValidCharList { get; private set; } = new HashSet<char>(VALID_CHARS.ToCharArray());        
@@ -33,8 +31,7 @@
 
         public bool IsValid(string encodedStr) => Base64.IsValidBase64(encodedStr, out _);
 
-        public bool IsValidShowError(string encodedString, out string error) => Base64.IsValidBase64(encodedString, out error);
-        
+        public bool IsValidShowError(string encodedString, out string error) => Base64.IsValidBase64(encodedString, out error);               
 
         #endregion common interface, interfaces for static members appear in C# 7.3 or later
 
@@ -47,7 +44,27 @@
 
         public static byte[] FromBase64(string inString)
         {
-            byte[] outBytes = Convert.FromBase64String(inString);
+            bool valid = true;
+            string parsedString = "", error = "";
+            foreach (char ch in inString)
+            {
+                if (!ValidCharList.Contains(ch))
+                {
+                    error += ch;
+                    valid = false;
+                }
+            }
+            byte[] outBytes = new byte[0];
+
+            parsedString = (string.IsNullOrEmpty(error)) ? inString : inString.Trim(error.ToCharArray());
+            try
+            {
+                outBytes = Convert.FromBase64String(inString);
+            } 
+            catch(Exception ex)
+            {
+                outBytes = Convert.FromBase64String(parsedString);
+            }
             return outBytes;
         }
 

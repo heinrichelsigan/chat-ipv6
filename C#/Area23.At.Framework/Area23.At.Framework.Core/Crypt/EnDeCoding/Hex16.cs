@@ -55,7 +55,7 @@
                 hexString += string.Format("{0:x2}", inBytes[wc]);
             }
 
-            string strUtf8 = Convert.ToHexStringLower(inBytes);
+            // string strUtf8 = System.Text.Encoding.UTF8.GetString(inBytes);
             return hexString;
         }
 
@@ -77,8 +77,8 @@
                 char msb, lsb;
                 if (wb == hexStr.Length - 1)
                 {
-                    msb = (char)'0';
-                    lsb = (char)hexStr[wb];
+                    msb = '0';
+                    lsb = hexStr[wb];
                 }
                 else
                 {
@@ -90,9 +90,9 @@
                 bytes.Add(b);
             }
 
-            // byte[] bytesUtf8 = bytes.ToArray(); // System.Text.Encoding.UTF8.GetBytes(hexStr);
+            byte[] bytesUtf8 = bytes.ToArray(); // System.Text.Encoding.UTF8.GetBytes(hexStr);
 
-            return bytes.ToArray();
+            return bytesUtf8;
 
         }
         

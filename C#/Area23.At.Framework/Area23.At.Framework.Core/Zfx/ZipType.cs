@@ -1,31 +1,78 @@
-﻿using Newtonsoft.Json.Linq;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Area23.At.Framework.Core.Zfx
 {
-
+    [Serializable]
     [DefaultValue(None)]
     public enum ZipType
     {
-        None =  0x00,
-        Zip =   0x10,
-        GZip =  0x20,
+        None = 0x00,
+        Zip = 0x10,
+        GZip = 0x20,
         BZip2 = 0x30,
-        Z7 =    0x40
+        Z7 = 0x40
     }
+
 
     public static class ZipTypeExtensions
     {
-        private static readonly ZipType[] ZipTypes = { ZipType.None, ZipType.Zip, ZipType.GZip, ZipType.BZip2, ZipType.Z7 };
+
+        public static ZipType[] GetZipTypes()
+        {
+            List<ZipType> list = new List<ZipType>();
+            foreach (string encName in Enum.GetNames(typeof(ZipType)))
+            {
+                list.Add((ZipType)Enum.Parse(typeof(ZipType), encName));
+            }
+
+            return list.ToArray();
+        }
+
+        public static ZipType GetZipType(string zipTypeStr)
+        {
+            if (!string.IsNullOrEmpty(zipTypeStr))
+            {
+                switch (zipTypeStr.ToLower().Replace("menu", ""))
+                {
+                    case "zip": return ZipType.Zip;
+                    case "gzip": return ZipType.GZip;
+                    case "bzip2": return ZipType.BZip2;
+                    case "7z": return ZipType.Z7;
+                    case "none":
+                    default: break;
+                }
+            }
+            return ZipType.None;
+        }
+
+        public static string GetZipTypeExtension(this ZipType zipType)
+        {
+            {
+                switch (zipType)
+                {
+                    case ZipType.Zip: return ".zip";
+                    case ZipType.GZip: return ".gz";
+                    case ZipType.BZip2: return ".bz2";
+                    case ZipType.Z7: return ".7z";
+                    case ZipType.None:
+                    default: break;
+                }
+            }
+            return string.Empty;
+        }
+
+
         public static ZipType GetZipTypeFromValue(short zValue)
         {
-            foreach (ZipType zType in ZipTypes)
+            zValue = (short)((zValue % 0x100) - (zValue % 0x10));
+            foreach (ZipType zType in GetZipTypes())
             {
                 if ((short)zType == zValue)
                     return zType;
             }
             return ZipType.None;
         }
+
 
         /// <summary>
         /// Generic zip extension method for <see cref="ZipType"/>
@@ -103,7 +150,6 @@ namespace Area23.At.Framework.Core.Zfx
                 default: return extPre;
             }
         }
-
     }
 
 }

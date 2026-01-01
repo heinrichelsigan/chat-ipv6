@@ -107,10 +107,10 @@ namespace Area23.At.Framework.Core.Static
         #region stream_extensions
 
         /// <summary>
-        /// <see cref="Stream"/>.ToByteArray() extension method: converts <see cref="Stream"/> to <see cref="byte[]"/> array
+        /// <see cref="Stream"/>.ToByteArray() extension method: converts <see cref="Stream"/> to <see cref="T:byte[]"/> array
         /// </summary>
         /// <param name="stream"><see cref="Stream"/> which static methods are now extended</param>
-        /// <returns>binary <see cref="byte[]">byte[] array</see></returns>
+        /// <returns>binary <see cref="T:byte[]">byte[] array</see></returns>
         public static byte[] ToByteArray(this Stream stream)
         {
             if (stream is MemoryStream)
@@ -130,16 +130,17 @@ namespace Area23.At.Framework.Core.Static
         #region byteArray_extensions
 
         /// <summary>
-        /// <see cref="byte[]"/>.GetImageMimeType() extension method: auto detect mime type of an image inside an binary byte[] array
+        /// <see cref="T:byte[]"/>.GetImageMimeType() extension method: auto detect mime type of an image inside an binary byte[] array
         /// via <see cref="ImageCodecInfo.GetImageEncoders()"/> <seealso cref="ImageCodecInfo.GetImageDecoders()"/>
         /// </summary>
-        /// <param name="bytes">binary <see cref="byte[]">byte[] array</see></param>
+        /// <param name="bytes">binary <see cref="T:byte[]">byte[] array</see></param>
         /// <returns></returns>
         public static string GetImageMimeType(this byte[] bytes)
         {
             using (MemoryStream ms = new MemoryStream(bytes))
             {
-                using (Image img = Image.FromStream(ms))
+                // using (System.Net.Mime.MediaTypeNames.Image img = System.Net.Mime.MediaTypeNames.Image.FromStream(ms))
+                using (System.Drawing.Image img = System.Drawing.Image.FromStream(ms))
                 {
                     return ImageCodecInfo.GetImageEncoders().First(codec => codec.FormatID == img.RawFormat.Guid).MimeType;
                 }
@@ -147,7 +148,7 @@ namespace Area23.At.Framework.Core.Static
         }
 
         /// <summary>
-        /// <see cref="byte[]"/>.ArrayIndexOf(byte value) extension method: gets the first index of specified byte value
+        /// <see cref="T:byte[]"/>.ArrayIndexOf(byte value) extension method: gets the first index of specified byte value
         /// </summary>
         /// <param name="bytes">byte[] to search</param>
         /// <param name="value">byte to find</param>
@@ -166,9 +167,9 @@ namespace Area23.At.Framework.Core.Static
 
 
         /// <summary>
-        /// <see cref="byte[]"/>.ToFile(string filePath, string fileName, string fext) extension method: writes a byte array to a file
+        /// <see cref="T:byte[]"/>.ToFile(string filePath, string fileName, string fext) extension method: writes a byte array to a file
         /// </summary>
-        /// <param name="bytes"><see cref="byte[]"/></param>
+        /// <param name="bytes"><see cref="T:byte[]"/></param>
         /// <param name="filePath">filesystem path</param>
         /// <param name="fileName">filename</param>
         /// <param name="fext">file extension</param>
@@ -214,26 +215,25 @@ namespace Area23.At.Framework.Core.Static
             return null;
         }
 
+
         /// <summary>
-        /// <see cref="byte[]"/>.ToHexString() extension method: converts byte[] to HexString
+        /// <see cref="T:byte[]"/>.ToHexString() extension method: converts byte[] to HexString
         /// </summary>
         /// <param name="bytes">Array of <see cref="byte"/></param>
+        /// <param name="UPPERCASE">bool default true, UPPERCASE LETTER CHARS ABCDEF</param>
         /// <returns>hexadecimal string</returns>
-        public static string ToHexString(this byte[] bytes)
+        public static string ToHexString(this byte[] bytes, bool UPPERCASE = true)
         {
             var sb = new StringBuilder();
-
-            foreach (var t in bytes)
-            {
-                sb.Append(t.ToString("X2"));
-            }
+            foreach (Byte b in bytes)
+                sb.Append(((UPPERCASE) ? b.ToString("X2") : b.ToString("x2")));
 
             return sb.ToString(); // returns: "48656C6C6F20776F726C64" for "Hello world"
         }
 
 
         /// <summary>
-        /// <see cref="byte[]"/>.FindBytes extension method: searches hayStack for the first occurence of needle, 
+        /// <see cref="T:byte[]"/>.FindBytes extension method: searches hayStack for the first occurence of needle, 
         /// FindBytes uses static equivalent <see cref="BytesBytes(byte[], byte[], int)"/> 
         /// </summary>
         /// <param name="hayStack">byte[] of haystack to search through</param>
@@ -286,7 +286,7 @@ namespace Area23.At.Framework.Core.Static
         }
 
         /// <summary>
-        /// <see cref="byte[]"/>.TarBytes extension method: tars 
+        /// <see cref="T:byte[]"/>.TarBytes extension method: tars 
         /// </summary>
         /// <param name="baseBytes">base byte array</param>
         /// <param name="bytesToAdd">more byte arrays</param>
@@ -321,7 +321,14 @@ namespace Area23.At.Framework.Core.Static
         }
 
 
-        public static long CompareBytes(this byte[] baseBytes, byte[] bytesToCompare)
+        /// <summary>
+        /// Compare bytes extension Method
+        /// </summary>
+        /// <param name="baseBytes">base bytes</param>
+        /// <param name="bytesToCompare">bytes to compare</param>
+        /// <param name="partially">true: only compare less then half of bytes, false: all byter</param>
+        /// <returns>something like Levenstein Distanz</returns>
+        public static long CompareBytes(this byte[] baseBytes, byte[] bytesToCompare, bool partially = false)
         {
             long difference = 0;
             if ((baseBytes == null && bytesToCompare == null) ||
@@ -332,11 +339,24 @@ namespace Area23.At.Framework.Core.Static
                 difference = Math.Abs((long)(baseBytes.Length - bytesToCompare.Length)) * 256;
             else // if (baseBytes.Length == bytesToCompare.Length)
             {
-                for (int ib = 0; ib < baseBytes.Length; ib++)
+                long ql = (partially) ? (long)(baseBytes.LongLength / 3) : (long)(baseBytes.LongLength);
+                for (long lb = 0; lb < ql; lb++)
                 {
-                    if (baseBytes[ib] != bytesToCompare[ib])
-                        difference += Math.Abs((long)(baseBytes[ib] - bytesToCompare[ib]));
+                    if (baseBytes[lb] != bytesToCompare[lb])
+                        difference += Math.Abs((long)(baseBytes[lb] - bytesToCompare[lb]));
                 }
+
+                if (partially)
+                {
+                    ql = 3 * ql;
+                    for (long lb = ql; lb < (long)(baseBytes.LongLength - 16); lb++)
+                    {
+                        if (baseBytes[lb] != bytesToCompare[lb])
+                            difference += Math.Abs((long)(baseBytes[lb] - bytesToCompare[lb]));
+                    }
+                }
+
+
             }
 
             return difference;
@@ -345,8 +365,8 @@ namespace Area23.At.Framework.Core.Static
         public static long BytesCompare(byte[] baseBytes, byte[] bytesToCompare)
         {
             long difference = 0;
-            if ((baseBytes == null && bytesToCompare == null) ||
-                (baseBytes.Length == 0 && bytesToCompare.Length == 0))
+            if (baseBytes == null && bytesToCompare == null ||
+                baseBytes.Length == 0 && bytesToCompare.Length == 0)
                 return difference;
 
             if (baseBytes.Length != bytesToCompare.Length)
@@ -376,11 +396,11 @@ namespace Area23.At.Framework.Core.Static
             {
                 switch (ip.AddressFamily)
                 {
-                    case System.Net.Sockets.AddressFamily.InterNetwork:
+                    case AddressFamily.InterNetwork:
                         foreach (string ipv4Segment in tmps.Trim("{}".ToCharArray()).Split('.'))
                             bytes.Add(Convert.ToByte(ipv4Segment));
                         break;
-                    case System.Net.Sockets.AddressFamily.InterNetworkV6:
+                    case AddressFamily.InterNetworkV6:
                         foreach (string ipv6Segment in tmps.Trim("[{}]".ToCharArray()).Split(':'))
                             bytes.Add(Convert.ToByte(ipv6Segment));
                         break;
@@ -394,7 +414,7 @@ namespace Area23.At.Framework.Core.Static
         }
 
 
-        public static byte[] ToVersionBytes(this System.Version? version)
+        public static byte[] ToVersionBytes(this Version? version)
         {
             List<byte> bytes = new List<byte>();
             if (version == null)
@@ -416,7 +436,7 @@ namespace Area23.At.Framework.Core.Static
         /// <see cref="string"/>.FromHexString() extension method: converts hexadecimal string to byte[]
         /// </summary>
         /// <param name="hexString">hexadecimal string</param>
-        /// <returns><see cref="byte[]">byte[]</see> Array of <see cref="byte"/></returns>
+        /// <returns><see cref="T:byte[]">byte[]</see> Array of <see cref="T:byte[]"/></returns>
         public static byte[] FromHexString(this string hexString)
         {
             byte[] bytes = new byte[hexString.Length / 2];
@@ -447,7 +467,7 @@ namespace Area23.At.Framework.Core.Static
         /// </summary>
         /// <param name="base64">base64 encoded string</param>
         /// <returns>Image?</returns>
-        public static Image? Base64ToImage(this string base64)
+        public static System.Drawing.Image? Base64ToImage(this string base64)
         {
             Bitmap? bitmap = null;
             try
@@ -507,17 +527,17 @@ namespace Area23.At.Framework.Core.Static
         /// so that int firstIndex = <see cref="string.IndexOf(string)">main.IndexOf(patternStart)</see> >= 0,
         /// then substring will start at <see cref="string.Substring(int)">main.Substring(firstIndex)</see>
         /// </param>
-        /// <param name="firstIndex">default <see cref="true"/>, 
-        /// if <see cref="true"/>, then first occurence in main <see cref="string.IndexOf(string)">main.IndexOf(patternStart)</see> will be executed, 
-        /// otherwise if <see cref="false"/>, then <see cref="string.LastIndexOf(string)">main.LastIndexOf(patternStart)</see> will be executed.
+        /// <param name="firstIndex">default <see cref="System.Boolean.TrueString"/>, 
+        /// if <see cref="System.Boolean.TrueString"/>, then first occurence in main <see cref="string.IndexOf(string)">main.IndexOf(patternStart)</see> will be executed, 
+        /// otherwise if <see cref="System.Boolean.FalseString"/>, then <see cref="string.LastIndexOf(string)">main.LastIndexOf(patternStart)</see> will be executed.
         /// </param>
-        /// <param name="markStartEnd">if <see cref="!string.IsNullOrEmpty(string?)">!string.IsNullOrEmpty(markStartEnd)</see> 
-        /// then start position of substring will be set to <see cref="string.IndexOf(string)>">string.IndexOf(markStartEnd)</see>
+        /// <param name="markStartEnd">if <see cref="string.IsNullOrEmpty(string?)">!string.IsNullOrEmpty(markStartEnd)</see> 
+        /// then start position of substring will be set to <see cref="String.IndexOf(string)">string.IndexOf(markStartEnd)</see>
         /// </param>
         /// <param name="patternEnd">end pattern for substring, <see cref="string.LastIndexOf(string)">main.IndexOf(patternEnd)</see></param>
-        /// <param name="lastIndex">default <see cref="false"/>
-        /// if <see cref="true"/>, then last occurence <see cref="string.LastIndexOf(string)">main.LastIndexOf(patternEnd)</see> will be executed,
-        /// otherwise if <see cref="false"/>, then first occurence in main <see cref="string.IndexOf(string)">main.IndexOf(patternEnd)</see> will be executed. 
+        /// <param name="lastIndex">default <see cref="System.Boolean.FalseString"/>
+        /// if <see cref="System.Boolean.TrueString"/>, then last occurence <see cref="string.LastIndexOf(string)">main.LastIndexOf(patternEnd)</see> will be executed,
+        /// otherwise if <see cref="System.Boolean.FalseString"/>, then first occurence in main <see cref="string.IndexOf(string)">main.IndexOf(patternEnd)</see> will be executed. 
         /// </param>
         /// <param name="comparasionType">
         /// <see cref="StringComparison">comparasionType</see> is set default to <see cref="StringComparison.CurrentCulture"/>
@@ -688,10 +708,10 @@ namespace Area23.At.Framework.Core.Static
         #region System.Drawing.Image extensions
 
         /// <summary>
-        /// <see cref="Image"/>.SaveRawToMemoryStream(ImageFormat imageFormat, out Guid? g) extension method: 
+        /// <see cref="System.Drawing.Image"/>.SaveRawToMemoryStream(ImageFormat imageFormat, out Guid? g) extension method: 
         /// saves an Image to <see cref="MemoryStream"/> and return <see cref="Guid"/> of <see cref="ImageFormat"/> as out parameter
         /// </summary>
-        /// <param name="img"><see cref="Image"/> to be processed by Exentsion Method</param>
+        /// <param name="img"><see cref="System.Drawing.Image"/> to be processed by Exentsion Method</param>
         /// <param name="imageFormat"><see cref="ImageFormat"/></param>
         /// <param name="g"><see cref="Guid">out Guid g</see></param>
         /// <returns><see cref="MemoryStream"/></returns>
@@ -710,8 +730,8 @@ namespace Area23.At.Framework.Core.Static
         /// <see cref="Image"/>.ToByteArray() extension method: converts <see cref="Image"/> to byte array
         /// </summary>
         /// <param name="img">this <see cref="Image"/></param>
-        /// <returns><see cref="byte[]?"/> array</returns>
-        public static byte[] ToByteArray(this Image img)
+        /// <returns><see cref="T:byte[]?"/> array</returns>
+        public static byte[] ToByteArray(this System.Drawing.Image img)
         {
             byte[] bytes;
             MemoryStream ms = new MemoryStream();
@@ -745,7 +765,7 @@ namespace Area23.At.Framework.Core.Static
             catch (Exception exImgFormat)
             {
                 imgFormGuid = Guid.Empty;
-                Area23Log.LogOriginMsgEx("Extensions", "ToByteArray(this Image img)", exImgFormat); 
+                Area23Log.LogOriginMsgEx("Extensions", "ToByteArray(this Image img)", exImgFormat);
             }
 
             if (imgFormGuid != null && imgFormGuid.HasValue && imgFormGuid.Value != Guid.Empty)
@@ -773,8 +793,8 @@ namespace Area23.At.Framework.Core.Static
         /// <see cref="Image"/>.ToBase64() extension method: converts <see cref="Image"/> to base64 string
         /// </summary>
         /// <param name="img">this <see cref="Image"/></param>
-        /// <returns>base64 encoded <see cref="string?"/></returns>
-        public static string? ToBase64(this Image img)
+        /// <returns>base64 encoded <see cref="T:string?"/></returns>
+        public static string? ToBase64(this System.Drawing.Image img)
         {
             string? base64 = null;
             byte[] bytes;
@@ -833,8 +853,8 @@ namespace Area23.At.Framework.Core.Static
                 return false;
             }
             strInput = strInput.Trim();
-            if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || //For object
-                (strInput.StartsWith("[") && strInput.EndsWith("]"))) //For array
+            if (strInput.StartsWith("{") && strInput.EndsWith("}") || //For object
+                strInput.StartsWith("[") && strInput.EndsWith("]")) //For array
             {
                 try
                 {
@@ -866,12 +886,12 @@ namespace Area23.At.Framework.Core.Static
         public static bool IsSameIp(this IPAddress ip1, IPAddress ip2, AddressFamily? addrFamily = null)
         {
             if (addrFamily == null || !addrFamily.HasValue)
-                return ((Extensions.BytesCompare(ip1.GetAddressBytes(), ip2.GetAddressBytes()) == 0) &&
-                    (ip1.AddressFamily == ip2.AddressFamily));
+                return BytesCompare(ip1.GetAddressBytes(), ip2.GetAddressBytes()) == 0 &&
+                    ip1.AddressFamily == ip2.AddressFamily;
 
-            return ((Extensions.BytesCompare(ip1.GetAddressBytes(), ip2.GetAddressBytes()) == 0) &&
-                    (ip1.AddressFamily == ip2.AddressFamily) &&
-                    (ip1.AddressFamily == addrFamily.Value));
+            return BytesCompare(ip1.GetAddressBytes(), ip2.GetAddressBytes()) == 0 &&
+                    ip1.AddressFamily == ip2.AddressFamily &&
+                    ip1.AddressFamily == addrFamily.Value;
         }
 
         public static string ShortInfo(this AddressFamily addrFamily)
@@ -894,6 +914,208 @@ namespace Area23.At.Framework.Core.Static
 
         #endregion System.Net extension methods
 
+        #region async invoke gui extensions
+
+        /// <summary>
+        /// SetBackColorAsync extension delegate to set <see cref="Color">Backcolor</see> for <see cref="Label"/> across threads
+        /// </summary>
+        /// <param name="label">extension method for this label</param>
+        /// <param name="backColor"><see cref="Color">backColor</see></param>
+        /// <returns>void Task for async method</returns>
+        public static async Task SetBackColorAsync(this Label label, Color backColor)
+        {
+            if (label != null)
+            {
+                if (label.InvokeRequired)
+                {
+                    try
+                    {
+                        await label.InvokeAsync(() =>
+                        {
+                            if (label != null)
+                                label.BackColor = backColor;
+                        });
+                    }
+                    catch (System.Exception exDelegate)
+                    {
+                        string labelName = (label != null && !string.IsNullOrEmpty(label.Name)) ? label.Name : "Label";
+                        if (label != null && label.Parent != null && !string.IsNullOrEmpty(label.Parent.Name))
+                            labelName = label.Parent.Name;
+                        Area23Log.LogOriginMsgEx(labelName, $"Exception in delegate SetLabelBackColor Color: \"{backColor.ToString()}\".\n", exDelegate);
+                    }
+                }
+                else
+                {
+                    if (label != null)
+                        label.BackColor = backColor;
+                }
+            }
+        }
+
+        /// <summary>
+        /// SetTextVisibleAsync extension method delegate to set a text to <see cref="Label"/> across threads
+        /// </summary>
+        /// <param name="label">the label</param>       
+        /// <param name="text"><see cref="string" /></param>
+        /// <param name="visible"><see cref="bool"/>, default to true</param>
+        /// <returns>void Task for async method</returns>
+        public static async Task SetTextVisibleAsync(this Label label, string text, bool visible = true)
+        {
+            if (label != null)
+            {
+                if (label.InvokeRequired)
+                {
+                    try
+                    {
+                        await label.InvokeAsync(() =>
+                        {
+                            if (label != null && (!visible || text != null))
+                            {
+                                label.Text = text ?? "";
+                                label.Visible = visible;
+                            }
+                        });
+                    }
+                    catch (System.Exception exDelegate)
+                    {
+                        string nameLabel = (label != null && !string.IsNullOrEmpty(label.Name)) ? label.Name : "Label";
+                        if (label != null && label.Parent != null && !string.IsNullOrEmpty(label.Parent.Name))
+                            nameLabel = label.Parent.Name;
+                        Area23Log.LogOriginMsgEx(nameLabel, $"Exception in delegate SetLabelTextVisibleAsync visible={visible}; Text: \"{text}\".\n", exDelegate);
+                    }
+                }
+                else
+                {
+                    if (label != null && (!visible || text != null))
+                    {
+                        label.Text = text ?? "";
+                        label.Visible = visible;
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// SetImageTagVisibleAsync extension method to set an <see cref="Image"/> in <see cref="PictureBox"/> across threads
+        /// </summary>
+        /// <param name="pictBox">the PictureBox</param>
+        /// <param name="image">the Image</param>
+        /// <param name="tagText">image tag</param>
+        /// <param name="visible">true, if visible, false if invisible</param>
+        /// <returns>void Task for async method</returns>
+        public static async Task SetImageTagVisibleAsync(this PictureBox pictBox, System.Drawing.Image image, string tagText = "", bool visible = true)
+        {
+            if (pictBox != null && image != null)
+            {
+                if (pictBox.InvokeRequired)
+                {
+                    try
+                    {
+                        await pictBox.InvokeAsync(() =>
+                        {
+                            if (pictBox != null && image != null && tagText != null)
+                            {
+                                pictBox.Image = image;
+                                pictBox.Tag = tagText;
+                                pictBox.Visible = visible;
+                            }
+                        });
+                    }
+                    catch (System.Exception exDelegate)
+                    {
+                        string picName = (pictBox != null && !string.IsNullOrEmpty(pictBox.Name)) ? pictBox.Name : "PictureBox";
+                        Area23Log.LogOriginMsgEx(picName, $"Exception in delegate SetPictureBoxImage image: \"{image}\", tag: \"{tagText}\".\n", exDelegate);
+                    }
+                }
+                else
+                {
+                    if (pictBox != null && image != null && tagText != null)
+                    {
+                        pictBox.Image = image;
+                        pictBox.Tag = tagText;
+                        pictBox.Visible = visible;
+                    }
+                }
+            }
+        }
+
+        public static async Task SetBitmapTagVisibleAsync(this PictureBox pictBox, Bitmap bmp, string tagText, bool visible = true)
+            => await SetImageTagVisibleAsync(pictBox, (System.Drawing.Image)bmp, tagText, visible);
+
+
+        /// <summary>
+        /// SetTextAsync extension method delegate to set a <see cref="string">string text</see>/ to <see cref="GroupBox">this</see> across threads
+        /// </summary>
+        /// <param name="text">text header for GroupBox</param>
+        /// <returns>void Task for async method</returns>
+        public static async Task SetTextAsync(this System.Windows.Forms.GroupBox groupBox, string text)
+        {
+            string textToSet = (!string.IsNullOrEmpty(text)) ? text : string.Empty;
+            if (groupBox != null)
+            {
+                if (groupBox.InvokeRequired)
+                {
+                    try
+                    {
+                        await groupBox.InvokeAsync(() =>
+                        {
+                            if (groupBox != null && textToSet != null)
+                                groupBox.Text = textToSet;
+                        });
+                    }
+                    catch (System.Exception exDelegate)
+                    {
+                        string gBoxName = (groupBox != null && !string.IsNullOrEmpty(groupBox.Name)) ? groupBox.Name : "GroupBox";
+                        Area23Log.LogOriginMsgEx(gBoxName, $"Exception in delegate SetGBoxText text: \"{textToSet}\".\n", exDelegate);
+                    }
+                }
+                else
+                {
+                    if (groupBox != null && textToSet != null)
+                        groupBox.Text = textToSet;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// SetTextAsync extension method for System.Windows.Forms.ToolStripStatusLabel to set text in a thread safe manner
+        /// </summary>
+        /// <param name="tsLabel">ToolStripStatusLabel</param>
+        /// <param name="text">text to set</param>
+        /// <returns></returns>
+        public static async Task SetTextAsync(this System.Windows.Forms.ToolStripStatusLabel tsLabel, string text)
+        {
+            if (tsLabel != null)
+            {
+                ToolStrip? tsParent = tsLabel.GetCurrentParent();
+                if (tsParent != null && tsParent.InvokeRequired)
+                {
+                    try
+                    {
+                        await tsParent.InvokeAsync(() =>
+                        {
+                            if (tsLabel != null && text != null)
+                                tsLabel.Text = text;
+                        });
+                    }
+                    catch (System.Exception exDelegate)
+                    {
+                        string tsLabelName = (tsLabel != null && !string.IsNullOrEmpty(tsLabel.Name)) ? tsLabel.Name : "ToolStripStatusLabel";
+                        Area23Log.LogOriginMsgEx(tsLabelName, $"Exception in delegate SetStatusLabelTextCallback Text: \"{text}\".\n", exDelegate);
+                    }
+                }
+                else
+                {
+                    if (tsLabel != null && text != null)
+                        tsLabel.Text = text;
+                }
+            }
+        }
+
+        #endregion async invoke gui extensions
+
         #region genericsT_extensions
 
         /// <summary>
@@ -914,7 +1136,7 @@ namespace Area23.At.Framework.Core.Static
 
 
         /// <summary>
-        /// <see cref="T"/>.SwapTPositions&lt;<typeparamref name="T"/>&gt;(this <typeparamref name="T"/>[] tarray, .. extensions method
+        /// SwapTPositions&lt;<typeparamref name="T"/>&gt;(this <typeparamref name="T"/>[] tarray, .. extensions method
         /// Swaps values of two positions inside a generic Array
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -935,7 +1157,7 @@ namespace Area23.At.Framework.Core.Static
             if (posA >= tarray.Length || posB >= tarray.Length)
                 throw new ArgumentException($"Either posA {posA} or posB {posB} is outside of array size of {tarray.Length}. Can't access array indices greater then array size {tarray.Length}.");
 
-            if ((exceptionOnNullable) && (tarray[posA] == null || tarray[posB] == null))
+            if (exceptionOnNullable && (tarray[posA] == null || tarray[posB] == null))
                 throw new ArgumentException($"Either T[posA= {posA}] == null or T[posB = {posB}] contains a null value; exceptionOnNullable = {exceptionOnNullable}.");
 
 
@@ -951,7 +1173,7 @@ namespace Area23.At.Framework.Core.Static
 
 
         /// <summary>
-        /// ArrayIndexOf<T> generic extension to find the first or last occurence of a T value in T[] tarray
+        /// ArrayIndexOf{T} generic extension to find the first or last occurence of a T value in T[] tarray
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="tarray">generic T array</param>
@@ -962,7 +1184,7 @@ namespace Area23.At.Framework.Core.Static
         {
             if (tarray != null && tarray.Length > 0)
             {
-                for (int cnt = (fromStart) ? 0 : tarray.Length - 1; (cnt < tarray.Length && fromStart) || (cnt >= 0 && !fromStart); cnt += fromStart ? 1 : -1)
+                for (int cnt = fromStart ? 0 : tarray.Length - 1; cnt < tarray.Length && fromStart || cnt >= 0 && !fromStart; cnt += fromStart ? 1 : -1)
                 {
                     if (tarray[cnt].Equals(tvalue))
                         return cnt;
@@ -972,7 +1194,7 @@ namespace Area23.At.Framework.Core.Static
         }
 
         /// <summary>
-        /// FirstIndexOf<T> generic search in a T array from starting at begin as usual
+        /// FirstIndexOf{T} generic search in a T array from starting at begin as usual
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="tarray">generic T array</param>
@@ -981,7 +1203,7 @@ namespace Area23.At.Framework.Core.Static
         public static int FirstIndexOf<T>(this T[] tarray, T tvalue) => tarray.ArrayIndexOf(tvalue, true);
 
         /// <summary>
-        /// LastIndexOf<T> generic search in a T array from starting at end
+        /// LastIndexOf{T} generic search in a T array from starting at end
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="tarray">generic T array</param>
@@ -989,8 +1211,9 @@ namespace Area23.At.Framework.Core.Static
         /// <returns>if found, last index of occurence of T value, if not found -1</returns>
         public static int LastIndexOf<T>(this T[] tarray, T tvalue) => tarray.ArrayIndexOf(tvalue, false);
 
+
         /// <summary>
-        /// IndicesOf<T> generic search that returns all indices of occurence of T value inside T array
+        /// IndicesOf{T} generic search that returns all indices of occurence of T value inside T array
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="tarray">generic T arreay</param>
@@ -1034,18 +1257,18 @@ namespace Area23.At.Framework.Core.Static
                             if (haystack[chay + ineedle].Equals(needle[ineedle]))
                             {
                                 // found next part of needle
-                                if (ineedle < needle.Length - 1) 
+                                if (ineedle < needle.Length - 1)
                                     continue;   // continue searching to end of needle
                                 indices.Add(chay);
                             }
 
                             // needle really found or really not found, but NOT might complete at later positions
-                            chay = (nextNeedleRef > chay) ? nextNeedleRef : chay + ineedle;
+                            chay = nextNeedleRef > chay ? nextNeedleRef : chay + ineedle;
                             break;
                         }
                     }
                     else chay++; // increment in case of not found
-                }                  
+                }
                 return indices.ToArray();
             }
             return null;
@@ -1054,6 +1277,5 @@ namespace Area23.At.Framework.Core.Static
         #endregion genericsT_extensions
 
     }
-
 
 }

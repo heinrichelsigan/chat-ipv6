@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using System.Security.Cryptography;
 using System.Text;
 

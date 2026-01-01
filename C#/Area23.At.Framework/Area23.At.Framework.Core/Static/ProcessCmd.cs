@@ -71,7 +71,7 @@ namespace Area23.At.Framework.Core.Static
         /// Execute a binary or shell cmd
         /// </summary>
         /// <param name="cmdPath">full or relative filepath to executable</param>
-        /// <param name="arguments"><see cref="string[]">string[] arguments</see> passed to executable</param>
+        /// <param name="arguments"><see cref="T:string[]">string[] arguments</see> passed to executable</param>
         /// <param name="quoteArgs"><see cref="bool">bool quoteArgs</see> set each single argument under double quote, when passing it to cmdPath</param>
         /// <param name="useShellExecute"><see cref="bool">bool useShellExecute</see> true, when using system shell to execute cmdPath</param>
         /// <returns>Console output of executed command</returns>

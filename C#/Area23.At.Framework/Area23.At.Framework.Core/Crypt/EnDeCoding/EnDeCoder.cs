@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Area23.At.Framework.Core.Crypt.EnDeCoding
+﻿namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 {
     /*
     /// <summary>

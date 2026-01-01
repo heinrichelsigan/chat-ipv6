@@ -1,15 +1,7 @@
 ﻿using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.GZip;
-using Org.BouncyCastle.Utilities.Zlib;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Core.Zfx
 {
@@ -26,13 +18,13 @@ namespace Area23.At.Framework.Core.Zfx
         /// <summary>
         /// GZip directly, please use <see cref="GZipViaStream(byte[])"/>
         /// </summary>
-        /// <param name="inBytes"><see cref="byte[]"/> inBytes</param>
+        /// <param name="inBytes"><see cref="T:byte[]"/> inBytes</param>
         /// <param name="compressionLevel">level of compression: 
         ///  1  ... for at least no compression, 
         /// 4,5 ... for average compression
         ///  9  ... for strongest bzip2 compression, generating smallest most compact output 
         /// </param>
-        /// <returns><see cref="byte[]"/> outbytes</returns>
+        /// <returns><see cref="T:byte[]"/> outbytes</returns>
         public static byte[] GZip(byte[] inBytes, int compressionLevel = 6)
         {
             byte[]? zipBytes = null;
@@ -55,6 +47,14 @@ namespace Area23.At.Framework.Core.Zfx
             using (MemoryStream memIn = new MemoryStream(inBytes, 0, inBytes.Length))
             {
                 MemoryStream memOut = GZipStream(memIn);
+                //MemoryStream memOut = new MemoryStream();
+                //// using (GZipOutputStream gzOut = new GZipOutputStream(msOut, buflen))
+                //var zlibOpt = new ZLibCompressionOptions() { CompressionLevel = 6, CompressionStrategy = ZLibCompressionStrategy.Fixed };
+                //using (GZipStream gzOut = new GZipStream(memOut, zlibOpt, false))
+                //{
+                //    StreamUtils.Copy(memIn, gzOut, new byte[BUFSZE]);
+                //}
+                //memOut.Flush();
                 zipBytes = memOut.ToByteArray();
             }
 
@@ -87,8 +87,8 @@ namespace Area23.At.Framework.Core.Zfx
         /// <summary>
         /// Please use <see cref="GUnZipViaStream(byte[])"/>
         /// </summary>
-        /// <param name="inBytes"><see cref="byte[]"/> inBytes</param>
-        /// <returns><see cref="byte[]"/> outbytes</returns>
+        /// <param name="inBytes"><see cref="T:byte[]"/> inBytes</param>
+        /// <returns><see cref="T:byte[]"/> outbytes</returns>
         public static byte[] GUnZip(byte[] inBytes)
         {
             byte[]? unZipBytes = null;
@@ -113,8 +113,8 @@ namespace Area23.At.Framework.Core.Zfx
         /// <summary>
         /// GUnZipViaStream
         /// </summary>
-        /// <param name="inBytes"><see cref="byte[]"/> inBytes</param>
-        /// <returns><see cref="byte[]"/> outbytes</returns>
+        /// <param name="inBytes"><see cref="T:byte[]"/> inBytes</param>
+        /// <returns><see cref="T:byte[]"/> outbytes</returns>
         public static byte[] GUnZipBytes(byte[] inBytes)
         {
             byte[]? unZipBytes = null;

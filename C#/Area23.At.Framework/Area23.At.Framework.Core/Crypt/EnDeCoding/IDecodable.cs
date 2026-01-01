@@ -3,7 +3,7 @@
 
     /// <summary>
     /// IDecodable is an common interface for <see cref="Base16"/>, <see cref="Base32"/>, <see cref="Base64"/>,
-    /// <see cref="Hex16"/>, <see cref="Hex32"/> and <seealso cref="Uu"/> Encoding / Decoding
+    /// <see cref="Hex16"/>, <see cref="Hex32"/>, <seealso cref="Uu"/> and <seealso cref="Xx"/> Encoding / Decoding
     /// </summary>
     public interface IDecodable
     {

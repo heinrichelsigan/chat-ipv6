@@ -3,13 +3,6 @@ using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using ICSharpCode.SharpZipLib.BZip2;
 using ICSharpCode.SharpZipLib.Core;
-using Org.BouncyCastle.Utilities;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Area23.At.Framework.Core.Zfx
 {
@@ -23,9 +16,9 @@ namespace Area23.At.Framework.Core.Zfx
         #region bzip2 compression
 
         /// <summary>
-        /// BZip transfdorms uncompressed <see cref="byte[]">byte[] inBytes</see> to <see cref="byte[]">bzip2 compressed (byte[])bytes</see>
+        /// BZip transfdorms uncompressed <see cref="T:byte[]">byte[] inBytes</see> to <see cref="T:byte[]">bzip2 compressed (byte[])bytes</see>
         /// </summary>
-        /// <param name="inBytes"> <see cref="byte[]">bytes</see> ready to compress</param>
+        /// <param name="inBytes"> <see cref="T:byte[]">bytes</see> ready to compress</param>
         /// <param name="compressionLevel">level of compression: 
         ///  1  ... for at least no compression, 
         /// 4,5 ... for average compression
@@ -81,16 +74,16 @@ namespace Area23.At.Framework.Core.Zfx
         }
 
         /// <summary>
-        /// BZip2Bytes bzip2 <see cref="byte[]">byte[] inBytes</see> 
-        /// and write bzip2 compressed data <see cref="byte[]">byte[] outBytes</see> 
+        /// BZip2Bytes bzip2 <see cref="T:byte[]">byte[] inBytes</see> 
+        /// and write bzip2 compressed data <see cref="T:byte[]">byte[] outBytes</see> 
         /// </summary>
-        /// <param name="inBytes"><see cref="byte[]">byte[] inBytes, containing data to compress with bzip2</see></param>
+        /// <param name="inBytes"><see cref="T:byte[]">byte[] inBytes, containing data to compress with bzip2</see></param>
         /// <param name="compressionLevel">level of compression: 
         ///  1  ... for at least no compression, 
         /// 4,5 ... for average compression
         ///  9  ... for strongest bzip2 compression, generating smallest most compact output 
         /// </param>
-        /// <returns><see cref="byte[]">byte[] outBytes</see> containing bzip2 compressed data of / from <see cref="byte[]">byte[] outBytes</see></returns>
+        /// <returns><see cref="T:byte[]">byte[] outBytes</see> containing bzip2 compressed data of / from <see cref="T:byte[]">byte[] outBytes</see></returns>
         public static byte[] BZip2Bytes(byte[] inBytes, int compressionLevel = 9)
         {
             byte[]? zipBytes = null;
@@ -130,10 +123,10 @@ namespace Area23.At.Framework.Core.Zfx
         #region bzip2 decompression
 
         /// <summary>
-        /// BUnZips compressed <see cref="byte[]">byte[] inBytes</see> 
+        /// BUnZips compressed <see cref="T:byte[]">byte[] inBytes</see> 
         /// and returns the decompressed bunzipped <see cref="byte[]?" />.
         /// </summary>
-        /// <param name="inBytes">compressed / bzipped <see cref="byte[]">byte[] inBytes</see></param>
+        /// <param name="inBytes">compressed / bzipped <see cref="T:byte[]">byte[] inBytes</see></param>
         /// <returns>decompressed bunzipped <see cref="byte[]?">byte[]?</see></returns>
         public static byte[]? BUnZip(byte[] inBytes)
         {
@@ -188,11 +181,11 @@ namespace Area23.At.Framework.Core.Zfx
 
 
         /// <summary>
-        /// BUnZip2Bytes bunzips <see cref="byte[]">byte[] inBytes</see> and writes
-        /// decompressed unzipped data to <see cref="byte[]">byte[] outBytes</see> 
+        /// BUnZip2Bytes bunzips <see cref="T:byte[]">byte[] inBytes</see> and writes
+        /// decompressed unzipped data to <see cref="T:byte[]">byte[] outBytes</see> 
         /// </summary>
-        /// <param name="inBytes"><see cref="byte[]">byte[] inBytes, containing bzip2 compressed data</see></param>
-        /// <returns><see cref="byte[]">byte[] outBytes</see> containing bunzipped / decompressed data from <see cref="byte[]">byte[] inBytes</see></returns>
+        /// <param name="inBytes"><see cref="T:byte[]">byte[] inBytes, containing bzip2 compressed data</see></param>
+        /// <returns><see cref="T:byte[]">byte[] outBytes</see> containing bunzipped / decompressed data from <see cref="T:byte[]">byte[] inBytes</see></returns>
         public static byte[]? BUnZip2Bytes(byte[] inBytes)
         {
             byte[]? zipBytes = null;

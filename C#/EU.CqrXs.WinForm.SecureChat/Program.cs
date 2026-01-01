@@ -169,20 +169,22 @@ namespace EU.CqrXs.WinForm.SecureChat
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetHighDpiMode(HighDpiMode.DpiUnawareGdiScaled);
+            Application.SetColorMode(SystemColorMode.System);
             ApplicationConfiguration.Initialize();
 
             switch (startFormSwitch)
-            {              
-                case "rich":                       
+            {                              
+                case "secure":                
+                    Controls.Forms.SecureChat secureChat = new Controls.Forms.SecureChat();
+                    Application.Run(secureChat);
+                    break;
+
+                case "rich":
+                default:
                     Controls.Forms.RichTextChat richTextChat = new Controls.Forms.RichTextChat();
                     Application.Run(richTextChat);
                     break;
 
-                case "secure":
-                default:
-                    Controls.Forms.SecureChat secureChat = new Controls.Forms.SecureChat();
-                    Application.Run(secureChat);
-                    break;
             }
 
 

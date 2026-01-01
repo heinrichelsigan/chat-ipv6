@@ -1,27 +1,16 @@
-﻿using Area23.At.Framework.Core;
-using Area23.At.Framework.Core.Cqr;
-using Area23.At.Framework.Core.Crypt;
-using Area23.At.Framework.Core.Crypt.Cipher;
-using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
-using Area23.At.Framework.Core.Static;
-using Microsoft.IdentityModel.Protocols.WsTrust;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using System.Security.Cryptography;
 using System.Text;
-using System.Windows.Forms;
 
 namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 {
     /// <summary>
     /// AesNet native .Net Aes RijndaelManaged without bouncy castle
-    /// <see cref="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes?view=net-8.0" />
+    /// <see href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes?view=net-8.0" />
     /// </summary>
     public class AesNet
     {
-
 
         #region properties
 
@@ -98,7 +87,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             }
             catch (Exception e)
             {
-                CqrException.SetLastException(e);
                 // TODO: what shell we do with the drunken sailor
                 AesKey = Convert.FromBase64String(Constants.AES_KEY);
                 AesIv = Encoding.UTF8.GetBytes(Constants.AES_IV);
@@ -139,7 +127,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// </summary>
         /// <param name="plainData">Array of plain data byte</param>
         /// <returns>Array of encrypted data byte</returns>
-        /// <exception cref="ArgumentNullException">is thrown when input enrypted <see cref="byte[]"/> is null or zero length</exception>
+        /// <exception cref="ArgumentNullException">is thrown when input enrypted <see cref="T:byte[]"/> is null or zero length</exception>
         public byte[] Encrypt(byte[] plainData)
         {
             // Check arguments. 
@@ -160,7 +148,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// </summary>
         /// <param name="encryptedBytes">Array of encrypted data byte</param>
         /// <returns>Array of plain data byte</returns>
-        /// <exception cref="ArgumentNullException">is thrown when input enrypted <see cref="byte[]"/> is null or zero length</exception>
+        /// <exception cref="ArgumentNullException">is thrown when input enrypted <see cref="T:byte[]"/> is null or zero length</exception>
         public byte[] Decrypt(byte[] encryptedBytes) 
         {
             // Check arguments. 

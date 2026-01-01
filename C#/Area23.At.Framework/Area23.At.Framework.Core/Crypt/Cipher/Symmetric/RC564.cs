@@ -1,21 +1,17 @@
 ﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Area23.At.Framework.Core.Static;
 
 namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 {
 
     /// <summary>
-    /// static class RC564, that implements RC564 static Encrypt & Decrypt members
+    /// static class RC564, that implements RC564 static Encrypt + Decrypt members
     /// </summary>
     public static class RC564
     {
@@ -49,9 +45,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             byte[] key = Convert.FromBase64String(ResReader.GetValue(Constants.AES_KEY));
             byte[] iv = Convert.FromBase64String(ResReader.GetValue(Constants.AES_IV));
             Key = new byte[32];
-            Iv = new byte[32];
-            Array.Copy(key, Iv, 32);
-            Array.Copy(key, Key, 32);
+            Iv = new byte[32];            
             Size = 256;
             Mode = "ECB";
             BlockCipherPadding = new ZeroBytePadding();
@@ -111,8 +105,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// RC564 Encrypt with <see cref="RC564Engine"/>
         /// </summary>
-        /// <param name="plainData">plain data as <see cref="byte[]"/></param>
-        /// <returns>encrypted data <see cref="byte[]">bytes</see></returns>
+        /// <param name="plainData">plain data as <see cref="T:byte[]"/></param>
+        /// <returns>encrypted data <see cref="T:byte[]">bytes</see></returns>
         public static byte[] Encrypt(byte[] plainData)
         {
             byte[] plainScratched = Area23.At.Framework.Core.Crypt.EnDeCoding.EnDeCodeHelper.GetBytesFromBytes(plainData);
@@ -146,7 +140,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// RC564 Decrypt with <see cref="RC564Engine"/>
         /// </summary>
-        /// <param name="cipherData">encrypted <see cref="byte[]">bytes</see></param>
+        /// <param name="cipherData">encrypted <see cref="T:byte[]">bytes</see></param>
         /// <returns>decrypted plain byte[] data</returns>
         public static byte[] Decrypt(byte[] cipherData)
         {

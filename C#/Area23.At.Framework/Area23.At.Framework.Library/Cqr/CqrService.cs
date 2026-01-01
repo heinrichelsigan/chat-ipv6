@@ -27,7 +27,7 @@ namespace Area23.At.Framework.Library.Cqr
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name = "CqrServiceSoap",
-          Namespace = "https://srv.cqrxs.eu/v1.6/")]
+          Namespace = "https://srv.cqrxs.eu/v1.6.2/")]
     public partial class CqrService : System.Web.Services.Protocols.SoapHttpClientProtocol
     {
 
@@ -39,9 +39,9 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/Send1StSrvMsg",
-              RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/Send1StSrvMsg",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string Send1StSrvMsg(string cryptMsg)
@@ -68,9 +68,9 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/ChatRoomInvite",
-              RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/ChatRoomInvite",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ChatRoomInvite(string cryptMsg)
@@ -97,8 +97,8 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/ChatPollAll", RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/ChatPollAll", RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ChatPollAll(string cryptMsg)
@@ -125,9 +125,9 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/ChatRoomPoll",
-              RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/ChatRoomPoll",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ChatRoomPoll(string cryptMsg)
@@ -154,9 +154,9 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/ChatRoomPush",
-              RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/ChatRoomPush",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ChatRoomPush(string cryptMsg)
@@ -183,9 +183,9 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/ChatRoomClose",
-              RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/ChatRoomClose",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ChatRoomClose(string cryptMsg)
@@ -212,8 +212,8 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/TestService", RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/TestService", RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string TestService()
@@ -238,9 +238,9 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/GetIPAddress",
-              RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/GetIPAddress",
+              RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string GetIPAddress()
@@ -265,8 +265,8 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/TestCache", RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/TestCache", RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string TestCache()
@@ -290,8 +290,8 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/GetKey", RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/GetKey", RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string GetKey(string key)
@@ -318,8 +318,8 @@ namespace Area23.At.Framework.Library.Cqr
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute(
-             "https://srv.cqrxs.eu/v1.6/ResetCache", RequestNamespace = "https://srv.cqrxs.eu/v1.6/",
-              ResponseNamespace = "https://srv.cqrxs.eu/v1.6/",
+             "https://srv.cqrxs.eu/v1.6.2/ResetCache", RequestNamespace = "https://srv.cqrxs.eu/v1.6.2/",
+              ResponseNamespace = "https://srv.cqrxs.eu/v1.6.2/",
               Use = System.Web.Services.Description.SoapBindingUse.Literal,
               ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ResetCache()

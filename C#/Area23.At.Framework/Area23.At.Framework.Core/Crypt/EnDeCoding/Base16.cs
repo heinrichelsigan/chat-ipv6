@@ -1,6 +1,5 @@
 ﻿namespace Area23.At.Framework.Core.Crypt.EnDeCoding
 {
-
     /// <summary>
     /// RawString hexadecimal byte encoding / decoding
     /// </summary>
@@ -24,7 +23,7 @@
         /// <summary>
         /// Decodes a hex string to byte[]
         /// </summary>
-        /// <param name="hexString">hex16 encoded string</param>
+        /// <param name="encodedString">hex16 encoded string</param>
         /// <returns></returns>
         public byte[] Decode(string encodedString) => Base16.FromBase16(encodedString);
      
@@ -76,7 +75,7 @@
                 if (wb == hexStr.Length - 1)
                 {
                     msb = '0';
-                    lsb = Char.ToUpper((char)hexStr[wb]);
+                    lsb = hexStr[wb];
                 }
                 else
                 {
@@ -88,10 +87,10 @@
                 bytes.Add(b);
             }
 
-            // byte[] bytesUtf8 = EnDeCodeHelper.GetBytes(hexStr);
+            byte[] bytesUtf8 = EnDeCodeHelper.GetBytes(hexStr);
             // return bytesUtf8;
-
             return bytes.ToArray();
+
         }
 
         public static bool IsValidBase16(string inString, out string error)

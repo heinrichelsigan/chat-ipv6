@@ -13,6 +13,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
     /// Implements <see cref="Org.BouncyCastle.Crypto.IBlockCipher">Org.BouncyCastle.Crypto.IBlockCipher</see>
     ///
     /// probably already invented, but created by zen@area23.at (Heinrich Elsigan)
+    /// Everything under the namespace `Area23.At.Framework.Library.Crypt.Cipher` is licensed under the MIT License.
+    /// <see href="https://opensource.org/license/mit">opensource.org/license/mit</see>
     /// </summary>
     public class ZenMatrix : IBlockCipher
     {
@@ -20,7 +22,9 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         #region fields
 
         private const string SYMMCIPHERALGONAME = "ZenMatrix";
-        protected internal const int BLOCK_SIZE = 0x10;
+        protected internal const int ZEN_SIZE = 0x10;
+        protected internal static int BLOCK_SIZE = 256;
+        protected internal static readonly int[] BLOCK_SIZES = { 16, 64, 128, 256, 1024, 4096, 16384, 65536 };
         protected internal bool initialised = false;
         protected internal bool forEncryption;
 
@@ -50,7 +54,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         };
 
         /// <summary>
-        /// MagicOrder is a byte[], that helps filling up keybytes up 16 bytes deterministic, when keybytes < 16
+        /// MagicOrder is a byte[], that helps filling up keybytes up 16 bytes deterministic, when keybytes lesser then 16
         /// </summary>
         protected internal static readonly int[] MagicOrder = {
             0x8,    0x3,    0x1,    0xe,
@@ -66,8 +70,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         #region Properties
 
         /// <summary>
-        /// abstraction of a 0x10 => 0x10 matrix, for example
-        /// if MatrixPermutationKey = { 0x8, 0x3, 0x1, 0xe, 0x9, 0xf, 0x5, 0xc, 0x4, 0xd, 0xa, 0x7, 0xb, 0x2, 0x0, 0x6 }
+        /// abstraction of a 0x10 => 0x10 matrix, for example if 
+        /// MatrixPermutationKey = { 0x8, 0x3, 0x1, 0xe, 0x9, 0xf, 0x5, 0xc, 0x4, 0xd, 0xa, 0x7, 0xb, 0x2, 0x0, 0x6 }
         ///            
         ///     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
         ///     
@@ -89,25 +93,25 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         ///     0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,             f
         ///     
         /// then 
-        /// value 0x0 will be mapped to 0x8      0 =>  8
-        /// value 0x1 will be mapped to 0x3      1 =>  3
-        /// value 0x2 will be mapped to 0x1      2 =>  1
-        /// value 0x3 will be mapped to 0xe      3 => 14
+        /// value 0x0 will be mapped to 0x8      0 →   8
+        /// value 0x1 will be mapped to 0x3      1 →   3
+        /// value 0x2 will be mapped to 0x1      2 →   1
+        /// value 0x3 will be mapped to 0xe      3 →  14
         /// ... and         
-        /// value 0xe will be mapped to 0x0     14 =>  0
-        /// value 0xf will be mapped to 0x6     15 =>  6         
+        /// value 0xe will be mapped to 0x0     14 →   0
+        /// value 0xf will be mapped to 0x6     15 →   6         
         /// 
         /// a full symmetric <see cref="MatrixPermutationKey"/> would like:
         ///     0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    f
         ///  { 0x8, 0x3, 0xe, 0x1, 0x9, 0xf, 0xb, 0xd, 0x0, 0x4, 0xc, 0x6, 0xa, 0x7, 0x2, 0x5 }
         /// 
         ///  that means, that
-        ///  value 0x0 will be mapped to 0x8 <=> 0x8 will be mapped back to 0x0      0 => 8 &&  8 => 0
-        ///  value 0x1 will be mapped to 0x3 <=> 0x3 will be mapped back to 0x1      1 => 3 &&  3 => 1
-        ///  value 0x2 will be mapped to 0xe <=> 0xe will be mapped back to 0x2      2 => e &&  e => 2
-        ///  value 0x3 is already mapped back to 0x1 !                               3 => 1
+        ///  value 0x0 will be mapped to 0x8 ⇔ 0x8 will be mapped back to 0x0      0 →	8 AND  8 →	0
+        ///  value 0x1 will be mapped to 0x3 ⇔ 0x3 will be mapped back to 0x1      1 →	3 AND  3 →	1
+        ///  value 0x2 will be mapped to 0xe ⇔ 0xe will be mapped back to 0x2      2 →	e AND  e →	2
+        ///  value 0x3 is already mapped back to 0x1 !                              3 →	1
         ///  ...
-        ///  value 0xf is   already mapped back to 0x5 !                             f => 5
+        ///  value 0xf is   already mapped back to 0x5 !                            f →	5
         /// </summary>
         public sbyte[] MatrixPermutationKey { get; protected internal set; }
 
@@ -134,7 +138,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
         /// <summary>
         /// PermutationKeyHash is same as <see cref="MatrixPermutationKey"/>
-        /// Advantage of <see cref="HashSet{sbyte}"/> is, that no duplicated values can be inside
+        /// Advantage of <see cref="T:HashSet{sbyte}"/> is, that no duplicated values can be inside
         /// </summary>
         public HashSet<sbyte> PermutationKeyHash { get; protected internal set; }
 
@@ -159,13 +163,13 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             }
             if (parameters is ParametersWithIV)
             {
-                byte[] bKey = new byte[0], bIv = ((ParametersWithIV)parameters).GetIV();
+                byte[] bKey = new byte[0];                
                 if (((ParametersWithIV)parameters).Parameters is KeyParameter)
-                {
                     bKey = ((KeyParameter)(((ParametersWithIV)parameters).Parameters)).GetKey();
-                }
-                bKey = bKey ?? new byte[0];
-                bIv = bIv ?? new byte[0];
+                byte[] bIv = ((ParametersWithIV)parameters).GetIV();
+
+                bKey = (bKey == null || bKey.Length == 0) ? new byte[0] : bKey;
+                bIv = (bIv == null || bIv.Length == 0) ? new byte[0] : bIv;
                 if (bKey.Length == 0 && bIv.Length == 0)
                     throw new ArgumentNullException("parameters", "KeyParameter and/or ParametersWithIV contain a null or empty key or iv.");
 
@@ -194,7 +198,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 throw new InvalidOperationException($"{SYMMCIPHERALGONAME} engine not initialised");
 
             // int len = BLOCK_SIZE;
-            int bCnt = 0;
+            int aCnt = 0, bCnt = 0;
 
             if (inOff >= inBuf.Length || inOff + BLOCK_SIZE > inBuf.Length)
                 throw new InvalidDataException($"Cannot process next {BLOCK_SIZE} bytes, because inOff ({inOff}) + BLOCK_SIZE ({BLOCK_SIZE}) > inBuf.Length ({inBuf.Length})");
@@ -217,12 +221,15 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
                 byte[] processed = new byte[BLOCK_SIZE];
 
-                for (bCnt = 0; bCnt < BLOCK_SIZE; bCnt++)
+                for (aCnt = 0, bCnt = 0; aCnt < BLOCK_SIZE; aCnt++)
                 {
-                    byte b = inOffBuf[bCnt];
+                    byte b = inOffBuf[aCnt];
                     MapByteValue(ref b, out byte mappedByte, forEncryption);
-                    sbyte sm = forEncryption ? MatrixPermutationKey[bCnt] : InverseMatrix[bCnt];
-                    processed[(int)sm] = mappedByte;
+                    sbyte sm = forEncryption ? MatrixPermutationKey[aCnt % 0x10] : InverseMatrix[aCnt % 0x10];
+                    int pos = bCnt + ((int)sm) % 0x10;
+                    processed[pos] = mappedByte;
+                    if (aCnt != 0 && aCnt % 0x10 == 0)
+                        bCnt += 0x10;
                 }
 
                 // byte[] outBytes = processed;
@@ -240,6 +247,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
         public int ProcessBlock(ReadOnlySpan<byte> input, Span<byte> output)
         {
+            int aCnt = 0, bCnt = 0;
             byte[] buffer = input.ToArray();
             if (forEncryption)                                  // add padding buffer to match BLOCK_SIZE
             {
@@ -252,12 +260,15 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
             byte[] processed = new byte[BLOCK_SIZE];
 
-            for (int bCnt = 0; bCnt < BLOCK_SIZE; bCnt++)
+            for (aCnt = 0, bCnt = 0; aCnt < BLOCK_SIZE; aCnt++)
             {
-                byte b = buffer[bCnt];
+                byte b = buffer[aCnt];
                 MapByteValue(ref b, out byte mappedByte, forEncryption);
-                sbyte sm = forEncryption ? MatrixPermutationKey[bCnt] : InverseMatrix[bCnt];
-                processed[(int)sm] = mappedByte;
+                sbyte sm = forEncryption ? MatrixPermutationKey[aCnt % 0x10] : InverseMatrix[aCnt % 0x10];
+                int pos = bCnt + ((int)sm) % 0x10;
+                processed[pos] = mappedByte;
+                if (aCnt != 0 && aCnt % 0x10 == 0)
+                    bCnt += 0x10;
             }
 
             // byte[] outBytes = processed;
@@ -278,20 +289,25 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// public constructor
         /// </summary>
-        public ZenMatrix()
+        public ZenMatrix(int bs = 16)
         {
+            for (int i = 0; i < BLOCK_SIZES.Length; i++)
+            {
+                if (bs == BLOCK_SIZES[i])
+                    BLOCK_SIZE = BLOCK_SIZES[i];
+            }
             sbyte sbcnt = 0x0;
-            MatrixPermutationKey = new sbyte[0x10];
+            MatrixPermutationKey = new sbyte[ZEN_SIZE];
             foreach (sbyte s in MatrixPermutationBase)
             {
-                privateBytes[sbcnt % 0x10] = (byte)0x0;
+                privateBytes[sbcnt % ZEN_SIZE] = (byte)0x0;
                 MatrixPermutationKey[sbcnt++] = s;
             }
             PermutationKeyHash = new HashSet<sbyte>(MatrixPermutationBase);
             _inverseMatrix = BuildInverseMatrix(MatrixPermutationKey);
         }
 
-        public ZenMatrix(string secretKey = "", KeyHash keyHash = KeyHash.Hex, bool fullSymmetric = false) : this()
+        public ZenMatrix(string secretKey = "", KeyHash keyHash = KeyHash.Hex, bool fullSymmetric = false) : this(16)
         {
             if (string.IsNullOrEmpty(secretKey))
                 throw new ArgumentNullException("secretKey");
@@ -312,7 +328,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// fullSymmetric means that zen matrix is it's inverse element 
         /// and decrypts back to plain text, when encrypting twice or ²</param>       
         /// <exception cref="ApplicationException"></exception>
-        public ZenMatrix(string secretKey = "", string hashIV = "", bool fullSymmetric = false, KeyHash keyHash = KeyHash.Hex) : this()
+        public ZenMatrix(string secretKey = "", string hashIV = "", bool fullSymmetric = false, KeyHash keyHash = KeyHash.Hex) : this(16)
         {
             if (string.IsNullOrEmpty(secretKey))
                 throw new ArgumentNullException("secretKey");
@@ -331,7 +347,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="fullSymmetric">
         /// fullSymmetric means that zen matrix is it's inverse element 
         /// and decrypts back to plain text, when encrypting twice or ²</param> 
-        public ZenMatrix(byte[] keyBytes, bool fullSymmetric = false) : this()
+        public ZenMatrix(byte[] keyBytes, bool fullSymmetric = false) : this(16)
         {
             ZenMatrixGenWithBytes(keyBytes, fullSymmetric);
         }
@@ -396,12 +412,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 for (int i = 0; i < 0x20; i++)
                 {
                     if (PermutationKeyHash.Contains(b) || ((int)b) == ba)
-                    {
-                        if (i < 0x10)
-                            b = ((sbyte)((Convert.ToInt32(keyByte) + MagicOrder[i]) % 0x10));
-                        if (i >= 0x10)
-                            b = ((sbyte)((Convert.ToInt32(keyByte) + i) % 0x10));
-                    }
+                        b = (i >= 0x10) ? ((sbyte)((Convert.ToInt32(keyByte) + i) % 0x10)) :
+                                ((sbyte)((Convert.ToInt32(keyByte) + MagicOrder[i]) % 0x10));
                     else break;
                 }
 
@@ -437,13 +449,13 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                         {
                             for (int l = 0x0f; l >= 0; l--)
                             {
-                                if (!MatrixDict.Values.Contains((sbyte)l))
-                                {
-                                    MatrixDict.Add((sbyte)k, (sbyte)l);
-                                    if (!MatrixDict.Keys.Contains((sbyte)l))
-                                        MatrixDict.Add((sbyte)l, (sbyte)k);
-                                    break;
-                                }
+                                if (MatrixDict.Values.Contains((sbyte)l))
+                                    continue;
+
+                                MatrixDict.Add((sbyte)k, (sbyte)l);
+                                if (!MatrixDict.Keys.Contains((sbyte)l))
+                                    MatrixDict.Add((sbyte)l, (sbyte)k);
+                                break;
                             }
                         }
                     }
@@ -527,7 +539,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 {
                     byte b = inBytes[bCnt];
                     MapByteValue(ref b, out byte mappedByte, forEncryption);
-                    sbyte pos = (forEncryption) ? MatrixPermutationKey[aCnt] : InverseMatrix[aCnt];
+                    sbyte pos = (forEncryption) ? MatrixPermutationKey[aCnt % 0x10] : InverseMatrix[aCnt % 0x10];
                     processed[(int)pos] = mappedByte;
                 }
 
@@ -615,8 +627,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// MatrixSymChiffer Encrypt member function
         /// </summary>
-        /// <param name="pdata">plain data as <see cref="byte[]"/></param>
-        /// <returns>encrypted data <see cref="byte[]">bytes</see></returns>
+        /// <param name="pdata">plain data as <see cref="T:byte[]"/></param>
+        /// <returns>encrypted data <see cref="T:byte[]">bytes</see></returns>
         public virtual byte[] Encrypt(byte[] pdata)
         {
             // Check arguments.
@@ -624,7 +636,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 throw new ArgumentNullException("ZenMatrix byte[] Encrypt(byte[] pdata): ArgumentNullException pdata = null or Lenght 0.");
 
             forEncryption = true;
-            byte[] obytes = PadBuffer(pdata, true);
+            byte[] obytes = PadBuffer(pdata, false);
 
             List<byte> encryptedBytes = new List<byte>();
             for (int i = 0; i < obytes.Length; i += 0x10)
@@ -641,7 +653,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <summary>
         /// MatrixSymChiffer Decrypt member function
         /// </summary>
-        /// <param name="cdata">encrypted cipher <see cref="byte[]">bytes</see></param>
+        /// <param name="ecdata">encrypted cipher <see cref="T:byte[]">bytes</see></param>
         /// <returns>decrypted plain byte[] data</returns>
         public virtual byte[] Decrypt(byte[] ecdata)
         {
@@ -660,7 +672,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 }
             }
 
-            byte[] outBytes = PadBuffer(decBytes.ToArray(), true);
+            byte[] outBytes = PadBuffer(decBytes.ToArray(), false);
 
             return outBytes;
         }
@@ -675,7 +687,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// BuildInverseMatrix, builds the determinant decryption matrix for sbyte[16] encryption matrix
         /// </summary>
         /// <param name="matrix">sbyte[16] encryption matrix</param>
-        /// <returns><see cref="sbyte[]">sbyte[16]</see> decryption matrix (determinante)</returns>
+        /// <returns><see cref="T:sbyte[]">sbyte[16]</see> decryption matrix (determinante)</returns>
         internal static sbyte[] BuildInverseMatrix(sbyte[] matrix, int size = 0x10)
         {
             if (matrix != null && matrix.Length == size)
@@ -696,9 +708,9 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// through <see cref="InverseMatrix"/> in case of decryption.
         /// </summary>
         /// <param name="inByte"><see cref="byte"/> in byte to map</param>
-        /// <param name="outByte"><see cref=byte"/> mapped out byte</param>
+        /// <param name="outByte"><see cref="byte"/> mapped out byte</param>
         /// <param name="encrypt">true for encryption, false for decryption</param>
-        /// <returns>An <see cref="sbyte[]"/> array with 2  0x0 - 0xf segments (most significant & least significant) bit</returns>
+        /// <returns>An <see cref="T:sbyte[]"/> array with 2  0x0 - 0xf segments (most significant and least significant) bit</returns>
         protected internal virtual sbyte[] MapByteValue(ref byte inByte, out byte outByte, bool encrypt = true)
         {
             List<sbyte> outSBytes = new List<sbyte>(2);

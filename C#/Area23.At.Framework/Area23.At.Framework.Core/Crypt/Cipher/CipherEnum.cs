@@ -1,5 +1,6 @@
 ﻿using Area23.At.Framework.Core.Crypt.Cipher.Symmetric;
 using Area23.At.Framework.Core.Static;
+using Area23.At.Framework.Core.Util;
 using System.ComponentModel;
 
 namespace Area23.At.Framework.Core.Crypt.Cipher
@@ -8,6 +9,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
     /// <summary>
     /// CipherEnum maps BlockCipher algorithms <see cref="Org.BouncyCastle.Crypto.IBlockCipher"/>
     /// </summary>
+    [Serializable]
     [DefaultValue("Aes")]
     public enum CipherEnum : byte
     {
@@ -27,8 +29,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         Serpent = 0xc,
         Tea = 0xd,
         XTea = 0xe,
-
-        ZenMatrix = 0xf,
+        SM4 = 0xf,
 
 
         Cast5 = 0x10,
@@ -42,16 +43,17 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         Aria = 0x18,
         CamelliaLight = 0x19,
         Dstu7624 = 0x1a,
-        SM4 = 0x1b,
-        AesLight = 0x1c,
-        ThreeFish256 = 0x1d,
-        
-        Des3Net = 0x1e,
-               
-        ZenMatrix2 = 0x1f,
+        AesLight = 0x1b,
+        ThreeFish256 = 0x1c,
 
-        AesNet = 0x20 
-        // Rsa = 0x21,
+        Des3Net = 0x1d,
+        AesNet = 0x1e,
+
+
+        ZenMatrix = 0x1f,
+        ZenMatrix2 = 0x20,
+
+        Rsa = 0x21
         // DH = 0x22,
     }
 
@@ -60,6 +62,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
     /// </summary>
     public static class CipherEnumExtensions
     {
+        public static readonly string CipherExtensionString = "l23456AabCcDdEeFfgIJjlNRSsTtXrZz$%";
+
         public static CipherEnum[] GetCipherTypes()
         {
             List<CipherEnum> list = new List<CipherEnum>();
@@ -69,6 +73,17 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             }
 
             return list.ToArray();
+        }
+
+        public static Dictionary<byte, CipherEnum> ByteCipherDict
+        {
+            get
+            {
+                Dictionary<byte, CipherEnum> hexCipherDict = new Dictionary<byte, CipherEnum>();
+                foreach (CipherEnum cipher in CipherEnumExtensions.GetCipherTypes())
+                    hexCipherDict.Add((byte)cipher, cipher);
+                return hexCipherDict;
+            }
         }
 
         /// <summary>
@@ -83,6 +98,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             {
                 case CipherEnum.Aes: return 'A';
                 case CipherEnum.AesLight: return 'L';
+                case CipherEnum.AesNet: return 'E';
                 case CipherEnum.Aria: return 'a';
 
                 case CipherEnum.BlowFish: return 'b';
@@ -97,6 +113,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
 
                 case CipherEnum.Des: return '$';
                 case CipherEnum.Des3: return 'D';
+                case CipherEnum.Des3Net: return 'e';
                 case CipherEnum.Dstu7624: return 'd';
 
                 case CipherEnum.Gost28147: return 'g';
@@ -117,14 +134,11 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.Tnepres: return 'T';
                 case CipherEnum.Rijndael: return 'j';
                 case CipherEnum.XTea: return 'X';
-                
+
                 case CipherEnum.ZenMatrix: return 'z';
                 case CipherEnum.ZenMatrix2: return 'Z';
 
-                case CipherEnum.AesNet: return 'E';
-                case CipherEnum.Des3Net: return 'e';
-
-                // case CipherEnum.Rsa: return '%';
+                case CipherEnum.Rsa: return '%';
                 // case CipherEnum.DH: return '!';
 
                 default: break;
@@ -143,22 +157,37 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         /// parses pipe semicolon separated pipe string to CipherList
         /// </summary>
         /// <param name="pipeText">semicolon separated pipe string to CipherList </param>
-        /// <returns><see cref="CipherEnum[]"/> array of ciphers for the pipe</returns>
+        /// <returns><see cref="T:CipherEnum[]"/> array of ciphers for the pipe</returns>
         public static CipherEnum[] ParsePipeText(string pipeText)
         {
             CipherEnum cipher = CipherEnum.Aes;
             List<CipherEnum> cipherList = new List<CipherEnum>();
             pipeText = pipeText ?? "";
 
-            string[] algos = pipeText.Split(Constants.COOL_CRYPT_SPLIT.ToCharArray());
+            int pipeCnt = 0;
+            string[] algos = pipeText.Split(Constants.COOL_CRYPT_SPLIT.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             foreach (string algo in algos)
             {
                 if (Enum.TryParse<CipherEnum>(algo, out cipher))
+                {
                     cipherList.Add(cipher);
+                    if ((++pipeCnt) >= 8)
+                        break;
+                }
+
             }
 
             return cipherList.ToArray();
         }
+
+    
+
+public static CipherEnum[] FromString(string pipeText)
+        {
+            CipherPipe cp = new CipherPipe(pipeText);
+            return cp.InPipe;
+        }
+
 
         public static CipherEnum FromSymmCipherEnum(Symmetric.SymmCipherEnum symmCipherEnum)
         {
