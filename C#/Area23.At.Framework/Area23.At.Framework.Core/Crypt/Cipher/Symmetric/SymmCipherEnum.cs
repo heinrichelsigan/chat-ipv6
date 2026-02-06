@@ -113,7 +113,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 case SymmCipherEnum.Tea: return 't';
                 case SymmCipherEnum.XTea: return 'X';
 
-                // case SymmCipherEnum.ZenMatrix: return 'z';
+                    // case SymmCipherEnum.ZenMatrix: return 'z';
             }
 
             return ((char)('A'));

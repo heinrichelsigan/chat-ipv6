@@ -7,15 +7,18 @@ using System.Text;
 namespace Area23.At.Framework.Core.Cqr.Msg
 {
 
+    /// <summary>
+    /// Serializer enumeration type with default to json
+    /// </summary>
     [Serializable]
     [DefaultValue(SerType.Json)]
     public enum SerType : short
     {
-        None =  0x0000,
-        Json =  0x1000,
-        Xml =   0x2000,
-        Mime =  0x3000,
-        Raw =   0x4000       
+        None = 0x0000,
+        Json = 0x1000,
+        Xml = 0x2000,
+        Mime = 0x3000,
+        Raw = 0x4000
     }
 
     public enum MsgKind
@@ -24,6 +27,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         Client = 1
     }
 
+    /// <summary>
+    /// Extension methods for enum <see cref="SerType"/>
+    /// <see cref="Cerialize{T}(SerType, T)"/>
+    /// <see cref="DeCerialize{T}(SerType, string)"/>
+    /// </summary>
     public static class SerializationTypeExtension
     {
 
@@ -67,9 +75,17 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         }
 
 
-        public static string Cerialize<T>(this SerType serTyoe, T t)
+
+        /// <summary>
+        /// Cerialize
+        /// </summary>
+        /// <typeparam name="T">class to serialize</typeparam>
+        /// <param name="serType">cerialized type</param>
+        /// <param name="t">instance to serialize</param>
+        /// <returns>serialized string</returns>
+        public static string Cerialize<T>(this SerType serType, T t)
         {
-            switch (serTyoe)
+            switch (serType)
             {
                 case SerType.Json: return Newtonsoft.Json.JsonConvert.SerializeObject(t);
                 case SerType.Xml: return Utils.SerializeToXml<T>(t);
@@ -101,4 +117,5 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             }
         }
     }
+
 }

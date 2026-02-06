@@ -5,7 +5,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 {
 
     [Serializable]
-    public class CChatRoom : CContent, IMsgAble
+    public class CChatRoom : CMsg, IMsgAble
     {
 
         #region properties
@@ -96,7 +96,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         #endregion ctor
 
         #region members
-        public override CContent CCopy(CContent leftDest, CContent rightSrc)
+        public override CMsg CCopy(CMsg leftDest, CMsg rightSrc)
         {
             if (leftDest is CChatRoom && rightSrc is CChatRoom)
                 return CChatRoom.CloneCopy(rightSrc, leftDest);
@@ -104,7 +104,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return base.CCopy(leftDest, rightSrc);
         }
 
-        public override string ToXml() => Utils.SerializeToXml<CChatRoom>(this);
+        public new string ToXml() => Utils.SerializeToXml<CChatRoom>(this);
 
         #endregion members
 

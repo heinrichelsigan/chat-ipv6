@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 {
+
     /// <summary>
     /// Des3Net native .Net triple des without bouncy castle
     /// <see href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.tripledes.-ctor?view=net-8.0" />
@@ -16,10 +17,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         #region properties
 
         public static byte[] DesKey { get; private set; }
-        
+
         public static int DesKeyLen = 16;
 
         public static byte[] DesIv { get; private set; }
+
+        public static CipherMode CMode = CipherMode.ECB;
 
         public static TripleDESCryptoServiceProvider Des3;
 
@@ -58,7 +61,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             //        }
             //    }
             //}
-            
+
             List<byte> span = new List<byte>(keyBytes);
             while (span.Count < DesKeyLen)
                 span.AddRange(keyBytes);
@@ -99,14 +102,14 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         #endregion ctor helpers
 
         #region ctor
-    
+
 
         /// <summary>
         /// 
         /// </summary>
         public Des3Net() : this(Convert.FromBase64String(Constants.DES3_KEY), Convert.FromBase64String(Constants.DES3_IV)) { }
 
-        public Des3Net(string desKey, string hash)
+        public Des3Net(string desKey, string hash, CipherMode cipherMode = CipherMode.ECB)
         {
             if (string.IsNullOrEmpty(desKey))
                 desKey = Constants.DES3_KEY;
@@ -117,6 +120,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             byte[] iv3Des = Encoding.UTF8.GetBytes(hash);
             Gen3DesKey(ref key3Des);
             Gen3DesIv(DesKey, ref iv3Des);
+            CMode = cipherMode;
 
             // MD5 md5 = new MD5CryptoServiceProvider();
             // DesKey = md5.ComputeHash(desKey);
@@ -124,11 +128,11 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             // Des3.KeySize = DesKeyLen;
             Des3.Key = DesKey;
             Des3.IV = DesIv;
-            Des3.Mode = CipherMode.ECB;
+            Des3.Mode = cipherMode;
             Des3.Padding = PaddingMode.PKCS7;
         }
 
-        public Des3Net(byte[] desKey, byte[] desIv)
+        public Des3Net(byte[] desKey, byte[] desIv, CipherMode cipherMode = CipherMode.ECB)
         {
             if (desKey == null || desKey.Length == 0)
             {
@@ -136,14 +140,21 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                 desIv = Encoding.UTF8.GetBytes(Constants.DES3_IV);
             }
 
+
             // MD5 md5 = new MD5CryptoServiceProvider(); // DesKey = md5.ComputeHash(desKey);
             Gen3DesKey(ref desKey);
             Gen3DesIv(DesKey, ref desIv);
             Des3 = new TripleDESCryptoServiceProvider();
             Des3.Key = DesKey;
             Des3.IV = DesIv;
-            Des3.Mode = CipherMode.ECB;
-            Des3.Padding = PaddingMode.Zeros;
+            CMode = cipherMode;
+            Des3.Mode = cipherMode;
+            Des3.Padding = PaddingMode.PKCS7;
+        }
+
+
+        public Des3Net(CryptParams cparams) : this(cparams.Key, cparams.Hash, cparams.CMode)
+        {
         }
 
         #endregion ctor
@@ -157,15 +168,15 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <returns>byte[] encrypted bytes</returns>
         public byte[] Encrypt(byte[] inBytes)
         {
-			if (inBytes == null || inBytes.Length == 0)
-				throw new ArgumentNullException("inBytes");
-			
-			if (Des3 == null)
-				Des3 = new TripleDESCryptoServiceProvider() { Key = DesKey, IV = DesIv, Mode = CipherMode.ECB, Padding = PaddingMode.Zeros };
-            
-			CryptTrans = Des3.CreateEncryptor();
-			
-            byte[] cryptedBytes = CryptTrans.TransformFinalBlock(inBytes, 0, inBytes.Length);            
+            if (inBytes == null || inBytes.Length == 0)
+                throw new ArgumentNullException("inBytes");
+
+            if (Des3 == null)
+                Des3 = new TripleDESCryptoServiceProvider() { Key = DesKey, IV = DesIv, Mode = CMode, Padding = PaddingMode.PKCS7 };
+
+            CryptTrans = Des3.CreateEncryptor();
+
+            byte[] cryptedBytes = CryptTrans.TransformFinalBlock(inBytes, 0, inBytes.Length);
             Des3.Clear();
 
             return cryptedBytes;
@@ -182,14 +193,14 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             if (cipherBytes == null || cipherBytes.Length <= 0)
                 throw new ArgumentNullException("cipherBytes");
 
-			if (Des3 == null)
-				Des3 = new TripleDESCryptoServiceProvider() { Key = DesKey, IV = DesIv, Mode = CipherMode.ECB, Padding = PaddingMode.Zeros };         
-            
-			CryptTrans = Des3.CreateDecryptor();
-			            
-            byte[] decryptedBytes = CryptTrans.TransformFinalBlock(cipherBytes, 0, cipherBytes.Length);        
+            if (Des3 == null)
+                Des3 = new TripleDESCryptoServiceProvider() { Key = DesKey, IV = DesIv, Mode = CMode, Padding = PaddingMode.Zeros };
+
+            CryptTrans = Des3.CreateDecryptor();
+
+            byte[] decryptedBytes = CryptTrans.TransformFinalBlock(cipherBytes, 0, cipherBytes.Length);
             Des3.Clear();
-            
+
             // return decrypted byte[]
             return decryptedBytes;
         }
@@ -228,4 +239,5 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
 
         #endregion EnDeCryptString       
     }
+
 }

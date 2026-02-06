@@ -9,6 +9,7 @@ using Area23.At.Framework.Core.Net.NameService;
 using Area23.At.Framework.Core.Net.WebHttp;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
+using Area23.At.Framework.Core.Zfx;
 using EU.CqrXs.WinForm.SecureChat.Controls.Forms.Base;
 using EU.CqrXs.WinForm.SecureChat.Controls.UserControls;
 using EU.CqrXs.WinForm.SecureChat.Entities;
@@ -877,7 +878,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
 
                     // client msg inside 
-                    CContent msg = new CContent(unencrypted, clientFacade.PipeString, SerType.Json, MD5Sum.HashString(unencrypted, ""));
+                    CMsg msg = new CMsg(unencrypted, clientFacade.PipeString, SerType.Json, MD5Sum.HashString(unencrypted, ""));
                     string encrypted = msg.EncryptToJson(myServerKey);
 
                     // Server message to webservice with myContact, friendContact, chatRoomNr, 
@@ -921,12 +922,12 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
         }
 
 
-        internal async Task HandleResponseFromService(string serverKey, CSrvMsg<List<string>> receivedFromService, 
-            CContent msg, CContact myContact, Chat? chat, string chatRoomNr)
+        internal async Task HandleResponseFromService(string serverKey, CSrvMsg<List<string>> receivedFromService,
+            CMsg msg, CContact myContact, Chat? chat, string chatRoomNr)
         {
 
             CFile msgFile, cReceivedFile;
-            CContent msgContent;
+            CMsg msgContent;
             string friendMsg = "";
 
             await PlaySoundFromResourcesAsync("sound_arrow");
@@ -985,7 +986,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                         msgFile = new CFile(msgInnerContent, SerType.Json);
                         cReceivedFile = msgFile.DecryptFromJson(serverKey, msgInnerContent);
                         // TODO: look if it's same
-                        msgFile = CFile.Json2Decrypt(serverKey, msgInnerContent, EncodingType.Base64, Area23.At.Framework.Core.Zfx.ZipType.None);
+                        msgFile = CFile.FromJsonDecrypt(serverKey, msgInnerContent, EncodingType.Base64, ZipType.None);
 
                         if (cReceivedFile != null)
                         {
@@ -1155,9 +1156,9 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             CSrvMsg<List<string>>? rfmsg = await serverFacade.SendChatMsg_Soap_SimpleAsync(fmsg, encrypted, EncodingType.Base64);
 
                             string friendMsg = "";
-                            CContent msgContent;
+                            CMsg msgContent;
                             CFile? msgFile, cReceivedFile;
-                            CContent msg = new CContent(cfile.FileName, clientFacade.PipeString, SerType.Json, MD5Sum.HashString(cfile.FileName, ""));
+                            CMsg msg = new CMsg(cfile.FileName, clientFacade.PipeString, SerType.Json, MD5Sum.HashString(cfile.FileName, ""));
 
                             if (rfmsg != null)
                             {
@@ -1387,10 +1388,10 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                 CSrvMsg<List<string>>? rfmsg = await serverFacade.ReceiveChatMsg_SoapAsync<string>(fmsg, EncodingType.Base64);
 
                 string friendMsg = "";
-                CContent msgContent;
+                CMsg msgContent;
                 CFile? msgFile, cReceivedFile;
 
-                CContent msg = new CContent("", clientFacade.PipeString, SerType.Json, "");
+                CMsg msg = new CMsg("", clientFacade.PipeString, SerType.Json, "");
                 if (rfmsg == null)
                 {
                     MessageBox.Show("Empty message or empty body", "Message from Service is null or body is empty!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1696,7 +1697,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     string msgInnerContent = (string)(encrypted);
                     string friendMsg = "";
-                    CContent msgContent, msg = new CContent(msgInnerContent, SerType.Json);
+                    CMsg msgContent, msg = new CMsg(msgInnerContent, SerType.Json);
                     CFile? msgFile, cReceivedFile;
 
                     try
@@ -1901,7 +1902,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                             {
                                 string userMsg = chat.AddMyMessage(cfile.GetFileNameContentLength());
                                 AppendText(TextBoxSource, userMsg);
-                                CContent msg = new CContent("", clientFacade.PipeString, SerType.Json);
+                                CMsg msg = new CMsg("", clientFacade.PipeString, SerType.Json);
                                 Task.Run(() => HandleResponseFromService(myServerKey, rfmsg, msg, myContact, chat, chatRoomNr));
                                                                 
                             }

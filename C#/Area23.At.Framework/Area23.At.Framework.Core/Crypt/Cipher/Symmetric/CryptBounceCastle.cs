@@ -101,7 +101,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
         /// <param name="init">init <see cref="CryptBounceCastle"/> first time with a new key</param>
         public CryptBounceCastle(CryptParams cparams, bool init = true)
         {
-            CryptoBlockCipher = (cparams.BlockCipher == null) ? new AesEngine() : cparams.BlockCipher;
+            CryptoBlockCipher = (cparams.BlockCipher == null) ? new Org.BouncyCastle.Crypto.Engines.AesEngine() : cparams.BlockCipher;
             if (CryptoBlockCipher.AlgorithmName == "RC564" || CryptoBlockCipher.AlgorithmName == "RC5-64")
                 CryptoBlockCipher = new RC564Engine();
             CryptoBlockCipherPadding = new Org.BouncyCastle.Crypto.Paddings.ZeroBytePadding();
@@ -196,8 +196,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     cipherMode = new PaddedBufferedBlockCipher((IBlockCipher)ccmCipher, CryptoBlockCipherPadding);
                     break;
                 case "CTS":
-                    Org.BouncyCastle.Crypto.Modes.CtsBlockCipher ctsCipher = new CtsBlockCipher(CryptoBlockCipher);
-                    cipherMode = new PaddedBufferedBlockCipher((IBlockCipher)ctsCipher, CryptoBlockCipherPadding);
+                    Org.BouncyCastle.Crypto.Modes.CbcBlockCipher ctsCipher = new CbcBlockCipher(CryptoBlockCipher);
+                    cipherMode = new PaddedBufferedBlockCipher((IBlockCipher)new CtsBlockCipher((IBlockCipher)ctsCipher), CryptoBlockCipherPadding);
                     break;
                 case "EAX":
                     Org.BouncyCastle.Crypto.Modes.EaxBlockCipher eaxCipher = new EaxBlockCipher(CryptoBlockCipher);
@@ -219,7 +219,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             // if (Mode == "ECB")
             cipherMode.Init(true, keyParam);
             // else
-            // cipherMode.Init(true, keyParamIV);
+            // cipherMode.Init(true, keyParam, keyParamIV);
 
             if (PadBufBChipger == null && cipherMode != null)
                 PadBufBChipger = cipherMode;
@@ -261,8 +261,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
                     cipherMode = new PaddedBufferedBlockCipher((IBlockCipher)ccmCipher, CryptoBlockCipherPadding);
                     break;
                 case "CTS":
-                    Org.BouncyCastle.Crypto.Modes.CtsBlockCipher ctsCipher = new CtsBlockCipher(CryptoBlockCipher);
-                    cipherMode = new PaddedBufferedBlockCipher((IBlockCipher)ctsCipher, CryptoBlockCipherPadding);
+                    Org.BouncyCastle.Crypto.Modes.CbcBlockCipher ctsCipher = new CbcBlockCipher(CryptoBlockCipher);
+                    cipherMode = new PaddedBufferedBlockCipher((IBlockCipher)new CtsBlockCipher((IBlockCipher)ctsCipher), CryptoBlockCipherPadding);
                     break;
                 case "EAX":
                     Org.BouncyCastle.Crypto.Modes.EaxBlockCipher eaxCipher = new EaxBlockCipher(CryptoBlockCipher);
@@ -284,11 +284,12 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Symmetric
             ICipherParameters keyParamIV = new ParametersWithIV(keyParam, Iv);
 
 
-            // Decrypt
-            //if (Mode == "ECB")
+            // Decrypt            
+            // if (Mode == "ECB")
             cipherMode.Init(false, keyParam);
-            //else
-            //    cipherMode.Init(false, keyParamIV);
+            // else
+            // cipherMode.init(false, keyParam, keyParamIV);
+
 
             // decryptedData = cipherMode.ProcessBytes(cipherData);
             if (cipherMode != null)

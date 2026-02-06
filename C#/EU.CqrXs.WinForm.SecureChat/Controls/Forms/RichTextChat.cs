@@ -816,7 +816,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
 
                     string msgInnerContent = (string)(encrypted);
                     string friendMsg = "";
-                    CContent msgContent, msg = new CContent(msgInnerContent, SerType.Json);
+                    CMsg msgContent, msg = new CMsg(msgInnerContent, SerType.Json);
                     CFile? msgFile, cReceivedFile;
 
                     try

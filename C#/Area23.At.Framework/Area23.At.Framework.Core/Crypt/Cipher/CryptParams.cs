@@ -27,7 +27,15 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
 
         public string Hash { get; set; }
 
-        public string Mode { get; set; }
+        public string Mode { get => CMode2.ToString(); set => CMode2 = CipherModeExtensions.ParseText(value); }
+
+        public System.Security.Cryptography.CipherMode CMode
+        {
+            get => CMode2.ToCipherMode();
+            set => CMode2 = value.FromCipherMode();
+        }
+
+        public CipherMode2 CMode2 { get; set; }
 
         public int Size { get; set; }
 
@@ -51,7 +59,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             Cipher = CipherEnum.Aes;
             Size = 256;
             KeyLen = 32;
-            Mode = "ECB";
+            Mode = "EAX";
             BlockCipher = new AesEngine();
             KeyHashing = KeyHash.Hex;
         }
@@ -99,10 +107,6 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.TwofishEngine();
                     break;
                 case CipherEnum.Fish3:
-                    BlockCipher = new Org.BouncyCastle.Crypto.Engines.ThreefishEngine(Size);
-                    break;
-                case CipherEnum.ThreeFish256:
-                    ;
                     BlockCipher = new Org.BouncyCastle.Crypto.Engines.ThreefishEngine(Size);
                     break;
                 case CipherEnum.Camellia:

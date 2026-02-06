@@ -67,6 +67,13 @@
     <Compile Remove="Cache\RedisMSCache.cs" />
     <Compile Remove="Cache\RedisValkeyCache.cs" />
     <Compile Remove="Crypt\Cipher\Crpyt.cs" />
+    <Compile Remove="Crypt\Cipher\Symmetric\FishRequiresAesEngineException.cs" />
+    <Compile Remove="Crypt\Cipher\Symmetric\RC564.cs" />
+    <Compile Remove="Crypt\Cipher\Symmetric\Serpent.cs" />
+    <Compile Remove="Crypt\Cipher\Symmetric\SymmCipherEnum.cs" />
+    <Compile Remove="Crypt\Cipher\Symmetric\SymmCipherPipe.cs" />
+    <Compile Remove="Crypt\Cipher\Symmetric\SymmCrypt.cs" />
+    <Compile Remove="Crypt\Cipher\Symmetric\SymmCryptParams.cs" />
     <Compile Remove="Crypt\EnDeCoding\DeEnCoder.cs" />
     <Compile Remove="Net\IpSocket\IpSocketSender.cs" />
     <Compile Remove="Net\IpSocket\IPSockListener.cs" />
@@ -103,30 +110,16 @@
     <PackageReference Include="MessagePack" Version="3.1.4" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="5.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="protobuf-net" Version="3.2.56" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
-    <PackageReference Include="System.Collections" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-    <PackageReference Include="System.IO" Version="4.3.0" />
-    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
-    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.1" />
-    <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
-    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.*" />
     <PackageReference Include="System.ServiceModel.Federation" Version="8.1.2" />
-    <PackageReference Include="System.ServiceModel.Http" Version="8.1.2" />
-    <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="6.0.*" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="8.1.2" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.2" />
+    <PackageReference Include="System.ServiceModel.Http" Version="10.0.652802" />
+    <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.0.652802" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="10.0.652802" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="10.0.652802" />
     <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
-    <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
-    <PackageReference Include="System.Threading" Version="4.3.0" />
-    <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
-    <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
-    <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
-    <PackageReference Include="ZeroFormatter" Version="1.6.4" />
   </ItemGroup>
 
 </Project>

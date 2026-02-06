@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EU.CqrXs.Console": {
+      "commandName": "Project",
+      "commandLineArgs": " -i=S:\\PermAgainCrypt\\Deploy\\EU.CqrXs\\EU.CqrXs.Console\\README.MD -e=base16 -o=S:\\PermAgainCrypt\\Deploy\\EU.CqrXs\\EU.CqrXs.Console\\README_MD.base16"
+    }
+  }
+}

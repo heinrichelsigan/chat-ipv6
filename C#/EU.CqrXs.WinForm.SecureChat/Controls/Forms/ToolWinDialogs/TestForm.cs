@@ -152,7 +152,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     CqrFacade facade = new CqrFacade(myServerKey);
                     this.textBoxPipeHash.Text = facade.PipeString;
 
-                    CContent cc = new CContent(this.textBoxSource.Text, facade.PipeString, SerType.Json, MD5Sum.HashString(this.textBoxSource.Text, ""));
+                    CMsg cc = new CMsg(this.textBoxSource.Text, facade.PipeString, SerType.Json, MD5Sum.HashString(this.textBoxSource.Text, ""));
 
                     if (!this.checkBoxDecrypt.Checked)
                     {
@@ -162,7 +162,7 @@ namespace EU.CqrXs.WinForm.SecureChat.Controls.Forms
                     else
                     {
                         string decrypted = string.Empty;
-                        CContent? content = cc.DecryptFromJson(myServerKey, this.textBoxSource.Text);
+                        CMsg? content = cc.DecryptFromJson(myServerKey, this.textBoxSource.Text);
                         this.textBoxDestination.Text = content.Message;
                     }
 

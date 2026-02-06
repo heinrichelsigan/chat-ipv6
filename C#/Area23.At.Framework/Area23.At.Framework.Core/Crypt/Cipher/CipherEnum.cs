@@ -44,17 +44,16 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
         CamelliaLight = 0x19,
         Dstu7624 = 0x1a,
         AesLight = 0x1b,
-        ThreeFish256 = 0x1c,
+        ZenMatrix = 0x1c,
+        Ascon = 0x1d,
 
-        Des3Net = 0x1d,
-        AesNet = 0x1e,
+        ZenMatrix2 = 0x1f,
 
-
-        ZenMatrix = 0x1f,
-        ZenMatrix2 = 0x20,
-
-        Rsa = 0x21
+        // Rsa = 0x21
         // DH = 0x22,
+
+        Des3Net = 0x31,
+        AesNet = 0x32
     }
 
     /// <summary>
@@ -104,7 +103,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.BlowFish: return 'b';
                 case CipherEnum.Fish2: return 'f';
                 case CipherEnum.Fish3: return 'F';
-                case CipherEnum.ThreeFish256: return '3';
+                // case CipherEnum.ThreeFish256: return '3';
 
                 case CipherEnum.Camellia: return 'C';
                 case CipherEnum.CamelliaLight: return 'l';
@@ -138,7 +137,7 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
                 case CipherEnum.ZenMatrix: return 'z';
                 case CipherEnum.ZenMatrix2: return 'Z';
 
-                case CipherEnum.Rsa: return '%';
+                // case CipherEnum.Rsa: return '%';
                 // case CipherEnum.DH: return '!';
 
                 default: break;
@@ -180,19 +179,19 @@ namespace Area23.At.Framework.Core.Crypt.Cipher
             return cipherList.ToArray();
         }
 
-    
 
-public static CipherEnum[] FromString(string pipeText)
+
+        public static CipherEnum[] FromString(string pipeText)
         {
             CipherPipe cp = new CipherPipe(pipeText);
             return cp.InPipe;
         }
 
 
-        public static CipherEnum FromSymmCipherEnum(Symmetric.SymmCipherEnum symmCipherEnum)
-        {
-            return symmCipherEnum.ToCipherEnum();
-        }
+        //public static CipherEnum FromSymmCipherEnum(Symmetric.SymmCipherEnum symmCipherEnum)
+        //{
+        //    return symmCipherEnum.ToCipherEnum();
+        //}
 
     }
 

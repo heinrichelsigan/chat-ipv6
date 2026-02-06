@@ -4,6 +4,7 @@ using Area23.At.Framework.Core.Crypt.Hash;
 using Area23.At.Framework.Core.Static;
 using Area23.At.Framework.Core.Util;
 using Area23.At.Framework.Core.Zfx;
+using ICSharpCode.SharpZipLib.GZip;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Drawing.Imaging;
@@ -12,7 +13,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 {
 
     /// <summary>
-    /// CImage is a image derived drom <see cref="CFile"/>
+    /// CImage is a image derived from <see cref="CFile"/>
+    /// <see cref="CImage"/> has almost same properties and some small mappings  as <see cref="CFile"/> 
+    /// and additionally member functions for conversion or import from File or <see cref="System.Drawing.Image"/> entity:
+    /// <see cref="ToDrawingBitmap"/> <see cref="FromDrawingImage(Image, string)"/> <see cref="ToDrawingImage(CImage)"/> <see cref="ToFile(CImage)"/>
+    /// TODO: refactor it
     /// </summary>
     [Serializable]
     public class CImage : CFile, IMsgAble
@@ -24,33 +29,33 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// File Name with extension of Image wraps <see cref="CFile.FileName"/>
         /// </summary>
         [JsonIgnore]
-        public string ImageFileName { get => base.FileName; set => FileName = value; }
+        public string ImageFileName { get => FileName; set => FileName = value; }
 
         /// <summary>
         /// Mime Type of Image
         /// </summary>
         [JsonIgnore]
-        public string ImageMimeType { get => base.Base64Type; set => Base64Type = value; }
+        public string ImageMimeType { get => Base64Type; set => Base64Type = value; }
 
         /// <summary>
         /// byte[] of Image Raw Data wraps <see cref="CFile.Data"/>
         /// </summary>
         [JsonIgnore]
-        public byte[] ImageData { get => base.Data; set => Data = value; } 
+        public byte[] ImageData { get => Data; set => Data = value; }
 
         /// <summary>
         /// Base64 mime encoded string of raw data
         /// </summary>
         [JsonIgnore]
         public string ImageBase64 { get => Convert.ToBase64String(Data, 0, Data.Length); }
-        
+
 
         #endregion properties
 
         #region constructors
 
         /// <summary>
-        /// Default empty constructor (needed for json serialize & deserialize)
+        /// Default empty constructor (needed for json serialize and deserialize)
         /// </summary>
         public CImage() : base()
         {
@@ -80,7 +85,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <param name="fileName"></param>
         /// <param name="base64Image"></param>
         public CImage(string fileName, string base64Image) : this()
-		{
+        {
             ImageFileName = fileName;
             ImageData = Convert.FromBase64String(base64Image);
             ImageMimeType = MimeType.GetMimeType(ImageData, ImageFileName);
@@ -93,18 +98,18 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         /// <param name="image"> <see cref="Image"/>  <see cref="Bitmap"/></param>
         /// <param name="fileName">fileName for the image,
         /// if fileName is null or empty
-        /// then a name <see cref="Extensions.Area23DateTimeWithMillis(DateTime)"/></param> + "_image." + extension based mime type will be given
+        /// then a name <see cref="Util.Extensions.Area23DateTimeWithMillis(DateTime)"/></param> + "_image." + extension based mime type will be given
         public CImage(Image image, string fileName = "")
         {
-            CImage cImage = FromDrawingImage(image, fileName);			
-			if (cImage != null)
+            CImage cImage = FromDrawingImage(image, fileName);
+            if (cImage != null)
             {
                 CloneCopy(cImage, this);
             }
         }
 
-        public CImage(CImage cImage) : this() 
-        {            
+        public CImage(CImage cImage) : this()
+        {
             if (cImage != null)
             {
                 CloneCopy(cImage, this);
@@ -113,11 +118,11 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         public CImage(string serializedImgage, SerType msgType = SerType.Json)
         {
-            CImage cImage = (msgType == SerType.Xml) ? FromXml<CImage>(serializedImgage) : FromJson<CImage>(serializedImgage);
+            CImage cImage = msgType.DeCerialize<CImage>(serializedImgage);
             if (cImage != null)
             {
-				CloneCopy(cImage, this);
-			}
+                CloneCopy(cImage, this);
+            }
         }
 
         #endregion constructors
@@ -127,47 +132,52 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
         #region EnDeCrypt+DeSerialize
 
-        public override string EncryptToJson(string serverKey, EncodingType encoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
+        public new string EncryptToJson(
+            string serverKey,
+            EncodingType encoder = EncodingType.Base64,
+            Zfx.ZipType zipType = Zfx.ZipType.None
+        )
         {
-            string serializedJson = CImage.Encrypt2Json(serverKey, this, encoder, zipType, kHash);
+            CFile cFile = ToFile(this);
+
+            string serializedJson = ToJsonEncrypt(serverKey, ref cFile, encoder, zipType);
 
             return serializedJson;
         }
 
         public new CImage? DecryptFromJson(string serverKey, string serialized = "",
-            EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
+            EncodingType decoder = EncodingType.Base64, Zfx.ZipType zipType = Zfx.ZipType.None)
         {
             if (string.IsNullOrEmpty(serialized))
-                serialized = this.SerializedMsg;
+                serialized = SerializedMsg;
 
-            CImage cimg = CImage.Json2Decrypt(serverKey, serialized, decoder, zipType, kHash);
-            if (cimg == null)
+            CFile cfile = FromJsonDecrypt(serverKey, serialized, decoder, zipType);
+            if (cfile == null)
                 throw new CqrException($"CImage? DecryptFromJson(string serverKey, string serialized) failed.");
 
-            return CloneCopy(cimg, this);
+            return CloneCopy(cfile, this);
         }
 
         #endregion EnDeCrypt+DeSerialize
 
-        public override CContent CCopy(CContent leftDest, CContent rightSrc)
+        public override CMsg CCopy(CMsg leftDest, CMsg rightSrc)
         {
             if (leftDest is CImage && rightSrc is CImage)
-                return CImage.CloneCopy(rightSrc, leftDest);
+                return CloneCopy(rightSrc, leftDest);
 
             return base.CCopy(leftDest, rightSrc);
         }
 
-        /// <summary>
-        /// ToXml serializes this <see cref="CImage"/> to serialized xml <see cref="string"/>
-        /// </summary>
-        /// <returns>xml serialized string</returns>
-        public override string ToXml() => Utils.SerializeToXml<CImage>(this);
+        public override string Cerialize() => Cerializer.Cerialize<CImage>(this);
+
+        public CImage? DeCerialize(string jsonText) => DeCerialize<CImage>(jsonText);
+
 
         /// <summary>
-        /// ToDrawingBitmap converts this <see cref="CImage"/> to <see cref="System.Drawing.Bitmap"/>
+        /// ToDrawingBitmap converts this <see cref="CImage"/> to <see cref="Bitmap"/>
         /// </summary>
         /// <returns>transformed see cref="System.Drawing.Bitmap"/></returns>
-        public virtual Bitmap ToDrawingBitmap() => CImage.ToDrawingImage(this);
+        public virtual Bitmap ToDrawingBitmap() => ToDrawingImage(this);
 
         #endregion members
 
@@ -175,10 +185,10 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         #region static members
 
         /// <summary>
-        /// ToDrawingImage converts a <see cref="CImage"/> to a <see cref="System.Drawing.Image"/>
+        /// ToDrawingImage converts a <see cref="CImage"/> to a <see cref="Image"/>
         /// </summary>
-        /// <param name="cqrImage"><see cref="CImage"/> to convert</param>
-        /// <returns>converted <see cref="System.Drawing.Image"/></returns>
+        /// <param name="cImage"><see cref="CImage"/> to convert</param>
+        /// <returns>converted <see cref="Image"/></returns>
         public static Bitmap ToDrawingImage(CImage cImage)
         {
             Bitmap bmpImage;
@@ -197,9 +207,9 @@ namespace Area23.At.Framework.Core.Cqr.Msg
         }
 
         /// <summary>
-        /// FromDrawingImage converts a <see cref="CImage"/> from a <see cref="System.Drawing.Image"/>
+        /// FromDrawingImage converts a <see cref="CImage"/> from a <see cref="Image"/>
         /// </summary>
-        /// <param name="image"><see cref="System.Drawing.Image"/></param>
+        /// <param name="image"><see cref="Image"/></param>
         /// <param name="imgName"><see cref="string">string imgName</see></param>
         /// <returns><see cref="CImage">converted CqrImage</see></returns>
         public static CImage? FromDrawingImage(Image image, string imgName = "")
@@ -262,18 +272,18 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                         fileName += ".ico";
                         image.Save(ms, ImageFormat.Icon);
                     }
-					//else if (image.RawFormat == ImageFormat.Heif)
-					//{
-					//    fileName += ".heif";
-					//    image.Save(ms, ImageFormat.Heif);
-					//}
-					//else if (image.RawFormat == ImageFormat.Webp)
-					//{
-					//    fileName += ".webp";
-					//    image.Save(ms, ImageFormat.Webp);
-					//}
-					else
-					{
+                    //else if (image.RawFormat == ImageFormat.Heif)
+                    //{
+                    //    fileName += ".heif";
+                    //    image.Save(ms, ImageFormat.Heif);
+                    //}
+                    //else if (image.RawFormat == ImageFormat.Webp)
+                    //{
+                    //    fileName += ".webp";
+                    //    image.Save(ms, ImageFormat.Webp);
+                    //}
+                    else
+                    {
                         try
                         {
                             fileName += ".bmp";
@@ -343,113 +353,18 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return cImage;
         }
 
-        #region static members Encrypt2Json Json2Decrypt
-
-        /// <summary>
-        /// Encrypt2Json
-        /// </summary>
-        /// <param name="key">server key to encrypt</param>
-        /// <param name="cimg"><see cref="CImage"/> to encrypt and serialize</param>
-        /// <returns>a serialized <see cref="string" /> of encrypted <see cref="CImage"/></returns>
-        /// <exception cref="CqrException"></exception>
-        public static string Encrypt2Json(string key, CImage cimg, EncodingType encoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
-        {
-            if (string.IsNullOrEmpty(key) || cimg == null)
-                throw new CqrException($"static string ToJsonEncrypt(string key, ref CImage cimg) failed: NULL reference!");
-
-            try
-            {
-                string keyHash = kHash.Hash(key);
-                string pipeString = (new SymmCipherPipe(key, keyHash)).PipeString;
-                cimg.Hash = pipeString;
-                cimg.Md5Hash = MD5Sum.HashString(String.Concat(key, keyHash, pipeString, cimg.FileName), "");
-                cimg.Sha256Hash = Sha256Sum.Hash(cimg.Data, "");
-
-                string encrypted = SymmCipherPipe.EncrpytBytesToString(cimg.Data, key, out pipeString, encoder, zipType, kHash);
-                cimg.Data = new byte[0];
-                cimg.Message = encrypted;
-            }
-            catch (Exception exCrypt)
-            {
-                CqrException.SetLastException(exCrypt);
-                throw;
-            }
-
-            return JsonConvert.SerializeObject(cimg);
-        }
-
-        /// <summary>
-        /// Json2Decrypt
-        /// </summary>
-        /// <param name="key">server key to decrypt</param>
-        /// <param name="serialized">serialized string of <see cref="CImage"/></param>
-        /// <returns>deserialized and decrypted <see cref="CImage"/></returns>
-        /// <exception cref="CqrException">thrown, 
-        /// when serialized string to decrypt and deserialize is either null or empty 
-        /// or <see cref="CImage"/> can't be decrypted and deserialized.
-        /// </exception>
-        public static new CImage Json2Decrypt(string key, string serialized, EncodingType decoder = EncodingType.Base64, ZipType zipType = ZipType.None, KeyHash kHash = KeyHash.Hex)
-        {
-            if (string.IsNullOrEmpty(serialized))
-                throw new CqrException("static CFile FromJsonDecrypt(string serverKey, string serialized): serialized is null or empty.");
-
-            CImage cimg = Newtonsoft.Json.JsonConvert.DeserializeObject<CImage>(serialized);
-
-            string keyHash = kHash.Hash(key);
-            try
-            {
-                string pipeString = (new SymmCipherPipe(key, keyHash)).PipeString;
-
-                byte[] fileBytes = SymmCipherPipe.DecrpytStringToBytes(cimg.Message, key, out pipeString, decoder, zipType, kHash);
-
-                string md5Hash = MD5Sum.HashString(String.Concat(key, keyHash, pipeString, cimg.FileName), "");
-                if (!cimg.Hash.Equals(pipeString))
-                {
-                    throw new CqrException($"CImage.Hash={cimg.Hash} doesn't match PipeString={pipeString}");
-                }
-                if (!md5Hash.Equals(cimg.Md5Hash))
-                {
-                    string md5ErrMsg = $"cimg.Md5Hash={cimg.Md5Hash} doesn't match md5Hash={md5Hash}.";
-                    Area23Log.LogOriginMsg("CImage", md5ErrMsg);
-                    // throw new CqrException(md5ErrMsg);
-                }
-                string sha256Hash = Sha256Sum.Hash(fileBytes, "");
-                if (!sha256Hash.Equals(cimg.Sha256Hash))
-                {
-                    string sha256ErrMsg = $"cimg.Sha256Hash={cimg.Sha256Hash} doesn't match sha256Hash={sha256Hash}.";
-                    Area23Log.LogOriginMsg("CImage", sha256ErrMsg);
-                    // throw new CqrException(sha256ErrMsg);
-                }
-
-                cimg.Data = fileBytes;
-                cimg.Message = "";
-
-            }
-            catch (Exception exCrypt)
-            {
-                CqrException.SetLastException(exCrypt);
-                throw;
-            }
-
-            return cimg;
-        }
-
-        #endregion static members Encrypt2Json Json2Decrypt
-
-        public static CImage? CloneCopy(CImage? source, CImage? destination)
+        public new static CImage? CloneCopy(CFile? source, CImage? destination)
         {
             if (source == null)
                 return null;
-            if (destination == null)            
+            if (destination == null)
                 destination = new CImage();
 
             destination.Message = source.Message;
             destination.Hash = source.Hash;
-            // destination.MsgType = source.MsgType;
+            destination.Cerializer = source.Cerializer;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
-            // destination.ZType = source.ZType;
-            // destination.KHash = source.KHash;
 
             destination.FileName = source.FileName;
             destination.Base64Type = source.Base64Type;
@@ -459,7 +374,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
             return destination;
         }
 
-        public static CFile ToFile(CImage source)
+        public new static CFile ToFile(CImage source)
         {
             if (source == null)
                 return null;
@@ -468,7 +383,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
 
             destination.Message = source.Message;
             destination.Hash = source.Hash;
-            // destination.MsgType = source.MsgType;
+            destination.Cerializer = source.Cerializer;
             destination.CBytes = source.CBytes;
             destination.Md5Hash = source.Md5Hash;
 

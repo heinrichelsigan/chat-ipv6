@@ -1,0 +1,67 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishAot>False</PublishAot>
+	<IsAotCompatible>True</IsAotCompatible>
+    <InvariantGlobalization>True</InvariantGlobalization>
+	<StripSymbols>False</StripSymbols>
+    <StartupObject>EU.CqrXs.Console.Program</StartupObject>
+    <ApplicationIcon>SatIcon.ico</ApplicationIcon>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <PublishTrimmed>False</PublishTrimmed>
+    <Title>EU.CqrXs.Console</Title>
+    <Description>EU.CqrXs.Console</Description>
+    <Copyright>Copyright © 2000-2040 Copyleft https://cqrxs.eu</Copyright>
+    <PackageProjectUrl>https://cqrxs.eu/download/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/heinrichelsigan/PermAgainCrypt</RepositoryUrl>
+    <AssemblyVersion>2.26.131</AssemblyVersion>
+    <FileVersion>2.26.131</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="README.MD" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="README.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SatIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Area23.At.Framework\Area23.At.Framework.Core\Area23.At.Framework.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Console_Test.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
