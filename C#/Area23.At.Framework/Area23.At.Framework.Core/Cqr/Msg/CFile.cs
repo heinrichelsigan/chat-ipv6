@@ -408,7 +408,7 @@ namespace Area23.At.Framework.Core.Cqr.Msg
                 cfile.Md5Hash = MD5Sum.HashString(string.Concat(serverKey, keyHash, pipeString, cfile.FileName), "");
                 cfile.Sha256Hash = Sha256Sum.Hash(cfile.Data, "");
                 // encrypted = CipherPipe.EncrpytBytesToString(, serverKey, out pipeString, encoder, zipType);                
-                encrypted = Encoding.UTF8.GetString(symmPipe.EncryptEncodeBytes(cfile.Data, serverKey, keyHash, encoder, zipType, KeyHash.Hex));
+                encrypted = CipherPipe.EncrpytT<string, byte[]>(cfile.Data, serverKey, keyHash, encoder, zipType, KeyHash.Hex, CipherMode2.ECB);
                 cfile.Data = new byte[0];
                 cfile.Message = encrypted;
             }

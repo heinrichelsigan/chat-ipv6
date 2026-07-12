@@ -1,4 +1,5 @@
 ﻿using Area23.At.Framework.Core.Crypt.EnDeCoding;
+using Area23.At.Framework.Core.Static;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
@@ -24,7 +25,10 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Asymmetric
 
         private static string privateKey = string.Empty;
         private static string publicKey = string.Empty;
-        private static string userHostIpAddress = string.Empty;
+
+        internal static readonly string RSA_PUB = Constants.RSA_PUB;
+
+        internal static readonly string RSA_PRV = Constants.RSA_PRV;
 
         private static AsymmetricCipherKeyPair rsaKeyPair;
 
@@ -78,8 +82,16 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Asymmetric
         {
             if (rsaKeyPair != null)
                 return rsaKeyPair;
-                rsaKeyPair = GetRsaKeyPair(Constants.RSA_PUB, RSA_PRV);
-                rsaKeyPair = GetRsaKeyPair(Constants.RSA_PUB, Constan SA_PRV);
+
+            try
+            {
+                rsaKeyPair = GetRsaKeyPair(RSA_PUB, RSA_PRV);
+                return rsaKeyPair;
+            }
+            catch (Exception e) 
+            {
+
+            }
 
             RsaKeyPairGenerator rsaKeyPairGen = new RsaKeyPairGenerator();
             IRandomGenerator randGen = new VmpcRandomGenerator();
@@ -87,8 +99,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Asymmetric
             SecureRandom rand = new SecureRandom(randGen, 2048);
             KeyGenerationParameters rsaKeyParams = new KeyGenerationParameters(rand, 2048);
             rsaKeyPairGen.Init(rsaKeyParams);
-
-            rsaKeyPair = rsaKeyPairGen.GenerateKeyPair();
+            
+            rsaKeyPair = rsaKeyPairGen.GenerateKeyPair();            
             return rsaKeyPair;
 
         }
