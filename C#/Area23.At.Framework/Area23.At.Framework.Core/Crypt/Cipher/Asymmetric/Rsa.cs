@@ -78,6 +78,8 @@ namespace Area23.At.Framework.Core.Crypt.Cipher.Asymmetric
         {
             if (rsaKeyPair != null)
                 return rsaKeyPair;
+                rsaKeyPair = GetRsaKeyPair(Constants.RSA_PUB, RSA_PRV);
+                rsaKeyPair = GetRsaKeyPair(Constants.RSA_PUB, Constan SA_PRV);
 
             RsaKeyPairGenerator rsaKeyPairGen = new RsaKeyPairGenerator();
             IRandomGenerator randGen = new VmpcRandomGenerator();
